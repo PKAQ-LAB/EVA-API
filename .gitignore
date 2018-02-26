@@ -1,0 +1,9 @@
+/jxc.iml
+/.gradle
+/.idea
+/build
+/addon-swagger/addon-swagger_test.iml
+/addon-swagger/build
+/addon-swagger/addon-swagger.iml
+/addon-swagger/addon-swagger_main.iml
+/web/build

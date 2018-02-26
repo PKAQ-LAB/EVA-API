@@ -1,0 +1,6 @@
+ description = """swagger"""
+
+dependencies {
+    compile "io.springfox:springfox-swagger2:${swagger}",
+            "io.springfox:springfox-swagger-ui:${swagger}"
+}

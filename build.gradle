@@ -1,0 +1,43 @@
+plugins {
+   id "name.remal.check-dependency-updates" version "1.0.6" apply false
+   id "org.jetbrains.kotlin.jvm" version "1.2.21" apply false
+}
+ext {
+    bootVersion = "1.5.10.RELEASE"
+    kotlin_jackson = "2.8.8"
+    kotlin_version = '1.2.21'
+    lombok = "1.16.10"
+    druid = "1.1.7"
+    mysql = "6.0.6"
+    fastjson = "1.2.46"
+    mybatis_plus = "2.1.9"
+    mybatis_plus_starter = "1.0.5"
+    lombok = "1.16.20"
+    swagger = "2.8.0"
+    hutool = "4.0.5"
+}
+allprojects {
+    group = 'org.pkaq'
+    version = '1.0'
+}
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'org.jetbrains.kotlin.jvm'
+    apply plugin: 'name.remal.check-dependency-updates'
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    [ compileJava, compileTestJava ]*.options*.encoding = 'UTF-8'
+
+    repositories {
+        mavenLocal()
+        maven { url"https://repo.spring.io/libs-release" }
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+       compileOnly "org.projectlombok:lombok:${lombok}"
+     }
+}
+

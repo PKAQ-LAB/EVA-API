@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mappers.dao.generator.SysModuleMapper">
+  <resultMap id="BaseResultMap" type="org.pkaq.model.generator.SysModuleEntity">
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="icon" jdbcType="VARCHAR" property="icon" />
+    <result column="routeUrl" jdbcType="VARCHAR" property="routeurl" />
+    <result column="modelUrl" jdbcType="VARCHAR" property="modelurl" />
+    <result column="code" jdbcType="VARCHAR" property="code" />
+    <result column="parentId" jdbcType="VARCHAR" property="parentid" />
+    <result column="parentName" jdbcType="VARCHAR" property="parentname" />
+    <result column="path" jdbcType="VARCHAR" property="path" />
+    <result column="pathname" jdbcType="VARCHAR" property="pathname" />
+    <result column="leaf" jdbcType="TINYINT" property="leaf" />
+    <result column="orders" jdbcType="INTEGER" property="orders" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="gmt_modify" jdbcType="TIMESTAMP" property="gmtModify" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="modify_by" jdbcType="VARCHAR" property="modifyBy" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from sys_module
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" keyProperty="id" parameterType="org.pkaq.model.generator.SysModuleEntity" useGeneratedKeys="true">
+    insert into sys_module (name, icon, routeUrl, 
+      modelUrl, code, parentId, 
+      parentName, path, pathname, 
+      leaf, orders, status, 
+      remark, gmt_create, gmt_modify, 
+      create_by, modify_by)
+    values (#{name,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR}, #{routeurl,jdbcType=VARCHAR}, 
+      #{modelurl,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, #{parentid,jdbcType=VARCHAR}, 
+      #{parentname,jdbcType=VARCHAR}, #{path,jdbcType=VARCHAR}, #{pathname,jdbcType=VARCHAR}, 
+      #{leaf,jdbcType=TINYINT}, #{orders,jdbcType=INTEGER}, #{status,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=VARCHAR}, #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModify,jdbcType=TIMESTAMP}, 
+      #{createBy,jdbcType=VARCHAR}, #{modifyBy,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="org.pkaq.model.generator.SysModuleEntity">
+    update sys_module
+    set name = #{name,jdbcType=VARCHAR},
+      icon = #{icon,jdbcType=VARCHAR},
+      routeUrl = #{routeurl,jdbcType=VARCHAR},
+      modelUrl = #{modelurl,jdbcType=VARCHAR},
+      code = #{code,jdbcType=VARCHAR},
+      parentId = #{parentid,jdbcType=VARCHAR},
+      parentName = #{parentname,jdbcType=VARCHAR},
+      path = #{path,jdbcType=VARCHAR},
+      pathname = #{pathname,jdbcType=VARCHAR},
+      leaf = #{leaf,jdbcType=TINYINT},
+      orders = #{orders,jdbcType=INTEGER},
+      status = #{status,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      gmt_modify = #{gmtModify,jdbcType=TIMESTAMP},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      modify_by = #{modifyBy,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select ID, name, icon, routeUrl, modelUrl, code, parentId, parentName, path, pathname, 
+    leaf, orders, status, remark, gmt_create, gmt_modify, create_by, modify_by
+    from sys_module
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select ID, name, icon, routeUrl, modelUrl, code, parentId, parentName, path, pathname, 
+    leaf, orders, status, remark, gmt_create, gmt_modify, create_by, modify_by
+    from sys_module
+  </select>
+</mapper>

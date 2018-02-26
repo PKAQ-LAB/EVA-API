@@ -1,0 +1,4 @@
+rootProject.name = 'jxc'
+include 'web'
+include 'addon-swagger'
+
