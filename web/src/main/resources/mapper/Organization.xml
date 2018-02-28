@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.pkaq.web.organization.mapper.OrganizationMapper">
+  <resultMap id="BaseResultMap" type="org.pkaq.web.organization.entity.OrganizationEntity">
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="code" jdbcType="VARCHAR" property="code" />
+    <result column="parentID" jdbcType="VARCHAR" property="parentid" />
+    <result column="parentName" jdbcType="VARCHAR" property="parentname" />
+    <result column="path" jdbcType="VARCHAR" property="path" />
+    <result column="pathname" jdbcType="VARCHAR" property="pathname" />
+    <result column="isleaf" jdbcType="TINYINT" property="isleaf" />
+    <result column="orders" jdbcType="INTEGER" property="orders" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="gmt_modify" jdbcType="TIMESTAMP" property="gmtModify" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="modify_by" jdbcType="VARCHAR" property="modifyBy" />
+  </resultMap>
+</mapper>
