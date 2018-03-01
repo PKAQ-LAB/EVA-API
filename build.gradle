@@ -7,8 +7,8 @@ ext {
     kotlin_jackson = "2.8.8"
     kotlin_version = '1.2.21'
     lombok = "1.16.10"
-    druid = "1.1.7"
-    mysql = "6.0.6"
+    druid = "1.1.8"
+    mysql = "8.0.8-dmr"
     fastjson = "1.2.46"
     mybatis_plus = "2.1.9"
     mybatis_plus_starter = "1.0.5"
