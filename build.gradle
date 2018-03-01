@@ -3,7 +3,7 @@ plugins {
    id "org.jetbrains.kotlin.jvm" version "1.2.21" apply false
 }
 ext {
-    bootVersion = "1.5.10.RELEASE"
+    bootVersion = "2.0.0.RELEASE"
     kotlin_jackson = "2.8.8"
     kotlin_version = '1.2.21'
     lombok = "1.16.10"

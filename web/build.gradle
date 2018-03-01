@@ -1,7 +1,9 @@
+
 // 依赖配置
 dependencies {
     compile project(":addon-swagger")
     compile "org.springframework.boot:spring-boot-starter-web:${bootVersion}",
+            "org.springframework.boot:spring-boot-properties-migrator:+",
             // mysql
             "mysql:mysql-connector-java:${mysql}",
             // josn

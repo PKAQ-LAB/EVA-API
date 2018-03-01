@@ -12,12 +12,11 @@ spring:
     username: jxc
     password: jxc
 server:
-  context-path: /
+  servlet:
+    context-path: /
   port: 80
 debug: false
 # 日志
-logging:
-  level: warn
 #mybatis
 mybatis-plus:
   mapper-locations: classpath:/mapper/*Mapper.xml
@@ -37,3 +36,6 @@ mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
     cache-enabled: false
+logging:
+  config:
+    level: debug
