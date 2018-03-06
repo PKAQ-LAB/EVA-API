@@ -1,15 +1,14 @@
-
+description = """web"""
 // 依赖配置
 dependencies {
     compile project(":addon-swagger")
     compile "org.springframework.boot:spring-boot-starter-web:${bootVersion}",
-            "org.springframework.boot:spring-boot-properties-migrator:+",
             // mysql
             "mysql:mysql-connector-java:${mysql}",
-            // josn
+            // json
             "com.alibaba:fastjson:${fastjson}",
             // druid数据源
-            "com.alibaba:druid:${druid}",
+            "com.alibaba:druid:1.1.8",
             // mybatis
             "com.baomidou:mybatis-plus-core:${mybatis_plus}",
             "com.baomidou:mybatisplus-spring-boot-starter:${mybatis_plus_starter}",

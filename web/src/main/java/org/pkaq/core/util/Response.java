@@ -1,24 +1,25 @@
 package org.pkaq.core.util;
 
+import cn.hutool.core.lang.Console;
 import lombok.Data;
 import org.pkaq.core.enums.HttpCodeEnum;
 
 @Data
 public class Response{
-    private int code;
-    private boolean status;
-    private String msg;
+    private int statusCode;
+    private boolean success;
+    private String message;
     private Object data;
 
-    private final String OPERATE_SUCCESS = "操作成功";
-    private final String OPERATE_FAILED = "操作失败";
+    private transient final String OPERATE_SUCCESS = "操作成功";
+    private transient final String OPERATE_FAILED = "操作失败";
 
     public Response() {
 
     }
-    public Response(Boolean status, Object data) {
+    public Response(Boolean success, Object data) {
         this.data = data;
-        this.status = status;
+        this.success = success;
     }
 
     /**
@@ -26,9 +27,9 @@ public class Response{
      * @return
      */
     public Response success(){
-        this.status = true;
-        this.msg = this.OPERATE_SUCCESS;
-        this.code = HttpCodeEnum.QUERY_SUCCESS.getIndex();
+        this.success = true;
+        this.message = this.OPERATE_SUCCESS;
+        this.statusCode = HttpCodeEnum.QUERY_SUCCESS.getIndex();
         return this;
     }
     /**
@@ -38,9 +39,9 @@ public class Response{
      */
     public Response success(Object data) {
         this.data = data;
-        this.status = true;
-        this.msg = this.OPERATE_SUCCESS;
-        this.code = HttpCodeEnum.QUERY_SUCCESS.getIndex();
+        this.success = true;
+        this.message = this.OPERATE_SUCCESS;
+        this.statusCode = HttpCodeEnum.QUERY_SUCCESS.getIndex();
         return this;
     }
 
@@ -51,21 +52,34 @@ public class Response{
      */
     public Response failure(Object data) {
         this.data = data;
-        this.msg = this.OPERATE_FAILED;
-        this.status = false;
-        this.code = HttpCodeEnum.REQEUST_FAILURE.getIndex();
+        this.message = this.OPERATE_FAILED;
+        this.success = false;
+        this.statusCode = HttpCodeEnum.REQEUST_FAILURE.getIndex();
         return this;
     }
 
     /**
-     * 失败响应,根据code设置msg
-     * @param code
+     * 失败响应,根据statusCode设置message
+     * @param statusCode
      * @return
      */
-    public Response failure(int code) {
-        this.status = false;
-        this.code = code;
-        this.msg = HttpCodeEnum.getName(code);
+    public Response failure(int statusCode) {
+        this.success = false;
+        this.statusCode = statusCode;
+        this.message = HttpCodeEnum.getName(statusCode);
+        return this;
+    }
+
+    /**
+     * 失败响应，自定义响应码和消息
+     * @param statusCode
+     * @param message
+     * @return
+     */
+    public Response failure(int statusCode, String message) {
+        this.success = false;
+        this.statusCode = statusCode;
+        this.message = message;
         return this;
     }
 
@@ -74,11 +88,11 @@ public class Response{
      * @param data
      * @return
      */
-    public Response failure(int code, String msg, Object data) {
+    public Response failure(int statusCode, String message, Object data) {
         this.data = data;
-        this.msg = this.msg;
-        this.status = false;
-        this.code = HttpCodeEnum.REQEUST_FAILURE.getIndex();
+        this.message = message;
+        this.success = false;
+        this.statusCode = HttpCodeEnum.REQEUST_FAILURE.getIndex();
         return this;
     }
 }

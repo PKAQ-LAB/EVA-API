@@ -13,6 +13,8 @@ public enum  HttpCodeEnum {
     DEL_SUCCESS("删除数据成功。", 204),
     REQEUST_FAILURE("请求参数错误。", 400),
     ROLE_ERROR("用户没有权限（令牌、用户名、密码错误）", 401),
+    BAD_METHOD("不支持当前请求方法 ", 405),
+    BAD_MEDIATYPE("不支持当前媒体类型 ", 415),
     REQEUST_REFUSED("用户得到授权，但是访问是被禁止的。", 403),
     SERVER_ERROR("服务器发生错误，请检查服务器。", 500),
     SERVICE_ERROR("服务不可用，服务器暂时过载或维护。", 503),
@@ -34,7 +36,7 @@ public enum  HttpCodeEnum {
 
     public static String getName(int index) {
         for (HttpCodeEnum p : HttpCodeEnum.values()) {
-            if (index == p.getIndex() ) {
+            if ( index == p.getIndex() ) {
                 return p.name;
             }
         }

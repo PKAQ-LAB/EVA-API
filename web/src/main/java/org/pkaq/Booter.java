@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 /**
- * 启动类
+ * 启动类c
  */
 @SpringBootApplication
 @ComponentScan(basePackages = {"org.pkaq.*"})

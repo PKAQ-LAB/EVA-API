@@ -2,6 +2,7 @@ package org.pkaq.core.util;
 
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,5 +11,5 @@ import java.util.List;
  */
 @Data
 public class SingleArray {
-    private List<String> id;
+    private ArrayList<String> ids;
 }

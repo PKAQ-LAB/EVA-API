@@ -1,7 +1,13 @@
+#publickey: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAIiwHpFrDijV+GzwRTzWJk8D3j3jFfhsMFJ/7k1NTvBuLgL+TdIHgaMNOIEjHpXzuvX38J3FtOK8hLrySncVGOMCAwEAAQ==
 spring:
+  messages:
+    basename: i18n/i18n
+    encoding: UTF-8
   http:
     encoding:
       charset: utf-8
+      enabled: true
+      force: true
   mvc:
     date-format: yyyy-MM-dd
 # 数据源
@@ -11,10 +17,19 @@ spring:
     url: jdbc:mysql://localhost:3306/jxc?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
     username: jxc
     password: jxc
+      # 公钥
+    # 配置 connection-properties，启用加密，配置公钥。
+#    druid:
+#      filter:
+#       config:
+#         enabled: true
+#      connection-properties: config.decrypt=true;config.decrypt.key={{publickey}}
 server:
   servlet:
     context-path: /
   port: 80
+  tomcat:
+    uri-encoding: utf-8
 debug: false
 # 日志
 #mybatis
