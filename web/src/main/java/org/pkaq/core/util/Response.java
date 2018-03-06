@@ -1,14 +1,13 @@
 package org.pkaq.core.util;
 
-import cn.hutool.core.lang.Console;
 import lombok.Data;
 import org.pkaq.core.enums.HttpCodeEnum;
 
 @Data
 public class Response{
-    private int statusCode;
+    private int status;
     private boolean success;
-    private String message;
+    private String statusText;
     private Object data;
 
     private transient final String OPERATE_SUCCESS = "操作成功";
@@ -28,8 +27,8 @@ public class Response{
      */
     public Response success(){
         this.success = true;
-        this.message = this.OPERATE_SUCCESS;
-        this.statusCode = HttpCodeEnum.QUERY_SUCCESS.getIndex();
+        this.statusText = this.OPERATE_SUCCESS;
+        this.status = HttpCodeEnum.QUERY_SUCCESS.getIndex();
         return this;
     }
     /**
@@ -40,8 +39,8 @@ public class Response{
     public Response success(Object data) {
         this.data = data;
         this.success = true;
-        this.message = this.OPERATE_SUCCESS;
-        this.statusCode = HttpCodeEnum.QUERY_SUCCESS.getIndex();
+        this.statusText = this.OPERATE_SUCCESS;
+        this.status = HttpCodeEnum.QUERY_SUCCESS.getIndex();
         return this;
     }
 
@@ -52,34 +51,34 @@ public class Response{
      */
     public Response failure(Object data) {
         this.data = data;
-        this.message = this.OPERATE_FAILED;
+        this.statusText = this.OPERATE_FAILED;
         this.success = false;
-        this.statusCode = HttpCodeEnum.REQEUST_FAILURE.getIndex();
+        this.status = HttpCodeEnum.REQEUST_FAILURE.getIndex();
         return this;
     }
 
     /**
-     * 失败响应,根据statusCode设置message
-     * @param statusCode
+     * 失败响应,根据status设置statusText
+     * @param status
      * @return
      */
-    public Response failure(int statusCode) {
+    public Response failure(int status) {
         this.success = false;
-        this.statusCode = statusCode;
-        this.message = HttpCodeEnum.getName(statusCode);
+        this.status = status;
+        this.statusText = HttpCodeEnum.getName(status);
         return this;
     }
 
     /**
      * 失败响应，自定义响应码和消息
-     * @param statusCode
-     * @param message
+     * @param status
+     * @param statusText
      * @return
      */
-    public Response failure(int statusCode, String message) {
+    public Response failure(int status, String statusText) {
         this.success = false;
-        this.statusCode = statusCode;
-        this.message = message;
+        this.status = status;
+        this.statusText = statusText;
         return this;
     }
 
@@ -88,11 +87,11 @@ public class Response{
      * @param data
      * @return
      */
-    public Response failure(int statusCode, String message, Object data) {
+    public Response failure(int status, String statusText, Object data) {
         this.data = data;
-        this.message = message;
+        this.statusText = statusText;
         this.success = false;
-        this.statusCode = HttpCodeEnum.REQEUST_FAILURE.getIndex();
+        this.status = HttpCodeEnum.REQEUST_FAILURE.getIndex();
         return this;
     }
 }

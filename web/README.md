@@ -9,9 +9,12 @@
 目录说明
 -web：web接口
 -ui：界面
--addon-i18n : 国际化
 -addon-swagger: 文档
 
+
+国际化支持
+ctrl层通过 this.getI18NHelper().getMessage(code) 获取相应国际化信息
+另外，通过此方式获取message内容可以统一管理message文本
 
 mybatis generator    
 ```

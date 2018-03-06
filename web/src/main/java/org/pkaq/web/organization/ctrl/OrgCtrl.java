@@ -6,6 +6,8 @@ import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.ibatis.annotations.Param;
+import org.pkaq.core.exception.ParamException;
 import org.pkaq.core.mvc.BaseCtrl;
 import org.pkaq.core.util.Response;
 import org.pkaq.core.util.SingleArray;
@@ -65,7 +67,8 @@ public class OrgCtrl extends BaseCtrl {
     public Response delOrg(@ApiParam(name = "ids", value = "[组织ID]") @RequestBody SingleArray ids){
         // 参数非空校验
         if (null == ids || CollectionUtil.isEmpty(ids.getIds())){
-            return new Response().failure(400, this.getI18NHelper().getMessage("param_id_notnull"));
+            //return new Response().failure(400, this.getI18NHelper().getMessage("param_id_notnull"));
+           throw new ParamException(this.getI18NHelper().getMessage("param_id_notnull"));
         }
 
         return this.organizationService.deleteOrg(ids.getIds());

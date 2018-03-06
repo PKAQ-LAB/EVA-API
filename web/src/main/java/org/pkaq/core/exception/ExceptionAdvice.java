@@ -23,6 +23,16 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @Slf4j
 public class ExceptionAdvice {
     /**
+     * 400 - 捕获自定义参数异常
+     * @param e 异常类型
+     * @return Response
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ParamException.class)
+    public Response handleException(ParamException e) {
+        return new Response().failure(400, e.getMsg());
+    }
+    /**
      *   500 - Internal Server Error.
      * @param e 异常类型
      * @return Response
@@ -35,7 +45,7 @@ public class ExceptionAdvice {
         return new Response().failure(500);
     }
     /**
-     * 400异常.
+     * 400异常.- 参数错误
      * @param e 异常类型
      * @return Response
      */
