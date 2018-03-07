@@ -16,7 +16,4 @@ dependencies {
             "cn.hutool:hutool-all:${hutool}"
 
     testCompile "org.springframework.boot:spring-boot-starter-test:${bootVersion}"
-
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
 }

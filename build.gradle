@@ -1,11 +1,8 @@
 plugins {
    id "name.remal.check-dependency-updates" version "1.0.19" apply false
-   id "org.jetbrains.kotlin.jvm" version "1.2.21" apply false
 }
 ext {
     bootVersion = "2.0.0.RELEASE"
-    kotlin_jackson = "2.8.8"
-    kotlin_version = '1.2.21'
     lombok = "1.16.10"
     druid = "1.1.8"
     mysql = "8.0.8-dmr"
@@ -22,7 +19,6 @@ allprojects {
 }
 subprojects {
     apply plugin: 'java'
-    apply plugin: 'org.jetbrains.kotlin.jvm'
     apply plugin: 'name.remal.check-dependency-updates'
 
     sourceCompatibility = 1.8
