@@ -24,7 +24,7 @@ public class OrganizationService {
      * @return
      */
     public List<OrganizationEntity> listOrg(OrganizationEntity organization){
-        return this.organizationMapper.selectList(new EntityWrapper<>(organization));
+        return this.organizationMapper.listOrg(organization);
     }
 
     /**
