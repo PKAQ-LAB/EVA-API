@@ -24,6 +24,7 @@ public class FastjsonConfiguration {
 
         //添加fastjson的配置信息 比如 ：是否要格式化返回的json数据
         FastJsonConfig fastJsonConfig = new FastJsonConfig();
+        // 格式化json,
         fastJsonConfig.setSerializerFeatures(SerializerFeature.PrettyFormat);
         fastJsonConfig.setDateFormat(DatePattern.NORM_DATETIME_PATTERN);
         //在转换器中添加配置信息

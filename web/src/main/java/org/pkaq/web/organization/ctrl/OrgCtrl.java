@@ -6,7 +6,6 @@ import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.apache.ibatis.annotations.Param;
 import org.pkaq.core.exception.ParamException;
 import org.pkaq.core.mvc.BaseCtrl;
 import org.pkaq.core.util.Response;
@@ -14,15 +13,12 @@ import org.pkaq.core.util.SingleArray;
 import org.pkaq.web.organization.entity.OrganizationEntity;
 import org.pkaq.web.organization.service.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.ArrayList;
 
 /**
  * 组织管理
@@ -40,10 +36,11 @@ public class OrgCtrl extends BaseCtrl {
      * @param organization
      * @return
      */
-    @GetMapping("/list")
+    @GetMapping({"/list","/list/{condition}"})
     @ApiOperation(value = "获取组织列表",response = Response.class)
-    public Response listOrg(@ApiParam(name = "name", value = "组织名称或编码") OrganizationEntity organization){
-        return new Response().success(this.organizationService.listOrg(organization));
+    public Response listOrg(@ApiParam(name = "condition", value = "组织名称或编码") @PathVariable(value = "condition", required = false) String condition){
+        System.out.println(condition);
+        return new Response().success(this.organizationService.listOrg(condition));
     }
 
     /**

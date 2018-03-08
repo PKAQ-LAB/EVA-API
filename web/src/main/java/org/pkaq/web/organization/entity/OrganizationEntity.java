@@ -1,5 +1,6 @@
 package org.pkaq.web.organization.entity;
 
+import com.alibaba.fastjson.support.spring.annotation.FastJsonFilter;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableLogic;
@@ -20,9 +21,11 @@ import java.util.List;
 @Alias("orginization")
 @TableName("sys_orginization")
 public class OrganizationEntity implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     @TableId
     private String id;
-    //子节点
+
     @TableField(exist = false)
     private List<OrganizationEntity> children;
 
@@ -56,5 +59,7 @@ public class OrganizationEntity implements Serializable {
 
     private String modifyBy;
 
-    private static final long serialVersionUID = 1L;
+    public List<OrganizationEntity> getChildren() {
+        return children == null || children.size()<1?null:children;
+    }
 }

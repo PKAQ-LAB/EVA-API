@@ -20,8 +20,16 @@
     <collection property="children"  column="id" select="listChildren"/>
   </resultMap>
   <!--根据条件查询菜单数据-->
-   <select id="listOrg" resultMap="BaseResultMap" parameterType="orginization">
-       select * from sys_orginization where parentID = '0' or parentID is null
+   <select id="listOrg" resultMap="BaseResultMap" parameterType="java.lang.String">
+       select * from sys_orginization where
+        <choose>
+          <when test="null == condition or '' == condition">
+            parentID = '0' or parentID is null
+          </when>
+          <otherwise>
+            name like '%${condition}%' or code like '%${condition}%'
+          </otherwise>
+        </choose>
    </select>
   <!-- 根据parentId查询子节点数据-->
   <select id="listChildren" resultMap="BaseResultMap">

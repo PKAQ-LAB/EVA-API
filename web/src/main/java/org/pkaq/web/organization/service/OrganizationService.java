@@ -23,8 +23,8 @@ public class OrganizationService {
      * 查询组织结构树
      * @return
      */
-    public List<OrganizationEntity> listOrg(OrganizationEntity organization){
-        return this.organizationMapper.listOrg(organization);
+    public List<OrganizationEntity> listOrg(String condition){
+        return this.organizationMapper.listOrg(condition);
     }
 
     /**

@@ -2,6 +2,7 @@ package org.pkaq.web.organization.mapper;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.pkaq.web.organization.entity.OrganizationEntity;
 import org.springframework.stereotype.Repository;
 
@@ -18,7 +19,7 @@ public interface OrganizationMapper extends BaseMapper<OrganizationEntity>{
      * @param entity 包含查询条件的实体类
      * @return 符合查询条件的List
      */
-    List<OrganizationEntity> listOrg(OrganizationEntity entity);
+    List<OrganizationEntity> listOrg(@Param("condition") String condition);
 
     /**
      * 根据parentID查询子节点数据
