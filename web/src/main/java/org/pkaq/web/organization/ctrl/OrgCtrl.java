@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 /**
  * 组织管理
  * Datetime: 2018/2/9 10:55
@@ -31,34 +33,22 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrgCtrl extends BaseCtrl {
     @Autowired
     private OrganizationService organizationService;
-    /**
-     * 查询组织列表树
-     * @param organization
-     * @return
-     */
+
     @GetMapping({"/list","/list/{condition}"})
     @ApiOperation(value = "获取组织列表",response = Response.class)
-    public Response listOrg(@ApiParam(name = "condition", value = "组织名称或编码") @PathVariable(value = "condition", required = false) String condition){
-        System.out.println(condition);
+    public Response listOrg(@ApiParam(name = "condition", value = "组织名称或编码")
+                            @PathVariable(value = "condition", required = false) String condition){
         return new Response().success(this.organizationService.listOrg(condition));
     }
 
-    /**
-     * 根据ID获取一条组织信息
-     * @param id
-     * @return
-     */
-    @GetMapping("/get")
+    @GetMapping("/get/{id}")
     @ApiOperation(value = "根据ID获取组织信息", response = Response.class)
-    public Response getOrg(@ApiParam(name = "id", value = "组织ID") String id){
-        return new Response().success();
+    public Response getOrg(@ApiParam(name = "id", value = "组织ID")
+                           @PathVariable("id") String id){
+        OrganizationEntity entity = this.organizationService.getOrg(id);
+        return new Response().success(entity);
     }
 
-    /**
-     * 根据ID删除组织(必需)
-     * @param ids
-     * @return
-     */
     @PostMapping("/del")
     @ApiOperation(value = "根据ID删除/批量删除组织", response = Response.class)
     public Response delOrg(@ApiParam(name = "ids", value = "[组织ID]") @RequestBody SingleArray ids){
@@ -66,37 +56,24 @@ public class OrgCtrl extends BaseCtrl {
         if (null == ids || CollectionUtil.isEmpty(ids.getIds())){
            throw new ParamException(this.getI18NHelper().getMessage("param_id_notnull"));
         }
-
         return this.organizationService.deleteOrg(ids.getIds());
     }
 
-    /**
-     * 编辑组织信息
-     * @param organization
-     * @return
-     */
     @PostMapping("/edit")
     @ApiOperation(value = "编辑组织信息", response = Response.class)
     public Response editOrg(@ApiParam(name ="organization", value = "组织信息") @RequestBody OrganizationEntity organization){
         String orgId = organization.getId();
-
-        Integer operate;
-
         // 有ID更新，无ID新增
         if(StrUtil.isNotBlank(orgId)){
-            operate = this.organizationService.updateOrg(organization);
+            this.organizationService.updateOrg(organization);
         }else{
-            operate = this.organizationService.insertOrg(organization);
+            this.organizationService.insertOrg(organization);
         }
-
-        return new Response().success(operate);
+        // 保存完重新查询一遍列表数据
+        List<OrganizationEntity> listData = this.organizationService.listOrg(null);
+        return new Response().success(listData);
     }
 
-    /**
-     * 排序
-     * @param organization
-     * @return
-     */
     @PostMapping("/sort")
     @ApiOperation(value = "排序组织信息", response = Response.class)
     public Response sortOrg(@ApiParam(name = "organization", value = "{id,orders}")  OrganizationEntity organization){
@@ -104,11 +81,6 @@ public class OrgCtrl extends BaseCtrl {
         return new Response().success();
     }
 
-    /**
-     * 切换可用状态
-     * @param organization
-     * @return
-     */
     @PostMapping("/switchStatus")
     @ApiOperation(value = "切换组织可用状态", response = Response.class)
     public Response switchStatus(@ApiParam(name = "id", value = "组织Id") OrganizationEntity organization){

@@ -82,4 +82,13 @@ public class OrganizationService {
     public Integer insertOrg(OrganizationEntity organizationEntity){
         return this.organizationMapper.insert(organizationEntity);
     }
+
+    /**
+     * 根据ID获取一条组织信息
+     * @param id 组织ID
+     * @return 组织信息
+     */
+    public OrganizationEntity getOrg(String id) {
+        return  this.organizationMapper.selectById(id);
+    }
 }
