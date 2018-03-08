@@ -1,9 +1,7 @@
 package org.pkaq.web.organization.entity;
 
-import com.alibaba.fastjson.support.spring.annotation.FastJsonFilter;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
-import com.baomidou.mybatisplus.annotations.TableLogic;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.mapper.SqlCondition;
 import lombok.Data;
@@ -43,7 +41,7 @@ public class OrganizationEntity implements Serializable {
 
     private String pathname;
 
-    private Byte isleaf;
+    private boolean isleaf;
 
     private Integer orders;
 

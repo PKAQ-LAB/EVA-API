@@ -64,7 +64,6 @@ public class OrgCtrl extends BaseCtrl {
     public Response delOrg(@ApiParam(name = "ids", value = "[组织ID]") @RequestBody SingleArray ids){
         // 参数非空校验
         if (null == ids || CollectionUtil.isEmpty(ids.getIds())){
-            //return new Response().failure(400, this.getI18NHelper().getMessage("param_id_notnull"));
            throw new ParamException(this.getI18NHelper().getMessage("param_id_notnull"));
         }
 
@@ -83,7 +82,6 @@ public class OrgCtrl extends BaseCtrl {
 
         Integer operate;
 
-        Console.error(organization.getName());
         // 有ID更新，无ID新增
         if(StrUtil.isNotBlank(orgId)){
             operate = this.organizationService.updateOrg(organization);
