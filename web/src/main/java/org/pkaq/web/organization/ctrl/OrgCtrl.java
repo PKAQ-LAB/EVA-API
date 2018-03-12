@@ -41,6 +41,12 @@ public class OrgCtrl extends BaseCtrl {
         return new Response().success(this.organizationService.listOrg(condition));
     }
 
+    @GetMapping("/listOrgByAttr")
+    @ApiOperation(value = "根据实体类属性获取相应的组织树 ", response = Response.class)
+    public Response listOrgByAttr(@ApiParam(name = "organization", value= "{key: value}") OrganizationEntity organization){
+       return new Response().success(this.organizationService.listOrgByAttr(organization));
+    }
+
     @GetMapping("/get/{id}")
     @ApiOperation(value = "根据ID获取组织信息", response = Response.class)
     public Response getOrg(@ApiParam(name = "id", value = "组织ID")
@@ -56,6 +62,7 @@ public class OrgCtrl extends BaseCtrl {
         if (null == ids || CollectionUtil.isEmpty(ids.getIds())){
            throw new ParamException(this.getI18NHelper().getMessage("param_id_notnull"));
         }
+        // 判断上级节点是否还有其它叶子 如果没有把 isleaf属性改为false
         return this.organizationService.deleteOrg(ids.getIds());
     }
 
@@ -63,6 +70,9 @@ public class OrgCtrl extends BaseCtrl {
     @ApiOperation(value = "编辑组织信息", response = Response.class)
     public Response editOrg(@ApiParam(name ="organization", value = "组织信息") @RequestBody OrganizationEntity organization){
         String orgId = organization.getId();
+        // 如果是子节点
+        // 1.修改上级节点isLeaf属性
+        // 2.设置子节点的parentname path pathname属性
         // 有ID更新，无ID新增
         if(StrUtil.isNotBlank(orgId)){
             this.organizationService.updateOrg(organization);

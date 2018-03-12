@@ -24,7 +24,7 @@ public class OrganizationService {
      * @return
      */
     public List<OrganizationEntity> listOrg(String condition){
-        return this.organizationMapper.listOrg(condition);
+        return this.organizationMapper.listOrg(condition, null);
     }
 
     /**
@@ -90,5 +90,14 @@ public class OrganizationService {
      */
     public OrganizationEntity getOrg(String id) {
         return  this.organizationMapper.selectById(id);
+    }
+
+    /**
+     * 根据属性查询组织树列表
+     * @param organization 属性实体类
+     * @return 组织树列表
+     */
+    public List<OrganizationEntity> listOrgByAttr(OrganizationEntity organization) {
+        return  this.organizationMapper.listOrg(null, organization);
     }
 }

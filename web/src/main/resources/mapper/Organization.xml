@@ -17,11 +17,16 @@
     <result column="gmt_modify" jdbcType="TIMESTAMP" property="gmtModify" />
     <result column="create_by" jdbcType="VARCHAR" property="createBy" />
     <result column="modify_by" jdbcType="VARCHAR" property="modifyBy" />
-    <collection property="children"  column="id" select="listChildren"/>
+    <collection property="children"  column="{id=id}" select="listChildren" />
   </resultMap>
+   <sql id="column">
+       ID, name, code, parentID,parentName, path, pathname, isLeaf, orders, status,  gmt_create, gmt_modify, create_by, modify_by
+   </sql>
   <!--根据条件查询菜单数据-->
-   <select id="listOrg" resultMap="BaseResultMap" parameterType="java.lang.String">
-       select * from sys_orginization where
+   <select id="listOrg" resultMap="BaseResultMap">
+       select *
+       from sys_orginization
+       <where>
         <choose>
           <when test="null == condition or '' == condition">
             parentID = '0' or parentID is null
@@ -30,9 +35,13 @@
             name like '%${condition}%' or code like '%${condition}%'
           </otherwise>
         </choose>
+       </where>
+       order by orders asc
    </select>
   <!-- 根据parentId查询子节点数据-->
   <select id="listChildren" resultMap="BaseResultMap">
-    select * from sys_orginization where parentID = #{id}
+    select *
+      from sys_orginization where parentID = #{id}
+    order by orders asc
   </select>
 </mapper>
