@@ -1,4 +1,3 @@
-#publickey: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAIiwHpFrDijV+GzwRTzWJk8D3j3jFfhsMFJ/7k1NTvBuLgL+TdIHgaMNOIEjHpXzuvX38J3FtOK8hLrySncVGOMCAwEAAQ==
 spring:
   messages:
     basename: i18n/i18n
@@ -16,14 +15,14 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     url: jdbc:mysql://localhost:3306/jxc?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
     username: jxc
-    password: jxc
+    password: DWl/QiLkfTx005bkLYs3xzogaoo+k8iSh6Oa4spQ6FroZ6aEUJMK5Pkd8UVoi2Qiy+ArLkleRQ75ZgeX1tG0Vg==
       # 公钥
     # 配置 connection-properties，启用加密，配置公钥。
-#    druid:
-#      filter:
-#       config:
-#         enabled: true
-#      connection-properties: config.decrypt=true;config.decrypt.key={{publickey}}
+    druid:
+      filter:
+       config:
+         enabled: true
+      connectionProperties: config.decrypt=true;config.decrypt.key=MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKR1ENwsJ6hxA79M9d6nOjCl4MNXHPtb9cwOWLnmjYDFOx57yogXDBWp0QnGKs1qZbfyaM3X6hsyO/m/7yTj5zUCAwEAAQ==
 server:
   servlet:
     context-path: /
