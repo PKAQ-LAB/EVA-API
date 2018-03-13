@@ -3,6 +3,8 @@ description = """web"""
 dependencies {
     compile project(":addon-swagger")
     compile "org.springframework.boot:spring-boot-starter-web:${bootVersion}",
+            // AOP
+            "org.springframework.boot:spring-boot-starter-aop:${bootVersion}",
             // mysql
             "mysql:mysql-connector-java:${mysql}",
             // json
