@@ -8,7 +8,7 @@ dependencies {
             // json
             "com.alibaba:fastjson:${fastjson}",
             // druid数据源
-            "com.alibaba:druid:1.1.8",
+            "com.alibaba:druid-spring-boot-starter:${druid}",
             // mybatis
             "com.baomidou:mybatis-plus-core:${mybatis_plus}",
             "com.baomidou:mybatisplus-spring-boot-starter:${mybatis_plus_starter}",

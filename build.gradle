@@ -4,14 +4,14 @@ plugins {
 ext {
     bootVersion = "2.0.0.RELEASE"
     lombok = "1.16.10"
-    druid = "1.1.8"
+    druid = "1.1.9"
     mysql = "8.0.8-dmr"
     fastjson = "1.2.46"
     mybatis_plus = "2.1.9"
     mybatis_plus_starter = "1.0.5"
     lombok = "1.16.20"
     swagger = "2.8.0"
-    hutool = "4.0.6"
+    hutool = "4.0.7"
 }
 allprojects {
     group = 'org.pkaq'
