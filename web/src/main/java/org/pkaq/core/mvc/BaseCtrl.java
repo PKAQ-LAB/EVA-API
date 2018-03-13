@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Datetime: 2018/3/5 23:37
  */
 @Getter
-public class BaseCtrl {
+public abstract class BaseCtrl {
     @Autowired
     private I18NHelper i18NHelper;
 }
