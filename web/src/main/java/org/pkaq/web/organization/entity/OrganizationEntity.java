@@ -1,5 +1,6 @@
 package org.pkaq.web.organization.entity;
 
+import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
@@ -18,7 +19,7 @@ import java.util.List;
 @Data
 @Alias("orginization")
 @TableName("sys_orginization")
-public class OrganizationEntity implements Serializable {
+public class OrganizationEntity extends Model<OrganizationEntity> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @TableId
@@ -59,5 +60,10 @@ public class OrganizationEntity implements Serializable {
 
     public List<OrganizationEntity> getChildren() {
         return children == null || children.size()<1?null:children;
+    }
+
+    @Override
+    protected Serializable pkVal() {
+        return this.id;
     }
 }

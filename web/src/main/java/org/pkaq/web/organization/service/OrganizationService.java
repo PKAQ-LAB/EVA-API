@@ -53,6 +53,44 @@ public class OrganizationService {
         return response;
     }
 
+    public List<OrganizationEntity> editOrg(OrganizationEntity organization){
+        String orgId = organization.getId();
+        // 获取上级节点
+        String pid = organization.getParentid();
+        if(StrUtil.isNotBlank(pid)){
+            // 查询父节点信息
+            OrganizationEntity parentOrg = this.getOrg(pid);
+            // 设置当前节点信息
+            organization.setPath(parentOrg.getId());
+            String pathName = StrUtil.format("{}/{}", parentOrg.getName(), organization.getName());
+            organization.setPathname(pathName);
+            organization.setParentname(parentOrg.getName());
+            // 更新父节点叶子属性
+            EntityWrapper<OrganizationEntity> entityWrapper = new EntityWrapper<>();
+            OrganizationEntity countEntity = new OrganizationEntity();
+            countEntity.setParentid(pid);
+            entityWrapper.setEntity(countEntity);
+            int childrenCount = this.organizationMapper.selectCount(entityWrapper);
+
+            // 检查原父节点是否还存在子节点 不存在设置leaf为false
+            parentOrg.setIsleaf(childrenCount > 0);
+            this.updateOrg(parentOrg);
+        } else {
+            // 父节点为空, 根节点 设置为非叶子
+            organization.setIsleaf(false);
+            organization.setPath(organization.getId());
+            organization.setPathname(organization.getName());
+        }
+        // 有ID更新，无ID新增
+        if(StrUtil.isNotBlank(orgId)){
+            this.updateOrg(organization);
+        }else{
+            this.insertOrg(organization);
+        }
+        // 保存完重新查询一遍列表数据
+        return this.listOrg(null);
+    }
+
     /**
      * 根据ID更新
      * @param organizationEntity
@@ -79,8 +117,8 @@ public class OrganizationService {
      * @param organizationEntity
      * @return
      */
-    public Integer insertOrg(OrganizationEntity organizationEntity){
-        return this.organizationMapper.insert(organizationEntity);
+    public boolean insertOrg(OrganizationEntity organizationEntity){
+        return organizationEntity.insert();
     }
 
     /**

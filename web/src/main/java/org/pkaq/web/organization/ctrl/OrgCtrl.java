@@ -69,19 +69,7 @@ public class OrgCtrl extends BaseCtrl {
     @PostMapping("/edit")
     @ApiOperation(value = "编辑组织信息", response = Response.class)
     public Response editOrg(@ApiParam(name ="organization", value = "组织信息") @RequestBody OrganizationEntity organization){
-        String orgId = organization.getId();
-        // 如果是子节点
-        // 1.修改上级节点isLeaf属性
-        // 2.设置子节点的parentname path pathname属性
-        // 有ID更新，无ID新增
-        if(StrUtil.isNotBlank(orgId)){
-            this.organizationService.updateOrg(organization);
-        }else{
-            this.organizationService.insertOrg(organization);
-        }
-        // 保存完重新查询一遍列表数据
-        List<OrganizationEntity> listData = this.organizationService.listOrg(null);
-        return new Response().success(listData);
+        return new Response().success(this.organizationService.editOrg(organization));
     }
 
     @PostMapping("/sort")
