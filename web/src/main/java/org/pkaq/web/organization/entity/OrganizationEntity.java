@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.mapper.SqlCondition;
 import lombok.Data;
 import org.apache.ibatis.type.Alias;
+import org.pkaq.core.mvc.BaseEntity;
 
 import java.io.Serializable;
 import java.sql.Date;
@@ -19,11 +20,8 @@ import java.util.List;
 @Data
 @Alias("orginization")
 @TableName("sys_orginization")
-public class OrganizationEntity extends Model<OrganizationEntity> implements Serializable {
+public class OrganizationEntity extends BaseEntity{
     private static final long serialVersionUID = 1L;
-
-    @TableId
-    private String id;
 
     @TableField(exist = false)
     private List<OrganizationEntity> children;
@@ -48,22 +46,8 @@ public class OrganizationEntity extends Model<OrganizationEntity> implements Ser
 
     private String status;
 
-    private String remark;
-
-    private Date gmtCreate;
-
-    private Date gmtModify;
-
-    private String createBy;
-
-    private String modifyBy;
-
     public List<OrganizationEntity> getChildren() {
         return children == null || children.size()<1?null:children;
     }
 
-    @Override
-    protected Serializable pkVal() {
-        return this.id;
-    }
 }

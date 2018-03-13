@@ -3,28 +3,28 @@ package org.pkaq.web.organization.service;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import org.pkaq.core.mvc.BaseService;
 import org.pkaq.core.util.Response;
 import org.pkaq.web.organization.entity.OrganizationEntity;
 import org.pkaq.web.organization.mapper.OrganizationMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 组织信息Service
+ * @author S.PKAQ
+ */
 @Service
-@Transactional
-public class OrganizationService {
-    @Autowired
-    private OrganizationMapper organizationMapper;
+public class OrganizationService extends BaseService<OrganizationMapper, OrganizationEntity> {
 
     /**
      * 查询组织结构树
      * @return
      */
     public List<OrganizationEntity> listOrg(String condition){
-        return this.organizationMapper.listOrg(condition, null);
+        return this.mapper.listOrg(condition, null);
     }
 
     /**
@@ -39,20 +39,25 @@ public class OrganizationService {
         oew.setEntity( new OrganizationEntity() );
         oew.in("parentID", ids);
 
-        List<OrganizationEntity> leafList = this.organizationMapper.selectList(oew);
+        List<OrganizationEntity> leafList = this.mapper.selectList(oew);
 
         if (CollectionUtil.isNotEmpty(leafList)){
             List<Object> list = CollectionUtil.getFieldValues(leafList, "parentName");
             String name = CollectionUtil.join(list, ",");
             response = new Response().failure(501, StrUtil.format("[{}] 存在子节点，无法删除。",name), null);
          } else {
-            this.organizationMapper.deleteBatchIds(ids);
-            response = new Response().success(this.organizationMapper.selectList(new EntityWrapper<>()));
+            this.mapper.deleteBatchIds(ids);
+            response = new Response().success(this.mapper.selectList(new EntityWrapper<>()));
         }
 
         return response;
     }
 
+    /**
+     * 新增/编辑一条组织信息
+     * @param organization 要 新增/编辑 得组织对象
+     * @return 重新查询组织列表
+     */
     public List<OrganizationEntity> editOrg(OrganizationEntity organization){
         String orgId = organization.getId();
         // 获取上级节点
@@ -70,7 +75,7 @@ public class OrganizationService {
             OrganizationEntity countEntity = new OrganizationEntity();
             countEntity.setParentid(pid);
             entityWrapper.setEntity(countEntity);
-            int childrenCount = this.organizationMapper.selectCount(entityWrapper);
+            int childrenCount = this.mapper.selectCount(entityWrapper);
 
             // 检查原父节点是否还存在子节点 不存在设置leaf为false
             parentOrg.setIsleaf(childrenCount > 0);
@@ -96,20 +101,9 @@ public class OrganizationService {
      * @param organizationEntity
      * @return
      */
-    public Integer updateOrg(OrganizationEntity organizationEntity){
+    public void updateOrg(OrganizationEntity organizationEntity){
         // 检查是否存在叶子节点，存在 返回叶子节点名称 终止删除
-        return this.organizationMapper.updateById(organizationEntity);
-    }
-
-    /**
-     * 根据条件更新
-     * @param organizationEntity
-     * @return
-     */
-    public Integer updateByCondition(OrganizationEntity organizationEntity){
-        EntityWrapper<OrganizationEntity> condition = new EntityWrapper<>();
-        condition.setEntity(organizationEntity);
-        return this.organizationMapper.update(organizationEntity, condition);
+        this.mapper.updateById(organizationEntity);
     }
 
     /**
@@ -117,8 +111,8 @@ public class OrganizationService {
      * @param organizationEntity
      * @return
      */
-    public boolean insertOrg(OrganizationEntity organizationEntity){
-        return organizationEntity.insert();
+    public void insertOrg(OrganizationEntity organizationEntity){
+        this.mapper.insert(organizationEntity);
     }
 
     /**
@@ -127,7 +121,7 @@ public class OrganizationService {
      * @return 组织信息
      */
     public OrganizationEntity getOrg(String id) {
-        return  this.organizationMapper.selectById(id);
+        return this.get(id);
     }
 
     /**
@@ -136,6 +130,17 @@ public class OrganizationService {
      * @return 组织树列表
      */
     public List<OrganizationEntity> listOrgByAttr(OrganizationEntity organization) {
-        return  this.organizationMapper.listOrg(null, organization);
+        return  this.mapper.listOrg(null, organization);
+    }
+
+    /**
+     *  交换两个orders值
+     * @param switchOrg 进行交换的两个实体
+     */
+    public void sortOrg(List<OrganizationEntity> switchOrg) {
+
+        for (OrganizationEntity org : switchOrg) {
+            this.mapper.updateById(org);
+        }
     }
 }

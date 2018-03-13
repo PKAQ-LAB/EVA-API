@@ -74,8 +74,8 @@ public class OrgCtrl extends BaseCtrl {
 
     @PostMapping("/sort")
     @ApiOperation(value = "排序组织信息", response = Response.class)
-    public Response sortOrg(@ApiParam(name = "organization", value = "{id,orders}")  OrganizationEntity organization){
-        this.organizationService.updateOrg(organization);
+    public Response sortOrg(@ApiParam(name = "organization", value = "{id,orders}")  List<OrganizationEntity> switchOrg){
+        this.organizationService.sortOrg(switchOrg);
         return new Response().success();
     }
 
