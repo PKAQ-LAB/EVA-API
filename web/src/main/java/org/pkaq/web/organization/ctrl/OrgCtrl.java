@@ -57,26 +57,29 @@ public class OrgCtrl extends BaseCtrl {
 
     @PostMapping("/del")
     @ApiOperation(value = "根据ID删除/批量删除组织", response = Response.class)
-    public Response delOrg(@ApiParam(name = "ids", value = "[组织ID]") @RequestBody SingleArray ids){
+    public Response delOrg(@ApiParam(name = "ids", value = "[组织ID]")
+                           @RequestBody SingleArray<String> ids){
         // 参数非空校验
-        if (null == ids || CollectionUtil.isEmpty(ids.getIds())){
+        if (null == ids || CollectionUtil.isEmpty(ids.getParam())){
            throw new ParamException(this.getI18NHelper().getMessage("param_id_notnull"));
         }
         // 判断上级节点是否还有其它叶子 如果没有把 isleaf属性改为false
-        return this.organizationService.deleteOrg(ids.getIds());
+        return this.organizationService.deleteOrg(ids.getParam());
     }
 
     @PostMapping("/edit")
     @ApiOperation(value = "编辑组织信息", response = Response.class)
-    public Response editOrg(@ApiParam(name ="organization", value = "组织信息") @RequestBody OrganizationEntity organization){
+    public Response editOrg(@ApiParam(name ="organization", value = "组织信息")
+                            @RequestBody OrganizationEntity organization){
         return new Response().success(this.organizationService.editOrg(organization));
     }
 
     @PostMapping("/sort")
     @ApiOperation(value = "排序组织信息", response = Response.class)
-    public Response sortOrg(@ApiParam(name = "organization", value = "{id,orders}")  List<OrganizationEntity> switchOrg){
-        this.organizationService.sortOrg(switchOrg);
-        return new Response().success();
+    public Response sortOrg(@ApiParam(name = "organization", value = "{id,orders}")
+                            @RequestBody OrganizationEntity[] switchObj){
+        this.organizationService.sortOrg(switchObj);
+        return new Response().success(this.organizationService.listOrg(null));
     }
 
     @PostMapping("/switchStatus")
