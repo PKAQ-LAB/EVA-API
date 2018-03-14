@@ -6,11 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Controller 基类
- * Author: S.PKAQ
  * Datetime: 2018/3/5 23:37
+ * @author S.PKAQ
  */
 @Getter
-public abstract class BaseCtrl {
+public abstract class BaseCtrl<T extends BaseService> {
     @Autowired
-    private I18NHelper i18NHelper;
+    protected T service;
+    @Autowired
+    protected I18NHelper i18NHelper;
 }
