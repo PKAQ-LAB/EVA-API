@@ -1,12 +1,12 @@
-package org.pkaq.web.organization.service;
+package org.pkaq.web.sys.organization.service;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.pkaq.core.mvc.BaseService;
 import org.pkaq.core.util.Response;
-import org.pkaq.web.organization.entity.OrganizationEntity;
-import org.pkaq.web.organization.mapper.OrganizationMapper;
+import org.pkaq.web.sys.organization.entity.OrganizationEntity;
+import org.pkaq.web.sys.organization.mapper.OrganizationMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

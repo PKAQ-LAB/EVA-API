@@ -1,4 +1,4 @@
-package org.pkaq.web.organization.ctrl;
+package org.pkaq.web.sys.organization.ctrl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import io.swagger.annotations.Api;
@@ -8,8 +8,8 @@ import org.pkaq.core.exception.ParamException;
 import org.pkaq.core.mvc.BaseCtrl;
 import org.pkaq.core.util.Response;
 import org.pkaq.core.util.SingleArray;
-import org.pkaq.web.organization.entity.OrganizationEntity;
-import org.pkaq.web.organization.service.OrganizationService;
+import org.pkaq.web.sys.organization.entity.OrganizationEntity;
+import org.pkaq.web.sys.organization.service.OrganizationService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;

@@ -1,4 +1,4 @@
-package org.pkaq.web.dict.ctrl;
+package org.pkaq.web.sys.dict.ctrl;
 
 import io.swagger.annotations.Api;
 import org.pkaq.core.mvc.BaseCtrl;
