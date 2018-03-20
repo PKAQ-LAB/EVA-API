@@ -21,7 +21,8 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends BaseEntity>
      * @param id
      * @return
      */
-    protected T get(String id){
+    protected T getById(String id){
         return (T)this.mapper.selectById(id);
     }
+
 }

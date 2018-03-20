@@ -9,7 +9,7 @@
         <plugin type="org.mybatis.generator.plugins.ToStringPlugin"/>
         <plugin type="org.mybatis.generator.plugins.EqualsHashCodePlugin"/>
         <commentGenerator>
-            <property name="suppressAllComments" value="true" />
+            <property name="suppressAllComments" value="true"/>
         </commentGenerator>
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
                         connectionURL="jdbc:mysql://localhost:3306/jxc?useUnicode=true&amp;characterEncoding=utf8&amp;zeroDateTimeBehavior=convertToNull"
@@ -20,7 +20,7 @@
         </javaTypeResolver>
         <javaModelGenerator targetPackage="org.pkaq.model.generator" targetProject="java">
             <property name="constructorBased" value="false"/>
-            <property name="useActualColumnNames" value="true" />
+            <property name="useActualColumnNames" value="true"/>
             <property name="enableSubPackages" value="false"/>
             <property name="immutable" value="false"/>
             <property name="trimStrings" value="false"/>
@@ -33,8 +33,8 @@
             <property name="methodNameCalculator" value=""/>
             <property name="rootInterface" value=""/>
         </javaClientGenerator>
-        <table tableName="sys_%">
-            <generatedKey column="ID" sqlStatement="JDBC" />
+        <table tableName="sys_dict%">
+            <generatedKey column="ID" sqlStatement="JDBC"/>
         </table>
     </context>
 </generatorConfiguration>

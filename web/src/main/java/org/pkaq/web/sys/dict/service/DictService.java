@@ -3,6 +3,7 @@ package org.pkaq.web.sys.dict.service;
 import org.pkaq.core.mvc.BaseService;
 import org.pkaq.web.sys.dict.entity.DictEntity;
 import org.pkaq.web.sys.dict.mapper.DictMapper;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -11,7 +12,9 @@ import java.util.List;
  * @author: S.PKAQ
  * @Datetime: 2018/3/15 8:09
  */
+@Service
 public class DictService extends BaseService<DictMapper, DictEntity> {
+
     /**
      * 根据ID获取一条字典
      * @return DictEntity
@@ -25,7 +28,7 @@ public class DictService extends BaseService<DictMapper, DictEntity> {
      * @return List<DictEntity>
      */
     public List<DictEntity> listDict(){
-        return null;
+        return this.mapper.listDict();
     }
 
     /**

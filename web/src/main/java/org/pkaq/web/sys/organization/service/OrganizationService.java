@@ -127,7 +127,7 @@ public class OrganizationService extends BaseService<OrganizationMapper, Organiz
      * @return 组织信息
      */
     public OrganizationEntity getOrg(String id) {
-        return this.get(id);
+        return this.getById(id);
     }
 
     /**

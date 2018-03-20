@@ -1,16 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.pkaq.web.sys.dict.mapper.DictMapper">
-  <resultMap id="BaseResultMap" type="org.pkaq.web.sys.dict.entity.DictEntity">
+  <resultMap id="BaseResultMap" type="dict">
     <id column="ID" jdbcType="VARCHAR" property="id" />
     <result column="code" jdbcType="VARCHAR" property="code" />
     <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="parent" jdbcType="VARCHAR" property="parent" />
+    <result column="parentID" jdbcType="VARCHAR" property="parentID" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
     <result column="gmt_modify" jdbcType="TIMESTAMP" property="gmtModify" />
     <result column="create_by" jdbcType="VARCHAR" property="createBy" />
     <result column="modify_by" jdbcType="VARCHAR" property="modifyBy" />
+    <collection property="children"  column="{id=id}" select="listChildren" />
   </resultMap>
-
+  <!--根据条件查询菜单数据-->
+  <select id="listDict" resultMap="BaseResultMap">
+    select * from sys_dict
+    <where>
+        parentID = '0' or parentID is null
+    </where>
+  </select>
+  <!-- 根据parentId查询子节点数据-->
+  <select id="listChildren" resultMap="BaseResultMap">
+    select * from sys_dict where parentID = #{id}
+  </select>
 </mapper>
