@@ -50,3 +50,8 @@ druid
 
 答疑：
 - 如果IDEA 提示mapper注入无法找到bean，请在mapper上添加@Repository注解
+
+TODO
+- flowable
+- jwt
+- truelicense
