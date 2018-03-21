@@ -31,13 +31,13 @@ public class OrgCtrl extends BaseCtrl<OrganizationService> {
     @ApiOperation(value = "获取组织列表",response = Response.class)
     public Response listOrg(@ApiParam(name = "condition", value = "组织名称或编码")
                             @PathVariable(value = "condition", required = false) String condition){
-        return new Response().success(this.service.listOrg(condition));
+        return success(this.service.listOrg(condition));
     }
 
     @GetMapping("/listOrgByAttr")
     @ApiOperation(value = "根据实体类属性获取相应的组织树 ", response = Response.class)
     public Response listOrgByAttr(@ApiParam(name = "organization", value= "{key: value}") OrganizationEntity organization){
-       return new Response().success(this.service.listOrgByAttr(organization));
+       return success(this.service.listOrgByAttr(organization));
     }
 
     @GetMapping("/get/{id}")
@@ -45,7 +45,7 @@ public class OrgCtrl extends BaseCtrl<OrganizationService> {
     public Response getOrg(@ApiParam(name = "id", value = "组织ID")
                            @PathVariable("id") String id){
         OrganizationEntity entity = this.service.getOrg(id);
-        return new Response().success(entity);
+        return success(entity);
     }
 
     @PostMapping("/del")
@@ -54,7 +54,7 @@ public class OrgCtrl extends BaseCtrl<OrganizationService> {
                            @RequestBody SingleArray<String> ids){
         // 参数非空校验
         if (null == ids || CollectionUtil.isEmpty(ids.getParam())){
-           throw new ParamException(this.i18NHelper.getMessage("param_id_notnull"));
+           throw new ParamException(locale("param_id_notnull"));
         }
         // 判断上级节点是否还有其它叶子 如果没有把 isleaf属性改为false
         return this.service.deleteOrg(ids.getParam());
@@ -64,7 +64,7 @@ public class OrgCtrl extends BaseCtrl<OrganizationService> {
     @ApiOperation(value = "编辑组织信息", response = Response.class)
     public Response editOrg(@ApiParam(name ="organization", value = "组织信息")
                             @RequestBody OrganizationEntity organization){
-        return new Response().success(this.service.editOrg(organization));
+        return success(this.service.editOrg(organization));
     }
 
     @PostMapping("/sort")
@@ -72,13 +72,13 @@ public class OrgCtrl extends BaseCtrl<OrganizationService> {
     public Response sortOrg(@ApiParam(name = "organization", value = "{id,orders}")
                             @RequestBody OrganizationEntity[] switchObj){
         this.service.sortOrg(switchObj);
-        return new Response().success(this.service.listOrg(null));
+        return success(this.service.listOrg(null));
     }
 
     @PostMapping("/switchStatus")
     @ApiOperation(value = "切换组织可用状态", response = Response.class)
     public Response switchStatus(@ApiParam(name = "id", value = "组织Id") OrganizationEntity organization){
         this.service.updateOrg(organization);
-        return new Response().success();
+        return success(null);
     }
 }

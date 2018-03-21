@@ -5,6 +5,7 @@ import org.pkaq.web.sys.dict.entity.DictEntity;
 import org.pkaq.web.sys.dict.mapper.DictMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,11 +17,11 @@ import java.util.List;
 public class DictService extends BaseService<DictMapper, DictEntity> {
 
     /**
-     * 根据ID获取一条字典
+     * 根据条件获取一条字典
      * @return DictEntity
      */
-    public DictEntity getDict(String id){
-        return null;
+    public DictEntity getDict(DictEntity dictEntity){
+        return this.mapper.selectOne(dictEntity);
     }
 
     /**
@@ -32,17 +33,17 @@ public class DictService extends BaseService<DictMapper, DictEntity> {
     }
 
     /**
-     * 删除一条字典
+     * 删除一条字典 逻辑删除
      * @param id 字典ID
      */
-    public void delDict(String id){
-        // 级联删除
+    public void delDict(List<String> ids){
+        this.mapper.deleteDict(ids);
     }
 
     /**
      * 删除一条字典项
      */
-    public void delDictItem() {
+    public void delDictItem(List<String> ids) {
 
     }
 

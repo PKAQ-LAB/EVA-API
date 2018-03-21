@@ -27,7 +27,9 @@ public class DictEntity extends BaseEntity {
     /**  编码描述 **/
     private String name;
     /** 上级节点 **/
-    private String parentID;
+    private String parentid;
+    /** 状态,0 已删除,1 可用 **/
+    private String status;
 
     @TableField(exist = false)
     private List<DictEntity> children;

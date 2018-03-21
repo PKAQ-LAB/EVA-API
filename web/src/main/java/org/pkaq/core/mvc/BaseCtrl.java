@@ -2,6 +2,7 @@ package org.pkaq.core.mvc;
 
 import lombok.Getter;
 import org.pkaq.core.util.I18NHelper;
+import org.pkaq.core.util.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -15,4 +16,30 @@ public abstract class BaseCtrl<T extends BaseService> {
     protected T service;
     @Autowired
     protected I18NHelper i18NHelper;
+
+    /**
+     * 根据编码获取国际化字符串
+     * @param code
+     * @return
+     */
+    protected String locale(String code){
+        return this.i18NHelper.getMessage(code);
+    }
+    /**
+     * 返回成功结果
+     * @param data
+     * @return
+     */
+    protected Response success(Object data){
+        return new Response().success(data);
+    }
+
+    /**
+     * 返回失败结果
+     * @param failCode
+     * @return
+     */
+    protected Response failure(int failCode){
+        return new Response().failure(failCode);
+    }
 }
