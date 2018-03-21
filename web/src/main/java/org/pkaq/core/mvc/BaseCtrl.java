@@ -25,6 +25,14 @@ public abstract class BaseCtrl<T extends BaseService> {
     protected String locale(String code){
         return this.i18NHelper.getMessage(code);
     }
+
+    /**
+     * 操作成功
+     * @return
+     */
+    protected Response success(){
+        return new Response().success(null);
+    }
     /**
      * 返回成功结果
      * @param data
@@ -33,7 +41,6 @@ public abstract class BaseCtrl<T extends BaseService> {
     protected Response success(Object data){
         return new Response().success(data);
     }
-
     /**
      * 返回失败结果
      * @param failCode

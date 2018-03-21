@@ -1,6 +1,5 @@
 package org.pkaq.web.sys.dict.ctrl;
 
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -9,7 +8,6 @@ import org.pkaq.core.enums.HttpCodeEnum;
 import org.pkaq.core.exception.ParamException;
 import org.pkaq.core.mvc.BaseCtrl;
 import org.pkaq.core.util.Response;
-import org.pkaq.core.util.SingleArray;
 import org.pkaq.web.sys.dict.entity.DictEntity;
 import org.pkaq.web.sys.dict.service.DictService;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,7 +50,7 @@ public class DictCtrl extends BaseCtrl<DictService>{
 
     @RequestMapping("/del/{id}")
     @ApiOperation(value = "根据ID删除",response = Response.class)
-    public Response delDict(@ApiParam(name = "id", value = "[组织ID]")
+    public Response delDict(@ApiParam(name = "id", value = "[字典ID]")
                             @PathVariable("id") String id){
         // 参数非空校验
         if (StrUtil.isBlank(id)){
@@ -61,8 +59,11 @@ public class DictCtrl extends BaseCtrl<DictService>{
         this.service.delDict(id);
         return success(this.service.listDict());
     }
-
-    public Response editDict(){
-        return null;
+    @RequestMapping("/edit")
+    @ApiOperation(value = "新增/编辑字典分类",response = Response.class)
+    public Response editDict(@ApiParam(name ="organization", value = "字典信息")
+                             @RequestBody DictEntity dictEntity){
+        this.service.edit(dictEntity);
+        return success();
     }
 }

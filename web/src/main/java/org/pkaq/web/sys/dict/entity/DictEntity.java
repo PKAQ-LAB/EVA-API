@@ -30,7 +30,10 @@ public class DictEntity extends BaseEntity {
     private String parentid;
     /** 状态,0 已删除,1 可用 **/
     private String status;
-
+    /** 子表数据 **/
+    @TableField(exist = false)
+    private List<DictItemEntity> items;
+    /** 子节点 **/
     @TableField(exist = false)
     private List<DictEntity> children;
 

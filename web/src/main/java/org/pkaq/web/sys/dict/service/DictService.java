@@ -1,5 +1,6 @@
 package org.pkaq.web.sys.dict.service;
 
+import cn.hutool.core.util.StrUtil;
 import org.pkaq.core.mvc.BaseService;
 import org.pkaq.web.sys.dict.entity.DictEntity;
 import org.pkaq.web.sys.dict.mapper.DictMapper;
@@ -21,7 +22,7 @@ public class DictService extends BaseService<DictMapper, DictEntity> {
      * @return DictEntity
      */
     public DictEntity getDict(DictEntity dictEntity){
-        return this.mapper.selectOne(dictEntity);
+        return this.mapper.getDict(dictEntity.getId());
     }
 
     /**
@@ -41,18 +42,17 @@ public class DictService extends BaseService<DictMapper, DictEntity> {
     }
 
     /**
-     * 删除一条字典项
-     */
-    public void delDictItem(List<String> ids) {
-
-    }
-
-    /**
      * 编辑一条字典
      * @param dictEntity 字典对象
      * @return DictEntity
      */
-    public DictEntity edit(DictEntity dictEntity){
-        return null;
+    public void edit(DictEntity dictEntity){
+        String id = dictEntity.getId();
+        // 校验code唯一性
+        if (StrUtil.isBlank(id)){
+            this.mapper.insert(dictEntity);
+        } else {
+            this.mapper.updateById(dictEntity);
+        }
     }
 }

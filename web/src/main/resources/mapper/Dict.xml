@@ -12,10 +12,35 @@
     <result column="gmt_modify" jdbcType="TIMESTAMP" property="gmtModify" />
     <result column="create_by" jdbcType="VARCHAR" property="createBy" />
     <result column="modify_by" jdbcType="VARCHAR" property="modifyBy" />
+  </resultMap>
+  <!-- 树形数据 -->
+  <resultMap id="TreeResultMap" type="dict" extends="BaseResultMap">
     <collection property="children"  column="{id=id}" select="listChildren" />
   </resultMap>
+  <!-- 带子表数据查询 -->
+  <resultMap id="LineResultMap" type="dict" extends="BaseResultMap">
+      <collection property="items"  ofType="dictItem">
+          <id column="itemId" property="id"/>
+          <result column="MAIN_ID" jdbcType="VARCHAR" property="mainId" />
+          <result column="key_name" jdbcType="VARCHAR" property="keyName" />
+          <result column="key_value" jdbcType="VARCHAR" property="keyValue" />
+          <result column="orders" jdbcType="INTEGER" property="orders" />
+          <result column="status" jdbcType="VARCHAR" property="status" />
+          <result column="remark" jdbcType="VARCHAR" property="remark" />
+      </collection>
+  </resultMap>
+  <sql id="column">
+      m.id,m.code,m.name,m.parentID,m.remark,
+      m2.id itemId ,m2.main_id,m2.key_name,m2.key_value,m2.orders,m2.status,m2.remark
+  </sql>
+  <select id="getDict" resultMap="LineResultMap">
+      select
+      <include refid="column"/>
+      from sys_dict m LEFT JOIN sys_dict_item m2 on m.id = m2.main_id
+      where m.id = #{id}
+  </select>
   <!--根据条件查询菜单数据-->
-  <select id="listDict" resultMap="BaseResultMap">
+  <select id="listDict" resultMap="TreeResultMap">
     select * from sys_dict
     <where>
       parentID = '0' or parentID is null and status !=0

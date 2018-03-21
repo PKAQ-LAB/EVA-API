@@ -34,4 +34,11 @@ public interface DictMapper extends BaseMapper<DictEntity>{
      * @param id
      */
     void deleteDictById(String id);
+
+    /**
+     * 根据ID加载一条字典详情
+     * @param id
+     * @return
+     */
+    DictEntity getDict(String id);
 }

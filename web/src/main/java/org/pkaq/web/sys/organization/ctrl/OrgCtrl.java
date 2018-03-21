@@ -79,6 +79,6 @@ public class OrgCtrl extends BaseCtrl<OrganizationService> {
     @ApiOperation(value = "切换组织可用状态", response = Response.class)
     public Response switchStatus(@ApiParam(name = "id", value = "组织Id") OrganizationEntity organization){
         this.service.updateOrg(organization);
-        return success(null);
+        return success();
     }
 }
