@@ -36,8 +36,8 @@ public class DictService extends BaseService<DictMapper, DictEntity> {
      * 删除一条字典 逻辑删除
      * @param id 字典ID
      */
-    public void delDict(List<String> ids){
-        this.mapper.deleteDict(ids);
+    public void delDict(String id){
+        this.mapper.deleteDictById(id);
     }
 
     /**

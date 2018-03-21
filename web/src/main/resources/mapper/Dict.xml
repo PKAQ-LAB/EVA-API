@@ -26,7 +26,7 @@
     select * from sys_dict where parentID = #{id}  and status !=0
   </select>
   <!-- 根据条件删除字典项 -->
-  <update id="deleteDict">
-      update sys_dict set status = 0
+  <update id="deleteDictById">
+      update sys_dict set status = 0 where id = #{id}
   </update>
 </mapper>

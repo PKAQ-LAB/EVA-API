@@ -50,16 +50,16 @@ public class DictCtrl extends BaseCtrl<DictService>{
         return success(this.service.getDict(dictEntity));
     }
 
-    @RequestMapping("/del")
-    @ApiOperation(value = "根据ID删除/批量删除组织",response = Response.class)
-    public Response delDict(@ApiParam(name = "ids", value = "[组织ID]")
-                                 @RequestBody SingleArray<String> ids){
+    @RequestMapping("/del/{id}")
+    @ApiOperation(value = "根据ID删除",response = Response.class)
+    public Response delDict(@ApiParam(name = "id", value = "[组织ID]")
+                            @PathVariable("id") String id){
         // 参数非空校验
-        if (null == ids || CollectionUtil.isEmpty(ids.getParam())){
+        if (StrUtil.isBlank(id)){
             throw new ParamException(locale("param_id_notnull"));
         }
-        this.service.delDict(ids.getParam());
-        return success(null);
+        this.service.delDict(id);
+        return success(this.service.listDict());
     }
 
     public Response editDict(){
