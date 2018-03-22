@@ -82,11 +82,10 @@ public class I18NHelper {
      * @return
      */
     public String getMessage(String code, Object[] args, String defaultMessage) {
-//这里使用比较方便的方法，不依赖request.
+        //这里使用比较方便的方法，不依赖request.
         Locale locale = LocaleContextHolder.getLocale();
         return this.getMessage(code, args, defaultMessage, locale);
     }
-
     /**
      * 指定语言.
      *

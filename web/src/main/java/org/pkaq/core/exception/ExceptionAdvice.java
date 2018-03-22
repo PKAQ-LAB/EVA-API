@@ -7,10 +7,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import java.util.Set;
 
 /**
  * @Description:      统一异常处理
@@ -22,6 +27,34 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseBody
 @Slf4j
 public class ExceptionAdvice {
+
+    /**
+     * hibernate validator参数校验失败时抛出的异常
+     * @param e
+     * @return
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ConstraintViolationException.class)
+    public Response handleViolationException(ConstraintViolationException e){
+        Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
+        StringBuilder message = new StringBuilder();
+
+        for (ConstraintViolation<?> item : violations) {
+            message.append(item.getMessage());
+        }
+        return new Response().failure(400, message.toString());
+    }
+
+    /**
+     * hibernate validator参数校验失败时抛出的异常
+     * @param e
+     * @return
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Response handleMethodParamCheckException(MethodArgumentNotValidException e){
+        return new Response().failure(400,  e.getBindingResult().getFieldError().getDefaultMessage());
+    }
     /**
      * 400 - 捕获自定义参数异常
      * @param e 异常类型

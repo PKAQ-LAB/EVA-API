@@ -18,6 +18,7 @@ public enum  HttpCodeEnum {
     REQEUST_REFUSED("用户得到授权，但是访问是被禁止的。", 403),
     SERVER_ERROR("服务器发生错误，请检查服务器。", 500),
     SERVICE_ERROR("服务不可用，服务器暂时过载或维护。", 503),
+    RULECHECK_FAILED("规则校验未通过。", 510),
     GATE_TIMEOUT("网关超时。", 504);
 
     /**

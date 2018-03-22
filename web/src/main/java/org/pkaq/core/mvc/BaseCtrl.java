@@ -1,6 +1,7 @@
 package org.pkaq.core.mvc;
 
 import lombok.Getter;
+import org.pkaq.core.enums.HttpCodeEnum;
 import org.pkaq.core.util.I18NHelper;
 import org.pkaq.core.util.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,4 +50,10 @@ public abstract class BaseCtrl<T extends BaseService> {
     protected Response failure(int failCode){
         return new Response().failure(failCode);
     }
+
+    /**
+     * 返回失败结果
+     * @return
+     */
+    protected Response failure() { return new Response().failure(HttpCodeEnum.RULECHECK_FAILED.getIndex());}
 }

@@ -10,10 +10,13 @@ import org.pkaq.core.mvc.BaseCtrl;
 import org.pkaq.core.util.Response;
 import org.pkaq.web.sys.dict.entity.DictEntity;
 import org.pkaq.web.sys.dict.service.DictService;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 
 /**
  * 字典管理控制器
@@ -48,6 +51,14 @@ public class DictCtrl extends BaseCtrl<DictService>{
         return success(this.service.getDict(dictEntity));
     }
 
+    @RequestMapping("/checkUnique")
+    @ApiOperation(value = "校验code",response = Response.class)
+    public Response checkUnique(@ApiParam(name ="dictEntity", value = "要进行校验的参数")
+                                @RequestBody DictEntity dictEntity){
+        boolean exist = this.service.checkUnique(dictEntity);
+        return exist? failure(): success();
+    }
+
     @RequestMapping("/del/{id}")
     @ApiOperation(value = "根据ID删除",response = Response.class)
     public Response delDict(@ApiParam(name = "id", value = "[字典ID]")
@@ -62,7 +73,7 @@ public class DictCtrl extends BaseCtrl<DictService>{
     @RequestMapping("/edit")
     @ApiOperation(value = "新增/编辑字典分类",response = Response.class)
     public Response editDict(@ApiParam(name ="organization", value = "字典信息")
-                             @RequestBody DictEntity dictEntity){
+                             @RequestBody @Valid DictEntity dictEntity){
         this.service.edit(dictEntity);
         return success(this.service.listDict());
     }

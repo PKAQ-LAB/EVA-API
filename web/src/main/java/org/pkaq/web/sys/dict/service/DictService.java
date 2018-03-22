@@ -1,6 +1,9 @@
 package org.pkaq.web.sys.dict.service;
 
+import cn.hutool.core.lang.Dict;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import org.pkaq.core.exception.ParamException;
 import org.pkaq.core.mvc.BaseService;
 import org.pkaq.web.sys.dict.entity.DictEntity;
 import org.pkaq.web.sys.dict.mapper.DictMapper;
@@ -49,10 +52,32 @@ public class DictService extends BaseService<DictMapper, DictEntity> {
     public void edit(DictEntity dictEntity){
         String id = dictEntity.getId();
         // 校验code唯一性
+        DictEntity conditionEntity = new DictEntity();
+        conditionEntity.setCode(dictEntity.getCode());
+        conditionEntity = this.mapper.selectOne(conditionEntity);
+
         if (StrUtil.isBlank(id)){
-            this.mapper.insert(dictEntity);
+            if (null != conditionEntity){
+                throw new ParamException("编码已存在");
+            } else {
+                this.mapper.insert(dictEntity);
+            }
         } else {
-            this.mapper.updateById(dictEntity);
+            if (id.equals(conditionEntity.getId())){
+                this.mapper.updateById(dictEntity);
+            } else {
+                throw new ParamException("编码已存在");
+            }
         }
+    }
+
+    /**
+     * 校验编码是否存在
+     * @param dictEntity
+     * @return
+     */
+    public boolean checkUnique(DictEntity dictEntity) {
+        int records = this.mapper.selectCount(new EntityWrapper<>(dictEntity));
+        return records>0;
     }
 }
