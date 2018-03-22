@@ -64,6 +64,6 @@ public class DictCtrl extends BaseCtrl<DictService>{
     public Response editDict(@ApiParam(name ="organization", value = "字典信息")
                              @RequestBody DictEntity dictEntity){
         this.service.edit(dictEntity);
-        return success();
+        return success(this.service.listDict());
     }
 }

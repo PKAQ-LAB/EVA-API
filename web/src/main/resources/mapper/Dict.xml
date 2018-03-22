@@ -38,6 +38,7 @@
       <include refid="column"/>
       from sys_dict m LEFT JOIN sys_dict_item m2 on m.id = m2.main_id
       where m.id = #{id}
+      order by m2.orders
   </select>
   <!--根据条件查询菜单数据-->
   <select id="listDict" resultMap="TreeResultMap">
