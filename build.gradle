@@ -7,7 +7,7 @@ ext {
     druid = "1.1.9"
     mysql = "8.0.8-dmr"
     fastjson = "1.2.47"
-    mybatis_plus = "2.1.9"
+    mybatis_plus = "2.2.0"
     mybatis_plus_starter = "1.0.5"
     lombok = "1.16.20"
     swagger = "2.8.0"

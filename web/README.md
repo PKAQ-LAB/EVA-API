@@ -14,7 +14,7 @@
 
 国际化支持
 ```
-ctrl层通过 this.getI18NHelper().getMessage(code) 获取相应国际化信息
+ctrl层通过 locale("key")) 获取相应国际化信息
 另外，通过此方式获取message内容可以统一管理message文本
 ```
 
@@ -56,3 +56,6 @@ TODO
 - jwt
 - truelicense
 - 业务日志注解
+- 特殊接口IP拦截注解
+
+- 订单号 订单池

@@ -3,7 +3,6 @@ package org.pkaq.core.util;
 import lombok.Data;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 用于接收数组参数的工具类
