@@ -6,6 +6,8 @@ import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
 import org.pkaq.core.mvc.BaseEntity;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -19,10 +21,13 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = true)
 public class DictItemEntity extends BaseEntity{
     /** 主表ID **/
+    @NotBlank(message = "主表ID不允许为空")
     private String mainId;
     /** 字典项键 **/
+    @NotBlank(message = "字典项不允许为空")
     private String keyName;
     /** 字典项值 **/
+    @NotBlank(message = "字典值不允许为空")
     private String keyValue;
     /** 输出排序 **/
     private Integer orders;

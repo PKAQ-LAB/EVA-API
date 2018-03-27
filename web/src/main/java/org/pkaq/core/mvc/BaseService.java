@@ -1,5 +1,6 @@
 package org.pkaq.core.mvc;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,11 +19,23 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends BaseEntity>
 
     /**
      * 根据ID查询
-     * @param id
-     * @return
+     * @param id id
+     * @return 实体类对象
      */
     protected T getById(String id){
         return (T)this.mapper.selectById(id);
+    }
+
+    /**
+     * 合并保存,如果不存在id执行插入,存在ID执行更新
+     * @param entity 实体类对象
+     */
+    protected void merge(T entity){
+        if (StrUtil.isBlank(entity.getId())){
+            this.mapper.insert(entity);
+        } else {
+            this.mapper.updateById(entity);
+        }
     }
 
 }
