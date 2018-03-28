@@ -28,8 +28,10 @@
           name like '%${condition}%'
         </otherwise>
       </choose>
-      <if test="module.status != '' and null != module.status">
-          and status = #{module.status}
+      <if test="null != module">
+        <if test="module.status != '' and null != module.status">
+            and status = #{module.status}
+        </if>
       </if>
     </where>
     order by orders asc
