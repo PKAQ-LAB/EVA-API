@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Api( description = "零售开单")
 public class SaleCtrl extends BaseCtrl<SaleService> {
 
-    @RequestMapping("/checkOut")
+    @PostMapping("/checkOut")
     @ApiOperation(value = "零售开单-结帐收银",response = Response.class)
     public Response checkOut(@ApiParam(name ="invoices", value = "零售单 商品对象数组")
                              @RequestBody() SingleArray<SaleEntity> param){

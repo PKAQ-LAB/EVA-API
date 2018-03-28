@@ -10,7 +10,9 @@ import org.pkaq.core.mvc.ctrl.BaseCtrl;
 import org.pkaq.core.util.Response;
 import org.pkaq.web.sys.dict.entity.DictEntity;
 import org.pkaq.web.sys.dict.service.DictService;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,13 +29,13 @@ import javax.validation.Valid;
 @RequestMapping("/dict")
 public class DictCtrl extends BaseCtrl<DictService>{
 
-    @RequestMapping("/list")
+    @GetMapping("/list")
     @ApiOperation(value = "获取字典分类列表",response = Response.class)
     public Response listDict(){
         return new Response().success(this.service.listDict());
     }
 
-    @RequestMapping({"/get/{id}", "/get/type/{code}"})
+    @GetMapping({"/get/{id}", "/get/type/{code}"})
     @ApiOperation(value = "根据ID获取字典",response = Response.class)
     public Response getDict(@ApiParam(name = "id", value = "字典分类ID")
                             @PathVariable("id") String id,
@@ -50,7 +52,7 @@ public class DictCtrl extends BaseCtrl<DictService>{
         return success(this.service.getDict(dictEntity));
     }
 
-    @RequestMapping("/checkUnique")
+    @PostMapping("/checkUnique")
     @ApiOperation(value = "校验code",response = Response.class)
     public Response checkUnique(@ApiParam(name ="dictEntity", value = "要进行校验的参数")
                                 @RequestBody DictEntity dictEntity){
@@ -58,7 +60,7 @@ public class DictCtrl extends BaseCtrl<DictService>{
         return exist? failure(): success();
     }
 
-    @RequestMapping("/del/{id}")
+    @GetMapping("/del/{id}")
     @ApiOperation(value = "根据ID删除",response = Response.class)
     public Response delDict(@ApiParam(name = "id", value = "[字典ID]")
                             @PathVariable("id") String id){
@@ -69,7 +71,7 @@ public class DictCtrl extends BaseCtrl<DictService>{
         this.service.delDict(id);
         return success(this.service.listDict());
     }
-    @RequestMapping("/edit")
+    @PostMapping("/edit")
     @ApiOperation(value = "新增/编辑字典分类",response = Response.class)
     public Response editDict(@ApiParam(name ="organization", value = "字典信息")
                              @RequestBody @Valid DictEntity dictEntity){

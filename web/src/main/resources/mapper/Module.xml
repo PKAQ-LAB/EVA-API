@@ -26,7 +26,7 @@
           parentID = '0' or parentID is null
         </when>
         <otherwise>
-          name like '%${condition}%' or code like '%${condition}%'
+          name like '%${condition}%'
         </otherwise>
       </choose>
     </where>

@@ -7,7 +7,9 @@ import org.pkaq.core.mvc.ctrl.BaseActiveCtrl;
 import org.pkaq.core.util.Response;
 import org.pkaq.web.sys.dict.entity.DictItemEntity;
 import org.pkaq.web.sys.dict.service.DictItemService;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,7 +26,7 @@ import javax.validation.Valid;
 @RequestMapping("/dictItem")
 public class DictItemCtrl extends BaseActiveCtrl<DictItemService> {
 
-    @RequestMapping("/del/{id}")
+    @GetMapping("/del/{id}")
     @ApiOperation(value = "根据ID删除",response = Response.class)
     public Response delete(@ApiParam(name = "id", value = "[字典项ID]")
                            @PathVariable("id") String id){
@@ -32,7 +34,7 @@ public class DictItemCtrl extends BaseActiveCtrl<DictItemService> {
         return success();
     }
 
-    @RequestMapping("/edit")
+    @PostMapping("/edit")
     @ApiOperation(value = "新增/编辑字典项",response = Response.class)
     public Response edit(@ApiParam(name = "dictItemEntity", value = "字典项对象")
            @RequestBody @Valid DictItemEntity dictItemEntity){
