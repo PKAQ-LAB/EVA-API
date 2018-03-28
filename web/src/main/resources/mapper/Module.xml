@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.module//DTD Mapper 3.0//EN" "http://mybatis.module/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.pkaq.web.sys.module.mapper.ModuleMapper">
+  <resultMap id="BaseResultMap" type="module" extends="common.resultMap">
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="icon" jdbcType="VARCHAR" property="icon" />
+    <result column="routeUrl" jdbcType="VARCHAR" property="routeurl" />
+    <result column="modelUrl" jdbcType="VARCHAR" property="modelurl" />
+    <result column="code" jdbcType="VARCHAR" property="code" />
+    <result column="parentId" jdbcType="VARCHAR" property="parentid" />
+    <result column="parentName" jdbcType="VARCHAR" property="parentname" />
+    <result column="path" jdbcType="VARCHAR" property="path" />
+    <result column="pathname" jdbcType="VARCHAR" property="pathname" />
+    <result column="isLeaf" jdbcType="TINYINT" property="isLeaf" />
+    <result column="orders" jdbcType="INTEGER" property="orders" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+      <collection property="children"  column="{id=id}" select="listChildren" />
+  </resultMap>
+  <!--根据条件查询菜单数据-->
+  <select id="listModule" resultMap="BaseResultMap">
+    select *
+    from sys_module
+    <where>
+      <choose>
+        <when test="null == condition or '' == condition">
+          parentID = '0' or parentID is null
+        </when>
+        <otherwise>
+          name like '%${condition}%' or code like '%${condition}%'
+        </otherwise>
+      </choose>
+    </where>
+    order by orders asc
+  </select>
+  <!-- 根据parentId查询子节点数据-->
+  <select id="listChildren" resultMap="BaseResultMap">
+    select *
+    from sys_module where parentID = #{id}
+    order by orders asc
+  </select>
+  <!-- 根据ID查询-->
+  <select id="getParentById" resultMap="BaseResultMap">
+    select * from sys_module module
+    where module.id = (select parentid from sys_module og where og.id = #{id})
+  </select>
+
+  <select id="countPrantLeaf" resultType="int">
+    select count(id)
+    from sys_module
+    where parentID=(select parentid from sys_module og where og.id = #{id})
+  </select>
+</mapper>
