@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.pkaq.web.sys.organization.mapper.OrganizationMapper">
-  <resultMap id="BaseResultMap" type="orginization">
-    <id column="ID" jdbcType="VARCHAR" property="id" />
+  <resultMap id="BaseResultMap" type="orginization" extends="common.resultMap">
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="code" jdbcType="VARCHAR" property="code" />
     <result column="parentID" jdbcType="VARCHAR" property="parentid" />
@@ -12,16 +11,8 @@
     <result column="isleaf" jdbcType="TINYINT" property="isleaf" />
     <result column="orders" jdbcType="INTEGER" property="orders" />
     <result column="status" jdbcType="VARCHAR" property="status" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
-    <result column="gmt_modify" jdbcType="TIMESTAMP" property="gmtModify" />
-    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
-    <result column="modify_by" jdbcType="VARCHAR" property="modifyBy" />
     <collection property="children"  column="{id=id}" select="listChildren" />
   </resultMap>
-   <sql id="column">
-       ID, name, code, parentID,parentName, path, pathname, isLeaf, orders, status,  gmt_create, gmt_modify, create_by, modify_by
-   </sql>
   <!--根据条件查询菜单数据-->
    <select id="listOrg" resultMap="BaseResultMap">
        select *
@@ -55,5 +46,4 @@
       from sys_orginization
       where parentID=(select parentid from sys_orginization og where og.id = #{id})
   </select>
-
 </mapper>
