@@ -8,6 +8,7 @@ import org.pkaq.core.util.Response;
 import org.pkaq.core.util.SingleArray;
 import org.pkaq.web.retail.sale.entity.SaleEntity;
 import org.pkaq.web.retail.sale.service.SaleService;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

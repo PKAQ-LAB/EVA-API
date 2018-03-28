@@ -18,8 +18,7 @@
   </resultMap>
   <!--根据条件查询菜单数据-->
   <select id="listModule" resultMap="BaseResultMap">
-    select *
-    from sys_module
+    select * from sys_module
     <where>
       <choose>
         <when test="null == condition or '' == condition">
@@ -29,6 +28,9 @@
           name like '%${condition}%'
         </otherwise>
       </choose>
+      <if test="module.status != '' and null != module.status">
+          and status = #{module.status}
+      </if>
     </where>
     order by orders asc
   </select>

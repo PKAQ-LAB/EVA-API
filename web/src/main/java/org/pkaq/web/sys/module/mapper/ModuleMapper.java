@@ -24,7 +24,7 @@ public interface ModuleMapper extends BaseMapper<ModuleEntity>{
      * @return 符合查询条件的List
      */
     List<ModuleEntity> listModule(@Param("condition") String condition,
-                                     @Param("module") ModuleEntity module);
+                                  @Param("module") ModuleEntity module);
 
     /**
      * 根据parentID查询子节点数据
