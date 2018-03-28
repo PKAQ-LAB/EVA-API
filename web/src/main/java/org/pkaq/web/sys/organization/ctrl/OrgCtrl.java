@@ -5,7 +5,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.pkaq.core.exception.ParamException;
-import org.pkaq.core.mvc.BaseCtrl;
+import org.pkaq.core.mvc.ctrl.BaseCtrl;
 import org.pkaq.core.util.Response;
 import org.pkaq.core.util.SingleArray;
 import org.pkaq.web.sys.organization.entity.OrganizationEntity;

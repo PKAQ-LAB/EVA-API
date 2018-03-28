@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.mapper.SqlCondition;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
-import org.pkaq.core.mvc.BaseEntity;
+import org.pkaq.core.mvc.entity.BaseEntity;
 
 import java.util.List;
 /**

@@ -1,4 +1,4 @@
-package org.pkaq.core.mvc;
+package org.pkaq.core.mvc.entity;
 
 import com.baomidou.mybatisplus.annotations.TableId;
 import lombok.Data;

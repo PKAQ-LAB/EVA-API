@@ -4,12 +4,9 @@ import com.baomidou.mybatisplus.annotations.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
-import org.pkaq.core.mvc.BaseEntity;
+import org.pkaq.core.mvc.entity.BaseActiveEntity;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.Date;
 
 /**
  * 字典管理主表
@@ -19,7 +16,7 @@ import java.util.Date;
 @Alias("dictItem")
 @TableName("sys_dict_item")
 @EqualsAndHashCode(callSuper = true)
-public class DictItemEntity extends BaseEntity{
+public class DictItemEntity extends BaseActiveEntity<DictItemEntity> {
     /** 主表ID **/
     @NotBlank(message = "主表ID不允许为空")
     private String mainId;
@@ -35,4 +32,5 @@ public class DictItemEntity extends BaseEntity{
     private String status;
 
     private static final long serialVersionUID = 1L;
+
 }

@@ -1,15 +1,13 @@
 package org.pkaq.web.sys.dict.service;
 
-import cn.hutool.core.lang.Dict;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.pkaq.core.exception.ParamException;
-import org.pkaq.core.mvc.BaseService;
+import org.pkaq.core.mvc.service.BaseService;
 import org.pkaq.web.sys.dict.entity.DictEntity;
 import org.pkaq.web.sys.dict.mapper.DictMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

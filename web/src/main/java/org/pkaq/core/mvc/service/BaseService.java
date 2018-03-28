@@ -1,7 +1,8 @@
-package org.pkaq.core.mvc;
+package org.pkaq.core.mvc.service;
 
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
+import org.pkaq.core.mvc.entity.BaseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,5 +38,4 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends BaseEntity>
             this.mapper.updateById(entity);
         }
     }
-
 }

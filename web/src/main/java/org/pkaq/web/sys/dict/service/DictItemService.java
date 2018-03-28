@@ -1,15 +1,9 @@
 package org.pkaq.web.sys.dict.service;
 
-import cn.hutool.core.util.StrUtil;
-import org.pkaq.core.mvc.BaseService;
-import org.pkaq.web.sys.dict.entity.DictEntity;
+import org.pkaq.core.mvc.service.BaseActiveRecordService;
 import org.pkaq.web.sys.dict.entity.DictItemEntity;
 import org.pkaq.web.sys.dict.mapper.DictItemMapper;
-import org.pkaq.web.sys.dict.mapper.DictMapper;
 import org.springframework.stereotype.Service;
-
-import javax.validation.Valid;
-import java.util.List;
 
 /**
  * 字典子表 - 字典项管理service
@@ -17,7 +11,7 @@ import java.util.List;
  * @Datetime: 2018/3/15 8:09
  */
 @Service
-public class DictItemService extends BaseService<DictItemMapper, DictItemEntity> {
+public class DictItemService extends BaseActiveRecordService<DictItemMapper, DictItemEntity> {
     /**
      * 删除一条字典
      * @param id 字典ID
@@ -32,6 +26,6 @@ public class DictItemService extends BaseService<DictItemMapper, DictItemEntity>
      * @return
      */
     public void editDictItem(DictItemEntity dictItemEntity) {
-        this.merge(dictItemEntity);
+        dictItemEntity.insertOrUpdate();
     }
 }

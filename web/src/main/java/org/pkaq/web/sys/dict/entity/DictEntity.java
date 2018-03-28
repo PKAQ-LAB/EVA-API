@@ -5,13 +5,9 @@ import com.baomidou.mybatisplus.annotations.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
-import org.pkaq.core.mvc.BaseEntity;
-import org.pkaq.web.sys.organization.entity.OrganizationEntity;
+import org.pkaq.core.mvc.entity.BaseEntity;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 /**
