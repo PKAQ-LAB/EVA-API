@@ -33,7 +33,7 @@
             <property name="methodNameCalculator" value=""/>
             <property name="rootInterface" value=""/>
         </javaClientGenerator>
-        <table tableName="sys_m%">
+        <table tableName="sys_user%">
             <generatedKey column="ID" sqlStatement="JDBC"/>
         </table>
     </context>

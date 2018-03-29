@@ -2,7 +2,6 @@ package org.pkaq.core.mvc.entity;
 
 import com.baomidou.mybatisplus.annotations.TableId;
 import lombok.Data;
-import org.apache.ibatis.type.Alias;
 
 import java.io.Serializable;
 import java.sql.Date;
