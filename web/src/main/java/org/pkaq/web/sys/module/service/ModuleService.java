@@ -63,37 +63,38 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
     public List<ModuleEntity> editModule(ModuleEntity module){
         String moduleId = module.getId();
         // 获取上级节点
-        String pid = module.getParentid();
+        String pid = module.getParentId();
         String root = "0";
         if(!root.equals(pid) && StrUtil.isNotBlank(pid)){
             // 查询新父节点信息
             ModuleEntity parentModule = this.getModule(pid);
             // 设置当前节点信息
-            module.setPath(parentModule.getId());
+            module.setIdPath(parentModule.getId());
             String pathName = StrUtil.format("{}/{}", parentModule.getName(), module.getName());
-            module.setPathname(pathName);
-            module.setParentname(parentModule.getName());
+            module.setNamePath(pathName);
+            module.setParentName(parentModule.getName());
 
         } else {
             // 父节点为空, 根节点 设置为非叶子
-            module.setIsLeaf(false);
-            module.setPath(module.getId());
-            module.setPathname(module.getName());
+            module.setIsleaf(false);
+            module.setIdPath(module.getId());
+            module.setNamePath(module.getName());
         }
 
         // 检查原父节点是否还存在子节点 不存在设置leaf为false
         ModuleEntity moduleinNode = this.mapper.getParentById(moduleId);
 
         // 如果更换了父节点 重新确定原父节点的 leaf属性，以及所修改节点的orders属性
-        if(null != moduleinNode && !pid.equals(moduleinNode.getParentid())){
+        if(null != moduleinNode && !pid.equals(moduleinNode.getParentId())){
             int brothers = this.mapper.countPrantLeaf(moduleId) - 1;
             if(brothers < 1){
-                moduleinNode.setIsLeaf(true);
+                moduleinNode.setIsleaf(true);
                 this.updateModule(moduleinNode);
             }
+            int buddy = this.mapper.countPrantLeaf(pid);
+            module.setOrders(buddy);
         }
-        int buddy = this.mapper.countPrantLeaf(pid);
-        module.setOrders(buddy);
+
         // 有ID更新，无ID新增
         if(StrUtil.isNotBlank(moduleId)){
             this.updateModule(module);

@@ -28,17 +28,21 @@ public class ModuleEntity extends BaseEntity implements Serializable {
 
     private String modelurl;
 
-    private String code;
+    @TableField("parentId")
+    private String parentId;
 
-    private String parentid;
-
-    private String parentname;
+    @TableField("parentName")
+    private String parentName;
 
     private String path;
 
-    private String pathname;
+    @TableField("idPath")
+    private String idPath;
 
-    private Boolean isLeaf;
+    @TableField("namePath")
+    private String namePath;
+
+    private boolean isleaf;
 
     private Integer orders;
 

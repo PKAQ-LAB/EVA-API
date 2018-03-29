@@ -2,8 +2,8 @@ package org.pkaq.core.mvc.entity;
 
 import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableId;
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.sql.Date;
@@ -14,6 +14,7 @@ import java.sql.Date;
  * @Datetime: 2018/3/28 7:16
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class BaseActiveEntity<T extends Model> extends Model<T> implements Serializable{
     @TableId
     private String id;
