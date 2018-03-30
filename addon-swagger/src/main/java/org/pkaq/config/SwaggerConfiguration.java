@@ -17,11 +17,11 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * swagger配置类
  * Datetime: 2016-11-25 11:44
  * @author PKAQ
+ * @Profile()
  */
 @Configuration
 @EnableSwagger2
 @Slf4j
-//@Profile()
 public class SwaggerConfiguration {
     @Bean
     public Docket createRestApi() {
