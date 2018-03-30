@@ -11,7 +11,7 @@
     <result column="isleaf" jdbcType="TINYINT" property="isleaf" />
     <result column="orders" jdbcType="INTEGER" property="orders" />
     <result column="status" jdbcType="VARCHAR" property="status" />
-    <collection property="children"  column="{id=id}" select="listChildren" />
+    <collection property="children"  column="{id=id,status=status}" select="listChildren" />
   </resultMap>
   <!--根据条件查询菜单数据-->
    <select id="listOrg" resultMap="BaseResultMap">
@@ -26,6 +26,11 @@
             name like '%${condition}%' or code like '%${condition}%'
           </otherwise>
         </choose>
+       <if test="null != module">
+           <if test="module.status != '' and null != module.status">
+               and status = #{module.status}
+           </if>
+       </if>
        </where>
        order by orders asc
    </select>
@@ -33,6 +38,11 @@
   <select id="listChildren" resultMap="BaseResultMap">
     select *
       from sys_orginization where parentID = #{id}
+      <if test="null != module">
+          <if test="status != '' and null != status">
+              and status = #{module.status}
+          </if>
+      </if>
     order by orders asc
   </select>
   <!-- 根据ID查询-->
