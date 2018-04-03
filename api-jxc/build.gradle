@@ -1,0 +1,5 @@
+description = """jxc"""
+// 依赖配置
+dependencies {
+    compile project(":api-core")
+}

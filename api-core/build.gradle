@@ -1,0 +1,20 @@
+description = """core"""
+// 依赖配置
+dependencies {
+    compile "org.springframework.boot:spring-boot-starter-web:${bootVersion}",
+            // AOP
+            "org.springframework.boot:spring-boot-starter-aop:${bootVersion}",
+            // mysql
+            "mysql:mysql-connector-java:${mysql}",
+            // json
+            "com.alibaba:fastjson:${fastjson}",
+            // druid数据源
+            "com.alibaba:druid-spring-boot-starter:${druid}",
+            // mybatis
+            "com.baomidou:mybatis-plus-core:${mybatis_plus}",
+            "com.baomidou:mybatisplus-spring-boot-starter:${mybatis_plus_starter}",
+            // hutool
+            "cn.hutool:hutool-all:${hutool}"
+
+    testCompile "org.springframework.boot:spring-boot-starter-test:${bootVersion}"
+}
