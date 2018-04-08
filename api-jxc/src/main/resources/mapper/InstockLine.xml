@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.pkaq.web.instock.mapper.InstockLineMapper">
+  <resultMap id="BaseResultMap" type="instockLine" extends="common.resultMap">
+    <result column="MAIN_ID" jdbcType="VARCHAR" property="mainId" />
+    <result column="BARCODE" jdbcType="VARCHAR" property="barcode" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="CATEGORY" jdbcType="VARCHAR" property="category" />
+    <result column="UNIT" jdbcType="VARCHAR" property="unit" />
+    <result column="BOXUNIT" jdbcType="INTEGER" property="boxunit" />
+    <result column="NUM" jdbcType="INTEGER" property="num" />
+    <result column="PRICE" jdbcType="DECIMAL" property="price" />
+    <result column="SUBTITLE" jdbcType="DECIMAL" property="subtitle" />
+    <result column="SUPPLIER" jdbcType="VARCHAR" property="supplier" />
+    <result column="PRODUCTOR" jdbcType="VARCHAR" property="productor" />
+  </resultMap>
+</mapper>
