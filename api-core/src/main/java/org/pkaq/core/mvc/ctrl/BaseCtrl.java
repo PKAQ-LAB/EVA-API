@@ -2,6 +2,7 @@ package org.pkaq.core.mvc.ctrl;
 
 import lombok.Getter;
 import org.pkaq.core.enums.HttpCodeEnum;
+import org.pkaq.core.mvc.entity.BaseEntity;
 import org.pkaq.core.mvc.service.BaseService;
 import org.pkaq.core.util.I18NHelper;
 import org.pkaq.core.util.Response;

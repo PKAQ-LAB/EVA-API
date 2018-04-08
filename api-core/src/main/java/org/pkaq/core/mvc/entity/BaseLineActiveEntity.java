@@ -1,25 +1,25 @@
 package org.pkaq.core.mvc.entity;
 
 import com.baomidou.mybatisplus.activerecord.Model;
-import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.sql.Date;
-import java.util.List;
 
 /**
- * activeRecord 基类
+ * activeRecord 子表 基类
  * @author: S.PKAQ
  * @Datetime: 2018/3/28 7:16
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public abstract class BaseActiveEntity<T extends Model> extends Model<T> implements Serializable{
+public abstract class BaseLineActiveEntity<T extends Model> extends Model<T> implements Serializable{
     @TableId
     private String id;
+
+    private String mainId;
 
     private String remark;
 

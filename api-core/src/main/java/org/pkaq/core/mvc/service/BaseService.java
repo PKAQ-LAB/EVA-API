@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 public abstract class BaseService<M extends BaseMapper<T>, T extends BaseEntity> {
     @Autowired
     protected M mapper;
-
     /**
      * 根据ID查询
      * @param id id

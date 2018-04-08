@@ -1,6 +1,7 @@
 description = """core"""
 // 依赖配置
 dependencies {
+    compile project(":addon-swagger")
     compile "org.springframework.boot:spring-boot-starter-web:${bootVersion}",
             // AOP
             "org.springframework.boot:spring-boot-starter-aop:${bootVersion}",
