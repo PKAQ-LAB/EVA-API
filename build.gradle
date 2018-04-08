@@ -2,7 +2,7 @@ plugins {
    id "name.remal.check-dependency-updates" version "1.0.19" apply false
 }
 ext {
-    bootVersion = "2.0.0.RELEASE"
+    bootVersion = "2.0.1.RELEASE"
     lombok = "1.16.10"
     druid = "1.1.9"
     mysql = "8.0.8-dmr"
