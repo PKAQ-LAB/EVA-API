@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
 import org.pkaq.core.mvc.entity.BaseEntity;
-import org.pkaq.web.sys.dict.entity.DictEntity;
 
 import java.io.Serializable;
 import java.util.List;
@@ -52,9 +51,9 @@ public class ModuleEntity extends BaseEntity implements Serializable {
 
     /** 子节点 **/
     @TableField(exist = false)
-    private List<DictEntity> children;
+    private List<ModuleEntity> children;
 
-    public List<DictEntity> getChildren() {
+    public List<ModuleEntity> getChildren() {
         return children == null || children.size()<1?null:children;
     }
 
