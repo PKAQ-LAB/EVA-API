@@ -15,8 +15,7 @@
   </resultMap>
   <!--根据条件查询菜单数据-->
    <select id="listOrg" resultMap="BaseResultMap">
-       select *
-       from sys_orginization
+       select * from sys_orginization
        <where>
         <choose>
           <when test="null == condition or '' == condition">
@@ -26,9 +25,9 @@
             name like '%${condition}%' or code like '%${condition}%'
           </otherwise>
         </choose>
-       <if test="null != module">
-           <if test="module.status != '' and null != module.status">
-               and status = #{module.status}
+       <if test="null != organization">
+           <if test="organization.status != '' and null != organization.status">
+               and status = #{organization.status}
            </if>
        </if>
        </where>
@@ -38,9 +37,9 @@
   <select id="listChildren" resultMap="BaseResultMap">
     select *
       from sys_orginization where parentID = #{id}
-      <if test="null != module">
+      <if test="null != organization">
           <if test="status != '' and null != status">
-              and status = #{module.status}
+              and status = #{organization.status}
           </if>
       </if>
     order by orders asc
