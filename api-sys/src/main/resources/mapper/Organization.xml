@@ -19,7 +19,7 @@
        <where>
         <choose>
           <when test="null == condition or '' == condition">
-            parentID = '0' or parentID is null
+              (parentID = '0' or parentID is null)
           </when>
           <otherwise>
             name like '%${condition}%' or code like '%${condition}%'
@@ -37,10 +37,8 @@
   <select id="listChildren" resultMap="BaseResultMap">
     select *
       from sys_orginization where parentID = #{id}
-      <if test="null != organization">
-          <if test="status != '' and null != status">
-              and status = #{organization.status}
-          </if>
+      <if test="status != '' and null != status">
+          and status = #{status}
       </if>
     order by orders asc
   </select>

@@ -22,7 +22,7 @@
     <where>
       <choose>
         <when test="null == condition or '' == condition">
-          parentId = '0' or parentId is null
+          (parentId = '0' or parentId is null)
         </when>
         <otherwise>
           name like '%${condition}%'

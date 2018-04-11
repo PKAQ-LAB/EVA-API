@@ -36,6 +36,21 @@ public class UserCtrl extends BaseCtrl<UserService> {
         return success(this.service.listUser(userEntity));
     }
 
+    @GetMapping("/get/{id}")
+    @ApiOperation(value = "根据ID获取用户信息", response = Response.class)
+    public Response getUser(@ApiParam(name = "id", value = "用户ID")
+                           @PathVariable("id") String id){
+        UserEntity entity = this.service.getUser(id);
+        return success(entity);
+    }
+
+    @PostMapping("/save")
+    @ApiOperation(value = "新增/编辑用户信息", response = Response.class)
+    public Response saveUser(@ApiParam(name ="user", value = "用户信息")
+                            @RequestBody UserEntity user){
+        return success(this.service.saveUser(user));
+    }
+
     @PostMapping("/del")
     @ApiOperation(value = "根据ID删除/批量删除用户", response = Response.class)
     public Response delUser(@ApiParam(name = "ids", value = "[用户id]")

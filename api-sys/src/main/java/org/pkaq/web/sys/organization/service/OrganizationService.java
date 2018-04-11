@@ -92,12 +92,8 @@ public class OrganizationService extends BaseService<OrganizationMapper, Organiz
         }
         int buddy = this.mapper.countPrantLeaf(pid);
         organization.setOrders(buddy);
-        // 有ID更新，无ID新增
-        if(StrUtil.isNotBlank(orgId)){
-            this.updateOrg(organization);
-        }else{
-            this.insertOrg(organization);
-        }
+
+        this.merge(organization);
         // 保存完重新查询一遍列表数据
         return this.listOrg(null);
     }

@@ -1,12 +1,9 @@
 package org.pkaq.web.sys.user.service;
 
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import org.pkaq.core.mvc.service.BaseService;
-import org.pkaq.core.util.Response;
-import org.pkaq.web.sys.organization.entity.OrganizationEntity;
 import org.pkaq.web.sys.user.entity.UserEntity;
 import org.pkaq.web.sys.user.entity.UserEnumm;
 import org.pkaq.web.sys.user.mapper.UserMapper;
@@ -52,5 +49,24 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
         wrapper.in("id",CollectionUtil.join(ids,","));
 
         this.mapper.update(user, wrapper);
+    }
+
+    /**
+     * 获取一条用户信息
+     * @param id 用户id
+     * @return 符合条件的用户对象
+     */
+    public UserEntity getUser(String id) {
+        return this.mapper.selectById(id);
+    }
+
+    /**
+     * 新增/编辑用户信息
+     * @param user 用户对象
+     * @return 用户列表
+     */
+    public List<UserEntity> saveUser(UserEntity user) {
+        this.merge(user);
+        return this.listUser(null);
     }
 }
