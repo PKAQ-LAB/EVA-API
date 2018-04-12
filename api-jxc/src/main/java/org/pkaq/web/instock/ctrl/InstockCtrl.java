@@ -4,7 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.pkaq.core.mvc.ctrl.BaseActiveCtrl;
-import org.pkaq.core.util.Response;
+import org.pkaq.core.mvc.util.Response;
 import org.pkaq.web.instock.entity.InstockEntity;
 import org.pkaq.web.instock.service.InstockService;
 import org.springframework.web.bind.annotation.PostMapping;

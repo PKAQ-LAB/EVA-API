@@ -12,7 +12,7 @@ import java.sql.Date;
  * @Datetime: 2018/3/13 22:48
  */
 @Data
-public abstract class BaseEntity implements Serializable {
+public abstract class BaseEntity implements Entity, Serializable {
     @TableId
     private String id;
 

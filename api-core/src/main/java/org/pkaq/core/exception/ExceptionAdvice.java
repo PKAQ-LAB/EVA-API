@@ -1,8 +1,7 @@
 package org.pkaq.core.exception;
 
 import lombok.extern.slf4j.Slf4j;
-import org.pkaq.core.enums.HttpCodeEnum;
-import org.pkaq.core.util.Response;
+import org.pkaq.core.mvc.util.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;

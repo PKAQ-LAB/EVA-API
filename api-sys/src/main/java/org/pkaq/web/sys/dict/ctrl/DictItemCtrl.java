@@ -4,7 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.pkaq.core.mvc.ctrl.BaseActiveCtrl;
-import org.pkaq.core.util.Response;
+import org.pkaq.core.mvc.util.Response;
 import org.pkaq.web.sys.dict.entity.DictItemEntity;
 import org.pkaq.web.sys.dict.service.DictItemService;
 import org.springframework.web.bind.annotation.GetMapping;

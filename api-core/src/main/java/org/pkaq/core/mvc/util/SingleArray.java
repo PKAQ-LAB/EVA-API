@@ -1,4 +1,4 @@
-package org.pkaq.core.util;
+package org.pkaq.core.mvc.util;
 
 import lombok.Data;
 

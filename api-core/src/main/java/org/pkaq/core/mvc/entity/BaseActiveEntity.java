@@ -17,7 +17,7 @@ import java.util.List;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public abstract class BaseActiveEntity<T extends Model> extends Model<T> implements Serializable{
+public abstract class BaseActiveEntity<T extends Model> extends Model<T> implements Entity, Serializable{
     @TableId
     private String id;
 

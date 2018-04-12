@@ -4,7 +4,7 @@ import lombok.Getter;
 import org.pkaq.core.enums.HttpCodeEnum;
 import org.pkaq.core.mvc.service.BaseActiveRecordService;
 import org.pkaq.core.util.I18NHelper;
-import org.pkaq.core.util.Response;
+import org.pkaq.core.mvc.util.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

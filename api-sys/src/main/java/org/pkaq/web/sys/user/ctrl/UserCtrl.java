@@ -6,9 +6,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.pkaq.core.exception.ParamException;
 import org.pkaq.core.mvc.ctrl.BaseCtrl;
-import org.pkaq.core.util.Response;
-import org.pkaq.core.util.SingleArray;
-import org.pkaq.web.sys.organization.entity.OrganizationEntity;
+import org.pkaq.core.mvc.util.Response;
+import org.pkaq.core.mvc.util.SingleArray;
 import org.pkaq.web.sys.user.entity.UserEntity;
 import org.pkaq.web.sys.user.service.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,8 +31,8 @@ public class UserCtrl extends BaseCtrl<UserService> {
     @GetMapping({"/list"})
     @ApiOperation(value = "获取用户列表", response = Response.class)
     public Response listUser(@ApiParam(name = "userEntity", value = "包含用户对象属性的查询条件")
-                                        UserEntity userEntity) {
-        return success(this.service.listUser(userEntity));
+                             UserEntity userEntity, Integer page) {
+        return success(this.service.listUser(userEntity, page));
     }
 
     @GetMapping("/get/{id}")
@@ -60,7 +59,7 @@ public class UserCtrl extends BaseCtrl<UserService> {
             throw new ParamException(locale("param_id_notnull"));
         }
         this.service.deleteUser(ids.getParam());
-        return success(this.service.listUser(new UserEntity()));
+        return success(this.service.listUser(new UserEntity(), 1));
     }
 
     @PostMapping("/lock")

@@ -4,13 +4,13 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import org.pkaq.core.mvc.service.BaseService;
+import org.pkaq.core.mvc.util.Page;
 import org.pkaq.web.sys.user.entity.UserEntity;
 import org.pkaq.web.sys.user.entity.UserEnumm;
 import org.pkaq.web.sys.user.mapper.UserMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 用户管理
@@ -24,9 +24,8 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
      * @param userEntity
      * @return
      */
-    public List<UserEntity> listUser(UserEntity userEntity) {
-        Wrapper<UserEntity> wrapper = new EntityWrapper<>(userEntity);
-        return this.mapper.selectList(wrapper);
+    public Page<UserEntity> listUser(UserEntity userEntity, Integer page) {
+        return this.listPage(userEntity, page);
     }
 
     /**
@@ -65,8 +64,8 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
      * @param user 用户对象
      * @return 用户列表
      */
-    public List<UserEntity> saveUser(UserEntity user) {
+    public Page<UserEntity> saveUser(UserEntity user) {
         this.merge(user);
-        return this.listUser(null);
+        return this.listUser(null, 1);
     }
 }

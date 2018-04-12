@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiParam;
 import org.pkaq.core.enums.HttpCodeEnum;
 import org.pkaq.core.exception.ParamException;
 import org.pkaq.core.mvc.ctrl.BaseCtrl;
-import org.pkaq.core.util.Response;
+import org.pkaq.core.mvc.util.Response;
 import org.pkaq.web.sys.dict.entity.DictEntity;
 import org.pkaq.web.sys.dict.service.DictService;
 import org.springframework.web.bind.annotation.GetMapping;

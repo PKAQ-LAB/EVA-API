@@ -4,7 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.pkaq.core.mvc.service.BaseService;
-import org.pkaq.core.util.Response;
+import org.pkaq.core.mvc.util.Response;
 import org.pkaq.web.sys.organization.entity.OrganizationEntity;
 import org.pkaq.web.sys.organization.mapper.OrganizationMapper;
 import org.springframework.stereotype.Service;
