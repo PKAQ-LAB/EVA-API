@@ -8,6 +8,7 @@ import org.pkaq.core.exception.ParamException;
 import org.pkaq.core.mvc.ctrl.BaseCtrl;
 import org.pkaq.core.mvc.util.Response;
 import org.pkaq.core.mvc.util.SingleArray;
+import org.pkaq.web.sys.dict.entity.DictEntity;
 import org.pkaq.web.sys.user.entity.UserEntity;
 import org.pkaq.web.sys.user.service.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +29,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/account")
 public class UserCtrl extends BaseCtrl<UserService> {
 
+    @PostMapping("/checkUnique")
+    @ApiOperation(value = "校验账号唯一性",response = Response.class)
+    public Response checkUnique(@ApiParam(name ="userEntity", value = "要进行校验的参数")
+                                @RequestBody UserEntity user){
+        boolean exist = this.service.checkUnique(user);
+        return exist? failure(): success();
+    }
     @GetMapping({"/list"})
     @ApiOperation(value = "获取用户列表", response = Response.class)
     public Response listUser(@ApiParam(name = "userEntity", value = "包含用户对象属性的查询条件")

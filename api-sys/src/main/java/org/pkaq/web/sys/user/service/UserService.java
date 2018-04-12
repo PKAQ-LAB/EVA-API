@@ -1,8 +1,10 @@
 package org.pkaq.web.sys.user.service;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
+import org.pkaq.core.annotation.BizLog;
 import org.pkaq.core.mvc.service.BaseService;
 import org.pkaq.core.mvc.util.Page;
 import org.pkaq.web.sys.user.entity.UserEntity;
@@ -24,6 +26,7 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
      * @param userEntity
      * @return
      */
+    @BizLog(description = "用户新增")
     public Page<UserEntity> listUser(UserEntity userEntity, Integer page) {
         return this.listPage(userEntity, page);
     }
@@ -67,5 +70,22 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
     public Page<UserEntity> saveUser(UserEntity user) {
         this.merge(user);
         return this.listUser(null, 1);
+    }
+
+    /**
+     * 校验账号是否唯一
+     * @param user
+     * @return
+     */
+    public boolean checkUnique(UserEntity user) {
+        Wrapper<UserEntity> entityWrapper = new EntityWrapper<>();
+        entityWrapper.like("code", user.getCode());
+        if (StrUtil.isNotBlank(user.getCode()) && StrUtil.isNotBlank(user.getAccount())){
+            entityWrapper.or();
+        }
+        entityWrapper.like("account", user.getAccount());
+
+        int records = this.mapper.selectCount(entityWrapper);
+        return records>0;
     }
 }
