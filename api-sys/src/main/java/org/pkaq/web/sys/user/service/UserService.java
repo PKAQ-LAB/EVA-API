@@ -5,10 +5,10 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import org.pkaq.core.annotation.BizLog;
+import org.pkaq.core.enums.LockEnumm;
 import org.pkaq.core.mvc.service.BaseService;
 import org.pkaq.core.mvc.util.Page;
 import org.pkaq.web.sys.user.entity.UserEntity;
-import org.pkaq.web.sys.user.entity.UserEnumm;
 import org.pkaq.web.sys.user.mapper.UserMapper;
 import org.springframework.stereotype.Service;
 
@@ -46,7 +46,7 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
      */
     public void updateUser(ArrayList<String> ids, String lock) {
         UserEntity user = new UserEntity();
-        user.setLocked(UserEnumm.LOCK.getIndex().equals(lock));
+        user.setLocked(LockEnumm.LOCK.getIndex().equals(lock));
         Wrapper<UserEntity> wrapper = new EntityWrapper<>();
         wrapper.in("id",CollectionUtil.join(ids,","));
 

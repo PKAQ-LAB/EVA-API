@@ -1,11 +1,14 @@
 package org.pkaq.core.mvc.ctrl;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.Getter;
 import org.pkaq.core.enums.HttpCodeEnum;
 import org.pkaq.core.mvc.service.BaseService;
 import org.pkaq.core.util.I18NHelper;
 import org.pkaq.core.mvc.util.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 
 /**
  * Controller 基类

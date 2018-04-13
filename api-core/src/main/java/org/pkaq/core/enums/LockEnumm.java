@@ -1,10 +1,10 @@
-package org.pkaq.web.sys.user.entity;
+package org.pkaq.core.enums;
 
 /**
  * @author: S.PKAQ
  * @Datetime: 2018/4/10 7:21
  */
-public enum UserEnumm {
+public enum LockEnumm {
     LOCK("锁定", "1"),
     UNLOCK("正常", "0");
 
@@ -17,7 +17,7 @@ public enum UserEnumm {
      */
     private String index;
 
-    UserEnumm(String name, String index) {
+    LockEnumm(String name, String index) {
         this.name = name;
         this.index = index;
     }
