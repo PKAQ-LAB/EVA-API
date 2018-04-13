@@ -28,7 +28,7 @@ public class DictEntity extends BaseEntity {
     private String name;
     /** 上级节点 **/
     @NotBlank(message = "归属类型不允许为空")
-    private String parentid;
+    private String parentId;
     /** 状态,0 已删除,1 可用 **/
     private String status;
     /** 子表数据 **/

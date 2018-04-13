@@ -31,13 +31,13 @@ public class OrganizationEntity extends BaseEntity{
     @TableField(condition = SqlCondition.LIKE)
     private String code;
 
-    private String parentid;
+    private String parentId;
 
-    private String parentname;
+    private String parentName;
 
     private String path;
 
-    private String pathname;
+    private String pathName;
 
     private boolean isleaf;
 

@@ -3,9 +3,9 @@
 <mapper namespace="org.pkaq.web.sys.dict.mapper.DictItemMapper">
   <resultMap id="BaseResultMap" type="dictItem" extends="common.resultMap">
     <result column="MAIN_ID" jdbcType="VARCHAR" property="mainId" />
-    <result column="key_name" jdbcType="VARCHAR" property="keyName" />
-    <result column="key_value" jdbcType="VARCHAR" property="keyValue" />
-    <result column="orders" jdbcType="INTEGER" property="orders" />
-    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="KEY_NAME" jdbcType="VARCHAR" property="keyName" />
+    <result column="KEY_VALUE" jdbcType="VARCHAR" property="keyValue" />
+    <result column="ORDERS" jdbcType="INTEGER" property="orders" />
+    <result column="STATUS" jdbcType="VARCHAR" property="status" />
   </resultMap>
 </mapper>

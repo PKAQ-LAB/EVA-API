@@ -2,10 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.pkaq.web.sys.dict.mapper.DictMapper">
   <resultMap id="BaseResultMap" type="dict" extends="common.resultMap">
-    <result column="code" jdbcType="VARCHAR" property="code" />
-    <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="parentID" jdbcType="VARCHAR" property="parentid" />
-    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="CODE" jdbcType="VARCHAR" property="code" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="PARENT_ID" jdbcType="VARCHAR" property="parentId" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
   </resultMap>
   <!-- 树形数据 -->
   <resultMap id="TreeResultMap" type="dict" extends="BaseResultMap">
@@ -16,15 +16,15 @@
       <collection property="items"  ofType="dictItem">
           <id column="itemId" property="id"/>
           <result column="MAIN_ID" jdbcType="VARCHAR" property="mainId" />
-          <result column="key_name" jdbcType="VARCHAR" property="keyName" />
-          <result column="key_value" jdbcType="VARCHAR" property="keyValue" />
-          <result column="orders" jdbcType="INTEGER" property="orders" />
-          <result column="status" jdbcType="VARCHAR" property="status" />
-          <result column="remark" jdbcType="VARCHAR" property="remark" />
+          <result column="KEY_NAME" jdbcType="VARCHAR" property="keyName" />
+          <result column="KEY_VALUE" jdbcType="VARCHAR" property="keyValue" />
+          <result column="ORDERS" jdbcType="INTEGER" property="orders" />
+          <result column="STATUS" jdbcType="VARCHAR" property="status" />
+          <result column="REMARK" jdbcType="VARCHAR" property="remark" />
       </collection>
   </resultMap>
   <sql id="column">
-      m.id,m.code,m.name,m.parentID,m.remark,
+      m.id,m.code,m.name,m.parent_ID,m.remark,
       m2.id itemId ,m2.main_id,m2.key_name,m2.key_value,m2.orders,m2.status,m2.remark
   </sql>
   <select id="getDict" resultMap="LineResultMap">
@@ -38,12 +38,12 @@
   <select id="listDict" resultMap="TreeResultMap">
     select * from sys_dict
     <where>
-      parentID = '0' or parentID is null and status !=0
+      parent_ID = '0' or parent_ID is null and status !=0
     </where>
   </select>
   <!-- 根据parentId查询子节点数据-->
   <select id="listChildren" resultMap="BaseResultMap">
-    select * from sys_dict where parentID = #{id}  and status !=0
+    select * from sys_dict where parent_ID = #{id}  and status !=0
   </select>
   <!-- 根据条件删除字典项 -->
   <update id="deleteDictById">

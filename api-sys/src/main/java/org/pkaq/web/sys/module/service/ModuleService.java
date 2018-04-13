@@ -69,16 +69,16 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
             // 查询新父节点信息
             ModuleEntity parentModule = this.getModule(pid);
             // 设置当前节点信息
-            module.setIdPath(parentModule.getId());
+            module.setPathId(parentModule.getId());
             String pathName = StrUtil.format("{}/{}", parentModule.getName(), module.getName());
-            module.setNamePath(pathName);
+            module.setParentName(pathName);
             module.setParentName(parentModule.getName());
 
         } else {
             // 父节点为空, 根节点 设置为非叶子
             module.setIsleaf(false);
-            module.setIdPath(module.getId());
-            module.setNamePath(module.getName());
+            module.setPathId(module.getId());
+            module.setParentName(module.getName());
         }
 
         // 检查原父节点是否还存在子节点 不存在设置leaf为false

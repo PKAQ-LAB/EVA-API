@@ -2,18 +2,18 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.module//DTD Mapper 3.0//EN" "http://mybatis.module/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.pkaq.web.sys.module.mapper.ModuleMapper">
   <resultMap id="BaseResultMap" type="module" extends="common.resultMap">
-    <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="icon" jdbcType="VARCHAR" property="icon" />
-    <result column="routeUrl" jdbcType="VARCHAR" property="routeurl" />
-    <result column="modelUrl" jdbcType="VARCHAR" property="modelurl" />
-    <result column="parentId" jdbcType="VARCHAR" property="parentId" />
-    <result column="parentName" jdbcType="VARCHAR" property="parentName" />
-    <result column="path" jdbcType="VARCHAR" property="path" />
-    <result column="namePath" jdbcType="VARCHAR" property="namePath" />
-    <result column="idPath" jdbcType="VARCHAR" property="idPath" />
-    <result column="isLeaf" jdbcType="TINYINT" property="isleaf" />
-    <result column="orders" jdbcType="INTEGER" property="orders" />
-    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="ICON" jdbcType="VARCHAR" property="icon" />
+    <result column="ROUTEURL" jdbcType="VARCHAR" property="routeurl" />
+    <result column="MODELURL" jdbcType="VARCHAR" property="modelurl" />
+    <result column="PARENT_ID" jdbcType="VARCHAR" property="parentId" />
+    <result column="PARENT_NAME" jdbcType="VARCHAR" property="parentName" />
+    <result column="PATHN" jdbcType="VARCHAR" property="path" />
+    <result column="PATH_ID" jdbcType="VARCHAR" property="pathId" />
+    <result column="PATH_NAME" jdbcType="VARCHAR" property="pathName" />
+    <result column="ISLEAF" jdbcType="TINYINT" property="isleaf" />
+    <result column="ORDERS" jdbcType="INTEGER" property="orders" />
+    <result column="STATUS" jdbcType="VARCHAR" property="status" />
       <collection property="children"  column="{id=id,status=status}" select="listChildren" />
   </resultMap>
   <!--根据条件查询菜单数据-->
@@ -22,7 +22,7 @@
     <where>
       <choose>
         <when test="null == condition or '' == condition">
-          (parentId = '0' or parentId is null)
+          (parent_Id = '0' or parent_Id is null)
         </when>
         <otherwise>
           name like '%${condition}%'
@@ -39,7 +39,7 @@
   <!-- 根据parentId查询子节点数据-->
   <select id="listChildren" resultMap="BaseResultMap">
     select *
-    from sys_module where parentID = #{id}
+    from sys_module where parent_ID = #{id}
     <if test="status != '' and null != status">
       and status = #{status}
     </if>
@@ -48,12 +48,12 @@
   <!-- 根据ID查询-->
   <select id="getParentById" resultMap="BaseResultMap">
     select * from sys_module module
-    where module.id = (select parentId from sys_module og where og.id = #{id})
+    where module.id = (select parent_Id from sys_module og where og.id = #{id})
   </select>
 
   <select id="countPrantLeaf" resultType="int">
     select count(id)
     from sys_module
-    where parentId=(select parentId from sys_module og where og.id = #{id})
+    where parent_Id=(select parent_Id from sys_module og where og.id = #{id})
   </select>
 </mapper>
