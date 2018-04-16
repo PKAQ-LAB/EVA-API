@@ -61,7 +61,7 @@ public class OrganizationService extends BaseService<OrganizationMapper, Organiz
     public List<OrganizationEntity> editOrg(OrganizationEntity organization){
         String orgId = organization.getId();
         // 获取上级节点
-        String pid = organization.getParentid();
+        String pid = organization.getParentId();
         String root = "0";
         if(!root.equals(pid) && StrUtil.isNotBlank(pid)){
             // 查询新父节点信息
@@ -69,21 +69,21 @@ public class OrganizationService extends BaseService<OrganizationMapper, Organiz
             // 设置当前节点信息
             organization.setPath(parentOrg.getId());
             String pathName = StrUtil.format("{}/{}", parentOrg.getName(), organization.getName());
-            organization.setPathname(pathName);
-            organization.setParentname(parentOrg.getName());
+            organization.setPathName(pathName);
+            organization.setParentName(parentOrg.getName());
 
         } else {
             // 父节点为空, 根节点 设置为非叶子
             organization.setIsleaf(false);
             organization.setPath(organization.getId());
-            organization.setPathname(organization.getName());
+            organization.setPathName(organization.getName());
         }
 
         // 检查原父节点是否还存在子节点 不存在设置leaf为false
         OrganizationEntity orginNode = this.mapper.getParentById(orgId);
 
         // 如果更换了父节点 重新确定原父节点的 leaf属性，以及所修改节点的orders属性
-        if(null != orginNode && !pid.equals(orginNode.getParentid())){
+        if(null != orginNode && !pid.equals(orginNode.getParentId())){
             int brothers = this.mapper.countPrantLeaf(orgId) - 1;
             if(brothers < 1){
                 orginNode.setIsleaf(true);

@@ -8,7 +8,7 @@
     <result column="MODELURL" jdbcType="VARCHAR" property="modelurl" />
     <result column="PARENT_ID" jdbcType="VARCHAR" property="parentId" />
     <result column="PARENT_NAME" jdbcType="VARCHAR" property="parentName" />
-    <result column="PATHN" jdbcType="VARCHAR" property="path" />
+    <result column="PATH" jdbcType="VARCHAR" property="path" />
     <result column="PATH_ID" jdbcType="VARCHAR" property="pathId" />
     <result column="PATH_NAME" jdbcType="VARCHAR" property="pathName" />
     <result column="ISLEAF" jdbcType="TINYINT" property="isleaf" />
