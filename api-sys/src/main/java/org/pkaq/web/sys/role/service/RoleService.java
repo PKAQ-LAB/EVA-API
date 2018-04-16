@@ -77,7 +77,7 @@ public class RoleService extends BaseService<RoleMapper, RoleEntity> {
      */
     public boolean checkUnique(RoleEntity role) {
         Wrapper<RoleEntity> entityWrapper = new EntityWrapper<>();
-        entityWrapper.like("code", role.getCode());
+        entityWrapper.eq("code", role.getCode());
         int records = this.mapper.selectCount(entityWrapper);
         return records>0;
     }
