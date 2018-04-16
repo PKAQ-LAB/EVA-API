@@ -8,6 +8,7 @@ import org.pkaq.core.exception.ParamException;
 import org.pkaq.core.mvc.ctrl.BaseCtrl;
 import org.pkaq.core.mvc.util.Response;
 import org.pkaq.core.mvc.util.SingleArray;
+import org.pkaq.web.sys.role.entity.RoleModuleEntity;
 import org.pkaq.web.sys.role.service.RoleService;
 import org.pkaq.web.sys.role.entity.RoleEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,8 +37,14 @@ public class RoleCtrl extends BaseCtrl<RoleService> {
     @GetMapping({"/list"})
     @ApiOperation(value = "获取角色列表", response = Response.class)
     public Response listRole(@ApiParam(name = "roleEntity", value = "包含角色对象属性的查询条件")
-                                     RoleEntity roleEntity, Integer page) {
+                             RoleEntity roleEntity, Integer page) {
         return success(this.service.listRole(roleEntity, page));
+    }
+    @GetMapping({"/listModule"})
+    @ApiOperation(value = "获得角色绑定的菜单列表", response = Response.class)
+    public Response listModule(@ApiParam(name = "roleEntity", value = "包含角色对象属性的查询条件")
+                               RoleModuleEntity role) {
+        return success(this.service.listModule(role));
     }
 
     @GetMapping("/get/{id}")

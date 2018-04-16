@@ -5,13 +5,22 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import org.pkaq.core.annotation.BizLog;
 import org.pkaq.core.enums.LockEnumm;
+import org.pkaq.core.enums.StatusEnumm;
 import org.pkaq.core.mvc.service.BaseService;
 import org.pkaq.core.mvc.util.Page;
+import org.pkaq.web.sys.module.entity.ModuleEntity;
+import org.pkaq.web.sys.module.mapper.ModuleMapper;
 import org.pkaq.web.sys.role.entity.RoleEntity;
+import org.pkaq.web.sys.role.entity.RoleModuleEntity;
 import org.pkaq.web.sys.role.mapper.RoleMapper;
+import org.pkaq.web.sys.role.mapper.RoleModuleMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author: S.PKAQ
@@ -19,6 +28,11 @@ import java.util.ArrayList;
  */
 @Service
 public class RoleService extends BaseService<RoleMapper, RoleEntity> {
+    @Autowired
+    private ModuleMapper moduleMapper;
+
+    @Autowired
+    private RoleModuleMapper roleModuleMapper;
     /**
      * 查询角色列表
      * @param roleEntity
@@ -80,5 +94,26 @@ public class RoleService extends BaseService<RoleMapper, RoleEntity> {
         entityWrapper.eq("code", role.getCode());
         int records = this.mapper.selectCount(entityWrapper);
         return records>0;
+    }
+
+    /**
+     * 获取该角色绑定的所有模块
+     * @param roleModule 权限条件
+     * @return
+     */
+    public Map<String, Object> listModule(RoleModuleEntity roleModule) {
+        // 获取所有菜单
+        ModuleEntity moduleEntity = new ModuleEntity();
+        moduleEntity.setStatus(StatusEnumm.ENABLE.getIndex());
+        List<ModuleEntity> moduleList = this.moduleMapper.listModule(null, moduleEntity);
+        // 获取已选的模块
+        EntityWrapper<RoleModuleEntity> wrapper = new EntityWrapper<>();
+        wrapper.setEntity(roleModule);
+        List<RoleModuleEntity> roleModuleList = this.roleModuleMapper.selectList(wrapper);
+
+        Map<String, Object> map = new HashMap<>(2);
+        map.put("modules", moduleList);
+        map.put("roleModules", roleModuleList);
+        return map;
     }
 }
