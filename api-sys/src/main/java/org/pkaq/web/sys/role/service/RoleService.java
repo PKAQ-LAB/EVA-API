@@ -3,6 +3,7 @@ package org.pkaq.web.sys.role.service;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import org.pkaq.core.annotation.BizLog;
 import org.pkaq.core.enums.LockEnumm;
 import org.pkaq.core.enums.StatusEnumm;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -109,11 +111,35 @@ public class RoleService extends BaseService<RoleMapper, RoleEntity> {
         // 获取已选的模块
         EntityWrapper<RoleModuleEntity> wrapper = new EntityWrapper<>();
         wrapper.setEntity(roleModule);
+        // 只返回moduleId
         List<RoleModuleEntity> roleModuleList = this.roleModuleMapper.selectList(wrapper);
+        List<String> checked = null;
+        if (CollectionUtils.isNotEmpty(roleModuleList)){
+            checked = new ArrayList<>(roleModuleList.size());
+            for (RoleModuleEntity rme : roleModuleList) {
+                checked.add(rme.getModuleId());
+            }
+        }
 
         Map<String, Object> map = new HashMap<>(2);
         map.put("modules", moduleList);
-        map.put("roleModules", roleModuleList);
+        map.put("roleModules", checked);
         return map;
+    }
+
+    /**
+     * 保存角色关系表
+     */
+    public void saveModule(RoleEntity role) {
+        // 删除原有角色
+        this.roleModuleMapper.deleteById(role);
+        // 插入新的权限信息
+        if(CollectionUtil.isNotEmpty(role.getModules())){
+            List<RoleModuleEntity> modules = role.getModules();
+            for (RoleModuleEntity module : modules) {
+                module.setRoleId(role.getId());
+                this.roleModuleMapper.insert(module);
+            }
+        }
     }
 }

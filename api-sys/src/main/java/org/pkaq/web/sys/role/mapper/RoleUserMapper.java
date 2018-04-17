@@ -3,6 +3,7 @@ package org.pkaq.web.sys.role.mapper;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.pkaq.web.sys.role.entity.RoleModuleEntity;
+import org.pkaq.web.sys.role.entity.RoleUserEntity;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -12,5 +13,5 @@ import org.springframework.stereotype.Repository;
  */
 @Mapper
 @Repository
-public interface RoleUserMapper extends BaseMapper<RoleModuleEntity> {
+public interface RoleUserMapper extends BaseMapper<RoleUserEntity> {
 }

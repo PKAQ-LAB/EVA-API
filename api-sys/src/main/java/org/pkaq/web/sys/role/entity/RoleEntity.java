@@ -9,6 +9,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
 import org.pkaq.core.mvc.entity.BaseEntity;
+import org.pkaq.web.sys.dict.entity.DictItemEntity;
+
+import java.util.List;
 
 /**
  * 角色管理模型类
@@ -38,4 +41,10 @@ public class RoleEntity extends BaseEntity {
     private Integer orders;
 
     private Boolean locked;
+    /** 角色-模块 **/
+    @TableField(exist = false)
+    private List<RoleModuleEntity> modules;
+    /** 角色-用户 **/
+    @TableField(exist = false)
+    private List<RoleUserEntity> users;
 }

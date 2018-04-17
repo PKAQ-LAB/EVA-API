@@ -34,6 +34,13 @@ public class RoleCtrl extends BaseCtrl<RoleService> {
         boolean exist = this.service.checkUnique(role);
         return exist? failure(): success();
     }
+    @GetMapping("/get/{id}")
+    @ApiOperation(value = "根据ID获取角色信息", response = Response.class)
+    public Response getRole(@ApiParam(name = "id", value = "角色ID")
+                            @PathVariable("id") String id){
+        RoleEntity entity = this.service.getRole(id);
+        return success(entity);
+    }
     @GetMapping({"/list"})
     @ApiOperation(value = "获取角色列表", response = Response.class)
     public Response listRole(@ApiParam(name = "roleEntity", value = "包含角色对象属性的查询条件")
@@ -46,22 +53,19 @@ public class RoleCtrl extends BaseCtrl<RoleService> {
                                RoleModuleEntity role) {
         return success(this.service.listModule(role));
     }
-
-    @GetMapping("/get/{id}")
-    @ApiOperation(value = "根据ID获取角色信息", response = Response.class)
-    public Response getRole(@ApiParam(name = "id", value = "角色ID")
-                            @PathVariable("id") String id){
-        RoleEntity entity = this.service.getRole(id);
-        return success(entity);
+    @PostMapping({"/saveModule"})
+    @ApiOperation(value = "保存角色模块关系", response = Response.class)
+    public Response saveModule(@ApiParam(name = "param", value = "模块ID数组")
+                              @RequestBody RoleEntity role) {
+        this.service.saveModule(role);
+        return success();
     }
-
     @PostMapping("/save")
     @ApiOperation(value = "新增/编辑角色信息", response = Response.class)
     public Response saveRole(@ApiParam(name ="role", value = "角色信息")
                              @RequestBody RoleEntity role){
         return success(this.service.saveRole(role));
     }
-
     @PostMapping("/del")
     @ApiOperation(value = "根据ID删除/批量删除角色", response = Response.class)
     public Response delRole(@ApiParam(name = "ids", value = "[角色id]")
@@ -73,7 +77,6 @@ public class RoleCtrl extends BaseCtrl<RoleService> {
         this.service.deleteRole(ids.getParam());
         return success(this.service.listRole(new RoleEntity(), 1));
     }
-
     @PostMapping("/lock")
     @ApiOperation(value = "锁定/解锁", response = Response.class)
     public Response lockSwitch(@ApiParam(name = "param", value = "角色[id]")
