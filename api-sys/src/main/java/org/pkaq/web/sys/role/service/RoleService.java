@@ -1,8 +1,10 @@
 package org.pkaq.web.sys.role.service;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import org.pkaq.core.annotation.BizLog;
 import org.pkaq.core.enums.LockEnumm;
@@ -13,8 +15,13 @@ import org.pkaq.web.sys.module.entity.ModuleEntity;
 import org.pkaq.web.sys.module.mapper.ModuleMapper;
 import org.pkaq.web.sys.role.entity.RoleEntity;
 import org.pkaq.web.sys.role.entity.RoleModuleEntity;
+import org.pkaq.web.sys.role.entity.RoleUserEntity;
 import org.pkaq.web.sys.role.mapper.RoleMapper;
 import org.pkaq.web.sys.role.mapper.RoleModuleMapper;
+import org.pkaq.web.sys.role.mapper.RoleUserMapper;
+import org.pkaq.web.sys.user.entity.UserEntity;
+import org.pkaq.web.sys.user.mapper.UserMapper;
+import org.pkaq.web.sys.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,10 +38,19 @@ import java.util.Map;
 @Service
 public class RoleService extends BaseService<RoleMapper, RoleEntity> {
     @Autowired
+    private UserMapper userMapper;
+
+    @Autowired
     private ModuleMapper moduleMapper;
 
     @Autowired
     private RoleModuleMapper roleModuleMapper;
+
+    @Autowired
+    private RoleUserMapper roleUserMapper;
+
+    @Autowired
+    private UserService userService;
     /**
      * 查询角色列表
      * @param roleEntity
@@ -123,7 +139,7 @@ public class RoleService extends BaseService<RoleMapper, RoleEntity> {
 
         Map<String, Object> map = new HashMap<>(2);
         map.put("modules", moduleList);
-        map.put("roleModules", checked);
+        map.put("checked", checked);
         return map;
     }
 
@@ -131,14 +147,63 @@ public class RoleService extends BaseService<RoleMapper, RoleEntity> {
      * 保存角色关系表
      */
     public void saveModule(RoleEntity role) {
+        Wrapper<RoleModuleEntity> wrapper = new EntityWrapper<>();
+        wrapper.eq("role_id", role.getId());
         // 删除原有角色
-        this.roleModuleMapper.deleteById(role);
+        this.roleModuleMapper.delete(wrapper);
         // 插入新的权限信息
         if(CollectionUtil.isNotEmpty(role.getModules())){
             List<RoleModuleEntity> modules = role.getModules();
             for (RoleModuleEntity module : modules) {
                 module.setRoleId(role.getId());
                 this.roleModuleMapper.insert(module);
+            }
+        }
+    }
+
+    /**
+     * 获取该角色绑定的所有用户
+     * @param roleUser 权限条件
+     * @return
+     */
+    public Map<String, Object> listUser(RoleUserEntity roleUser, Integer page) {
+        // 获取所有用户
+        UserEntity userEntity = new UserEntity();
+        userEntity.setLocked(false);
+
+        Page<UserEntity> pager = this.userService.listUser(userEntity, page);
+        // 获取已选的模块
+        EntityWrapper<RoleUserEntity> wrapper = new EntityWrapper<>();
+        wrapper.setEntity(roleUser);
+        // 只返回moduleId
+        List<RoleUserEntity> roleUserList = this.roleUserMapper.selectList(wrapper);
+        List<String> checked = null;
+        if (CollectionUtils.isNotEmpty(roleUserList)){
+            checked = new ArrayList<>(roleUserList.size());
+            for (RoleUserEntity rue : roleUserList) {
+                checked.add(rue.getUserId());
+            }
+        }
+        Map<String, Object> map = new HashMap<>(2);
+        map.put("users", pager);
+        map.put("checked", checked);
+        return map;
+    }
+
+    /**
+     * 保存角色关系表
+     */
+    public void saveUser(RoleEntity role) {
+        Wrapper<RoleUserEntity> wrapper = new EntityWrapper<>();
+        wrapper.eq("role_id", role.getId());
+        // 删除原有角色
+        this.roleUserMapper.delete(wrapper);
+        // 插入新的权限信息
+        if(CollectionUtil.isNotEmpty(role.getUsers())){
+            List<RoleUserEntity> users = role.getUsers();
+            for (RoleUserEntity user : users) {
+                user.setRoleId(role.getId());
+                this.roleUserMapper.insert(user);
             }
         }
     }
