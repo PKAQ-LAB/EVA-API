@@ -10,7 +10,7 @@ ext {
     mybatis_plus_starter = "1.0.5"
     lombok = "1.16.20"
     swagger = "2.8.0"
-    hutool = "4.0.9"
+    hutool = "4.0.10"
     p3c = "1.3.4"
 }
 allprojects {
