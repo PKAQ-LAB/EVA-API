@@ -2,4 +2,5 @@ description = """sys"""
 // 依赖配置
 dependencies {
     compile project(":api-core")
+    testCompile "org.springframework.boot:spring-boot-starter-test:${bootVersion}"
 }

@@ -33,7 +33,7 @@ debug: false
 # 日志
 #mybatis
 mybatis-plus:
-  mapper-locations: classpath:/mapper/*.xml
+  mapper-locations: classpath*:/mapper/*.xml
   #实体扫描，多个package用逗号或者分号分隔
   typeAliasesPackage: org.pkaq.web.**.entity
   global-config:
