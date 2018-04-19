@@ -37,7 +37,7 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
         // 检查是否存在子节点，存在子节点不允许删除
         EntityWrapper<ModuleEntity> oew = new EntityWrapper<>();
         oew.setEntity( new ModuleEntity() );
-        oew.in("parentID", ids);
+        oew.in("parent_ID", ids);
 
         List<ModuleEntity> leafList = this.mapper.selectList(oew);
 

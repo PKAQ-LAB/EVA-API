@@ -37,7 +37,7 @@ public class OrganizationService extends BaseService<OrganizationMapper, Organiz
         // 检查是否存在子节点，存在子节点不允许删除
         EntityWrapper<OrganizationEntity> oew = new EntityWrapper<>();
         oew.setEntity( new OrganizationEntity() );
-        oew.in("parentID", ids);
+        oew.in("parent_ID", ids);
 
         List<OrganizationEntity> leafList = this.mapper.selectList(oew);
 
