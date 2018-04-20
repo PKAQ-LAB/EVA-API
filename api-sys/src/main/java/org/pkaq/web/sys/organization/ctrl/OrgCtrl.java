@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -77,7 +78,8 @@ public class OrgCtrl extends BaseCtrl<OrganizationService> {
 
     @PostMapping("/switchStatus")
     @ApiOperation(value = "切换组织可用状态", response = Response.class)
-    public Response switchStatus(@ApiParam(name = "id", value = "组织Id") OrganizationEntity organization){
+    public Response switchStatus(@ApiParam(name = "id", value = "组织Id")
+                                 @RequestBody OrganizationEntity organization){
         this.service.updateOrg(organization);
         return success();
     }

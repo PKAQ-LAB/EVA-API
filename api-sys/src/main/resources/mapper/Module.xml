@@ -32,6 +32,9 @@
         <if test="module.status != '' and null != module.status">
             and status = #{module.status}
         </if>
+        <if test="module.name != '' and null != module.name">
+          and name = #{module.name}
+        </if>
       </if>
     </where>
     order by orders asc

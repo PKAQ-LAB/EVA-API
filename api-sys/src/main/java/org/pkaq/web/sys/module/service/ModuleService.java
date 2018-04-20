@@ -111,7 +111,6 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
      * @return
      */
     public void updateModule(ModuleEntity moduleEntity){
-        // 检查是否存在叶子节点，存在 返回叶子节点名称 终止删除
         this.mapper.updateById(moduleEntity);
     }
 

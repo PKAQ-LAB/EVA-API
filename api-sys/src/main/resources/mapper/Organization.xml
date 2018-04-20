@@ -29,6 +29,9 @@
            <if test="organization.status != '' and null != organization.status">
                and status = #{organization.status}
            </if>
+           <if test="organization.name != '' and null != organization.name">
+               and name = #{organization.name}
+           </if>
        </if>
        </where>
        order by orders asc

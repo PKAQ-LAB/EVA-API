@@ -30,7 +30,7 @@ public class ModuleCtrl extends BaseCtrl<ModuleService>{
     @GetMapping({"/list","/list/{condition}"})
     @ApiOperation(value = "获取模块列表",response = Response.class)
     public Response listModule(@ApiParam(name = "condition", value = "模块名称或编码")
-                            @PathVariable(value = "condition", required = false) String condition){
+                               @PathVariable(value = "condition", required = false) String condition){
         return success(this.service.listModule(condition));
     }
 
@@ -43,7 +43,7 @@ public class ModuleCtrl extends BaseCtrl<ModuleService>{
     @GetMapping("/get/{id}")
     @ApiOperation(value = "根据ID获取模块信息", response = Response.class)
     public Response getModule(@ApiParam(name = "id", value = "模块ID")
-                           @PathVariable("id") String id){
+                              @PathVariable("id") String id){
         ModuleEntity entity = this.service.getModule(id);
         return success(entity);
     }
@@ -51,7 +51,7 @@ public class ModuleCtrl extends BaseCtrl<ModuleService>{
     @PostMapping("/del")
     @ApiOperation(value = "根据ID删除/批量删除模块", response = Response.class)
     public Response delModule(@ApiParam(name = "ids", value = "[模块ID]")
-                           @RequestBody SingleArray<String> ids){
+                              @RequestBody SingleArray<String> ids){
         // 参数非空校验
         if (null == ids || CollectionUtil.isEmpty(ids.getParam())){
             throw new ParamException(locale("param_id_notnull"));
@@ -61,23 +61,24 @@ public class ModuleCtrl extends BaseCtrl<ModuleService>{
     }
 
     @PostMapping("/edit")
-    @ApiOperation(value = "编辑模块信息", response = Response.class)
+    @ApiOperation(value = "新增/编辑模块信息", response = Response.class)
     public Response editModule(@ApiParam(name ="module", value = "模块信息")
-                            @RequestBody ModuleEntity module){
+                               @RequestBody ModuleEntity module){
         return success(this.service.editModule(module));
     }
 
     @PostMapping("/sort")
     @ApiOperation(value = "排序模块信息", response = Response.class)
     public Response sortModule(@ApiParam(name = "module", value = "{id,orders}")
-                            @RequestBody ModuleEntity[] switchObj){
+                               @RequestBody ModuleEntity[] switchObj){
         this.service.sortModule(switchObj);
         return success(this.service.listModule(null));
     }
 
     @PostMapping("/switchStatus")
     @ApiOperation(value = "切换模块可用状态", response = Response.class)
-    public Response switchStatus(@ApiParam(name = "id", value = "模块Id") ModuleEntity module){
+    public Response switchStatus(@ApiParam(name = "id", value = "模块Id")
+                                 @RequestBody ModuleEntity module){
         this.service.updateModule(module);
         return success();
     }

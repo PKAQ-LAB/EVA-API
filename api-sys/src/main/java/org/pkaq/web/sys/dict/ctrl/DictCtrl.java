@@ -38,7 +38,7 @@ public class DictCtrl extends BaseCtrl<DictService>{
     @GetMapping({"/get/{id}", "/get/type/{code}"})
     @ApiOperation(value = "根据ID获取字典",response = Response.class)
     public Response getDict(@ApiParam(name = "id", value = "字典分类ID")
-                            @PathVariable("id") String id,
+                            @PathVariable(name = "id", required = false) String id,
                             @ApiParam(name = "code", value = "类型编码")
                             @PathVariable(value = "code", required = false) String code){
         // 参数校验
