@@ -4,7 +4,7 @@ plugins {
 ext {
     bootVersion = "2.0.1.RELEASE"
     druid = "1.1.9"
-    mysql = "8.0.8-dmr"
+    mysql = "8.0.11"
     fastjson = "1.2.47"
     mybatis_plus = "2.2.0"
     mybatis_plus_starter = "1.0.5"

@@ -58,7 +58,7 @@ public class UserCtrlTest extends BaseTest{
     @Test
     public void saveUser() {
         try {
-            String json = "{account: 'junit test account',code: 'junit code', name: 'junit name'}";
+            String json = "{account: 'admin',code: 'admin', name: '超级管理员', password: 'admin'}";
             mockMvc.perform(post("/account/save")
                     .content(json))
                     .andExpect(MockMvcResultMatchers.status().isOk())

@@ -1,7 +1,10 @@
 package org.pkaq.web.sys.user.service;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.crypto.digest.DigestAlgorithm;
+import cn.hutool.crypto.digest.Digester;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import org.pkaq.core.annotation.BizLog;
@@ -21,6 +24,28 @@ import java.util.ArrayList;
  */
 @Service
 public class UserService extends BaseService<UserMapper, UserEntity> {
+    /**
+     * 用户登录校验
+     * @param userEntity
+     * @return
+     */
+    public UserEntity validate(UserEntity userEntity){
+        String pwd = userEntity.getPassword();
+        // 查询盐 在计算一次密码
+        UserEntity ue = new UserEntity();
+        ue.setAccount(userEntity.getAccount());
+        ue = this.mapper.selectOne(ue);
+        Digester digester = new Digester(DigestAlgorithm.MD5);
+        String salt = ue.getSalt();
+        String cryptPwd = digester.digestHex(salt+pwd+salt);
+        // 签发token
+        // TODO 根据用户名密码查询权限信息 存入redis
+        if(cryptPwd.equals(ue.getPassword())){
+           return userEntity;
+        } else {
+            return null;
+        }
+    }
     /**
      * 查询用户列表
      * @param userEntity
@@ -68,6 +93,16 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
      * @return 用户列表
      */
     public Page<UserEntity> saveUser(UserEntity user) {
+        // 用户资料发生修改后 重新生成盐和密码
+        String pwd = user.getPassword();
+        String salt = RandomUtil.randomString(16);
+
+        Digester digester = new Digester(DigestAlgorithm.MD5);
+        String secretPwd = digester.digestHex(salt+pwd+salt);
+
+        user.setSalt(salt);
+        user.setPassword(secretPwd);
+
         this.merge(user);
         return this.listUser(null, 1);
     }
