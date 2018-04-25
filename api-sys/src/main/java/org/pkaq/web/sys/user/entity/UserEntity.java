@@ -7,9 +7,11 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
 import org.pkaq.core.mvc.entity.BaseEntity;
+import org.pkaq.web.sys.role.entity.RoleEntity;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.List;
 
 /**
  * 用户管理实体类
@@ -55,6 +57,9 @@ public class UserEntity extends BaseEntity implements Serializable {
 
     private Boolean locked;
 
+    /**用户拥有的角色**/
+    @TableField(exist = false)
+    private List<RoleEntity> roles;
 
     private static final long serialVersionUID = 1L;
 
