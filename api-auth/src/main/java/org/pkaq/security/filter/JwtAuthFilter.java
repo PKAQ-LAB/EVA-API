@@ -1,8 +1,8 @@
 package org.pkaq.security.filter;
 
-import org.pkaq.auth.jwt.JwtUtil;
+import org.pkaq.security.jwt.JwtConstant;
+import org.pkaq.security.jwt.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,22 +27,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Autowired
     private JwtUtil jwtUtil;
 
-    @Value("${jwt.header}")
-    private String tokenHeader;
-
-    @Value("${jwt.tokenHead}")
-    private String tokenHead;
-
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain chain) throws ServletException, IOException {
 
-        String authHeader = request.getHeader(this.tokenHeader);
-        if (authHeader != null && authHeader.startsWith(tokenHead)) {
+        String authHeader = request.getHeader(JwtConstant.JWT_TOKENHEAD);
+        if (authHeader != null && authHeader.startsWith(JwtConstant.JWT_TOKENHEAD)) {
             // The part after "Bearer "
-            final String authToken = authHeader.substring(tokenHead.length());
+            final String authToken = authHeader.substring(JwtConstant.JWT_TOKENHEAD.length());
             String account = jwtUtil.getUid(authToken);
 
             logger.info("checking authentication " + account);

@@ -51,7 +51,7 @@ public class Booter implements CommandLineRunner {
 
     /**
      * 优雅关闭 Spring Boot
-     * @see http://www.spring4all.com/article/1022
+     * http://www.spring4all.com/article/1022
      */
     private class GracefulShutdown implements TomcatConnectorCustomizer, ApplicationListener<ContextClosedEvent> {
         private final Logger log = LoggerFactory.getLogger(GracefulShutdown.class);

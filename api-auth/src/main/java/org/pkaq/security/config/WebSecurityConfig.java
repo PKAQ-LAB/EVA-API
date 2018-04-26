@@ -15,12 +15,13 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+/**
+ * @author PKAQ
+ */
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -28,7 +29,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private AuthEntryPoint authEntryPoint;
-    // Spring会自动寻找同样类型的具体类注入，这里就是JwtUserDetailsServiceImpl了
+    /** Spring会自动寻找同样类型的具体类注入，这里就是JwtUserDetailsServiceImpl了**/
     @Autowired
     private UserDetailsService userDetailsService;
 
@@ -54,7 +55,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurerAdapter() {
+        return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**").
@@ -65,21 +66,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             }
         };
     }
-
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 // 关闭csrf 由于使用的是JWT，我们这里不需要csrf
                 .csrf().disable()
-
-                .exceptionHandling().authenticationEntryPoint(authEntryPoint).and()
-
+                .exceptionHandling().authenticationEntryPoint(authEntryPoint)
+                .and()
                 // 基于token，所以不需要session
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-
                 // 允许对于网站静态资源的无授权访问
                 .antMatchers(
                         HttpMethod.GET,

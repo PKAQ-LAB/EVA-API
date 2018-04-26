@@ -26,7 +26,6 @@ public class WebLogAdvice {
     private ThreadLocal<Long> startTime = new ThreadLocal<>();
 
     /**
-
      * 定义一个切入点.
      * ~ 第一个 * 代表任意修饰符及任意返回值.
      * ~ 第二个 * 任意包名

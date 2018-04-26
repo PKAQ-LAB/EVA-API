@@ -3,4 +3,5 @@ description = """web"""
 dependencies {
     compile project(":api-jxc")
     compile project(":api-sys")
+    compile project(":api-auth")
 }

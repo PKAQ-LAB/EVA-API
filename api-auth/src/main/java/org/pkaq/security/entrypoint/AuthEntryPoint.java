@@ -15,12 +15,16 @@ import java.io.Serializable;
  */
 @Component
 public class AuthEntryPoint implements AuthenticationEntryPoint, Serializable {
+    //当访问的资源没有权限，会调用这里
     @Override
     public void commence(HttpServletRequest request,
                          HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
         // This is invoked when user tries to access a secured REST resource without supplying any credentials
         // We should just send a 401 Unauthorized response because there is no 'login page' to redirect to
+        //返回json形式的错误信息
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json");
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
     }
 }
