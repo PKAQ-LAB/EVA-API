@@ -1,10 +1,8 @@
 package org.pkaq.web.sys.role.service;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import org.pkaq.core.annotation.BizLog;
 import org.pkaq.core.enums.LockEnumm;
@@ -27,7 +25,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +34,8 @@ import java.util.Map;
  */
 @Service
 public class RoleService extends BaseService<RoleMapper, RoleEntity> {
+    /** 权限前缀 **/
+    private final static String AUTH_PREFIX = "ROLE_";
     @Autowired
     private UserMapper userMapper;
 
@@ -98,6 +97,10 @@ public class RoleService extends BaseService<RoleMapper, RoleEntity> {
      * @return 角色列表
      */
     public Page<RoleEntity> saveRole(RoleEntity role) {
+        // 添加 ROLE_ 前缀
+        if(!role.getCode().startsWith(AUTH_PREFIX)){
+            role.setCode(AUTH_PREFIX+role.getCode());
+        }
         this.merge(role);
         return this.listRole(null, 1);
     }
