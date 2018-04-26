@@ -17,19 +17,17 @@ public class JwtUserDetailsServiceImpl implements UserDetailsService {
 
     /**
      * 提供一种从用户名可以查到用户并返回的方法
-     * @param account 帐号
+     * @param id userid
      * @return UserDetails
      * @throws UsernameNotFoundException
      */
     @Override
-    public UserDetails loadUserByUsername(String account) throws UsernameNotFoundException {
-        UserEntity userEntity = new UserEntity();
-        userEntity.setAccount(account);
+    public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
 
-        UserEntity user = userMapper.selectOne(userEntity);
+        UserEntity user = userMapper.selectById(id);
 
         if (user == null) {
-            throw new UsernameNotFoundException(String.format("No user found with username '%s'.", account));
+            throw new UsernameNotFoundException(String.format("No user found with uid '%s'.", id));
         } else {
             return JwtUserFactory.create(user);
         }

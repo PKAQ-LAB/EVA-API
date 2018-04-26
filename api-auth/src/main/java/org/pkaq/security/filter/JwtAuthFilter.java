@@ -33,7 +33,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain chain) throws ServletException, IOException {
 
-        String authHeader = request.getHeader(JwtConstant.JWT_TOKENHEAD);
+        String authHeader = request.getHeader(JwtConstant.JWT_HEADER);
         if (authHeader != null && authHeader.startsWith(JwtConstant.JWT_TOKENHEAD)) {
             // The part after "Bearer "
             final String authToken = authHeader.substring(JwtConstant.JWT_TOKENHEAD.length());

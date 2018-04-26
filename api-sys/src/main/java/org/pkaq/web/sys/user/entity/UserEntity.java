@@ -11,6 +11,7 @@ import org.pkaq.web.sys.role.entity.RoleEntity;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -59,7 +60,7 @@ public class UserEntity extends BaseEntity implements Serializable {
 
     /**用户拥有的角色**/
     @TableField(exist = false)
-    private List<RoleEntity> roles;
+    private List<RoleEntity> roles = new ArrayList<>();
 
     private static final long serialVersionUID = 1L;
 

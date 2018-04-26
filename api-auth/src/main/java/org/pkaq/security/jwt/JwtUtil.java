@@ -78,8 +78,8 @@ public class JwtUtil {
                 .setIssuedAt(new Date(nowMillis))
                 // 签发人
                 .setIssuer(JwtConstant.SIGN_USER)
-                // 自定义属性
-                .claim("uid", uid);
+                // 主题
+                .setSubject(uid);
 
         // 设置过期时间,为0则永不过期
         if (ttlMillis > 0) {
@@ -97,7 +97,7 @@ public class JwtUtil {
      * @return 验证结果
      */
     public boolean valid(String jwtToken){
-        boolean ret = true;
+        boolean ret = false;
         try {
             SecretKey secretKey = generalKey();
             Claims claims = Jwts.parser()
@@ -105,10 +105,11 @@ public class JwtUtil {
                     .parseClaimsJws(jwtToken)
                     .getBody();
 
-            String uid = claims.get("uid", String.class);
+            String uid = claims.getSubject();
             if ("-".equals(uid)) {
-                ret = false;
                 throw new OathException("登录已失效");
+            } else {
+                ret = true;
             }
         } catch (SignatureException se ) {
             //在解析JWT字符串时，如果密钥不正确，将会解析失败，抛出SignatureException异常，说明该JWT字符串是伪造的
