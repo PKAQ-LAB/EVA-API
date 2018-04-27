@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
  * @author PKAQ
  */
 @Configuration
-@MapperScan("org.pkaq.web.*.**.mapper*")
+@MapperScan("org.pkaq.*.**.mapper*")
 public class MybatisPlusConfig {
    /**
     * 分页插件

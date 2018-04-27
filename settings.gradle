@@ -4,6 +4,5 @@ include 'api-jxc'
 include 'api-core'
 include 'api-sys'
 include 'addon-swagger'
-include 'api-auth'
 include 'addon-mongo'
 

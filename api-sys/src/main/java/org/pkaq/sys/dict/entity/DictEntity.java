@@ -1,0 +1,44 @@
+package org.pkaq.sys.dict.entity;
+
+import com.baomidou.mybatisplus.annotations.TableField;
+import com.baomidou.mybatisplus.annotations.TableName;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.apache.ibatis.type.Alias;
+import org.pkaq.core.mvc.entity.BaseEntity;
+
+import javax.validation.constraints.NotBlank;
+import java.util.List;
+
+/**
+ * 字典项管理实体类
+ * @author S.PKAQ
+ */
+@Data
+@Alias("dict")
+@TableName("sys_dict")
+@EqualsAndHashCode(callSuper = true)
+public class DictEntity extends BaseEntity {
+    private static final long serialVersionUID = 1L;
+    /**  编码 **/
+    @NotBlank(message = "编码不允许为空")
+    private String code;
+    /**  编码描述 **/
+    @NotBlank(message = "编码类型不允许为空")
+    private String name;
+    /** 上级节点 **/
+    @NotBlank(message = "归属类型不允许为空")
+    private String parentId;
+    /** 状态,0 已删除,1 可用 **/
+    private String status;
+    /** 子表数据 **/
+    @TableField(exist = false)
+    private List<DictItemEntity> items;
+    /** 子节点 **/
+    @TableField(exist = false)
+    private List<DictEntity> children;
+
+    public List<DictEntity> getChildren() {
+        return children == null || children.size()<1?null:children;
+    }
+}

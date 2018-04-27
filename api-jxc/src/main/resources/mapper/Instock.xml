@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.pkaq.web.instock.mapper.InstockMapper">
+<mapper namespace="org.pkaq.sys.instock.mapper.InstockMapper">
   <resultMap id="BaseResultMap" type="instock" extends="common.resultMap">
     <result column="INDATE" jdbcType="DATE" property="indate" />
     <result column="INCODE" jdbcType="VARCHAR" property="incode" />

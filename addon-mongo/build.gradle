@@ -1,0 +1,7 @@
+description = """auth"""
+// 依赖配置
+dependencies {
+    compile project(":api-core")
+    compile 'org.springframework.boot:spring-boot-starter-data-mongodb:+'
+    testCompile "org.springframework.boot:spring-boot-starter-test:${bootVersion}"
+}
