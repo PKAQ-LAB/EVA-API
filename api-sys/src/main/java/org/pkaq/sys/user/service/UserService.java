@@ -10,7 +10,8 @@ import org.pkaq.core.mvc.service.BaseService;
 import org.pkaq.core.mvc.util.Page;
 import org.pkaq.sys.user.entity.UserEntity;
 import org.pkaq.sys.user.mapper.UserMapper;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,6 +23,8 @@ import java.util.ArrayList;
  */
 @Service
 public class UserService extends BaseService<UserMapper, UserEntity> {
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     /**
      * 用户登录校验
      * @param userEntity
@@ -30,16 +33,13 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
     public UserEntity validate(UserEntity userEntity){
         // 得到客户端传递过来的md5之后的密码
         String pwd = userEntity.getPassword();
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        pwd = encoder.encode(pwd);
         // 查询盐 在计算一次密码
         UserEntity ue = new UserEntity();
         ue.setAccount(userEntity.getAccount());
-        ue.setPassword(pwd);
         ue = this.mapper.selectOne(ue);
         // 签发token
         // TODO 根据用户名密码查询权限信息 存入redis
-        if(pwd.equals(ue.getPassword())){
+        if(passwordEncoder.matches(pwd, ue.getPassword())){
            return userEntity;
         } else {
             return null;
@@ -95,8 +95,7 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
         // 用户资料发生修改后 重新生成密码
         // 这里传递过来的密码是进行md5加密后的
         String pwd = user.getPassword();
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        pwd = encoder.encode(pwd);
+        pwd = passwordEncoder.encode(pwd);
         user.setPassword(pwd);
 
         this.merge(user);

@@ -1,8 +1,11 @@
-package org.pkaq.security.config;
+package org.pkaq.config;
 
 import org.pkaq.security.entrypoint.AuthEntryPoint;
 import org.pkaq.security.filter.JwtAuthFilter;
+import org.pkaq.security.jwt.JwtConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -21,11 +24,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * @author PKAQ
- * 必须保证prePostEnabled开启 否则@PreAuthorize("hasRole('ROLE_ADMIN')")无效
+ * 1.必须保证prePostEnabled开启 否则@PreAuthorize("hasRole('ROLE_ADMIN')")无效
+ * 2.启用EnableConfigurationProperties以使ConfigurationProperties生效
  */
 @Configuration
 @EnableWebSecurity
-
+@EnableConfigurationProperties(JwtConfig.class)
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -34,6 +38,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     /** Spring会自动寻找同样类型的具体类注入，这里就是JwtUserDetailsServiceImpl了**/
     @Autowired
     private UserDetailsService userDetailsService;
+
+    @Bean
+    public JwtConfig jwtConfig(){
+        return new JwtConfig();
+    }
 
     @Autowired
     public void configureAuthentication(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {

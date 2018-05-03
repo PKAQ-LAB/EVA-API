@@ -1,9 +1,9 @@
-package org.pkaq.sys.retail.sale.service;
+package org.pkaq.sys.sale.service;
 
 import org.pkaq.core.helper.OrderHelper;
 import org.pkaq.core.mvc.service.BaseService;
-import org.pkaq.sys.retail.sale.entity.SaleEntity;
-import org.pkaq.sys.retail.sale.mapper.SaleMapper;
+import org.pkaq.sys.sale.entity.SaleEntity;
+import org.pkaq.sys.sale.mapper.SaleMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

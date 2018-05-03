@@ -1,4 +1,4 @@
-package org.pkaq.sys.retail.sale.ctrl;
+package org.pkaq.sys.sale.ctrl;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -6,8 +6,8 @@ import io.swagger.annotations.ApiParam;
 import org.pkaq.core.mvc.ctrl.BaseCtrl;
 import org.pkaq.core.mvc.util.Response;
 import org.pkaq.core.mvc.util.SingleArray;
-import org.pkaq.sys.retail.sale.entity.SaleEntity;
-import org.pkaq.sys.retail.sale.service.SaleService;
+import org.pkaq.sys.sale.entity.SaleEntity;
+import org.pkaq.sys.sale.service.SaleService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

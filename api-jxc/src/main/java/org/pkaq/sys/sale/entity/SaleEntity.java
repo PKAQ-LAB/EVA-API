@@ -1,4 +1,4 @@
-package org.pkaq.sys.retail.sale.entity;
+package org.pkaq.sys.sale.entity;
 
 import com.baomidou.mybatisplus.annotations.TableName;
 import lombok.Data;

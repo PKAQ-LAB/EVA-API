@@ -7,7 +7,9 @@ import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
+import lombok.Data;
 import org.pkaq.security.exception.OathException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -18,11 +20,14 @@ import java.util.Date;
  * @author: S.PKAQ
  * @Datetime: 2018/4/20 15:16
  */
+@Data
 @Component
 public class JwtUtil {
+    @Autowired
+    private JwtConfig jwtConfig;
 
-    private static SecretKey generalKey() {
-        byte[] encodedKey = Base64.decode(JwtConstant.JWT_SECERT);
+    private SecretKey generalKey() {
+        byte[] encodedKey = Base64.decode(jwtConfig.getSecert());
         return new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
     }
 
@@ -77,7 +82,7 @@ public class JwtUtil {
                 // 签发时间
                 .setIssuedAt(new Date(nowMillis))
                 // 签发人
-                .setIssuer(JwtConstant.SIGN_USER)
+                .setIssuer(jwtConfig.getSign())
                 // 主题
                 .setSubject(uid);
 

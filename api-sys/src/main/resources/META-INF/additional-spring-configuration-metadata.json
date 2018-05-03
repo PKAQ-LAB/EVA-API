@@ -1,0 +1,28 @@
+{
+  "properties": [
+    {
+      "name": "jwt.tokenHead",
+      "type": "java.lang.String",
+      "description": "Description for jwt.tokenHead."
+    },
+    {
+      "name": "jwt.header",
+      "type": "java.lang.String",
+      "description": "Description for jwt.header."
+    },
+    {
+      "name": "jwt.sign",
+      "type": "java.lang.String",
+      "description": "Description for jwt.sign."
+    },
+    {
+      "name": "jwt.secert",
+      "type": "java.lang.String",
+      "description": "Description for jwt.secert."
+    },
+    {
+      "name": "jwt.ttl",
+      "type": "java.lang.Integer",
+      "description": "Description for jwt.ttl."
+    }
+  ] }

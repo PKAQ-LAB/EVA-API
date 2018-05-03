@@ -1,13 +1,12 @@
 package org.pkaq.sys.user.ctrl;
 
-import cn.hutool.core.map.MapUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.pkaq.core.enums.HttpCodeEnum;
 import org.pkaq.core.mvc.util.Response;
 import org.pkaq.core.util.I18NHelper;
-import org.pkaq.security.jwt.JwtConstant;
+import org.pkaq.security.jwt.JwtConfig;
 import org.pkaq.security.jwt.JwtUtil;
 import org.pkaq.sys.user.entity.UserEntity;
 import org.pkaq.sys.user.service.UserService;
@@ -30,20 +29,22 @@ public class AuthCtrl {
     private UserService userService;
     @Autowired
     protected I18NHelper i18NHelper;
-
+    @Autowired
+    private JwtConfig jwtConfig;
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @PostMapping("/login")
     @ApiOperation(value = "用户登录", response = Response.class)
     public Response login(@ApiParam(name = "{user}", value = "用户对象")
                           @RequestBody UserEntity user){
         user =this.userService.validate(user);
-        Response response = null;
+        Response response;
         if(null == user){
-            new Response().failure(HttpCodeEnum.ROLE_ERROR.getIndex(), i18NHelper.getMessage("login_failed"));
+            response = new Response().failure(HttpCodeEnum.ROLE_ERROR.getIndex(), i18NHelper.getMessage("login_failed"));
         } else {
-            JwtUtil jwt = new JwtUtil();
-            String token = jwt.build(JwtConstant.JWT_TTL, user.getId());
-            response = new Response().success(MapUtil.builder("token", token));
+            String token = jwtUtil.build(jwtConfig.getTtl(), user.getId());
+            response = new Response().success(token);
         }
         return response;
     }

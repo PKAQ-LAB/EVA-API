@@ -1,6 +1,6 @@
 package org.pkaq.security.filter;
 
-import org.pkaq.security.jwt.JwtConstant;
+import org.pkaq.security.jwt.JwtConfig;
 import org.pkaq.security.jwt.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,16 +27,20 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private JwtConfig jwtConfig;
+
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain chain) throws ServletException, IOException {
+        String authHeader = request.getHeader(jwtConfig.getHeader());
 
-        String authHeader = request.getHeader(JwtConstant.JWT_HEADER);
-        if (authHeader != null && authHeader.startsWith(JwtConstant.JWT_TOKENHEAD)) {
+
+        if (authHeader != null && authHeader.startsWith(jwtConfig.getTokenHead())) {
             // The part after "Bearer "
-            final String authToken = authHeader.substring(JwtConstant.JWT_TOKENHEAD.length());
+            final String authToken = authHeader.substring(jwtConfig.getTokenHead().length());
             String account = jwtUtil.getUid(authToken);
 
             logger.info("checking authentication " + account);
