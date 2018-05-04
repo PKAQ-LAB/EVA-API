@@ -33,14 +33,13 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
     public UserEntity validate(UserEntity userEntity){
         // 得到客户端传递过来的md5之后的密码
         String pwd = userEntity.getPassword();
-        // 查询盐 在计算一次密码
         UserEntity ue = new UserEntity();
         ue.setAccount(userEntity.getAccount());
         ue = this.mapper.selectOne(ue);
         // 签发token
         // TODO 根据用户名密码查询权限信息 存入redis
         if(passwordEncoder.matches(pwd, ue.getPassword())){
-           return userEntity;
+           return ue;
         } else {
             return null;
         }

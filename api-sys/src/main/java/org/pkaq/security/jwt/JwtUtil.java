@@ -31,6 +31,10 @@ public class JwtUtil {
         return new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
     }
 
+    public static void main(String[] args) {
+        String tk = "eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1MjUzODc1NjEsImlzcyI6IlBLQVEiLCJleHAiOjE1MjUzOTExNjF9.tAa0pQtZ5MPA8dkp2rZbMF11rBqEd1WDmXEgZ9nF2A0";
+        System.out.println(new JwtUtil().getUid(tk));
+    }
     /**
      * 获取uid中的uid属性
      * @param token

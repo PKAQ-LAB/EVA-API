@@ -1,5 +1,6 @@
 package org.pkaq.sys.user.ctrl;
 
+import cn.hutool.core.map.MapUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -15,6 +16,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * JWT鉴权
@@ -44,7 +48,10 @@ public class AuthCtrl {
             response = new Response().failure(HttpCodeEnum.ROLE_ERROR.getIndex(), i18NHelper.getMessage("login_failed"));
         } else {
             String token = jwtUtil.build(jwtConfig.getTtl(), user.getId());
-            response = new Response().success(token);
+            Map<String, Object> map = new HashMap<>();
+            map.put("token", token);
+            map.put("user", user);
+            response = new Response().success(map);
         }
         return response;
     }
@@ -55,6 +62,6 @@ public class AuthCtrl {
                                  @RequestBody UserEntity user){
         // 获取用户jwt
         // 清空redis中的jwt 刷新用户secret
-        return null;
+        return new Response().success();
     }
 }
