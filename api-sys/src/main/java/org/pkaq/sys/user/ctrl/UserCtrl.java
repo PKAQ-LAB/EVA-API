@@ -10,7 +10,6 @@ import org.pkaq.core.mvc.util.Response;
 import org.pkaq.core.mvc.util.SingleArray;
 import org.pkaq.sys.user.entity.UserEntity;
 import org.pkaq.sys.user.service.UserService;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,7 +35,7 @@ public class UserCtrl extends BaseCtrl<UserService> {
         boolean exist = this.service.checkUnique(user);
         return exist? failure(): success();
     }
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+
     @GetMapping({"/list"})
     @ApiOperation(value = "获取用户列表", response = Response.class)
     public Response listUser(@ApiParam(name = "userEntity", value = "包含用户对象属性的查询条件")
