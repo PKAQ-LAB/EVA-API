@@ -48,7 +48,7 @@ public class AuthCtrl {
             response = new Response().failure(HttpCodeEnum.ROLE_ERROR.getIndex(), i18NHelper.getMessage("login_failed"));
         } else {
             String token = jwtUtil.build(jwtConfig.getTtl(), user.getId());
-            Map<String, Object> map = new HashMap<>();
+            Map<String, Object> map = new HashMap<>(2);
             map.put("token", token);
             map.put("user", user);
             response = new Response().success(map);
