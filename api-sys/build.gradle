@@ -5,8 +5,8 @@ dependencies {
     // 鉴权
     compile "com.auth0:java-jwt:${auth0}",
             "io.jsonwebtoken:jjwt:${jjwt}",
-            "org.springframework.boot:spring-boot-starter-security:${bootVersion}"
-            "javax.xml.bind:jaxb-api:${jaxb-api}"
+            "org.springframework.boot:spring-boot-starter-security:${bootVersion}",
+            "javax.xml.bind:jaxb-api:${jaxb_api}"
     testCompile "org.springframework.boot:spring-boot-starter-test:${bootVersion}"
 
 
