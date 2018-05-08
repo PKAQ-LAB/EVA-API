@@ -5,4 +5,5 @@
     <result column="ROLE_ID" jdbcType="VARCHAR" property="roleId" />
     <result column="USER_ID" jdbcType="VARCHAR" property="userId" />
   </resultMap>
+
 </mapper>

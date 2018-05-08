@@ -5,6 +5,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.pkaq.sys.role.entity.RoleUserEntity;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * 角色用户关系mapper
  * @author: S.PKAQ
@@ -13,4 +15,5 @@ import org.springframework.stereotype.Repository;
 @Mapper
 @Repository
 public interface RoleUserMapper extends BaseMapper<RoleUserEntity> {
+
 }

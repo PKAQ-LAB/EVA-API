@@ -12,4 +12,16 @@
     <result column="ORDERS" jdbcType="INTEGER" property="orders" />
     <result column="LOCKED" jdbcType="TINYINT" property="locked" />
   </resultMap>
+  <!-- 根据userId获取 权限相关信息-->
+  <select id="selectByUserId" resultType="role">
+    select R.ID,R.NAME,R.CODE,RU.USER_ID
+      from SYS_ROLE R, SYS_ROLE_USER RU
+    <where>
+        R.ID= RU.ROLE_ID
+        and
+        R.LOCKED=0
+        and
+        RU.USER_ID=#{userId}
+    </where>
+  </select>
 </mapper>

@@ -13,4 +13,10 @@ import org.springframework.stereotype.Repository;
 @Mapper
 @Repository
 public interface UserMapper extends BaseMapper<UserEntity> {
+    /**
+     * 根据用户userId 获取包含权限列表的用户信息
+     * @param userId
+     * @return
+     */
+    UserEntity getUserWithRoleById(String userId);
 }

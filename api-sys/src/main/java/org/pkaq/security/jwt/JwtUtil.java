@@ -41,12 +41,12 @@ public class JwtUtil {
      * @return
      */
     public String getUid(String token) {
-        String uid;
+        String uid = "";
         try {
             final Claims claims = getClaimsFromToken(token);
             uid = claims.getSubject();
         } catch (Exception e) {
-            uid = null;
+            e.printStackTrace();
         }
         return uid;
     }
