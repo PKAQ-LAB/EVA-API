@@ -46,7 +46,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             logger.info("checking authentication " + account);
 
             if (account != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                // 根据用户id获取用户权限列表
+                // 从redis中 根据用户id获取用户权限列表
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(account);
 
                 if (jwtUtil.valid(authToken)) {

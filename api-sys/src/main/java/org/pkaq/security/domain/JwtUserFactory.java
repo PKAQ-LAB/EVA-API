@@ -18,7 +18,7 @@ public final class JwtUserFactory {
                 user.getId(),
                 user.getAccount(),
                 user.getPassword(),
-                mapToGrantedAuthorities(user.getRoles().stream().map(RoleEntity::getName).collect(Collectors.toList()))
+                mapToGrantedAuthorities(user.getRoles().stream().map(RoleEntity::getCode).collect(Collectors.toList()))
         );
     }
 
