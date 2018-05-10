@@ -8,6 +8,9 @@ import org.pkaq.core.annotation.BizLog;
 import org.pkaq.core.enums.LockEnumm;
 import org.pkaq.core.mvc.service.BaseService;
 import org.pkaq.core.mvc.util.Page;
+import org.pkaq.sys.module.entity.ModuleEntity;
+import org.pkaq.sys.module.mapper.ModuleMapper;
+import org.pkaq.sys.role.entity.RoleEntity;
 import org.pkaq.sys.user.entity.UserEntity;
 import org.pkaq.sys.user.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 用户管理
@@ -25,6 +29,9 @@ import java.util.ArrayList;
 public class UserService extends BaseService<UserMapper, UserEntity> {
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private ModuleMapper moduleMapper;
+
     /**
      * 用户登录校验
      * @param userEntity
@@ -38,12 +45,13 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
         ue = this.mapper.selectOne(ue);
         // 签发token
         // TODO 根据用户名密码查询权限信息 存入redis
-        if(passwordEncoder.matches(pwd, ue.getPassword())){
-           return ue;
+        if(null != ue && passwordEncoder.matches(pwd, ue.getPassword())){
+           return this.mapper.getUserWithModuleAndRoleById(ue.getId());
         } else {
             return null;
         }
     }
+
     /**
      * 查询用户列表
      * @param userEntity

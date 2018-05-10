@@ -16,6 +16,22 @@
     <result column="STATUS" jdbcType="VARCHAR" property="status" />
       <collection property="children"  column="{id=id,status=status}" select="listChildren" />
   </resultMap>
+  <!--根据权限ID查询用户拥有的模块-->
+  <select id="getRoleModuleByUserId" resultType="module">
+      select distinct m.* from
+        SYS_MODULE M,
+        SYS_ROLE R,
+        SYS_ROLE_MODULE RM,
+        SYS_ROLE_USER RU
+      where
+        R.ID=RM.ROLE_ID
+        and
+        M.ID=RM.MODULE_ID
+        and
+        R.ID=RU.ROLE_ID
+        and
+        ru.USER_ID = #{userId}
+  </select>
   <!--根据条件查询菜单数据-->
   <select id="listModule" resultMap="BaseResultMap">
     select * from sys_module

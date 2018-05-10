@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.pkaq.sys.module.entity.ModuleEntity;
+import org.pkaq.sys.role.entity.RoleEntity;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -31,6 +32,13 @@ public interface ModuleMapper extends BaseMapper<ModuleEntity>{
      * @return 符合条件的List
      */
     List<ModuleEntity> listChildren(String id);
+
+    /**
+     * 根据用户id查询用户拥有的权限模块列表
+     * @param userId 用户id
+     * @return 符合条件的List
+     */
+    List<ModuleEntity> getRoleModuleByUserId(String userId);
 
     /**
      * 根据子节点ID查询父节点信息

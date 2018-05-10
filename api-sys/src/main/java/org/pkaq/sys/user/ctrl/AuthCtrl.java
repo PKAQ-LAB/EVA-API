@@ -1,6 +1,7 @@
 package org.pkaq.sys.user.ctrl;
 
 import cn.hutool.core.map.MapUtil;
+import com.alibaba.fastjson.JSON;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -9,8 +10,10 @@ import org.pkaq.core.mvc.util.Response;
 import org.pkaq.core.util.I18NHelper;
 import org.pkaq.security.jwt.JwtConfig;
 import org.pkaq.security.jwt.JwtUtil;
+import org.pkaq.sys.module.entity.ModuleEntity;
 import org.pkaq.sys.user.entity.UserEntity;
 import org.pkaq.sys.user.service.UserService;
+import org.pkaq.util.TreeHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -47,7 +51,14 @@ public class AuthCtrl {
         if(null == user){
             response = new Response().failure(HttpCodeEnum.ROLE_ERROR.getIndex(), i18NHelper.getMessage("login_failed"));
         } else {
+            // 签发token
             String token = jwtUtil.build(jwtConfig.getTtl(), user.getId());
+            // 整理菜单
+            List<ModuleEntity> treeModule = new TreeHelper().bulid(user.getModules());
+            System.out.println(JSON.toJSONString(treeModule));
+
+            user.setModules(treeModule);
+
             Map<String, Object> map = new HashMap<>(2);
             map.put("token", token);
             map.put("user", user);

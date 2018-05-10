@@ -19,4 +19,11 @@ public interface UserMapper extends BaseMapper<UserEntity> {
      * @return
      */
     UserEntity getUserWithRoleById(String userId);
+
+    /**
+     * 根据用户userId 获取包含权限列表 菜单列表的用户信息
+     * @param userId
+     * @return
+     */
+    UserEntity getUserWithModuleAndRoleById(String userId);
 }

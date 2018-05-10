@@ -48,9 +48,4 @@ public class ModuleEntity extends BaseEntity implements Serializable {
     /** 子节点 **/
     @TableField(exist = false)
     private List<ModuleEntity> children;
-
-    public List<ModuleEntity> getChildren() {
-        return children == null || children.size()<1?null:children;
-    }
-
 }

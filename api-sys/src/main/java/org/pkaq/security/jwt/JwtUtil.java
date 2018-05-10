@@ -32,7 +32,7 @@ public class JwtUtil {
     }
 
     public static void main(String[] args) {
-        String tk = "eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1MjUzODc1NjEsImlzcyI6IlBLQVEiLCJleHAiOjE1MjUzOTExNjF9.tAa0pQtZ5MPA8dkp2rZbMF11rBqEd1WDmXEgZ9nF2A0";
+        String tk = "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI5MTk5NDgyZDc2YjQ0M2VmOWYxM2ZlZmRkY2YwMDQ2YyIsImlhdCI6MTUyNTc4OTkzNCwiaXNzIjoiUEtBUSIsInN1YiI6IjkxOTk0ODJkNzZiNDQzZWY5ZjEzZmVmZGRjZjAwNDZjIiwiZXhwIjoxNTI1NzkzNTM0fQ.pg08dDPV1pWlSxPDTrV35DlLtrPXe_Ej_QvEK_T-SuA";
         System.out.println(new JwtUtil().getUid(tk));
     }
     /**

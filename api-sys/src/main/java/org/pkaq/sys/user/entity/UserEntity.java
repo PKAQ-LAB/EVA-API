@@ -1,5 +1,6 @@
 package org.pkaq.sys.user.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.mapper.SqlCondition;
@@ -7,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
 import org.pkaq.core.mvc.entity.BaseEntity;
+import org.pkaq.sys.module.entity.ModuleEntity;
 import org.pkaq.sys.role.entity.RoleEntity;
 
 import java.io.Serializable;
@@ -37,8 +39,9 @@ public class UserEntity extends BaseEntity implements Serializable {
     @TableField(condition = SqlCondition.LIKE)
     private String account;
 
+    @JSONField(serialize=false)
     private String password;
-
+    @JSONField(serialize=false)
     private String salt;
 
     private String avatar;
@@ -61,6 +64,10 @@ public class UserEntity extends BaseEntity implements Serializable {
     /**用户拥有的角色**/
     @TableField(exist = false)
     private List<RoleEntity> roles = new ArrayList<>();
+
+    /**用户拥有的模块**/
+    @TableField(exist = false)
+    private List<ModuleEntity> modules = new ArrayList<>();
 
     private static final long serialVersionUID = 1L;
 

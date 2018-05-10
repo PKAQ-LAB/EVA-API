@@ -3,6 +3,6 @@
 <mapper namespace="org.pkaq.sys.role.mapper.RoleModuleMapper">
   <resultMap id="BaseResultMap" type="roleModule" extends="common.resultMap">
     <result column="ROLE_ID" jdbcType="VARCHAR" property="roleId" />
-    <result column="USER_ID" jdbcType="VARCHAR" property="moduleId" />
+    <result column="MODULE_ID" jdbcType="VARCHAR" property="moduleId" />
   </resultMap>
 </mapper>
