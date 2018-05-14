@@ -14,20 +14,20 @@ import java.util.List;
 public class TreeHelper {
     /**
      * 将list转换为树结构
-     * @param ModuleEntitys
+     * @param moduleentitys
      * @return
      */
-    public List<ModuleEntity> bulid(List<ModuleEntity> ModuleEntitys) {
+    public List<ModuleEntity> bulid(List<ModuleEntity> moduleentitys) {
 
         List<ModuleEntity> trees = new ArrayList<>();
 
-        for (ModuleEntity entity : ModuleEntitys) {
+        for (ModuleEntity entity : moduleentitys) {
             String pid = entity.getParentId();
             if (StrUtil.isBlank(pid) || "0".equals(pid)) {
                 trees.add(entity);
             }
 
-            for (ModuleEntity it : ModuleEntitys) {
+            for (ModuleEntity it : moduleentitys) {
                 if (entity.getId().equals(it.getParentId())) {
                     if (entity.getChildren() == null) {
                         entity.setChildren(new ArrayList<>());

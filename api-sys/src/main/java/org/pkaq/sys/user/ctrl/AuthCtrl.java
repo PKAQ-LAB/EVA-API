@@ -1,6 +1,8 @@
 package org.pkaq.sys.user.ctrl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.map.MapUtil;
+import cn.hutool.core.util.ArrayUtil;
 import com.alibaba.fastjson.JSON;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -50,12 +52,13 @@ public class AuthCtrl {
         Response response;
         if(null == user){
             response = new Response().failure(HttpCodeEnum.ROLE_ERROR.getIndex(), i18NHelper.getMessage("login_failed"));
-        } else {
+        } else if(CollectionUtil.isEmpty(user.getModules()) || CollectionUtil.isEmpty(user.getRoles())){
+            response = new Response().failure(HttpCodeEnum.ROLE_ERROR.getIndex(), i18NHelper.getMessage("permission_denied"));
+        }else {
             // 签发token
             String token = jwtUtil.build(jwtConfig.getTtl(), user.getId());
             // 整理菜单
             List<ModuleEntity> treeModule = new TreeHelper().bulid(user.getModules());
-            System.out.println(JSON.toJSONString(treeModule));
 
             user.setModules(treeModule);
 
