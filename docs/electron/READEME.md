@@ -1,5 +1,9 @@
 使用Electron打包伪桌面版b/s应用
 
+  借助`Electron`可以用来非常轻易的构建跨平台桌面应用，因为你只需要熟悉`html`、`css`、`javascript`这些基本技能就可以快速构建一个简单应用。
+这意味着我们可以借助`Electron`来打包我们的`B/S`应用伪装成一个本地应用,这不仅可以提高传统用户的亲和度还可以免去`不要用ie装谷歌; 怎么装谷歌,360可以吗?`的烦恼\扩大可视区域(免去地址栏 菜单栏等)\快速打开应用(无需打开浏览器翻收藏夹)等一系列好处。 
+  那么下面的内容就是告诉你如何快速打包一个伪桌面应用
+
 前提:   
  - nodejs   
  - yarn   
@@ -104,3 +108,4 @@ electron-packager . Evatron --win --out=release --arch=x64 --version=1.0.0 --ele
 打包后会在命令目录生成一个release文件夹 点击里面生成的exe可以查看我们的桌面程序   
 
 >p.s:如果你的react项目index页面死活出不来，可能是你使用了react-router的BroswerHistory，换成HashHistory就可以了。
+参考：https://segmentfault.com/a/1190000014030465
