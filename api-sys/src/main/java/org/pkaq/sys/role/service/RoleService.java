@@ -97,9 +97,9 @@ public class RoleService extends BaseService<RoleMapper, RoleEntity> {
      * @return 角色列表
      */
     public Page<RoleEntity> saveRole(RoleEntity role) {
-        // 添加 ROLE_ 前缀
+        // 添加 ROLE_ 前缀 并转大写
         if(!role.getCode().startsWith(AUTH_PREFIX)){
-            role.setCode(AUTH_PREFIX+role.getCode());
+            role.setCode((AUTH_PREFIX+role.getCode()).toUpperCase());
         }
         this.merge(role);
         return this.listRole(null, 1);
