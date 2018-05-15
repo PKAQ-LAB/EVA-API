@@ -6,7 +6,7 @@ ext {
     druid = "1.1.9"
     mysql = "8.0.11"
     fastjson = "1.2.47"
-    mybatis_plus = "2.2.0"
+    mybatis_plus = "2.3"
     mybatis_plus_starter = "1.0.5"
     lombok = "1.16.20"
     swagger = "2.9.0"
@@ -25,8 +25,8 @@ subprojects {
     apply plugin: 'name.remal.check-dependency-updates'
     apply plugin: 'pmd'
 
-    sourceCompatibility = 1.9
-    targetCompatibility = 1.9
+    sourceCompatibility = JavaVersion.VERSION_1_9
+    targetCompatibility = JavaVersion.VERSION_1_9
 
     [ compileJava, compileTestJava ]*.options*.encoding = 'UTF-8'
 

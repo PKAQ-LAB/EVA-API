@@ -5,6 +5,9 @@ package org.pkaq.core.enums;
  * @Datetime: 2018/4/16 21:49
  */
 public enum StatusEnumm {
+    /**
+     * 可用
+     */
     ENABLE("正常", "0001"),
     UNABLE("不可用", "0000");
 

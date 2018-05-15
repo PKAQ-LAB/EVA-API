@@ -108,6 +108,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 ).permitAll()
                 // 对于获取token的rest api要允许匿名访问
                 .antMatchers("/auth/login").permitAll()
+                // 限定访问IP
                 .antMatchers("/druid/**").hasIpAddress("127.0.0.1")
                 // 除上面外的所有请求全部需要鉴权认证
                 .anyRequest().authenticated();

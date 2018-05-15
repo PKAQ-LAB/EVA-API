@@ -5,6 +5,9 @@ package org.pkaq.core.enums;
  * @Datetime: 2018/4/10 7:21
  */
 public enum LockEnumm {
+    /**
+     * 锁定
+     */
     LOCK("锁定", "1"),
     UNLOCK("正常", "0");
 
