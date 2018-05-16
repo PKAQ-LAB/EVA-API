@@ -36,8 +36,6 @@ import java.util.Map;
 public class RoleService extends BaseService<RoleMapper, RoleEntity> {
     /** 权限前缀 **/
     private final static String AUTH_PREFIX = "ROLE_";
-    @Autowired
-    private UserMapper userMapper;
 
     @Autowired
     private ModuleMapper moduleMapper;
