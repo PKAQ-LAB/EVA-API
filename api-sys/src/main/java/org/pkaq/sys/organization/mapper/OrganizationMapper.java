@@ -44,4 +44,10 @@ public interface OrganizationMapper extends BaseMapper<OrganizationEntity>{
      * @return 同级节点数量
      */
     int countPrantLeaf(String id);
+
+    /**
+     * 切换可用状态
+     * @param organization
+     */
+    void switchStatus(OrganizationEntity organization);
 }

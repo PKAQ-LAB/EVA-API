@@ -11,7 +11,7 @@
     <result column="ISLEAF" jdbcType="TINYINT" property="isleaf" />
     <result column="ORDERS" jdbcType="INTEGER" property="orders" />
     <result column="STATUS" jdbcType="VARCHAR" property="status" />
-    <collection property="children"  column="{id=id,status=status}" select="listChildren" />
+    <collection property="children"  column="{id=id}" select="listChildren" />
   </resultMap>
   <!--根据条件查询菜单数据-->
    <select id="listOrg" resultMap="BaseResultMap">
@@ -40,9 +40,6 @@
   <select id="listChildren" resultMap="BaseResultMap">
     select *
       from sys_orginization where parent_ID = #{id}
-      <if test="status != '' and null != status">
-          and status = #{status}
-      </if>
     order by orders asc
   </select>
   <!-- 根据ID查询-->
@@ -56,4 +53,8 @@
       from sys_orginization
       where parent_ID=(select parent_id from sys_orginization og where og.id = #{id})
   </select>
+  <!-- 切换可用状态 -->
+  <update id="switchStatus">
+      update sys_orginization set status=#{status} where path like concat('%',#{id},'%') or id = #{id}
+  </update>
 </mapper>

@@ -67,7 +67,10 @@ public class OrganizationService extends BaseService<OrganizationMapper, Organiz
             // 查询新父节点信息
             OrganizationEntity parentOrg = this.getOrg(pid);
             // 设置当前节点信息
-            organization.setPath(parentOrg.getId());
+            String parentPath = StrUtil.isNotBlank(parentOrg.getPath())?
+                    parentOrg.getPath()+","+parentOrg.getId():
+                    parentOrg.getId();
+            organization.setPath(parentPath);
             String pathName = StrUtil.format("{}/{}", parentOrg.getName(), organization.getName());
             organization.setPathName(pathName);
             organization.setParentName(parentOrg.getName());
@@ -140,9 +143,16 @@ public class OrganizationService extends BaseService<OrganizationMapper, Organiz
      * @param switchOrg 进行交换的两个实体
      */
     public void sortOrg(OrganizationEntity[] switchOrg) {
-
         for (OrganizationEntity org : switchOrg) {
             this.mapper.updateById(org);
         }
+    }
+
+    /**
+     * 切换可用状态 - 级联操作
+     * @param organization
+     */
+    public void switchStatus(OrganizationEntity organization) {
+        this.mapper.switchStatus(organization);
     }
 }
