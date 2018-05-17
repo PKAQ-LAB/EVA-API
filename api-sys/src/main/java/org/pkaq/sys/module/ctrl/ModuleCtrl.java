@@ -10,6 +10,7 @@ import org.pkaq.core.mvc.util.Response;
 import org.pkaq.core.mvc.util.SingleArray;
 import org.pkaq.sys.module.entity.ModuleEntity;
 import org.pkaq.sys.module.service.ModuleService;
+import org.pkaq.sys.user.entity.UserEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,6 +28,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/module")
 public class ModuleCtrl extends BaseCtrl<ModuleService>{
+
+    @PostMapping("/checkUnique")
+    @ApiOperation(value = "校验账号唯一性",response = Response.class)
+    public Response checkUnique(@ApiParam(name ="moduleEntity", value = "要进行校验的参数")
+                                @RequestBody ModuleEntity module){
+        boolean exist = this.service.checkUnique(module);
+        return exist? failure(): success();
+    }
 
     @GetMapping({"/list","/list/{condition}"})
     @ApiOperation(value = "获取模块列表",response = Response.class)
@@ -49,7 +58,6 @@ public class ModuleCtrl extends BaseCtrl<ModuleService>{
         return success(entity);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/del")
     @ApiOperation(value = "根据ID删除/批量删除模块", response = Response.class)
     public Response delModule(@ApiParam(name = "ids", value = "[模块ID]")

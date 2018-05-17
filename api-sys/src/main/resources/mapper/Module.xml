@@ -69,10 +69,11 @@
     select * from sys_module module
     where module.id = (select parent_Id from sys_module og where og.id = #{id})
   </select>
-
+  <!--查询叶子节点数量-->
   <select id="countPrantLeaf" resultType="int">
     select count(id)
     from sys_module
     where parent_Id=(select parent_Id from sys_module og where og.id = #{id})
   </select>
+
 </mapper>

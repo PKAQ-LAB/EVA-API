@@ -3,10 +3,12 @@ package org.pkaq.sys.module.service;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import org.pkaq.core.mvc.service.BaseService;
 import org.pkaq.core.mvc.util.Response;
 import org.pkaq.sys.module.entity.ModuleEntity;
 import org.pkaq.sys.module.mapper.ModuleMapper;
+import org.pkaq.sys.user.entity.UserEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -149,5 +151,18 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
         for (ModuleEntity module : switchModule) {
             this.mapper.updateById(module);
         }
+    }
+    /**
+     * 校验同级节点中path是否唯一
+     * @param module
+     * @return
+     */
+    public boolean checkUnique(ModuleEntity module) {
+        Wrapper<ModuleEntity> entityWrapper = new EntityWrapper<>();
+        entityWrapper.eq("path", module.getPath());
+        entityWrapper.eq("parent_id", module.getParentId());
+
+        int records = this.mapper.selectCount(entityWrapper);
+        return records > 0;
     }
 }
