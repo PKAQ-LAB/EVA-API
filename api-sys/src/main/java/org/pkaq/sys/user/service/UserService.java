@@ -102,9 +102,10 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
         // 用户资料发生修改后 重新生成密码
         // 这里传递过来的密码是进行md5加密后的
         String pwd = user.getPassword();
-        pwd = passwordEncoder.encode(pwd);
-        user.setPassword(pwd);
-
+        if (StrUtil.isNotBlank(pwd)){
+            pwd = passwordEncoder.encode(pwd);
+            user.setPassword(pwd);
+        }
         this.merge(user);
         return this.listUser(null, 1);
     }
