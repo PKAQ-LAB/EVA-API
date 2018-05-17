@@ -61,7 +61,7 @@ public class DictService extends BaseService<DictMapper, DictEntity> {
                 this.mapper.insert(dictEntity);
             }
         } else {
-            if (id.equals(conditionEntity.getId())){
+            if (null == conditionEntity || id.equals(conditionEntity.getId())){
                 this.mapper.updateById(dictEntity);
             } else {
                 throw new ParamException("编码已存在");
