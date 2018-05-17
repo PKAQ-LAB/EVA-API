@@ -47,7 +47,7 @@ public class OrganizationService extends BaseService<OrganizationMapper, Organiz
             response = new Response().failure(501, StrUtil.format("[{}] 存在子节点，无法删除。",name), null);
          } else {
             this.mapper.deleteBatchIds(ids);
-            response = new Response().success(this.mapper.selectList(new EntityWrapper<>()));
+            response = new Response().success(this.mapper.listOrg(null, null));
         }
 
         return response;
