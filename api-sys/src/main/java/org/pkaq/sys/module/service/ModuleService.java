@@ -51,7 +51,7 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
             response = response.failure(501, StrUtil.format("[{}] 存在子节点，无法删除。",name), null);
         } else {
             this.mapper.deleteBatchIds(ids);
-            response = response.success(this.mapper.selectList(new EntityWrapper<>()));
+            response = response.success(this.mapper.listModule(null, null));
         }
 
         return response;
