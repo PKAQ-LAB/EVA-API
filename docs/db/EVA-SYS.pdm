@@ -2283,7 +2283,7 @@ LABL 0 新宋体,8,N</a:FontList>
 <o:Table Id="o23">
 <a:ObjectID>595C6296-6510-4610-807A-07F1115C02E1</a:ObjectID>
 <a:Name>基础管理_组织管理</a:Name>
-<a:Code>SYS_ORGINIZATION</a:Code>
+<a:Code>SYS_organization</a:Code>
 <a:CreationDate>1515681241</a:CreationDate>
 <a:Creator>Administrator</a:Creator>
 <a:ModificationDate>1523590313</a:ModificationDate>

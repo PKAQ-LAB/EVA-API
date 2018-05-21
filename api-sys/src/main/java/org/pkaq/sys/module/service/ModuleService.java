@@ -8,7 +8,6 @@ import org.pkaq.core.mvc.service.BaseService;
 import org.pkaq.core.mvc.util.Response;
 import org.pkaq.sys.module.entity.ModuleEntity;
 import org.pkaq.sys.module.mapper.ModuleMapper;
-import org.pkaq.sys.user.entity.UserEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

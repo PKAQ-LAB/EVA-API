@@ -3,6 +3,7 @@ package org.pkaq.sys.organization.service;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import org.pkaq.core.mvc.service.BaseService;
 import org.pkaq.core.mvc.util.Response;
 import org.pkaq.sys.organization.entity.OrganizationEntity;
@@ -154,5 +155,17 @@ public class OrganizationService extends BaseService<OrganizationMapper, Organiz
      */
     public void switchStatus(OrganizationEntity organization) {
         this.mapper.switchStatus(organization);
+    }
+
+    /**
+     * 校验code是否唯一
+     * @param organization
+     * @return
+     */
+    public boolean checkUnique(OrganizationEntity organization) {
+        Wrapper<OrganizationEntity> entityWrapper = new EntityWrapper<>();
+        entityWrapper.eq("code", organization.getCode());
+        int records = this.mapper.selectCount(entityWrapper);
+        return records > 0;
     }
 }

@@ -21,8 +21,8 @@ ctrl层通过 locale("key")) 获取相应国际化信息
 实体类注解说明
 ```
 @Data   -- lomobok 注解可以静态织入getter setter等
-@Alias("orginization") -- 设置别名，可以在mybatis xml中直接使用别名
-@TableName("sys_orginization") -- 当表名与实体名不一致时需显示指定表名
+@Alias("organization") -- 设置别名，可以在mybatis xml中直接使用别名
+@TableName("sys_organization") -- 当表名与实体名不一致时需显示指定表名
 
 @TableId -- 主键ID
 @TableField(exist = false) -- 虚拟列

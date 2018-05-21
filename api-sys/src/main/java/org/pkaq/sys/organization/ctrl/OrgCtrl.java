@@ -8,6 +8,7 @@ import org.pkaq.core.exception.ParamException;
 import org.pkaq.core.mvc.ctrl.BaseCtrl;
 import org.pkaq.core.mvc.util.Response;
 import org.pkaq.core.mvc.util.SingleArray;
+import org.pkaq.sys.module.entity.ModuleEntity;
 import org.pkaq.sys.organization.entity.OrganizationEntity;
 import org.pkaq.sys.organization.service.OrganizationService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,6 +28,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/organization")
 public class OrgCtrl extends BaseCtrl<OrganizationService> {
 
+    @PostMapping("/checkUnique")
+    @ApiOperation(value = "校验code唯一性",response = Response.class)
+    public Response checkUnique(@ApiParam(name ="organization", value = "要进行校验的参数")
+                                @RequestBody OrganizationEntity organization){
+        boolean exist = this.service.checkUnique(organization);
+        return exist? failure(): success();
+    }
     @GetMapping({"/list","/list/{condition}"})
     @ApiOperation(value = "获取组织列表",response = Response.class)
     public Response listOrg(@ApiParam(name = "condition", value = "组织名称或编码")

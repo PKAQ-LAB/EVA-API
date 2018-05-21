@@ -16,8 +16,8 @@ import java.util.List;
  */
 
 @Data
-@Alias("orginization")
-@TableName("sys_orginization")
+@Alias("organization")
+@TableName("sys_organization")
 @EqualsAndHashCode(callSuper = true)
 public class OrganizationEntity extends BaseEntity{
     private static final long serialVersionUID = 1L;

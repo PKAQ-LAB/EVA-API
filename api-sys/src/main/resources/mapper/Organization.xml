@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.pkaq.sys.organization.mapper.OrganizationMapper">
-  <resultMap id="BaseResultMap" type="orginization" extends="common.resultMap">
+  <resultMap id="BaseResultMap" type="organization" extends="common.resultMap">
     <result column="NAME" jdbcType="VARCHAR" property="name" />
     <result column="CODE" jdbcType="VARCHAR" property="code" />
     <result column="PARENT_ID" jdbcType="VARCHAR" property="parentId" />
@@ -15,7 +15,7 @@
   </resultMap>
   <!--根据条件查询菜单数据-->
    <select id="listOrg" resultMap="BaseResultMap">
-       select * from sys_orginization
+       select * from sys_organization
        <where>
         <choose>
           <when test="null == condition or '' == condition">
@@ -39,22 +39,22 @@
   <!-- 根据parentId查询子节点数据-->
   <select id="listChildren" resultMap="BaseResultMap">
     select *
-      from sys_orginization where parent_ID = #{id}
+      from sys_organization where parent_ID = #{id}
     order by orders asc
   </select>
   <!-- 根据ID查询-->
   <select id="getParentById" resultMap="BaseResultMap">
-      select * from sys_orginization org
-      where org.id = (select parent_id from sys_orginization og where og.id = #{id})
+      select * from sys_organization org
+      where org.id = (select parent_id from sys_organization og where og.id = #{id})
   </select>
 
   <select id="countPrantLeaf" resultType="int">
       select count(id)
-      from sys_orginization
-      where parent_ID=(select parent_id from sys_orginization og where og.id = #{id})
+      from sys_organization
+      where parent_ID=(select parent_id from sys_organization og where og.id = #{id})
   </select>
   <!-- 切换可用状态 -->
   <update id="switchStatus">
-      update sys_orginization set status=#{status} where path like concat('%',#{id},'%') or id = #{id}
+      update sys_organization set status=#{status} where path like concat('%',#{id},'%') or id = #{id}
   </update>
 </mapper>
