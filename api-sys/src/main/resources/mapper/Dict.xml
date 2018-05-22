@@ -13,26 +13,16 @@
   </resultMap>
   <!-- 带子表数据查询 -->
   <resultMap id="LineResultMap" type="dict" extends="BaseResultMap">
-      <collection property="items"  ofType="dictItem">
-          <id column="itemId" property="id"/>
-          <result column="MAIN_ID" jdbcType="VARCHAR" property="mainId" />
-          <result column="KEY_NAME" jdbcType="VARCHAR" property="keyName" />
-          <result column="KEY_VALUE" jdbcType="VARCHAR" property="keyValue" />
-          <result column="ORDERS" jdbcType="INTEGER" property="orders" />
-          <result column="STATUS" jdbcType="VARCHAR" property="status" />
-          <result column="REMARK" jdbcType="VARCHAR" property="remark" />
-      </collection>
+      <collection property="items"  ofType="dictItem" column="{mainId=id}"
+                  select="org.pkaq.sys.dict.mapper.DictItemMapper.listItemByMainId"/>
   </resultMap>
   <sql id="column">
       m.id,m.code,m.name,m.parent_ID,m.remark,
       m2.id itemId ,m2.main_id,m2.key_name,m2.key_value,m2.orders,m2.status,m2.remark
   </sql>
   <select id="getDict" resultMap="LineResultMap">
-      select
-      <include refid="column"/>
-      from sys_dict m LEFT JOIN sys_dict_item m2 on m.id = m2.main_id
+      select * from sys_dict m
       where m.id = #{id}
-      order by m2.orders
   </select>
   <!--根据条件查询菜单数据-->
   <select id="listDict" resultMap="TreeResultMap">

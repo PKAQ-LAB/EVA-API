@@ -8,4 +8,8 @@
     <result column="ORDERS" jdbcType="INTEGER" property="orders" />
     <result column="STATUS" jdbcType="VARCHAR" property="status" />
   </resultMap>
+  <!--根据mainId查询数据-->
+  <select id="listItemByMainId" resultType="dictItem">
+    select * from sys_dict_item where main_id=#{mainId} order by orders
+  </select>
 </mapper>
