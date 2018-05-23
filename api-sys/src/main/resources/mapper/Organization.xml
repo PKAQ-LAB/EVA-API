@@ -55,6 +55,6 @@
   </select>
   <!-- 切换可用状态 -->
   <update id="switchStatus">
-      update sys_organization set status=#{status} where path like concat('%',#{id},'%') or id = #{id}
+      update sys_organization set status=#{status} where path like concat('%,',#{id},',%') or id = #{id}
   </update>
 </mapper>
