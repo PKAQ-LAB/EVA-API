@@ -2,6 +2,8 @@ package org.pkaq.sys.role.entity;
 
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
@@ -17,11 +19,12 @@ import java.io.Serializable;
 @Alias("roleUser")
 @TableName("sys_role_user")
 @EqualsAndHashCode()
+@ApiModel("角色用户关系")
 public class RoleUserEntity implements Serializable{
     @TableId
     private String id;
-    /** 角色ID **/
+    @ApiModelProperty("角色ID")
     private String roleId;
-    /** 用户ID **/
+    @ApiModelProperty("用户ID")
     private String userId;
 }

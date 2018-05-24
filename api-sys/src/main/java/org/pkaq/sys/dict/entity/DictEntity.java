@@ -2,6 +2,8 @@ package org.pkaq.sys.dict.entity;
 
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableName;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
@@ -18,27 +20,25 @@ import java.util.List;
 @Alias("dict")
 @TableName("sys_dict")
 @EqualsAndHashCode(callSuper = true)
+@ApiModel("字典管理")
 public class DictEntity extends BaseEntity {
     private static final long serialVersionUID = 1L;
-    /**  编码 **/
     @NotBlank(message = "编码不允许为空")
+    @ApiModelProperty("字典分类编码")
     private String code;
-    /**  编码描述 **/
     @NotBlank(message = "编码类型不允许为空")
+    @ApiModelProperty("字典分类名称")
     private String name;
-    /** 上级节点 **/
     @NotBlank(message = "归属类型不允许为空")
+    @ApiModelProperty("上级节点")
     private String parentId;
-    /** 状态,0 已删除,1 可用 **/
+    @ApiModelProperty("是否可用（0 已删除,1 可用）")
     private String status;
-    /** 子表数据 **/
     @TableField(exist = false)
+    @ApiModelProperty("字典项列表")
     private List<DictItemEntity> items;
-    /** 子节点 **/
     @TableField(exist = false)
+    @ApiModelProperty("子节点")
     private List<DictEntity> children;
 
-    public List<DictEntity> getChildren() {
-        return children == null || children.size()<1?null:children;
-    }
 }

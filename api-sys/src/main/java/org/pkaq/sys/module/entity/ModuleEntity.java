@@ -2,6 +2,8 @@ package org.pkaq.sys.module.entity;
 
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableName;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
@@ -18,34 +20,35 @@ import java.util.List;
 @Alias("module")
 @TableName("sys_module")
 @EqualsAndHashCode(callSuper = true)
+@ApiModel("模块管理")
 public class ModuleEntity extends BaseEntity implements Serializable {
-    private String name;
-
-    private String icon;
-
-    private String routeurl;
-
-    private String modelurl;
-
-    private String parentId;
-
-    private String parentName;
-
-    private String path;
-
-    private String pathId;
-
-    private String pathName;
-
-    private boolean isleaf;
-
-    private Integer orders;
-
-    private String status;
-
     private static final long serialVersionUID = 1L;
 
-    /** 子节点 **/
+    @ApiModelProperty("模块名称")
+    private String name;
+    @ApiModelProperty("模块图标")
+    private String icon;
+    @ApiModelProperty("模块路由url")
+    private String routeurl;
+    @ApiModelProperty("模块前端model url")
+    private String modelurl;
+    @ApiModelProperty("上级节点id")
+    private String parentId;
+    @ApiModelProperty("上级节点名称")
+    private String parentName;
+    @ApiModelProperty("路径")
+    private String path;
+    @ApiModelProperty("上级节点id路径")
+    private String pathId;
+    @ApiModelProperty("上级节点名称路径")
+    private String pathName;
+    @ApiModelProperty("是否叶子")
+    private boolean isleaf;
+    @ApiModelProperty("排序")
+    private Integer orders;
+    @ApiModelProperty("状态")
+    private String status;
     @TableField(exist = false)
+    @ApiModelProperty("子节点")
     private List<ModuleEntity> children;
 }
