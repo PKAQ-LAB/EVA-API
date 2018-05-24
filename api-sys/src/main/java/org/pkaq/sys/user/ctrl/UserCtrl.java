@@ -10,6 +10,7 @@ import org.pkaq.core.mvc.util.Response;
 import org.pkaq.core.mvc.util.SingleArray;
 import org.pkaq.sys.user.entity.UserEntity;
 import org.pkaq.sys.user.service.UserService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -60,6 +61,7 @@ public class UserCtrl extends BaseCtrl<UserService> {
 
     @PostMapping("/del")
     @ApiOperation(value = "根据ID删除/批量删除用户", response = Response.class)
+    @PreAuthorize("hasRole('ADMIN')")
     public Response delUser(@ApiParam(name = "ids", value = "[用户id]")
                            @RequestBody SingleArray<String> ids){
         // 参数非空校验

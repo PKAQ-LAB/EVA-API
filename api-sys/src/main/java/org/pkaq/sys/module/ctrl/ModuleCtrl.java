@@ -10,6 +10,7 @@ import org.pkaq.core.mvc.util.Response;
 import org.pkaq.core.mvc.util.SingleArray;
 import org.pkaq.sys.module.entity.ModuleEntity;
 import org.pkaq.sys.module.service.ModuleService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -58,6 +59,7 @@ public class ModuleCtrl extends BaseCtrl<ModuleService>{
 
     @PostMapping("/del")
     @ApiOperation(value = "根据ID删除/批量删除模块", response = Response.class)
+    @PreAuthorize("hasRole('ADMIN')")
     public Response delModule(@ApiParam(name = "ids", value = "[模块ID]")
                               @RequestBody SingleArray<String> ids){
         // 参数非空校验

@@ -11,6 +11,7 @@ import org.pkaq.core.mvc.util.SingleArray;
 import org.pkaq.sys.module.entity.ModuleEntity;
 import org.pkaq.sys.organization.entity.OrganizationEntity;
 import org.pkaq.sys.organization.service.OrganizationService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -58,6 +59,7 @@ public class OrgCtrl extends BaseCtrl<OrganizationService> {
 
     @PostMapping("/del")
     @ApiOperation(value = "根据ID删除/批量删除组织", response = Response.class)
+    @PreAuthorize("hasRole('ADMIN')")
     public Response delOrg(@ApiParam(name = "ids", value = "[组织ID]")
                            @RequestBody SingleArray<String> ids){
         // 参数非空校验

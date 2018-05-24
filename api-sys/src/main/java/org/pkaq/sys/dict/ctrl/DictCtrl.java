@@ -10,6 +10,7 @@ import org.pkaq.core.mvc.ctrl.BaseCtrl;
 import org.pkaq.core.mvc.util.Response;
 import org.pkaq.sys.dict.entity.DictEntity;
 import org.pkaq.sys.dict.service.DictService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -62,6 +63,7 @@ public class DictCtrl extends BaseCtrl<DictService>{
 
     @GetMapping("/del/{id}")
     @ApiOperation(value = "根据ID删除",response = Response.class)
+    @PreAuthorize("hasRole('ADMIN')")
     public Response delDict(@ApiParam(name = "id", value = "[字典ID]")
                             @PathVariable("id") String id){
         // 参数非空校验
