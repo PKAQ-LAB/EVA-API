@@ -1,5 +1,6 @@
 package org.pkaq.security.filter;
 
+import cn.hutool.core.util.StrUtil;
 import org.pkaq.security.jwt.JwtConfig;
 import org.pkaq.security.jwt.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,9 +44,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             final String authToken = authHeader.substring(jwtConfig.getTokenHead().length());
             String account = jwtUtil.getUid(authToken);
 
-            logger.info("checking authentication " + account);
+            logger.info("checking authentication ：" + account);
 
-            if (account != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            if (StrUtil.isNotBlank(account) && SecurityContextHolder.getContext().getAuthentication() == null) {
                 // 从redis中 根据用户id获取用户权限列表
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(account);
 
