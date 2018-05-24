@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.mvc.util.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -74,6 +75,18 @@ public class ExceptionAdvice {
     public Response handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         log.error("参数解析失败："+e.getMessage());
         return new Response().failure(400);
+    }
+
+    /**
+     * 权限不足
+     * @param e
+     * @return
+     */
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(AccessDeniedException.class)
+    public Response handleAccessDeniedException(AccessDeniedException e) {
+        log.error("权限不足："+e.getMessage());
+        return new Response().failure(403);
     }
     /**
      *  405 - Method Not Allowed.

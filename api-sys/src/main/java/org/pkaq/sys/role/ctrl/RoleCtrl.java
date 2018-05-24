@@ -12,6 +12,8 @@ import org.pkaq.sys.role.entity.RoleEntity;
 import org.pkaq.sys.role.entity.RoleModuleEntity;
 import org.pkaq.sys.role.entity.RoleUserEntity;
 import org.pkaq.sys.role.service.RoleService;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -90,6 +92,7 @@ public class RoleCtrl extends BaseCtrl<RoleService> {
 
     @PostMapping("/del")
     @ApiOperation(value = "根据ID删除/批量删除角色", response = Response.class)
+    @PreAuthorize("hasRole('ADMIN')")
     public Response delRole(@ApiParam(name = "ids", value = "[角色id]")
                             @RequestBody SingleArray<String> ids){
         if (null == ids || CollectionUtil.isEmpty(ids.getParam())){

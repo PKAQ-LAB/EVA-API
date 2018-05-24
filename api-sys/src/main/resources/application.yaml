@@ -1,7 +1,0 @@
-# for sys
-jwt:
-  header: Authorization
-  token-head: Bearer
-  sign: PKAQ
-  secert: aHR0cDovL3BrYXEub3Jn
-  ttl: 3600000

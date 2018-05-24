@@ -1,5 +1,6 @@
 package org.pkaq.security.domain;
 
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -10,6 +11,7 @@ import java.util.Collection;
  * @author: S.PKAQ
  * @Datetime: 2018/4/24 23:14
  */
+@Data
 public class JwtUser implements UserDetails {
     /**用户ID**/
     private final String id;
@@ -29,18 +31,8 @@ public class JwtUser implements UserDetails {
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
-    }
-
-    @Override
-    public String getPassword() {
-        return null;
-    }
-
-    @Override
     public String getUsername() {
-        return null;
+        return this.account;
     }
 
     @Override
@@ -57,6 +49,7 @@ public class JwtUser implements UserDetails {
     public boolean isCredentialsNonExpired() {
         return false;
     }
+
     @Override
     public boolean isEnabled() {
         return false;
