@@ -65,18 +65,6 @@ public class ExceptionAdvice {
         return new Response().failure(400, e.getMsg());
     }
     /**
-     *   500 - Internal Server Error.
-     * @param e 异常类型
-     * @return Response
-     */
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(Exception.class)
-    public Response handleException(Exception e) {
-        log.error("服务运行异常:"+e.getMessage());
-        e.printStackTrace();
-        return new Response().failure(500);
-    }
-    /**
      * 400异常.- 参数错误
      * @param e 异常类型
      * @return Response
@@ -109,5 +97,16 @@ public class ExceptionAdvice {
         log.warn("不支持当前媒体类型:"+e.getMessage());
         return new Response().failure(415);
     }
-
+    /**
+     *   500 - Internal Server Error.
+     * @param e 异常类型
+     * @return Response
+     */
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(Exception.class)
+    public Response handleException(Exception e) {
+        log.error("服务运行异常:"+e.getMessage());
+        e.printStackTrace();
+        return new Response().failure(500);
+    }
 }

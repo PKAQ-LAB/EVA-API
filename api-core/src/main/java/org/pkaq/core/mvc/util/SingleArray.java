@@ -1,5 +1,7 @@
 package org.pkaq.core.mvc.util;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -10,9 +12,10 @@ import java.util.ArrayList;
  * @author S.PKAQ
  */
 @Data
+@ApiModel("list接收对象")
 public class SingleArray<T> {
-    /** 对象数组 **/
+    @ApiModelProperty("对象数组")
     private ArrayList<T> param;
-    /** 状态字段 **/
+    @ApiModelProperty("状态字段")
     private String status;
 }
