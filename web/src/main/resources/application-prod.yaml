@@ -11,6 +11,7 @@ logging:
 # 数据源
 spring:
   datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
     url: jdbc:mysql://localhost:3306/jxc?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
     username: jxc
@@ -22,7 +23,6 @@ spring:
        config:
          enabled: true
       connectionProperties: config.decrypt=true;config.decrypt.key=MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKR1ENwsJ6hxA79M9d6nOjCl4MNXHPtb9cwOWLnmjYDFOx57yogXDBWp0QnGKs1qZbfyaM3X6hsyO/m/7yTj5zUCAwEAAQ==
-      driver-class-name: com.mysql.jdbc.Driver
 # 日志
 #mybatis
 mybatis-plus:
