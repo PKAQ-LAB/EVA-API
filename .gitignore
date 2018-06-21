@@ -9,3 +9,4 @@
 /web/build
 build
 /*.iml
+/docs/db/*.pdb
