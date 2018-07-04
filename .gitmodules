@@ -1,4 +1,0 @@
-[submodule "ui"]
-	path = ui
-	url = git@github.com:pkaq/ant-design-pro.git
-	branch = dev

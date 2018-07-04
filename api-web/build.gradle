@@ -1,0 +1,22 @@
+plugins {
+    id 'org.springframework.boot' version '2.0.3.RELEASE'
+    id "com.github.ben-manes.versions" version "0.20.0"
+}
+apply plugin: 'io.spring.dependency-management'
+jar {
+	enabled = true
+}
+bootJar {
+	mainClassName = 'org.pkaq.Booter'
+}
+description = """web"""
+// for sys
+compileJava.dependsOn(processResources)
+
+// 依赖配置
+dependencies {
+    compile project(":api-jxc")
+    compile project(":api-sys")
+
+    annotationProcessor  "org.springframework.boot:spring-boot-configuration-processor:${bootVersion}"
+}
