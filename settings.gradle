@@ -1,5 +1,5 @@
 rootProject.name = 'eva'
-include 'web'
+include 'api-web'
 include 'api-jxc'
 include 'api-core'
 include 'api-sys'

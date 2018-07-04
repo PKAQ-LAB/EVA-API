@@ -1,61 +1,47 @@
-技术栈
-- spring config
-- shiro
-- jwt
-- mybatis plus
-- druid
-- fastjson
+PKAQ Design => Ant Design Pro
 
-目录说明
--web：web接口
--ui：界面
--addon-swagger: 文档
+## 交流QQ群： 83864896
 
+运行前需要安装 
+- git
+- nodejs
+- yarn
 
-国际化支持
-```
-ctrl层通过 locale("key")) 获取相应国际化信息
-另外，通过此方式获取message内容可以统一管理message文本
-```
-
-实体类注解说明
-```
-@Data   -- lomobok 注解可以静态织入getter setter等
-@Alias("organization") -- 设置别名，可以在mybatis xml中直接使用别名
-@TableName("sys_organization") -- 当表名与实体名不一致时需显示指定表名
-
-@TableId -- 主键ID
-@TableField(exist = false) -- 虚拟列
-@TableField(condition = SqlCondition.LIKE) -- 列的默认查询模式
-```
-
-mybatis generator    
-```
-java -jar mybatis-generator-core-1.0.3.jar -configfile generatorConfig.xml -overwrite
-```
+需要补充得知识
+ - [es6语法](http://es6.ruanyifeng.com)
+ - [react入门](http://www.ruanyifeng.com/blog/2015/03/react.html)
+ - [react redux入门] (http://www.ruanyifeng.com/blog/2016/09/redux_tutorial_part_one_basic_usages.html)
+ - [react router入门] (http://www.ruanyifeng.com/blog/2016/05/react_router.html?utm_source=tool.lu)
+ - [saga入门] (https://www.jianshu.com/p/89ed2a01a3db)
 ---
-- 用户管理
-    - 登陆
-    - 退出
-    - jwt(v2)
-- 组织管理
-- 模块管理
-- 角色管理(v2)
-- 国际化（v2）
+目录说明   
+- dist: 打包目录   
+- mock： mock data   
+- public： 公共资源   
+- src   
+  - app 模块目录   
+  - assets 资源目录   
+  - core 框架核心   
+  - component  自定义组件      
+   - |- App： 高阶组件      
+   - |- Page： 内页包装器       
 
-druid 
-  - 访问限制
-  - 链接用户名密码加密
-- https
+TIP: - 代码里针对namespace和model文件名进行了忽略大小写的处理
+     - reducer名字和effects名字不要重复,否则在调用的时候会出现混乱(优先effects>reducer)
 
-答疑：
-- 如果IDEA 提示mapper注入无法找到bean，请在mapper上添加@Repository注解
+>问题
+- 不支model花式命名：当期版本model的文件名必须与所指定的namespace一致，因为router.js中是通过读取文件名来判断已经注册的model
+  中是否存在该model的，又由于存在namespace的唯一性约束，所以当两者不一致时无法通过此种方式判断对应文件名的model是否已经注册导致异常
+- Mirror Site in China: http://ant-design-pro.gitee.io
 
-TODO
-- flowable
-- jwt
-- truelicense
-- 业务日志注解
-- 特殊接口IP拦截注解
 
-- 订单号 订单池
+## Usage
+```bash
+$ git clone 
+$ yarn install
+$ yarn start         # visit http://localhost:8000
+```
+// 格式化代码
+yarn run prettier
+
+![snapshot](snapshot.jpg)
