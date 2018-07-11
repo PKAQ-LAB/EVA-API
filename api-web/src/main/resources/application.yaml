@@ -23,6 +23,9 @@ spring:
          enabled: true
       connectionProperties: config.decrypt=true;config.decrypt.key=MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKR1ENwsJ6hxA79M9d6nOjCl4MNXHPtb9cwOWLnmjYDFOx57yogXDBWp0QnGKs1qZbfyaM3X6hsyO/m/7yTj5zUCAwEAAQ==
       driver-class-name: com.mysql.jdbc.Driver
+  devtools:
+    livereload:
+      enabled: true
 # 日志
 #mybatis
 mybatis-plus:

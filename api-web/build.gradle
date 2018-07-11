@@ -17,6 +17,6 @@ compileJava.dependsOn(processResources)
 dependencies {
     compile project(":api-jxc")
     compile project(":api-sys")
-
+    compile "org.springframework.boot:spring-boot-devtools"
     annotationProcessor  "org.springframework.boot:spring-boot-configuration-processor:${bootVersion}"
 }
