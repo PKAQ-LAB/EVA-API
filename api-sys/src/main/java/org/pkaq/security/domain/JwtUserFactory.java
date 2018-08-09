@@ -15,7 +15,7 @@ public final class JwtUserFactory {
 
     public static JwtUser create(UserEntity user) {
         return new JwtUser(
-                user.getId(),
+                String.valueOf(user.getId()),
                 user.getAccount(),
                 user.getPassword(),
                 mapToGrantedAuthorities(user.getRoles().stream().map(RoleEntity::getCode).collect(Collectors.toList()))

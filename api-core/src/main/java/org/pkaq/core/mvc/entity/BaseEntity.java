@@ -13,9 +13,9 @@ import java.sql.Date;
  * @Datetime: 2018/3/13 22:48
  */
 @Data
-public abstract class BaseEntity implements Entity, Serializable {
+public abstract class BaseEntity<T> implements Entity, Serializable {
     @TableId
-    private String id;
+    private T id;
     @ApiModelProperty("创建人")
     private String createBy;
     @ApiModelProperty("创建时间")

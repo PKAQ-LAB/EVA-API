@@ -5,13 +5,14 @@ ext {
     fastjson = "1.2.47"
     mybatis_plus = "2.3"
     mybatis_plus_starter = "1.0.5"
-    lombok = "1.18.0"
+    lombok = "1.18.2"
     swagger = "2.9.0"
     hutool = "4.1.1"
     p3c = "1.3.5"
     jaxb_api = "2.3.0"
     jjwt = "0.9.0"
     auth0 = "3.3.0"
+    sharding_jdbc = "3.0.0.M2"
 }
 allprojects {
     group = 'org.pkaq'

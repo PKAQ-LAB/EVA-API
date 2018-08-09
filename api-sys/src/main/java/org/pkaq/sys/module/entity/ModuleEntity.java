@@ -21,7 +21,7 @@ import java.util.List;
 @TableName("sys_module")
 @EqualsAndHashCode(callSuper = true)
 @ApiModel("模块管理")
-public class ModuleEntity extends BaseEntity implements Serializable {
+public class ModuleEntity extends BaseEntity<String> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("模块名称")

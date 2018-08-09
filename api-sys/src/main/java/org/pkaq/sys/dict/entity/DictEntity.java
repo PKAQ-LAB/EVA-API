@@ -21,7 +21,7 @@ import java.util.List;
 @TableName("sys_dict")
 @EqualsAndHashCode(callSuper = true)
 @ApiModel("字典管理")
-public class DictEntity extends BaseEntity {
+public class DictEntity extends BaseEntity<String> {
     private static final long serialVersionUID = 1L;
     @NotBlank(message = "编码不允许为空")
     @ApiModelProperty("字典分类编码")

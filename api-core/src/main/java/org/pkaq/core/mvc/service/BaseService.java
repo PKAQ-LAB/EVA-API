@@ -11,6 +11,8 @@ import org.pkaq.core.mvc.util.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * service 基类
  * 抛出exception异常时 回滚事务
@@ -36,13 +38,22 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends BaseEntity>
      * @param entity 实体类对象
      */
     protected void merge(T entity){
-        if (StrUtil.isBlank(entity.getId())){
+        if (entity.getId() != null){
             this.mapper.insert(entity);
         } else {
             this.mapper.updateById(entity);
         }
     }
 
+    /**
+     * 查询所有
+     * @param entity
+     * @return
+     */
+    protected List<T> list(T entity){
+        Wrapper<T> wrapper = new EntityWrapper<>(entity);
+        return this.mapper.selectList(wrapper);
+    }
     /**
      * 按分页查询
      * @param entity    目标实体类
@@ -74,9 +85,11 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends BaseEntity>
         Pagination pagination = new Pagination();
         pagination.setCurrent(page);
         pagination.setSize(size);
+
         Page<T> pager = new Page<>();
+        pager.setData(this.mapper.selectPage(pagination,wrapper));
         BeanUtil.copyProperties(pagination, pager);
-        this.mapper.selectPage(pagination,wrapper);
+
         return pager;
     }
 

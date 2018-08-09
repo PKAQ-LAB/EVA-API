@@ -22,7 +22,7 @@ import java.util.List;
 @TableName("sys_role")
 @EqualsAndHashCode(callSuper = true)
 @ApiModel("角色管理")
-public class RoleEntity extends BaseEntity {
+public class RoleEntity extends BaseEntity<String> {
     @TableField(condition = SqlCondition.LIKE)
     @ApiModelProperty("角色名称")
     private String name;

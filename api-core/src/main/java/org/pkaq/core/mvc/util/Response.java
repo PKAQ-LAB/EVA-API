@@ -2,6 +2,7 @@ package org.pkaq.core.mvc.util;
 
 import lombok.Data;
 import org.pkaq.core.enums.HttpCodeEnum;
+import org.pkaq.core.enums.ResponseEnumm;
 
 @Data
 public class Response{
@@ -9,9 +10,6 @@ public class Response{
     private boolean success;
     private String statusText;
     private Object data;
-
-    private transient final String OPERATE_SUCCESS = "操作成功";
-    private transient final String OPERATE_FAILED = "操作失败";
 
     public Response() {
 
@@ -27,7 +25,7 @@ public class Response{
      */
     public Response success(){
         this.success = true;
-        this.statusText = this.OPERATE_SUCCESS;
+        this.statusText = ResponseEnumm.OPERATE_SUCCESS.getName();
         this.status = HttpCodeEnum.QUERY_SUCCESS.getIndex();
         return this;
     }
@@ -39,7 +37,7 @@ public class Response{
     public Response success(Object data) {
         this.data = data;
         this.success = true;
-        this.statusText = this.OPERATE_SUCCESS;
+        this.statusText = ResponseEnumm.OPERATE_SUCCESS.getName();
         this.status = HttpCodeEnum.QUERY_SUCCESS.getIndex();
         return this;
     }
@@ -51,7 +49,7 @@ public class Response{
      */
     public Response failure(Object data) {
         this.data = data;
-        this.statusText = this.OPERATE_FAILED;
+        this.statusText = ResponseEnumm.OPERATE_FAILED.getName();
         this.success = false;
         this.status = HttpCodeEnum.REQEUST_FAILURE.getIndex();
         return this;

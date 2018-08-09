@@ -22,7 +22,7 @@ import java.util.List;
 @TableName("sys_organization")
 @EqualsAndHashCode(callSuper = true)
 @ApiModel("组织管理")
-public class OrganizationEntity extends BaseEntity{
+public class OrganizationEntity extends BaseEntity<String>{
     private static final long serialVersionUID = 1L;
 
     @TableField(condition = SqlCondition.LIKE)

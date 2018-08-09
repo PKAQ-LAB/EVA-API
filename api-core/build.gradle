@@ -13,7 +13,8 @@ dependencies {
             "com.baomidou:mybatis-plus-core:${mybatis_plus}",
             "com.baomidou:mybatisplus-spring-boot-starter:${mybatis_plus_starter}",
             // hutool
-            "cn.hutool:hutool-all:${hutool}"
+            "cn.hutool:hutool-all:${hutool}",
+            "io.shardingsphere:sharding-jdbc:${sharding_jdbc}"
             // druid数据源
     compile("com.alibaba:druid-spring-boot-starter:${druid}"){
             exclude group: 'com.alibaba', module: 'jconsole'

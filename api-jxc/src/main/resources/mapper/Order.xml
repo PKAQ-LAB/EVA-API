@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.pkaq.sys.instock.mapper.OrderMapper">
+  <resultMap id="BaseResultMap" type="order">
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="month" jdbcType="DATE" property="month" />
+    <result column="note" jdbcType="VARCHAR" property="note" />
+  </resultMap>
+</mapper>

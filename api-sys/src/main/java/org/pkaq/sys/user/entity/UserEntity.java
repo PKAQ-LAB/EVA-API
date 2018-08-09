@@ -28,7 +28,7 @@ import java.util.List;
 @TableName("sys_user_info")
 @EqualsAndHashCode(callSuper = true)
 @ApiModel("用户管理")
-public class UserEntity extends BaseEntity implements Serializable {
+public class UserEntity extends BaseEntity<String> implements Serializable {
     @ApiModelProperty("编号")
     private String code;
     @ApiModelProperty("所属部门")
