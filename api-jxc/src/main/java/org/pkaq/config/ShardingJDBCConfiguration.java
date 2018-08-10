@@ -4,14 +4,12 @@ import com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean;
 import io.shardingsphere.core.api.ShardingDataSourceFactory;
 import io.shardingsphere.core.api.config.ShardingRuleConfiguration;
 import io.shardingsphere.core.api.config.TableRuleConfiguration;
-import lombok.Data;
+import io.shardingsphere.core.api.config.strategy.StandardShardingStrategyConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Primary;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
@@ -46,7 +44,6 @@ public class ShardingJDBCConfiguration {
         //分表策略
         shardingRuleConfig.getTableRuleConfigs().add(getOrderTableRuleConfiguration());
         //绑定表规则列表
-        shardingRuleConfig.getBindingTableGroups().add("T_ORDER${0..2}");
         this.shardingDataSource = ShardingDataSourceFactory.createDataSource(createDataSourceMap(), shardingRuleConfig,  new HashMap<>(1), new Properties());
     }
     /**
@@ -54,14 +51,18 @@ public class ShardingJDBCConfiguration {
      * @return
      */
     private TableRuleConfiguration getOrderTableRuleConfiguration() {
-        TableRuleConfiguration result = new TableRuleConfiguration();
+        TableRuleConfiguration rule = new TableRuleConfiguration();
         //逻辑表名称
-        result.setLogicTable("T_ORDER");
+        rule.setLogicTable("T_ORDER");
         //源名 + 表名
-        result.setActualDataNodes("ds0.T_ORDER${0..2}");
+        rule.setActualDataNodes("ds0.T_ORDER_$->{2018..2019}_$->{['01','08','12']}");
+        // 表分片策略
+        StandardShardingStrategyConfiguration strategyConfiguration =
+                new StandardShardingStrategyConfiguration("month", new MonthTableShardingAlgorithm());
+        rule.setTableShardingStrategyConfig(strategyConfiguration);
         //自增列名称
-        result.setKeyGeneratorColumnName("id");
-        return result;
+        rule.setKeyGeneratorColumnName("id");
+        return rule;
     }
 
     private Map<String, DataSource> createDataSourceMap() {
