@@ -89,12 +89,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 // 允许对于网站静态资源的无授权访问
                 .antMatchers(
                         HttpMethod.GET,
                         "/",
-                        "/order/list",
                         "/*.html",
                         "/favicon.ico",
                         "/**/*.html",
@@ -109,6 +107,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 限定访问IP
                 .antMatchers("/druid/**").hasIpAddress("127.0.0.1")
                 // 除上面外的所有请求全部需要鉴权认证
+                // FIXME 此处配置会导致@PermitAll @DenyAll注解无效
                 .anyRequest().authenticated();
 
         // 添加JWT filter

@@ -1,5 +1,6 @@
 package org.pkaq.sys.order.service;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.pkaq.core.mvc.service.BaseActiveRecordService;
 import org.pkaq.core.mvc.service.BaseService;
 import org.pkaq.sys.order.entity.OrderEntity;
@@ -21,14 +22,15 @@ public class OrderService{
     private OrderMapper mapper;
 
     public void save(OrderEntity order) {
-        OrderEntity orderEntity = new OrderEntity();
-        orderEntity.setNote(Math.random()+"");
-        orderEntity.setMonth(new Date());
         this.mapper.insert(order);
     }
 
     public List<OrderEntity> list(){
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>");
-        return this.mapper.selectList(null);
+        EntityWrapper entityWrapper = new EntityWrapper();
+        OrderEntity orderEntity = new OrderEntity();
+        orderEntity.setMonth(new Date());
+
+        entityWrapper.setEntity(orderEntity);
+        return this.mapper.selectList(entityWrapper);
     }
 }

@@ -4,9 +4,7 @@ import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
-import org.pkaq.core.mvc.entity.BaseEntity;
 import org.pkaq.core.mvc.entity.Entity;
 
 import java.util.Date;
@@ -19,7 +17,7 @@ import java.util.Date;
 @TableName("t_order")
 public class OrderEntity implements Entity {
 
-    @TableId(type = IdType.AUTO)
+    @TableId(type = IdType.INPUT)
     private Integer id;
 
     private Date month;
