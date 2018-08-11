@@ -26,11 +26,6 @@ public class MonthTableShardingAlgorithm implements PreciseShardingAlgorithm<Dat
         String tableExt = DateUtil.format(shardingValue.getValue(), "yyyy_MM");
 
         for (String availableTableName : availableTargetNames) {
-
-            System.out.println("------------->");
-            System.out.println(tableExt);
-            System.out.println(availableTableName);
-
             if (availableTableName.endsWith(tableExt)) {
                 return availableTableName;
             }
