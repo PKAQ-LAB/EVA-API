@@ -21,7 +21,7 @@ yarn start
     |-api-sys : 基础管理 + 鉴权   
     |-api-jxc : 进销存业务管理   
     ------- 可选增强包 -------
-    |-addon-swagger : 插件配置,swagger支持   
+    |-addon-mongo
     |-docs : 文档相关   
         |-config : 环境配置   
         |-generator : mybatis generator 

@@ -1,3 +1,7 @@
 [submodule "web"]
 	path = web
 	url = git@github.com:pkaq/ant-design-pro.git
+[submodule "mobile"]
+	path = mobile
+	url = git@github.com:pkaq/AVA.git
+	branch = master
