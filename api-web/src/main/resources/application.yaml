@@ -6,15 +6,15 @@ server:
     uri-encoding: utf-8
 debug: false
 logging:
-  config:
+  pattern:
     level: debug
 # 数据源
 spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     url: jdbc:mysql://localhost:3306/jxc?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
-    username: jxc
-    password: DWl/QiLkfTx005bkLYs3xzogaoo+k8iSh6Oa4spQ6FroZ6aEUJMK5Pkd8UVoi2Qiy+ArLkleRQ75ZgeX1tG0Vg==
+    username: ENC(dghf0DZZJA+vQ95xgHz5iA==)
+    password: ENC(TNbKfi0lHjpfPcdepEnR5oKHikoDfVr+/amPonxytqK5u+B8Pid7k4hmlGUOhv+6QxEuB3gjJPPn7L8ishuFYym/Gr59qRO6Uf5/XiyT+3FUTujtyybxUjTyo4CO1wKe+zubp27QVYM=)
       # 公钥
     # 配置 connection-properties，启用加密，配置公钥。
     druid:
@@ -41,8 +41,6 @@ mybatis-plus:
     db-column-underline: true
     #刷新mapper 调试神器
     refresh-mapper: true
-    # SQL 解析缓存，开启后多租户 @SqlParser 注解生效
-    sql-parser-cache: true
   configuration:
     map-underscore-to-camel-case: true
     cache-enabled: false
@@ -53,3 +51,6 @@ jwt:
   sign: PKAQ
   secert: aHR0cDovL3BrYXEub3Jn
   ttl: 3600000
+jasypt:
+  encryptor:
+    password: eva

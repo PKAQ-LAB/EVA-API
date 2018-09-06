@@ -13,6 +13,7 @@ ext {
     jjwt = "0.9.0"
     auth0 = "3.3.0"
     sharding_jdbc = "3.0.0.M2"
+    jasypt = "2.1.0"
 }
 allprojects {
     group = 'org.pkaq'
@@ -44,6 +45,7 @@ subprojects {
     }
 
     dependencies {
+       compile "com.github.ulisesbocchio:jasypt-spring-boot-starter:${jasypt}"
        pmd "com.alibaba.p3c:p3c-pmd:${p3c}"
        compileOnly "org.projectlombok:lombok:${lombok}"
      }
