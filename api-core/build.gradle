@@ -17,11 +17,6 @@ dependencies {
             // hutool
             "cn.hutool:hutool-all:${hutool}",
             "io.shardingsphere:sharding-jdbc:${sharding_jdbc}"
-            // druid数据源
-    compile("com.alibaba:druid-spring-boot-starter:${druid}"){
-            exclude group: 'com.alibaba', module: 'jconsole'
-            exclude group: 'com.alibaba', module: 'tools'
-    }
     // 鉴权
     compile "org.springframework.boot:spring-boot-starter-security:${bootVersion}",
             //Spring容器在创建entityManagerFactory的时候，需要使用 JAXB 的类，而JDK9之后，JAXB 的类将不再自动包含到classpath下

@@ -1,6 +1,5 @@
 ext {
     bootVersion = "2.0.4.RELEASE"
-    druid = "1.1.10"
     mysql = "8.0.11"
     fastjson = "1.2.47"
     mybatis_plus = "2.3"
@@ -12,7 +11,7 @@ ext {
     jaxb_api = "2.3.0"
     jjwt = "0.9.0"
     auth0 = "3.3.0"
-    sharding_jdbc = "3.0.0.M2"
+    sharding_jdbc = "3.0.0.M3"
     jasypt = "2.1.0"
 }
 allprojects {
