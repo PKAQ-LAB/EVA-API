@@ -1,7 +1,7 @@
 description = """jxc"""
 // 依赖配置
 dependencies {
-    compile project(":api-core")
-
+    compile project(":api-core"),
+            "io.shardingsphere:sharding-jdbc:${sharding_jdbc}"
     testCompile "org.springframework.boot:spring-boot-starter-test:${bootVersion}"
 }

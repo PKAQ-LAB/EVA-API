@@ -13,9 +13,10 @@ logging:
 spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:mysql://localhost:3306/jxc?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    url: jdbc:p6spy:mysql://localhost:3306/jxc?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
     username: ENC(dghf0DZZJA+vQ95xgHz5iA==)
     password: ENC(Yyk5bWPsCApaZ1yceumO4A==)
+    driver-class-name: com.p6spy.engine.spy.P6SpyDriver
   devtools:
     livereload:
       enabled: true
@@ -36,6 +37,7 @@ mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
     cache-enabled: false
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
 # for sys
 jwt:
   header: Authorization
