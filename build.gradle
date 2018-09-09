@@ -13,6 +13,8 @@ ext {
     auth0 = "3.3.0"
     sharding_jdbc = "3.0.0.M3"
     jasypt = "2.1.0"
+    p6spy = "3.7.0"
+    flyway = "5.1.4"
 }
 allprojects {
     group = 'org.pkaq'
