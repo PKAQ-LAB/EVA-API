@@ -5,6 +5,7 @@ import com.p6spy.engine.spy.appender.MessageFormattingStrategy;
 import java.time.LocalDateTime;
 
 /**
+ * P6SPY的自定义日志格式实现类
  * @author: S.PKAQ
  * @Datetime: 2018/9/8 22:51
  */

@@ -17,7 +17,14 @@ yarn start
     |-mobile : 手机端工程  
     |-api-web : 单体工程整合层,可将任意api-*工程接入统一发布   
     ------- 服务包 -------
-    |-api-core : 核心包-框架核心   
+    |-api-core : 核心包-框架核心    
+        |-src/main/resources   
+            |-db/migration : flyway脚本   
+            |-spy.properties : p6spy脚本   
+            |-mapper : mybatis sql文件   
+            |-i18n : 国际化文件  
+            |-logback : 日志配置
+            |-mybatis-config : myabtis配置   
     |-api-sys : 基础管理 + 鉴权   
     |-api-jxc : 进销存业务管理   
     ------- 可选增强包 -------
