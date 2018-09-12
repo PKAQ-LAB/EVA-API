@@ -31,6 +31,14 @@ yarn start
     |-addon-mongo
     |-docs : 文档相关   
         |-config : 环境配置   
-        |-generator : mybatis generator 
+        |-generator : mybatis generator   
+        
+-----------------------------------------------------------------   
 
-    ​
+ - 连接池: Hikari
+ - 配置加密: P6SPY
+ - 数据库版本管理: Flyway
+ - json: fastjson
+ - 日志: logback
+ - 工具包: hutool
+ - orm: mybatis, mybatis-plus
