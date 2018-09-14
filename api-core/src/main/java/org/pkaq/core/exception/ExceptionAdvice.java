@@ -8,6 +8,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -109,6 +110,17 @@ public class ExceptionAdvice {
     public Response handleHttpMediaTypeNotSupportedException(Exception e) {
         log.warn("不支持当前媒体类型:"+e.getMessage());
         return new Response().failure(415);
+    }
+    /**
+     * 参数类型错误
+     * @param e 异常类型
+     * @return Response
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler({IllegalArgumentException.class, MissingServletRequestParameterException.class})
+    public Response handleIllegalArgumentException(Exception e) {
+        log.warn("参数类型错误：不支持当前请求的参数类型:"+e.getMessage());
+        return new Response().failure(400);
     }
     /**
      *   500 - Internal Server Error.
