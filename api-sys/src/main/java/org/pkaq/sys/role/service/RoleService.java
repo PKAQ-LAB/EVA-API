@@ -1,9 +1,8 @@
 package org.pkaq.sys.role.service;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.baomidou.mybatisplus.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import org.pkaq.core.annotation.BizLog;
 import org.pkaq.core.enums.LockEnumm;
 import org.pkaq.core.enums.StatusEnumm;
@@ -74,7 +73,7 @@ public class RoleService extends BaseService<RoleMapper, RoleEntity> {
     public void updateRole(ArrayList<String> ids, String lock) {
         RoleEntity role = new RoleEntity();
         role.setLocked(LockEnumm.LOCK.getIndex().equals(lock));
-        Wrapper<RoleEntity> wrapper = new EntityWrapper<>();
+        QueryWrapper<RoleEntity> wrapper = new QueryWrapper<>();
         wrapper.in("id", CollectionUtil.join(ids,","));
 
         this.mapper.update(role, wrapper);
@@ -109,7 +108,7 @@ public class RoleService extends BaseService<RoleMapper, RoleEntity> {
      * @return
      */
     public boolean checkUnique(RoleEntity role) {
-        Wrapper<RoleEntity> entityWrapper = new EntityWrapper<>();
+        QueryWrapper<RoleEntity> entityWrapper = new QueryWrapper<>();
         entityWrapper.eq("code", role.getCode());
         int records = this.mapper.selectCount(entityWrapper);
         return records>0;
@@ -126,7 +125,7 @@ public class RoleService extends BaseService<RoleMapper, RoleEntity> {
         moduleEntity.setStatus(StatusEnumm.ENABLE.getIndex());
         List<ModuleEntity> moduleList = this.moduleMapper.listModule(null, moduleEntity);
         // 获取已选的模块
-        EntityWrapper<RoleModuleEntity> wrapper = new EntityWrapper<>();
+        QueryWrapper<RoleModuleEntity> wrapper = new QueryWrapper<>();
         wrapper.setEntity(roleModule);
         // 只返回moduleId
         List<RoleModuleEntity> roleModuleList = this.roleModuleMapper.selectList(wrapper);
@@ -148,7 +147,7 @@ public class RoleService extends BaseService<RoleMapper, RoleEntity> {
      * 保存角色关系表
      */
     public void saveModule(RoleEntity role) {
-        Wrapper<RoleModuleEntity> wrapper = new EntityWrapper<>();
+        QueryWrapper<RoleModuleEntity> wrapper = new QueryWrapper<>();
         wrapper.eq("role_id", role.getId());
         // 删除原有角色
         this.roleModuleMapper.delete(wrapper);
@@ -174,7 +173,7 @@ public class RoleService extends BaseService<RoleMapper, RoleEntity> {
 
         Page<UserEntity> pager = this.userService.listUser(userEntity, page);
         // 获取已选的模块
-        EntityWrapper<RoleUserEntity> wrapper = new EntityWrapper<>();
+        QueryWrapper<RoleUserEntity> wrapper = new QueryWrapper<>();
         wrapper.setEntity(roleUser);
         // 只返回moduleId
         List<RoleUserEntity> roleUserList = this.roleUserMapper.selectList(wrapper);
@@ -195,7 +194,7 @@ public class RoleService extends BaseService<RoleMapper, RoleEntity> {
      * 保存角色关系表
      */
     public void saveUser(RoleEntity role) {
-        Wrapper<RoleUserEntity> wrapper = new EntityWrapper<>();
+        QueryWrapper<RoleUserEntity> wrapper = new QueryWrapper<>();
         wrapper.eq("role_id", role.getId());
         // 删除原有角色
         this.roleUserMapper.delete(wrapper);

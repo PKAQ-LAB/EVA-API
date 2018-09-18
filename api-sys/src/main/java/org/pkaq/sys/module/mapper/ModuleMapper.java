@@ -1,6 +1,6 @@
 package org.pkaq.sys.module.mapper;
 
-import com.baomidou.mybatisplus.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.pkaq.sys.module.entity.ModuleEntity;
@@ -16,7 +16,7 @@ import java.util.List;
  */
 @Mapper
 @Repository
-public interface ModuleMapper extends BaseMapper<ModuleEntity>{
+public interface ModuleMapper extends BaseMapper<ModuleEntity> {
     /**
      * 查询所有符合条件的树
      * @param condition 包含查询条件的实体类

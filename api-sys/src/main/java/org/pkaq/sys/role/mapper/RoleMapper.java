@@ -1,9 +1,8 @@
 package org.pkaq.sys.role.mapper;
 
-import com.baomidou.mybatisplus.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.pkaq.sys.role.entity.RoleEntity;
-import org.pkaq.sys.role.entity.RoleUserEntity;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,7 +14,7 @@ import java.util.List;
  */
 @Mapper
 @Repository
-public interface RoleMapper extends BaseMapper<RoleEntity>{
+public interface RoleMapper extends BaseMapper<RoleEntity> {
     /**
      * 根据UserID查询角色权限
      * @param userId

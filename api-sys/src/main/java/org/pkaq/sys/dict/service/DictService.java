@@ -1,7 +1,7 @@
 package org.pkaq.sys.dict.service;
 
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.pkaq.core.exception.ParamException;
 import org.pkaq.core.mvc.service.BaseService;
 import org.pkaq.sys.dict.entity.DictEntity;
@@ -52,7 +52,7 @@ public class DictService extends BaseService<DictMapper, DictEntity> {
         // 校验code唯一性
         DictEntity conditionEntity = new DictEntity();
         conditionEntity.setCode(dictEntity.getCode());
-        conditionEntity = this.mapper.selectOne(conditionEntity);
+        conditionEntity = this.mapper.selectOne(new QueryWrapper<>(conditionEntity));
 
         if (StrUtil.isBlank(id)){
             if (null != conditionEntity){
@@ -75,7 +75,7 @@ public class DictService extends BaseService<DictMapper, DictEntity> {
      * @return
      */
     public boolean checkUnique(DictEntity dictEntity) {
-        int records = this.mapper.selectCount(new EntityWrapper<>(dictEntity));
+        int records = this.mapper.selectCount(new QueryWrapper<>(dictEntity));
         return records>0;
     }
 }

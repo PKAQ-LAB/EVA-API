@@ -2,9 +2,7 @@ package org.pkaq.core.mvc.service;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.mapper.BaseMapper;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.pkaq.core.mvc.entity.BaseActiveEntity;
 import org.pkaq.core.mvc.entity.BaseLineActiveEntity;
 import org.springframework.beans.factory.annotation.Autowired;

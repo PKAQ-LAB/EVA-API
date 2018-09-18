@@ -2,8 +2,8 @@ package org.pkaq.sys.module.service;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.pkaq.core.mvc.service.BaseService;
 import org.pkaq.core.mvc.util.Response;
 import org.pkaq.sys.module.entity.ModuleEntity;
@@ -36,7 +36,7 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
     public Response deleteModule(ArrayList<String> ids){
         Response response = new Response();
         // 检查是否存在子节点，存在子节点不允许删除
-        EntityWrapper<ModuleEntity> oew = new EntityWrapper<>();
+        QueryWrapper<ModuleEntity> oew = new QueryWrapper<>();
         oew.setEntity( new ModuleEntity() );
         oew.in("parent_ID", ids);
 
@@ -157,7 +157,7 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
      * @return
      */
     public boolean checkUnique(ModuleEntity module) {
-        Wrapper<ModuleEntity> entityWrapper = new EntityWrapper<>();
+        QueryWrapper<ModuleEntity> entityWrapper = new QueryWrapper<>();
         entityWrapper.eq("path", module.getPath());
         entityWrapper.eq("parent_id", module.getParentId());
 

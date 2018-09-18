@@ -12,8 +12,7 @@ dependencies {
             // json
             "com.alibaba:fastjson:${fastjson}",
             // mybatis
-            "com.baomidou:mybatis-plus-core:${mybatis_plus}",
-            "com.baomidou:mybatisplus-spring-boot-starter:${mybatis_plus_starter}",
+            "com.baomidou:mybatis-plus-boot-starter:${mybatis_plus_starter}",
             // hutool
             "cn.hutool:hutool-all:${hutool}",
             // p6spy

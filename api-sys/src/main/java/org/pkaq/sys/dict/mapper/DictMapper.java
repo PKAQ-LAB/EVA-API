@@ -1,6 +1,6 @@
 package org.pkaq.sys.dict.mapper;
 
-import com.baomidou.mybatisplus.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.pkaq.sys.dict.entity.DictEntity;
 import org.springframework.stereotype.Repository;
@@ -13,7 +13,7 @@ import java.util.List;
  */
 @Mapper
 @Repository
-public interface DictMapper extends BaseMapper<DictEntity>{
+public interface DictMapper extends BaseMapper<DictEntity> {
     /**
      * 查询所有符合条件的树
      * @return 符合查询条件的List

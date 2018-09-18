@@ -1,6 +1,6 @@
 package org.pkaq.sys.organization.mapper;
 
-import com.baomidou.mybatisplus.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.pkaq.sys.organization.entity.OrganizationEntity;
@@ -14,7 +14,7 @@ import java.util.List;
  */
 @Mapper
 @Repository
-public interface OrganizationMapper extends BaseMapper<OrganizationEntity>{
+public interface OrganizationMapper extends BaseMapper<OrganizationEntity> {
     /**
      * 查询所有符合条件的树
      * @param condition 包含查询条件的实体类

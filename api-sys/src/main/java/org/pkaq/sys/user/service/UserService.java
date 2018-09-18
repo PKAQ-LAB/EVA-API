@@ -2,8 +2,7 @@ package org.pkaq.sys.user.service;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.pkaq.core.annotation.BizLog;
 import org.pkaq.core.enums.LockEnumm;
 import org.pkaq.core.mvc.service.BaseService;
@@ -42,7 +41,7 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
         String pwd = userEntity.getPassword();
         UserEntity ue = new UserEntity();
         ue.setAccount(userEntity.getAccount());
-        ue = this.mapper.selectOne(ue);
+        ue = this.mapper.selectOne(new QueryWrapper<>(ue));
         // 签发token
         // TODO 根据用户名密码查询权限信息 存入redis
         if(null != ue && passwordEncoder.matches(pwd, ue.getPassword())){
@@ -78,7 +77,7 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
     public void updateUser(ArrayList<String> ids, String lock) {
         UserEntity user = new UserEntity();
         user.setLocked(LockEnumm.LOCK.getIndex().equals(lock));
-        Wrapper<UserEntity> wrapper = new EntityWrapper<>();
+        QueryWrapper<UserEntity> wrapper = new QueryWrapper<>();
         wrapper.in("id",CollectionUtil.join(ids,","));
 
         this.mapper.update(user, wrapper);
@@ -116,7 +115,7 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
      * @return
      */
     public boolean checkUnique(UserEntity user) {
-        Wrapper<UserEntity> entityWrapper = new EntityWrapper<>();
+        QueryWrapper<UserEntity> entityWrapper = new QueryWrapper<>();
         entityWrapper.like("code", user.getCode());
         if (StrUtil.isNotBlank(user.getCode()) && StrUtil.isNotBlank(user.getAccount())){
             entityWrapper.or();

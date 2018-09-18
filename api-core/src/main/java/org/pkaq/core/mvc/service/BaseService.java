@@ -1,11 +1,10 @@
 package org.pkaq.core.mvc.service;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.mapper.BaseMapper;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.baomidou.mybatisplus.plugins.pagination.Pagination;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import javafx.scene.control.Pagination;
 import org.pkaq.core.mvc.entity.BaseEntity;
 import org.pkaq.core.mvc.util.Page;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +50,7 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends BaseEntity>
      * @return
      */
     protected List<T> list(T entity){
-        Wrapper<T> wrapper = new EntityWrapper<>(entity);
+        Wrapper<T> wrapper = new QueryWrapper<>(entity);
         return this.mapper.selectList(wrapper);
     }
     /**
@@ -63,13 +62,13 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends BaseEntity>
     protected Page<T> listPage(T entity, Integer page) {
         page = null != page ? page : 1;
         // 查询条件
-        Wrapper<T> wrapper = new EntityWrapper<>(entity);
+        Wrapper<T> wrapper = new QueryWrapper<>(entity);
         // 分页条件
-        Pagination pagination = new Pagination();
+        com.baomidou.mybatisplus.extension.plugins.pagination.Page pagination = new com.baomidou.mybatisplus.extension.plugins.pagination.Page();
         pagination.setCurrent(page);
         // 分页查询
         Page<T> pager = new Page<>();
-        pager.setData(this.mapper.selectPage(pagination,wrapper));
+        pager.setData(this.mapper.selectPage(pagination,wrapper).getRecords());
         BeanUtil.copyProperties(pagination, pager);
         return pager;
     }
@@ -81,16 +80,15 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends BaseEntity>
      * @return          分页模型类
      */
     protected Page<T> listPage(T entity, Integer page, Integer size) {
-        Wrapper<T> wrapper = new EntityWrapper<>(entity);
-        Pagination pagination = new Pagination();
+        Wrapper<T> wrapper = new QueryWrapper<>(entity);
+        com.baomidou.mybatisplus.extension.plugins.pagination.Page pagination = new com.baomidou.mybatisplus.extension.plugins.pagination.Page();
         pagination.setCurrent(page);
         pagination.setSize(size);
 
         Page<T> pager = new Page<>();
-        pager.setData(this.mapper.selectPage(pagination,wrapper));
+        pager.setData(this.mapper.selectPage(pagination,wrapper).getRecords());
         BeanUtil.copyProperties(pagination, pager);
 
         return pager;
     }
-
 }

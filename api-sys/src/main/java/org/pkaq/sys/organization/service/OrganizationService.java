@@ -2,8 +2,8 @@ package org.pkaq.sys.organization.service;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.pkaq.core.mvc.service.BaseService;
 import org.pkaq.core.mvc.util.Response;
 import org.pkaq.sys.organization.entity.OrganizationEntity;
@@ -36,7 +36,7 @@ public class OrganizationService extends BaseService<OrganizationMapper, Organiz
     public Response deleteOrg(ArrayList<String> ids){
         Response response = null;
         // 检查是否存在子节点，存在子节点不允许删除
-        EntityWrapper<OrganizationEntity> oew = new EntityWrapper<>();
+        QueryWrapper<OrganizationEntity> oew = new QueryWrapper<>();
         oew.setEntity( new OrganizationEntity() );
         oew.in("parent_ID", ids);
 
@@ -163,7 +163,7 @@ public class OrganizationService extends BaseService<OrganizationMapper, Organiz
      * @return
      */
     public boolean checkUnique(OrganizationEntity organization) {
-        Wrapper<OrganizationEntity> entityWrapper = new EntityWrapper<>();
+        QueryWrapper<OrganizationEntity> entityWrapper = new QueryWrapper<>();
         entityWrapper.eq("code", organization.getCode());
         int records = this.mapper.selectCount(entityWrapper);
         return records > 0;
