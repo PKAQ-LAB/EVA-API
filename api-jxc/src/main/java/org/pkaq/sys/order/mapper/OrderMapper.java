@@ -1,8 +1,7 @@
 package org.pkaq.sys.order.mapper;
 
-import com.baomidou.mybatisplus.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
-import org.pkaq.core.mvc.entity.Entity;
 import org.pkaq.sys.order.entity.OrderEntity;
 import org.springframework.stereotype.Repository;
 

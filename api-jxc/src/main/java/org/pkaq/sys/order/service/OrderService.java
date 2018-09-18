@@ -1,6 +1,6 @@
 package org.pkaq.sys.order.service;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.pkaq.core.mvc.service.BaseActiveRecordService;
 import org.pkaq.core.mvc.service.BaseService;
 import org.pkaq.sys.order.entity.OrderEntity;
@@ -26,7 +26,7 @@ public class OrderService{
     }
 
     public List<OrderEntity> list(){
-        EntityWrapper entityWrapper = new EntityWrapper();
+        QueryWrapper entityWrapper = new QueryWrapper();
         OrderEntity orderEntity = new OrderEntity();
         orderEntity.setMonth(new Date());
 

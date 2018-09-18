@@ -13,3 +13,4 @@ build
 /mobile
 /*.log
 /*.lock
+/api-core/out
