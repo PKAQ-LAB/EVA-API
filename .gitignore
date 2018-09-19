@@ -14,3 +14,4 @@ build
 /*.log
 /*.lock
 /api-core/out
+/api-jxc/out
