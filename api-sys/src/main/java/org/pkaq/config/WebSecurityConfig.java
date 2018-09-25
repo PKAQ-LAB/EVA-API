@@ -4,6 +4,9 @@ import org.pkaq.security.entrypoint.AuthEntryPoint;
 import org.pkaq.security.filter.JwtAuthFilter;
 import org.pkaq.security.jwt.JwtConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +34,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableConfigurationProperties(JwtConfig.class)
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Value("${spring.profiles.active}")
+    private String activeProfile;
+
     @Autowired
     private AuthEntryPoint authEntryPoint;
     /** Spring会自动寻找同样类型的具体类注入，这里就是JwtUserDetailsServiceImpl了**/
@@ -58,10 +65,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public JwtAuthFilter authenticationTokenFilterBean() throws Exception {
+    public JwtAuthFilter authenticationTokenFilterBean() {
         return new JwtAuthFilter();
     }
 
+    /**
+     * 跨域设置
+     * @return
+     */
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
@@ -78,38 +89,40 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-                // 关闭csrf 由于使用的是JWT，我们这里不需要csrf
-                .csrf().disable()
-                .exceptionHandling().authenticationEntryPoint(authEntryPoint)
-                .and()
-                //允许加载iframe内容 X-Frame-Options
-                .headers().frameOptions().disable()
-                .and()
-                // 基于token，所以不需要session
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeRequests()
-                // 允许对于网站静态资源的无授权访问
-                .antMatchers(
-                        HttpMethod.GET,
-                        "/",
-                        "/*.html",
-                        "/favicon.ico",
-                        "/**/*.html",
-                        "/**/*.css",
-                        "/**/*.js",
-                        "/webjars/**",
-                        "/swagger-resources/**",
-                        "/*/api-docs"
-                ).permitAll()
-                // 对于获取token的rest api要允许匿名访问
-                .antMatchers("/auth/login").permitAll()
-                // 限定访问IP
-                .antMatchers("/druid/**").hasIpAddress("127.0.0.1")
-                // 除上面外的所有请求全部需要鉴权认证
-                // FIXME 此处配置会导致@PermitAll @DenyAll注解无效
-                .anyRequest().authenticated();
+            // 关闭csrf 由于使用的是JWT，我们这里不需要csrf
+            .csrf().disable()
+            .exceptionHandling().authenticationEntryPoint(authEntryPoint)
+            .and()
+            //允许加载iframe内容 X-Frame-Options
+            .headers().frameOptions().disable()
+            .and()
+            // 基于token，所以不需要session
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and();
 
+        if ("dev".equalsIgnoreCase(activeProfile)){
+            httpSecurity.authorizeRequests().anyRequest().permitAll();
+        } else {
+            httpSecurity.authorizeRequests()
+                    // 允许对于网站静态资源的无授权访问
+                    .antMatchers(
+                            HttpMethod.GET,
+                            "/",
+                            "/*.html",
+                            "/favicon.ico",
+                            "/**/*.html",
+                            "/**/*.css",
+                            "/**/*.js",
+                            "/webjars/**",
+                            "/swagger-resources/**",
+                            "/*/api-docs"
+                    ).permitAll()
+                    // 对于获取token的rest api要允许匿名访问
+                    .antMatchers("/auth/login").permitAll()
+                    // 除上面外的所有请求全部需要鉴权认证
+                    // FIXME 此处配置会导致@PermitAll @DenyAll注解无效
+                    .anyRequest().authenticated();
+        }
         // 添加JWT filter
         httpSecurity.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
 
