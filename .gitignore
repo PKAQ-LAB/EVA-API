@@ -15,3 +15,6 @@ build
 /*.lock
 /api-core/out
 /api-jxc/out
+/api-web/out
+/api-sys/out
+/addon-pay/out

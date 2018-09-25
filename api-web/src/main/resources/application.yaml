@@ -1,25 +1,6 @@
-server:
-  servlet:
-    context-path: /
-  port: 80
-  tomcat:
-    uri-encoding: utf-8
-debug: false
-# 日志
-logging:
-  pattern:
-    level: debug
-# 数据源
 spring:
-  datasource:
-    type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:p6spy:mysql://localhost:3306/jxc?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
-    username: ENC(dghf0DZZJA+vQ95xgHz5iA==)
-    password: ENC(Yyk5bWPsCApaZ1yceumO4A==)
-    driver-class-name: com.p6spy.engine.spy.P6SpyDriver
-  devtools:
-    livereload:
-      enabled: true
+  profiles:
+    active: dev
   # flyway配置 对于非空数据库 需要开启此项避免报错
   flyway:
     baseline-on-migrate: true
@@ -52,3 +33,9 @@ jwt:
 jasypt:
   encryptor:
     password: eva
+server:
+  servlet:
+    context-path: /
+  port: 80
+  tomcat:
+    uri-encoding: utf-8

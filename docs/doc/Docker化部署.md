@@ -2,11 +2,16 @@
 
 
 
+
 # 引言
 
 　　一个 `Spring Boot`  应用在编写完成后，可以方便的打包成一个 `jar` 文件直接运行。通常的做法是使用 `nohup java -jar app.jar &` 的方式使其在服务器后台运行。 这种方式对服务器环境不仅有着很强的依赖并且会产生一个随时间推移越来越大的 `nohup` 文件 ，虽然可以利用管道黑洞将其输出到未知领域，但是对于运行版本的管理仍然依赖于人肉备份的方式。
 
 　　借助 `Docker`  不仅可以做到运行环境与服务器环境的隔离，同时可以方便的管理发布版本。通过版本 `tag`  不仅可以方便的回滚到相应版本，使用端口映射也可以方便的配合蓝绿发布。
+
+
+
+<!-- more -->
 
 # 版本
 
@@ -23,9 +28,9 @@
 FROM daocloud.io/java:8
 # 作者
 MAINTAINER PKAQ #pkaq@msn.com
-# 映射/tmp到主机
+# 在宿主机的/var/lib/docker目录下创建一个临时文件并把它链接到容器中的/tmp目录。
 VOLUME /tmp
-#将打包好的spring程序拷贝到容器中的指定位置
+# 将打包好的spring程序拷贝到容器中的指定位置
 COPY ./build/lib/app.jar /opt/app.jar
 #容器对外暴露9006
 EXPOSE 9006
@@ -69,3 +74,44 @@ ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/opt/app.ja
 
 　　如果发布出现问题，如果应用了蓝绿部署只需要切换回原来运行端口即可。若未使用蓝绿部署的方式，那么也只需要 `stop` 有问题的版本，重新 `start` 即可。
 
+## 5.使用 Gradle 插件
+
+　　如果你是用 `Gradle` 来进行应用构建的，那么可以使用 [Gradle-Docker](https://github.com/palantir/gradle-docker)  插件进行镜像创建操作。
+
+1.引入插件
+
+```groovy
+plugins {
+  id "com.palantir.docker" version "0.20.1"
+}
+```
+
+2.编写 `Dockerfile`
+
+```dockerfile
+# 基于哪个镜像
+FROM daocloud.io/java:8
+# 作者
+MAINTAINER PKAQ #pkaq@msn.com
+# 在宿主机的/var/lib/docker目录下创建一个临时文件并把它链接到容器中的/tmp目录。
+VOLUME /tmp
+#将打包好的spring程序拷贝到容器中的指定位置
+ARG JAR_FILE
+COPY ${JAR_FILE} /opt/app.jar
+#容器对外暴露9006
+EXPOSE 9006
+# 容器启动后执行的命令
+ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/opt/app.jar"]
+```
+
+3.应用插件
+
+```groovy
+
+docker {
+    dependsOn build
+    name "${project.group}/${bootJar.baseName}"
+    files bootJar.archivePath
+    buildArgs(['JAR_FILE': "${bootJar.archiveName}"])
+}
+```
