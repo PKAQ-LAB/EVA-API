@@ -35,9 +35,6 @@ public class BizLogAdvice {
     public void doBefore(JoinPoint joinPoint) {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         BizLog  bizlog = signature.getMethod().getAnnotation(BizLog.class);
-        if( null == this.bizLogSupporter){
-            System.out.println("123");
-        }
 
         if (null != bizlog){
             BizLogEntity bizLogEntity = new BizLogEntity();

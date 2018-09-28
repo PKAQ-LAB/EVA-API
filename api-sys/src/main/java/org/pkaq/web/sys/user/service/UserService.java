@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.pkaq.core.bizlog.annotation.BizLog;
+import org.pkaq.core.bizlog.base.BizLogEnum;
 import org.pkaq.core.enums.LockEnumm;
 import org.pkaq.core.mvc.service.BaseService;
 import org.pkaq.core.mvc.util.Page;
@@ -30,7 +31,7 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
      * @param userEntity
      * @return
      */
-    @BizLog(description = "用户登录")
+    @BizLog(description = "用户登录", operateType = BizLogEnum.QUERY)
     public UserEntity validate(UserEntity userEntity){
         // 得到客户端传递过来的md5之后的密码
         String pwd = userEntity.getPassword();
