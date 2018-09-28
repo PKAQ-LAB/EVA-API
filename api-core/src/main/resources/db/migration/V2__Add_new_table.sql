@@ -1,6 +1,8 @@
-DROP TABLE IF EXISTS flyway_test_alpha;
-CREATE TABLE `flyway_test_alpha`  (
-	`id`          	int(11) AUTO_INCREMENT NOT NULL,
-	`column_alpha`	varchar(30) NULL,
-	PRIMARY KEY(`id`)
+CREATE TABLE `log_biz`  (
+	`ID`             	varchar(40) NOT NULL,
+	`operator`       	varchar(10) NULL,
+	`operate_type`    	varchar(10) NULL,
+	`operate_dateTime`	varchar(20) NULL,
+	`description`    	varchar(300) NULL,
+	PRIMARY KEY(`ID`)
 )

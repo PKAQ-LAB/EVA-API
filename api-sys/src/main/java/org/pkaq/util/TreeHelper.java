@@ -1,7 +1,7 @@
 package org.pkaq.util;
 
 import cn.hutool.core.util.StrUtil;
-import org.pkaq.sys.module.entity.ModuleEntity;
+import org.pkaq.web.sys.module.entity.ModuleEntity;
 
 import java.util.ArrayList;
 import java.util.List;

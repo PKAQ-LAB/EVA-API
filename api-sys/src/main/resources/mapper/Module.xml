@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.module//DTD Mapper 3.0//EN" "http://mybatis.module/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.pkaq.sys.module.mapper.ModuleMapper">
+<mapper namespace="org.pkaq.web.sys.module.mapper.ModuleMapper">
   <resultMap id="BaseResultMap" type="module" extends="common.resultMap">
     <result column="NAME" jdbcType="VARCHAR" property="name" />
     <result column="ICON" jdbcType="VARCHAR" property="icon" />

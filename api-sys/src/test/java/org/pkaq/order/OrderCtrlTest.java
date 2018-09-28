@@ -1,7 +1,7 @@
 package org.pkaq.order;
 
 import org.junit.Test;
-import org.pkaq.sys.BaseTest;
+import org.pkaq.web.sys.BaseTest;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;

@@ -1,8 +1,8 @@
 package org.pkaq.security.service;
 
 import org.pkaq.security.domain.JwtUserFactory;
-import org.pkaq.sys.user.entity.UserEntity;
-import org.pkaq.sys.user.mapper.UserMapper;
+import org.pkaq.web.sys.user.entity.UserEntity;
+import org.pkaq.web.sys.user.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

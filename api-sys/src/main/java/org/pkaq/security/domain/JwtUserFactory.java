@@ -1,7 +1,7 @@
 package org.pkaq.security.domain;
 
-import org.pkaq.sys.role.entity.RoleEntity;
-import org.pkaq.sys.user.entity.UserEntity;
+import org.pkaq.web.sys.role.entity.RoleEntity;
+import org.pkaq.web.sys.user.entity.UserEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 

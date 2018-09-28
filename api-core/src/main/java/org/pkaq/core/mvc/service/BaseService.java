@@ -46,8 +46,8 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends BaseEntity>
 
     /**
      * 查询所有
-     * @param entity
-     * @return
+     * @param entity 要进行查询的实体类
+     * @return 返回结果
      */
     protected List<T> list(T entity){
         Wrapper<T> wrapper = new QueryWrapper<>(entity);
