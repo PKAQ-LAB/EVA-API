@@ -1,0 +1,10 @@
+spring:
+  profiles:
+    active: dev
+# server配置
+server:
+  servlet:
+    context-path: /alipay
+  port: 9008
+  tomcat:
+    uri-encoding: utf-8

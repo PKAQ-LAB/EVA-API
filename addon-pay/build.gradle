@@ -1,0 +1,29 @@
+plugins {
+     id 'org.springframework.boot' version '2.0.5.RELEASE'
+     id "com.github.ben-manes.versions" version "0.20.0"
+ }
+apply plugin: 'io.spring.dependency-management'
+
+jar {
+	enabled = true
+}
+
+bootJar {
+    baseName = "alipay"
+	mainClassName = 'org.pkaq.AlipayBooter'
+}
+
+ext{
+    alipay = "3.3.87.ALL"
+    zxing = "3.3.3"
+}
+
+dependencies {
+    compile     "org.springframework.boot:spring-boot-starter-web:${bootVersion}",
+                // hutool
+                "cn.hutool:hutool-all:${hutool}",
+                // 支付宝 依赖
+                "com.alipay.sdk:alipay-sdk-java:${alipay}",
+                // QRCODE 二维码转换所需的依赖
+                "com.google.zxing:core:${zxing}"
+}
