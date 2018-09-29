@@ -1,8 +1,8 @@
 package org.pkaq.config;
 
 import cn.hutool.core.date.DateUtil;
-import io.shardingsphere.core.api.algorithm.sharding.PreciseShardingValue;
-import io.shardingsphere.core.api.algorithm.sharding.standard.PreciseShardingAlgorithm;
+import io.shardingsphere.api.algorithm.sharding.PreciseShardingValue;
+import io.shardingsphere.api.algorithm.sharding.standard.PreciseShardingAlgorithm;
 
 import java.util.Collection;
 import java.util.Date;
