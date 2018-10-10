@@ -25,7 +25,6 @@ import java.util.List;
 @Slf4j
 @Component
 @Conditional(MybatisSupporterCondition.class)
-@AutoConfigureAfter(MybatisSupporterCondition.class)
 public class MybatisSupporter implements BizLogSupporter {
     private BizLogEntity bizLogEntity;
 

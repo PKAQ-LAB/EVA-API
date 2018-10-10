@@ -4,6 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.bizlog.base.BizLogEntity;
 import org.pkaq.core.bizlog.base.BizLogEnum;
 import org.pkaq.core.bizlog.base.BizLogSupporter;
+import org.pkaq.core.bizlog.condition.MybatisSupporterCondition;
+import org.springframework.context.annotation.Conditional;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.List;
@@ -14,6 +17,8 @@ import java.util.List;
  * @Datetime: 2018/9/26 21:48
  */
 @Slf4j
+@Component
+@Conditional(MybatisSupporterCondition.class)
 public class ConsoleSupporter implements BizLogSupporter {
     private BizLogEntity bizLogEntity;
 
