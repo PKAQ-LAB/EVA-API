@@ -28,17 +28,22 @@ yarn start
     |-api-sys : 基础管理 + 鉴权   
     |-api-jxc : 进销存业务管理   
     ------- 可选增强包 -------
-    |-addon-mongo
+    |-addon-mongo nosql  
+    |-addon-pay 支付   
     |-docs : 文档相关   
+        |-db : pdm   
+        |-doc : 开发文档   
         |-config : 环境配置   
-        |-generator : mybatis generator   
+        |-electron : electron打包配置     
+        |-generator : mybatis generator    
         
 -----------------------------------------------------------------   
 
  - 连接池: Hikari
- - 配置加密: P6SPY
+ - 配置加密: Jassypt
+ - SQL监控: P6SPY
  - 数据库版本管理: Flyway
- - json: fastjson
- - 日志: logback
- - 工具包: hutool
- - orm: mybatis, mybatis-plus
+ - JSON: Fastjson
+ - 日志: Logback
+ - 工具包: Hutool
+ - ORM: Mybatis, Mybatis-plus
