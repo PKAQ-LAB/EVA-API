@@ -6,17 +6,13 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /**
  * @author: S.PKAQ
- * @Datetime: 2018/9/28 12:38
+ * @Datetime: 2018/10/12 16:11
  */
-public class MybatisSupporterCondition implements Condition {
+public class BizlogSupporterCondition implements Condition {
 
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        String supporterStr = "org.pkaq.core.bizlog.supporter.mybatis.MybatisSupporter";
-        String impl = context.getEnvironment().getProperty("bizlog.impl");
         String enabled = context.getEnvironment().getProperty("bizlog.enabled");
-        
-        return "true".equalsIgnoreCase(enabled)
-               && supporterStr.equals(impl);
+        return "true".equalsIgnoreCase(enabled);
     }
 }

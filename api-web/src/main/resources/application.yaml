@@ -11,14 +11,14 @@ mybatis-plus:
   #实体扫描，多个package用逗号或者分号分隔
   typeAliasesPackage: org.pkaq.*.**.entity
   global-config:
-    #主键类型  0:"数据库ID自增", 1:"用户输入ID",2:"全局唯一ID (数字类型唯一ID)", 3:"全局唯一ID UUID";
-    id-type: 3
-    #字段策略 0:"忽略判断",1:"非 NULL 判断"),2:"非空判断"
-    field-strategy: 2
-    #驼峰下划线转换
-    db-column-underline: true
-    #刷新mapper 调试神器
-    refresh-mapper: true
+#      刷新mapper 调试神器
+    refresh: true
+    db-config:
+      id-type: uuid
+#      字段策略
+      field-strategy: not_empty
+#      驼峰下划线转换
+      table-underline: true
   configuration:
     map-underscore-to-camel-case: true
     cache-enabled: false
@@ -43,5 +43,6 @@ server:
     uri-encoding: utf-8
 # 业务日志
 bizlog:
+  enabled: false
   impl: org.pkaq.core.bizlog.supporter.mybatis.MybatisSupporter
   basePackage:  org.pkaq.web

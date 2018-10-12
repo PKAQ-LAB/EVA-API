@@ -10,9 +10,11 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.pkaq.core.bizlog.annotation.BizLog;
 import org.pkaq.core.bizlog.base.BizLogEntity;
 import org.pkaq.core.bizlog.base.BizLogSupporter;
+import org.pkaq.core.bizlog.condition.BizlogSupporterCondition;
 import org.pkaq.core.bizlog.config.BizLogConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 /**
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Aspect
 @Component
+@Conditional(BizlogSupporterCondition.class)
 @EnableConfigurationProperties(BizLogConfig.class)
 public class BizLogAdvice {
 

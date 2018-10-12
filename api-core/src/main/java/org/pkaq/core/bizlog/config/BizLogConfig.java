@@ -14,6 +14,10 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "bizlog")
 public class BizLogConfig {
     /**
+     * 是否启用
+     */
+    private boolean  enabled = false;
+    /**
      * 实现类
      */
     private String impl = "";

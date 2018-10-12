@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
  */
 @SpringBootApplication
 @ComponentScan(basePackages = {"org.pkaq.*"})
-public class Booter implements CommandLineRunner {
+public class WebBooter implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
@@ -32,7 +32,7 @@ public class Booter implements CommandLineRunner {
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(Booter.class, args);
+        SpringApplication.run(WebBooter.class, args);
     }
     /**
      * 用于接受 shutdown 事件
