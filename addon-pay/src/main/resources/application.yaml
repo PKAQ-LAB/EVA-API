@@ -8,3 +8,7 @@ server:
   port: 9008
   tomcat:
     uri-encoding: utf-8
+pay:
+  alipay:
+    enabled: true
+    url: http://alipay.com

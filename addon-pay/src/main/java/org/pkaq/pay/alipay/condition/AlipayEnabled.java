@@ -1,5 +1,6 @@
 package org.pkaq.pay.alipay.condition;
 
+import cn.hutool.core.util.StrUtil;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
@@ -22,8 +23,8 @@ public class AlipayEnabled implements Condition {
             String alipayPublicKey = context.getEnvironment().getProperty("pay.alipay.alipay_public_key");
             String signType = context.getEnvironment().getProperty("pay.alipay.sign_type");
 
-            return !StringUtils.isEmpty(appId) &&  !StringUtils.isEmpty(appPrivateKey) &&
-                   !StringUtils.isEmpty(alipayPublicKey) &&  !StringUtils.isEmpty(signType);
+            return StrUtil.isNotBlank(appId) &&  !StrUtil.isNotBlank(appPrivateKey) &&
+                   !StrUtil.isNotBlank(alipayPublicKey) &&  !StrUtil.isNotBlank(signType);
         }
         return false;
     }

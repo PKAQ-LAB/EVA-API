@@ -30,7 +30,7 @@
   },{
     "name": "pay.alipay.charset",
     "type": "java.lang.String",
-    "defaultValue": "",
+    "defaultValue": "UTF-8",
     "sourceType": "org.pkaq.pay.alipay.config.AlipayConfig"
   },{
     "name": "pay.alipay.alipay_public_key",
@@ -39,6 +39,11 @@
     "sourceType": "org.pkaq.pay.alipay.config.AlipayConfig"
   },{
     "name": "pay.alipay.sign_type",
+    "type": "java.lang.String",
+    "defaultValue": "RSA2",
+    "sourceType": "org.pkaq.pay.alipay.config.AlipayConfig"
+  },{
+    "name": "pay.alipay.notify_url",
     "type": "java.lang.String",
     "defaultValue": "",
     "sourceType": "org.pkaq.pay.alipay.config.AlipayConfig"
