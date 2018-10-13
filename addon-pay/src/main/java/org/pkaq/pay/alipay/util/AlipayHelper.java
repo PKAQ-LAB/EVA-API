@@ -21,8 +21,9 @@ import org.springframework.stereotype.Component;
 public class AlipayHelper {
     @Autowired
     private AlipayConfig alipayConfig;
+
     @Autowired
-    private AlipayFactory alipayFactory;
+    private AlipayClient alipayClient;
 
     /**
      * alipay.trade.query(统一收单线下交易查询)
@@ -31,7 +32,6 @@ public class AlipayHelper {
      * @throws AlipayApiException
      */
     public AlipayTradeQueryResponse payquery(String out_trade_no) throws AlipayApiException {
-        AlipayClient alipayClient = alipayFactory.getAlipayClient();
         AlipayTradeQueryRequest queryRequest = new AlipayTradeQueryRequest();
         JSONObject json = new JSONObject();
         json.put("out_trade_no", out_trade_no);
@@ -50,7 +50,6 @@ public class AlipayHelper {
      * @throws AlipayApiException
      */
     public String prepay(String orderNo, String totalAmount, String subject, String timeout) throws AlipayApiException {
-        AlipayClient alipayClient = alipayFactory.getAlipayClient();
         AlipayTradePrecreateRequest request = new AlipayTradePrecreateRequest();
 
         JSONObject json = new JSONObject();
