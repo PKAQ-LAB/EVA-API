@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Api( description = "角色管理")
 @RestController
 @RequestMapping("/role")
-public class RoleCtrl extends BaseCtrl<RoleService> {
+public class RoleCtrl extends BaseCtrl<RoleService, RoleEntity> {
     @PostMapping("/checkUnique")
     @ApiOperation(value = "校验角色编码唯一性",response = Response.class)
     public Response checkUnique(@ApiParam(name ="roleEntity", value = "要进行校验的参数")

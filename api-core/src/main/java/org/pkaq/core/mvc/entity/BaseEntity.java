@@ -3,6 +3,9 @@ package org.pkaq.core.mvc.entity;
 import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.ibatis.annotations.TypeDiscriminator;
+import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.MappedJdbcTypes;
 
 import java.io.Serializable;
 import java.sql.Date;

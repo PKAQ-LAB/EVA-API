@@ -2,6 +2,7 @@ package org.pkaq.web.sys.role.service;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import org.pkaq.core.bizlog.annotation.BizLog;
 import org.pkaq.core.enums.LockEnumm;
@@ -52,7 +53,7 @@ public class RoleService extends BaseService<RoleMapper, RoleEntity> {
      * @return
      */
     @BizLog(description = "角色新增")
-    public Page<RoleEntity> listRole(RoleEntity roleEntity, Integer page) {
+    public IPage<RoleEntity> listRole(RoleEntity roleEntity, Integer page) {
         return this.listPage(roleEntity, page);
     }
 
@@ -92,7 +93,7 @@ public class RoleService extends BaseService<RoleMapper, RoleEntity> {
      * @param role 角色对象
      * @return 角色列表
      */
-    public Page<RoleEntity> saveRole(RoleEntity role) {
+    public IPage<RoleEntity> saveRole(RoleEntity role) {
         // 添加 ROLE_ 前缀 并转大写
         if(!role.getCode().startsWith(AUTH_PREFIX)){
             role.setCode((AUTH_PREFIX+role.getCode()).toUpperCase());

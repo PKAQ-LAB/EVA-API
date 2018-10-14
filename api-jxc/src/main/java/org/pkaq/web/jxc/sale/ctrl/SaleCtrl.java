@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/sale")
 @Api( description = "零售开单")
-public class SaleCtrl extends BaseCtrl<SaleService> {
+public class SaleCtrl extends BaseCtrl<SaleService, SaleEntity> {
 
     @PostMapping("/checkOut")
     @ApiOperation(value = "零售开单-结帐收银",response = Response.class)
