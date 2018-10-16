@@ -2,18 +2,18 @@ package org.pkaq.core.mvc.ctrl;
 
 import lombok.Getter;
 import org.pkaq.core.enums.HttpCodeEnum;
-import org.pkaq.core.mvc.service.BaseActiveRecordService;
-import org.pkaq.core.util.I18NHelper;
+import org.pkaq.core.mvc.service.BaseService;
 import org.pkaq.core.mvc.util.Response;
+import org.pkaq.core.util.I18NHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Controller 基类
+ * Controller 基类- 无默认CRUD方法
  * Datetime: 2018/3/5 23:37
  * @author S.PKAQ
  */
 @Getter
-public abstract class BaseActiveCtrl<T extends BaseActiveRecordService> {
+public abstract class PureBaseCtrl<T extends BaseService> {
     @Autowired
     protected T service;
     @Autowired
@@ -27,7 +27,6 @@ public abstract class BaseActiveCtrl<T extends BaseActiveRecordService> {
     protected String locale(String code){
         return this.i18NHelper.getMessage(code);
     }
-
     /**
      * 操作成功
      * @return

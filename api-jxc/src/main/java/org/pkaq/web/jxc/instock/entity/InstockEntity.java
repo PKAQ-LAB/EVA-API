@@ -2,10 +2,13 @@ package org.pkaq.web.jxc.instock.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
-import org.pkaq.core.mvc.entity.BaseActiveEntity;
+import org.pkaq.core.mvc.entity.PureBaseEntity;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 import java.util.List;
@@ -16,15 +19,19 @@ import java.util.List;
  */
 @Data
 @Alias("instock")
-@TableName("t_instock")
+@TableName("t_jxc_instock")
 @EqualsAndHashCode(callSuper = true)
-public class InstockEntity extends BaseActiveEntity {
-
+@ApiModel("采购入库单")
+public class InstockEntity extends PureBaseEntity {
+    @ApiModelProperty("入库日期")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private Date indate;
 
+    @ApiModelProperty("入库单号")
     private String incode;
 
-    private String remark;
+    @ApiModelProperty("入库名称")
+    private String title;
 
     /** 子表数据 **/
     @TableField(exist = false)

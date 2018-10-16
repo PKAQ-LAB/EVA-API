@@ -1,18 +1,11 @@
 package org.pkaq.web.jxc.instock;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
+import org.pkaq.web.BaseTest;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 /**
@@ -20,34 +13,28 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
  * @author: S.PKAQ
  * @Datetime: 2018/4/4 8:32
  */
-@RunWith(SpringRunner.class)
-@AutoConfigureMockMvc
-@SpringBootTest
-public class InstockTest{
-    @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private WebApplicationContext wac;
+public class InstockTest extends BaseTest {
 
-    @Before
-    public void setupMockMvc(){
-        //初始化MockMvc对象
-        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+    @Test
+    public void testList(){
+        try {
+            mockMvc.perform(get("/instock/list"))
+                    .andExpect(MockMvcResultMatchers.status().isOk());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-
     /**
      * 采购入库单新增
      */
     @Test
     public void testSave(){
         try {
-            String json = "{incode:'tom','indate':'2018-02-11',remark:'this is remarks',line: [{" +
-                    "barcode:'goods_01',name:'商品01',price:18,num:2,subtotal:36}," +
-                    "{barcode:'goods_02',name:'商品02',price:18,num:2,subtotal:36}]}";
-            mockMvc.perform(post("/instock/save")
+            String json = "{incode:'RK20181018','indate':'2018-10-16',remark:'this is remarks',line: [{" +
+                    "barcode:'goods_01',name:'商品01',buyprice:18,buynum:3, goodsId: 'A380'}]}";
+            mockMvc.perform(post("/instock/edit")
                     .content(json))
-                    .andExpect(MockMvcResultMatchers.status().isOk())
-                    .andDo(MockMvcResultHandlers.print());
+                    .andExpect(MockMvcResultMatchers.status().isOk());
         } catch (Exception e) {
             e.printStackTrace();
         }

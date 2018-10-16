@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.pkaq.web.jxc.instock.mapper.InstockLineMapper">
+    <select id="listByMainId" resultType="org.pkaq.web.jxc.instock.entity.InstockLineEntity">
+        select * from t_jxc_instock_line where main_id=#{mainId}
+    </select>
+</mapper>

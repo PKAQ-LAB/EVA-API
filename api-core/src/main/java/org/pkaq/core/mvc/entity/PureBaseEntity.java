@@ -1,6 +1,8 @@
 package org.pkaq.core.mvc.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.apache.ibatis.annotations.TypeDiscriminator;
@@ -16,9 +18,9 @@ import java.sql.Date;
  * @Datetime: 2018/3/13 22:48
  */
 @Data
-public abstract class BaseEntity<T> implements Entity, Serializable {
-    @TableId
-    private T id;
+public abstract class PureBaseEntity implements Entity, Serializable {
+    @TableId(type = IdType.UUID)
+    private String id;
     @ApiModelProperty("创建人")
     private String createBy;
     @ApiModelProperty("创建时间")

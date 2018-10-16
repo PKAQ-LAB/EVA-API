@@ -19,7 +19,7 @@ public class GoodsCtrlTest extends BaseTest {
     @Test
     public void testSave(){
         try {
-            String json = "{name: '测试品名', category: '0000', model: '7130',mnemonic: 'atmbsq',barcode:'62391232',unit:'0004',boxunit: 10, productor:'A123232'}";
+            String json = "{name: '测试品名-BRAVO', category: '0000', model: '7130',mnemonic: 'atmbsq',barcode:'62391232',unit:'0004',boxunit: 10, productor:'A123232'}";
             this.mockMvc.perform(post("/goods/edit")
                     .content(json))
                     .andExpect(MockMvcResultMatchers.status().isOk())

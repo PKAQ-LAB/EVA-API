@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
-import org.pkaq.core.mvc.entity.BaseEntity;
+import org.pkaq.core.mvc.entity.PureBaseEntity;
 
 /**
  * 零售开单实体类
@@ -15,7 +15,7 @@ import org.pkaq.core.mvc.entity.BaseEntity;
 @Alias("sale")
 @TableName("T_RETAIL_SALE")
 @EqualsAndHashCode(callSuper = true)
-public class SaleEntity extends BaseEntity {
+public class SaleEntity extends PureBaseEntity {
     private static final long serialVersionUID = 1L;
     /** 商品ID **/
     private String goodsId;

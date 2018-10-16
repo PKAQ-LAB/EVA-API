@@ -5,8 +5,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import org.pkaq.core.mvc.entity.BaseEntity;
+import org.pkaq.core.mvc.entity.PureBaseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -19,8 +20,8 @@ import java.util.List;
  * Datetime: 2018/3/13 22:16
  * @author S.PKAQ
  */
-@Transactional(rollbackFor = Exception.class)
-public abstract class BaseService<M extends BaseMapper<T>, T extends BaseEntity> {
+@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+public abstract class BaseService<M extends BaseMapper<T>, T extends PureBaseEntity> {
     @Autowired
     protected M mapper;
     /**

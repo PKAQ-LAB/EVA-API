@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.Getter;
 import org.pkaq.core.enums.HttpCodeEnum;
 import org.pkaq.core.exception.ParamException;
-import org.pkaq.core.mvc.entity.BaseEntity;
+import org.pkaq.core.mvc.entity.PureBaseEntity;
 import org.pkaq.core.mvc.service.BaseService;
 import org.pkaq.core.mvc.util.Response;
 import org.pkaq.core.mvc.util.SingleArray;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author S.PKAQ
  */
 @Getter
-public abstract class BaseCtrl<T extends BaseService, E extends BaseEntity> {
+public abstract class BaseCtrl<T extends BaseService, E extends PureBaseEntity> {
     @Autowired
     protected T service;
     @Autowired
@@ -43,7 +43,7 @@ public abstract class BaseCtrl<T extends BaseService, E extends BaseEntity> {
 
     @PostMapping("edit")
     @ApiOperation(value = "新增/编辑记录",response = Response.class)
-    public Response save(@ApiParam(name ="goods", value = "商品对象")
+    public Response save(@ApiParam(name ="formdata", value = "商品对象")
                          @RequestBody E entity){
         this.service.merge(entity);
         return success(entity.getId());
@@ -51,7 +51,7 @@ public abstract class BaseCtrl<T extends BaseService, E extends BaseEntity> {
 
     @GetMapping("list")
     @ApiOperation(value = "列表查询",response = Response.class)
-    public Response list(@ApiParam(name ="goods", value = "商品对象")
+    public Response list(@ApiParam(name ="condition", value = "商品对象")
                                  E entity, Integer pageNo){
         return this.success(this.service.listPage(entity, pageNo));
     }

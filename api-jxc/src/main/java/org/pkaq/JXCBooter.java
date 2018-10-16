@@ -10,7 +10,6 @@ import org.springframework.context.annotation.ComponentScan;
  * @author PKAQ
  */
 @SpringBootApplication
-@ComponentScan(basePackages = {"org.pkaq.*"})
 public class JXCBooter implements CommandLineRunner {
 
     @Override

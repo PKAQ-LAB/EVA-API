@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
+ * 默认控制器 访问swagger首页
  * @author: S.PKAQ
  * @Datetime: 2018/9/29 10:53
  */

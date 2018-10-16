@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.pkaq.web.jxc.instock.mapper.InstockMapper">
+    <resultMap id="BaseResultMap" type="instock" extends="common.resultMap">
+        <result column="INDATE" jdbcType="DATE" property="indate" />
+        <result column="INCODE" jdbcType="VARCHAR" property="incode" />
+        <result column="TITLE" jdbcType="VARCHAR" property="title" />
+    </resultMap>
+    <!-- 带子表数据查询 -->
+    <resultMap id="LineResultMap" type="instockLine" extends="BaseResultMap">
+        <collection property="line" ofType="org.pkaq.web.jxc.instock.entity.InstockLineEntity" column="{mainId=id}"
+                    select="org.pkaq.web.jxc.instock.mapper.InstockLineMapper.listByMainId"/>
+    </resultMap>
+
+    <!-- 查询库存 -->
+    <select id="listInstock" parameterType="org.pkaq.web.jxc.instock.vo.InstockVO" resultMap="LineResultMap">
+        select * from t_jxc_instock t
+            left join t_jxc_instock_line t1
+                      on t.id = t1.MAIN_ID
+        <where>
+            <if test="null != indate">
+                t.indate = #{indate}
+            </if>
+            <if test="null != incode and '' != incode">
+                and t.incode = #{incode}
+            </if>
+            <if test="null != buynum">
+                and t1.buynum = #{buynum}
+            </if>
+            <if test="null != buyprice">
+                and t1.buyprice = #{buyprice}
+            </if>
+            <if test="null != barcode and '' != barcode">
+                and t1.barcode like CONCAT('%','${barcode}','%' )
+            </if>
+            <if test="null != name">
+                and t1.name like CONCAT('%','${name}','%' )
+            </if>
+            <if test="null != category and '' != category">
+                and t1.category = #{category}
+            </if>
+            <if test="null != unit and '' != unit">
+                and t1.unit = #{unit}
+            </if>
+            <if test="null != model and '' != model">
+                and t1.model like CONCAT('%','${model}','%' )
+            </if>
+            <if test="null != mnemonic and '' != mnemonic">
+                and t1.mnemonic like CONCAT('%','${mnemonic}','%' )
+            </if>
+            <if test="null != supplier and '' != supplier">
+                and t1.supplier like CONCAT('%','${supplier}','%' )
+            </if>
+        </where>
+        order by t1.indate desc
+    </select>
+</mapper>
