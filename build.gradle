@@ -1,5 +1,5 @@
 ext {
-    bootVersion = "2.0.5.RELEASE"
+    bootVersion = "2.0.6.RELEASE"
     mysql = "8.0.11"
     fastjson = "1.2.47"
     mybatis_plus_starter = "3.0.5"
