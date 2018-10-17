@@ -8,7 +8,6 @@ import org.pkaq.core.bizlog.annotation.BizLog;
 import org.pkaq.core.enums.LockEnumm;
 import org.pkaq.core.enums.StatusEnumm;
 import org.pkaq.core.mvc.service.BaseService;
-import org.pkaq.core.mvc.util.Page;
 import org.pkaq.web.sys.module.entity.ModuleEntity;
 import org.pkaq.web.sys.module.mapper.ModuleMapper;
 import org.pkaq.web.sys.role.entity.RoleEntity;
@@ -171,7 +170,7 @@ public class RoleService extends BaseService<RoleMapper, RoleEntity> {
         UserEntity userEntity = new UserEntity();
         userEntity.setLocked(false);
 
-        Page<UserEntity> pager = this.userService.listUser(userEntity, page);
+        IPage<UserEntity> pager = this.userService.listUser(userEntity, page);
         // 获取已选的模块
         QueryWrapper<RoleUserEntity> wrapper = new QueryWrapper<>();
         wrapper.setEntity(roleUser);

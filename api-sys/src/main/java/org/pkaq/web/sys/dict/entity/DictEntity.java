@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
-import org.pkaq.core.mvc.entity.BaseEntity;
+import org.pkaq.core.mvc.entity.PureBaseEntity;
 
 import javax.validation.constraints.NotBlank;
 import java.util.List;
@@ -21,7 +21,7 @@ import java.util.List;
 @TableName("sys_dict")
 @EqualsAndHashCode(callSuper = true)
 @ApiModel("字典管理")
-public class DictEntity extends BaseEntity<String> {
+public class DictEntity extends PureBaseEntity {
     private static final long serialVersionUID = 1L;
     @NotBlank(message = "编码不允许为空")
     @ApiModelProperty("字典分类编码")

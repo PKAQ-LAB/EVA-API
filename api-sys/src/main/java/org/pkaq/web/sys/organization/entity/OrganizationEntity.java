@@ -8,7 +8,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
-import org.pkaq.core.mvc.entity.BaseEntity;
+import org.pkaq.core.mvc.entity.PureBaseEntity;
 
 import java.util.List;
 /**
@@ -22,7 +22,7 @@ import java.util.List;
 @TableName("sys_organization")
 @EqualsAndHashCode(callSuper = true)
 @ApiModel("组织管理")
-public class OrganizationEntity extends BaseEntity<String>{
+public class OrganizationEntity extends PureBaseEntity{
     private static final long serialVersionUID = 1L;
 
     @TableField(condition = SqlCondition.LIKE)

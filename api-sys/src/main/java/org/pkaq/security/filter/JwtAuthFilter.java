@@ -22,7 +22,6 @@ import java.io.IOException;
 @SuppressWarnings("SpringJavaAutowiringInspection")
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
-
     @Autowired
     @Qualifier("jwtUserDetailsServiceImpl")
     private UserDetailsService userDetailsService;

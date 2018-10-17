@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
-import org.pkaq.core.mvc.entity.BaseEntity;
+import org.pkaq.core.mvc.entity.PureBaseEntity;
 
 import java.io.Serializable;
 import java.util.List;
@@ -21,7 +21,7 @@ import java.util.List;
 @TableName("sys_module")
 @EqualsAndHashCode(callSuper = true)
 @ApiModel("模块管理")
-public class ModuleEntity extends BaseEntity<String> implements Serializable {
+public class ModuleEntity extends PureBaseEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("模块名称")

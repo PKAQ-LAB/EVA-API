@@ -3,7 +3,7 @@ package org.pkaq.web.sys.dict.ctrl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.pkaq.core.mvc.ctrl.BaseActiveCtrl;
+import org.pkaq.core.mvc.ctrl.PureBaseCtrl;
 import org.pkaq.core.mvc.util.Response;
 import org.pkaq.web.sys.dict.entity.DictItemEntity;
 import org.pkaq.web.sys.dict.service.DictItemService;
@@ -24,7 +24,7 @@ import javax.validation.Valid;
 @Api( description = "字典项管理")
 @RestController
 @RequestMapping("/dictItem")
-public class DictItemCtrl extends BaseActiveCtrl<DictItemService> {
+public class DictItemCtrl extends PureBaseCtrl<DictItemService> {
 
     @GetMapping("/del/{id}")
     @ApiOperation(value = "根据ID删除",response = Response.class)

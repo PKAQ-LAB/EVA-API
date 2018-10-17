@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
-import org.pkaq.core.mvc.entity.BaseActiveEntity;
+import org.pkaq.core.mvc.entity.PureBaseEntity;
 
 import javax.validation.constraints.NotBlank;
 
@@ -17,7 +17,7 @@ import javax.validation.constraints.NotBlank;
 @Alias("dictItem")
 @TableName("sys_dict_item")
 @EqualsAndHashCode(callSuper = true)
-public class DictItemEntity extends BaseActiveEntity<DictItemEntity> {
+public class DictItemEntity extends PureBaseEntity {
     @NotBlank(message = "主表ID不允许为空")
     @ApiModelProperty(value = "主表ID", required = true)
     private String mainId;

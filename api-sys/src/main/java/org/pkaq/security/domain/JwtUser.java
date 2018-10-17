@@ -23,7 +23,7 @@ public class JwtUser implements UserDetails {
     private final Collection<? extends GrantedAuthority> authorities;
 
 
-    public JwtUser(String id, String account, String password, Collection<? extends GrantedAuthority> authorities) {
+    JwtUser(String id, String account, String password, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.account = account;
         this.password = password;

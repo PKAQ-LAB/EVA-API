@@ -10,9 +10,7 @@ import org.pkaq.core.mvc.util.Response;
 import org.pkaq.core.mvc.util.SingleArray;
 import org.pkaq.web.sys.user.entity.UserEntity;
 import org.pkaq.web.sys.user.service.UserService;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(description = "用户管理")
 @RestController
 @RequestMapping("/account")
-public class UserCtrl extends BaseCtrl<UserService> {
+public class UserCtrl extends BaseCtrl<UserService, UserEntity> {
 
     @PostMapping("/checkUnique")
     @ApiOperation(value = "校验账号唯一性",response = Response.class)
@@ -42,34 +40,6 @@ public class UserCtrl extends BaseCtrl<UserService> {
     public Response listUser(@ApiParam(name = "userEntity", value = "包含用户对象属性的查询条件")
                              UserEntity userEntity, Integer page) {
         return success(this.service.listUser(userEntity, page));
-    }
-
-    @GetMapping("/get/{id}")
-    @ApiOperation(value = "根据ID获取用户信息", response = Response.class)
-    public Response getUser(@ApiParam(name = "id", value = "用户ID")
-                           @PathVariable("id") String id){
-        UserEntity entity = this.service.getUser(id);
-        return success(entity);
-    }
-
-    @PostMapping("/save")
-    @ApiOperation(value = "新增/编辑用户信息", response = Response.class)
-    public Response saveUser(@ApiParam(name ="user", value = "用户信息")
-                            @RequestBody UserEntity user){
-        return success(this.service.saveUser(user));
-    }
-
-    @PostMapping("/del")
-    @ApiOperation(value = "根据ID删除/批量删除用户", response = Response.class)
-    @PreAuthorize("hasRole('ADMIN')")
-    public Response delUser(@ApiParam(name = "ids", value = "[用户id]")
-                           @RequestBody SingleArray<String> ids){
-        // 参数非空校验
-        if (null == ids || CollectionUtil.isEmpty(ids.getParam())){
-            throw new ParamException(locale("param_id_notnull"));
-        }
-        this.service.deleteUser(ids.getParam());
-        return success(this.service.listUser(new UserEntity(), 1));
     }
 
     @PostMapping("/lock")

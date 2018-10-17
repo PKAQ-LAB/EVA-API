@@ -9,7 +9,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
-import org.pkaq.core.mvc.entity.BaseEntity;
+import org.pkaq.core.mvc.entity.PureBaseEntity;
 import org.pkaq.web.sys.module.entity.ModuleEntity;
 import org.pkaq.web.sys.role.entity.RoleEntity;
 
@@ -28,7 +28,7 @@ import java.util.List;
 @TableName("sys_user_info")
 @EqualsAndHashCode(callSuper = true)
 @ApiModel("用户管理")
-public class UserEntity extends BaseEntity<String> implements Serializable {
+public class UserEntity extends PureBaseEntity implements Serializable {
     @ApiModelProperty("编号")
     private String code;
     @ApiModelProperty("所属部门")

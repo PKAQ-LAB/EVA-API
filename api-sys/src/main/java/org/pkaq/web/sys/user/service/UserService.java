@@ -3,11 +3,11 @@ package org.pkaq.web.sys.user.service;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.pkaq.core.bizlog.annotation.BizLog;
 import org.pkaq.core.bizlog.base.BizLogEnum;
 import org.pkaq.core.enums.LockEnumm;
 import org.pkaq.core.mvc.service.BaseService;
-import org.pkaq.core.mvc.util.Page;
 import org.pkaq.web.sys.user.entity.UserEntity;
 import org.pkaq.web.sys.user.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +53,7 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
      * @return
      */
     @BizLog(description = "用户新增")
-    public Page<UserEntity> listUser(UserEntity userEntity, Integer page) {
+    public IPage<UserEntity> listUser(UserEntity userEntity, Integer page) {
         return this.listPage(userEntity, page);
     }
 
@@ -93,7 +93,7 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
      * @param user 用户对象
      * @return 用户列表
      */
-    public Page<UserEntity> saveUser(UserEntity user) {
+    public IPage<UserEntity> saveUser(UserEntity user) {
         // 用户资料发生修改后 重新生成密码
         // 这里传递过来的密码是进行md5加密后的
         String pwd = user.getPassword();
@@ -104,7 +104,6 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
         this.merge(user);
         return this.listUser(null, 1);
     }
-
     /**
      * 校验账号是否唯一
      * @param user

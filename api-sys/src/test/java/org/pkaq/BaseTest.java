@@ -1,4 +1,4 @@
-package org.pkaq.web.sys;
+package org.pkaq;
 
 import org.junit.Before;
 import org.junit.runner.RunWith;

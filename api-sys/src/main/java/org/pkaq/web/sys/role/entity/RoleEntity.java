@@ -8,7 +8,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
-import org.pkaq.core.mvc.entity.BaseEntity;
+import org.pkaq.core.mvc.entity.PureBaseEntity;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ import java.util.List;
 @TableName("sys_role")
 @EqualsAndHashCode(callSuper = true)
 @ApiModel("角色管理")
-public class RoleEntity extends BaseEntity<String> {
+public class RoleEntity extends PureBaseEntity {
     @TableField(condition = SqlCondition.LIKE)
     @ApiModelProperty("角色名称")
     private String name;

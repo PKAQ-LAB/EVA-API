@@ -1,6 +1,6 @@
 package org.pkaq.web.sys.dict.service;
 
-import org.pkaq.core.mvc.service.BaseActiveRecordService;
+import org.pkaq.core.mvc.service.BaseService;
 import org.pkaq.web.sys.dict.entity.DictItemEntity;
 import org.pkaq.web.sys.dict.mapper.DictItemMapper;
 import org.springframework.stereotype.Service;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
  * @Datetime: 2018/3/15 8:09
  */
 @Service
-public class DictItemService extends BaseActiveRecordService<DictItemMapper, DictItemEntity> {
+public class DictItemService extends BaseService<DictItemMapper, DictItemEntity> {
     /**
      * 删除一条字典
      * @param id 字典ID
@@ -26,6 +26,6 @@ public class DictItemService extends BaseActiveRecordService<DictItemMapper, Dic
      * @return
      */
     public void editDictItem(DictItemEntity dictItemEntity) {
-        dictItemEntity.insertOrUpdate();
+        this.merge(dictItemEntity);
     }
 }

@@ -1,7 +1,7 @@
 package org.pkaq.web.sys.dict.ctrl;
 
 import org.junit.Test;
-import org.pkaq.web.sys.BaseTest;
+import org.pkaq.BaseTest;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;

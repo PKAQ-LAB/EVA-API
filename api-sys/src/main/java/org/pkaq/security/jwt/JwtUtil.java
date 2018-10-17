@@ -17,6 +17,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.util.Date;
 
 /**
+ * JWT 工具类
  * @author: S.PKAQ
  * @Datetime: 2018/4/20 15:16
  */
@@ -26,14 +27,13 @@ public class JwtUtil {
     @Autowired
     private JwtConfig jwtConfig;
 
+    /**
+     * 生成加密K
+     * @return
+     */
     private SecretKey generalKey() {
         byte[] encodedKey = Base64.decode(jwtConfig.getSecert());
         return new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
-    }
-
-    public static void main(String[] args) {
-        String tk = "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI5MTk5NDgyZDc2YjQ0M2VmOWYxM2ZlZmRkY2YwMDQ2YyIsImlhdCI6MTUyNTc4OTkzNCwiaXNzIjoiUEtBUSIsInN1YiI6IjkxOTk0ODJkNzZiNDQzZWY5ZjEzZmVmZGRjZjAwNDZjIiwiZXhwIjoxNTI1NzkzNTM0fQ.pg08dDPV1pWlSxPDTrV35DlLtrPXe_Ej_QvEK_T-SuA";
-        System.out.println(new JwtUtil().getUid(tk));
     }
     /**
      * 获取uid中的uid属性
@@ -99,7 +99,6 @@ public class JwtUtil {
         }
         return jwt.compact();
     }
-
     /**
      * 验证token
      * @param jwtToken token串

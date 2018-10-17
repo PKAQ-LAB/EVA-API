@@ -3,7 +3,6 @@ package org.pkaq;
 import org.junit.Test;
 import org.pkaq.security.jwt.JwtConfig;
 import org.pkaq.security.jwt.JwtUtil;
-import org.pkaq.web.sys.BaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
