@@ -21,6 +21,6 @@ dependencies {
     //compile project(":api-jxc")
     compile project(":api-sys")
     compile "org.springframework.boot:spring-boot-devtools"
-    annotationProcessor  "org.springframework.boot:spring-boot-configuration-processor:${bootVersion}"
-    testCompile "org.springframework.boot:spring-boot-starter-test:${bootVersion}"
+    annotationProcessor  "org.springframework.boot:spring-boot-configuration-processor"
+    testCompile "org.springframework.boot:spring-boot-starter-test"
 }

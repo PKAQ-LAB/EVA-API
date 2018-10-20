@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.pkaq.core.exception.ParamException;
 import org.pkaq.core.mvc.ctrl.BaseCtrl;
+import org.pkaq.core.mvc.ctrl.PureBaseCtrl;
 import org.pkaq.core.mvc.util.Response;
 import org.pkaq.core.mvc.util.SingleArray;
 import org.pkaq.web.sys.role.entity.RoleEntity;
@@ -28,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Api( description = "角色管理")
 @RestController
 @RequestMapping("/role")
-public class RoleCtrl extends BaseCtrl<RoleService, RoleEntity> {
+public class RoleCtrl extends PureBaseCtrl<RoleService> {
     @PostMapping("/checkUnique")
     @ApiOperation(value = "校验角色编码唯一性",response = Response.class)
     public Response checkUnique(@ApiParam(name ="roleEntity", value = "要进行校验的参数")

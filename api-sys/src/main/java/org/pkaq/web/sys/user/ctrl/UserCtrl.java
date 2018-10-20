@@ -35,13 +35,6 @@ public class UserCtrl extends BaseCtrl<UserService, UserEntity> {
         return exist? failure(): success();
     }
 
-    @GetMapping({"/list"})
-    @ApiOperation(value = "获取用户列表", response = Response.class)
-    public Response listUser(@ApiParam(name = "userEntity", value = "包含用户对象属性的查询条件")
-                             UserEntity userEntity, Integer page) {
-        return success(this.service.listUser(userEntity, page));
-    }
-
     @PostMapping("/lock")
     @ApiOperation(value = "锁定/解锁", response = Response.class)
     public Response lockSwitch(@ApiParam(name = "param", value = "用户[id]")
