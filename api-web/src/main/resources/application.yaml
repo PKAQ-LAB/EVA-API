@@ -37,8 +37,8 @@ jasypt:
 # server配置
 server:
   servlet:
-    context-path: /
-  port: 80
+    context-path: /api
+  port: 9009
   tomcat:
     uri-encoding: utf-8
 # 业务日志
