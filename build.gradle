@@ -1,9 +1,9 @@
 ext {
-    bootVersion = "2.0.6.RELEASE"
+    bootVersion = "2.1.0.RELEASE"
     mysql = "8.0.11"
     fastjson = "1.2.47"
     mybatis_plus_starter = "3.0.5"
-    lombok = "1.18.2"
+    lombok = "1.18.4"
     swagger = "2.9.0"
     hutool = "4.1.17"
     p3c = "1.3.5"
