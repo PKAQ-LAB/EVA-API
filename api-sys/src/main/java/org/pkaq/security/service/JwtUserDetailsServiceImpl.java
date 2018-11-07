@@ -24,7 +24,7 @@ public class JwtUserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
 
-        UserEntity user = userMapper.getUserWithRoleById(id);
+        UserEntity user = userMapper.selectById(id);
 
         if (user == null) {
             throw new UsernameNotFoundException(String.format("No user found with uid '%s'.", id));
