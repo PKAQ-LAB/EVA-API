@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@SuppressWarnings("SpringJavaAutowiringInspection")
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
     @Autowired
@@ -39,18 +38,22 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             FilterChain chain) throws ServletException, IOException {
         String authHeader = request.getHeader(jwtConfig.getHeader());
 
-        if (authHeader != null && authHeader.startsWith(jwtConfig.getTokenHead())) {
+        if (null != authHeader && authHeader.startsWith(jwtConfig.getTokenHead())) {
             // The part after "Bearer "
             final String authToken = authHeader.substring(jwtConfig.getTokenHead().length());
-            String account = jwtUtil.getUid(authToken);
 
-            logger.info("checking authentication ：" + account);
+            logger.debug(" ------------------ > Auth token is : " + authHeader);
+            boolean isvalid = jwtUtil.valid(authToken);
 
-            if (StrUtil.isNotBlank(account) && SecurityContextHolder.getContext().getAuthentication() == null) {
-                // 从redis中 根据用户id获取用户权限列表
-                UserDetails userDetails = this.userDetailsService.loadUserByUsername(account);
+            if (isvalid) {
+                String account = jwtUtil.getUid(authToken);
 
-                if (jwtUtil.valid(authToken)) {
+                logger.info("checking authentication ：" + account);
+
+                if (StrUtil.isNotBlank(account) && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    // 从redis中 根据用户id获取用户权限列表
+                    UserDetails userDetails = this.userDetailsService.loadUserByUsername(account);
+
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                             userDetails, null, userDetails.getAuthorities());
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -59,7 +62,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 }
             }
         }
-
         chain.doFilter(request, response);
     }
 }

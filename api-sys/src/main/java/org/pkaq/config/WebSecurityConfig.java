@@ -1,12 +1,13 @@
 package org.pkaq.config;
 
 import org.pkaq.security.entrypoint.AuthEntryPoint;
+import org.pkaq.security.filter.EntryPointUnauthorizedHandler;
 import org.pkaq.security.filter.JwtAuthFilter;
+import org.pkaq.security.filter.RestAccessDeniedHandler;
 import org.pkaq.security.jwt.JwtConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,8 +22,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.Arrays;
 
 /**
  * @author PKAQ
@@ -40,9 +46,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private AuthEntryPoint authEntryPoint;
+
+    @Autowired
+    private EntryPointUnauthorizedHandler entryPointUnauthorizedHandler;
+
+    @Autowired
+    private RestAccessDeniedHandler restAccessDeniedHandler;
     /** Spring会自动寻找同样类型的具体类注入，这里就是JwtUserDetailsServiceImpl了**/
     @Autowired
+    @Qualifier("jwtUserDetailsServiceImpl")
     private UserDetailsService userDetailsService;
+
+    @Autowired
+    private JwtAuthFilter jwtAuthFilter;
 
     @Bean
     public JwtConfig jwtConfig(){
@@ -69,26 +85,32 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new JwtAuthFilter();
     }
 
-    /**
-     * 跨域设置
-     * @return
-     */
+
     @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").
-                         allowedOrigins("*")
-                        .allowedMethods("GET", "HEAD", "POST","PUT", "DELETE", "OPTIONS")
-                        .allowCredentials(false)
-                        .maxAge(3600);
-            }
-        };
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("*"));
+        configuration.setAllowedMethods(Arrays.asList("PUT", "DELETE", "GET", "POST", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setExposedHeaders(Arrays.asList("Access-Control-Allow-Headers",
+                                                      "Access-Control-Allow-Methods",
+                                                      "Access-Control-Allow-Origin",
+                                                      "Access-Control-Max-Age",
+                                                      "authorization",
+                                                      "xsrf-token",
+                                                      "content-type",
+                                                      "X-Frame-Options",
+                                                      "Authorization"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
+
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
+            .cors()
+            .and()
             // 关闭csrf 由于使用的是JWT，我们这里不需要csrf
             .csrf().disable()
             .exceptionHandling().authenticationEntryPoint(authEntryPoint)
@@ -119,13 +141,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     ).permitAll()
                     // 对于获取token的rest api要允许匿名访问
                     .antMatchers("/auth/login").permitAll()
+                    .antMatchers("/api/auth/login").permitAll()
                     // 除上面外的所有请求全部需要鉴权认证
                     // FIXME 此处配置会导致@PermitAll @DenyAll注解无效
                     .anyRequest().authenticated();
         }
         // 添加JWT filter
-        httpSecurity.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
-
+        httpSecurity.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+        httpSecurity.exceptionHandling()
+                    .authenticationEntryPoint(entryPointUnauthorizedHandler)
+                    .accessDeniedHandler(restAccessDeniedHandler);
         // 禁用缓存
         httpSecurity.headers().cacheControl();
     }

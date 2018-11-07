@@ -8,6 +8,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.pkaq.security.exception.OathException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,6 +24,7 @@ import java.util.Date;
  */
 @Data
 @Component
+@Slf4j
 public class JwtUtil {
     @Autowired
     private JwtConfig jwtConfig;
@@ -121,12 +123,12 @@ public class JwtUtil {
             }
         } catch (SignatureException se ) {
             //在解析JWT字符串时，如果密钥不正确，将会解析失败，抛出SignatureException异常，说明该JWT字符串是伪造的
-            System.out.println("密钥错误");
+            log.error("密钥错误");
         } catch (ExpiredJwtException ee) {
             //在解析JWT字符串时，如果‘过期时间字段’已经早于当前时间，将会抛出ExpiredJwtException异常，说明本次请求已经失效
-            System.out.println("token过时");
+            log.error("token已过期");
         } catch (OathException oe) {
-            System.out.println("登录已失效");
+            log.error("登录已失效");
         }
 
         return ret;

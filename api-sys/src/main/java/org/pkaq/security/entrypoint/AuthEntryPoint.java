@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.Serializable;
 
 /**
+ * 鉴权失败时的响应
  * @author: S.PKAQ
  * @Datetime: 2018/4/24 23:24
  */
