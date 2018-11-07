@@ -49,9 +49,7 @@ public class AuthCtrl {
         Response response;
         if(null == user){
             response = new Response().failure(HttpCodeEnum.ROLE_ERROR.getIndex(), i18NHelper.getMessage("login_failed"));
-        } else if(CollectionUtil.isEmpty(user.getModules()) || CollectionUtil.isEmpty(user.getRoles())){
-            response = new Response().failure(HttpCodeEnum.ROLE_ERROR.getIndex(), i18NHelper.getMessage("permission_denied"));
-        }else {
+        } else {
             // 签发token
             String token = jwtUtil.build(jwtConfig.getTtl(), user.getId());
             // 整理菜单

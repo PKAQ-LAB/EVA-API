@@ -43,9 +43,9 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
         // 签发token
         // TODO 根据用户名密码查询权限信息 存入redis
         if(null != ue && passwordEncoder.matches(pwd, ue.getPassword())){
-           return this.mapper.getUserWithModuleAndRoleById(ue.getId());
+           return ue;
         } else {
-            return null;
+           return null;
         }
     }
 
