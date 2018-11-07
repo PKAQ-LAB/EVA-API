@@ -2,6 +2,7 @@ package org.pkaq.config;
 
 import io.swagger.models.auth.SecuritySchemeDefinition;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -26,6 +27,7 @@ import java.util.List;
 @Configuration
 @EnableSwagger2
 @Slf4j
+@ConditionalOnProperty(prefix = "spring.profiles", name = "active", havingValue = "dev")
 public class SwaggerConfiguration {
     @Bean
     public Docket createRestApi() {
