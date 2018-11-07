@@ -26,29 +26,57 @@ public class ModuleEntity extends PureBaseEntity implements Serializable {
 
     @ApiModelProperty("模块名称")
     private String name;
+
     @ApiModelProperty("模块图标")
     private String icon;
+
     @ApiModelProperty("模块路由url")
     private String routeurl;
+
     @ApiModelProperty("模块前端model url")
     private String modelurl;
+
     @ApiModelProperty("上级节点id")
     private String parentId;
+
     @ApiModelProperty("上级节点名称")
     private String parentName;
+
     @ApiModelProperty("路径")
     private String path;
+
     @ApiModelProperty("上级节点id路径")
     private String pathId;
+
     @ApiModelProperty("上级节点名称路径")
     private String pathName;
+
     @ApiModelProperty("是否叶子")
     private boolean isleaf;
+
     @ApiModelProperty("排序")
     private Integer orders;
+
     @ApiModelProperty("状态")
     private String status;
+
     @TableField(exist = false)
     @ApiModelProperty("子节点")
     private List<ModuleEntity> children;
+
+    @ApiModelProperty("key")
+    @TableField(exist = false)
+    private String key;
+
+    @ApiModelProperty("exact")
+    @TableField(exist = false)
+    private boolean exact;
+
+    public String getKey(){
+        return this.getId();
+    }
+
+    public boolean getExact(){
+        return this.isleaf;
+    }
 }

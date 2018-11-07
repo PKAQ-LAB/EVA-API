@@ -31,7 +31,7 @@ public class ModuleCtrl extends BaseCtrl<ModuleService, ModuleEntity>{
         return exist? failure(): success();
     }
 
-    @GetMapping("/listModuleByAttr")
+    @GetMapping({"listModuleByAttr","listNoPage"})
     @ApiOperation(value = "根据实体类属性获取相应的模块树 ", response = Response.class)
     public Response listModuleByAttr(@ApiParam(name = "module", value= "{key: value}") ModuleEntity module){
         return success(this.service.listModuleByAttr(module));

@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: dev
+    active: prod
   # flyway配置 对于非空数据库 需要开启此项避免报错
   flyway:
     baseline-on-migrate: true

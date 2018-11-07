@@ -1,5 +1,6 @@
 package org.pkaq.web.sys.user.service;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -10,6 +11,7 @@ import org.pkaq.core.enums.LockEnumm;
 import org.pkaq.core.mvc.service.BaseService;
 import org.pkaq.web.sys.user.entity.UserEntity;
 import org.pkaq.web.sys.user.mapper.UserMapper;
+import org.pkaq.web.sys.user.vo.UserCenterVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -84,8 +86,10 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
      * @param id 用户id
      * @return 符合条件的用户对象
      */
-    public UserEntity getUser(String id) {
-        return this.mapper.selectById(id);
+    public UserCenterVO getUser(String id) {
+        UserCenterVO userCenterVO = new UserCenterVO();
+        BeanUtil.copyProperties(this.mapper.selectById(id), userCenterVO);
+        return userCenterVO;
     }
 
     /**

@@ -53,7 +53,7 @@ public class UserEntity extends PureBaseEntity implements Serializable {
     @ApiModelProperty("盐")
     private String salt;
 
-    @ApiModelProperty("用户编码")
+    @ApiModelProperty("用户头像")
     private String avatar;
 
     @ApiModelProperty("姓名")

@@ -6,11 +6,13 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.pkaq.core.exception.ParamException;
 import org.pkaq.core.mvc.ctrl.BaseCtrl;
+import org.pkaq.core.mvc.ctrl.PureBaseCtrl;
 import org.pkaq.core.mvc.util.Response;
 import org.pkaq.core.mvc.util.SingleArray;
 import org.pkaq.web.sys.user.entity.UserEntity;
 import org.pkaq.web.sys.user.service.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(description = "用户管理")
 @RestController
 @RequestMapping("/account")
-public class UserCtrl extends BaseCtrl<UserService, UserEntity> {
+public class UserCtrl extends PureBaseCtrl<UserService> {
 
     @PostMapping("/checkUnique")
     @ApiOperation(value = "校验账号唯一性",response = Response.class)
@@ -34,7 +36,39 @@ public class UserCtrl extends BaseCtrl<UserService, UserEntity> {
         boolean exist = this.service.checkUnique(user);
         return exist? failure(): success();
     }
+    @PostMapping("/del")
+    @ApiOperation(value = "根据ID删除/批量删除记录",response = Response.class)
+    public Response del(@ApiParam(name = "ids", value = "[记录ID]")
+                        @RequestBody SingleArray<String> ids){
 
+        if (null == ids || CollectionUtil.isEmpty(ids.getParam())){
+            throw new ParamException(locale("param_id_notnull"));
+        }
+
+        return success(this.service.delete(ids.getParam()));
+    }
+
+    @PostMapping("edit")
+    @ApiOperation(value = "新增/编辑记录",response = Response.class)
+    public Response save(@ApiParam(name ="formdata", value = "商品对象")
+                         @RequestBody UserEntity entity){
+        this.service.merge(entity);
+        return success(entity.getId());
+    }
+
+    @GetMapping("list")
+    @ApiOperation(value = "列表查询",response = Response.class)
+    public Response list(@ApiParam(name ="condition", value = "商品对象")
+                                     UserEntity entity, Integer pageNo){
+        return this.success(this.service.listPage(entity, pageNo));
+    }
+
+    @GetMapping("/get/{id}")
+    @ApiOperation(value = "根据ID获得记录信息", response = Response.class)
+    public Response getRole(@ApiParam(name = "id", value = "记录ID")
+                            @PathVariable("id") String id){
+        return this.success(this.service.getUser(id));
+    }
     @PostMapping("/lock")
     @ApiOperation(value = "锁定/解锁", response = Response.class)
     public Response lockSwitch(@ApiParam(name = "param", value = "用户[id]")
