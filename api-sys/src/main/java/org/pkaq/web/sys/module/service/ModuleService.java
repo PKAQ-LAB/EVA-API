@@ -56,6 +56,17 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
     }
 
     /**
+     * 组装路径
+     * @param parentPath
+     * @param currentPath
+     * @return
+     */
+    private String assemblePath(String parentPath, String currentPath) {
+        parentPath = parentPath.startsWith("/")? parentPath : "/"+parentPath;
+        currentPath = currentPath.startsWith("/")? currentPath : "/"+currentPath;
+        return parentPath+currentPath;
+    }
+    /**
      * 新增/编辑一条模块信息
      * @param module 要 新增/编辑 得模块对象
      * @return 重新查询模块列表
@@ -71,6 +82,8 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
             // 设置当前节点信息
             module.setPathId(parentModule.getId());
             String pathName = StrUtil.format("{}/{}", parentModule.getName(), module.getName());
+
+            module.setPath(this.assemblePath(parentModule.getPath(), module.getPath()));
             module.setParentName(pathName);
             module.setParentName(parentModule.getName());
 

@@ -10,7 +10,7 @@ ext {
     jaxb_api = "2.3.0"
     jjwt = "0.9.0"
     auth0 = "3.3.0"
-    sharding_jdbc = "3.0.0.M4"
+    sharding_jdbc = "3.0.0"
     jasypt = "2.1.0"
     p6spy = "3.7.0"
     flyway = "5.1.4"
