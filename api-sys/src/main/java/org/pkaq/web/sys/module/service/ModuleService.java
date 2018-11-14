@@ -57,14 +57,19 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
 
     /**
      * 组装路径
+     * :注意: 这里如果子路径本身就是以与父路径相同开头的路径那么不会拼接父路径
      * @param parentPath
      * @param currentPath
      * @return
      */
     private String assemblePath(String parentPath, String currentPath) {
         parentPath = parentPath.startsWith("/")? parentPath : "/"+parentPath;
-        currentPath = currentPath.startsWith("/")? currentPath : "/"+currentPath;
-        return parentPath+currentPath;
+        if (!currentPath.startsWith(parentPath)){
+            currentPath = currentPath.startsWith("/")? currentPath : "/"+currentPath;
+            return parentPath+currentPath;
+        } else {
+            return currentPath;
+        }
     }
     /**
      * 新增/编辑一条模块信息
