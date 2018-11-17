@@ -1,0 +1,10 @@
+ext{
+    freemarker = "2.3.28"
+    velocity = "2.0"
+}
+
+dependencies {
+    compile  project(":api-core"),
+            "org.freemarker:freemarker:${freemarker}",
+            "org.apache.velocity:velocity-engine-core:${velocity}"
+}
