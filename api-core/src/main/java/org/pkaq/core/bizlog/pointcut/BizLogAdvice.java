@@ -31,7 +31,7 @@ public class BizLogAdvice {
     @Autowired
     private BizLogSupporter bizLogSupporter;
 
-    @Pointcut("execution(public * org.pkaq.web..*.*(..))")
+    @Pointcut("@annotation(org.pkaq.core.bizlog.annotation.BizLog)")
     private void bizLog(){}
 
     @Before("bizLog()")
