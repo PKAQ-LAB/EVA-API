@@ -5,6 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.pkaq.core.mvc.service.BaseService;
 import org.pkaq.core.mvc.util.Response;
+import org.pkaq.core.util.tree.TreeHelper;
 import org.pkaq.web.sys.module.entity.ModuleEntity;
 import org.pkaq.web.sys.module.mapper.ModuleMapper;
 import org.springframework.stereotype.Service;
@@ -54,23 +55,6 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
 
         return response;
     }
-
-    /**
-     * 组装路径
-     * :注意: 这里如果子路径本身就是以与父路径相同开头的路径那么不会拼接父路径
-     * @param parentPath
-     * @param currentPath
-     * @return
-     */
-    private String assemblePath(String parentPath, String currentPath) {
-        parentPath = parentPath.startsWith("/")? parentPath : "/"+parentPath;
-        if (!currentPath.startsWith(parentPath)){
-            currentPath = currentPath.startsWith("/")? currentPath : "/"+currentPath;
-            return parentPath+currentPath;
-        } else {
-            return currentPath;
-        }
-    }
     /**
      * 新增/编辑一条模块信息
      * @param module 要 新增/编辑 得模块对象
@@ -88,8 +72,8 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
             module.setPathId(parentModule.getId());
             String pathName = StrUtil.format("{}/{}", parentModule.getName(), module.getName());
 
-            module.setPath(this.assemblePath(parentModule.getPath(), module.getPath()));
-            module.setParentName(pathName);
+            module.setPath(TreeHelper.assemblePath(parentModule.getPath(), module.getPath()));
+            module.setPathName(pathName);
             module.setParentName(parentModule.getName());
 
         } else {
@@ -113,12 +97,7 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
             module.setOrders(buddy);
         }
 
-        // 有ID更新，无ID新增
-        if(StrUtil.isNotBlank(moduleId)){
-            this.updateModule(module);
-        }else{
-            this.insertModule(module);
-        }
+        this.merge(module);
         // 保存完重新查询一遍列表数据
         return this.listModule(null);
     }
@@ -132,14 +111,6 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
         this.mapper.updateById(moduleEntity);
     }
 
-    /**
-     * 新增
-     * @param moduleEntity
-     * @return
-     */
-    public void insertModule(ModuleEntity moduleEntity){
-        this.mapper.insert(moduleEntity);
-    }
 
     /**
      * 根据ID获取一条模块信息

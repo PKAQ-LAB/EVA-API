@@ -19,7 +19,7 @@ public class GoodsCtrlTest extends BaseTest {
     @Test
     public void testSave(){
         try {
-            String json = "{name: '测试品名-BRAVO', category: '0000', model: '7130',mnemonic: 'atmbsq',barcode:'62391232',unit:'0004',boxunit: 10, productor:'A123232'}";
+            String json = "{name: '测试品名-BRAVO', category.xml: '0000', model: '7130',mnemonic: 'atmbsq',barcode:'62391232',unit:'0004',boxunit: 10, productor:'A123232'}";
             this.mockMvc.perform(post("/goods/edit")
                     .content(json))
                     .andExpect(MockMvcResultMatchers.status().isOk())
@@ -32,7 +32,7 @@ public class GoodsCtrlTest extends BaseTest {
     @Test
     public void testEdit(){
         try {
-            String json = "{id:'1051305116113580033', name: '测试品名修改', category: '0000', model: '7130',mnemonic: 'atmbsq',barcode:'62391232',unit:'0004',boxunit: 10, productor:'A123232'}";
+            String json = "{id:'1051305116113580033', name: '测试品名修改', category.xml: '0000', model: '7130',mnemonic: 'atmbsq',barcode:'62391232',unit:'0004',boxunit: 10, productor:'A123232'}";
             this.mockMvc.perform(post("/goods/edit")
                     .content(json))
                     .andExpect(MockMvcResultMatchers.status().isOk())

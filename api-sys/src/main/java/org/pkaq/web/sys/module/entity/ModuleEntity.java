@@ -1,16 +1,12 @@
 package org.pkaq.web.sys.module.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
-import org.pkaq.core.mvc.entity.PureBaseEntity;
-
-import java.io.Serializable;
-import java.util.List;
+import org.pkaq.core.mvc.entity.tree.BaseTreeEntity;
 
 /**
  * 模块管理
@@ -21,7 +17,7 @@ import java.util.List;
 @TableName("sys_module")
 @EqualsAndHashCode(callSuper = true)
 @ApiModel("模块管理")
-public class ModuleEntity extends PureBaseEntity implements Serializable {
+public class ModuleEntity extends BaseTreeEntity {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("模块名称")
@@ -36,47 +32,9 @@ public class ModuleEntity extends PureBaseEntity implements Serializable {
     @ApiModelProperty("模块前端model url")
     private String modelurl;
 
-    @ApiModelProperty("上级节点id")
-    private String parentId;
-
-    @ApiModelProperty("上级节点名称")
-    private String parentName;
-
-    @ApiModelProperty("路径")
-    private String path;
-
-    @ApiModelProperty("上级节点id路径")
-    private String pathId;
-
-    @ApiModelProperty("上级节点名称路径")
-    private String pathName;
-
-    @ApiModelProperty("是否叶子")
-    private boolean isleaf;
-
     @ApiModelProperty("排序")
     private Integer orders;
 
     @ApiModelProperty("状态")
     private String status;
-
-    @TableField(exist = false)
-    @ApiModelProperty("子节点")
-    private List<ModuleEntity> children;
-
-    @ApiModelProperty("key")
-    @TableField(exist = false)
-    private String key;
-
-    @ApiModelProperty("exact")
-    @TableField(exist = false)
-    private boolean exact;
-
-    public String getKey(){
-        return this.getId();
-    }
-
-    public boolean getExact(){
-        return this.isleaf;
-    }
 }

@@ -10,10 +10,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
 import org.pkaq.core.mvc.entity.PureBaseEntity;
-import org.pkaq.web.sys.module.entity.ModuleEntity;
+import org.pkaq.core.mvc.entity.tree.BaseTreeEntity;
 import org.pkaq.web.sys.role.entity.RoleEntity;
 
-import java.io.Serializable;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +27,7 @@ import java.util.List;
 @TableName("sys_user_info")
 @EqualsAndHashCode(callSuper = true)
 @ApiModel("用户管理")
-public class UserEntity extends PureBaseEntity implements Serializable {
+public class UserEntity extends PureBaseEntity {
 
     @ApiModelProperty("编号")
     private String code;
@@ -84,7 +83,7 @@ public class UserEntity extends PureBaseEntity implements Serializable {
 
     @ApiModelProperty("用户拥有的模块")
     @TableField(exist = false)
-    private List<ModuleEntity> modules = new ArrayList<>();
+    private List<BaseTreeEntity> modules = new ArrayList<>();
 
     private static final long serialVersionUID = 1L;
 

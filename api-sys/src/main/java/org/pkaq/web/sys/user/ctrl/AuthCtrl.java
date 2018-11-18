@@ -1,18 +1,17 @@
 package org.pkaq.web.sys.user.ctrl;
 
-import cn.hutool.core.collection.CollectionUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.pkaq.core.enums.HttpCodeEnum;
+import org.pkaq.core.mvc.entity.tree.BaseTreeEntity;
 import org.pkaq.core.mvc.util.Response;
 import org.pkaq.core.util.I18NHelper;
+import org.pkaq.core.util.tree.TreeHelper;
 import org.pkaq.security.jwt.JwtConfig;
 import org.pkaq.security.jwt.JwtUtil;
-import org.pkaq.web.sys.module.entity.ModuleEntity;
 import org.pkaq.web.sys.user.entity.UserEntity;
 import org.pkaq.web.sys.user.service.UserService;
-import org.pkaq.util.TreeHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -53,7 +52,7 @@ public class AuthCtrl {
             // 签发token
             String token = jwtUtil.build(jwtConfig.getTtl(), user.getId());
             // 整理菜单
-            List<ModuleEntity> treeModule = new TreeHelper().bulid(user.getModules());
+            List<BaseTreeEntity> treeModule = new TreeHelper().bulid(user.getModules());
 
             user.setModules(treeModule);
 

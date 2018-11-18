@@ -5,7 +5,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.pkaq.core.exception.ParamException;
-import org.pkaq.core.mvc.ctrl.BaseCtrl;
 import org.pkaq.core.mvc.ctrl.PureBaseCtrl;
 import org.pkaq.core.mvc.util.Response;
 import org.pkaq.core.mvc.util.SingleArray;
@@ -45,15 +44,14 @@ public class ModuleCtrl extends PureBaseCtrl<ModuleService> {
             throw new ParamException(locale("param_id_notnull"));
         }
 
-        return success(this.service.deleteModule(ids.getParam()));
+        return this.service.deleteModule(ids.getParam());
     }
 
     @PostMapping("edit")
     @ApiOperation(value = "新增/编辑记录",response = Response.class)
     public Response save(@ApiParam(name ="formdata", value = "模块对象")
                          @RequestBody ModuleEntity entity){
-        this.service.editModule(entity);
-        return success(this.service.listModuleByAttr(null));
+        return success(  this.service.editModule(entity));
     }
 
     @GetMapping("/get/{id}")

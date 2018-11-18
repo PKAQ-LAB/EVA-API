@@ -18,3 +18,4 @@ build
 /api-web/out
 /api-sys/out
 /addon-pay/out
+/addon-generator/out

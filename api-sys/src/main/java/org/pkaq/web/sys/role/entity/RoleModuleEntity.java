@@ -20,7 +20,7 @@ import java.io.Serializable;
 @TableName("sys_role_module")
 @EqualsAndHashCode()
 @ApiModel("角色模块关系")
-public class RoleModuleEntity implements Serializable{
+public class RoleModuleEntity{
     @TableId
     private String id;
     @ApiModelProperty("角色ID")
