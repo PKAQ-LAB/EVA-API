@@ -17,7 +17,7 @@ public class IndexCtrl {
     @RequestMapping({"/",""})
     @ApiIgnore
     public void index(HttpServletResponse response) throws IOException {
-        response.sendRedirect("swagger-ui.html");
+        response.sendRedirect("doc.html");
     }
 }
 

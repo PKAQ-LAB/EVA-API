@@ -2,7 +2,7 @@ description = """core"""
 // 依赖配置
 dependencies {
     compile "io.springfox:springfox-swagger2:${swagger}",
-            "io.springfox:springfox-swagger-ui:${swagger}"
+            "com.github.xiaoymin:swagger-bootstrap-ui:1.8.7"
 
     compile "org.springframework.boot:spring-boot-starter-web:${bootVersion}",
             // AOP
