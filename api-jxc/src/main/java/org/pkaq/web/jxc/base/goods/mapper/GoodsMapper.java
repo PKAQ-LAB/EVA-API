@@ -1,8 +1,8 @@
-package org.pkaq.web.jxc.goods.mapper;
+package org.pkaq.web.jxc.base.goods.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
-import org.pkaq.web.jxc.goods.entity.GoodsEntity;
+import org.pkaq.web.jxc.base.goods.entity.GoodsEntity;
 import org.springframework.stereotype.Repository;
 
 /**

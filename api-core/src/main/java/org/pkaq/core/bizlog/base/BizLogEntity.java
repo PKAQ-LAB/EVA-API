@@ -1,6 +1,7 @@
 package org.pkaq.core.bizlog.base;
 
 import lombok.Data;
+import lombok.Setter;
 
 /**
  * 业务日志模型类

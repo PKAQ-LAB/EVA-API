@@ -1,13 +1,13 @@
-package org.pkaq.web.jxc.instock.ctrl;
+package org.pkaq.web.jxc.purchasing.orders.ctrl;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.pkaq.core.mvc.ctrl.PureBaseCtrl;
 import org.pkaq.core.mvc.util.Response;
-import org.pkaq.web.jxc.instock.entity.InstockEntity;
-import org.pkaq.web.jxc.instock.service.InstockService;
-import org.pkaq.web.jxc.instock.vo.InstockVO;
+import org.pkaq.web.jxc.purchasing.orders.entity.PurchasingOrderEntity;
+import org.pkaq.web.jxc.purchasing.orders.service.PurchasingService;
+import org.pkaq.web.jxc.purchasing.orders.vo.PurchasingOrderVO;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,12 +23,12 @@ import org.springframework.web.bind.annotation.RestController;
 @Api( description = "采购入库单")
 @RestController
 @RequestMapping("instock")
-public class InstockCtrl extends PureBaseCtrl<InstockService> {
+public class PurchasingOrderCtrl extends PureBaseCtrl<PurchasingService> {
 
     @PostMapping("edit")
     @ApiOperation(value = "新增/编辑采购入库单",response = Response.class)
     public Response save(@ApiParam(name ="instock", value = "采购入库单对象")
-                         @RequestBody InstockEntity instock){
+                         @RequestBody PurchasingOrderEntity instock){
         this.service.save(instock);
         return success();
     }
@@ -36,7 +36,7 @@ public class InstockCtrl extends PureBaseCtrl<InstockService> {
     @GetMapping("list")
     @ApiOperation(value = "采购入库单列表查询",response = Response.class)
     public Response list(@ApiParam(name ="instock", value = "入库单查询对象")
-                         InstockVO entity, Integer pageNo){
+                                 PurchasingOrderVO entity, Integer pageNo){
         return this.success(this.service.listPage(entity, pageNo));
     }
 

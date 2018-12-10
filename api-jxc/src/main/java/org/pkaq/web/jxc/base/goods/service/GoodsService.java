@@ -1,9 +1,9 @@
-package org.pkaq.web.jxc.goods.service;
+package org.pkaq.web.jxc.base.goods.service;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.pkaq.core.mvc.service.BaseService;
-import org.pkaq.web.jxc.goods.entity.GoodsEntity;
-import org.pkaq.web.jxc.goods.mapper.GoodsMapper;
+import org.pkaq.web.jxc.base.goods.entity.GoodsEntity;
+import org.pkaq.web.jxc.base.goods.mapper.GoodsMapper;
 import org.springframework.stereotype.Service;
 
 /**
@@ -13,11 +13,11 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class GoodsService extends BaseService<GoodsMapper, GoodsEntity> {
-    public void save(GoodsEntity goodsEntity){
-        this.merge(goodsEntity);
-    }
+    public boolean checkUnique(GoodsEntity goods) {
+        QueryWrapper<GoodsEntity> entityWrapper = new QueryWrapper<>();
+        entityWrapper.eq("barcode", goods.getBarcode());
 
-    public IPage<GoodsEntity> list(GoodsEntity goodsEntity, Integer pageNo){
-       return this.listPage(goodsEntity, pageNo);
+        int records = this.mapper.selectCount(entityWrapper);
+        return records > 0;
     }
 }

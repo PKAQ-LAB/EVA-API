@@ -29,7 +29,7 @@ public abstract class BaseCtrl<T extends BaseService, E extends PureBaseEntity> 
     @Autowired
     protected I18NHelper i18NHelper;
 
-    @PostMapping("/del")
+    @PostMapping("del")
     @ApiOperation(value = "根据ID删除/批量删除记录",response = Response.class)
     public Response del(@ApiParam(name = "ids", value = "[记录ID]")
                         @RequestBody SingleArray<String> ids){
@@ -43,7 +43,7 @@ public abstract class BaseCtrl<T extends BaseService, E extends PureBaseEntity> 
 
     @PostMapping("edit")
     @ApiOperation(value = "新增/编辑记录",response = Response.class)
-    public Response save(@ApiParam(name ="formdata", value = "商品对象")
+    public Response save(@ApiParam(name ="formdata", value = "模型对象")
                          @RequestBody E entity){
         this.service.merge(entity);
         return success(entity.getId());
@@ -51,7 +51,7 @@ public abstract class BaseCtrl<T extends BaseService, E extends PureBaseEntity> 
 
     @GetMapping("list")
     @ApiOperation(value = "列表查询",response = Response.class)
-    public Response list(@ApiParam(name ="condition", value = "商品对象")
+    public Response list(@ApiParam(name ="condition", value = "模型对象")
                                  E entity, Integer pageNo){
         return this.success(this.service.listPage(entity, pageNo));
     }

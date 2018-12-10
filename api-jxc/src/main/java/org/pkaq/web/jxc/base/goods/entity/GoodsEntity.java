@@ -1,5 +1,7 @@
-package org.pkaq.web.jxc.goods.entity;
+package org.pkaq.web.jxc.base.goods.entity;
 
+import com.baomidou.mybatisplus.annotation.SqlCondition;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -15,22 +17,24 @@ import org.pkaq.core.mvc.entity.PureBaseEntity;
 @Data
 @Alias("goods")
 @ApiModel
-@TableName("t_jxc_goods")
+@TableName("JXC_BASE_GOODS")
 @EqualsAndHashCode(callSuper = true)
 public class GoodsEntity extends PureBaseEntity {
     @ApiModelProperty(value = "品名")
+    @TableField(condition = SqlCondition.LIKE)
     private String name;
 
     @ApiModelProperty("品类")
     private String category;
 
     @ApiModelProperty("型号")
+    @TableField(condition = SqlCondition.LIKE)
     private String model;
 
     @ApiModelProperty("助记码")
     private String mnemonic;
 
-    @ApiModelProperty("二维码")
+    @ApiModelProperty("条码")
     private String barcode;
 
     @ApiModelProperty("单位")
@@ -38,7 +42,4 @@ public class GoodsEntity extends PureBaseEntity {
 
     @ApiModelProperty("装箱规格")
     private Integer boxunit;
-
-    @ApiModelProperty("生产厂家")
-    private String productor;
 }

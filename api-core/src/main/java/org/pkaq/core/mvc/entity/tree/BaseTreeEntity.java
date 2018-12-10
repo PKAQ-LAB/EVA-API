@@ -3,16 +3,18 @@ package org.pkaq.core.mvc.entity.tree;
 import com.baomidou.mybatisplus.annotation.TableField;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.pkaq.core.mvc.entity.PureBaseEntity;
 
 import java.util.List;
 
 /**
- * 树形结构实体积累
+ * 树形结构实体基类
  * @author: S.PKAQ
  * @Datetime: 2018/11/18 13:20
  */
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class BaseTreeEntity extends PureBaseEntity {
     @ApiModelProperty("上级节点id")
     private String parentId;

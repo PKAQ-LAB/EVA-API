@@ -2,7 +2,7 @@ package org.pkaq.web.jxc.instock.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
-import org.pkaq.web.jxc.instock.entity.InstockLineEntity;
+import org.pkaq.web.jxc.purchasing.orders.entity.PurchasingOrderLineEntity;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,6 +14,6 @@ import java.util.List;
  */
 @Mapper
 @Repository
-public interface InstockLineMapper extends BaseMapper<InstockLineEntity> {
-    List<InstockLineEntity> listByMainId(String mainId);
+public interface PurchasingOrderLineMapper extends BaseMapper<PurchasingOrderLineEntity> {
+    List<PurchasingOrderLineEntity> listByMainId(String mainId);
 }

@@ -93,8 +93,11 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
                 moduleinNode.setIsleaf(true);
                 this.updateModule(moduleinNode);
             }
-            int buddy = this.mapper.countPrantLeaf(pid);
-            module.setOrders(buddy);
+            if (null == module.getOrders()){
+                int buddy = this.mapper.countPrantLeaf(pid);
+                module.setOrders(buddy);
+            }
+
         }
 
         this.merge(module);

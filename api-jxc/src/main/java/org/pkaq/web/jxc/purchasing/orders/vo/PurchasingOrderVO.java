@@ -1,8 +1,8 @@
-package org.pkaq.web.jxc.instock.vo;
+package org.pkaq.web.jxc.purchasing.orders.vo;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.pkaq.web.jxc.instock.entity.InstockEntity;
+import org.pkaq.web.jxc.purchasing.orders.entity.PurchasingOrderEntity;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -13,7 +13,7 @@ import java.util.Date;
  * @Datetime: 2018/10/15 20:14
  */
 @Data
-public class InstockVO extends InstockEntity {
+public class PurchasingOrderVO extends PurchasingOrderEntity {
     @ApiModelProperty("入库日期")
     private Date indate;
 

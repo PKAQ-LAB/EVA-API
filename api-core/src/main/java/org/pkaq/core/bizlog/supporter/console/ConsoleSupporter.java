@@ -2,9 +2,8 @@ package org.pkaq.core.bizlog.supporter.console;
 
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.bizlog.base.BizLogEntity;
-import org.pkaq.core.bizlog.base.BizLogEnum;
 import org.pkaq.core.bizlog.base.BizLogSupporter;
-import org.pkaq.core.bizlog.condition.MybatisSupporterCondition;
+import org.pkaq.core.bizlog.condition.DefaultSupporterCondition;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +17,7 @@ import java.util.List;
  */
 @Slf4j
 @Component
-@Conditional(MybatisSupporterCondition.class)
+@Conditional(DefaultSupporterCondition.class)
 public class ConsoleSupporter implements BizLogSupporter {
     private BizLogEntity bizLogEntity;
 
