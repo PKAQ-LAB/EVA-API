@@ -39,6 +39,8 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
         String pwd = userEntity.getPassword();
         UserEntity ue = new UserEntity();
         ue.setAccount(userEntity.getAccount());
+        //ue.setPassword(pwd);
+
         ue = this.mapper.selectOne(new QueryWrapper<>(ue));
         // 签发token
         // TODO 根据用户名密码查询权限信息 存入redis

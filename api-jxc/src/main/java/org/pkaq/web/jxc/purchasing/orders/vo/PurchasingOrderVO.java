@@ -2,6 +2,7 @@ package org.pkaq.web.jxc.purchasing.orders.vo;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.pkaq.web.jxc.purchasing.orders.entity.PurchasingOrderEntity;
 
 import java.math.BigDecimal;
@@ -13,6 +14,7 @@ import java.util.Date;
  * @Datetime: 2018/10/15 20:14
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class PurchasingOrderVO extends PurchasingOrderEntity {
     @ApiModelProperty("入库日期")
     private Date indate;
