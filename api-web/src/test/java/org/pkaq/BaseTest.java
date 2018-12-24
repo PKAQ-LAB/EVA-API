@@ -29,4 +29,5 @@ public class BaseTest {
         //初始化MockMvc对象
         mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
     }
+
 }

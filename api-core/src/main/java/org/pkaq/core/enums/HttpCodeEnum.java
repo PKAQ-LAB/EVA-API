@@ -16,7 +16,7 @@ public enum  HttpCodeEnum {
     POST_SUCCESS("一个请求已经进入后台排队（异步任务）。", 202),
     DEL_SUCCESS("删除数据成功。", 204),
     REQEUST_FAILURE("请求参数错误。", 400),
-    ROLE_ERROR("用户没有权限（令牌、用户名、密码错误）", 401),
+    ROLE_ERROR("用户没有权限", 401),
     BAD_METHOD("不支持当前请求方法 ", 405),
     BAD_MEDIATYPE("不支持当前媒体类型 ", 415),
     REQEUST_REFUSED("用户得到授权，但是访问是被禁止的。", 403),
