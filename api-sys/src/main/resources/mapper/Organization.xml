@@ -51,7 +51,7 @@
   <select id="countPrantLeaf" resultType="int">
       select count(id)
       from sys_organization
-      where parent_ID=(select parent_id from sys_organization og where og.id = #{id})
+      where parent_ID=#{id}
   </select>
   <!-- 切换可用状态 -->
   <update id="switchStatus">
