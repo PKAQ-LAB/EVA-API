@@ -5,7 +5,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.pkaq.core.exception.ParamException;
-import org.pkaq.core.mvc.ctrl.BaseCtrl;
 import org.pkaq.core.mvc.ctrl.PureBaseCtrl;
 import org.pkaq.core.mvc.util.Response;
 import org.pkaq.core.mvc.util.SingleArray;
@@ -52,8 +51,8 @@ public class UserCtrl extends PureBaseCtrl<UserService> {
     @ApiOperation(value = "新增/编辑记录",response = Response.class)
     public Response save(@ApiParam(name ="formdata", value = "商品对象")
                          @RequestBody UserEntity entity){
-        this.service.merge(entity);
-        return success(entity.getId());
+
+        return success(this.service.saveUser(entity));
     }
 
     @GetMapping("list")

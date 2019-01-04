@@ -39,7 +39,6 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
         String pwd = userEntity.getPassword();
         UserEntity ue = new UserEntity();
         ue.setAccount(userEntity.getAccount());
-        //ue.setPassword(pwd);
 
         ue = this.mapper.selectOne(new QueryWrapper<>(ue));
         // 签发token
@@ -56,7 +55,6 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
      * @param userEntity
      * @return
      */
-    @BizLog(description = "用户新增")
     public IPage<UserEntity> listUser(UserEntity userEntity, Integer page) {
         return this.listPage(userEntity, page);
     }
