@@ -106,8 +106,8 @@ public class JwtUtil {
      * @param jwtToken token串
      * @return 验证结果
      */
-    public boolean valid(String jwtToken){
-        boolean ret = false;
+    public boolean valid(String jwtToken) throws OathException {
+        boolean ret;
         try {
             SecretKey secretKey = generalKey();
             Claims claims = Jwts.parser()
@@ -124,11 +124,14 @@ public class JwtUtil {
         } catch (SignatureException se ) {
             //在解析JWT字符串时，如果密钥不正确，将会解析失败，抛出SignatureException异常，说明该JWT字符串是伪造的
             log.error("密钥错误");
+            throw new OathException("Token 验证失败");
         } catch (ExpiredJwtException ee) {
             //在解析JWT字符串时，如果‘过期时间字段’已经早于当前时间，将会抛出ExpiredJwtException异常，说明本次请求已经失效
             log.error("token已过期");
+            throw new OathException("Token 已过期, 请重新登录.");
         } catch (OathException oe) {
             log.error("登录已失效");
+            throw new OathException("登录已过期, 请重新登录.");
         }
 
         return ret;
