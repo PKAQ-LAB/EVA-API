@@ -1,6 +1,7 @@
 package org.pkaq;
 
 import org.junit.Test;
+import org.pkaq.security.exception.OathException;
 import org.pkaq.security.jwt.JwtConfig;
 import org.pkaq.security.jwt.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class JwtTest extends BaseTest{
 
     }
     @Test
-    public void tokenTest() {
+    public void tokenTest() throws OathException {
         System.out.println("sign user is : " + jwtConfig.getSign());
         JwtUtil jwtUtil = new JwtUtil();
         String token = jwtUtil.build(500, "9199482d76b443ef9f13fefddcf0046c");

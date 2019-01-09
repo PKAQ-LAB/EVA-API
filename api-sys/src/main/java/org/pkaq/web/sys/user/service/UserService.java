@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.pkaq.core.bizlog.annotation.BizLog;
 import org.pkaq.core.bizlog.base.BizLogEnum;
-import org.pkaq.core.enums.LockEnumm;
 import org.pkaq.core.mvc.service.BaseService;
 import org.pkaq.web.sys.user.entity.UserEntity;
 import org.pkaq.web.sys.user.mapper.UserMapper;
@@ -74,7 +73,7 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
      */
     public void updateUser(ArrayList<String> ids, String lock) {
         UserEntity user = new UserEntity();
-        user.setLocked(LockEnumm.LOCK.getIndex().equals(lock));
+        user.setLocked(lock);
         QueryWrapper<UserEntity> wrapper = new QueryWrapper<>();
         wrapper.in("id",CollectionUtil.join(ids,","));
 

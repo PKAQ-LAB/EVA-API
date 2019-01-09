@@ -1,6 +1,7 @@
 package org.pkaq.security.filter;
 
 import cn.hutool.core.util.StrUtil;
+import org.pkaq.security.exception.OathException;
 import org.pkaq.security.jwt.JwtConfig;
 import org.pkaq.security.jwt.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +44,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             final String authToken = authHeader.substring(jwtConfig.getTokenHead().length());
 
             logger.debug(" ------------------ > Auth token is : " + authHeader);
-            boolean isvalid = jwtUtil.valid(authToken);
+            boolean isvalid = false;
+            try {
+                isvalid = jwtUtil.valid(authToken);
+            } catch (OathException e) {
+                e.printStackTrace();
+            }
 
             if (isvalid) {
                 String account = jwtUtil.getUid(authToken);

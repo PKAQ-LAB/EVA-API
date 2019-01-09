@@ -78,6 +78,6 @@ public class UserCtrl extends PureBaseCtrl<UserService> {
         }
 
         this.service.updateUser(param.getParam(), param.getStatus());
-        return success();
+        return success(this.service.listPage(null, 1));
     }
 }

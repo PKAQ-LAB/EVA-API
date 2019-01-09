@@ -26,11 +26,11 @@ public class OathExceptionAdvice {
      * @param e 异常类型
      * @return
      */
-    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(AccessDeniedException.class)
     public Response handleAccessDeniedException(AccessDeniedException e){
         log.error("没有操作权限:" + e.getMessage());
-        return new Response().failure(403);
+        return new Response().failure(401);
     }
 
     /**
@@ -42,6 +42,6 @@ public class OathExceptionAdvice {
     @ExceptionHandler(ExpiredJwtException.class)
     public Response handleAccessDeniedException(ExpiredJwtException e){
         log.error("登录已过期:" + e.getMessage());
-        return new Response().failure(403);
+        return new Response().failure(401);
     }
 }

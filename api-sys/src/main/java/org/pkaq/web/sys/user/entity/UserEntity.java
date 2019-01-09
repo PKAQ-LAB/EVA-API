@@ -75,7 +75,7 @@ public class UserEntity extends PureBaseEntity {
     private Date lastLogin;
 
     @ApiModelProperty("是否锁定")
-    private Boolean locked;
+    private String locked;
 
     @ApiModelProperty("用户拥有的角色")
     @TableField(exist = false)
