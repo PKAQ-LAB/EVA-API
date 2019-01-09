@@ -5,13 +5,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.pkaq.core.exception.ParamException;
-import org.pkaq.core.mvc.ctrl.BaseCtrl;
 import org.pkaq.core.mvc.ctrl.PureBaseCtrl;
 import org.pkaq.core.mvc.util.Response;
 import org.pkaq.core.mvc.util.SingleArray;
 import org.pkaq.web.sys.organization.entity.OrganizationEntity;
 import org.pkaq.web.sys.organization.service.OrganizationService;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -59,7 +57,7 @@ public class OrgCtrl extends PureBaseCtrl<OrganizationService> {
 
     @PostMapping("/del")
     @ApiOperation(value = "根据ID删除/批量删除组织", response = Response.class)
-    @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('ADMIN')")
     public Response delOrg(@ApiParam(name = "ids", value = "[组织ID]")
                            @RequestBody SingleArray<String> ids){
         // 参数非空校验
