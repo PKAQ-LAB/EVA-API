@@ -76,7 +76,10 @@ public class OrganizationService extends BaseService<OrganizationMapper, Organiz
             organization.setParentName(parentOrg.getName());
 
         } else {
-            // 父节点为空, 根节点 设置为非叶子
+            // 父节点为空, 根节点 设置为非叶子\
+            pid = root;
+
+            organization.setParentId(pid);
             organization.setIsleaf(false);
             organization.setPath(organization.getId());
             organization.setPathName(organization.getName());
