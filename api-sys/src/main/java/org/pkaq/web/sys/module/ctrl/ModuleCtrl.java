@@ -61,14 +61,9 @@ public class ModuleCtrl extends PureBaseCtrl<ModuleService> {
         return this.success(this.service.getById(id));
     }
 
-    @GetMapping({"listModuleByAttr","listNoPage/{moduleName}"})
+    @GetMapping({"listModuleByAttr","listNoPage"})
     @ApiOperation(value = "根据实体类属性获取相应的模块树 ", response = Response.class)
-    public Response listModuleByAttr(@ApiParam(name = "moduleName", value = "组织名称或编码")
-                                     @PathVariable(value = "moduleName", required = false) String moduleName){
-        
-        ModuleEntity module = new ModuleEntity();
-        module.setName(moduleName);
-
+    public Response listModuleByAttr(@ApiParam(name = "module", value= "{key: value}") ModuleEntity module){
         return success(this.service.listModuleByAttr(module));
     }
 
