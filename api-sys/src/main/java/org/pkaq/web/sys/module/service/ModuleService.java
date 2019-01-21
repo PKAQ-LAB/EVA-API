@@ -87,7 +87,9 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
         ModuleEntity moduleinNode = this.mapper.getParentById(moduleId);
 
         // 如果更换了父节点 重新确定原父节点的 leaf属性，以及所修改节点的orders属性
-        if(null != moduleinNode && !pid.equals(moduleinNode.getParentId())){
+        if(null != moduleinNode
+                && null != pid
+                && !pid.equals(moduleinNode.getParentId())){
             int brothers = this.mapper.countPrantLeaf(moduleId) - 1;
             if(brothers < 1){
                 moduleinNode.setIsleaf(true);
