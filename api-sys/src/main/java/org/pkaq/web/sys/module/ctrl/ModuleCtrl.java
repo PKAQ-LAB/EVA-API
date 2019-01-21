@@ -44,7 +44,9 @@ public class ModuleCtrl extends PureBaseCtrl<ModuleService> {
             throw new ParamException(locale("param_id_notnull"));
         }
 
-        return this.service.deleteModule(ids.getParam());
+        this.service.deleteModule(ids.getParam());
+
+        return this.success(this.service.listModule(null));
     }
 
     @PostMapping("edit")
