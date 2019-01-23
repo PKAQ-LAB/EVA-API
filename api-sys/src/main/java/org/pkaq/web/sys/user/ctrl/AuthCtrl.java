@@ -3,6 +3,7 @@ package org.pkaq.web.sys.user.ctrl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.pkaq.core.constant.TokenConst;
 import org.pkaq.core.enums.HttpCodeEnum;
 import org.pkaq.core.mvc.entity.tree.BaseTreeEntity;
 import org.pkaq.core.mvc.util.Response;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +42,8 @@ public class AuthCtrl {
     private JwtConfig jwtConfig;
     @Autowired
     private JwtUtil jwtUtil;
+    @Autowired
+    private HttpServletResponse httpResponse;
 
     @PostMapping("/login")
     @ApiOperation(value = "用户登录", response = Response.class)
@@ -56,10 +61,13 @@ public class AuthCtrl {
 
             user.setModules(treeModule);
 
-            Map<String, Object> map = new HashMap<>(2);
-            map.put("token", token);
+            Map<String, Object> map = new HashMap<>(1);
             map.put("user", user);
-            response = new Response().success(map);
+            response = new Response().success(map, "登录成功");
+
+            Cookie cookie = new Cookie(TokenConst.EVA_TOKEN,token);
+            cookie.setMaxAge(24 * 60 * 60);
+            httpResponse.addCookie(cookie);
         }
         return response;
     }

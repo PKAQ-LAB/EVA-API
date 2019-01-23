@@ -41,6 +41,18 @@ public class Response{
         this.status = HttpCodeEnum.QUERY_SUCCESS.getIndex();
         return this;
     }
+    /**
+     * 响应成功
+     * @param data
+     * @return
+     */
+    public Response success(Object data, String msg) {
+        this.data = data;
+        this.success = true;
+        this.statusText = msg;
+        this.status = HttpCodeEnum.QUERY_SUCCESS.getIndex();
+        return this;
+    }
 
     /**
      * 响应失败
