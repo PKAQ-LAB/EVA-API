@@ -21,16 +21,16 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @Slf4j
 public class OathExceptionAdvice {
     /**
-     * 401 - 访问被拒绝
+     * 403 - 访问被拒绝
      * 权限不足异常
      * @param e 异常类型
      * @return
      */
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(AccessDeniedException.class)
     public Response handleAccessDeniedException(AccessDeniedException e){
         log.error("没有操作权限:" + e.getMessage());
-        return new Response().failure(401);
+        return new Response().failure(403);
     }
 
     /**
