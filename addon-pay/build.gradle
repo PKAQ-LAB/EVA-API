@@ -18,7 +18,7 @@ ext{
 }
 
 dependencies {
-    compile     "org.springframework.boot:spring-boot-starter-web:${bootVersion}",
+    compile     "org.springframework.boot:spring-boot-starter-web",
                 // hutool
                 "cn.hutool:hutool-all:${hutool}",
                 // 支付宝 依赖
