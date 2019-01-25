@@ -7,7 +7,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.pkaq.core.bizlog.annotation.BizLog;
 import org.pkaq.core.bizlog.base.BizLogEnum;
+import org.pkaq.core.mvc.entity.tree.BaseTreeEntity;
 import org.pkaq.core.mvc.service.BaseService;
+import org.pkaq.core.util.tree.TreeHelper;
+import org.pkaq.web.sys.module.service.ModuleService;
 import org.pkaq.web.sys.user.entity.UserEntity;
 import org.pkaq.web.sys.user.mapper.UserMapper;
 import org.pkaq.web.sys.user.vo.UserCenterVO;
@@ -16,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 用户管理
@@ -27,6 +31,8 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private ModuleService moduleService;
     /**
      * 用户登录校验
      * @param userEntity
@@ -122,5 +128,19 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
 
         int records = this.mapper.selectCount(entityWrapper);
         return records>0;
+    }
+
+    /**
+     * 获取当前登录用户的信息(菜单.权限.消息
+     * @param userEntity
+     * @return
+     */
+    public UserEntity fetch(String uid) {
+        UserEntity userEntity = this.mapper.getUserWithModuleAndRoleById(uid);
+
+        List<BaseTreeEntity> treeModule = new TreeHelper().bulid(userEntity.getModules());
+        userEntity.setModules(treeModule);
+
+        return userEntity;
     }
 }

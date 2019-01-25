@@ -3,26 +3,23 @@ package org.pkaq.web.sys.user.ctrl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.pkaq.core.constant.TokenConst;
 import org.pkaq.core.enums.HttpCodeEnum;
-import org.pkaq.core.mvc.entity.tree.BaseTreeEntity;
 import org.pkaq.core.mvc.util.Response;
 import org.pkaq.core.util.I18NHelper;
-import org.pkaq.core.util.tree.TreeHelper;
 import org.pkaq.security.jwt.JwtConfig;
 import org.pkaq.security.jwt.JwtUtil;
 import org.pkaq.web.sys.user.entity.UserEntity;
 import org.pkaq.web.sys.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,6 +41,8 @@ public class AuthCtrl {
     private JwtUtil jwtUtil;
     @Autowired
     private HttpServletResponse httpResponse;
+    @Autowired
+    private HttpServletRequest httpRequest;
 
     @PostMapping("/login")
     @ApiOperation(value = "用户登录", response = Response.class)
@@ -56,20 +55,24 @@ public class AuthCtrl {
         } else {
             // 签发token
             String token = jwtUtil.build(jwtConfig.getTtl(), user.getId());
-            // 整理菜单
-            List<BaseTreeEntity> treeModule = new TreeHelper().bulid(user.getModules());
-
-            user.setModules(treeModule);
 
             Map<String, Object> map = new HashMap<>(1);
             map.put("user", user);
+            map.put("token", token);
             response = new Response().success(map, "登录成功");
-
-            Cookie cookie = new Cookie(TokenConst.EVA_TOKEN,token);
-            cookie.setMaxAge(24 * 60 * 60);
-            httpResponse.addCookie(cookie);
         }
         return response;
+    }
+
+    @GetMapping("/fetch")
+    @ApiOperation(value = "获取当前登录用户的信息(菜单.权限.消息)",response = Response.class)
+    public Response fetch(){
+        String authHeader = httpRequest.getHeader(jwtConfig.getHeader());
+
+        final String authToken = authHeader.substring(jwtConfig.getTokenHead().length());
+        String account = jwtUtil.getUid(authToken);
+
+        return new Response().success(this.userService.fetch(account));
     }
 
     @PostMapping("/logout")
