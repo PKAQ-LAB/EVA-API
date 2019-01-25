@@ -21,15 +21,15 @@ public class JwtConfig {
     //private int jwt_errcode_expire = 4001;
     ////验证不通过
     //private int jwt_errcode_fail = 4002;
-    // token header参数名
+    /**  token header参数名 **/
     private String header = "Authorization";
-    // token 前缀
+    /**  token 前缀 **/
     private String tokenHead = "Bearer";
-    // 签发人
+    /**  签发人 **/
     private String sign = "PKAQ";
-    //密匙
+    /** 密匙 **/
     private String secert = "aHR0cDovL3BrYXEub3Jn";
-    //token有效时间
+    /** token有效时间 **/
     private long ttl = 60 * 60 * 1000;
 
     public void setSign(String sign){

@@ -41,7 +41,7 @@ public class OathExceptionAdvice {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(ExpiredJwtException.class)
     public Response handleAccessDeniedException(ExpiredJwtException e){
-        log.error("登录已过期:" + e.getMessage());
-        return new Response().failure(401);
+        log.error("Token 已过期, 请重新登录.:" + e.getMessage());
+        return new Response().failure(401, "您的登录已过期, 请重新登录.");
     }
 }
