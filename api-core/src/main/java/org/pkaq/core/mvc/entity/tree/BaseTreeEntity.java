@@ -46,6 +46,14 @@ public class BaseTreeEntity extends PureBaseEntity {
     @TableField(exist = false)
     private boolean exact;
 
+    @TableField(exist = false)
+    @ApiModelProperty("国际化面包屑")
+    private String locale;
+
+    public String getLocale() {
+        return "menu"+this.path.replaceAll("/",".");
+    }
+
     public String getKey(){
         return this.getId();
     }

@@ -37,4 +37,5 @@ public class ModuleEntity extends BaseTreeEntity {
 
     @ApiModelProperty("状态")
     private String status;
+
 }
