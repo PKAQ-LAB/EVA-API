@@ -59,15 +59,11 @@ public class JwtUtil {
      */
     private Claims getClaimsFromToken(String token) {
         Claims claims;
-        try {
-            SecretKey secretKey = generalKey();
-            claims = Jwts.parser()
-                    .setSigningKey(secretKey)
-                    .parseClaimsJws(token)
-                    .getBody();
-        } catch (Exception e) {
-            claims = null;
-        }
+        SecretKey secretKey = generalKey();
+        claims = Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(token)
+                .getBody();
         return claims;
     }
     /**
@@ -128,7 +124,7 @@ public class JwtUtil {
         } catch (ExpiredJwtException ee) {
             //在解析JWT字符串时，如果‘过期时间字段’已经早于当前时间，将会抛出ExpiredJwtException异常，说明本次请求已经失效
             log.error("token已过期");
-            throw ee;
+            throw new OathException("Token 已过期");
         } catch (OathException oe) {
             log.error("登录已失效");
             throw new OathException("登录已过期, 请重新登录.");
