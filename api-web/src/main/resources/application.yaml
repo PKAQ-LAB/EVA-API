@@ -29,7 +29,7 @@ jwt:
   token-head: Bearer
   sign: PKAQ
   secert: aHR0cDovL3BrYXEub3Jn
-  ttl: 15000
+  ttl: 3600000
 # 配置加密
 jasypt:
   encryptor:
