@@ -8,7 +8,7 @@ import org.pkaq.core.enums.ResponseEnumm;
 public class Response{
     private int status;
     private boolean success;
-    private String statusText;
+    private String message;
     private Object data;
 
     public Response() {
@@ -25,7 +25,7 @@ public class Response{
      */
     public Response success(){
         this.success = true;
-        this.statusText = ResponseEnumm.OPERATE_SUCCESS.getName();
+        this.message = ResponseEnumm.OPERATE_SUCCESS.getName();
         this.status = HttpCodeEnum.QUERY_SUCCESS.getIndex();
         return this;
     }
@@ -37,7 +37,7 @@ public class Response{
     public Response success(Object data) {
         this.data = data;
         this.success = true;
-        this.statusText = ResponseEnumm.OPERATE_SUCCESS.getName();
+        this.message = ResponseEnumm.OPERATE_SUCCESS.getName();
         this.status = HttpCodeEnum.QUERY_SUCCESS.getIndex();
         return this;
     }
@@ -49,7 +49,7 @@ public class Response{
     public Response success(Object data, String msg) {
         this.data = data;
         this.success = true;
-        this.statusText = msg;
+        this.message = msg;
         this.status = HttpCodeEnum.QUERY_SUCCESS.getIndex();
         return this;
     }
@@ -61,7 +61,7 @@ public class Response{
      */
     public Response failure(Object data) {
         this.data = data;
-        this.statusText = ResponseEnumm.OPERATE_FAILED.getName();
+        this.message = ResponseEnumm.OPERATE_FAILED.getName();
         this.success = false;
         this.status = HttpCodeEnum.REQEUST_FAILURE.getIndex();
         return this;
@@ -75,7 +75,7 @@ public class Response{
     public Response failure(int status) {
         this.success = false;
         this.status = status;
-        this.statusText = HttpCodeEnum.getName(status);
+        this.message = HttpCodeEnum.getName(status);
         return this;
     }
 
@@ -85,10 +85,10 @@ public class Response{
      * @param statusText
      * @return
      */
-    public Response failure(int status, String statusText) {
+    public Response failure(int status, String message) {
         this.success = false;
         this.status = status;
-        this.statusText = statusText;
+        this.message = message;
         return this;
     }
 
@@ -97,9 +97,9 @@ public class Response{
      * @param data
      * @return
      */
-    public Response failure(int status, String statusText, Object data) {
+    public Response failure(int status, String message, Object data) {
         this.data = data;
-        this.statusText = statusText;
+        this.message = message;
         this.success = false;
         this.status = HttpCodeEnum.REQEUST_FAILURE.getIndex();
         return this;

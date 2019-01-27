@@ -53,7 +53,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             try {
                 isvalid = jwtUtil.valid(authToken);
             } catch (OathException e) {
-                e.printStackTrace();
+                logger.warn("Token已过期");
+                //response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "您的登录已过期, 请重新登录.");
+                //return;
             }
 
             if (isvalid) {
