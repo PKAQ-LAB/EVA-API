@@ -16,8 +16,8 @@ ext {
     flyway = "5.1.4"
 }
 allprojects {
-    group = 'org.pkaq'
-    version = '1.0'
+    group = 'io.nerv'
+    version = '1.0.0'
 }
 subprojects {
     apply plugin: 'java'

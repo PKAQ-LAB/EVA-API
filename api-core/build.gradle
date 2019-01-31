@@ -1,9 +1,13 @@
 plugins {
     id "com.jfrog.artifactory" version "4.9.0"
 }
+
 apply from: '../publish.gradle'
 
-description = """core"""
+jar {
+    baseName = 'eva-core'
+}
+
 // 依赖配置
 dependencies {
     compile "io.springfox:springfox-swagger2:${swagger}",

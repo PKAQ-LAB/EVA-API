@@ -18,20 +18,18 @@ artifactory {
     }
 }
 
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
+            artifactId jar.baseName
+
             from components.java
             artifact(file("$rootDir/gradle.properties"))
-            //GAV配置
-            groupId GROUP
-            artifactId "eva-core"
-            version "1.0.0"
-
             //pom相关信息
             pom.withXml {
                 Node root = asNode()
-                root.appendNode('name', ARTIFACT_ID)
+                root.appendNode('name', artifactId)
                 root.appendNode('description', POM_DESCRIPTION)
                 root.appendNode('url', POM_URL)
 
