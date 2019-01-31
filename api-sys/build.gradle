@@ -1,4 +1,12 @@
-description = """sys"""
+plugins {
+    id "com.jfrog.artifactory" version "4.9.0"
+}
+
+apply from: '../publish.gradle'
+
+jar {
+    baseName = 'eva-sys'
+}
 
 dependencies {
     compile project(":api-core")
