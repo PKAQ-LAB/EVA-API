@@ -53,7 +53,7 @@ spring:
 ```properties
 module.log=com.p6spy.engine.logging.P6LogFactory,com.p6spy.engine.outage.P6OutageFactory
 # 自定义日志打印
-logMessageFormat=org.pkaq.core.log.P6SpyLogger
+logMessageFormat=io.nerv.core.log.P6SpyLogger
 # 使用日志系统记录sql
 appender=com.p6spy.engine.spy.appender.Slf4JLogger
 ## 配置记录Log例外

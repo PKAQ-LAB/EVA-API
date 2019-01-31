@@ -1,4 +1,4 @@
-package org.pkaq.helper.ftl;
+package io.nerv.helper.ftl;
 
 {package.Entity};
 

@@ -9,7 +9,7 @@ jar {
 }
 
 bootJar {
-	mainClassName = 'org.pkaq.Booter'
+	mainClassName = 'io.nerv.Booter'
 }
 
 description = """web"""

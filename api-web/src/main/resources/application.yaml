@@ -9,7 +9,7 @@ spring:
 mybatis-plus:
   mapper-locations: classpath*:/mapper/*.xml
   #实体扫描，多个package用逗号或者分号分隔
-  typeAliasesPackage: org.pkaq.*.**.entity
+  typeAliasesPackage: io.nerv.*.**.entity
   global-config:
 #      刷新mapper 调试神器
     refresh: true
@@ -44,5 +44,5 @@ server:
 # 业务日志
 bizlog:
   enabled: false
-  impl: org.pkaq.core.bizlog.supporter.mybatis.MybatisSupporter
-  basePackage:  org.pkaq.web
+  impl: MybatisSupporter
+  basePackage:  io.nerv.web

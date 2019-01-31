@@ -8,7 +8,7 @@ jar {
 }
 
 bootJar {
-	mainClassName = 'org.pkaq.JXCBooter'
+	mainClassName = 'io.nerv.JXCBooter'
 }
 
 description = """jxc"""

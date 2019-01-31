@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.pkaq.web.jxc.stock.mapper.StockMapper">
+<mapper namespace="io.nerv.web.jxc.inventory.accbook.mapper.StockMapper">
     <update id="changeOnhandsNum">
         update t_jxc_stock set onhand = onhand+${num},amount=amount+${amount} where goods_id=#{goodsId}
     </update>

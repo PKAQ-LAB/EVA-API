@@ -9,7 +9,7 @@ jar {
 
 bootJar {
     baseName = "alipay"
-	mainClassName = 'org.pkaq.AlipayBooter'
+	mainClassName = 'io.nerv.AlipayBooter'
 }
 
 ext{

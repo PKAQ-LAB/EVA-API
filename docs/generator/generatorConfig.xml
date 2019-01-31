@@ -18,7 +18,7 @@
         <javaTypeResolver>
             <property name="forceBigDecimals" value="false"/>
         </javaTypeResolver>
-        <javaModelGenerator targetPackage="org.pkaq.model.generator" targetProject="java">
+        <javaModelGenerator targetPackage="io.nerv.model.generator" targetProject="java">
             <property name="constructorBased" value="false"/>
             <property name="useActualColumnNames" value="true"/>
             <property name="enableSubPackages" value="false"/>
