@@ -1,0 +1,54 @@
+apply plugin: 'maven-publish'
+
+artifactory {
+    contextUrl = "${ARTIFACTORY_CONTEXTURL}"
+    publish {
+        repository {
+            repoKey = 'local-repo'
+            username = "${ARTIFACTORY_USER}"
+            password = "${ARTIFACTORY_PASSWORD}"
+            maven = true
+        }
+        defaults {
+            publications ('mavenJava')
+            publishArtifacts = true
+            publishBuildInfo = true
+            publishPom = true
+        }
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact(file("$rootDir/gradle.properties"))
+            //GAV配置
+            groupId GROUP
+            artifactId "eva-core"
+            version "1.0.0"
+
+            //pom相关信息
+            pom.withXml {
+                Node root = asNode()
+                root.appendNode('name', ARTIFACT_ID)
+                root.appendNode('description', POM_DESCRIPTION)
+                root.appendNode('url', POM_URL)
+
+                def issues = root.appendNode('issueManagement')
+                issues.appendNode('system', 'github')
+                issues.appendNode('url', ISSUE_URL)
+
+                def scm = root.appendNode('scm')
+                scm.appendNode('url', POM_SCM_URL)
+                scm.appendNode('connection', POM_SCM_CONNECTION)
+                scm.appendNode('developerConnection', POM_SCM_DEV_CONNECTION)
+
+                def license = root.appendNode('licenses').appendNode('license')
+                license.appendNode('name', POM_LICENCE_NAME)
+                license.appendNode('url', POM_LICENCE_URL)
+                license.appendNode('distribution', POM_LICENCE_DIST)
+            }
+        }
+    }
+}
