@@ -5,11 +5,11 @@ import io.nerv.core.mvc.util.Response;
 import io.nerv.core.util.I18NHelper;
 import io.nerv.security.jwt.JwtConfig;
 import io.nerv.security.jwt.JwtUtil;
+import io.nerv.web.sys.user.entity.UserEntity;
 import io.nerv.web.sys.user.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import io.nerv.web.sys.user.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,8 +38,6 @@ public class AuthCtrl {
     private JwtConfig jwtConfig;
     @Autowired
     private JwtUtil jwtUtil;
-    @Autowired
-    private HttpServletResponse httpResponse;
     @Autowired
     private HttpServletRequest httpRequest;
 
