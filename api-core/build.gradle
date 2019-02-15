@@ -16,6 +16,8 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-web:${springBootVersion}",
             // AOP
             "org.springframework.boot:spring-boot-starter-aop:${springBootVersion}",
+            //Spring容器在创建entityManagerFactory的时候，需要使用 JAXB 的类，而JDK9之后，JAXB 的类将不再自动包含到classpath下
+            "javax.xml.bind:jaxb-api:${jaxb_api}",
             // mysql
             "mysql:mysql-connector-java:${mysql}",
             // json

@@ -9,12 +9,10 @@ jar {
 }
 
 dependencies {
-    compile project(":api-core")
+    implementation project(":api-core")
     // 鉴权
     compile "com.auth0:java-jwt:${auth0}",
             "io.jsonwebtoken:jjwt:${jjwt}"
-    compile "org.springframework.boot:spring-boot-starter-security:${springBootVersion}",
-            //Spring容器在创建entityManagerFactory的时候，需要使用 JAXB 的类，而JDK9之后，JAXB 的类将不再自动包含到classpath下
-            "javax.xml.bind:jaxb-api:${jaxb_api}"
+    compile "org.springframework.boot:spring-boot-starter-security:${springBootVersion}"
     testCompile "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
 }
