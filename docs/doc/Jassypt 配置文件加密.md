@@ -26,7 +26,7 @@
 3. 加密内容
 　　编写一个单元测试加密你需要加密的内容。
 ```java
-	@Autowired
+@Autowired
 StringEncryptor stringEncryptor;
 @Test
 public void encrypt() {
