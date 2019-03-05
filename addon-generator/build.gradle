@@ -1,10 +1,12 @@
 ext{
     freemarker = "2.3.28"
     velocity = "2.0"
+    mybatis_plus_generator = "3.1.0"
 }
 
 dependencies {
     compile  project(":api-core"),
+            "com.baomidou:mybatis-plus-generator:${mybatis_plus_generator}",
             "org.freemarker:freemarker:${freemarker}",
             "org.apache.velocity:velocity-engine-core:${velocity}"
 }
