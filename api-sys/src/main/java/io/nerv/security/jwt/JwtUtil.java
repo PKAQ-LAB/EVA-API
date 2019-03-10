@@ -58,13 +58,11 @@ public class JwtUtil {
      * @return 属性值
      */
     private Claims getClaimsFromToken(String token) {
-        Claims claims;
         SecretKey secretKey = generalKey();
-        claims = Jwts.parser()
+        return Jwts.parser()
                 .setSigningKey(secretKey)
                 .parseClaimsJws(token)
                 .getBody();
-        return claims;
     }
     /**
      *
@@ -93,7 +91,7 @@ public class JwtUtil {
             long expMillis = nowMillis + ttlMillis;
             Date exp = new Date(expMillis);
             // 失效时间
-            jwt.setExpiration(exp);
+            jwt.setExpiration(exp).setNotBefore(new Date(System.currentTimeMillis()));
         }
         return jwt.compact();
     }
