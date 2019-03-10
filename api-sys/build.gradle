@@ -1,7 +1,3 @@
-plugins {
-    id "com.jfrog.artifactory" version "4.9.0"
-}
-
 apply from: '../publish.gradle'
 
 jar {
@@ -9,10 +5,11 @@ jar {
 }
 
 dependencies {
-    implementation project(":api-core")
-    // 鉴权
-    compile "com.auth0:java-jwt:${auth0}",
-            "io.jsonwebtoken:jjwt:${jjwt}"
-    compile "org.springframework.boot:spring-boot-starter-security:${springBootVersion}"
-    testCompile "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
+    implementation		project(":api-core")
+	
+	implementation 		"com.auth0:java-jwt:${auth0}",
+						"io.jsonwebtoken:jjwt:${jjwt}",
+						"org.springframework.boot:spring-boot-starter-security:${springBootVersion}"
+						
+    testImplementation 	"org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
 }

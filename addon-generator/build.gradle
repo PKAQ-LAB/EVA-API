@@ -5,8 +5,8 @@ ext{
 }
 
 dependencies {
-    compile  project(":api-core"),
-            "com.baomidou:mybatis-plus-generator:${mybatis_plus_generator}",
-            "org.freemarker:freemarker:${freemarker}",
-            "org.apache.velocity:velocity-engine-core:${velocity}"
+    implementation  project(":api-core"),
+					"org.freemarker:freemarker:${freemarker}",
+					"org.apache.velocity:velocity-engine-core:${velocity}",
+					"com.baomidou:mybatis-plus-generator:${mybatis_plus_generator}"
 }

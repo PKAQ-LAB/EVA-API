@@ -14,6 +14,7 @@ bootJar {
 description = """jxc"""
 // 依赖配置
 dependencies {
-    compile project(":api-core")
-    testCompile "org.springframework.boot:spring-boot-starter-test"
+    implementation project(":api-core")
+	
+    testImplementation 	"org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
 }

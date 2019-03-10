@@ -1,20 +1,16 @@
-apply plugin: 'maven-publish'
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allJava
+    classifier = 'sources'
+}
 
-artifactory {
-    contextUrl = "${ARTIFACTORY_CONTEXTURL}"
-    publish {
-        repository {
-            repoKey = 'local-repo'
-            username = "${ARTIFACTORY_USER}"
-            password = "${ARTIFACTORY_PASSWORD}"
-            maven = true
-        }
-        defaults {
-            publications ('mavenJava')
-            publishArtifacts = true
-            publishBuildInfo = true
-            publishPom = true
-        }
+task javadocJar(type: Jar) {
+    from javadoc
+    classifier = 'javadoc'
+}
+
+javadoc {
+    if(JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
     }
 }
 
@@ -22,29 +18,44 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             artifactId jar.baseName
-
-            from components.java
-            artifact(file("$rootDir/gradle.properties"))
-            //pom相关信息
-            pom.withXml {
-                Node root = asNode()
-                root.appendNode('name', artifactId)
-                root.appendNode('description', POM_DESCRIPTION)
-                root.appendNode('url', POM_URL)
-
-                def issues = root.appendNode('issueManagement')
-                issues.appendNode('system', 'github')
-                issues.appendNode('url', ISSUE_URL)
-
-                def scm = root.appendNode('scm')
-                scm.appendNode('url', POM_SCM_URL)
-                scm.appendNode('connection', POM_SCM_CONNECTION)
-                scm.appendNode('developerConnection', POM_SCM_DEV_CONNECTION)
-
-                def license = root.appendNode('licenses').appendNode('license')
-                license.appendNode('name', POM_LICENCE_NAME)
-                license.appendNode('url', POM_LICENCE_URL)
-                license.appendNode('distribution', POM_LICENCE_DIST)
+			from components.java
+			artifact sourcesJar
+            artifact javadocJar
+			pom {
+                name = artifactId
+                description = POM_DESCRIPTION
+                url = POM_URL
+                licenses {
+                    license {
+                        name = POM_LICENCE_NAME
+                        url = POM_LICENCE_URL
+                    }
+                }
+                developers {
+                    developer {
+                        id = POM_DEVELOPER_ID
+                        name = POM_DEVELOPER_NAME
+                        email = POM_DEVELOPER_EMAIL
+                    }
+                }
+                scm {
+                    connection = POM_SCM_CONNECTION
+                    developerConnection = POM_SCM_DEV_CONNECTION
+                    url = POM_SCM_URL
+                }
+            }		        		
+        }
+    }
+	
+	 repositories {
+        maven {
+			println(ARTIFACTORY_CONTEXTURL)
+            
+            url = ARTIFACTORY_CONTEXTURL
+            
+            credentials {
+                username ARTIFACTORY_USER
+                password ARTIFACTORY_PASSWORD
             }
         }
     }

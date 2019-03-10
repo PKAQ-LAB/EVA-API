@@ -1,6 +1,5 @@
 plugins {
      id 'org.springframework.boot' version '2.1.3.RELEASE'
-     id "com.github.ben-manes.versions" version "0.21.0"
  }
 apply plugin: 'io.spring.dependency-management'
 
@@ -13,14 +12,16 @@ bootJar {
 }
 
 description = """web"""
-// for sys
+
 compileJava.dependsOn(processResources)
 
-// 依赖配置
 dependencies {
-    compile project(":api-jxc")
-    compile project(":api-sys")
-    compile "org.springframework.boot:spring-boot-devtools"
-    annotationProcessor  "org.springframework.boot:spring-boot-configuration-processor"
-    testCompile "org.springframework.boot:spring-boot-starter-test"
+   implementation project(":api-core"),
+				  project(":api-jxc"),
+				  project(":api-sys"),
+				  "org.springframework.boot:spring-boot-devtools:${springBootVersion}"
+				  
+   annotationProcessor  "org.springframework.boot:spring-boot-configuration-processor:${springBootVersion}"
+	
+   testImplementation 	"org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
 }
