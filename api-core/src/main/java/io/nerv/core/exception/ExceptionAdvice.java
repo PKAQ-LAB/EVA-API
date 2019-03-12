@@ -119,6 +119,6 @@ public class ExceptionAdvice {
     public Response handleException(Exception e) {
         log.error("服务运行异常:"+e.getMessage());
         e.printStackTrace();
-        return new Response().failure(500);
+        return new Response().failure(500, e.getMessage());
     }
 }
