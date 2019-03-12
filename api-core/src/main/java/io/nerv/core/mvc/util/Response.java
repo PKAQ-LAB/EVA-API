@@ -82,7 +82,6 @@ public class Response{
     /**
      * 失败响应，自定义响应码和消息
      * @param status
-     * @param statusText
      * @return
      */
     public Response failure(int status, String message) {
