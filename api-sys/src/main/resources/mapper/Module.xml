@@ -31,6 +31,7 @@
         R.ID=RU.ROLE_ID
         and
         ru.USER_ID = #{userId}
+      order by orders asc
   </select>
   <!--根据条件查询菜单数据-->
   <select id="listModule" resultMap="BaseResultMap">
@@ -68,6 +69,7 @@
   <select id="getParentById" resultMap="BaseResultMap">
     select * from sys_module module
     where module.id = (select parent_Id from sys_module og where og.id = #{id})
+    order by orders asc
   </select>
   <!--查询叶子节点数量-->
   <select id="countPrantLeaf" resultType="int">
@@ -75,5 +77,4 @@
     from sys_module
     where parent_Id=#{id}
   </select>
-
 </mapper>
