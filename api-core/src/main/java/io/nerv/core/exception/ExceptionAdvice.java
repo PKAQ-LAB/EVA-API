@@ -4,6 +4,7 @@ import io.nerv.core.mvc.util.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -110,6 +111,23 @@ public class ExceptionAdvice {
         return new Response().failure(400);
     }
     /**
+     *   400 - spring参数绑定校验错误
+     * @param e 异常类型
+     * @return Response
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(BindException.class)
+    public Response handleBindException(BindException e) {
+        log.error("服务运行异常:"+e.getMessage());
+        e.printStackTrace();
+        StringBuilder errorMsg = new StringBuilder();
+        e.getAllErrors().forEach(
+                x -> errorMsg.append(x.getDefaultMessage()).append(",")
+        );
+        return new Response().failure(500, errorMsg.toString());
+    }
+
+    /**
      *   500 - Internal Server Error.
      * @param e 异常类型
      * @return Response
@@ -119,6 +137,6 @@ public class ExceptionAdvice {
     public Response handleException(Exception e) {
         log.error("服务运行异常:"+e.getMessage());
         e.printStackTrace();
-        return new Response().failure(500, e.getMessage());
+        return new Response().failure(500);
     }
 }
