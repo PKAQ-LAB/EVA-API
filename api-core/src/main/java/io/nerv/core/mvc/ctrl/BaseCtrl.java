@@ -58,7 +58,7 @@ public abstract class BaseCtrl<T extends BaseService, E extends PureBaseEntity> 
 
     @GetMapping("/get/{id}")
     @ApiOperation(value = "根据ID获得记录信息", response = Response.class)
-    public Response getRole(@ApiParam(name = "id", value = "记录ID")
+    public Response get(@ApiParam(name = "id", value = "记录ID")
                             @PathVariable("id") String id){
         return this.success(this.service.getById(id));
     }
