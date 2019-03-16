@@ -2,13 +2,16 @@ package io.nerv.web.sys.dict.service;
 
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import io.nerv.core.mvc.service.BaseService;
 import io.nerv.core.exception.ParamException;
+import io.nerv.core.mvc.service.BaseService;
 import io.nerv.web.sys.dict.entity.DictEntity;
 import io.nerv.web.sys.dict.mapper.DictMapper;
+import io.nerv.web.sys.dict.mapper.DictViewMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 字典管理service
@@ -18,6 +21,16 @@ import java.util.List;
 @Service
 public class DictService extends BaseService<DictMapper, DictEntity> {
 
+    @Autowired
+    private DictViewMapper dictViewMapper;
+
+    /**
+     * 查询字典缓存
+     * @return
+     */
+    public Map<String, Map<String, String>> initDictCache(){
+        return this.dictViewMapper.queryForMap();
+    }
     /**
      * 根据条件获取一条字典
      * @return DictEntity
