@@ -27,10 +27,8 @@ public class DictHelper implements DictHelperProvider{
      */
     @Override
     public void init() {
-        int size = dictService.listDict().size();
-
         if (null == dictMap){
-            dictMap = Collections.synchronizedMap(new HashMap<>(size));
+            dictMap = Collections.synchronizedMap(dictService.initDictCache());
         }
     }
 
@@ -55,7 +53,12 @@ public class DictHelper implements DictHelperProvider{
 
     @Override
     public String get(String code, String key) {
-        return null;
+        String value = null;
+        Map<String, String> itemMap =  this.dictMap.get(key);
+        if (null != itemMap){
+            value = itemMap.get(code);
+        }
+        return value;
     }
 
     @Override

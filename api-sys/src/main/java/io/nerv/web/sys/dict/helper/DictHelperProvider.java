@@ -7,7 +7,7 @@ import java.util.Map;
  * @author: S.PKAQ
  * @Datetime: 2019/3/16 10:43
  */
-interface DictHelperProvider {
+public interface DictHelperProvider {
     /**
      * 初始化字典
      */
