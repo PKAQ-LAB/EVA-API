@@ -5,12 +5,11 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import io.nerv.core.bizlog.base.BizLogEnum;
 import io.nerv.core.bizlog.annotation.BizLog;
+import io.nerv.core.bizlog.base.BizLogEnum;
 import io.nerv.core.mvc.entity.tree.BaseTreeEntity;
 import io.nerv.core.mvc.service.BaseService;
 import io.nerv.core.util.tree.TreeHelper;
-import io.nerv.web.sys.module.service.ModuleService;
 import io.nerv.web.sys.user.entity.UserEntity;
 import io.nerv.web.sys.user.mapper.UserMapper;
 import io.nerv.web.sys.user.vo.UserCenterVO;
@@ -30,9 +29,6 @@ import java.util.List;
 public class UserService extends BaseService<UserMapper, UserEntity> {
     @Autowired
     private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private ModuleService moduleService;
     /**
      * 用户登录校验
      * @param userEntity
@@ -132,7 +128,7 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
 
     /**
      * 获取当前登录用户的信息(菜单.权限.消息
-     * @param userEntity
+     * @param uid 用户ID
      * @return
      */
     public UserEntity fetch(String uid) {

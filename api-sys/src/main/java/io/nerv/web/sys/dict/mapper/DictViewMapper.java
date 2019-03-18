@@ -5,8 +5,6 @@ import io.nerv.web.sys.dict.entity.DictViewEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
-import java.util.Map;
-
 /**
  * 字典视图view
  * @author: S.PKAQ
@@ -15,5 +13,5 @@ import java.util.Map;
 @Mapper
 @Repository
 public interface DictViewMapper extends BaseMapper<DictViewEntity> {
-    Map<String, Map<String, String>> queryForMap();
+
 }

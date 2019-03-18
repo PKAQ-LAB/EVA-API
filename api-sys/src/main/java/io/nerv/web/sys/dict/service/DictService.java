@@ -5,11 +5,13 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.nerv.core.exception.ParamException;
 import io.nerv.core.mvc.service.BaseService;
 import io.nerv.web.sys.dict.entity.DictEntity;
+import io.nerv.web.sys.dict.entity.DictViewEntity;
 import io.nerv.web.sys.dict.mapper.DictMapper;
 import io.nerv.web.sys.dict.mapper.DictViewMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +31,27 @@ public class DictService extends BaseService<DictMapper, DictEntity> {
      * @return
      */
     public Map<String, Map<String, String>> initDictCache(){
-        return this.dictViewMapper.queryForMap();
+        List<DictViewEntity> dictList = this.dictViewMapper.selectList(null);
+
+        Map<String, Map<String, String>> cacheMap = new HashMap<>();
+
+        dictList.forEach( item -> {
+            String code = item.getCode();
+
+            String key = item.getKeyName();
+            String value = item.getKeyValue();
+
+            Map<String, String> itemMap = cacheMap.get(code);
+
+            if(null == itemMap){
+                Map<String, String> tempMap = new HashMap<>(1);
+                tempMap.put(key, value);
+                cacheMap.put(code, tempMap);
+            } else {
+                itemMap.put(key, value);
+            }
+        });
+        return cacheMap;
     }
     /**
      * 根据条件获取一条字典
