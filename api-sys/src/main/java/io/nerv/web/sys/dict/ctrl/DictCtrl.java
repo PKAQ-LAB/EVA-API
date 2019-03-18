@@ -5,11 +5,13 @@ import io.nerv.core.enums.HttpCodeEnum;
 import io.nerv.core.mvc.ctrl.PureBaseCtrl;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.web.sys.dict.entity.DictEntity;
+import io.nerv.web.sys.dict.helper.DictHelperProvider;
 import io.nerv.web.sys.dict.service.DictService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.nerv.core.exception.ParamException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +31,15 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/dict")
 public class DictCtrl extends PureBaseCtrl<DictService> {
+    @Autowired
+    private DictHelperProvider dictHelper;
+
+    @GetMapping({"/query/{code}"})
+    @ApiOperation(value = "根据 code 从缓存中获取字典项",response = Response.class)
+    public Response query(@ApiParam(name = "code", value = "字典分类ID")
+                          @PathVariable(name = "code", required = false) String code){
+        return this.success(dictHelper.get(code));
+    }
 
     @GetMapping("/list")
     @ApiOperation(value = "获取字典分类列表",response = Response.class)
