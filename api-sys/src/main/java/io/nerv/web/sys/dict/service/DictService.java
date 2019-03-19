@@ -6,6 +6,7 @@ import io.nerv.core.exception.ParamException;
 import io.nerv.core.mvc.service.BaseService;
 import io.nerv.web.sys.dict.entity.DictEntity;
 import io.nerv.web.sys.dict.entity.DictViewEntity;
+import io.nerv.web.sys.dict.helper.DictHelperProvider;
 import io.nerv.web.sys.dict.mapper.DictMapper;
 import io.nerv.web.sys.dict.mapper.DictViewMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,8 @@ import java.util.Map;
  */
 @Service
 public class DictService extends BaseService<DictMapper, DictEntity> {
+    @Autowired
+    private DictHelperProvider dictHelper;
 
     @Autowired
     private DictViewMapper dictViewMapper;
@@ -75,6 +78,12 @@ public class DictService extends BaseService<DictMapper, DictEntity> {
      */
     public void delDict(String id){
         this.mapper.deleteDictById(id);
+
+        //删掉字典之后，移除字典缓存中的相关字典
+        DictEntity dictEntity=this.mapper.getDict(id);
+        if(dictEntity != null) {
+            dictHelper.remove(dictEntity.getCode());
+        }
     }
 
     /**
@@ -96,10 +105,18 @@ public class DictService extends BaseService<DictMapper, DictEntity> {
                 this.mapper.insert(dictEntity);
             }
         } else {
+            DictEntity oldDict=this.mapper.getDict(id);
+
             if (null == conditionEntity || id.equals(conditionEntity.getId())){
                 this.mapper.updateById(dictEntity);
             } else {
                 throw new ParamException("编码已存在");
+            }
+
+            //如果修改了字典的code则把原来的删掉加上最新的
+            if(!oldDict.getCode().equals(dictEntity.getCode())){
+                dictHelper.add(dictEntity.getCode(),dictHelper.get(oldDict.getCode()));
+                dictHelper.remove(oldDict.getCode());
             }
         }
     }

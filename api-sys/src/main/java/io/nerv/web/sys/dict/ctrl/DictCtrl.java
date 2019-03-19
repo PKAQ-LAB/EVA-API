@@ -82,21 +82,14 @@ public class DictCtrl extends PureBaseCtrl<DictService> {
             throw new ParamException(locale("param_id_notnull"));
         }
         this.service.delDict(id);
-        dictHelper.reload();
         return success(this.service.listDict());
     }
     @PostMapping("/edit")
     @ApiOperation(value = "新增/编辑字典分类",response = Response.class)
     public Response editDict(@ApiParam(name ="organization", value = "字典信息")
                              @RequestBody @Valid DictEntity dictEntity){
-        boolean isReload = false;
-        if(StrUtil.isNotBlank(dictEntity.getId())){
-            isReload = true;
-        }
         this.service.edit(dictEntity);
-        if(isReload) {
-            dictHelper.reload();
-        }
+
         return success(this.service.listDict());
     }
 }
