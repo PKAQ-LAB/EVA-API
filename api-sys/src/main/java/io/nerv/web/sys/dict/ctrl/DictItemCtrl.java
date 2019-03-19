@@ -27,15 +27,12 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/dictItem")
 public class DictItemCtrl extends PureBaseCtrl<DictItemService> {
-    @Autowired
-    private DictHelperProvider dictHelper;
 
     @GetMapping("/del/{id}")
     @ApiOperation(value = "根据ID删除",response = Response.class)
     public Response delete(@ApiParam(name = "id", value = "[字典项ID]")
                            @PathVariable("id") String id){
         this.service.delDictItem(id);
-        dictHelper.reload();
         return success();
     }
 
@@ -44,7 +41,6 @@ public class DictItemCtrl extends PureBaseCtrl<DictItemService> {
     public Response edit(@ApiParam(name = "dictItemEntity", value = "字典项对象")
            @RequestBody @Valid DictItemEntity dictItemEntity){
         this.service.editDictItem(dictItemEntity);
-        dictHelper.reload();
         return success(dictItemEntity);
     }
 }
