@@ -83,7 +83,7 @@ public class DictHelper implements DictHelperProvider{
     public void update(String code, String key, String value) {
         Map<String, String> itemMap =  this.dictMap.get(key);
         if (null != itemMap){
-            itemMap.put(key, value);
+            itemMap.put(code, value);
         }
     }
 

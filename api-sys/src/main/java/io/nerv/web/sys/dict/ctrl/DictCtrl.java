@@ -89,6 +89,7 @@ public class DictCtrl extends PureBaseCtrl<DictService> {
     public Response editDict(@ApiParam(name ="organization", value = "字典信息")
                              @RequestBody @Valid DictEntity dictEntity){
         this.service.edit(dictEntity);
+
         return success(this.service.listDict());
     }
 }
