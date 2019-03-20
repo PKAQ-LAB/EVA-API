@@ -9,6 +9,9 @@ import io.nerv.web.sys.dict.mapper.DictItemMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 字典子表 - 字典项管理service
  * @author: S.PKAQ
@@ -32,7 +35,7 @@ public class DictItemService extends BaseService<DictItemMapper, DictItemEntity>
         if( dictItemEntity != null ){
             DictEntity dict=dictService.getById(dictItemEntity.getMainId());
             if(dict != null){
-                dictHelper.remove(dictItemEntity.getKeyName(),dict.getCode());
+                dictHelper.remove(dict.getCode(),dictItemEntity.getKeyName());
             }
         }
     }
@@ -50,14 +53,21 @@ public class DictItemService extends BaseService<DictItemMapper, DictItemEntity>
 
         // 修改/保存 字典项后，更新字典缓存中的相关字典项
             DictEntity dict=dictService.getById(dictItem.getMainId());
-            if(dict != null){
-                dictHelper.update(dictItemEntity.getKeyName(),dict.getCode(),dictItemEntity.getKeyValue());
+           if(dict != null){
+                //如果字典缓存中没有该字典code对应的字典项，则更新进去
+                if(dictHelper.get(dict.getCode()) == null){
+                    Map<String,String> itemMap=new HashMap<>(1);
+                    itemMap.put(dictItemEntity.getKeyName(),dictItemEntity.getKeyValue());
+                    dictHelper.add(dict.getCode(),itemMap);
+                }else{
+                    dictHelper.update(dict.getCode(),dictItemEntity.getKeyName(),dictItemEntity.getKeyValue());
+                }
             }
 
             if( dictItem != null ){
                 //如果修改了keyname 则把原来的keyname删掉
                 if(!dictItem.getKeyName().equals(dictItemEntity.getKeyName())){
-                    dictHelper.remove(dictItem.getKeyName(),dict.getCode());
+                    dictHelper.remove(dict.getCode(),dictItem.getKeyName());
                 }
         }
 
