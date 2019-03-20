@@ -54,23 +54,23 @@ public class DictHelper implements DictHelperProvider{
     @Override
     public String get(String code, String key) {
         String value = null;
-        Map<String, String> itemMap =  this.dictMap.get(key);
+        Map<String, String> itemMap =  this.dictMap.get(code);
         if (null != itemMap){
-            value = itemMap.get(code);
+            value = itemMap.get(key);
         }
         return value;
     }
 
     @Override
-    public void remove(String key) {
-        this.dictMap.remove(key);
+    public void remove(String code) {
+        this.dictMap.remove(code);
     }
 
     @Override
     public void remove(String code, String key) {
-        Map<String, String> itemMap =  this.dictMap.get(key);
+        Map<String, String> itemMap =  this.dictMap.get(code);
         if (null != itemMap){
-            itemMap.remove(code);
+            itemMap.remove(key);
         }
     }
 
@@ -81,9 +81,9 @@ public class DictHelper implements DictHelperProvider{
 
     @Override
     public void update(String code, String key, String value) {
-        Map<String, String> itemMap =  this.dictMap.get(key);
+        Map<String, String> itemMap =  this.dictMap.get(code);
         if (null != itemMap){
-            itemMap.put(code, value);
+            itemMap.put(key, value);
         }
     }
 
