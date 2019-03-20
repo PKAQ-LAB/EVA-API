@@ -19,7 +19,7 @@ ext {
 }
 allprojects {
     group = 'io.nerv'
-    version = '1.0.19'
+    version = '1.0.22'
 }
 subprojects {
 	apply plugin: 'pmd'

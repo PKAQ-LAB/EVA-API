@@ -11,6 +11,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,6 +42,13 @@ public class AuthCtrl {
     @Autowired
     private HttpServletRequest httpRequest;
 
+    @Value("${spring.profiles.active}")
+    private String activeProfile;
+    // 默认匿名用户
+    private String defaultUser = "admin";
+    // 无需鉴权环境
+    private String anonProfile = "dev";
+
     @PostMapping("/login")
     @ApiOperation(value = "用户登录", response = Response.class)
     public Response login(@ApiParam(name = "{user}", value = "用户对象")
@@ -64,10 +72,14 @@ public class AuthCtrl {
     @GetMapping("/fetch")
     @ApiOperation(value = "获取当前登录用户的信息(菜单.权限.消息)",response = Response.class)
     public Response fetch(){
-        String authHeader = httpRequest.getHeader(jwtConfig.getHeader());
+        String account = defaultUser;
+        // 开发环境不鉴权直接取admin菜单
+        if(anonProfile.equals(activeProfile)){
+            String authHeader = httpRequest.getHeader(jwtConfig.getHeader());
 
-        final String authToken = authHeader.substring(jwtConfig.getTokenHead().length());
-        String account = jwtUtil.getUid(authToken);
+            final String authToken = authHeader.substring(jwtConfig.getTokenHead().length());
+            account = jwtUtil.getUid(authToken);
+        }
 
         return new Response().success(this.userService.fetch(account));
     }
