@@ -105,18 +105,17 @@ public class DictService extends BaseService<DictMapper, DictEntity> {
                 this.mapper.insert(dictEntity);
             }
         } else {
-            DictEntity oldDict=this.mapper.getDict(id);
 
             if (null == conditionEntity || id.equals(conditionEntity.getId())){
                 this.mapper.updateById(dictEntity);
+
+                //如果修改了字典的code则把原来的删掉加上最新的
+                if(!conditionEntity.getCode().equals(dictEntity.getCode())){
+                    dictHelper.add(dictEntity.getCode(),dictHelper.get(conditionEntity.getCode()));
+                    dictHelper.remove(conditionEntity.getCode());
+                }
             } else {
                 throw new ParamException("编码已存在");
-            }
-
-            //如果修改了字典的code则把原来的删掉加上最新的
-            if(!oldDict.getCode().equals(dictEntity.getCode())){
-                dictHelper.add(dictEntity.getCode(),dictHelper.get(oldDict.getCode()));
-                dictHelper.remove(oldDict.getCode());
             }
         }
     }
