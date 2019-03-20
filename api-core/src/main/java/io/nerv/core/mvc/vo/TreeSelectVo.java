@@ -1,10 +1,13 @@
 package io.nerv.core.mvc.vo;
 
+import lombok.Data;
+
 /**
  * antd treeSelect需要的数据结构
  * @author: S.PKAQ
  * @Datetime: 2019/3/19 21:45
  */
+@Data
 public class TreeSelectVo {
     /** 全树唯一 **/
     private String key;
