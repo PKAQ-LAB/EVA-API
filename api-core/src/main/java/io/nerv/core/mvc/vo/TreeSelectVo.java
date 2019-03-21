@@ -1,6 +1,7 @@
 package io.nerv.core.mvc.vo;
-
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * antd treeSelect需要的数据结构
@@ -25,4 +26,10 @@ public class TreeSelectVo {
     private String parentId;
     /** 上级节点名称 **/
     private String parentName;
+    /** 子节点 **/
+    private List<TreeSelectVo> children;
+
+    public void setIsLeaf(Boolean isLeaf){
+        this.isLeaf = isLeaf+"";
+    }
 }
