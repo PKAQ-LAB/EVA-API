@@ -17,7 +17,7 @@ public class TreeSelectVo {
     /** 节点值 **/
     private String value;
     /** 是否叶子 **/
-    private String isLeaf;
+    private boolean isLeaf;
     /** 路径 **/
     private String path;
     /** 路径中文描述 **/
@@ -28,8 +28,4 @@ public class TreeSelectVo {
     private String parentName;
     /** 子节点 **/
     private List<TreeSelectVo> children;
-
-    public void setIsLeaf(Boolean isLeaf){
-        this.isLeaf = isLeaf+"";
-    }
 }
