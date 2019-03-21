@@ -27,7 +27,7 @@ public class JwtUserDetailsServiceImpl implements UserDetailsService {
         UserEntity user = userMapper.getUserWithRoleById(id);
 
         if (user == null) {
-            throw new UsernameNotFoundException(String.format("No user found with uid '%s'.", id));
+            throw new UsernameNotFoundException(String.format("找不到该用户 '%s'.", id));
         } else {
             return JwtUserFactory.create(user);
         }

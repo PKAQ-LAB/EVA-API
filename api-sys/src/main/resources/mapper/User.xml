@@ -31,11 +31,11 @@
    <!-- 根据用户id获取包含权限列表的用户信息 -->
    <select id="getUserWithRoleById" resultMap="UserWithRole">
        select * from sys_user_info
-       where id=#{userId}
+       where account=#{userId}
    </select>
     <!-- 根据用户ID 获取包含模块 权限列表的用户信息-->
   <select id="getUserWithModuleAndRoleById" resultMap="UserWithModuleAndRole">
     select * from sys_user_info
-    where id=#{userId}
+    where account=#{userId}
   </select>
 </mapper>

@@ -61,7 +61,7 @@ public class AuthCtrl {
             response = new Response().failure(HttpCodeEnum.ROLE_ERROR.getIndex(), i18NHelper.getMessage("login_failed"));
         } else {
             // 签发token
-            String token = jwtUtil.build(jwtConfig.getTtl(), user.getId());
+            String token = jwtUtil.build(jwtConfig.getTtl(), user.getAccount());
 
             Map<String, Object> map = new HashMap<>(1);
             map.put("user", user);
@@ -77,7 +77,7 @@ public class AuthCtrl {
         log.info("[auth/fetch ] - Current active profile is : " + activeProfile);
         String account = defaultUser;
         // 开发环境不鉴权直接取admin菜单
-        if(anonProfile.equals(activeProfile)){
+        if(!anonProfile.equals(activeProfile)){
             String authHeader = httpRequest.getHeader(jwtConfig.getHeader());
 
             final String authToken = authHeader.substring(jwtConfig.getTokenHead().length());
