@@ -52,7 +52,7 @@ public class DictItemService extends BaseService<DictItemMapper, DictItemEntity>
         this.merge(dictItemEntity);
 
         // 修改/保存 字典项后，更新字典缓存中的相关字典项
-            DictEntity dict=dictService.getById(dictItem.getMainId());
+            DictEntity dict=dictService.getById(dictItemEntity.getMainId());
            if(dict != null){
                 //如果字典缓存中没有该字典code对应的字典项，则更新进去
                 if(dictHelper.get(dict.getCode()) == null){
