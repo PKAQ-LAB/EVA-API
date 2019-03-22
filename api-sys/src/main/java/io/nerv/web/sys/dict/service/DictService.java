@@ -107,15 +107,16 @@ public class DictService extends BaseService<DictMapper, DictEntity> {
         } else {
 
             if (null == conditionEntity || id.equals(conditionEntity.getId())){
+                //可能是修改字典对象的code属性，所以根据id查原始的code
+                String code=this.mapper.selectById(id).getCode();
+
                 this.mapper.updateById(dictEntity);
 
-                //可能是修改字典对象的code属性，所以根据id查原始的dict记录
-                DictEntity dict=this.mapper.selectById(id);
 
                 //修改了字典的code则把原来的删掉加上最新的
-                if(!dict.getCode().equals(dictEntity.getCode())){
-                    dictHelper.add(dictEntity.getCode(),dictHelper.get(dict.getCode()));
-                    dictHelper.remove(dict.getCode());
+                if(!code.equals(dictEntity.getCode())){
+                    dictHelper.add(dictEntity.getCode(),dictHelper.get(code));
+                    dictHelper.remove(code);
                 }
             } else {
                 throw new ParamException("编码已存在");
