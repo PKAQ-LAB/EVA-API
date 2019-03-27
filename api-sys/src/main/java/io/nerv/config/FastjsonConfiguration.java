@@ -48,6 +48,9 @@ public class FastjsonConfiguration {
         fastJsonConfig.setSerializeFilters(new ContextValueFilter() {
             @Override
             public Object process(BeanContext context, Object object, String name, Object value) {
+                if(value == null || context == null){
+                    return value;
+                }
                 //根据注解判断该属性值是否需要转换
                 CodeFilter codeFilter = context.getAnnation(CodeFilter.class);
                 if (codeFilter != null) {
