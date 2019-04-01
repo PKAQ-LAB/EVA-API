@@ -77,4 +77,10 @@
     from sys_module
     where parent_Id=#{id}
   </select>
+
+  <!-- 根据parentId查询子节点数据-->
+  <select id="listOrder" resultType="Integer">
+    select max(orders)
+    from sys_module where parent_ID = #{id}
+  </select>
 </mapper>

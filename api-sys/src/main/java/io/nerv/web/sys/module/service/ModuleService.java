@@ -64,6 +64,12 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
         String moduleId = module.getId();
         // 获取上级节点
         String pid = module.getParentId();
+
+        //新增时排序为空计算默认排序值
+        if(StrUtil.isBlank(moduleId) && module.getOrders()==null && StrUtil.isNotBlank(pid)){
+            module.setOrders(this.mapper.listOrder(pid)+1);
+        }
+
         String root = "0";
         if(!root.equals(pid) && StrUtil.isNotBlank(pid)){
             // 查询新父节点信息
@@ -81,6 +87,7 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
             module.setIsleaf(false);
             module.setPathId(module.getId());
             module.setParentName(module.getName());
+            module.setOrders(0);
         }
 
         // 检查原父节点是否还存在子节点 不存在设置leaf为false

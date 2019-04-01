@@ -52,4 +52,11 @@ public interface ModuleMapper extends BaseMapper<ModuleEntity> {
      * @return 同级节点数量
      */
     int countPrantLeaf(String id);
+
+
+    /**
+     * 根据parentID查询最大的排序值
+     * @param id parentID
+     */
+    Integer listOrder(String id);
 }
