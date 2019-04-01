@@ -168,7 +168,7 @@ public class RoleService extends BaseService<RoleMapper, RoleEntity> {
     public Map<String, Object> listUser(RoleUserEntity roleUser, Integer page) {
         // 获取所有用户
         UserEntity userEntity = new UserEntity();
-        userEntity.setLocked("0000");
+        userEntity.setLocked(LockEnumm.UNLOCK.getIndex());
 
         IPage<UserEntity> pager = this.userService.listUser(userEntity, page);
         // 获取已选的模块
