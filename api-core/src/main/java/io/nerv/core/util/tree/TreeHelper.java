@@ -47,13 +47,17 @@ public class TreeHelper {
      * @param currentPath
      * @return
      */
-    public static String assemblePath(String parentPath, String currentPath) {
-        parentPath = (null != parentPath && parentPath.startsWith("/"))? parentPath : "/"+parentPath;
-        if (null != currentPath && !currentPath.startsWith(parentPath)){
-            currentPath = currentPath.startsWith("/")? currentPath : "/"+currentPath;
-            return parentPath+currentPath;
-        } else {
-            return currentPath;
+    public static String assemblePath(String parentPath, String currentPath,String oldParentPath) {
+        if(StrUtil.isNotBlank(oldParentPath)) {
+            //把子路径里原来的父路径替换成现在的父路径
+            currentPath=currentPath.replace(oldParentPath,parentPath);
+        }else {
+            parentPath = (null != parentPath && parentPath.startsWith("/")) ? parentPath : "/" + parentPath;
+            if (null != currentPath && !currentPath.startsWith(parentPath)) {
+                currentPath = currentPath.startsWith("/") ? currentPath : "/" + currentPath;
+                return parentPath + currentPath;
+            }
         }
+        return currentPath;
     }
 }

@@ -78,7 +78,20 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
             module.setPathId(parentModule.getId());
             String pathName = StrUtil.format("{}/{}", parentModule.getName(), module.getName());
 
-            module.setPath(TreeHelper.assemblePath(parentModule.getPath(), module.getPath()));
+            String oldFatherPath = null;
+            if(moduleId != null ){
+                ModuleEntity oldModule=this.mapper.selectById(moduleId);
+                if(oldModule != null){
+                    //得到原来父节点的path路径
+                    if(StrUtil.isNotBlank(oldModule.getParentId())){
+                       ModuleEntity oldParent= this.mapper.selectById(oldModule.getParentId());
+                       oldFatherPath=oldParent != null ? oldParent.getPath() : null;
+                    }
+                }
+            }
+            module.setPath(TreeHelper.assemblePath(parentModule.getPath(), module.getPath(),oldFatherPath));
+
+
             module.setPathName(pathName);
             module.setParentName(parentModule.getName());
 

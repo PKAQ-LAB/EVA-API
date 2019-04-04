@@ -71,7 +71,18 @@ public class CategoryService extends BaseService<CategoryMapper, CategoryEntity>
             // 设置当前节点信息
             String pathName = StrUtil.format("{}/{}", parentCategory.getName(), category.getName());
 
-            category.setPath(TreeHelper.assemblePath(parentCategory.getPath(), category.getPath()));
+            String oldFatherPath = null;
+            if(categoryId != null ){
+                CategoryEntity oldCategory=this.mapper.selectById(categoryId);
+                if(oldCategory != null){
+                    //得到原来父节点的path路径
+                    if(StrUtil.isNotBlank(oldCategory.getParentId())){
+                        CategoryEntity oldParent= this.mapper.selectById(oldCategory.getParentId());
+                        oldFatherPath=oldParent != null ? oldParent.getPath() : null;
+                    }
+                }
+            }
+            category.setPath(TreeHelper.assemblePath(parentCategory.getPath(), category.getPath(),oldFatherPath));
             category.setPathId(parentCategory.getId());
             category.setPathName(pathName);
             category.setParentName(parentCategory.getName());
