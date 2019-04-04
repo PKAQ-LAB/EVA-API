@@ -30,7 +30,7 @@ public class JwtConfig {
     /** 密匙 **/
     private String secert = "aHR0cDovL3BrYXEub3Jn";
     /** token有效时间 **/
-    private long ttl = 60 * 60 * 1000;
+    private long ttl = 3 * 60 * 60 * 1000;
 
     public void setSign(String sign){
         this.sign = sign;

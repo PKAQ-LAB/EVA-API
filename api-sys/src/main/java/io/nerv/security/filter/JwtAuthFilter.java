@@ -39,8 +39,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             FilterChain chain) throws ServletException, IOException {
 
         String uri = request.getRequestURI();
-        if (uri.contains("auth/login")){
+        //筛选登录接口和文档库的接口
+        if (uri.contains("auth/login") || uri.contains("/vein/webjars") || uri.equals("/vein/") || uri.contains("/vein/doc.html") || uri.contains("/swagger")){
             chain.doFilter(request, response);
+            return;
         }
 
         String authHeader = request.getHeader(jwtConfig.getHeader());
@@ -74,6 +76,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             }
+        }else{
+            //没有authHeader直接拦截
+            return;
         }
         chain.doFilter(request, response);
     }
