@@ -40,7 +40,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String uri = request.getRequestURI();
         //筛选登录接口和文档库的接口
-        if (uri.contains("auth/login") || uri.contains("/webjars")  || uri.contains("/doc.html") || uri.contains("/swagger")){
+        if (uri.contains("auth/login") || uri.contains("/webjars")  || uri.contains("/doc.html") || uri.contains("/swagger")
+                || (uri.indexOf('/') == 0 && uri.lastIndexOf('/') == uri.length()-1) || uri.contains("/api-docs")){
             chain.doFilter(request, response);
             return;
         }
