@@ -64,6 +64,14 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
     public List<ModuleEntity> editModule(ModuleEntity module){
         String moduleId = module.getId();
         if(StrUtil.isNotBlank(moduleId)){
+            //是否启用的逻辑
+            if(StrUtil.isNotBlank(module.getStatus()) && module.getStatus().equals("0001")) {
+                if(!isDisable(module)){
+                    //如果父节点状态为禁用，则子节点状态也只能为禁用
+                    return this.listModule(null);
+                }
+            }
+            //是否禁用的逻辑
             disableChild(module);
         }
         // 获取上级节点
@@ -137,8 +145,14 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
      * @return
      */
     public void updateModule(ModuleEntity moduleEntity){
-        disableChild(moduleEntity);
-        this.mapper.updateById(moduleEntity);
+        if(StrUtil.isNotBlank(moduleEntity.getStatus()) && moduleEntity.getStatus().equals("0001")) {
+            if(!isDisable(moduleEntity)){
+                return;
+            }
+        }
+            disableChild(moduleEntity);
+            this.mapper.updateById(moduleEntity);
+
     }
 
 
@@ -219,6 +233,25 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
             }
         }
         return childids;
+    }
+
+    /**
+     * 如果父节点状态是禁用 返回false
+     * @param moduleEntity
+     * @return
+     */
+    public  boolean isDisable(ModuleEntity moduleEntity){
+        ModuleEntity module=this.mapper.selectById(moduleEntity);
+        //判断是否启用
+            if(StrUtil.isNotBlank(module.getParentId())){
+                //得到父节点
+                ModuleEntity fatherModule=this.mapper.selectById(module.getParentId());
+                if(fatherModule != null && StrUtil.isNotBlank(fatherModule.getStatus())){
+                    return fatherModule.getStatus().equals("0000") ? false : true;
+                }
+
+            }
+        return true;
     }
 
 }
