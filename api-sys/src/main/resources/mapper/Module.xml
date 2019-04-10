@@ -83,4 +83,18 @@
     select  ifnull(max(orders),0)
     from sys_module where parent_ID = #{id}
   </select>
+
+  <!-- 根据id禁用节点-->
+  <update id="disableChild" parameterType="list">
+    update sys_module set status = '0000'
+    <foreach collection="list" index="id" close=")" item="id" open=" where id in (" separator=",">
+      #{id}
+    </foreach>
+  </update>
+
+  <!-- 根据id查询数据-->
+  <select id="selectId" resultMap="BaseResultMap">
+    select  *
+    from sys_module where id = #{id}
+  </select>
 </mapper>

@@ -59,4 +59,12 @@ public interface ModuleMapper extends BaseMapper<ModuleEntity> {
      * @param id parentID
      */
     Integer listOrder(String id);
+
+    /**
+     * 根据id禁用子节点
+     * @param ids
+     */
+    void disableChild(List<String> ids);
+
+    ModuleEntity selectId(@Param("id") String id);
 }

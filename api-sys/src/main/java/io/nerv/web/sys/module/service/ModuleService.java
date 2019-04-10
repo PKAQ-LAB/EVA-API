@@ -3,6 +3,7 @@ package io.nerv.web.sys.module.service;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import io.nerv.core.mvc.entity.tree.BaseTreeEntity;
 import io.nerv.core.mvc.service.BaseService;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.util.tree.TreeHelper;
@@ -62,6 +63,9 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
      */
     public List<ModuleEntity> editModule(ModuleEntity module){
         String moduleId = module.getId();
+        if(StrUtil.isNotBlank(moduleId)){
+            disableChild(module);
+        }
         // 获取上级节点
         String pid = module.getParentId();
 
@@ -133,6 +137,7 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
      * @return
      */
     public void updateModule(ModuleEntity moduleEntity){
+        disableChild(moduleEntity);
         this.mapper.updateById(moduleEntity);
     }
 
@@ -177,4 +182,43 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
         int records = this.mapper.selectCount(entityWrapper);
         return records > 0;
     }
+
+    /**
+     * 父节点被禁用，子节点也会被禁用
+     */
+    public void disableChild(ModuleEntity module){
+        //判断是不是禁用
+        if(StrUtil.isBlank(module.getStatus()) || module.getStatus().equals("0001")){
+            return;
+        }
+
+        //得到节点 里面有child
+       ModuleEntity moduleEntity=this.mapper.selectId(module.getId());
+
+       List<String> list=new ArrayList<>();
+        list=getChildId(moduleEntity,list);
+        if(list.size()<1){
+            return;
+        }
+
+        //把子节点的状态置位禁用
+        this.mapper.disableChild(list);
+    }
+
+    /**
+     * 递归得到当前节点子孙节点的id
+     * @param module
+     * @param childids
+     * @return
+     */
+    public  List<String> getChildId(BaseTreeEntity module, List<String> childids){
+        if(module.getChildren() != null) {
+            for (BaseTreeEntity baseTreeEntity : module.getChildren()) {
+                childids.add(baseTreeEntity.getId());
+                getChildId(baseTreeEntity, childids);
+            }
+        }
+        return childids;
+    }
+
 }
