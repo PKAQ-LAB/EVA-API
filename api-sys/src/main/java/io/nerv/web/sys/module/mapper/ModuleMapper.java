@@ -62,9 +62,8 @@ public interface ModuleMapper extends BaseMapper<ModuleEntity> {
 
     /**
      * 根据id禁用子节点
-     * @param ids
      */
-    void disableChild(List<String> ids);
+    void disableChild(@Param("id") String id);
 
     ModuleEntity selectId(@Param("id") String id);
 }
