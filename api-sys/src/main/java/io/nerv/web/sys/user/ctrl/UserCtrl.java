@@ -35,6 +35,7 @@ public class UserCtrl extends PureBaseCtrl<UserService> {
         boolean exist = this.service.checkUnique(user);
         return exist? failure(): success();
     }
+
     @PostMapping("/del")
     @ApiOperation(value = "根据ID删除/批量删除记录",response = Response.class)
     public Response del(@ApiParam(name = "ids", value = "[记录ID]")
@@ -49,7 +50,7 @@ public class UserCtrl extends PureBaseCtrl<UserService> {
 
     @PostMapping("edit")
     @ApiOperation(value = "新增/编辑记录",response = Response.class)
-    public Response save(@ApiParam(name ="formdata", value = "商品对象")
+    public Response save(@ApiParam(name ="formdata", value = "用户对象")
                          @RequestBody UserEntity entity){
 
         return success(this.service.saveUser(entity));
@@ -57,7 +58,7 @@ public class UserCtrl extends PureBaseCtrl<UserService> {
 
     @GetMapping("list")
     @ApiOperation(value = "列表查询",response = Response.class)
-    public Response list(@ApiParam(name ="condition", value = "商品对象")
+    public Response list(@ApiParam(name ="condition", value = "用户对象")
                                      UserEntity entity, Integer pageNo){
         return this.success(this.service.listPage(entity, pageNo));
     }
@@ -68,6 +69,7 @@ public class UserCtrl extends PureBaseCtrl<UserService> {
                             @PathVariable("id") String id){
         return this.success(this.service.getUser(id));
     }
+
     @PostMapping("/lock")
     @ApiOperation(value = "锁定/解锁", response = Response.class)
     public Response lockSwitch(@ApiParam(name = "param", value = "用户[id]")
