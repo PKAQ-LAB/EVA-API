@@ -2,17 +2,15 @@ package io.nerv.core.mvc.util;
 
 import io.nerv.core.enums.HttpCodeEnum;
 import io.nerv.core.enums.ResponseEnumm;
-import lombok.Builder;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Map;
 
 @Data
-/*
-@Builder
-*/
+@Slf4j
 public class Response{
     private int status;
     private boolean success;
@@ -22,6 +20,7 @@ public class Response{
     public Response() {
 
     }
+
     public Response(Boolean success, Object data) {
         this.data = data;
         this.success = success;
@@ -35,6 +34,7 @@ public class Response{
         this.success = true;
         this.message = ResponseEnumm.OPERATE_SUCCESS.getName();
         this.status = HttpCodeEnum.QUERY_SUCCESS.getIndex();
+
         return this;
     }
     /**
@@ -47,6 +47,7 @@ public class Response{
         this.success = true;
         this.message = ResponseEnumm.OPERATE_SUCCESS.getName();
         this.status = HttpCodeEnum.QUERY_SUCCESS.getIndex();
+
         return this;
     }
     /**
@@ -59,6 +60,7 @@ public class Response{
         this.success = true;
         this.message = msg;
         this.status = HttpCodeEnum.QUERY_SUCCESS.getIndex();
+
         return this;
     }
 
@@ -72,6 +74,7 @@ public class Response{
         this.message = ResponseEnumm.OPERATE_FAILED.getName();
         this.success = false;
         this.status = HttpCodeEnum.REQEUST_FAILURE.getIndex();
+
         return this;
     }
 
@@ -84,6 +87,7 @@ public class Response{
         this.success = false;
         this.status = status;
         this.message = HttpCodeEnum.getName(status);
+
         return this;
     }
 
@@ -96,6 +100,7 @@ public class Response{
         this.success = false;
         this.status = status;
         this.message = message;
+
         return this;
     }
 
@@ -109,16 +114,30 @@ public class Response{
         this.message = message;
         this.success = false;
         this.status = HttpCodeEnum.REQEUST_FAILURE.getIndex();
+
         return this;
     }
 
+    /**
+     * 排除不必要属性
+     * @param values
+     * @return
+     */
+    public Response exclude(String[] values){
+        try {
+            this.exclude(this.data, values);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return this;
+    }
 
     /**
      * 对data对象里对应的属性置空
      * @param values 需要为空的属性名
      * @return
      */
-    public Response filter(Object data,String[] values) throws IllegalAccessException{
+    public Response exclude(Object data,String[] values) throws IllegalAccessException{
         if(data != null ) {
             for (String value : values) {
 
@@ -140,7 +159,7 @@ public class Response{
                         //javabean
                         setNull(data, value);
                     }
-                    return success(data);
+                    this.setData(data);
                 }
 
                 //链式属性的话，循环每一阶层的属性名
@@ -157,26 +176,28 @@ public class Response{
                         for (Object obj : (Collection) fatherObject) {
                             Field field = getField(obj, stepValue);
                             if (field != null) {
-                                filter(field.get(obj), sValue);
+                                exclude(field.get(obj), sValue);
                             }
                         }
                         break;
                     } else if (fatherObject instanceof Map) {
                         //如果是map集合的话，则得到map对应的key(下一阶层的属性名)的value对象，然后递归该对象
                         Map map = (Map) fatherObject;
-                        filter(map.get(stepValue), sValue);
+                        exclude(map.get(stepValue), sValue);
                         break;
                     } else {
                         Field field = getField(fatherObject, stepValue);
                         if (field != null) {
                             field.setAccessible(true);
-                            filter(field.get(fatherObject), sValue);
+                            exclude(field.get(fatherObject), sValue);
                         }
                     }
                 }
             }
         }
-        return success(data);
+        this.setData(data);
+
+        return this;
     }
 
     /**
@@ -207,7 +228,7 @@ public class Response{
             try {
                 field=object.getClass().getSuperclass().getDeclaredField(value);
             }catch (NoSuchFieldException e1){
-                System.out.println(object+"对象没有"+value+"属性！！");
+                log.error(object+"对象没有"+value+"属性");
             }
         }
         return field;

@@ -87,7 +87,7 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
             // 查询新父节点信息
             ModuleEntity parentModule = this.getModule(pid);
             // 设置当前节点信息
-            module.setPathId(parentModule.getId());
+            module.setPathId(parentModule.getPathId());
             String pathName = StrUtil.format("{}/{}", parentModule.getName(), module.getName());
 
             String oldFatherPath = null;
