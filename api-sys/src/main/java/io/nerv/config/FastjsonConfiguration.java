@@ -2,7 +2,6 @@ package io.nerv.config;
 
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.util.StrUtil;
-import com.alibaba.fastjson.serializer.BeanContext;
 import com.alibaba.fastjson.serializer.ContextValueFilter;
 import com.alibaba.fastjson.serializer.PropertyFilter;
 import com.alibaba.fastjson.serializer.SerializerFeature;
@@ -26,8 +25,7 @@ import java.util.List;
  */
 @Configuration
 public class FastjsonConfiguration {
-    private  String serializeGroup="";
-    private  Class clazz=null;
+
     @Autowired
     DictHelperProvider dictHelper;
     @Bean
@@ -45,20 +43,17 @@ public class FastjsonConfiguration {
                 !(value instanceof List) || ((List) value).size() >= 1);
 
         //字典值转换
-        fastJsonConfig.setSerializeFilters(new ContextValueFilter() {
-            @Override
-            public Object process(BeanContext context, Object object, String name, Object value) {
-                if(value == null || context == null){
-                    return value;
-                }
-                //根据注解判断该属性值是否需要转换
-                CodeFilter codeFilter = context.getAnnation(CodeFilter.class);
-                if (codeFilter != null) {
-                    String dictValue = dictHelper.get(StrUtil.isBlank(codeFilter.value()) ? name : codeFilter.value(), value.toString());
-                    value = StrUtil.isNotBlank(dictValue) ? dictValue : value;
-                }
+        fastJsonConfig.setSerializeFilters((ContextValueFilter) (context, object, name, value) -> {
+            if(value == null || context == null){
                 return value;
             }
+            //根据注解判断该属性值是否需要转换
+            CodeFilter codeFilter = context.getAnnation(CodeFilter.class);
+            if (codeFilter != null) {
+                String dictValue = dictHelper.get(StrUtil.isBlank(codeFilter.value()) ? name : codeFilter.value(), value.toString());
+                value = StrUtil.isNotBlank(dictValue) ? dictValue : value;
+            }
+            return value;
         });
         //在转换器中添加配置信息
         fastConverter.setFastJsonConfig(fastJsonConfig);
