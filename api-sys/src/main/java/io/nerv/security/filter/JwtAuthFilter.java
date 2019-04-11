@@ -6,6 +6,7 @@ import io.nerv.security.jwt.JwtConfig;
 import io.nerv.security.jwt.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,6 +27,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Qualifier("jwtUserDetailsServiceImpl")
     private UserDetailsService userDetailsService;
 
+    @Value("${spring.profiles.active}")
+    private String activeProfile;
+
     @Autowired
     private JwtUtil jwtUtil;
 
@@ -40,10 +44,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String uri = request.getRequestURI();
         //筛选登录接口和文档库的接口
-        if (uri.contains("auth/login") || uri.contains("/webjars")  || uri.contains("/doc.html") || uri.contains("/swagger")
-                || (uri.indexOf('/') == 0 && uri.lastIndexOf('/') == uri.length()-1) || uri.contains("/api-docs")){
+        if (uri.contains("auth/login") || "dev".equals(activeProfile)){
             chain.doFilter(request, response);
-            return;
         }
 
         String authHeader = request.getHeader(jwtConfig.getHeader());
@@ -77,10 +79,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             }
-        }else{
-            //没有authHeader直接拦截
-            return;
         }
+
         chain.doFilter(request, response);
     }
 }
