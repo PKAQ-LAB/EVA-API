@@ -35,7 +35,7 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
      * @return
      */
     public Response deleteModule(ArrayList<String> ids){
-        Response response = new Response();
+        Response response = null;
         // 检查是否存在子节点，存在子节点不允许删除
         QueryWrapper<ModuleEntity> oew = new QueryWrapper<>();
         oew.setEntity( new ModuleEntity() );
@@ -48,10 +48,10 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
             List<Object> list = CollectionUtil.getFieldValues(leafList, "parentName");
             // 拼接名称
             String name = CollectionUtil.join(list, ",");
+            response=new Response();
             response = response.failure(501, StrUtil.format("[{}] 存在子节点，无法删除。",name), null);
         } else {
             this.mapper.deleteBatchIds(ids);
-            response = response.success(this.mapper.listModule(null, null));
         }
 
         return response;
@@ -61,14 +61,16 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
      * @param module 要 新增/编辑 得模块对象
      * @return 重新查询模块列表
      */
-    public List<ModuleEntity> editModule(ModuleEntity module){
+    public Response editModule(ModuleEntity module){
         String moduleId = module.getId();
         if(StrUtil.isNotBlank(moduleId)){
             //是否启用的逻辑
             if(StrUtil.isNotBlank(module.getStatus()) && module.getStatus().equals("0001")) {
                 if(!isDisable(module)){
                     //如果父节点状态为禁用，则子节点状态也只能为禁用
-                    return this.listModule(null);
+                    Response response=new Response();
+                    response=response.failure(501, "父节点为禁用状态，无法启用。", null);
+                    return response;
                 }
             }
             //是否禁用的逻辑
@@ -87,7 +89,7 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
             // 查询新父节点信息
             ModuleEntity parentModule = this.getModule(pid);
             // 设置当前节点信息
-            module.setPathId(parentModule.getPathId());
+            module.setPathId(StrUtil.isNotBlank(parentModule.getPathId()) ? parentModule.getPathId()+","+parentModule.getId() : parentModule.getId());
             String pathName = StrUtil.format("{}/{}", parentModule.getName(), module.getName());
 
             String oldFatherPath = null;
@@ -110,7 +112,8 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
         } else {
             // 父节点为空, 根节点 设置为非叶子
             module.setIsleaf(false);
-            module.setPathId(module.getId());
+            //父节点为空，则pathid为空
+            module.setPathId(null);
             module.setParentName(module.getName());
             module.setOrders(0);
         }
@@ -133,10 +136,9 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
             }
 
         }
-
         this.merge(module);
-        // 保存完重新查询一遍列表数据
-        return this.listModule(null);
+
+        return null;
     }
 
     /**
@@ -205,35 +207,10 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
         if(StrUtil.isBlank(module.getStatus()) || module.getStatus().equals("0001")){
             return;
         }
-
-        //得到节点 里面有child
-       ModuleEntity moduleEntity=this.mapper.selectId(module.getId());
-
-       List<String> list=new ArrayList<>();
-        list=getChildId(moduleEntity,list);
-        if(list.size()<1){
-            return;
-        }
-
-        //把子节点的状态置位禁用
-        this.mapper.disableChild(list);
+        //禁用该父节点下的所有子节点
+        this.mapper.disableChild(module.getId());
     }
 
-    /**
-     * 递归得到当前节点子孙节点的id
-     * @param module
-     * @param childids
-     * @return
-     */
-    public  List<String> getChildId(BaseTreeEntity module, List<String> childids){
-        if(module.getChildren() != null) {
-            for (BaseTreeEntity baseTreeEntity : module.getChildren()) {
-                childids.add(baseTreeEntity.getId());
-                getChildId(baseTreeEntity, childids);
-            }
-        }
-        return childids;
-    }
 
     /**
      * 如果父节点状态是禁用 返回false

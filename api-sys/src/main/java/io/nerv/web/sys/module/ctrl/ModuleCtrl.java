@@ -44,7 +44,11 @@ public class ModuleCtrl extends PureBaseCtrl<ModuleService> {
             throw new ParamException(locale("param_id_notnull"));
         }
 
-        this.service.deleteModule(ids.getParam());
+        //如果Response不为空，则表示该节点下有子节点，返回错误给前台
+        Response response=this.service.deleteModule(ids.getParam());
+        if(response != null){
+            return response;
+        }
 
         return this.success(this.service.listModule(null));
     }
@@ -53,7 +57,13 @@ public class ModuleCtrl extends PureBaseCtrl<ModuleService> {
     @ApiOperation(value = "新增/编辑记录",response = Response.class)
     public Response save(@ApiParam(name ="formdata", value = "模块对象")
                          @RequestBody ModuleEntity entity){
-        return success(  this.service.editModule(entity));
+       Response response = this.service.editModule(entity);
+
+        //如果Response不为空，则表示有返回错误给前台
+        if(response != null){
+            return response;
+        }
+        return success(   this.service.listModule(null));
     }
 
     @GetMapping("/get/{id}")
@@ -82,6 +92,6 @@ public class ModuleCtrl extends PureBaseCtrl<ModuleService> {
     public Response switchStatus(@ApiParam(name = "id", value = "模块Id")
                                  @RequestBody ModuleEntity module){
         this.service.updateModule(module);
-        return success();
+        return success(this.service.listModule(null));
     }
 }
