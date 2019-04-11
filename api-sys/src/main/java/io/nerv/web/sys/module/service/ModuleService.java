@@ -87,7 +87,7 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
             // 查询新父节点信息
             ModuleEntity parentModule = this.getModule(pid);
             // 设置当前节点信息
-            module.setPathId(parentModule.getId());
+            module.setPathId(StrUtil.isNotBlank(parentModule.getPathId()) ? parentModule.getPathId()+","+parentModule.getId() : parentModule.getId());
             String pathName = StrUtil.format("{}/{}", parentModule.getName(), module.getName());
 
             String oldFatherPath = null;
@@ -110,7 +110,8 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
         } else {
             // 父节点为空, 根节点 设置为非叶子
             module.setIsleaf(false);
-            module.setPathId(module.getId());
+            //父节点为空，则pathid为空
+            module.setPathId(null);
             module.setParentName(module.getName());
             module.setOrders(0);
         }
