@@ -1,5 +1,5 @@
 plugins {
-     id 'org.springframework.boot' version '2.1.3.RELEASE'
+     id 'org.springframework.boot' version '2.1.4.RELEASE'
 }
 apply plugin: 'io.spring.dependency-management'
 
@@ -13,7 +13,7 @@ bootJar {
 }
 
 ext{
-    alipay = "3.3.87.ALL"
+    alipay = "3.7.4"
     zxing = "3.3.3"
 }
 

@@ -1,6 +1,6 @@
 ext{
     freemarker = "2.3.28"
-    velocity = "2.0"
+    velocity = "2.1"
     mybatis_plus_generator = "3.1.0"
 }
 
