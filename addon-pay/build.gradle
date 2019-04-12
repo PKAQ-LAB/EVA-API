@@ -8,7 +8,7 @@ jar {
 }
 
 bootJar {
-    baseName = "alipay"
+    archiveBaseName = "alipay"
 	mainClassName = 'io.nerv.AlipayBooter'
 }
 
