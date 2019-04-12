@@ -1,7 +1,7 @@
 apply from: '../publish.gradle'
 
 jar {
-    baseName = 'eva-core'
+	archiveBaseName = 'eva-core'
 }
 
 // 依赖配置

@@ -1,7 +1,7 @@
 apply from: '../publish.gradle'
 
 jar {
-    baseName = 'eva-sys'
+    archiveBaseName = 'eva-sys'
 }
 
 dependencies {
