@@ -1,29 +1,40 @@
-package io.nerv.helper;
+package io.nerv.generator;
 
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
-import com.baomidou.mybatisplus.generator.config.FileOutConfig;
 import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.PackageConfig;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.TemplateConfig;
-import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
-import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
+import com.baomidou.mybatisplus.generator.engine.VelocityTemplateEngine;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 /**
+ * 单表代码生成器
  * @author PKAQ
  */
-public class CodeGenerator {
+public class SingleCodeGenerator {
+    // 作者
+    private final static String AUTHOR = "PKAQ";
+    // 基础包名
+    private final static String BASEPKG = "io.nerv.web";
+    // 系统名
+    private final static String SYS_NAME = "eva";
 
+    // 数据库配置
+    private final static String IP_PORT = "182.61.49.92:3306";
+    private final static String DBNAME = "eva";
+    private final static String URL = "jdbc:mysql://"+IP_PORT+"/"+DBNAME+"?useUnicode=true&characterEncoding=UTF-8";
+    private final static String DRIVER = "com.mysql.cj.jdbc.Driver";
+    private final static String USER = "root";
+    private final static String PWD = "xilailai";
     /**
      * <p>
      * 读取控制台内容
@@ -49,47 +60,54 @@ public class CodeGenerator {
         GlobalConfig gc = new GlobalConfig();
         String projectPath = System.getProperty("user.dir");
         gc.setOutputDir(projectPath + "/addon-generator/src/main/java");
-        gc.setAuthor("PKAQ");
+        gc.setAuthor(AUTHOR);
+        // 是否打开输出目录
         gc.setOpen(false);
+        // 启用swagger
         gc.setSwagger2(true);
+        gc.setServiceName("%sService");
+        gc.setServiceImplName(null);
+        gc.setControllerName("%sCtrl");
+        gc.setEntityName("%sEntity");
         mpg.setGlobalConfig(gc);
 
-        // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:mysql://localhost:3306/jxc?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC");
-        dsc.setDriverName("com.mysql.cj.jdbc.Driver");
-        dsc.setUsername("jxc");
-        dsc.setPassword("jxc");
+        dsc.setUrl(URL);
+        dsc.setDriverName(DRIVER);
+        dsc.setUsername(USER);
+        dsc.setPassword(PWD);
         mpg.setDataSource(dsc);
+
 
         // 包配置
         PackageConfig pc = new PackageConfig();
         pc.setModuleName(scanner("模块名"));
-        pc.setParent("io.nerv.web.jxc.purchasing");
+        pc.setParent(BASEPKG);
         mpg.setPackageInfo(pc);
 
         // 模板配置
         TemplateConfig templateConfig = new TemplateConfig();
+        // xml模板
         templateConfig.setXml(null);
-        templateConfig.setEntity("/templates/pureEntity.java");
+        // entity模板
+        templateConfig.setEntity("/templates/single/entity.java");
+        // controller模板
+        templateConfig.setController("templates/single/controller.java");
+        // mapper模板
+        templateConfig.setMapper("/templates/single/mapper.java");
+        // service模板
+        templateConfig.setService("/templates/single/service.java");
+        templateConfig.setServiceImpl(null);
 
         // 自定义配置
         InjectionConfig cfg = new InjectionConfig() {
             @Override
             public void initMap() {
-                // to do nothing
+                Map<String, Object> map = new HashMap<>(1);
+                map.put("sysName", SYS_NAME);
+                this.setMap(map);
             }
         };
-        List<FileOutConfig> focList = new ArrayList<>();
-        focList.add(new FileOutConfig("/templates/mapper.xml.ftl") {
-            @Override
-            public String outputFile(TableInfo tableInfo) {
-                // 自定义输入文件名称
-                return projectPath + "/src/main/resources/mapper/" + pc.getModuleName()
-                        + "/" + tableInfo.getEntityName() + "Mapper" + StringPool.DOT_XML;
-            }
-        });
-        cfg.setFileOutConfigList(focList);
         mpg.setCfg(cfg);
         mpg.setTemplate(templateConfig);
 
@@ -97,16 +115,23 @@ public class CodeGenerator {
         StrategyConfig strategy = new StrategyConfig();
         strategy.setNaming(NamingStrategy.underline_to_camel);
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
-        strategy.setSuperEntityClass("PureBaseEntity");
+
+        // 定义基类
+        strategy.setSuperEntityClass("io.nerv.core.mvc.entity.PureBaseEntity");
+        strategy.setSuperControllerClass("io.nerv.core.mvc.ctrl.BaseCtrl");
+        strategy.setSuperMapperClass("com.baomidou.mybatisplus.core.mapper.BaseMapper");
+        strategy.setSuperServiceClass("io.nerv.core.mvc.service.BaseService");
+
         strategy.setEntityLombokModel(true);
         strategy.setRestControllerStyle(true);
-        strategy.setSuperControllerClass("com.baomidou.ant.common.BaseController");
-        strategy.setInclude(scanner("表名"));
-        strategy.setSuperEntityColumns("id");
         strategy.setControllerMappingHyphenStyle(true);
-        strategy.setTablePrefix(pc.getModuleName() + "_");
+
+        strategy.setInclude(scanner("表名"));
+        strategy.setSuperEntityColumns("ID","CREATE_BY","GMT_CREATE","MODIFY_BY","GMT_MODIFY","REMARK");
+        strategy.setTablePrefix(scanner("表前缀"));
+
         mpg.setStrategy(strategy);
-        mpg.setTemplateEngine(new FreemarkerTemplateEngine());
+        mpg.setTemplateEngine(new VelocityTemplateEngine());
         mpg.execute();
     }
 

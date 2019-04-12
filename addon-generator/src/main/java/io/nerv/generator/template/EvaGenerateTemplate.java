@@ -1,4 +1,4 @@
-package io.nerv.helper.template;
+package io.nerv.generator.template;
 
 
 import com.baomidou.mybatisplus.generator.engine.AbstractTemplateEngine;
