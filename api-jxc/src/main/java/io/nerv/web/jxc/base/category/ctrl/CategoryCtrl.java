@@ -28,10 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CategoryCtrl extends PureBaseCtrl<CategoryService> {
     @GetMapping("list")
     @ApiOperation(value = "根据实体类属性获取相应的分类树 ", response = Response.class)
-    public Response list(@ApiParam(name = "condition", value= "分类A") String condition,
-                         @ApiParam(name = "categoryEntity", value= "{key: value}", required = false)
-                         CategoryEntity categoryEntity
-                         ){
+    public Response list(@ApiParam(name = "condition", value= "分类A") String condition){
         return success(this.service.listCategory(condition, null));
     }
 
