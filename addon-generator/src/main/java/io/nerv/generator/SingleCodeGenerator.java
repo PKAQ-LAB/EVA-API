@@ -66,6 +66,7 @@ public class SingleCodeGenerator {
         // 启用swagger
         gc.setSwagger2(true);
         gc.setServiceName("%sService");
+        // 不生成serviceImpl类
         gc.setServiceImplName(null);
         gc.setControllerName("%sCtrl");
         gc.setEntityName("%sEntity");
