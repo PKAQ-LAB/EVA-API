@@ -1,7 +1,7 @@
 description = """auth"""
 
 ext {
-    mongo = "2.1.3.RELEASE"
+    mongo = "2.1.4.RELEASE"
 }
 // 依赖配置
 dependencies {
