@@ -113,6 +113,7 @@ public class JwtUtil {
             if ("-".equals(uid)) {
                 throw new OathException("登录已失效");
             } else {
+                // TODO 给token续命
                 ret = true;
             }
         } catch (SignatureException se ) {
