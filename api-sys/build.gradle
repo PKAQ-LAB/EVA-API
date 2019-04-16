@@ -1,8 +1,5 @@
 apply from: '../publish.gradle'
-
-jar {
-    archiveBaseName = 'eva-sys'
-}
+project.archivesBaseName = 'eva-sys'
 
 dependencies {
     implementation		project(":api-core")

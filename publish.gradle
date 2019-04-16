@@ -17,10 +17,15 @@ javadoc {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifactId jar.baseName
-			from components.java
+            from components.java
+			
+			afterEvaluate {
+				artifactId project.archivesBaseName
+			}
+			
 			artifact sourcesJar
             artifact javadocJar
+			
 			pom {
                 name = artifactId
                 description = POM_DESCRIPTION
