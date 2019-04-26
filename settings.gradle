@@ -5,6 +5,3 @@ include 'api-core'
 include 'api-sys'
 include 'addon-mongo'
 include 'addon-pay'
-include 'addon-generator'
-findProject(':addon-generator')?.name = 'generator'
-
