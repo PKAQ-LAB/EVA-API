@@ -13,7 +13,7 @@ bootJar {
 }
 
 ext{
-    alipay = "3.7.4"
+    alipay = "3.7.26.ALL"
     zxing = "3.3.3"
 }
 
