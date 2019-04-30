@@ -42,7 +42,9 @@ spring:
     username: ENC(dghf0DZZJA+vQ95xgHz5iA==)
     password: ENC(TNbKfi0lHjpfPcdepEnR5oKHikoDfVr+/amPonxytqK5u+B8Pid7k4hmlGUOhv+6QxEuB3gjJPPn7L8ishuFYym/Gr59qRO6Uf5/XiyT+3FUTujtyybxUjTyo4CO1wKe+zubp27QVYM=)
 ```
-
+# 法二
+下载jasypt压缩包 解压后执行
+encrypt input=root123 password=::Lazy@8 algorithm=PBEWITHMD5ANDDES
 
 
 > 参考: https://github.com/ulisesbocchio/jasypt-spring-boot
