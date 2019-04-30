@@ -52,16 +52,48 @@ publishing {
         }
     }
 	
-	 repositories {
+	repositories {
         maven {
 			println(ARTIFACTORY_CONTEXTURL)
-            
-            url = ARTIFACTORY_CONTEXTURL
+           
+           url = ARTIFACTORY_CONTEXTURL
             
             credentials {
                 username ARTIFACTORY_USER
                 password ARTIFACTORY_PASSWORD
-            }
+           }
         }
     }
 }
+
+ bintray {
+        user = ARTIFACTORY_USER
+        key = ARTIFACTORY_PASSWORD
+		
+		println user
+		println key
+		
+        publications = ['mavenJava'] 
+        
+        dryRun = false 
+        publish = true 
+		override = true
+        pkg {
+			
+            repo = 'pub'
+			afterEvaluate {
+				name = project.archivesBaseName
+			}
+			userOrg = 'nerv'
+            desc = 'eva core lib'
+			
+            websiteUrl = 'https://pkaq.org'
+            issueTrackerUrl = 'https://pkaq.org'
+            vcsUrl = 'https://pkaq.org'
+			
+            licenses = ['Apache-2.0']
+            labels = ['io.nerv', 'eva']
+            publicDownloadNumbers = true
+        }
+    }
+	

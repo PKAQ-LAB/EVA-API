@@ -1,14 +1,19 @@
 package io.nerv.core;
 
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+import org.junit.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public abstract class BaseTest {
+
+    @Test
+    public void encrypt(){
+        StandardPBEStringEncryptor standardPBEStringEncryptor = new StandardPBEStringEncryptor();
+        standardPBEStringEncryptor.setAlgorithm("eva");
+        System.out.println(standardPBEStringEncryptor.encrypt("hctms"));
+    }
+
     public HttpHeaders setHeader() {
         HttpHeaders headers = new HttpHeaders();
         MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
