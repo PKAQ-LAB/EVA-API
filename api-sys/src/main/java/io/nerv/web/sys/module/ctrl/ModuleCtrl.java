@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author: S.PKAQ
  * @Datetime: 2018/3/28 19:20
  */
-@Api( description = "模块管理")
+@Api("模块管理")
 @RestController
 @RequestMapping("/module")
 public class ModuleCtrl extends PureBaseCtrl<ModuleService> {

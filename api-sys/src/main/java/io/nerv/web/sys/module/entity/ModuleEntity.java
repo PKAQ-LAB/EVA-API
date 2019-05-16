@@ -1,5 +1,7 @@
 package io.nerv.web.sys.module.entity;
 
+import com.baomidou.mybatisplus.annotation.SqlCondition;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.nerv.core.mvc.entity.tree.BaseTreeEntity;
 import io.swagger.annotations.ApiModel;
@@ -21,6 +23,7 @@ public class ModuleEntity extends BaseTreeEntity {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("模块名称")
+    @TableField(condition = SqlCondition.LIKE_RIGHT)
     private String name;
 
     @ApiModelProperty("模块图标")

@@ -42,15 +42,15 @@
           (parent_Id = '0' or parent_Id is null)
         </when>
         <otherwise>
-          name like '%${condition}%'
+          name like concat('%',#{condition},'%')
         </otherwise>
       </choose>
       <if test="null != module">
-        <if test="module.status != '' and null != module.status">
+        <if test="null != module.status and module.status != '' ">
             and status = #{module.status}
         </if>
-        <if test="module.name != '' and null != module.name">
-          and name = #{module.name}
+        <if test="null != module.name and module.name != '' ">
+          and name like concat('%',#{module.name},'%')
         </if>
       </if>
     </where>
