@@ -50,4 +50,11 @@ public interface OrganizationMapper extends BaseMapper<OrganizationEntity> {
      * @param organization
      */
     void switchStatus(OrganizationEntity organization);
+
+    /**
+     * 父节点信息有修改 刷新子节点相关数据
+     * @param name
+     * @param id
+     */
+    void updateChildParentName(String name, String id);
 }

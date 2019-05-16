@@ -61,14 +61,14 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
      * @return 重新查询模块列表
      */
     public Response editModule(ModuleEntity module){
+        Response response=new Response();
         String moduleId = module.getId();
         if(StrUtil.isNotBlank(moduleId)){
             //是否启用的逻辑
             if(StrUtil.isNotBlank(module.getStatus()) && module.getStatus().equals("0001")) {
                 if(!isDisable(module)){
                     //如果父节点状态为禁用，则子节点状态也只能为禁用
-                    Response response=new Response();
-                    response=response.failure(501, "父节点为禁用状态，无法启用。", null);
+                    response.failure(501, "父节点为禁用状态，无法启用。", null);
                     return response;
                 }
             }
@@ -84,6 +84,7 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
         }
 
         String root = "0";
+        //  当前编辑节点为子节点
         if(!root.equals(pid) && StrUtil.isNotBlank(pid)){
             // 查询新父节点信息
             ModuleEntity parentModule = this.getModule(pid);
@@ -109,6 +110,7 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
             module.setParentName(parentModule.getName());
 
         } else {
+            //  当前编辑节点为根节点
             // 父节点为空, 根节点 设置为非叶子
             module.setIsleaf(false);
             //父节点为空，则pathid为空
@@ -135,11 +137,27 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
             }
 
         }
+        // 持久化
         this.merge(module);
 
-        return new Response().success(this.listModule(null));
+        // 刷新所有子节点的 path parent_name path_name
+        this.refreshChild(module);
+        return response.success(this.listModule(null));
     }
 
+    // 父节点信息有修改 刷新子节点相关数据
+    public void refreshChild(ModuleEntity module){
+        // 刷新子节点名称
+        this.mapper.updateChildParentName(module.getName(), module.getId());
+        // TODO 刷新所有子节点的 path_name 和 path
+        //this.mapper.updateChildPathInfo(module.getName(),module.getPath(),module.getId());
+        //-- 所有子节点刷新
+        //update sys_module set
+        //        PATH_NAME=REPLACE(PARENT_NAME,name,'基础信息'),
+        //        PATH=REPLACE(PATH,'oldPath','newPath')
+        //where path like concat(path,'%') and path_id like '054d3ed0e60f4faaa29ceb1a440375f3%'
+
+    }
     /**
      * 根据ID更新
      * @param moduleEntity

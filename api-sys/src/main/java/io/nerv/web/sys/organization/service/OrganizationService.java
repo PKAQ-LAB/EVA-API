@@ -104,6 +104,19 @@ public class OrganizationService extends BaseService<OrganizationMapper, Organiz
         return this.listOrg(null);
     }
 
+    // 父节点信息有修改 刷新子节点相关数据
+    public void refreshChild(OrganizationEntity organizationEntity){
+        // 刷新子节点名称
+        this.mapper.updateChildParentName(organizationEntity.getName(), organizationEntity.getId());
+        // TODO 刷新所有子节点的 path_name 和 path
+        //this.mapper.updateChildPathInfo(module.getName(),module.getPath(),module.getId());
+        //-- 所有子节点刷新
+        //update sys_module set
+        //        PATH_NAME=REPLACE(PARENT_NAME,name,'基础信息'),
+        //        PATH=REPLACE(PATH,'oldPath','newPath')
+        //where path like concat(path,'%') and path_id like '054d3ed0e60f4faaa29ceb1a440375f3%'
+
+    }
     /**
      * 根据ID更新
      * @param organizationEntity

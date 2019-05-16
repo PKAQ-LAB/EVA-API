@@ -66,4 +66,9 @@ public interface ModuleMapper extends BaseMapper<ModuleEntity> {
     void disableChild(@Param("id") String id);
 
     ModuleEntity selectId(@Param("id") String id);
+
+    /**
+     * 刷新子节点名称
+     */
+    void updateChildParentName(@Param("name") String name, @Param("id") String id);
 }
