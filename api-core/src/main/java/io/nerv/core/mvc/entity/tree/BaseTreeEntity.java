@@ -1,5 +1,6 @@
 package io.nerv.core.mvc.entity.tree;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.annotation.TableField;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -51,7 +52,7 @@ public class BaseTreeEntity extends PureBaseEntity {
     private String locale;
 
     public String getLocale() {
-        return "menu"+this.path.replaceAll("/",".");
+        return StrUtil.isNotBlank(this.path) ? "menu"+this.path.replaceAll("/","."): "";
     }
 
     public String getKey(){
