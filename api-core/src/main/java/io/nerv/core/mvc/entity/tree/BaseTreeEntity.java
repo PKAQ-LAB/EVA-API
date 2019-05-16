@@ -67,4 +67,8 @@ public class BaseTreeEntity extends PureBaseEntity {
         return children == null || children.size()<1?null:children;
     }
 
+    public List<BaseTreeEntity> getOriginChildren(){
+        return children;
+    }
+
 }

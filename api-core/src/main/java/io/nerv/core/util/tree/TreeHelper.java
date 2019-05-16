@@ -29,10 +29,10 @@ public class TreeHelper {
 
             for (BaseTreeEntity it : moduleEntitys) {
                 if (entity.getId().equals(it.getParentId())) {
-                    if (entity.getChildren() == null) {
+                    if (entity.getOriginChildren() == null) {
                         entity.setChildren(new ArrayList<>());
                     }
-                    entity.getChildren().add(it);
+                    entity.getOriginChildren().add(it);
                 }
             }
         }
