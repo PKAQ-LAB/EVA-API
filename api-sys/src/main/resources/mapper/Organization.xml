@@ -57,4 +57,10 @@
   <update id="switchStatus">
       update sys_organization set status=#{status} where path like concat('%,',#{id},',%') or id = #{id}
   </update>
+  <!--  刷新子节点名称-->
+  <update id="updateChildParentName">
+    update sys_organization
+      set PARENT_NAME=#{name}
+    where  parent_id like  concat(#{id},'%');
+  </update>
 </mapper>

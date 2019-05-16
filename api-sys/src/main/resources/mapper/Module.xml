@@ -92,4 +92,10 @@
     select  *
     from sys_module where id = #{id}
   </select>
+  <!--  刷新子节点名称-->
+  <update id="updateChildParentName">
+    update sys_module
+      set PARENT_NAME=#{name}
+    where  parent_id like  concat(#{id},'%');
+  </update>
 </mapper>
