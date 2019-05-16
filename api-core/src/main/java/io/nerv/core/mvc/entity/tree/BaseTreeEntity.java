@@ -63,4 +63,8 @@ public class BaseTreeEntity extends PureBaseEntity {
         return this.isleaf;
     }
 
+    public List<BaseTreeEntity> getChildren(){
+        return children == null || children.size()<1?null:children;
+    }
+
 }
