@@ -3,7 +3,6 @@ package io.nerv.web.sys.module.service;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import io.nerv.core.mvc.entity.tree.BaseTreeEntity;
 import io.nerv.core.mvc.service.BaseService;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.util.tree.TreeHelper;
@@ -138,7 +137,7 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
         }
         this.merge(module);
 
-        return null;
+        return new Response().success(this.listModule(null));
     }
 
     /**

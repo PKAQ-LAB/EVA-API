@@ -57,13 +57,7 @@ public class ModuleCtrl extends PureBaseCtrl<ModuleService> {
     @ApiOperation(value = "新增/编辑记录",response = Response.class)
     public Response save(@ApiParam(name ="formdata", value = "模块对象")
                          @RequestBody ModuleEntity entity){
-       Response response = this.service.editModule(entity);
-
-        //如果Response不为空，则表示有返回错误给前台
-        if(response != null){
-            return response;
-        }
-        return success(   this.service.listModule(null));
+        return this.service.editModule(entity);
     }
 
     @GetMapping("/get/{id}")
