@@ -78,8 +78,19 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
         // 获取上级节点
         String pid = module.getParentId();
 
-        //新增时排序为空计算默认排序值
-        if(StrUtil.isBlank(moduleId) && module.getOrders()==null && StrUtil.isNotBlank(pid)){
+        //如果order不为空
+        if(null != module.getOrders()){
+            //校验order是否唯一，不唯一则新增的对象的orders改为最大，修改的对象不设置orders
+            int oder=this.mapper.isOrder(pid,module.getOrders(),moduleId);
+            if(oder > 0 ){
+                if(StrUtil.isBlank(moduleId)){
+                    module.setOrders(this.mapper.listOrder(pid)+1);
+                }else {
+                    module.setOrders(null);
+                }
+            }
+        }else  if(StrUtil.isBlank(moduleId) && module.getOrders()==null){
+            //orders为空且是新增的对象九八orders设为最大
             module.setOrders(this.mapper.listOrder(pid)+1);
         }
 
@@ -116,7 +127,6 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
             //父节点为空，则pathid为空
             module.setPathId(null);
             module.setParentName(module.getName());
-            module.setOrders(0);
         }
 
         // 检查原父节点是否还存在子节点 不存在设置leaf为false
@@ -130,10 +140,6 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
             if(brothers < 1){
                 moduleinNode.setIsleaf(true);
                 this.updateModule(moduleinNode);
-            }
-            if (null == module.getOrders()){
-                int buddy = this.mapper.countPrantLeaf(pid);
-                module.setOrders(buddy);
             }
 
         }

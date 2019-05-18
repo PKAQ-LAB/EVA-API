@@ -58,7 +58,7 @@ public interface ModuleMapper extends BaseMapper<ModuleEntity> {
      * 根据parentID查询最大的排序值
      * @param id parentID
      */
-    Integer listOrder(String id);
+    Integer listOrder(@Param("pid") String id);
 
     /**
      * 根据id禁用子节点
@@ -71,4 +71,12 @@ public interface ModuleMapper extends BaseMapper<ModuleEntity> {
      * 刷新子节点名称
      */
     void updateChildParentName(@Param("name") String name, @Param("id") String id);
+
+    /**
+     * 根据id、父节点ID和orders校验同级节点orders的唯一性
+     * @param id
+     * @param orders
+     * @return
+     */
+    int isOrder(@Param("pid") String pid,@Param("orders") Integer orders,@Param("id")String id);
 }
