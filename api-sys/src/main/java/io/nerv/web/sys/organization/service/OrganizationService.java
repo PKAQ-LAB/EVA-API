@@ -96,8 +96,16 @@ public class OrganizationService extends BaseService<OrganizationMapper, Organiz
                 this.updateOrg(orginNode);
             }
         }
-        int buddy = this.mapper.countPrantLeaf(pid);
-        organization.setOrders(buddy);
+        //如果是新增且orders属性为空则设置orders属性
+        if (StrUtil.isBlank(organization.getId()) && organization.getOrders()==null) {
+            int buddy = this.mapper.countPrantLeaf(pid);
+            organization.setOrders(buddy);
+        } else {
+            //修改的话判断id有没有重复有重复就不改
+            if (this.mapper.isOrder(pid, organization.getOrders(), organization.getId()) > 0) {
+                organization.setOrders(null);
+            }
+        }
 
         this.merge(organization);
         // 保存完重新查询一遍列表数据

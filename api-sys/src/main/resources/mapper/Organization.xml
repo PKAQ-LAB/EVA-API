@@ -63,4 +63,10 @@
       set PARENT_NAME=#{name}
     where  parent_id like  concat(#{id},'%');
   </update>
+
+    <select id="isOrder" resultType="int">
+      select count(*)
+      from sys_organization
+      where orders = #{orders} and  parent_ID = #{pid} and id !=#{id}
+  </select>
 </mapper>
