@@ -73,6 +73,11 @@ public interface ModuleMapper extends BaseMapper<ModuleEntity> {
     void updateChildParentName(@Param("name") String name, @Param("id") String id);
 
     /**
+     *     刷新子节点的path_name  和 path
+     */
+    void updateChildPathInfo(@Param("newModule") ModuleEntity newModule, @Param("oldModule") ModuleEntity oldModule);
+
+    /**
      * 根据id、父节点ID和orders校验同级节点orders的唯一性
      * @param id
      * @param orders

@@ -107,6 +107,14 @@
     where  parent_id like  concat(#{id},'%');
   </update>
 
+    <!--  刷新子节点的path_name  和 path -->
+    <update id="updateChildPathInfo">
+        update sys_module set
+        PATH_NAME=REPLACE(PARENT_NAME,#{oldModule.name},#{newModule.name}),
+        PATH=REPLACE(PATH,#{oldModule.path},#{newModule.path})
+        where path like concat('%',#{oldModule.path},'%') and path_id like concat('%',#{newModule.id},'%')
+    </update>
+
   <select id="isOrder" resultType="int">
     select count(*)
     from sys_module

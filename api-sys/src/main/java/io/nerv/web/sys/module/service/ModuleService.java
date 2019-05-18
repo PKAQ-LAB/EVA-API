@@ -63,6 +63,7 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
     public Response editModule(ModuleEntity module){
         Response response=new Response();
         String moduleId = module.getId();
+        ModuleEntity oldModule=this.mapper.selectById(moduleId);
         if(StrUtil.isNotBlank(moduleId)){
             //是否启用的逻辑
             if(StrUtil.isNotBlank(module.getStatus()) && module.getStatus().equals("0001")) {
@@ -105,7 +106,6 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
 
             String oldFatherPath = null;
             if(moduleId != null ){
-                ModuleEntity oldModule=this.mapper.selectById(moduleId);
                 if(oldModule != null){
                     //得到原来父节点的path路径
                     if(StrUtil.isNotBlank(oldModule.getParentId())){
@@ -147,22 +147,16 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
         this.merge(module);
 
         // 刷新所有子节点的 path parent_name path_name
-        this.refreshChild(module);
+        this.refreshChild(module,oldModule);
         return response.success(this.listModule(null));
     }
 
     // 父节点信息有修改 刷新子节点相关数据
-    public void refreshChild(ModuleEntity module){
+    public void refreshChild(ModuleEntity module,ModuleEntity oldModule){
         // 刷新子节点名称
         this.mapper.updateChildParentName(module.getName(), module.getId());
         // TODO 刷新所有子节点的 path_name 和 path
-        //this.mapper.updateChildPathInfo(module.getName(),module.getPath(),module.getId());
-        //-- 所有子节点刷新
-        //update sys_module set
-        //        PATH_NAME=REPLACE(PARENT_NAME,name,'基础信息'),
-        //        PATH=REPLACE(PATH,'oldPath','newPath')
-        //where path like concat(path,'%') and path_id like '054d3ed0e60f4faaa29ceb1a440375f3%'
-
+        this.mapper.updateChildPathInfo(module,oldModule);
     }
     /**
      * 根据ID更新
