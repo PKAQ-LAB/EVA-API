@@ -7,10 +7,17 @@ logging:
 spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:p6spy:mysql://192.168.10.166:3306/eva?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    url: jdbc:p6spy:mysql://192.168.10.166:3306/eva?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
     username: ENC(+zmfSWY7K4obhKN5smFdzQ==)
     password: ENC(U10aDi9wVi6VlEp8pMHgpQ==)
     driver-class-name: com.p6spy.engine.spy.P6SpyDriver
+  hikari:
+    minimum-idle: 3
+    maximum-pool-size: 10
+    max-lifetime: 3000
+    connection-test-query: select 1
   devtools:
     livereload:
       enabled: true
+    restart:
+      additional-paths: src/main/java
