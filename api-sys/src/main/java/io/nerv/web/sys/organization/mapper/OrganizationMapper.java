@@ -57,4 +57,12 @@ public interface OrganizationMapper extends BaseMapper<OrganizationEntity> {
      * @param id
      */
     void updateChildParentName(String name, String id);
+
+    /**
+     * 根据id、父节点ID和orders校验同级节点orders的唯一性
+     * @param id
+     * @param orders
+     * @return
+     */
+    int isOrder(@Param("pid") String pid,@Param("orders") Integer orders,@Param("id")String id);
 }

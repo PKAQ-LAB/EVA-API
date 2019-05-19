@@ -78,7 +78,15 @@
   <!-- 根据parentId查询子节点数据-->
   <select id="listOrder" resultType="Integer">
     select  ifnull(max(orders),0)
-    from sys_module where parent_ID = #{id}
+    from sys_module where
+    <choose>
+      <when test='pid == null or pid == "0"'>
+          parent_ID is null
+      </when>
+      <otherwise>
+          parent_ID = #{pid}
+      </otherwise>
+    </choose>
   </select>
 
   <!-- 根据id禁用节点-->
@@ -98,4 +106,29 @@
       set PARENT_NAME=#{name}
     where  parent_id like  concat(#{id},'%');
   </update>
+
+    <!--  刷新子节点的path_name  和 path -->
+    <update id="updateChildPathInfo">
+        update sys_module set
+        PATH_NAME=REPLACE(PARENT_NAME,#{oldModule.name},#{newModule.name}),
+        PATH=REPLACE(PATH,#{oldModule.path},#{newModule.path})
+        where path like concat('%',#{oldModule.path},'%') and path_id like concat('%',#{newModule.id},'%')
+    </update>
+
+  <select id="isOrder" resultType="int">
+    select count(*)
+    from sys_module
+    where orders = #{orders}
+    <choose>
+      <when test='pid == null or pid == "0"'>
+        and  parent_ID is null
+      </when>
+      <otherwise>
+        and  parent_ID = #{pid}
+      </otherwise>
+    </choose>
+    <if test="id != null and id != '' ">
+    and id !=#{id}
+    </if>
+  </select>
 </mapper>
