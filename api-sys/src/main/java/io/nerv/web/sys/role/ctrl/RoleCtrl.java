@@ -1,17 +1,17 @@
 package io.nerv.web.sys.role.ctrl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import io.nerv.core.exception.ParamException;
+import io.nerv.core.mvc.ctrl.PureBaseCtrl;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.mvc.util.SingleArray;
+import io.nerv.web.sys.role.entity.RoleEntity;
+import io.nerv.web.sys.role.entity.RoleModuleEntity;
+import io.nerv.web.sys.role.entity.RoleUserEntity;
 import io.nerv.web.sys.role.service.RoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import io.nerv.core.exception.ParamException;
-import io.nerv.core.mvc.ctrl.PureBaseCtrl;
-import io.nerv.web.sys.role.entity.RoleEntity;
-import io.nerv.web.sys.role.entity.RoleModuleEntity;
-import io.nerv.web.sys.role.entity.RoleUserEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,10 +25,11 @@ import org.springframework.web.bind.annotation.RestController;
  * @author: S.PKAQ
  * @Datetime: 2018/4/13 7:27
  */
-@Api( description = "角色管理")
+@Api( tags = "角色管理")
 @RestController
 @RequestMapping("/role")
 public class RoleCtrl extends PureBaseCtrl<RoleService> {
+
     @PostMapping("/checkUnique")
     @ApiOperation(value = "校验角色编码唯一性",response = Response.class)
     public Response checkUnique(@ApiParam(name ="roleEntity", value = "要进行校验的参数")
