@@ -1,10 +1,9 @@
 package io.nerv.config;
 
-import io.nerv.security.filter.EntryPointUnauthorizedHandler;
+import io.nerv.security.entrypoint.UnauthorizedHandler;
 import io.nerv.security.filter.JwtAuthFilter;
 import io.nerv.security.filter.RestAccessDeniedHandler;
 import io.nerv.security.jwt.JwtConfig;
-import io.nerv.security.entrypoint.AuthEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +14,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -43,10 +43,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private String activeProfile;
 
     @Autowired
-    private AuthEntryPoint authEntryPoint;
-
-    @Autowired
-    private EntryPointUnauthorizedHandler entryPointUnauthorizedHandler;
+    private UnauthorizedHandler unauthorizedHandler;
 
     @Autowired
     private RestAccessDeniedHandler restAccessDeniedHandler;
@@ -92,9 +89,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setExposedHeaders(Arrays.asList("Access-Control-Allow-Headers",
                                                       "Access-Control-Allow-Methods",
+                                                      "Access-Control-Expose-Headers",
                                                       "Access-Control-Allow-Origin",
                                                       "Access-Control-Max-Age",
                                                       "authorization",
+                                                      "Auth_Token",
                                                       "xsrf-token",
                                                       "content-type",
                                                       "X-Frame-Options",
@@ -111,45 +110,55 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
             // 关闭csrf 由于使用的是JWT，我们这里不需要csrf
             .csrf().disable()
-            .exceptionHandling().authenticationEntryPoint(authEntryPoint)
+            .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
+            .accessDeniedHandler(restAccessDeniedHandler)
             .and()
             //允许加载iframe内容 X-Frame-Options
             .headers().frameOptions().disable()
             .and()
             // 基于token，所以不需要session
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and();
+            .and()
+            .authorizeRequests()
+            // 对于获取token的rest api要允许匿名访问
+            .antMatchers("/auth/login","/auth/logout").permitAll()
+            // 除上面外的所有请求全部需要鉴权认证
+            // FIXME 此处配置会导致@PermitAll @DenyAll注解无效
+            .anyRequest().authenticated();
 
-        if ("dev".equalsIgnoreCase(activeProfile)){
-            httpSecurity.authorizeRequests().anyRequest().permitAll();
-        } else {
-            httpSecurity.authorizeRequests()
-                    // 允许对于网站静态资源的无授权访问
-                    .antMatchers(
-                            HttpMethod.GET,
-                            "/",
-                            "/*.html",
-                            "/favicon.ico",
-                            "/**/*.html",
-                            "/**/*.css",
-                            "/**/*.js",
-                            "/webjars/**",
-                            "/swagger-resources/**",
-                            "/*/api-docs"
-                    ).permitAll()
-                    // 对于获取token的rest api要允许匿名访问
-                    .antMatchers("/auth/login").permitAll()
-                    .antMatchers("/api/auth/login").permitAll()
-                    // 除上面外的所有请求全部需要鉴权认证
-                    // FIXME 此处配置会导致@PermitAll @DenyAll注解无效
-                    .anyRequest().authenticated();
-        }
-        // 添加JWT filter
-        httpSecurity.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-        httpSecurity.exceptionHandling()
-                    .authenticationEntryPoint(entryPointUnauthorizedHandler)
-                    .accessDeniedHandler(restAccessDeniedHandler);
-        // 禁用缓存
-        httpSecurity.headers().cacheControl();
+            httpSecurity.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+            // disable page caching
+            httpSecurity
+            .headers()
+            .frameOptions().sameOrigin()  // required to set for H2 else H2 Console will be blank.
+            .cacheControl();
+    }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web
+            .ignoring()
+            .antMatchers(
+                HttpMethod.POST,
+    "/auth"
+            )
+
+            // allow anonymous resource requests
+            .and()
+            .ignoring()
+            .antMatchers(
+                    HttpMethod.GET,
+                    "/",
+                    "/*.html",
+                    "/favicon.ico",
+                    "/**/*.html",
+                    "/**/*.css",
+                    "/**/*.js",
+                    "/webjars/**",
+                    "/swagger-resources/**",
+                    "/*/api-docs"
+            );
+
     }
 }

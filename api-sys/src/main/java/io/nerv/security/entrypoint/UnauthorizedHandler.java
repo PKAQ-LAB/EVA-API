@@ -1,5 +1,6 @@
 package io.nerv.security.entrypoint;
 
+import io.nerv.core.enums.HttpCodeEnum;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -15,7 +16,7 @@ import java.io.Serializable;
  * @Datetime: 2018/4/24 23:24
  */
 @Component
-public class AuthEntryPoint implements AuthenticationEntryPoint, Serializable {
+public class UnauthorizedHandler implements AuthenticationEntryPoint, Serializable {
     //当访问的资源没有权限，会调用这里
     @Override
     public void commence(HttpServletRequest request,
@@ -26,6 +27,6 @@ public class AuthEntryPoint implements AuthenticationEntryPoint, Serializable {
         //返回json形式的错误信息
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, HttpCodeEnum.ROLE_ERROR.getName());
     }
 }
