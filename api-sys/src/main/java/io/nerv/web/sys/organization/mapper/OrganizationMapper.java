@@ -56,6 +56,11 @@ public interface OrganizationMapper extends BaseMapper<OrganizationEntity> {
      * @param name
      * @param id
      */
-    void updateChildParentName(String name, String id);
+    void updateChildParentName(@Param("name") String name, @Param("id") String id);
+
+    /**
+     *     刷新子节点的path_name  和 path
+     */
+    void updateChildPathInfo(@Param("neworgin") OrganizationEntity neworgin, @Param("oldorgin") OrganizationEntity oldorgin);
 
 }

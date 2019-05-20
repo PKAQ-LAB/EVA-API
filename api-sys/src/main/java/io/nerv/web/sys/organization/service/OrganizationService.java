@@ -100,23 +100,21 @@ public class OrganizationService extends BaseService<OrganizationMapper, Organiz
         if (StrUtil.isBlank(organization.getId()) ) {
             organization.setOrders(this.mapper.countPrantLeaf(pid));
         }
+        OrganizationEntity oldOrgin=this.mapper.selectById(orgId);
         this.merge(organization);
+
+        //刷新子节点相关数据
+        this.refreshChild(organization,oldOrgin);
         // 保存完重新查询一遍列表数据
         return this.listOrg(null);
     }
 
     // 父节点信息有修改 刷新子节点相关数据
-    public void refreshChild(OrganizationEntity organizationEntity){
+    public void refreshChild(OrganizationEntity organizationEntity,OrganizationEntity oldOrgin){
         // 刷新子节点名称
         this.mapper.updateChildParentName(organizationEntity.getName(), organizationEntity.getId());
         // TODO 刷新所有子节点的 path_name 和 path
-        //this.mapper.updateChildPathInfo(module.getName(),module.getPath(),module.getId());
-        //-- 所有子节点刷新
-        //update sys_module set
-        //        PATH_NAME=REPLACE(PARENT_NAME,name,'基础信息'),
-        //        PATH=REPLACE(PATH,'oldPath','newPath')
-        //where path like concat(path,'%') and path_id like '054d3ed0e60f4faaa29ceb1a440375f3%'
-
+        this.mapper.updateChildPathInfo(organizationEntity,oldOrgin);
     }
     /**
      * 根据ID更新
