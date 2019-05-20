@@ -98,7 +98,7 @@ public class OrganizationService extends BaseService<OrganizationMapper, Organiz
         }
         //如果是新增且orders属性为空则设置orders属性
         if (StrUtil.isBlank(organization.getId()) ) {
-            organization.setOrders(this.mapper.countPrantLeaf(pid););
+            organization.setOrders(this.mapper.countPrantLeaf(pid));
         }
         this.merge(organization);
         // 保存完重新查询一遍列表数据
