@@ -64,6 +64,9 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
         Response response=new Response();
         String moduleId = module.getId();
         ModuleEntity oldModule=this.mapper.selectById(moduleId);
+
+        // 获取上级节点
+        String pid = module.getParentId();
         if(StrUtil.isNotBlank(moduleId)){
             //是否启用的逻辑
             if(StrUtil.isNotBlank(module.getStatus()) && module.getStatus().equals("0001")) {
@@ -75,23 +78,8 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
             }
             //是否禁用的逻辑
             disableChild(module);
-        }
-        // 获取上级节点
-        String pid = module.getParentId();
-
-        //如果order不为空
-        if(null != module.getOrders()){
-            //校验order是否唯一，不唯一则新增的对象的orders改为最大，修改的对象不设置orders
-            int oder=this.mapper.isOrder(pid,module.getOrders(),moduleId);
-            if(oder > 0 ){
-                if(StrUtil.isBlank(moduleId)){
-                    module.setOrders(this.mapper.listOrder(pid)+1);
-                }else {
-                    module.setOrders(null);
-                }
-            }
-        }else  if(StrUtil.isBlank(moduleId) && module.getOrders()==null){
-            //orders为空且是新增的对象九八orders设为最大
+        }else{
+            //新增设置orders为同级模块中最大的orders+1
             module.setOrders(this.mapper.listOrder(pid)+1);
         }
 

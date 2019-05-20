@@ -115,20 +115,4 @@
         where path like concat('%',#{oldModule.path},'%') and path_id like concat('%',#{newModule.id},'%')
     </update>
 
-  <select id="isOrder" resultType="int">
-    select count(*)
-    from sys_module
-    where orders = #{orders}
-    <choose>
-      <when test='pid == null or pid == "0"'>
-        and  parent_ID is null
-      </when>
-      <otherwise>
-        and  parent_ID = #{pid}
-      </otherwise>
-    </choose>
-    <if test="id != null and id != '' ">
-    and id !=#{id}
-    </if>
-  </select>
 </mapper>
