@@ -108,6 +108,10 @@ public class RoleService extends BaseService<RoleMapper, RoleEntity> {
      */
     public boolean checkUnique(RoleEntity role) {
         QueryWrapper<RoleEntity> entityWrapper = new QueryWrapper<>();
+        // 添加 ROLE_ 前缀 并转大写
+        if(!role.getCode().startsWith(AUTH_PREFIX)){
+            role.setCode((AUTH_PREFIX+role.getCode()).toUpperCase());
+        }
         entityWrapper.eq("code", role.getCode());
         int records = this.mapper.selectCount(entityWrapper);
         return records>0;
