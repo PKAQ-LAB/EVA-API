@@ -1,5 +1,6 @@
 package io.nerv.security.domain;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +19,7 @@ public class JwtUser implements UserDetails {
     /**用户账号**/
     private final String account;
     /**密码**/
+    @JSONField(serialize = false)
     private final String password;
     /**权限集合**/
     private final Collection<? extends GrantedAuthority> authorities;

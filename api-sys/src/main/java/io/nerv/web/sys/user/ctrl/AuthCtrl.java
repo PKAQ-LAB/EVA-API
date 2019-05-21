@@ -71,22 +71,19 @@ public class AuthCtrl {
         return response;
     }
 
+
     @GetMapping("/fetch")
     @ApiOperation(value = "获取当前登录用户的信息(菜单.权限.消息)",response = Response.class)
     public Response fetch(){
         log.info("[auth/fetch ] - Current active profile is : " + activeProfile);
-        String account = defaultUser;
         // 开发环境不鉴权直接取admin菜单
-        if(!anonProfile.equals(activeProfile)){
-            String authHeader = httpRequest.getHeader(jwtConfig.getHeader());
+        String authHeader = httpRequest.getHeader(jwtConfig.getHeader());
 
-            final String authToken = authHeader.substring(jwtConfig.getTokenHead().length());
-            account = jwtUtil.getUid(authToken);
-        }
+        final String authToken = authHeader.substring(jwtConfig.getTokenHead().length());
+        final var account = jwtUtil.getUid(authToken);
 
         return new Response().success(this.userService.fetch(account));
     }
-
     @PostMapping("/logout")
     @ApiOperation(value = "用户退出", response = Response.class)
     public Response logout(@ApiParam(name = "{user}", value = "用户对象")

@@ -2,11 +2,12 @@ package io.nerv.security.jwt;
 
 import cn.hutool.core.codec.Base64;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Clock;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.impl.DefaultClock;
 import io.nerv.security.exception.OathException;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Date;
+import java.util.function.Function;
 
 /**
  * JWT 工具类
@@ -29,6 +31,8 @@ public class JwtUtil {
     @Autowired
     private JwtConfig jwtConfig;
 
+    private Clock clock = DefaultClock.INSTANCE;
+
     /**
      * 生成加密K
      * @return
@@ -36,6 +40,17 @@ public class JwtUtil {
     private SecretKey generalKey() {
         byte[] encodedKey = Base64.decode(jwtConfig.getSecert());
         return new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
+    }
+    /**
+     * 获取claim
+     * @param token
+     * @param claimsResolver
+     * @param <T>
+     * @return
+     */
+    public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) throws OathException {
+        final Claims claims = getClaimsFromToken(token);
+        return claimsResolver.apply(claims);
     }
     /**
      * 获取uid中的uid属性
@@ -57,12 +72,20 @@ public class JwtUtil {
      * @param token jwt
      * @return 属性值
      */
-    private Claims getClaimsFromToken(String token) {
+    private Claims getClaimsFromToken(String token) throws OathException {
         SecretKey secretKey = generalKey();
-        return Jwts.parser()
+        Claims claims = null;
+        try {
+            claims = Jwts.parser()
                 .setSigningKey(secretKey)
                 .parseClaimsJws(token)
                 .getBody();
+        }catch (ExpiredJwtException e){
+            log.error("token已过期");
+            throw new OathException("Token 已过期");
+        }finally {
+            return claims;
+        }
     }
     /**
      *
@@ -102,34 +125,76 @@ public class JwtUtil {
      */
     public boolean valid(String jwtToken) throws OathException {
         boolean ret;
-        try {
-            SecretKey secretKey = generalKey();
-            Claims claims = Jwts.parser()
-                    .setSigningKey(secretKey)
-                    .parseClaimsJws(jwtToken)
-                    .getBody();
+        Claims claims = this.getClaimsFromToken(jwtToken);
 
-            String uid = claims.getSubject();
-            if ("-".equals(uid)) {
-                throw new OathException("登录已失效");
-            } else {
-                // TODO 给token续命
-                ret = true;
-            }
-        } catch (SignatureException se ) {
-            //在解析JWT字符串时，如果密钥不正确，将会解析失败，抛出SignatureException异常，说明该JWT字符串是伪造的
-            log.error("密钥错误");
-            throw new OathException("Token 验证失败");
-        } catch (ExpiredJwtException ee) {
-            //在解析JWT字符串时，如果‘过期时间字段’已经早于当前时间，将会抛出ExpiredJwtException异常，说明本次请求已经失效
-            log.error("token已过期");
-            throw new OathException("Token 已过期");
-        } catch (OathException oe) {
-            log.error("登录已失效");
-            throw new OathException("登录已过期, 请重新登录.");
+        if (null == claims || "-".equals(claims.getSubject())) {
+            throw new OathException("登录已失效");
+        } else {
+            ret = true;
         }
 
         return ret;
     }
+    /**
+     * 刷新TOKEN TOKEN續命
+     * @param token
+     * @return
+     */
+    public String refreshToken(String token) throws OathException {
+        final Date createdDate = clock.now();
+        final Date expirationDate = calculateExpirationDate(createdDate);
 
+        final Claims claims = getClaimsFromToken(token);
+        claims.setIssuedAt(createdDate);
+        claims.setExpiration(expirationDate);
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .signWith(SignatureAlgorithm.HS512, jwtConfig.getSecert())
+                .compact();
+    }
+    /**
+     * Token是否过期
+     * @param token
+     * @return
+     */
+    public Boolean isTokenExpired(String token) throws OathException {
+        final Date expiration = getExpirationDateFromToken(token);
+        return expiration.before(clock.now());
+    }
+
+    /**
+     * Token是否即将过期
+     * @param token
+     * @return
+     */
+    public Boolean isTokenExpiring(String token) throws OathException {
+        Date expiration = getExpirationDateFromToken(token);
+        return (clock.now().getTime() - expiration.getTime()) < (1000 * 60);
+    }
+    /**
+     * 重新计算过期时间
+     * @param createdDate
+     * @return
+     */
+    private Date calculateExpirationDate(Date createdDate) {
+        return new Date(clock.now().getTime() + jwtConfig.getTtl());
+
+    }
+    /**
+     * 从token中获取过期时间
+     * @param token
+     * @return
+     */
+    public Date getExpirationDateFromToken(String token) throws OathException {
+        return getClaimFromToken(token, Claims::getExpiration);
+    }
+    /**
+     * 从tokne中获取签发时间
+     * @param token
+     * @return
+     */
+    public Date getIssuedAtDateFromToken(String token) throws OathException {
+        return getClaimFromToken(token, Claims::getIssuedAt);
+    }
 }

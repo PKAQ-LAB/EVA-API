@@ -11,6 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -42,45 +43,60 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain chain) throws ServletException, IOException {
 
-        String uri = request.getRequestURI();
-        //筛选登录接口和文档库的接口
-        if (uri.contains("auth/login") || "dev".equals(activeProfile)){
-            chain.doFilter(request, response);
-        }
+        var isvalid = false;
+        var authToken = "";
 
         String authHeader = request.getHeader(jwtConfig.getHeader());
-        if (null != authHeader && authHeader.startsWith(jwtConfig.getTokenHead())) {
+        if (StrUtil.isNotBlank(authHeader) && authHeader.startsWith(jwtConfig.getTokenHead())) {
             // The part after "Bearer "
-            final String authToken = authHeader.substring(jwtConfig.getTokenHead().length());
-
+            authToken = authHeader.substring(jwtConfig.getTokenHead().length());
             logger.debug(" ------------------ > Auth token is : " + authHeader);
-            boolean isvalid = false;
+
+            /**
+             * token即将过期 刷新
+             */
             try {
                 isvalid = jwtUtil.valid(authToken);
-            } catch (OathException e) {
-                logger.warn("Token已过期");
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "您的登录已过期, 请重新登录.");
-                return;
-            }
-
-            if (isvalid) {
-                String account = jwtUtil.getUid(authToken);
-
-                logger.info("checking authentication ：" + account);
-
-                if (StrUtil.isNotBlank(account) && SecurityContextHolder.getContext().getAuthentication() == null) {
-                    // 从redis中 根据用户id获取用户权限列表
-                    UserDetails userDetails = this.userDetailsService.loadUserByUsername(account);
-
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                            userDetails, null, userDetails.getAuthorities());
-                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    logger.info("authenticated user " + account + ", setting security context");
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                if (jwtUtil.isTokenExpiring(authToken)){
+                    response.setHeader("Auth_Token",jwtUtil.refreshToken(authToken));
                 }
+            } catch (OathException e) {
+                logger.warn("鉴权失败 Token已过期");
+                //response.sendError(JwtErrorCode.TOKEN_EXPIRED, "您的登录已过期, 请重新登录.");
+                //return;
             }
+        } else {
+            logger.warn("couldn't find bearer string, will ignore the header");
         }
 
+        if (isvalid) {
+            String uid = jwtUtil.getUid(authToken);
+
+            logger.info("checking authentication ：" + uid);
+
+            if (StrUtil.isNotBlank(uid) && SecurityContextHolder.getContext().getAuthentication() == null) {
+                logger.debug("security context was null, so authorizing user");
+
+                // 从redis中 根据用户id获取用户权限列表
+                UserDetails userDetails;
+                try{
+                    userDetails = this.userDetailsService.loadUserByUsername(uid);
+                } catch(UsernameNotFoundException e){
+                    response.setCharacterEncoding("UTF-8");
+                    response.setContentType("application/json");
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED, "您的登录已过期, 请重新登录.");
+                    return;
+                }
+
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                logger.info("authenticated user " + uid + ", setting security context");
+
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+        }
         chain.doFilter(request, response);
     }
 }
