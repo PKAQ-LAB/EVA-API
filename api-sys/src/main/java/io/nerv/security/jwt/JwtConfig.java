@@ -18,17 +18,21 @@ public class JwtConfig {
 
     /**  token header参数名 **/
     private String header = "Authorization";
+
     /**  token 前缀 **/
     private String tokenHead = "Bearer";
+
     /**  签发人 **/
     private String sign = "PKAQ";
+
     /** 密匙 **/
     private String secert = "aHR0cDovL3BrYXEub3Jn";
+
     /** token有效时间 **/
-    private long ttl = 3 * 60 * 1000;
+    private long ttl = 30 * 24 * 60 * 60 * 1000;
 
     /** 续期时间 **/
-    private long delay_ttl = 1000 * 60;
+    private long threshold = 60 * 60 * 24 * 1000;
 
     public void setSign(String sign){
         this.sign = sign;

@@ -170,7 +170,7 @@ public class JwtUtil {
      */
     public Boolean isTokenExpiring(String token) throws OathException {
         Date expiration = getExpirationDateFromToken(token);
-        return (clock.now().getTime() - expiration.getTime()) < (1000 * 60);
+        return (clock.now().getTime() - expiration.getTime()) < (jwtConfig.getThreshold());
     }
     /**
      * 重新计算过期时间
