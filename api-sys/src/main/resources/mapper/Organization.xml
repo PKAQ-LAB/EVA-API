@@ -63,4 +63,11 @@
       set PARENT_NAME=#{name}
     where  parent_id like  concat(#{id},'%');
   </update>
+    <!--  刷新子节点的path_name  和 path -->
+    <update id="updateChildPathInfo">
+        update sys_organization set
+        PATH_NAME=REPLACE(PATH_NAME,#{oldorgin.pathName},#{neworgin.pathName}),
+        PATH=REPLACE(PATH,#{oldorgin.path},#{neworgin.path})
+        where path like concat('%',#{oldorgin.id},'%') and id != #{oldorgin.id}
+    </update>
 </mapper>
