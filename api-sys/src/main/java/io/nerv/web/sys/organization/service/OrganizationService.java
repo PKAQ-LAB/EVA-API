@@ -67,21 +67,20 @@ public class OrganizationService extends BaseService<OrganizationMapper, Organiz
             // 查询新父节点信息
             OrganizationEntity parentOrg = this.getOrg(pid);
             // 设置当前节点信息
-            String parentPath = StrUtil.isNotBlank(parentOrg.getPath())?
-                    parentOrg.getPath()+","+parentOrg.getId():
-                    parentOrg.getId();
+            String parentPath = StrUtil.isNotBlank(organization.getId()) ? parentOrg.getPath()+"/"+organization.getId() : parentOrg.getPath();
             organization.setPath(parentPath);
-            String pathName = StrUtil.format("{}/{}", parentOrg.getName(), organization.getName());
+            String pathName = parentOrg.getPathName()+"/"+organization.getName();
             organization.setPathName(pathName);
             organization.setParentName(parentOrg.getName());
 
         } else {
             // 父节点为空, 根节点 设置为非叶子\
             pid = root;
-
+            if(StrUtil.isNotBlank(organization.getId())){
+                organization.setPath(organization.getId());
+            }
             organization.setParentId(pid);
             organization.setIsleaf(false);
-            organization.setPath(organization.getId());
             organization.setPathName(organization.getName());
         }
 
@@ -103,8 +102,15 @@ public class OrganizationService extends BaseService<OrganizationMapper, Organiz
         OrganizationEntity oldOrgin=this.mapper.selectById(orgId);
         this.merge(organization);
 
-        //刷新子节点相关数据
-        this.refreshChild(organization,oldOrgin);
+        //新增
+        if(oldOrgin == null) {
+            //设置path路径 把path路径加上自己本身
+            String path= StrUtil.isBlank(organization.getPath()) ? organization.getId() : organization.getPath() + "/" + organization.getId();
+            this.mapper.updateById(organization);
+        } else {
+            //刷新子节点相关数据
+            this.refreshChild(organization, oldOrgin);
+        }
         // 保存完重新查询一遍列表数据
         return this.listOrg(null);
     }
