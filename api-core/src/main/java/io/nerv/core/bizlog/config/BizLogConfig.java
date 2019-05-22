@@ -22,8 +22,4 @@ public class BizLogConfig {
      */
     private String impl = "";
 
-    /**
-     * 切入点
-     */
-    private String basePackage = "";
 }

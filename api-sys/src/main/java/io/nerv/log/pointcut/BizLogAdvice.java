@@ -1,17 +1,18 @@
-package io.nerv.core.bizlog.pointcut;
+package io.nerv.log.pointcut;
 
 import cn.hutool.core.date.DateUtil;
+import io.nerv.core.bizlog.annotation.BizLog;
+import io.nerv.core.bizlog.base.BizLogEntity;
+import io.nerv.core.bizlog.base.BizLogSupporter;
 import io.nerv.core.bizlog.condition.BizlogSupporterCondition;
+import io.nerv.core.bizlog.config.BizLogConfig;
+import io.nerv.security.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-import io.nerv.core.bizlog.annotation.BizLog;
-import io.nerv.core.bizlog.base.BizLogEntity;
-import io.nerv.core.bizlog.base.BizLogSupporter;
-import io.nerv.core.bizlog.config.BizLogConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Conditional;
@@ -31,6 +32,9 @@ public class BizLogAdvice {
     @Autowired
     private BizLogSupporter bizLogSupporter;
 
+    @Autowired
+    private SecurityUtil securityUtil;
+
     @Pointcut("@annotation(io.nerv.core.bizlog.annotation.BizLog)")
     private void bizLog(){}
 
@@ -41,6 +45,7 @@ public class BizLogAdvice {
 
         if (null != bizlog){
             BizLogEntity bizLogEntity = new BizLogEntity();
+            bizLogEntity.setOperator(securityUtil.getJwtUserName());
             bizLogEntity.setDescription(bizlog.description());
             bizLogEntity.setOperateDatetime(DateUtil.now());
             bizLogEntity.setOperateType(bizlog.operateType().getIndex());
