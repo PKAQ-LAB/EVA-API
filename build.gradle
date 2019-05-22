@@ -1,7 +1,7 @@
- plugins {
-    id "name.remal.check-dependency-updates" version "1.0.133"
-	id "com.jfrog.bintray" version "1.8.4"
- }
+plugins {
+   id "name.remal.check-dependency-updates" version "1.0.133"
+   id "com.jfrog.bintray" version "1.8.4"
+}
 
 ext {
     springBootVersion = '2.1.5.RELEASE'
@@ -21,11 +21,13 @@ ext {
     p6spy = "3.8.2"
     flyway = "5.2.4"
 }
+
 allprojects {
     apply plugin: "name.remal.check-dependency-updates"
     group = 'io.nerv'
-    version = '1.1.8'
+    version = '1.1.9'
 }
+
 subprojects {
 	apply plugin: 'pmd'
     apply plugin: 'java-library'
