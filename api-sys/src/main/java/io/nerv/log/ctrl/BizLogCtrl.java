@@ -27,8 +27,8 @@ public class BizLogCtrl {
     @GetMapping("/list")
     @ApiOperation(value = "获取日志列表", response = Response.class)
     public Response list(@ApiParam(name ="condition", value = "日志对象") MybatisBizLogEntity entity,
-                         @ApiParam(name ="condition", value = "页码") Integer pageNo,
-                         @ApiParam(name ="condition", value = "条数") Integer pageCount){
+                         @ApiParam(name ="pageNo", value = "页码") Integer pageNo,
+                         @ApiParam(name ="pageCount", value = "条数") Integer pageCount){
 
         Wrapper<MybatisBizLogEntity> wrapper = new QueryWrapper<>(entity);
 
@@ -42,7 +42,7 @@ public class BizLogCtrl {
     @GetMapping("/listTop")
     @ApiOperation(value = "获取日志头X条", response = Response.class)
     public Response list(@ApiParam(name ="condition", value = "日志对象") MybatisBizLogEntity entity,
-                         @ApiParam(name ="condition", value = "条数") Integer top){
+                         @ApiParam(name ="top", value = "条数") Integer top){
 
         QueryWrapper<MybatisBizLogEntity> wrapper = new QueryWrapper<>(entity);
         wrapper.last("limit " + top);
