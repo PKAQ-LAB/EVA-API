@@ -155,6 +155,7 @@ public class Response{
                             for (Object obj : (Collection) thisObject) {
                                 Field field = ReflectHelper.getField(obj, stepValue);
                                 if (field != null) {
+                                    field.setAccessible(true);
                                     exclude(field.get(obj), sValue);
                                 }
                             }
