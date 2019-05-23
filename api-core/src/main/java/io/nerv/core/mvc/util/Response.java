@@ -3,6 +3,7 @@ package io.nerv.core.mvc.util;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.nerv.core.enums.HttpCodeEnum;
 import io.nerv.core.enums.ResponseEnumm;
+import io.nerv.core.exception.ParamException;
 import io.nerv.core.helper.ReflectHelper;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -125,7 +126,7 @@ public class Response{
      * @param values 需要为空的属性名
      * @return
      */
-    public Response exclude(Object data,String[] values) throws IllegalAccessException{
+    public Response exclude(Object data,String[] values){
         Object thisObject = data;
         if(data != null ) {
             for (String value : values) {
@@ -156,7 +157,11 @@ public class Response{
                                 Field field = ReflectHelper.getField(obj, stepValue);
                                 if (field != null) {
                                     field.setAccessible(true);
-                                    exclude(field.get(obj), sValue);
+                                    try {
+                                        exclude(field.get(obj), sValue);
+                                    }catch (IllegalAccessException e){
+                                        throw new ParamException("得到"+obj.getClass()+"对象的"+stepValue+"属性值失败");
+                                    }
                                 }
                             }
                             break;
@@ -169,7 +174,11 @@ public class Response{
                             Field field = ReflectHelper.getField(thisObject, stepValue);
                             if (field != null) {
                                 field.setAccessible(true);
+                                try{
                                 exclude(field.get(thisObject), sValue);
+                                }catch (IllegalAccessException e){
+                                    throw new ParamException("得到"+thisObject.getClass()+"对象的"+stepValue+"属性值失败");
+                                }
                             }
                         }
                     }

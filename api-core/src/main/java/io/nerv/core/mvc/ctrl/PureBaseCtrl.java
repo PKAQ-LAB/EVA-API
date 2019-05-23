@@ -37,11 +37,7 @@ public abstract class PureBaseCtrl<T extends BaseService> {
 
     protected Response exclude(Object data, String[] values){
         Response response = new Response();
-        try {
-            response.exclude(data, values);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        response.exclude(data, values);
         return response;
     }
     /**
