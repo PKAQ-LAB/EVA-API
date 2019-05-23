@@ -23,6 +23,8 @@ mybatis-plus:
       field-strategy: not_empty
 #      驼峰下划线转换
       table-underline: true
+      logic-delete-value: '0000' # 逻辑已删除值(默认为 1)
+      logic-not-delete-value: '0001' # 逻辑未删除值(默认为 0)
   configuration:
     map-underscore-to-camel-case: true
     cache-enabled: false
