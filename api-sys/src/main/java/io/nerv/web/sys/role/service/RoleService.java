@@ -1,14 +1,17 @@
 package io.nerv.web.sys.role.service;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.nerv.core.bizlog.annotation.BizLog;
 import io.nerv.core.enums.LockEnumm;
 import io.nerv.core.enums.StatusEnumm;
-import io.nerv.web.sys.user.service.UserService;
-import io.nerv.core.bizlog.annotation.BizLog;
 import io.nerv.core.mvc.service.BaseService;
+import io.nerv.security.jwt.JwtConfig;
+import io.nerv.security.jwt.JwtUtil;
 import io.nerv.web.sys.module.entity.ModuleEntity;
 import io.nerv.web.sys.module.mapper.ModuleMapper;
 import io.nerv.web.sys.role.entity.RoleEntity;
@@ -18,9 +21,12 @@ import io.nerv.web.sys.role.mapper.RoleMapper;
 import io.nerv.web.sys.role.mapper.RoleModuleMapper;
 import io.nerv.web.sys.role.mapper.RoleUserMapper;
 import io.nerv.web.sys.user.entity.UserEntity;
+import io.nerv.web.sys.user.mapper.UserMapper;
+import io.nerv.web.sys.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,14 +52,38 @@ public class RoleService extends BaseService<RoleMapper, RoleEntity> {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    JwtConfig jwtConfig;
+
+    @Autowired
+    JwtUtil jwtUtil;
+
+    @Autowired
+    UserMapper userMapper;
     /**
      * 查询角色列表
      * @param roleEntity
      * @return
      */
-    @BizLog(description = "角色新增")
-    public IPage<RoleEntity> listRole(RoleEntity roleEntity, Integer page) {
-        return this.listPage(roleEntity, page);
+    @BizLog(description = "角色查询")
+    public IPage<RoleEntity> listRole(RoleEntity roleEntity, Integer page, HttpServletRequest request) {
+
+            //通过token得到用户account
+            String account = this.getUserId(request);
+            if(StrUtil.isBlank(account)){
+                return new Page<RoleEntity>();
+            }
+
+            //超级管理员返回所有角色
+            if(account.equals("admin")){
+                return this.listPage(roleEntity, page);
+            }
+
+            //根据查询条件得到该用户角色
+            Page<RoleEntity> roleEntityPage=new Page<>();
+            roleEntityPage.setCurrent(page==null ? 0 : page);
+            return this.mapper.selectRoleByUserId(roleEntityPage,roleEntity,account);
     }
 
     /**
@@ -92,13 +122,13 @@ public class RoleService extends BaseService<RoleMapper, RoleEntity> {
      * @param role 角色对象
      * @return 角色列表
      */
-    public IPage<RoleEntity> saveRole(RoleEntity role) {
+    public IPage<RoleEntity> saveRole(RoleEntity role,HttpServletRequest request) {
         // 添加 ROLE_ 前缀 并转大写
         if(!role.getCode().startsWith(AUTH_PREFIX)){
             role.setCode((AUTH_PREFIX+role.getCode()).toUpperCase());
         }
         this.merge(role);
-        return this.listRole(null, 1);
+        return this.listRole(null, 1,request);
     }
 
     /**
@@ -209,5 +239,18 @@ public class RoleService extends BaseService<RoleMapper, RoleEntity> {
                 this.roleUserMapper.insert(user);
             }
         }
+    }
+
+    /**
+     * 根据token得到用户account
+     */
+    public  String getUserId(HttpServletRequest request){
+        //通过token得到用户id
+        String authHeader = request.getHeader(jwtConfig.getHeader());
+        if (StrUtil.isNotBlank(authHeader) && authHeader.startsWith(jwtConfig.getTokenHead())) {
+            String authToken = authHeader.substring(jwtConfig.getTokenHead().length());
+            return jwtUtil.getUid(authToken);
+        }
+        return null;
     }
 }

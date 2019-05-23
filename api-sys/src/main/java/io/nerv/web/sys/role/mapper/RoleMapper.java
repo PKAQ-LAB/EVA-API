@@ -1,8 +1,11 @@
 package io.nerv.web.sys.role.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Mapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.nerv.web.sys.role.entity.RoleEntity;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -21,4 +24,12 @@ public interface RoleMapper extends BaseMapper<RoleEntity> {
      * @return
      */
     List<RoleEntity> selectByUserId(String userId);
+
+    /**
+     * 根据角色信息和用户account查询角色
+     * @param page
+     * @param entity
+     * @return
+     */
+    IPage<RoleEntity> selectRoleByUserId(@Param("page") Page<RoleEntity> page , @Param("entity") RoleEntity entity,@Param("account") String account);
 }
