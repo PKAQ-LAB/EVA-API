@@ -1,8 +1,9 @@
 package io.nerv.security.util;
 
-import io.nerv.security.domain.JwtUser;
+import io.nerv.web.sys.user.entity.JwtUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +15,29 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 @Component
 public class SecurityUtil {
+    /**
+     * 判断是否是管理员
+     * @return
+     */
+    public boolean isAdmin(){
+        return this.getAuthentication()
+                .getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch(str -> str.equals("ROLE_ADMIN"));
+    }
 
+    /**
+     * 获取当前用户的权限数组
+     * @return
+     */
+    public String[] getRoleNames(){
+        return this.getAuthentication()
+                .getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .toArray(String[]::new);
+    }
     /**
      *  获取权限对象
      * @return
@@ -49,6 +72,7 @@ public class SecurityUtil {
         try{
             userId = this.getJwtUser().getId();
         }catch (Exception e){
+            e.printStackTrace();
             log.error("获取用户ID错误： " + e.getMessage());
         } finally {
             return userId;
@@ -64,7 +88,8 @@ public class SecurityUtil {
         try{
             userName = this.getJwtUser().getAccount();
         }catch (Exception e){
-            log.error("获取用户ID错误： " + e.getMessage());
+            e.printStackTrace();
+            log.error("获取用户名错误： " + e.getMessage());
         } finally {
             return userName;
         }
