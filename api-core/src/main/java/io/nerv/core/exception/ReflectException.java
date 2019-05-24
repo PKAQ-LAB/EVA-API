@@ -7,6 +7,7 @@ public class ReflectException extends RuntimeException{
     private String msg;
 
     public ReflectException(String msg){
+        super();
         this.msg=msg;
     }
 
