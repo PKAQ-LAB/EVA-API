@@ -1,6 +1,6 @@
 package io.nerv.core.helper;
 
-import io.nerv.core.exception.ParamException;
+import io.nerv.core.exception.ReflectException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
@@ -23,7 +23,7 @@ public class ReflectHelper {
                 field.set(object, value);
             }
         }catch (IllegalAccessException e){
-            throw new ParamException("把"+object.getClass()+"对象的"+fieldName+"属性值设置成"+value+"失败");
+            throw new ReflectException("把"+object.getClass()+"对象的"+fieldName+"属性值设置成"+value+"失败");
         }
     }
 

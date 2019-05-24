@@ -3,7 +3,7 @@ package io.nerv.core.mvc.util;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.nerv.core.enums.HttpCodeEnum;
 import io.nerv.core.enums.ResponseEnumm;
-import io.nerv.core.exception.ParamException;
+import io.nerv.core.exception.ReflectException;
 import io.nerv.core.helper.ReflectHelper;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -160,7 +160,7 @@ public class Response{
                                     try {
                                         exclude(field.get(obj), sValue);
                                     }catch (IllegalAccessException e){
-                                        throw new ParamException("得到"+obj.getClass()+"对象的"+stepValue+"属性值失败");
+                                        throw new ReflectException("得到"+obj.getClass()+"对象的"+stepValue+"属性值失败");
                                     }
                                 }
                             }
@@ -177,7 +177,7 @@ public class Response{
                                 try{
                                 exclude(field.get(thisObject), sValue);
                                 }catch (IllegalAccessException e){
-                                    throw new ParamException("得到"+thisObject.getClass()+"对象的"+stepValue+"属性值失败");
+                                    throw new ReflectException("得到"+thisObject.getClass()+"对象的"+stepValue+"属性值失败");
                                 }
                             }
                         }
