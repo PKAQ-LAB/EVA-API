@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,7 +75,7 @@ public class AuthCtrl {
 
     @GetMapping("/fetch")
     @ApiOperation(value = "获取当前登录用户的信息(菜单.权限.消息)",response = Response.class)
-    public Response fetch(){
+    public Response fetch(HttpServletResponse response){
         log.info("[auth/fetch ] - Current active profile is : " + activeProfile);
         // 开发环境不鉴权直接取admin菜单
         String authHeader = httpRequest.getHeader(jwtConfig.getHeader());
@@ -82,7 +83,18 @@ public class AuthCtrl {
         final String authToken = authHeader.substring(jwtConfig.getTokenHead().length());
         final var account = jwtUtil.getUid(authToken);
 
-        return new Response().success(this.userService.fetch(account));
+        UserEntity userEntity=this.userService.fetch(account);
+
+        //当前用户没有任何模块权限时返回401错误
+        if(userEntity.getModules() == null || userEntity.getModules().size() < 1){
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("application/json");
+            String msg= i18NHelper.getMessage("permission_denied");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED, msg);
+            return new Response().failure(HttpCodeEnum.REQEUST_REFUSED.getIndex(), msg);
+        }
+
+        return new Response().success(userEntity);
     }
     @PostMapping("/logout")
     @ApiOperation(value = "用户退出", response = Response.class)
