@@ -13,14 +13,9 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -75,7 +70,7 @@ public class AuthCtrl {
 
     @GetMapping("/fetch")
     @ApiOperation(value = "获取当前登录用户的信息(菜单.权限.消息)",response = Response.class)
-    public Response fetch(HttpServletResponse response){
+    public Response fetch(){
         log.info("[auth/fetch ] - Current active profile is : " + activeProfile);
         // 开发环境不鉴权直接取admin菜单
         String authHeader = httpRequest.getHeader(jwtConfig.getHeader());
@@ -85,13 +80,9 @@ public class AuthCtrl {
 
         UserEntity userEntity=this.userService.fetch(account);
 
-        //当前用户没有任何模块权限时返回401错误
+        //当前用户没有任何模块权限时返回403错误
         if(userEntity.getModules() == null || userEntity.getModules().size() < 1){
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("application/json");
-            String msg= i18NHelper.getMessage("permission_denied");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED, msg);
-            return new Response().failure(HttpCodeEnum.REQEUST_REFUSED.getIndex(), msg);
+            return new Response().failure(HttpCodeEnum.REQEUST_REFUSED.getIndex(), HttpCodeEnum.REQEUST_REFUSED.getName());
         }
 
         return new Response().success(userEntity);
