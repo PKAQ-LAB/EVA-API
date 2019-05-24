@@ -3,6 +3,7 @@ package io.nerv.web.sys.user.entity;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.SqlCondition;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.nerv.core.mvc.entity.tree.BaseTreeEntity;
 import io.nerv.web.sys.role.entity.RoleEntity;
@@ -86,5 +87,9 @@ public class UserEntity extends PureBaseEntity {
     private List<BaseTreeEntity> modules = new ArrayList<>();
 
     private static final long serialVersionUID = 1L;
+
+    @TableLogic
+    @ApiModelProperty("逻辑删除状态")
+    private String deleted;
 
 }

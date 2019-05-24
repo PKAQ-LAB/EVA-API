@@ -139,4 +139,17 @@ public class ExceptionAdvice {
         e.printStackTrace();
         return new Response().failure(500);
     }
+
+    /**
+     *   500 - Internal Server Error.
+     * @param e 异常类型
+     * @return Response
+     */
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(ReflectException.class)
+    public Response reflectException(ReflectException e) {
+        log.error("反射异常:"+e.getMessage());
+        e.printStackTrace();
+        return new Response().failure(500);
+    }
 }

@@ -1,5 +1,6 @@
 package io.nerv.core.helper;
 
+import io.nerv.core.exception.ReflectException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
@@ -13,13 +14,16 @@ public class ReflectHelper {
      * 给object对象的fieldName属性赋value值
      * @param object
      * @param fieldName
-     * @throws IllegalAccessException
      */
-    public static void setValue(Object object,String fieldName,Object value)throws IllegalAccessException{
-        Field field =getField(object,fieldName);
-        if(field != null){
-            field.setAccessible(true);
-            field.set(object,value);
+    public static void setValue(Object object,String fieldName,Object value){
+        try {
+            Field field = getField(object, fieldName);
+            if (field != null) {
+                field.setAccessible(true);
+                field.set(object, value);
+            }
+        }catch (IllegalAccessException e){
+            throw new ReflectException("把"+object.getClass()+"对象的"+fieldName+"属性值设置成"+value+"失败");
         }
     }
 
@@ -48,7 +52,7 @@ public class ReflectHelper {
      * @param object
      * @param fieldName
      */
-    public static void setNull(Object object,String fieldName) throws IllegalAccessException{
+    public static void setNull(Object object,String fieldName){
         //三次判断
         //fieldName是object对象的集合/数组属性
         if (object.getClass().isArray() || object instanceof Collection) {

@@ -24,4 +24,28 @@
         RU.USER_ID=#{userId}
     </where>
   </select>
+
+    <!-- 根据查询条件获取该account的角色-->
+    <select id="selectRoleByUserId"  resultMap="BaseResultMap">
+        select R.*
+        from SYS_ROLE R, SYS_ROLE_USER RU,sys_user_info sui
+        <where>
+            R.ID= RU.ROLE_ID
+            and
+            RU.User_ID=sui.id
+            and
+            R.LOCKED=0
+            and
+            sui.account=#{account}
+            <if test="@cn.hutool.core.util.StrUtil@isNotBlank(entity.id)">
+                and R.ID=#{entity.id}
+            </if>
+            <if test="@cn.hutool.core.util.StrUtil@isNotBlank(entity.name)">
+                and R.NAME like concat('%',#{entity.name},'%')
+            </if>
+            <if test="@cn.hutool.core.util.StrUtil@isNotBlank(entity.code)">
+                and R.CODE=#{entity.code}
+            </if>
+        </where>
+    </select>
 </mapper>

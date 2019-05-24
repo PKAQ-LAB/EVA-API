@@ -2,6 +2,7 @@ package io.nerv.web.sys.organization.entity;
 
 import com.baomidou.mybatisplus.annotation.SqlCondition;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -51,7 +52,8 @@ public class OrganizationEntity extends PureBaseEntity{
     @ApiModelProperty("排序")
     private Integer orders;
 
-    @ApiModelProperty("状态")
+    @TableLogic
+    @ApiModelProperty("逻辑删除状态")
     private String status;
 
     @TableField(exist = false)
