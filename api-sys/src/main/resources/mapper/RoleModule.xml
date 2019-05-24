@@ -5,4 +5,19 @@
     <result column="ROLE_ID" jdbcType="VARCHAR" property="roleId" />
     <result column="MODULE_ID" jdbcType="VARCHAR" property="moduleId" />
   </resultMap>
+
+<!--获取已选且是叶子节点的模块-->
+  <select id="roleModuleList" resultMap="BaseResultMap">
+    select rm.*
+    from sys_role_module rm ,sys_module m
+    where
+    rm.module_id=m.id
+    and m.isleaf=1
+    <if test="@cn.hutool.core.util.StrUtil@isNotBlank(entity.roleId)">
+      and rm.role_Id=#{entity.roleId}
+    </if>
+    <if test="@cn.hutool.core.util.StrUtil@isNotBlank(entity.moduleId)">
+      and rm.module_Id=#{entity.moduleId}
+    </if>
+  </select>
 </mapper>

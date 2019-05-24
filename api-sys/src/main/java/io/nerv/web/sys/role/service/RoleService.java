@@ -163,11 +163,9 @@ public class RoleService extends BaseService<RoleMapper, RoleEntity> {
             moduleList = this.moduleMapper.listGrantedModule(null, moduleEntity, securityUtil.getRoleNames());
         }
 
-        // 获取已选的模块
-        QueryWrapper<RoleModuleEntity> wrapper = new QueryWrapper<>();
-        wrapper.setEntity(roleModule);
-        // 只返回moduleId
-        List<RoleModuleEntity> roleModuleList = this.roleModuleMapper.selectList(wrapper);
+        //获取已选且是叶子节点的模块
+        List<RoleModuleEntity> roleModuleList = this.roleModuleMapper.roleModuleList(roleModule);
+        //只返回moduleId
         List<String> checked = null;
         if (CollectionUtils.isNotEmpty(roleModuleList)){
             checked = new ArrayList<>(roleModuleList.size());
