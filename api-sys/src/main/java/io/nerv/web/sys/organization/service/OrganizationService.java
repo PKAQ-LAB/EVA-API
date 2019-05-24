@@ -133,15 +133,6 @@ public class OrganizationService extends BaseService<OrganizationMapper, Organiz
     }
 
     /**
-     * 新增
-     * @param organizationEntity
-     * @return
-     */
-    public void insertOrg(OrganizationEntity organizationEntity){
-        this.mapper.insert(organizationEntity);
-    }
-
-    /**
      * 根据ID获取一条组织信息
      * @param id 组织ID
      * @return 组织信息

@@ -17,6 +17,16 @@ import java.util.List;
 @Repository
 public interface ModuleMapper extends BaseMapper<ModuleEntity> {
     /**
+     * 查询用户拥有权限的模块树
+     * @param condition
+     * @param module
+     * @param roleNames
+     * @return
+     */
+    List<ModuleEntity> listGrantedModule(@Param("condition") String condition,
+                                         @Param("module") ModuleEntity module,
+                                         @Param("roleNames") String[] roleNames);
+    /**
      * 查询所有符合条件的树
      * @param condition 包含查询条件的实体类
      * @param module 符合条件的List

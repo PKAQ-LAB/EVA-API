@@ -2,16 +2,17 @@ package io.nerv.web.sys.role.service;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import io.nerv.core.bizlog.annotation.BizLog;
 import io.nerv.core.enums.LockEnumm;
 import io.nerv.core.enums.StatusEnumm;
+import io.nerv.security.util.SecurityUtil;
+import io.nerv.web.sys.user.service.UserService;
+import io.nerv.core.bizlog.annotation.BizLog;
 import io.nerv.core.mvc.service.BaseService;
-import io.nerv.security.jwt.JwtConfig;
-import io.nerv.security.jwt.JwtUtil;
 import io.nerv.web.sys.module.entity.ModuleEntity;
 import io.nerv.web.sys.module.mapper.ModuleMapper;
 import io.nerv.web.sys.role.entity.RoleEntity;
@@ -21,12 +22,9 @@ import io.nerv.web.sys.role.mapper.RoleMapper;
 import io.nerv.web.sys.role.mapper.RoleModuleMapper;
 import io.nerv.web.sys.role.mapper.RoleUserMapper;
 import io.nerv.web.sys.user.entity.UserEntity;
-import io.nerv.web.sys.user.mapper.UserMapper;
-import io.nerv.web.sys.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -54,36 +52,27 @@ public class RoleService extends BaseService<RoleMapper, RoleEntity> {
     private UserService userService;
 
     @Autowired
-    JwtConfig jwtConfig;
-
-    @Autowired
-    JwtUtil jwtUtil;
-
-    @Autowired
-    UserMapper userMapper;
+    private SecurityUtil securityUtil;
     /**
      * 查询角色列表
      * @param roleEntity
      * @return
      */
-    @BizLog(description = "角色查询")
-    public IPage<RoleEntity> listRole(RoleEntity roleEntity, Integer page, HttpServletRequest request) {
+    public IPage<RoleEntity> listRole(RoleEntity roleEntity, Integer page) {
 
-            //通过token得到用户account
-            String account = this.getUserId(request);
-            if(StrUtil.isBlank(account)){
-                return new Page<RoleEntity>();
-            }
+        boolean isAdmin = securityUtil.isAdmin();
+        page = null != page ? page : 1;
+        // 查询条件
+        QueryWrapper<RoleEntity> wrapper = new QueryWrapper<>(roleEntity);
+        // 非管理员只查询当前拥有权限 或 当前创建人创建的角色 列表
+        if (!isAdmin) {
+            wrapper.in("CREATE_BY", securityUtil.getJwtUserId());
+        }
 
-            //超级管理员返回所有角色
-            if(account.equals("admin")){
-                return this.listPage(roleEntity, page);
-            }
-
-            //根据查询条件得到该用户角色
-            Page<RoleEntity> roleEntityPage=new Page<>();
-            roleEntityPage.setCurrent(page==null ? 0 : page);
-            return this.mapper.selectRoleByUserId(roleEntityPage,roleEntity,account);
+        // 分页条件
+        Page pagination = new Page();
+        pagination.setCurrent(page);
+        return this.mapper.selectPage(pagination,wrapper);
     }
 
     /**
@@ -122,13 +111,19 @@ public class RoleService extends BaseService<RoleMapper, RoleEntity> {
      * @param role 角色对象
      * @return 角色列表
      */
-    public IPage<RoleEntity> saveRole(RoleEntity role,HttpServletRequest request) {
+    public IPage<RoleEntity> saveRole(RoleEntity role) {
         // 添加 ROLE_ 前缀 并转大写
         if(!role.getCode().startsWith(AUTH_PREFIX)){
             role.setCode((AUTH_PREFIX+role.getCode()).toUpperCase());
         }
+        // 设置创建人 修改人
+        if (StrUtil.isBlank(role.getId())){
+            role.setCreateBy(securityUtil.getJwtUserId());
+        }
+        role.setModifyBy(securityUtil.getJwtUserId());
+
         this.merge(role);
-        return this.listRole(null, 1,request);
+        return this.listRole(null, 1);
     }
 
     /**
@@ -153,10 +148,21 @@ public class RoleService extends BaseService<RoleMapper, RoleEntity> {
      * @return
      */
     public Map<String, Object> listModule(RoleModuleEntity roleModule) {
+
+        boolean isAdmin = securityUtil.isAdmin();
+
         // 获取所有菜单
         ModuleEntity moduleEntity = new ModuleEntity();
         moduleEntity.setStatus(StatusEnumm.ENABLE.getIndex());
-        List<ModuleEntity> moduleList = this.moduleMapper.listModule(null, moduleEntity);
+        List<ModuleEntity> moduleList = null;
+
+        // 非管理员仅能授权当前权限范围内的模块
+        if (isAdmin){
+            moduleList = this.moduleMapper.listModule(null, moduleEntity);
+        } else {
+            moduleList = this.moduleMapper.listGrantedModule(null, moduleEntity, securityUtil.getRoleNames());
+        }
+
         // 获取已选的模块
         QueryWrapper<RoleModuleEntity> wrapper = new QueryWrapper<>();
         wrapper.setEntity(roleModule);
@@ -239,18 +245,5 @@ public class RoleService extends BaseService<RoleMapper, RoleEntity> {
                 this.roleUserMapper.insert(user);
             }
         }
-    }
-
-    /**
-     * 根据token得到用户account
-     */
-    public  String getUserId(HttpServletRequest request){
-        //通过token得到用户id
-        String authHeader = request.getHeader(jwtConfig.getHeader());
-        if (StrUtil.isNotBlank(authHeader) && authHeader.startsWith(jwtConfig.getTokenHead())) {
-            String authToken = authHeader.substring(jwtConfig.getTokenHead().length());
-            return jwtUtil.getUid(authToken);
-        }
-        return null;
     }
 }

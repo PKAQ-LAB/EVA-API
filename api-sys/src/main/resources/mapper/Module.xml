@@ -33,6 +33,36 @@
         ru.USER_ID = #{userId}
       order by orders asc
   </select>
+  <!--根据条件查询 拥有权限的 菜单数据-->
+  <select id="listGrantedModule" resultMap="BaseResultMap">
+    select * from v_granted_module m
+    <where>
+      <if test="null != roleNames">
+        and role_Code in
+        <foreach collection="roleNames" item="code" index="index" open="(" close=")" separator=",">
+          #{code,jdbcType=VARCHAR}
+        </foreach>
+      </if>
+      <choose>
+        <when test="null == condition or '' == condition">
+          and (m.parent_Id = '0' or m.parent_Id is null)
+        </when>
+        <otherwise>
+          and m.name like concat('%',#{condition},'%')
+        </otherwise>
+      </choose>
+      <if test="null != module">
+        <if test="null != module.status and module.status != '' ">
+          and m.status = #{module.status}
+        </if>
+        <if test="null != module.name and module.name != '' ">
+          and m.name like concat('%',#{module.name},'%')
+        </if>
+      </if>
+    </where>
+    order by m.orders asc
+  </select>
+
   <!--根据条件查询菜单数据-->
   <select id="listModule" resultMap="BaseResultMap">
     select * from sys_module

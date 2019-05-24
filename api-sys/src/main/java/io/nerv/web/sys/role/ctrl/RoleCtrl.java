@@ -20,8 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * 角色管理
  * @author: S.PKAQ
@@ -51,8 +49,8 @@ public class RoleCtrl extends PureBaseCtrl<RoleService> {
     @GetMapping({"/list"})
     @ApiOperation(value = "获取角色列表", response = Response.class)
     public Response listRole(@ApiParam(name = "roleEntity", value = "包含角色对象属性的查询条件")
-                             RoleEntity roleEntity, Integer page, HttpServletRequest request) {
-        return success(this.service.listRole(roleEntity, page,request));
+                             RoleEntity roleEntity, Integer page) {
+        return success(this.service.listRole(roleEntity, page));
     }
 
     @GetMapping({"/listModule"})
@@ -88,20 +86,20 @@ public class RoleCtrl extends PureBaseCtrl<RoleService> {
     @PostMapping("/save")
     @ApiOperation(value = "新增/编辑角色信息", response = Response.class)
     public Response saveRole(@ApiParam(name ="role", value = "角色信息")
-                             @RequestBody RoleEntity role,HttpServletRequest request){
-        return success(this.service.saveRole(role,request));
+                             @RequestBody RoleEntity role){
+        return success(this.service.saveRole(role));
     }
 
     @PostMapping("/del")
     @ApiOperation(value = "根据ID删除/批量删除角色", response = Response.class)
     @PreAuthorize("hasRole('ADMIN')")
     public Response delRole(@ApiParam(name = "ids", value = "[角色id]")
-                            @RequestBody SingleArray<String> ids,HttpServletRequest request){
+                            @RequestBody SingleArray<String> ids){
         if (null == ids || CollectionUtil.isEmpty(ids.getParam())){
             throw new ParamException(locale("param_id_notnull"));
         }
         this.service.deleteRole(ids.getParam());
-        return success(this.service.listRole(new RoleEntity(), 1,request));
+        return success(this.service.listRole(new RoleEntity(), 1));
     }
 
     @PostMapping("/lock")
