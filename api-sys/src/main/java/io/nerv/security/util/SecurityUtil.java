@@ -1,6 +1,6 @@
 package io.nerv.security.util;
 
-import io.nerv.web.sys.user.entity.JwtUser;
+import io.nerv.security.domain.JwtUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
