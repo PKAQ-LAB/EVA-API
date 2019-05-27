@@ -13,11 +13,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -82,7 +78,14 @@ public class AuthCtrl {
         final String authToken = authHeader.substring(jwtConfig.getTokenHead().length());
         final var account = jwtUtil.getUid(authToken);
 
-        return new Response().success(this.userService.fetch(account));
+        UserEntity userEntity=this.userService.fetch(account);
+
+        //当前用户没有任何模块权限时返回403错误
+        if(userEntity.getModules() == null || userEntity.getModules().size() < 1){
+            return new Response().failure(HttpCodeEnum.REQEUST_REFUSED.getIndex(), HttpCodeEnum.REQEUST_REFUSED.getName());
+        }
+
+        return new Response().success(userEntity);
     }
     @PostMapping("/logout")
     @ApiOperation(value = "用户退出", response = Response.class)
