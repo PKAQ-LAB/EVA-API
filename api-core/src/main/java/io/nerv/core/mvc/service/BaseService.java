@@ -34,6 +34,25 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends PureBaseEnt
     }
 
     /**
+     * 查询符合条件得记录条数
+     * @param entity
+     * @return
+     */
+    public Integer selectCount(T entity){
+        Wrapper<T> wrapper = new QueryWrapper<>(entity);
+        return this.mapper.selectCount(wrapper);
+    }
+
+    /**
+     * 根据条件获取一条记录
+     * @param entity
+     * @return
+     */
+    public T getByEntity(T entity){
+        Wrapper<T> wrapper = new QueryWrapper<>(entity);
+        return this.mapper.selectOne(wrapper);
+    }
+    /**
      * 合并保存,如果不存在id执行插入,存在ID执行更新
      * @param entity 实体类对象
      */
