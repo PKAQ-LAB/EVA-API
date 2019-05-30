@@ -7,7 +7,8 @@ dependencies {
 					"org.flywaydb:flyway-core:${flyway}",
 					"mysql:mysql-connector-java:${mysql}",
 					"javax.xml.bind:jaxb-api:${jaxb_api}",
-					"com.github.ulisesbocchio:jasypt-spring-boot-starter:${jasypt}"
+					"com.github.ulisesbocchio:jasypt-spring-boot-starter:${jasypt}",
+					"commons-io:commons-io:${commons_io}"
 	
     api		"org.springframework.boot:spring-boot-starter-web:${springBootVersion}",
             // AOP

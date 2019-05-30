@@ -20,6 +20,7 @@ ext {
     jasypt = "2.1.1"
     p6spy = "3.8.2"
     flyway = "5.2.4"
+    commons_io = "2.6"
 }
 
 allprojects {
