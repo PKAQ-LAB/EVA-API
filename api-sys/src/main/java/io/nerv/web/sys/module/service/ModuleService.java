@@ -144,7 +144,7 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
         // 刷新子节点名称
         this.mapper.updateChildParentName(module.getName(), module.getId());
         // TODO 刷新所有子节点的 path_name 和 path
-        this.mapper.updateChildPathInfo(module,oldModule);
+        //this.mapper.updateChildPathInfo(module,oldModule);
     }
     /**
      * 根据ID更新

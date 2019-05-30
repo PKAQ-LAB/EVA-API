@@ -10,7 +10,7 @@ mybatis-plus:
   check-config-location: true
   mapper-locations: classpath*:mapper/*.xml
   #实体扫描，多个package用逗号或者分号分隔
-  typeAliasesPackage: io.nerv.*.**.entity
+  typeAliasesPackage: io.nerv.*.**.config
   global-config:
 #      刷新mapper 调试神器
     refresh: true

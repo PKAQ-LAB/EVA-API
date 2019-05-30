@@ -5,7 +5,6 @@ import io.nerv.core.bizlog.annotation.BizLog;
 import io.nerv.core.bizlog.base.BizLogEntity;
 import io.nerv.core.bizlog.base.BizLogSupporter;
 import io.nerv.core.bizlog.condition.BizlogSupporterCondition;
-import io.nerv.core.bizlog.config.BizLogConfig;
 import io.nerv.security.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -14,7 +13,6 @@ import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +24,6 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 @Conditional(BizlogSupporterCondition.class)
-@EnableConfigurationProperties(BizLogConfig.class)
 public class BizLogAdvice {
 
     @Autowired

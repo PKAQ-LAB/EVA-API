@@ -17,7 +17,7 @@ compileJava.dependsOn(processResources)
 
 dependencies {
    implementation project(":api-core"),
-				  project(":api-jxc"),
+//				  project(":api-jxc"),
 				  project(":api-sys"),
 				  "org.springframework.boot:spring-boot-devtools:${springBootVersion}"
 				  
