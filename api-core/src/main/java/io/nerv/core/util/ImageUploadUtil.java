@@ -25,9 +25,9 @@ public class ImageUploadUtil {
     @Autowired
     private ImageConfig imageConfig;
 
-    private final static long SNOW = 7910;
+    private final static long SNOW = 16;
 
-    private final static long FLAKE = 9870;
+    private final static long FLAKE = 18;
 
     /**
      * 文件上传 默认上传到配置的tmp目录
@@ -77,13 +77,12 @@ public class ImageUploadUtil {
      */
     public void storage(String... filenames){
         String tempPath = imageConfig.getTempPath();
-               tempPath = tempPath.endsWith("/")? tempPath +  + this.SNOW+this.FLAKE: tempPath+"/" + this.SNOW+this.FLAKE;
 
         for (String filename : filenames) {
             File sourceFile = new File(tempPath, filename);
             File distFile = new File(imageConfig.getStoragePath(), filename);
 
-            FileUtil.move(sourceFile, distFile, true);
+            FileUtil.copy(sourceFile, distFile, true);
         }
     }
 }
