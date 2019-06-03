@@ -180,7 +180,8 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
      * @return 模块树列表
      */
     public List<ModuleEntity> listModuleByAttr(ModuleEntity module) {
-        return this.mapper.listModule(null, module);
+        //根据名字查询节点信息
+        return this.mapper.listModule(module.getName(), module);
     }
 
     /**
