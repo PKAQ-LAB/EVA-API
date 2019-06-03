@@ -142,7 +142,7 @@
         update sys_module set
         PATH_NAME=REPLACE(PARENT_NAME,#{oldModule.name},#{newModule.name}),
         PATH=REPLACE(PATH,#{oldModule.path},#{newModule.path})
-        where path like concat('%',#{oldModule.path},'%') and path_id like concat('%',#{newModule.id},'%')
+      where path like concat('%',#{oldModule.path},'%') and id != #{oldModule.id}
     </update>
 
 </mapper>
