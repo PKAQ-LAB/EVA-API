@@ -10,6 +10,7 @@ import io.nerv.core.bizlog.base.BizLogEnum;
 import io.nerv.core.mvc.entity.tree.BaseTreeEntity;
 import io.nerv.core.mvc.service.BaseService;
 import io.nerv.core.util.tree.TreeHelper;
+import io.nerv.web.sys.organization.mapper.OrganizationMapper;
 import io.nerv.web.sys.user.entity.UserEntity;
 import io.nerv.web.sys.user.mapper.UserMapper;
 import io.nerv.web.sys.user.vo.UserCenterVO;
@@ -29,6 +30,8 @@ import java.util.List;
 public class UserService extends BaseService<UserMapper, UserEntity> {
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private OrganizationMapper organizationMapper;
     /**
      * 用户登录校验
      * @param userEntity
@@ -105,6 +108,10 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
         if (StrUtil.isNotBlank(pwd)){
             pwd = passwordEncoder.encode(pwd);
             user.setPassword(pwd);
+        }
+        //设置部门名称
+        if(StrUtil.isNotBlank(user.getDeptId())){
+            user.setDeptName(organizationMapper.selectById(user.getDeptId()).getName());
         }
         this.merge(user);
         return this.listUser(null, 1);

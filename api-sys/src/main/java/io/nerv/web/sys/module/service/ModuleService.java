@@ -90,7 +90,7 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
             ModuleEntity parentModule = this.getModule(pid);
             // 设置当前节点信息
             module.setPathId(StrUtil.isNotBlank(parentModule.getPathId()) ? parentModule.getPathId()+","+parentModule.getId() : parentModule.getId());
-            String pathName = StrUtil.format("{}/{}", parentModule.getName(), module.getName());
+            String pathName = StrUtil.format("{}/{}", parentModule.getName(), module.getName()); //pathName
 
             String oldFatherPath = null;
             if(moduleId != null ){
@@ -134,8 +134,10 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
         // 持久化
         this.merge(module);
 
-        // 刷新所有子节点的 path parent_name path_name
-        this.refreshChild(module,oldModule);
+        // 刷新所有子节点的 path parent_name path_name 当修改状态的时候不用刷新子节点信息
+        if(StrUtil.isNotBlank(module.getName())) {
+            this.refreshChild(module, oldModule);
+        }
         return response.success(this.listModule(null));
     }
 
@@ -178,7 +180,8 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
      * @return 模块树列表
      */
     public List<ModuleEntity> listModuleByAttr(ModuleEntity module) {
-        return this.mapper.listModule(null, module);
+        //根据名字查询节点信息
+        return this.mapper.listModule(module.getName(), module);
     }
 
     /**

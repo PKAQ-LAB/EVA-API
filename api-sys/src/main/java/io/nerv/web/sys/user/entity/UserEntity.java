@@ -36,6 +36,9 @@ public class UserEntity extends PureBaseEntity {
     @ApiModelProperty("所属部门")
     private String deptId;
 
+    @ApiModelProperty("所属部门名称")
+    private String deptName;
+
     @ApiModelProperty("电话")
     private String tel;
 
