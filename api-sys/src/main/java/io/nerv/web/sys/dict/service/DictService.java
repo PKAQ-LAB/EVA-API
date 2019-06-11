@@ -12,7 +12,7 @@ import io.nerv.web.sys.dict.mapper.DictViewMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,10 +33,10 @@ public class DictService extends BaseService<DictMapper, DictEntity> {
      * 查询字典缓存
      * @return
      */
-    public Map<String, Map<String, String>> initDictCache(){
+    public Map<String, LinkedHashMap<String, String>> initDictCache(){
         List<DictViewEntity> dictList = this.dictViewMapper.selectList(null);
 
-        Map<String, Map<String, String>> cacheMap = new HashMap<>();
+        LinkedHashMap<String, LinkedHashMap<String, String>> cacheMap = new LinkedHashMap<>();
 
         dictList.forEach( item -> {
             String code = item.getCode();
@@ -44,10 +44,10 @@ public class DictService extends BaseService<DictMapper, DictEntity> {
             String key = item.getKeyName();
             String value = item.getKeyValue();
 
-            Map<String, String> itemMap = cacheMap.get(code);
+            LinkedHashMap<String, String> itemMap = cacheMap.get(code);
 
             if(null == itemMap){
-                Map<String, String> tempMap = new HashMap<>(1);
+                LinkedHashMap<String, String> tempMap = new LinkedHashMap<>(1);
                 tempMap.put(key, value);
                 cacheMap.put(code, tempMap);
             } else {
@@ -115,7 +115,7 @@ public class DictService extends BaseService<DictMapper, DictEntity> {
 
                 //修改了字典的code则把原来的删掉加上最新的
                 if(!code.equals(dictEntity.getCode())){
-                    dictHelper.add(dictEntity.getCode(),dictHelper.get(code));
+                    dictHelper.add(dictEntity.getCode(), dictHelper.get(code));
                     dictHelper.remove(code);
                 }
             } else {

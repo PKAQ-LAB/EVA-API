@@ -1,5 +1,6 @@
 package io.nerv.web.sys.dict.helper;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -16,13 +17,13 @@ public interface DictHelperProvider {
      * 根据传入的内容重新初始化字典
      * @param dictMap
      */
-    void init(Map<String, Map<String, String>> dictMap);
+    void init(Map<String, LinkedHashMap<String, String>> dictMap);
     /**
      * 根据code获取 字典项map
      * @param code
      * @return
      */
-    Map<String, String> get(String code);
+    LinkedHashMap<String, String> get(String code);
 
     /**
      * 根据code和字典项key获取value
@@ -67,7 +68,7 @@ public interface DictHelperProvider {
      * @param item
      * @return
      */
-    void add(String code, Map<String, String> item);
+    void add(String code, LinkedHashMap<String, String> item);
 
     /**
      * 新增一条字典项
@@ -86,5 +87,5 @@ public interface DictHelperProvider {
      * @param dictMap
      * @return
      */
-    void reload(Map<String, Map<String, String>> dictMap);
+    void reload(Map<String, LinkedHashMap<String, String>> dictMap);
 }

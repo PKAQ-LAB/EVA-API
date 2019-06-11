@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -20,7 +20,7 @@ public class DictHelper implements DictHelperProvider{
     @Autowired
     private DictService dictService;
 
-    private Map<String, Map<String, String>> dictMap;
+    private Map<String, LinkedHashMap<String, String>> dictMap;
 
     /**
      * 初始化字典数据
@@ -37,8 +37,8 @@ public class DictHelper implements DictHelperProvider{
      * @param dictMap
      */
     @Override
-    public void init(Map<String, Map<String, String>> dictMap) {
-        this.dictMap = Collections.synchronizedMap(new HashMap<>(dictMap));
+    public void init(Map<String, LinkedHashMap<String, String>> dictMap) {
+        this.dictMap = Collections.synchronizedMap(new LinkedHashMap<>(dictMap));
     }
 
     /**
@@ -47,7 +47,7 @@ public class DictHelper implements DictHelperProvider{
      * @return
      */
     @Override
-    public Map<String, String> get(String code){
+    public LinkedHashMap<String, String> get(String code){
         return this.dictMap.get(code);
     }
 
@@ -88,7 +88,7 @@ public class DictHelper implements DictHelperProvider{
     }
 
     @Override
-    public void add(String code, Map<String, String> item) {
+    public void add(String code, LinkedHashMap<String, String> item) {
         this.dictMap.put(code, item);
     }
 
@@ -104,7 +104,7 @@ public class DictHelper implements DictHelperProvider{
     }
 
     @Override
-    public void reload(Map<String, Map<String, String>> dictMap) {
+    public void reload(Map<String, LinkedHashMap<String, String>> dictMap) {
         this.dictMap.clear();
         this.init(dictMap);
     }

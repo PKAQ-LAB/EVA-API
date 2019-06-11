@@ -1,6 +1,5 @@
 package io.nerv.web.sys.dict.service;
 
-import cn.hutool.core.lang.Dict;
 import io.nerv.core.mvc.service.BaseService;
 import io.nerv.web.sys.dict.entity.DictEntity;
 import io.nerv.web.sys.dict.entity.DictItemEntity;
@@ -9,8 +8,7 @@ import io.nerv.web.sys.dict.mapper.DictItemMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedHashMap;
 
 /**
  * 字典子表 - 字典项管理service
@@ -56,9 +54,9 @@ public class DictItemService extends BaseService<DictItemMapper, DictItemEntity>
            if(dict != null){
                 //如果字典缓存中没有该字典code对应的字典项，则更新进去
                 if(dictHelper.get(dict.getCode()) == null){
-                    Map<String,String> itemMap=new HashMap<>(1);
+                    LinkedHashMap<String,String> itemMap = new LinkedHashMap<>(1);
                     itemMap.put(dictItemEntity.getKeyName(),dictItemEntity.getKeyValue());
-                    dictHelper.add(dict.getCode(),itemMap);
+                    dictHelper.add(dict.getCode(), itemMap);
                 }else{
                     dictHelper.update(dict.getCode(),dictItemEntity.getKeyName(),dictItemEntity.getKeyValue());
                 }
