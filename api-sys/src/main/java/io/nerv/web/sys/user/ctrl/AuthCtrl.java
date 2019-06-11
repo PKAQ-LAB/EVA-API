@@ -3,8 +3,11 @@ package io.nerv.web.sys.user.ctrl;
 import io.nerv.core.enums.HttpCodeEnum;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.util.I18NHelper;
+import io.nerv.exception.LoginException;
+import io.nerv.security.exception.OathException;
 import io.nerv.security.jwt.JwtConfig;
 import io.nerv.security.jwt.JwtUtil;
+import io.nerv.security.util.SecurityUtil;
 import io.nerv.web.sys.user.entity.UserEntity;
 import io.nerv.web.sys.user.service.UserService;
 import io.swagger.annotations.Api;
@@ -13,7 +16,11 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -25,7 +32,7 @@ import java.util.Map;
  * @Datetime: 2018/4/22 17:12
  */
 @Slf4j
-@Api(description = "用户登录")
+@Api(tags = "用户登录")
 @RestController
 @RequestMapping("/auth")
 public class AuthCtrl {
@@ -50,7 +57,7 @@ public class AuthCtrl {
     @PostMapping("/login")
     @ApiOperation(value = "用户登录", response = Response.class)
     public Response login(@ApiParam(name = "{user}", value = "用户对象")
-                          @RequestBody UserEntity user){
+                          @RequestBody UserEntity user) throws LoginException {
         user =this.userService.validate(user);
         Response response;
         if(null == user){
@@ -70,7 +77,7 @@ public class AuthCtrl {
 
     @GetMapping("/fetch")
     @ApiOperation(value = "获取当前登录用户的信息(菜单.权限.消息)",response = Response.class)
-    public Response fetch(){
+    public Response fetch() throws OathException {
         log.info("[auth/fetch ] - Current active profile is : " + activeProfile);
         // 开发环境不鉴权直接取admin菜单
         String authHeader = httpRequest.getHeader(jwtConfig.getHeader());
@@ -78,14 +85,7 @@ public class AuthCtrl {
         final String authToken = authHeader.substring(jwtConfig.getTokenHead().length());
         final var account = jwtUtil.getUid(authToken);
 
-        UserEntity userEntity=this.userService.fetch(account);
-
-        //当前用户没有任何模块权限时返回403错误
-        if(userEntity.getModules() == null || userEntity.getModules().size() < 1){
-            return new Response().failure(HttpCodeEnum.REQEUST_REFUSED.getIndex(), HttpCodeEnum.REQEUST_REFUSED.getName());
-        }
-
-        return new Response().success(userEntity);
+        return new Response().success(this.userService.fetch(account));
     }
     @PostMapping("/logout")
     @ApiOperation(value = "用户退出", response = Response.class)

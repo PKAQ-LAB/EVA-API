@@ -44,4 +44,16 @@ public class OathExceptionAdvice {
         log.error("Token 已过期, 请重新登录.:" + e.getMessage());
         return new Response().failure(401, "您的登录已过期, 请重新登录.");
     }
+
+    /**
+     * 401 - 权限不足
+     * @param e
+     * @return
+     */
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(OathException.class)
+    public Response handleAccessDeniedException(OathException e){
+        log.error("权限不足.:" + e.getMessage());
+        return new Response().failure(401, e.getMessage());
+    }
 }

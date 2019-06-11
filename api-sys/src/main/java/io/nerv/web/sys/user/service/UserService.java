@@ -5,12 +5,17 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.nerv.core.bizlog.annotation.BizLog;
 import io.nerv.core.bizlog.base.BizLogEnum;
+import io.nerv.core.enums.LockEnumm;
 import io.nerv.core.mvc.entity.tree.BaseTreeEntity;
 import io.nerv.core.mvc.service.BaseService;
 import io.nerv.core.util.tree.TreeHelper;
 import io.nerv.web.sys.organization.mapper.OrganizationMapper;
+import io.nerv.exception.LoginException;
+import io.nerv.security.exception.OathException;
+import io.nerv.security.util.SecurityUtil;
 import io.nerv.web.sys.user.entity.UserEntity;
 import io.nerv.web.sys.user.mapper.UserMapper;
 import io.nerv.web.sys.user.vo.UserCenterVO;
@@ -38,19 +43,25 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
      * @return
      */
     @BizLog(description = "用户登录", operateType = BizLogEnum.QUERY)
-    public UserEntity validate(UserEntity userEntity){
+    public UserEntity validate(UserEntity userEntity) throws LoginException {
         // 得到客户端传递过来的md5之后的密码
         String pwd = userEntity.getPassword();
         UserEntity ue = new UserEntity();
         ue.setAccount(userEntity.getAccount());
-
         ue = this.mapper.selectOne(new QueryWrapper<>(ue));
-        // 签发token
-        // TODO 根据用户名密码查询权限信息 存入redis
-        if(null != ue && passwordEncoder.matches(pwd, ue.getPassword())){
+
+        if (null == ue){
+            throw new LoginException("用户名或密码错误");
+        }
+
+        if(LockEnumm.LOCK.getIndex().equals(ue.getLocked())){
+            throw new LoginException("该用户已被锁定，请联系管理员");
+        }
+
+        if( passwordEncoder.matches(pwd, ue.getPassword())){
            return ue;
         } else {
-           return null;
+            throw new LoginException("用户名或密码错误");
         }
     }
 
@@ -60,7 +71,20 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
      * @return
      */
     public IPage<UserEntity> listUser(UserEntity userEntity, Integer page) {
-        return this.listPage(userEntity, page);
+        boolean isAdmin = securityUtil.isAdmin();
+        // 非管理员只查询当前所属部门用户
+        if (!isAdmin) {
+            userEntity.setDeptId(securityUtil.getJwtUser().getOrgId());
+        }
+
+        page = null != page ? page : 1;
+        // 查询条件
+        QueryWrapper<UserEntity> wrapper = new QueryWrapper<>(userEntity);
+        // 分页条件
+        Page pagination = new Page();
+        pagination.setCurrent(page);
+        return this.mapper.selectPage(pagination,wrapper);
+
     }
 
     /**
@@ -138,12 +162,40 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
      * @param uid 用户ID
      * @return
      */
-    public UserEntity fetch(String uid) {
+    public UserEntity fetch(String uid) throws OathException {
         UserEntity userEntity = this.mapper.getUserWithModuleAndRoleById(uid);
+
+        if (null == userEntity){
+            throw new OathException("查询不到该用户");
+        }
+
+        if (null == userEntity.getRoles()){
+            throw new OathException("用户角色权限不足");
+        }
+
+        if (null == userEntity.getModules()){
+            throw new OathException("用户菜单权限不足");
+        }
 
         List<BaseTreeEntity> treeModule = new TreeHelper().bulid(userEntity.getModules());
         userEntity.setModules(treeModule);
 
         return userEntity;
+    }
+
+    /**
+     * 新增/编辑用户信息
+     * @param user 用户对象
+     * @return 用户列表
+     */
+    public void saveUserForOther(UserEntity user) {
+        // 用户资料发生修改后 重新生成密码
+        // 这里传递过来的密码是进行md5加密后的
+        String pwd = user.getPassword();
+        if (StrUtil.isNotBlank(pwd)){
+            pwd = passwordEncoder.encode(pwd);
+            user.setPassword(pwd);
+        }
+        this.merge(user);
     }
 }
