@@ -8,8 +8,8 @@ public enum LockEnumm {
     /**
      * 锁定
      */
-    LOCK("锁定", "0000"),
-    UNLOCK("正常", "0001");
+    LOCK("锁定", "0001"),
+    UNLOCK("正常", "0000");
 
     /**
      * 名称

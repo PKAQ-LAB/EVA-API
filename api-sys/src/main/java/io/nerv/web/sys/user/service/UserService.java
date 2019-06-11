@@ -5,17 +5,15 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.nerv.core.bizlog.annotation.BizLog;
 import io.nerv.core.bizlog.base.BizLogEnum;
 import io.nerv.core.enums.LockEnumm;
 import io.nerv.core.mvc.entity.tree.BaseTreeEntity;
 import io.nerv.core.mvc.service.BaseService;
 import io.nerv.core.util.tree.TreeHelper;
-import io.nerv.web.sys.organization.mapper.OrganizationMapper;
 import io.nerv.exception.LoginException;
 import io.nerv.security.exception.OathException;
-import io.nerv.security.util.SecurityUtil;
+import io.nerv.web.sys.organization.mapper.OrganizationMapper;
 import io.nerv.web.sys.user.entity.UserEntity;
 import io.nerv.web.sys.user.mapper.UserMapper;
 import io.nerv.web.sys.user.vo.UserCenterVO;
@@ -71,20 +69,7 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
      * @return
      */
     public IPage<UserEntity> listUser(UserEntity userEntity, Integer page) {
-        boolean isAdmin = securityUtil.isAdmin();
-        // 非管理员只查询当前所属部门用户
-        if (!isAdmin) {
-            userEntity.setDeptId(securityUtil.getJwtUser().getOrgId());
-        }
-
-        page = null != page ? page : 1;
-        // 查询条件
-        QueryWrapper<UserEntity> wrapper = new QueryWrapper<>(userEntity);
-        // 分页条件
-        Page pagination = new Page();
-        pagination.setCurrent(page);
-        return this.mapper.selectPage(pagination,wrapper);
-
+        return this.listPage(userEntity, page);
     }
 
     /**
