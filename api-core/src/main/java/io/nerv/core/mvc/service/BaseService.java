@@ -63,6 +63,19 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends PureBaseEnt
             this.mapper.updateById(entity);
         }
     }
+
+    /***
+     * 根据指定条件合并
+     * @param entity
+     * @param wrapper
+     */
+    public void merge(T entity, Wrapper<T> wrapper){
+        if (entity.getId() == null){
+            this.mapper.insert(entity);
+        } else {
+            this.mapper.update(entity, wrapper);
+        }
+    }
     /**
      * 查询所有
      * @param entity 要进行查询的实体类
