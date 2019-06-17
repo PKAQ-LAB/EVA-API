@@ -84,7 +84,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 } catch(UsernameNotFoundException e){
                     response.setCharacterEncoding("UTF-8");
                     response.setContentType("application/json");
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED, "您的登录已过期, 请重新登录.");
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "您的登录已过期, 请重新登录.");
                     return;
                 }
 
