@@ -37,7 +37,7 @@
   <select id="listGrantedModule" resultMap="BaseResultMap">
     select * from v_granted_module m
     <where>
-      <if test="null != roleNames">
+      <if test="null != roleNames and roleNames.length > 0">
         and role_Code in
         <foreach collection="roleNames" item="code" index="index" open="(" close=")" separator=",">
           #{code,jdbcType=VARCHAR}
