@@ -11,7 +11,6 @@ import io.nerv.core.enums.LockEnumm;
 import io.nerv.core.mvc.entity.tree.BaseTreeEntity;
 import io.nerv.core.mvc.service.BaseService;
 import io.nerv.core.util.tree.TreeHelper;
-import io.nerv.exception.LoginException;
 import io.nerv.security.exception.OathException;
 import io.nerv.web.sys.organization.mapper.OrganizationMapper;
 import io.nerv.web.sys.user.entity.UserEntity;
@@ -41,7 +40,7 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
      * @return
      */
     @BizLog(description = "用户登录", operateType = BizLogEnum.QUERY)
-    public UserEntity validate(UserEntity userEntity) throws LoginException {
+    public UserEntity validate(UserEntity userEntity) throws OathException {
         // 得到客户端传递过来的md5之后的密码
         String pwd = userEntity.getPassword();
         UserEntity ue = new UserEntity();
@@ -49,17 +48,17 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
         ue = this.mapper.selectOne(new QueryWrapper<>(ue));
 
         if (null == ue){
-            throw new LoginException("用户名或密码错误");
+            throw new OathException("用户名或密码错误");
         }
 
         if(LockEnumm.LOCK.getIndex().equals(ue.getLocked())){
-            throw new LoginException("该用户已被锁定，请联系管理员");
+            throw new OathException("该用户已被锁定，请联系管理员");
         }
 
         if( passwordEncoder.matches(pwd, ue.getPassword())){
            return ue;
         } else {
-            throw new LoginException("用户名或密码错误");
+            throw new OathException("用户名或密码错误");
         }
     }
 
