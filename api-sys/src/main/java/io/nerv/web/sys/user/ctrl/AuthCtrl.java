@@ -1,13 +1,12 @@
 package io.nerv.web.sys.user.ctrl;
 
+import cn.hutool.core.collection.CollUtil;
 import io.nerv.core.enums.HttpCodeEnum;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.util.I18NHelper;
-import io.nerv.exception.LoginException;
 import io.nerv.security.exception.OathException;
 import io.nerv.security.jwt.JwtConfig;
 import io.nerv.security.jwt.JwtUtil;
-import io.nerv.security.util.SecurityUtil;
 import io.nerv.web.sys.user.entity.UserEntity;
 import io.nerv.web.sys.user.service.UserService;
 import io.swagger.annotations.Api;
@@ -49,24 +48,23 @@ public class AuthCtrl {
 
     @Value("${spring.profiles.active}")
     private String activeProfile;
-    // 默认匿名用户
-    private String defaultUser = "admin";
-    // 无需鉴权环境
-    private String anonProfile = "dev";
 
     @PostMapping("/login")
     @ApiOperation(value = "用户登录", response = Response.class)
     public Response login(@ApiParam(name = "{user}", value = "用户对象")
-                          @RequestBody UserEntity user) throws LoginException {
+                          @RequestBody UserEntity user) throws OathException {
         user =this.userService.validate(user);
         Response response;
         if(null == user){
             response = new Response().failure(HttpCodeEnum.ROLE_ERROR.getIndex(), i18NHelper.getMessage("login_failed"));
+        } else if(CollUtil.isEmpty(user.getModules()) || CollUtil.isEmpty(user.getRoles())){
+            // 无权限直接返回登录失败
+            throw new OathException(i18NHelper.getMessage("limited_user"));
         } else {
             // 签发token
             String token = jwtUtil.build(jwtConfig.getTtl(), user.getAccount());
 
-            Map<String, Object> map = new HashMap<>(1);
+            Map<String, Object> map = new HashMap<>(2);
             map.put("user", user);
             map.put("token", token);
             response = new Response().success(map, "登录成功");
