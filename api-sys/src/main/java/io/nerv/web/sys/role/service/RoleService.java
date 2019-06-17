@@ -2,17 +2,14 @@ package io.nerv.web.sys.role.service;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.nerv.core.enums.LockEnumm;
 import io.nerv.core.enums.StatusEnumm;
-import io.nerv.security.util.SecurityUtil;
-import io.nerv.web.sys.user.service.UserService;
-import io.nerv.core.bizlog.annotation.BizLog;
 import io.nerv.core.mvc.service.BaseService;
+import io.nerv.security.util.SecurityUtil;
 import io.nerv.web.sys.module.entity.ModuleEntity;
 import io.nerv.web.sys.module.mapper.ModuleMapper;
 import io.nerv.web.sys.role.entity.RoleEntity;
@@ -22,6 +19,7 @@ import io.nerv.web.sys.role.mapper.RoleMapper;
 import io.nerv.web.sys.role.mapper.RoleModuleMapper;
 import io.nerv.web.sys.role.mapper.RoleUserMapper;
 import io.nerv.web.sys.user.entity.UserEntity;
+import io.nerv.web.sys.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
