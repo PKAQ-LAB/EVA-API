@@ -19,5 +19,6 @@
     <if test="@cn.hutool.core.util.StrUtil@isNotBlank(entity.moduleId)">
       and rm.module_Id=#{entity.moduleId}
     </if>
+    order by m.id
   </select>
 </mapper>

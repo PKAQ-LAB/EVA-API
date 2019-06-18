@@ -60,7 +60,7 @@
         </if>
       </if>
     </where>
-    order by m.orders asc
+    order by id asc
   </select>
 
   <!--根据条件查询菜单数据-->
