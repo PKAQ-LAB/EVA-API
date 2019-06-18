@@ -1,6 +1,7 @@
 package io.nerv.web.sys.user.service;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -45,7 +46,7 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
         String pwd = userEntity.getPassword();
         UserEntity ue = new UserEntity();
         ue.setAccount(userEntity.getAccount());
-        ue = this.mapper.selectOne(new QueryWrapper<>(ue));
+        ue = this.mapper.selectOne  (new QueryWrapper<>(ue));
 
         if (null == ue){
             throw new OathException("用户名或密码错误");
@@ -153,12 +154,8 @@ public class UserService extends BaseService<UserMapper, UserEntity> {
             throw new OathException("查询不到该用户");
         }
 
-        if (null == userEntity.getRoles()){
-            throw new OathException("用户角色权限不足");
-        }
-
-        if (null == userEntity.getModules()){
-            throw new OathException("用户菜单权限不足");
+        if (CollUtil.isEmpty(userEntity.getRoles()) || CollUtil.isEmpty(userEntity.getModules())){
+            throw new OathException("用户权限不足，请联系管理员");
         }
 
         List<BaseTreeEntity> treeModule = new TreeHelper().bulid(userEntity.getModules());

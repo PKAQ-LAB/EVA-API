@@ -37,6 +37,6 @@
     <!-- 根据用户ID 获取包含模块 权限列表的用户信息-->
   <select id="getUserWithModuleAndRoleById" resultMap="UserWithModuleAndRole">
     select * from sys_user_info
-    where account=#{userId}
+    where id=#{userId}
   </select>
 </mapper>
