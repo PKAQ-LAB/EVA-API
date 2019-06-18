@@ -54,6 +54,9 @@ public class OrganizationEntity extends PureBaseEntity{
 
     @TableLogic
     @ApiModelProperty("逻辑删除状态")
+    private String deleted;
+
+    @ApiModelProperty("是否可用")
     private String status;
 
     @TableField(exist = false)

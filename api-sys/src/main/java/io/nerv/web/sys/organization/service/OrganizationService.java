@@ -58,7 +58,7 @@ public class OrganizationService extends BaseService<OrganizationMapper, Organiz
      * @param organization 要 新增/编辑 得组织对象
      * @return 重新查询组织列表
      */
-    public List<OrganizationEntity> editOrg(OrganizationEntity organization){
+    public void editOrg(OrganizationEntity organization){
         String orgId = organization.getId();
         // 获取上级节点
         String pid = organization.getParentId();
@@ -112,7 +112,6 @@ public class OrganizationService extends BaseService<OrganizationMapper, Organiz
             this.refreshChild(organization, oldOrgin);
         }
         // 保存完重新查询一遍列表数据
-        return this.listOrg(null);
     }
 
     // 父节点信息有修改 刷新子节点相关数据

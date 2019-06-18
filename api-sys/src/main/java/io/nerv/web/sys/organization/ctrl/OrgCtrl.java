@@ -72,7 +72,8 @@ public class OrgCtrl extends PureBaseCtrl<OrganizationService> {
     @ApiOperation(value = "编辑组织信息", response = Response.class)
     public Response editOrg(@ApiParam(name ="organization", value = "组织信息")
                             @RequestBody OrganizationEntity organization){
-        return success(this.service.editOrg(organization));
+        this.service.editOrg(organization);
+        return success(this.service.listOrg(null));
     }
 
     @PostMapping("/sort")
