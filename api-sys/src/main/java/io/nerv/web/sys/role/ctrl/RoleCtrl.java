@@ -1,13 +1,13 @@
 package io.nerv.web.sys.role.ctrl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
 import io.nerv.core.exception.ParamException;
 import io.nerv.core.mvc.ctrl.PureBaseCtrl;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.mvc.util.SingleArray;
 import io.nerv.web.sys.role.entity.RoleEntity;
 import io.nerv.web.sys.role.entity.RoleModuleEntity;
-import io.nerv.web.sys.role.entity.RoleUserEntity;
 import io.nerv.web.sys.role.service.RoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -63,22 +64,25 @@ public class RoleCtrl extends PureBaseCtrl<RoleService> {
     @PostMapping({"/saveModule"})
     @ApiOperation(value = "保存角色模块关系", response = Response.class)
     public Response saveModule(@ApiParam(name = "param", value = "模块ID数组")
-                              @RequestBody RoleEntity role) {
+                               @RequestBody RoleEntity role) {
         this.service.saveModule(role);
         return success();
     }
 
     @GetMapping({"/listUser"})
     @ApiOperation(value = "获得角色绑定的用户列表", response = Response.class)
-    public Response listUser(@ApiParam(name = "roleEntity", value = "包含角色对象属性的查询条件")
-                                     RoleUserEntity role, Integer page) {
-        return success(this.service.listUser(role, page));
+    public Response listUser(@ApiParam(name = "roleEntity", value = "包含角色对象属性的查询条件", required = true)
+                             @RequestParam String roleId, Integer page) {
+        return success(this.service.listUser(roleId, page));
     }
 
     @PostMapping({"/saveUser"})
     @ApiOperation(value = "保存角色用户关系", response = Response.class)
     public Response saveUser(@ApiParam(name = "param", value = "模块ID数组")
                              @RequestBody RoleEntity role) {
+        if (null == role || StrUtil.isBlank(role.getId())){
+            throw new ParamException("用户角色不允许为空");
+        }
         this.service.saveUser(role);
         return success();
     }

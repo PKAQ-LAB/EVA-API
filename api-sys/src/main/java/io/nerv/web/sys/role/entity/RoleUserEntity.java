@@ -7,7 +7,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
 
-import java.io.Serializable;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * 角色用户关系表
@@ -22,8 +23,12 @@ import java.io.Serializable;
 public class RoleUserEntity{
     @TableId
     private String id;
+
+    @NotBlank
     @ApiModelProperty("角色ID")
     private String roleId;
+
+    @NotBlank
     @ApiModelProperty("用户ID")
     private String userId;
 }

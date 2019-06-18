@@ -198,18 +198,21 @@ public class RoleService extends BaseService<RoleMapper, RoleEntity> {
 
     /**
      * 获取该角色绑定的所有用户
-     * @param roleUser 权限条件
+     * @param roleId 权限条件
      * @return
      */
-    public Map<String, Object> listUser(RoleUserEntity roleUser, Integer page) {
+    public Map<String, Object> listUser(String roleId, Integer page) {
         // 获取所有用户
         UserEntity userEntity = new UserEntity();
         userEntity.setLocked(LockEnumm.UNLOCK.getIndex());
 
         IPage<UserEntity> pager = this.userService.listUser(userEntity, page);
         // 获取已选的模块
+        RoleUserEntity roleUserEntity = new RoleUserEntity();
+        roleUserEntity.setRoleId(roleId);
+
         QueryWrapper<RoleUserEntity> wrapper = new QueryWrapper<>();
-        wrapper.setEntity(roleUser);
+        wrapper.setEntity(roleUserEntity);
         // 只返回moduleId
         List<RoleUserEntity> roleUserList = this.roleUserMapper.selectList(wrapper);
         List<String> checked = null;

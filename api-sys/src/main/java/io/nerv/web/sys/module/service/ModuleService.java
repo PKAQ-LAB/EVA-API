@@ -145,7 +145,8 @@ public class ModuleService extends BaseService<ModuleMapper, ModuleEntity> {
     public void refreshChild(ModuleEntity module,ModuleEntity oldModule){
         // 刷新子节点名称
         this.mapper.updateChildParentName(module.getName(), module.getId());
-        // TODO 刷新所有子节点的 path_name 和 path
+        // TODO 刷新所有子节点的 path_name 和 path path_id
+        // 不同父级路由的节点散落在同一个路由下修改会导致字节点路由被错误的更改
         //this.mapper.updateChildPathInfo(module,oldModule);
     }
     /**
