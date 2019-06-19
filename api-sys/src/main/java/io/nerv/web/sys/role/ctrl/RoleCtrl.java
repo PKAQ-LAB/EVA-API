@@ -57,7 +57,7 @@ public class RoleCtrl extends PureBaseCtrl<RoleService> {
     @GetMapping({"/listModule"})
     @ApiOperation(value = "获得角色绑定的菜单列表", response = Response.class)
     public Response listModule(@ApiParam(name = "roleEntity", value = "包含角色对象属性的查询条件")
-                                       RoleModuleEntity role) {
+                                RoleModuleEntity role) {
         return success(this.service.listModule(role));
     }
 
