@@ -1,0 +1,13 @@
+apply from: '../publish.gradle'
+project.archivesBaseName = 'eva-sys'
+
+dependencies {
+    implementation	project(":eva-core")
+
+    implementation 		"com.auth0:java-jwt:${auth0}",
+                        "io.jsonwebtoken:jjwt:${jjwt}"
+
+    implementation "org.springframework.boot:spring-boot-starter-security:${springBootVersion}"
+
+    testImplementation 	"org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
+}

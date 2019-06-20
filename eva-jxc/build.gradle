@@ -1,0 +1,20 @@
+plugins {
+     id 'org.springframework.boot' version '2.1.5.RELEASE'
+}
+apply plugin: 'io.spring.dependency-management'
+
+jar {
+	enabled = true
+}
+
+bootJar {
+	mainClassName = 'io.nerv.JXCBooter'
+}
+
+description = """jxc"""
+// 依赖配置
+dependencies {
+    implementation project(":eva-core")
+	
+    testImplementation 	"org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
+}

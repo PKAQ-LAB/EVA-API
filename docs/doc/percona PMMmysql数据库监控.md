@@ -1,5 +1,7 @@
 # 用percona ppm的docker容器进行数据库监控备份  
 
+Percona Monitoring and Management是percona一款开源的用于管理和监控MySQL 和MongoDB性能的开源平台，通过PMM客户端收集到的DB监控数据用第三方软件Grafana画图展示出来，包括两个部分：PMM client：部署在每个监控数据库主机。搜集主机，数据库和查询分析数据等。PMM Server：汇集数据并展示。提供表，dashboards和graph的web界面。
+
 
 # 2 docker部署pmm与mysql监控
 

@@ -1,0 +1,25 @@
+plugins {
+     id 'org.springframework.boot' version '2.1.5.RELEASE'
+ }
+apply plugin: 'io.spring.dependency-management'
+
+jar {
+	enabled = true
+}
+
+bootJar {
+	mainClassName = 'io.nerv.Booter'
+}
+
+description = """web"""
+
+compileJava.dependsOn(processResources)
+
+dependencies {
+   implementation project(":eva-core"),
+				  project(":eva-sys"),
+                  project(":eva-auth"),
+				  "org.springframework.boot:spring-boot-devtools"
+
+   testImplementation 	"org.springframework.boot:spring-boot-starter-test"
+}
