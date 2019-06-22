@@ -1,5 +1,6 @@
 package io.nerv.config;
 
+import cn.hutool.core.collection.CollUtil;
 import com.google.common.base.Predicate;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -31,7 +32,7 @@ public class SysAPIConfiguration {
 
         return new Docket(DocumentationType.SWAGGER_2)
                 .groupName("系统管理")
-                .securitySchemes(List.of(
+                .securitySchemes(CollUtil.toList(
                         new ApiKey("Authorization", "Authorization", "header")))
                 .apiInfo(apiInfo())
                 .select()

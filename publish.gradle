@@ -1,11 +1,16 @@
 task sourcesJar(type: Jar) {
     from sourceSets.main.allJava
-    classifier = 'sources'
+    archiveClassifier = 'sources'
 }
 
 task javadocJar(type: Jar) {
     from javadoc
-    classifier = 'javadoc'
+    archiveClassifier = 'javadoc'
+}
+
+task jdk8(type: Jar) {
+    from sourceSets.main.output
+    archiveClassifier = 'jdk8'
 }
 
 javadoc {
@@ -13,6 +18,7 @@ javadoc {
         options.addBooleanOption('html5', true)
     }
 }
+
 
 publishing {
     publications {
@@ -22,10 +28,11 @@ publishing {
 			afterEvaluate {
 				artifactId project.archivesBaseName
 			}
-			
+
 			artifact sourcesJar
             artifact javadocJar
-			
+            artifact jdk8
+
 			pom {
                 name = artifactId
                 description = POM_DESCRIPTION
@@ -54,8 +61,7 @@ publishing {
 	
 	repositories {
         maven {
-			println(ARTIFACTORY_CONTEXTURL)
-           
+
            url = ARTIFACTORY_CONTEXTURL
             
             credentials {

@@ -2,6 +2,7 @@ package io.nerv.core.upload.ctrl;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Snowflake;
+import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import io.nerv.core.enums.HttpCodeEnum;
@@ -66,7 +67,7 @@ public class UploadImageCtrl{
             return response.failure(HttpCodeEnum.SERVER_ERROR.getIndex(), "上传格式错误");
         }
 
-        return response.success(Map.of("pname", newFileName));
+        return response.success(MapUtil.of("pname", newFileName));
     }
 
 

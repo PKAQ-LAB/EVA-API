@@ -43,8 +43,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain chain) throws ServletException, IOException {
 
-        var isvalid = false;
-        var authToken = "";
+        boolean isvalid = false;
+        String authToken = "";
 
         String authHeader = request.getHeader(jwtConfig.getHeader());
         if (StrUtil.isNotBlank(authHeader) && authHeader.startsWith(jwtConfig.getTokenHead())) {

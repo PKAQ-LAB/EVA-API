@@ -63,7 +63,7 @@ public class AuthCtrl {
     public Response fetch() throws OathException {
         log.info("[auth/fetch ] - Current active profile is : " + activeProfile);
         // 开发环境不鉴权直接取admin菜单
-        final var account = securityHelper.getJwtUserId();
+        final String account = securityHelper.getJwtUserId();
 
         return new Response().success(this.userService.fetch(account));
     }

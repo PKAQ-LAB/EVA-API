@@ -1,5 +1,6 @@
 package io.nerv.config;
 
+import cn.hutool.core.collection.CollUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -28,7 +29,7 @@ public class SwaggerConfiguration {
     @Bean
     public Docket createRestApi() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .securitySchemes(List.of(
+                .securitySchemes(CollUtil.toList(
                         new ApiKey("Authorization", "Authorization", "header")))
                 .apiInfo(apiInfo())
                 .select()
