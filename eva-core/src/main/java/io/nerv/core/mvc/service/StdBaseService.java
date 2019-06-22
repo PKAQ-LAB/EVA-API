@@ -21,7 +21,7 @@ import java.util.List;
  * @author S.PKAQ
  */
 @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-public abstract class BaseService<M extends BaseMapper<T>, T extends StdBaseEntity> {
+public abstract class StdBaseService<M extends BaseMapper<T>, T extends StdBaseEntity> {
     @Autowired
     protected M mapper;
     /**

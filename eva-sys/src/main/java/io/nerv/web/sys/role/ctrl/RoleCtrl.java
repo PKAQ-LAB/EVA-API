@@ -3,7 +3,7 @@ package io.nerv.web.sys.role.ctrl;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import io.nerv.core.exception.ParamException;
-import io.nerv.core.mvc.ctrl.BaseCtrl;
+import io.nerv.core.mvc.ctrl.PureBaseCtrl;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.mvc.util.SingleArray;
 import io.nerv.web.sys.role.entity.RoleEntity;
@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Api( tags = "角色管理")
 @RestController
 @RequestMapping("/role")
-public class RoleCtrl extends BaseCtrl<RoleService> {
+public class RoleCtrl extends PureBaseCtrl<RoleService> {
 
     @PostMapping("/checkUnique")
     @ApiOperation(value = "校验角色编码唯一性",response = Response.class)

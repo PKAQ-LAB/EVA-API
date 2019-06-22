@@ -5,7 +5,7 @@ import io.nerv.web.jxc.inventory.accbook.service.StockService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import io.nerv.core.mvc.ctrl.BaseCtrl;
+import io.nerv.core.mvc.ctrl.PureBaseCtrl;
 import io.nerv.core.mvc.util.Response;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Api( description = "库存台帐管理")
 @RestController
 @RequestMapping("stock")
-public class StockCtrl extends BaseCtrl<StockService> {
+public class StockCtrl extends PureBaseCtrl<StockService> {
     @GetMapping("list")
     @ApiOperation(value = "库存台帐列表",response = Response.class)
     public Response list(@ApiParam(name ="goods", value = "库存查询对象")

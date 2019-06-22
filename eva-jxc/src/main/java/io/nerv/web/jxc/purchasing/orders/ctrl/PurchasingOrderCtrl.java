@@ -1,6 +1,6 @@
 package io.nerv.web.jxc.purchasing.orders.ctrl;
 
-import io.nerv.core.mvc.ctrl.BaseCtrl;
+import io.nerv.core.mvc.ctrl.PureBaseCtrl;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.web.jxc.purchasing.orders.entity.PurchasingOrderEntity;
 import io.nerv.web.jxc.purchasing.orders.service.PurchasingService;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Api( description = "采购入库单")
 @RestController
 @RequestMapping("instock")
-public class PurchasingOrderCtrl extends BaseCtrl<PurchasingService> {
+public class PurchasingOrderCtrl extends PureBaseCtrl<PurchasingService> {
 
     @PostMapping("edit")
     @ApiOperation(value = "新增/编辑采购入库单",response = Response.class)

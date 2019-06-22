@@ -5,7 +5,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.nerv.core.exception.ParamException;
-import io.nerv.core.mvc.ctrl.BaseCtrl;
+import io.nerv.core.mvc.ctrl.PureBaseCtrl;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.mvc.util.SingleArray;
 import io.nerv.web.sys.organization.entity.OrganizationEntity;
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Api( description = "组织管理")
 @RestController
 @RequestMapping("/organization")
-public class OrgCtrl extends BaseCtrl<OrganizationService> {
+public class OrgCtrl extends PureBaseCtrl<OrganizationService> {
 
     @PostMapping("/checkUnique")
     @ApiOperation(value = "校验code唯一性",response = Response.class)

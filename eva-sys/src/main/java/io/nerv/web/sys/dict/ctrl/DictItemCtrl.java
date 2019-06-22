@@ -1,6 +1,6 @@
 package io.nerv.web.sys.dict.ctrl;
 
-import io.nerv.core.mvc.ctrl.BaseCtrl;
+import io.nerv.core.mvc.ctrl.PureBaseCtrl;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.web.sys.dict.entity.DictItemEntity;
 import io.nerv.web.sys.dict.service.DictItemService;
@@ -24,7 +24,7 @@ import javax.validation.Valid;
 @Api( description = "字典项管理")
 @RestController
 @RequestMapping("/dictItem")
-public class DictItemCtrl extends BaseCtrl<DictItemService> {
+public class DictItemCtrl extends PureBaseCtrl<DictItemService> {
 
     @GetMapping("/del/{id}")
     @ApiOperation(value = "根据ID删除",response = Response.class)

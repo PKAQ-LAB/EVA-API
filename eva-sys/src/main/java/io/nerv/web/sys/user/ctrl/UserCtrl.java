@@ -6,7 +6,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.nerv.core.exception.ParamException;
-import io.nerv.core.mvc.ctrl.BaseCtrl;
+import io.nerv.core.mvc.ctrl.PureBaseCtrl;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.mvc.util.SingleArray;
 import io.nerv.web.sys.user.entity.UserEntity;
@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(description = "用户管理")
 @RestController
 @RequestMapping("/account")
-public class UserCtrl extends BaseCtrl<UserService> {
+public class UserCtrl extends PureBaseCtrl<UserService> {
 
     @PostMapping("/checkUnique")
     @ApiOperation(value = "校验账号唯一性",response = Response.class)

@@ -1,7 +1,7 @@
 package io.nerv.web.sys.module.ctrl;
 
 import cn.hutool.core.collection.CollectionUtil;
-import io.nerv.core.mvc.ctrl.BaseCtrl;
+import io.nerv.core.mvc.ctrl.PureBaseCtrl;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.mvc.util.SingleArray;
 import io.nerv.web.sys.module.entity.ModuleEntity;
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Api("模块管理")
 @RestController
 @RequestMapping("/module")
-public class ModuleCtrl extends BaseCtrl<ModuleService> {
+public class ModuleCtrl extends PureBaseCtrl<ModuleService> {
 
     @PostMapping("/checkUnique")
     @ApiOperation(value = "校验path唯一性",response = Response.class)

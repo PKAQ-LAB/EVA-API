@@ -1,7 +1,7 @@
 package io.nerv.web.jxc.base.category.ctrl;
 
 import cn.hutool.core.collection.CollectionUtil;
-import io.nerv.core.mvc.ctrl.BaseCtrl;
+import io.nerv.core.mvc.ctrl.PureBaseCtrl;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.mvc.util.SingleArray;
 import io.swagger.annotations.Api;
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Api( description = "分类管理")
 @RestController
 @RequestMapping("jxc/category")
-public class CategoryCtrl extends BaseCtrl<CategoryService> {
+public class CategoryCtrl extends PureBaseCtrl<CategoryService> {
     @GetMapping("list")
     @ApiOperation(value = "根据实体类属性获取相应的分类树 ", response = Response.class)
     public Response list(@ApiParam(name = "condition", value= "分类A") String condition){

@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author S.PKAQ
  */
 @Getter
-public abstract class BaseCtrl<T extends StdBaseService> {
+public abstract class PureBaseCtrl<T extends StdBaseService> {
     @Autowired
     protected T service;
     @Autowired

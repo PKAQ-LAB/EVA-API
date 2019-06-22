@@ -1,11 +1,11 @@
-package io.nerv.ctrl;
+package io.nerv.web.sys.user.ctrl;
 
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.util.I18NHelper;
 import io.nerv.exception.OathException;
 import io.nerv.security.jwt.JwtConfig;
 import io.nerv.security.jwt.JwtUtil;
-import io.nerv.security.util.SecurityHelper;
+import io.nerv.security.util.SecurityUtil;
 import io.nerv.web.sys.user.entity.UserEntity;
 import io.nerv.web.sys.user.service.UserService;
 import io.swagger.annotations.Api;
@@ -38,7 +38,7 @@ public class AuthCtrl {
     @Autowired
     private JwtUtil jwtUtil;
     @Autowired
-    private SecurityHelper securityHelper;
+    private SecurityUtil securityHelper;
 
     @Value("${spring.profiles.active}")
     private String activeProfile;
