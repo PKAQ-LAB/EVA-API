@@ -12,7 +12,6 @@ ext {
     swagger = "2.9.2"
 	swagger_ui = "1.9.4"
     hutool = "4.5.12"
-    p3c = "2.0.0"
     jaxb_api = "2.3.1"
     jjwt = "0.9.1"
     auth0 = "3.8.1"
@@ -26,11 +25,10 @@ ext {
 allprojects {
     apply plugin: "name.remal.check-dependency-updates"
     group = 'io.nerv'
-    version = '1.1.27'
+    version = '1.1.28'
 }
 
 subprojects {
-	apply plugin: 'pmd'
     apply plugin: 'java-library'
 	apply plugin: 'maven-publish'
 	apply plugin: 'com.jfrog.bintray'
@@ -46,15 +44,6 @@ subprojects {
         options.encoding = "UTF-8"
 		options.addStringOption('Xdoclint:none', '-quiet')
     }
-	
-    pmd {
-        consoleOutput = true
-        reportsDir = file("build/reports/pmd")
-
-        ruleSets = [
-            "java-ali-comment"
-        ]
-    }
 
     repositories {
         mavenLocal()
@@ -64,7 +53,6 @@ subprojects {
     }
 
     dependencies {
-       pmd "com.alibaba.p3c:p3c-pmd:${p3c}"
        implementation "org.projectlombok:lombok:${lombok}"
 	   annotationProcessor "org.projectlombok:lombok:${lombok}"
      }
