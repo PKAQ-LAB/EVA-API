@@ -1,9 +1,6 @@
 apply from: '../publish.gradle'
 project.archivesBaseName = 'eva-core'
 
-jar {
-	archiveClassifier = "jdk8"
-}
 // 依赖配置
 dependencies {
 	implementation 	"p6spy:p6spy:${p6spy}",
