@@ -49,12 +49,28 @@ public abstract class PureBaseCtrl<T extends StdBaseService> {
         return new Response().success(data);
     }
     /**
+     * 返回成功结果
+     * @param data
+     * @return
+     */
+    protected Response success(Object data, String msg){
+        return new Response().success(data, msg);
+    }
+    /**
      * 返回失败结果
      * @param failCode
      * @return
      */
     protected Response failure(int failCode){
         return new Response().failure(failCode);
+    }
+    /**
+     * 返回失败结果
+     * @param failCode
+     * @return
+     */
+    protected Response failure(int failCode, String msg){
+        return new Response().failure(failCode, msg);
     }
 
     /**

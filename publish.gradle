@@ -15,7 +15,6 @@ javadoc {
     }
 }
 
-
 publishing {
     publications {
         mavenJava(MavenPublication) {
@@ -55,14 +54,24 @@ publishing {
     }
 	
 	repositories {
+        // Jcenter
+//        maven {
+//           url = ARTIFACTORY_CONTEXTURL
+//
+//            credentials {
+//                username ARTIFACTORY_USER
+//                password ARTIFACTORY_PASSWORD
+//           }
+//        }
+        // 本地私服
         maven {
+            name "local"
+            url = LOCAL_ARTIFACTORY_CONTEXTURL
 
-           url = ARTIFACTORY_CONTEXTURL
-            
             credentials {
-                username ARTIFACTORY_USER
-                password ARTIFACTORY_PASSWORD
-           }
+                username LOCAL_ARTIFACTORY_USER
+                password LOCAL_ARTIFACTORY_PASSWORD
+            }
         }
     }
 }
