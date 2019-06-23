@@ -8,10 +8,6 @@ task javadocJar(type: Jar) {
     archiveClassifier = 'javadoc'
 }
 
-task jdk8(type: Jar) {
-    from sourceSets.main.output
-    archiveClassifier = 'jdk8'
-}
 
 javadoc {
     if(JavaVersion.current().isJava9Compatible()) {
@@ -31,7 +27,6 @@ publishing {
 
 			artifact sourcesJar
             artifact javadocJar
-            artifact jdk8
 
 			pom {
                 name = artifactId

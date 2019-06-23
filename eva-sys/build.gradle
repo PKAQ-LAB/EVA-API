@@ -1,8 +1,8 @@
 apply from: '../publish.gradle'
 project.archivesBaseName = 'eva-sys'
-//jar {
-//    archiveClassifier = "jdk8"
-//}
+jar {
+    archiveClassifier = "jdk8"
+}
 dependencies {
     implementation	project(":eva-core")
 
