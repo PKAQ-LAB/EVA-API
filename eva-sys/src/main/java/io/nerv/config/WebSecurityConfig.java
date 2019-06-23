@@ -80,7 +80,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new JwtAuthFilter();
     }
 
-
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -151,6 +150,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     HttpMethod.GET,
                     "/",
                     "/*.html",
+                    "/*.xls",
+                    "/*.xlsx",
+                    "/*.doc",
+                    "/*.docx",
+                    "/*.pdf",
                     "/favicon.ico",
                     "/**/*.html",
                     "/**/*.css",

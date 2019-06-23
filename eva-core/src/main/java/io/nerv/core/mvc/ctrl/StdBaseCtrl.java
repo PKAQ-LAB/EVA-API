@@ -2,6 +2,7 @@ package io.nerv.core.mvc.ctrl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import io.nerv.core.enums.HttpCodeEnum;
+import io.nerv.core.enums.ResponseEnumm;
 import io.nerv.core.mvc.service.StdBaseService;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.mvc.util.SingleArray;
@@ -38,7 +39,7 @@ public abstract class StdBaseCtrl<T extends StdBaseService, E extends StdBaseEnt
             throw new ParamException(locale("param_id_notnull"));
         }
 
-        return success(this.service.delete(ids.getParam()));
+        return success(this.service.delete(ids.getParam()), ResponseEnumm.DELETE_SUCCESS.getName());
     }
 
     @PostMapping("edit")
@@ -53,14 +54,14 @@ public abstract class StdBaseCtrl<T extends StdBaseService, E extends StdBaseEnt
     @ApiOperation(value = "列表查询",response = Response.class)
     public Response list(@ApiParam(name ="condition", value = "模型对象")
                                  E entity, Integer pageNo){
-        return this.success(this.service.listPage(entity, pageNo));
+        return this.success(this.service.listPage(entity, pageNo), ResponseEnumm.NULL_MSG.getName());
     }
 
     @GetMapping("/get/{id}")
     @ApiOperation(value = "根据ID获得记录信息", response = Response.class)
     public Response get(@ApiParam(name = "id", value = "记录ID")
                             @PathVariable("id") String id){
-        return this.success(this.service.getById(id));
+        return this.success(this.service.getById(id), ResponseEnumm.NULL_MSG.getName());
     }
     /**
      * 根据编码获取国际化字符串
@@ -84,6 +85,14 @@ public abstract class StdBaseCtrl<T extends StdBaseService, E extends StdBaseEnt
      */
     protected Response success(Object data){
         return new Response().success(data);
+    }
+    /**
+     * 返回成功结果
+     * @param data
+     * @return
+     */
+    protected Response success(Object data, String msg){
+        return new Response().success(data, msg);
     }
     /**
      * 返回失败结果
