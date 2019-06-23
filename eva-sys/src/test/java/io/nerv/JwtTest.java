@@ -1,6 +1,6 @@
 package io.nerv;
 
-import io.nerv.security.exception.OathException;
+import io.nerv.exception.OathException;
 import io.nerv.security.jwt.JwtConfig;
 import io.nerv.security.jwt.JwtUtil;
 import org.junit.Test;
