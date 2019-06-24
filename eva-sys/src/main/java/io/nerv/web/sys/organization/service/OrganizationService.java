@@ -36,7 +36,6 @@ public class OrganizationService extends StdBaseService<OrganizationMapper, Orga
         Response response = null;
         // 检查是否存在子节点，存在子节点不允许删除
         QueryWrapper<OrganizationEntity> oew = new QueryWrapper<>();
-        oew.setEntity( new OrganizationEntity() );
         oew.in("parent_ID", ids);
 
         List<OrganizationEntity> leafList = this.mapper.selectList(oew);
