@@ -36,7 +36,6 @@ public abstract class ActiveBaseService<M extends BaseMapper<T>, T extends Model
     /**
      * 查询符合条件得记录条数
      * @param entity
-     * @return
      */
     public void selectCount(T entity){
         Wrapper<T> wrapper = new QueryWrapper<>(entity);
@@ -46,7 +45,6 @@ public abstract class ActiveBaseService<M extends BaseMapper<T>, T extends Model
     /**
      * 根据条件获取一条记录
      * @param entity
-     * @return
      */
     public void getByEntity(T entity){
         Wrapper<T> wrapper = new QueryWrapper<>(entity);
@@ -106,7 +104,6 @@ public abstract class ActiveBaseService<M extends BaseMapper<T>, T extends Model
     /**
      * 通用删除
      * @param param
-     * @return
      */
     public void delete(ArrayList<String> param){
         this.mapper.deleteBatchIds(param);

@@ -62,7 +62,6 @@ public interface DictHelperProvider {
      * 新增字典
      * @param code
      * @param item
-     * @return
      */
     void add(String code, LinkedHashMap<String, String> item);
 

@@ -56,7 +56,6 @@ public class OrganizationService extends StdBaseService<OrganizationMapper, Orga
     /**
      * 新增/编辑一条组织信息
      * @param organization 要 新增/编辑 得组织对象
-     * @return 重新查询组织列表
      */
     public void editOrg(OrganizationEntity organization){
         String orgId = organization.getId();
@@ -124,7 +123,6 @@ public class OrganizationService extends StdBaseService<OrganizationMapper, Orga
     /**
      * 根据ID更新
      * @param organizationEntity
-     * @return
      */
     public void updateOrg(OrganizationEntity organizationEntity){
         // 检查是否存在叶子节点，存在 返回叶子节点名称 终止删除

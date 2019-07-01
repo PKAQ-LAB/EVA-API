@@ -41,7 +41,6 @@ public class DictItemService extends StdBaseService<DictItemMapper, DictItemEnti
     /**
      * 新增/编辑一条字典项
      * @param dictItemEntity
-     * @return
      */
     public void editDictItem(DictItemEntity dictItemEntity) {
         //根据id获取数据库中的字典项

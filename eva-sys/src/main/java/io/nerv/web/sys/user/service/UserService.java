@@ -167,7 +167,6 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
     /**
      * 新增/编辑用户信息
      * @param user 用户对象
-     * @return 用户列表
      */
     public void saveUserForOther(UserEntity user) {
         // 用户资料发生修改后 重新生成密码

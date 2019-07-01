@@ -89,7 +89,6 @@ public class DictService extends StdBaseService<DictMapper, DictEntity> {
     /**
      * 编辑一条字典
      * @param dictEntity 字典对象
-     * @return DictEntity
      */
     public void edit(DictEntity dictEntity){
         String id = dictEntity.getId();

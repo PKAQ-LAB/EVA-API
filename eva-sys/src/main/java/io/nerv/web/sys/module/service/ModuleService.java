@@ -151,8 +151,6 @@ public class ModuleService extends StdBaseService<ModuleMapper, ModuleEntity> {
     }
     /**
      * 根据ID更新
-     * @param moduleEntity
-     * @return
      */
     public void updateModule(ModuleEntity moduleEntity){
         if(StrUtil.isNotBlank(moduleEntity.getStatus()) && moduleEntity.getStatus().equals("0001")) {

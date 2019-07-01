@@ -1,13 +1,8 @@
-plugins {
-    id 'org.springframework.boot' version '2.1.6.RELEASE'
-}
 apply from: '../publish.gradle'
-apply plugin: 'io.spring.dependency-management'
-
 
 project.archivesBaseName = 'addon-cache'
 
 dependencies {
-    implementation "org.springframework.boot:spring-boot-starter-data-redis:2.1.6.RELEASE",
+    implementation "org.springframework.boot:spring-boot-starter-data-redis:${springBootVersion}",
                    "com.alibaba:fastjson:${fastjson}"
 }

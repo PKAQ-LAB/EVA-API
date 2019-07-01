@@ -161,7 +161,6 @@ public class RedisUtil {
     /**
      * 修改 key
      * @param key
-     * @return
      */
     public void rename(String key,String newKey){
         redisTemplate.boundValueOps(key).rename(newKey);
@@ -450,7 +449,6 @@ public class RedisUtil {
     /**
      * 获取 key 和 集合  collections 中的 key 集合的差集
      * @param key
-     * @param collections
      * @return
      */
     public Set<Object> difference(String key ,Collection<Object> otherKeys){
