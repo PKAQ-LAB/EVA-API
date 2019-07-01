@@ -2,10 +2,9 @@ plugins {
     id 'org.springframework.boot' version '2.1.6.RELEASE'
 }
 apply plugin: 'io.spring.dependency-management'
+apply from: '../publish.gradle'
 
-jar {
-    enabled = true
-}
+project.archivesBaseName = 'eva-cache'
 
 dependencies {
     implementation "org.springframework.boot:spring-boot-starter-data-redis",
