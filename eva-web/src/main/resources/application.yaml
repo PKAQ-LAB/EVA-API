@@ -30,7 +30,6 @@ mybatis-plus:
     db-config:
       id-type: uuid
 #      字段策略
-      field-strategy: not_empty
 #      驼峰下划线转换
       table-underline: true
       logic-delete-value: '0000' # 逻辑已删除值(默认为 1)
@@ -67,3 +66,6 @@ upload:
   tempPath: E://temp/11
   storagePath: E://temp/22
   allowSuffixName: jpg,png
+# 缓存配置
+cache:
+    impl: redis

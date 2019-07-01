@@ -21,6 +21,7 @@ spring:
       enabled: true
     restart:
       additional-paths: src/main/java
+# redis 配置
   redis:
     host: 192.168.10.166
     port: 6379

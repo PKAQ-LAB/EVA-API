@@ -1,8 +1,11 @@
 package io.nerv;
 
+import io.nerv.web.sys.dict.cache.DictHelperProvider;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.connector.Connector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -23,13 +26,20 @@ import java.util.concurrent.TimeUnit;
  * 启动类
  * @author PKAQ
  */
+@Slf4j
 @EnableCaching
 @SpringBootApplication
 @ComponentScan(basePackages = {"io.nerv.*"})
 public class WebBooter implements CommandLineRunner {
 
+    @Autowired
+    private DictHelperProvider dictHelperProvider;
+
     @Override
     public void run(String... args) {
+        log.info(" ---- 字典初始化 开始 ---- ");
+        dictHelperProvider.init();
+        log.info(" ---- 字典初始化 结束 ---- ");
         System.out.println("  --- --- --- [ web started ] --- --- ---  ");
     }
 

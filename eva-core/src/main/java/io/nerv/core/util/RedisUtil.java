@@ -208,8 +208,7 @@ public class RedisUtil {
     public boolean putIfAbsent(String key, String hashKey, String value){
         return redisTemplate.opsForHash().putIfAbsent(key, hashKey, value);
     }
-    
-    
+
     /**
      * 删除指定 hash 的 HashKey
      * @param key
@@ -219,8 +218,7 @@ public class RedisUtil {
     public Long delete(String key, String ...hashKeys){
         return redisTemplate.opsForHash().delete(key, hashKeys);
     }
-    
-    
+
     /**
      * 给指定 hash 的 hashkey 做增减操作
      * @param key
