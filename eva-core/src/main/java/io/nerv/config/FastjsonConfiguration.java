@@ -5,6 +5,7 @@ import com.alibaba.fastjson.serializer.PropertyFilter;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,9 +19,11 @@ import java.util.List;
  * 使用fastjson代替jackson,
  * @author PKAQ
  */
+@SuppressWarnings("Duplicates")
 @Configuration
 public class FastjsonConfiguration {
     @Bean
+    @ConditionalOnMissingBean
     public HttpMessageConverters fastJsonHttpMessageConverters() {
         //定义一个转换消息的对象
         FastJsonHttpMessageConverter fastConverter = new FastJsonHttpMessageConverter();

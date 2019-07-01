@@ -5,6 +5,7 @@ import io.nerv.web.sys.organization.entity.OrganizationEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+import springfox.documentation.annotations.Cacheable;
 
 import java.util.List;
 

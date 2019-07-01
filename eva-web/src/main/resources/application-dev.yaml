@@ -21,3 +21,12 @@ spring:
       enabled: true
     restart:
       additional-paths: src/main/java
+  redis:
+    host: 192.168.10.166
+    port: 6379
+    password: 8i9o0p
+    timeout: 10000
+    database: 0
+  cache:
+    type: redis
+    cache-names: sys

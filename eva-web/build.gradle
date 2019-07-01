@@ -18,6 +18,7 @@ compileJava.dependsOn(processResources)
 dependencies {
    implementation project(":eva-core"),
 				  project(":eva-sys"),
+                  project(":addon-cache"),
 				  "org.springframework.boot:spring-boot-devtools"
 
    testImplementation 	"org.springframework.boot:spring-boot-starter-test"

@@ -7,6 +7,7 @@ import io.nerv.core.mvc.service.StdBaseService;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.web.sys.organization.entity.OrganizationEntity;
 import io.nerv.web.sys.organization.mapper.OrganizationMapper;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -135,6 +136,7 @@ public class OrganizationService extends StdBaseService<OrganizationMapper, Orga
      * @param id 组织ID
      * @return 组织信息
      */
+    @Cacheable(value="sys")
     public OrganizationEntity getOrg(String id) {
         return this.getById(id);
     }
@@ -144,6 +146,7 @@ public class OrganizationService extends StdBaseService<OrganizationMapper, Orga
      * @param organization 属性实体类
      * @return 组织树列表
      */
+    @Cacheable(value="sys")
     public List<OrganizationEntity> listOrgByAttr(OrganizationEntity organization) {
         return  this.mapper.listOrg(null, organization);
     }

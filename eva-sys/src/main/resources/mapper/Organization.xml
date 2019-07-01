@@ -23,7 +23,7 @@
              and (parent_ID = '0' or parent_ID is null)
           </when>
           <otherwise>
-           and  name (like '%${condition}%' or code like '%${condition}%')
+           and (name like '%${condition}%' or code like '%${condition}%')
           </otherwise>
         </choose>
        <if test="null != organization">

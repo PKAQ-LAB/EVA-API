@@ -4,3 +4,5 @@ include 'eva-jxc'
 include 'eva-core'
 include 'eva-sys'
 include 'addon-pay'
+include 'addon-cache'
+
