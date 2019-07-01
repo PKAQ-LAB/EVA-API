@@ -3,7 +3,7 @@ package io.nerv.web.sys.dict.service;
 import io.nerv.core.mvc.service.StdBaseService;
 import io.nerv.web.sys.dict.entity.DictEntity;
 import io.nerv.web.sys.dict.entity.DictItemEntity;
-import io.nerv.web.sys.dict.helper.DictHelperProvider;
+import io.nerv.web.sys.dict.cache.DictHelperProvider;
 import io.nerv.web.sys.dict.mapper.DictItemMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

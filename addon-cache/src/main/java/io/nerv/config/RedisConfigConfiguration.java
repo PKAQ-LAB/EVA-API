@@ -1,4 +1,4 @@
-package io.nerv;
+package io.nerv.config;
 
 import com.alibaba.fastjson.support.spring.FastJsonRedisSerializer;
 import lombok.extern.slf4j.Slf4j;

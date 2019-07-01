@@ -9,10 +9,9 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
  * @Datetime: 2018/9/28 12:38
  */
 public class MybatisSupporterCondition implements Condition {
-
+    private final static String supporterStr = "MybatisSupporter";
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        String supporterStr = "MybatisSupporter";
         String impl = context.getEnvironment().getProperty("bizlog.impl");
         String enabled = context.getEnvironment().getProperty("bizlog.enabled");
         

@@ -1,4 +1,4 @@
-package io.nerv.web.sys.dict.helper;
+package io.nerv.web.sys.dict.cache;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

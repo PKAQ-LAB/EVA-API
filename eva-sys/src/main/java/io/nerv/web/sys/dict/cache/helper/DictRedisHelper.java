@@ -1,11 +1,17 @@
-package io.nerv.web.sys.dict.helper;
+package io.nerv.web.sys.dict.cache.helper;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+import io.nerv.core.util.RedisUtil;
+import io.nerv.web.sys.dict.cache.DictHelperProvider;
+import io.nerv.web.sys.dict.cache.condition.RedisDictCacheCondition;
 import io.nerv.web.sys.dict.service.DictService;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
+import java.lang.reflect.Type;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -16,20 +22,26 @@ import java.util.Map;
  */
 @Data
 @Component
-public class DictHelper implements DictHelperProvider{
+@Conditional(RedisDictCacheCondition.class)
+public class DictRedisHelper implements DictHelperProvider {
     @Autowired
     private DictService dictService;
 
-    private Map<String, LinkedHashMap<String, String>> dictMap;
+    @Autowired
+    private RedisUtil redisUtil;
 
+    private final static String DICT_CACHE_KEY="eva_dict:";
+
+    final static Type type = new TypeReference<LinkedHashMap<String, String>>() {}.getType();
     /**
      * 初始化字典数据
      */
     @Override
     public void init() {
-        if (null == dictMap){
-            dictMap = Collections.synchronizedMap(dictService.initDictCache());
-        }
+        var dictMap = dictService.initDictCache();
+        dictMap.forEach((k, v) ->
+            redisUtil.set(DICT_CACHE_KEY+k, JSON.toJSONString(v))
+        );
     }
 
     /**
@@ -38,7 +50,7 @@ public class DictHelper implements DictHelperProvider{
      */
     @Override
     public void init(Map<String, LinkedHashMap<String, String>> dictMap) {
-        this.dictMap = Collections.synchronizedMap(new LinkedHashMap<>(dictMap));
+        redisUtil.set(DICT_CACHE_KEY, JSON.toJSONString(dictMap));
     }
 
     /**
@@ -48,13 +60,13 @@ public class DictHelper implements DictHelperProvider{
      */
     @Override
     public LinkedHashMap<String, String> get(String code){
-        return this.dictMap.get(code);
+        return JSON.parseObject(redisUtil.get(DICT_CACHE_KEY+code), type);
     }
 
     @Override
     public String get(String code, String key) {
         String value = null;
-        Map<String, String> itemMap =  this.dictMap.get(code);
+        Map<String, String> itemMap = JSON.parseObject(redisUtil.get(DICT_CACHE_KEY+code), type);
         if (null != itemMap){
             value = itemMap.get(key);
         }
@@ -63,12 +75,12 @@ public class DictHelper implements DictHelperProvider{
 
     @Override
     public void remove(String code) {
-        this.dictMap.remove(code);
+        this.redisUtil.remove(DICT_CACHE_KEY+code);
     }
 
     @Override
     public void remove(String code, String key) {
-        Map<String, String> itemMap =  this.dictMap.get(code);
+        Map<String, String> itemMap = JSON.parseObject(this.redisUtil.get(DICT_CACHE_KEY+code), type);
         if (null != itemMap){
             itemMap.remove(key);
         }
@@ -76,20 +88,21 @@ public class DictHelper implements DictHelperProvider{
 
     @Override
     public void removeAll() {
-       this.dictMap.clear();
+       this.redisUtil.remove(DICT_CACHE_KEY+"*");
     }
 
     @Override
     public void update(String code, String key, String value) {
-        Map<String, String> itemMap =  this.dictMap.get(code);
+        Map<String, String> itemMap =  JSON.parseObject(this.redisUtil.get(DICT_CACHE_KEY+code), type);
         if (null != itemMap){
             itemMap.put(key, value);
+            this.redisUtil.set(DICT_CACHE_KEY+code, JSON.toJSONString(itemMap));
         }
     }
 
     @Override
     public void add(String code, LinkedHashMap<String, String> item) {
-        this.dictMap.put(code, item);
+        this.redisUtil.set(DICT_CACHE_KEY+code, JSON.toJSONString(item));
     }
 
     @Override
@@ -99,13 +112,13 @@ public class DictHelper implements DictHelperProvider{
 
     @Override
     public void reload() {
-        this.dictMap.clear();
+        this.removeAll();
         this.init();
     }
 
     @Override
     public void reload(Map<String, LinkedHashMap<String, String>> dictMap) {
-        this.dictMap.clear();
+        this.removeAll();
         this.init(dictMap);
     }
 }

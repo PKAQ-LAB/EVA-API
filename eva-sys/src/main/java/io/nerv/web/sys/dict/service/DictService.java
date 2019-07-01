@@ -6,7 +6,7 @@ import io.nerv.core.exception.ParamException;
 import io.nerv.core.mvc.service.StdBaseService;
 import io.nerv.web.sys.dict.entity.DictEntity;
 import io.nerv.web.sys.dict.entity.DictViewEntity;
-import io.nerv.web.sys.dict.helper.DictHelperProvider;
+import io.nerv.web.sys.dict.cache.DictHelperProvider;
 import io.nerv.web.sys.dict.mapper.DictMapper;
 import io.nerv.web.sys.dict.mapper.DictViewMapper;
 import org.springframework.beans.factory.annotation.Autowired;

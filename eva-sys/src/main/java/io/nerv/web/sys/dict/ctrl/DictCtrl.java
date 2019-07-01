@@ -5,7 +5,7 @@ import io.nerv.core.enums.HttpCodeEnum;
 import io.nerv.core.mvc.ctrl.PureBaseCtrl;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.web.sys.dict.entity.DictEntity;
-import io.nerv.web.sys.dict.helper.DictHelperProvider;
+import io.nerv.web.sys.dict.cache.DictHelperProvider;
 import io.nerv.web.sys.dict.service.DictService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
