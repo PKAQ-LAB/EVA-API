@@ -24,6 +24,9 @@ spring:
   cache:
     type: redis
     cache-names: sys
+cache:
+    impl: map | redis |default
+
 ```    
  
 三、启动类配置

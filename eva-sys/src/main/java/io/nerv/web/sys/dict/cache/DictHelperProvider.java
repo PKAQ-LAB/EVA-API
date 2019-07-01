@@ -36,7 +36,6 @@ public interface DictHelperProvider {
     /**
      * 删除指定字典
      * @param code
-     * @return
      */
     void remove(String code);
 
@@ -44,13 +43,11 @@ public interface DictHelperProvider {
      * 删除指定key对应的code值
      * @param code
      * @param key
-     * @return
      */
     void remove(String code, String key);
 
     /**
      * 删除所有字典
-     * @return
      */
     void removeAll();
 
@@ -58,7 +55,6 @@ public interface DictHelperProvider {
      * 更新指定key对应的code值
      * @param key
      * @param code
-     * @return
      */
     void update(String code, String key, String value);
 
@@ -75,7 +71,6 @@ public interface DictHelperProvider {
      * @param code
      * @param key
      * @param value
-     * @return
      */
     void add(String code, String key, String value);
     /**
@@ -85,7 +80,6 @@ public interface DictHelperProvider {
     /**
      * 重新加载所有字典
      * @param dictMap
-     * @return
      */
     void reload(Map<String, LinkedHashMap<String, String>> dictMap);
 }

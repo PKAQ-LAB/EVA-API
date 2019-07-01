@@ -11,7 +11,7 @@ ext {
     lombok = "1.18.8"
     swagger = "2.9.2"
 	swagger_ui = "1.9.4"
-    hutool = "4.5.16 "
+    hutool = "4.5.16"
     jaxb_api = "2.3.1"
     jjwt = "0.9.1"
     auth0 = "3.8.1"
