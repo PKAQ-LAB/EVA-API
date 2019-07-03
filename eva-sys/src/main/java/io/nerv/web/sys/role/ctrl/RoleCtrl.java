@@ -108,13 +108,13 @@ public class RoleCtrl extends PureBaseCtrl<RoleService> {
 
     @PostMapping("/lock")
     @ApiOperation(value = "锁定/解锁", response = Response.class)
-    public Response lockSwitch(@ApiParam(name = "param", value = "角色[id]")
-                               @RequestBody SingleArray<String> param) {
-        if (null == param || CollectionUtil.isEmpty(param.getParam())){
+    public Response lockSwitch(@ApiParam(name = "params", value = "角色[id]")
+                               @RequestBody SingleArray<String> params) {
+        if (null == params || CollectionUtil.isEmpty(params.getParam())){
             throw new ParamException(locale("param_id_notnull"));
         }
 
-        this.service.updateRole(param.getParam(), param.getStatus());
+        this.service.updateRole(params.getParam(), params.getStatus());
         return success();
     }
 }
