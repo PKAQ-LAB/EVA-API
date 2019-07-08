@@ -66,6 +66,3 @@ upload:
   tempPath: E://temp/11
   storagePath: E://temp/22
   allowSuffixName: jpg,png
-# 缓存配置
-cache:
-    impl: redis

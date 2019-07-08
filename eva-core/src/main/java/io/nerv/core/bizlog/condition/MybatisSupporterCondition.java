@@ -16,6 +16,6 @@ public class MybatisSupporterCondition implements Condition {
         String enabled = context.getEnvironment().getProperty("bizlog.enabled");
         
         return "true".equalsIgnoreCase(enabled)
-               && supporterStr.equals(impl);
+               && supporterStr.equalsIgnoreCase(impl);
     }
 }

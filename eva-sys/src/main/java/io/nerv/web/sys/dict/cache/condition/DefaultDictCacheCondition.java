@@ -10,12 +10,12 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
  */
 public class DefaultDictCacheCondition implements Condition {
 
-    private final static String cacheStr = "map|default";
+    private final static String cacheStr = "map,default";
 
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        String impl = context.getEnvironment().getProperty("cache.impl");
+        String impl = context.getEnvironment().getProperty("cache.type");
 
-        return cacheStr.contains(impl) || StrUtil.isBlank(impl);
+        return StrUtil.isBlank(impl) || cacheStr.contains(impl);
     }
 }

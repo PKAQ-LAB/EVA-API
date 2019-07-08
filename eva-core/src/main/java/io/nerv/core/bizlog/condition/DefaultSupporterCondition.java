@@ -16,6 +16,6 @@ public class DefaultSupporterCondition implements Condition {
         String enabled = context.getEnvironment().getProperty("bizlog.enabled");
         return "true".equalsIgnoreCase(enabled)
                 &&
-                (null == impl || impl.trim().length()<1);
+                (null == impl || impl.trim().length()<1 || "console".equalsIgnoreCase(impl));
     }
 }

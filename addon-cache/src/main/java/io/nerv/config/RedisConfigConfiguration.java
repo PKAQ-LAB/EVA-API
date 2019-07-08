@@ -58,9 +58,10 @@ public class RedisConfigConfiguration extends CachingConfigurerSupport {
                                                          //设置key序列化器
                                                         .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
                                                         //设置value序列化器
-                                                        .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer((new GenericJackson2JsonRedisSerializer())));
+                                                        .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer((new FastJsonRedisSerializer<>(Object.class))));
 
         log.debug("自定义RedisCacheManager加载完成");
+
 
 
         return RedisCacheManager.builder(RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory))

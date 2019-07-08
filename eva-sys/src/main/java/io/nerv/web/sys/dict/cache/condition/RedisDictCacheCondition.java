@@ -13,8 +13,8 @@ public class RedisDictCacheCondition implements Condition {
 
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        String impl = context.getEnvironment().getProperty("cache.impl");
+        String impl = context.getEnvironment().getProperty("cache.type");
 
-        return cacheStr.equals(impl);
+        return cacheStr.equalsIgnoreCase(impl);
     }
 }
