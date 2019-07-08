@@ -1,4 +1,4 @@
-package io.nerv.core.helper;
+package io.nerv.core.util;
 
 import java.util.Random;
 

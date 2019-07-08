@@ -5,17 +5,6 @@ date: 2018-09-10 15:45:37
 tags: ['Spring Boot','Gradle','Spring','Java']
 categories: ['Spring Boot']
 ---
-
-# 引言
-
-　　最近换了号称最快的`HikariDataSource`，由于没有了`SQL`监控，加之于`Mybaits`默认输出日志之拙计。遂用此物，与之相仿还有`log4jdbc`，比较活跃度后选择了`P6Spy`。
-
-# 版本
-
-- P6Sspy: 3.7
-- Gradle: 4.10
-- Spring Boot: 2.0.4
-
 # 步骤
 
 　　具体步骤比较简单，这里说下简单原理。`P6Spy`通过劫持`JDBC`驱动，在调用实际`JDBC`驱动前拦截调用的目标语，达到`SQL`语句日志记录的目的。
