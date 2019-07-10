@@ -25,7 +25,7 @@ ext {
 allprojects {
     apply plugin: "name.remal.check-dependency-updates"
     group = 'io.nerv'
-    version = '1.2.3'
+    version = '1.2.4'
 }
 
 subprojects {
