@@ -438,7 +438,7 @@ public class RedisUtil {
     /**
      * 获取两个集合的差集
      * @param key
-     * @param key2
+     * @param otherkey
      * @return
      */
     public Set<Object> difference(String key ,String otherkey){
@@ -579,7 +579,7 @@ public class RedisUtil {
     /**
      * 返回 key 和 otherKeys 的并集
      * @param key
-     * @param otherKey key 的集合
+     * @param otherKeys key 的集合
      * @return
      */
     public Set<Object> unionSet(String key,Collection<Object> otherKeys){
