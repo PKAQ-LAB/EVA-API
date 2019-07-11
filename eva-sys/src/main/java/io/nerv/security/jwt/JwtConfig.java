@@ -3,6 +3,8 @@ package io.nerv.security.jwt;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.List;
+
 /**
  * jwt配置
  * @author: S.PKAQ
@@ -33,6 +35,9 @@ public class JwtConfig {
 
     /** 续期时间 **/
     private long threshold = 60 * 60 * 24 * 1000;
+
+    /** 可信任域 **/
+    private List<String> creditUrl;
 
     public void setSign(String sign){
         this.sign = sign;
