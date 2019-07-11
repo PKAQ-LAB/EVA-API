@@ -444,8 +444,7 @@ public class RedisUtil {
     public Set<Object> difference(String key ,String otherkey){
         return redisTemplate.opsForSet().difference(key, otherkey);
     }
-    
-    
+
     /**
      * 获取 key 和 集合  collections 中的 key 集合的差集
      * @param key

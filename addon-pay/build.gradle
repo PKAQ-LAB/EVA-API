@@ -13,8 +13,8 @@ bootJar {
 }
 
 ext{
-    alipay = "3.7.26.ALL"
-    zxing = "3.3.3"
+    alipay = "3.7.110.ALL"
+    zxing = "3.4.3"
 }
 
 dependencies {

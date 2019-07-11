@@ -1,5 +1,5 @@
 plugins {
-   id "name.remal.check-dependency-updates" version "1.0.145"
+   id "name.remal.check-dependency-updates" version "1.0.147"
    id "com.jfrog.bintray" version "1.8.4"
 }
 
