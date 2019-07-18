@@ -39,7 +39,6 @@ public class JwtConfig {
     /** 可信任域 **/
     private List<String> creditUrl;
 
-    public void setSign(String sign){
-        this.sign = sign;
-    }
+    /** cookie 配置 **/
+    private CookieProperties cookie;
 }

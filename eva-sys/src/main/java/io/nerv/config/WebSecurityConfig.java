@@ -43,6 +43,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private String activeProfile;
 
     @Autowired
+    private JwtConfig jwtConfig;
+
+    @Autowired
     private UnauthorizedHandler unauthorizedHandler;
 
     @Autowired
@@ -83,17 +86,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(this.jwtConfig().getCreditUrl());
+        configuration.setAllowedOrigins(this.jwtConfig.getCreditUrl());
         configuration.setAllowCredentials(true);
         configuration.setAllowedMethods(Arrays.asList("PUT", "DELETE", "GET", "POST", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setMaxAge(1800l);
         configuration.setExposedHeaders(Arrays.asList("Access-Control-Allow-Headers",
                                                       "Access-Control-Allow-Methods",
                                                       "Access-Control-Expose-Headers",
                                                       "Access-Control-Allow-Origin",
                                                       "Access-Control-Max-Age",
                                                       "authorization",
-                                                      "Auth_Token",
+                                                      "auth_token",
                                                       "xsrf-token",
                                                       "content-type",
                                                       "X-Frame-Options",

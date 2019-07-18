@@ -1,12 +1,14 @@
 package io.nerv.security.filter;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.servlet.ServletUtil;
+import io.nerv.core.constant.TokenConst;
+import io.nerv.core.enums.HttpCodeEnum;
 import io.nerv.exception.OathException;
 import io.nerv.security.jwt.JwtConfig;
 import io.nerv.security.jwt.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,9 +30,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Qualifier("jwtUserDetailsServiceImpl")
     private UserDetailsService userDetailsService;
 
-    @Value("${spring.profiles.active}")
-    private String activeProfile;
-
     @Autowired
     private JwtUtil jwtUtil;
 
@@ -43,27 +42,31 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain chain) throws ServletException, IOException {
 
-        boolean isvalid = false;
+        var isvalid = false;
+
         String authToken = "";
+        System.out.println(request.getRequestURL());
+        if(null != ServletUtil.getCookie(request, TokenConst.TOKEN_KEY)){
+            authToken = ServletUtil.getCookie(request, TokenConst.TOKEN_KEY).getValue();
+        }
 
-        String authHeader = request.getHeader(jwtConfig.getHeader());
-        if (StrUtil.isNotBlank(authHeader) && authHeader.startsWith(jwtConfig.getTokenHead())) {
-            // The part after "Bearer "
-            authToken = authHeader.substring(jwtConfig.getTokenHead().length());
-            logger.debug(" ------------------ > Auth token is : " + authHeader);
-
+        if (StrUtil.isNotBlank(authToken)) {
             /**
              * token即将过期 刷新
              */
             try {
                 isvalid = jwtUtil.valid(authToken);
                 if (jwtUtil.isTokenExpiring(authToken)){
-                    response.setHeader("Auth_Token",jwtUtil.refreshToken(authToken));
+                    ServletUtil.addCookie(response, TokenConst.TOKEN_KEY,
+                                                    jwtUtil.refreshToken(authToken),
+                                                    jwtConfig.getCookie().getMaxAge(),
+                                                "/",
+                                            jwtConfig.getCookie().getDomain());
                 }
             } catch (OathException e) {
                 logger.warn("鉴权失败 Token已过期");
-                //response.sendError(JwtErrorCode.TOKEN_EXPIRED, "您的登录已过期, 请重新登录.");
-                //return;
+                response.sendError(HttpCodeEnum.ROLE_ERROR.getIndex(), "您的登录已过期, 请重新登录.");
+                return;
             }
         } else {
             logger.warn("couldn't find bearer string, will ignore the header");

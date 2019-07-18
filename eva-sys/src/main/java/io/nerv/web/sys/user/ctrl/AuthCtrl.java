@@ -1,5 +1,7 @@
 package io.nerv.web.sys.user.ctrl;
 
+import cn.hutool.extra.servlet.ServletUtil;
+import io.nerv.core.constant.TokenConst;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.util.I18NHelper;
 import io.nerv.exception.OathException;
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,14 +34,21 @@ import java.util.Map;
 public class AuthCtrl {
     @Autowired
     private UserService userService;
+
     @Autowired
     protected I18NHelper i18NHelper;
+
     @Autowired
     private JwtConfig jwtConfig;
+
     @Autowired
     private JwtUtil jwtUtil;
+
     @Autowired
     private SecurityUtil securityHelper;
+
+    @Autowired
+    private HttpServletResponse response;
 
     @Value("${spring.profiles.active}")
     private String activeProfile;
@@ -51,9 +61,15 @@ public class AuthCtrl {
         // 签发token
         String token = jwtUtil.build(jwtConfig.getTtl(), user.getAccount());
 
-        Map<String, Object> map = new HashMap<>(2);
+        ServletUtil.addCookie(response,
+                              TokenConst.TOKEN_KEY,
+                              token,
+                              jwtConfig.getCookie().getMaxAge(),
+                             "/",
+                              jwtConfig.getCookie().getDomain());
+
+        Map<String, Object> map = new HashMap<>(1);
         map.put("user", user);
-        map.put("token", token);
        return new Response().success(map, "登录成功");
     }
 
