@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
 
 /**
  * JWT鉴权
@@ -98,6 +97,20 @@ public class AuthCtrl {
                                  @RequestBody UserEntity user){
         // 获取用户jwt
         // 清空redis中的jwt 刷新用户secret
+        ServletUtil.addCookie(response,
+                TokenConst.TOKEN_KEY,
+                null,
+                0,
+                "/",
+                jwtConfig.getCookie().getDomain());
+
+
+        ServletUtil.addCookie(response,
+                TokenConst.USER_KEY,
+                null,
+                0,
+                "/",
+                jwtConfig.getCookie().getDomain());
         return new Response().success();
     }
 }
