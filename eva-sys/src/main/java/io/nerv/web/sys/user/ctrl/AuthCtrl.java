@@ -1,6 +1,8 @@
 package io.nerv.web.sys.user.ctrl;
 
+import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.extra.servlet.ServletUtil;
+import com.alibaba.fastjson.JSON;
 import io.nerv.core.constant.TokenConst;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.util.I18NHelper;
@@ -19,8 +21,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 
 /**
  * JWT鉴权
@@ -56,7 +59,7 @@ public class AuthCtrl {
     @PostMapping("/login")
     @ApiOperation(value = "用户登录", response = Response.class)
     public Response login(@ApiParam(name = "{user}", value = "用户对象")
-                          @RequestBody UserEntity user) throws OathException {
+                          @RequestBody UserEntity user) throws OathException, UnsupportedEncodingException {
         user =this.userService.validate(user);
         // 签发token
         String token = jwtUtil.build(jwtConfig.getTtl(), user.getAccount());
@@ -68,11 +71,16 @@ public class AuthCtrl {
                              "/",
                               jwtConfig.getCookie().getDomain());
 
-        Map<String, Object> map = new HashMap<>(1);
-        map.put("user", user);
-       return new Response().success(map, "登录成功");
-    }
 
+        ServletUtil.addCookie(response,
+                TokenConst.USER_KEY,
+                URLEncoder.encode(JSON.toJSONString(user), CharsetUtil.UTF_8),
+                jwtConfig.getCookie().getMaxAge(),
+                "/",
+                jwtConfig.getCookie().getDomain());
+
+       return new Response().success( "登录成功");
+    }
 
     @GetMapping("/fetch")
     @ApiOperation(value = "获取当前登录用户的信息(菜单.权限.消息)",response = Response.class)
@@ -83,6 +91,7 @@ public class AuthCtrl {
 
         return new Response().success(this.userService.fetch(account));
     }
+
     @PostMapping("/logout")
     @ApiOperation(value = "用户退出", response = Response.class)
     public Response logout(@ApiParam(name = "{user}", value = "用户对象")

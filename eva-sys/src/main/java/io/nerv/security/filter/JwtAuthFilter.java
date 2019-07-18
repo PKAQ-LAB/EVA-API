@@ -44,8 +44,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         var isvalid = false;
 
-        String authToken = "";
-        System.out.println(request.getRequestURL());
+        var authToken = this.getToken(request);
+
         if(null != ServletUtil.getCookie(request, TokenConst.TOKEN_KEY)){
             authToken = ServletUtil.getCookie(request, TokenConst.TOKEN_KEY).getValue();
         }
@@ -57,11 +57,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             try {
                 isvalid = jwtUtil.valid(authToken);
                 if (jwtUtil.isTokenExpiring(authToken)){
+                    // reponse请求头返回刷新后的token
+                    response.setHeader(TokenConst.TOKEN_KEY,jwtUtil.refreshToken(authToken));
+                    // 后台设置前台cookie值
                     ServletUtil.addCookie(response, TokenConst.TOKEN_KEY,
                                                     jwtUtil.refreshToken(authToken),
                                                     jwtConfig.getCookie().getMaxAge(),
                                                 "/",
-                                            jwtConfig.getCookie().getDomain());
+                                                    jwtConfig.getCookie().getDomain());
                 }
             } catch (OathException e) {
                 logger.warn("鉴权失败 Token已过期");
@@ -101,5 +104,24 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             }
         }
         chain.doFilter(request, response);
+    }
+
+    /**
+     * 获取基线代码
+     * @param request
+     * @return
+     */
+    private String getToken(HttpServletRequest request){
+        String authToken = null;
+
+        var authHeader = request.getHeader(jwtConfig.getHeader());
+
+        if(null != ServletUtil.getCookie(request, TokenConst.TOKEN_KEY)){
+            authToken = ServletUtil.getCookie(request, TokenConst.TOKEN_KEY).getValue();
+        } else  if (StrUtil.isNotBlank(authHeader) && authHeader.startsWith(jwtConfig.getTokenHead())) {
+            authToken = authHeader.substring(jwtConfig.getTokenHead().length());
+        }
+
+        return authToken;
     }
 }
