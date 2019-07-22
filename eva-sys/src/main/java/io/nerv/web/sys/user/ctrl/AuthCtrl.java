@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * JWT鉴权
@@ -78,7 +80,11 @@ public class AuthCtrl {
                 "/",
                 jwtConfig.getCookie().getDomain());
 
-       return new Response().success( "登录成功");
+        Map<String, Object> map = new HashMap<>(2);
+        map.put("user", user);
+        map.put("token", token);
+
+       return new Response().success( map, "登录成功");
     }
 
     @GetMapping("/fetch")
