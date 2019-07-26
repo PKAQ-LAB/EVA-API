@@ -47,21 +47,21 @@ public abstract class StdBaseCtrl<T extends StdBaseService, E extends StdBaseEnt
     public Response save(@ApiParam(name ="formdata", value = "模型对象")
                          @RequestBody E entity){
         this.service.merge(entity);
-        return success(entity.getId());
+        return success(entity.getId(), ResponseEnumm.SAVE_SUCCESS.getName());
     }
 
     @GetMapping("list")
     @ApiOperation(value = "列表查询",response = Response.class)
     public Response list(@ApiParam(name ="condition", value = "模型对象")
                                  E entity, Integer pageNo){
-        return this.success(this.service.listPage(entity, pageNo), ResponseEnumm.NULL_MSG.getName());
+        return this.success(this.service.listPage(entity, pageNo));
     }
 
     @GetMapping("/get/{id}")
     @ApiOperation(value = "根据ID获得记录信息", response = Response.class)
     public Response get(@ApiParam(name = "id", value = "记录ID")
                             @PathVariable("id") String id){
-        return this.success(this.service.getById(id), ResponseEnumm.NULL_MSG.getName());
+        return this.success(this.service.getById(id));
     }
     /**
      * 根据编码获取国际化字符串

@@ -3,6 +3,7 @@ package io.nerv.core.mvc.ctrl;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import io.nerv.core.enums.HttpCodeEnum;
+import io.nerv.core.enums.ResponseEnumm;
 import io.nerv.core.exception.ParamException;
 import io.nerv.core.mvc.service.ActiveBaseService;
 import io.nerv.core.mvc.util.Response;
@@ -38,7 +39,7 @@ public abstract class ActiveBaseCtrl<T extends ActiveBaseService, E extends Mode
             throw new ParamException(locale("param_id_notnull"));
         }
         this.service.delete(ids.getParam());
-        return success(this.service.listPage(null, 1));
+        return success(this.service.listPage(null, 1), ResponseEnumm.DELETE_SUCCESS.getName());
     }
 
     @PostMapping("edit")
@@ -46,7 +47,7 @@ public abstract class ActiveBaseCtrl<T extends ActiveBaseService, E extends Mode
     public Response save(@ApiParam(name ="formdata", value = "模型对象")
                          @RequestBody E entity){
         this.service.merge(entity);
-        return success(entity);
+        return success(entity, ResponseEnumm.SAVE_SUCCESS.getName());
     }
 
     @GetMapping("list")
@@ -84,6 +85,14 @@ public abstract class ActiveBaseCtrl<T extends ActiveBaseService, E extends Mode
      */
     protected Response success(Object data){
         return new Response().success(data);
+    }
+    /**
+     * 返回成功结果
+     * @param data
+     * @return
+     */
+    protected Response success(Object data, String msg){
+        return new Response().success(data, msg);
     }
     /**
      * 返回失败结果

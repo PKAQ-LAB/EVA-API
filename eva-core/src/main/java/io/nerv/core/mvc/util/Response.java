@@ -48,7 +48,6 @@ public class Response{
     public Response success(Object data) {
         this.data = data;
         this.success = true;
-        this.message = ResponseEnumm.OPERATE_SUCCESS.getName();
         this.status = HttpCodeEnum.QUERY_SUCCESS.getIndex();
 
         return this;
