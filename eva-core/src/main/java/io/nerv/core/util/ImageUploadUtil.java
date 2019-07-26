@@ -82,7 +82,7 @@ public class ImageUploadUtil {
             File sourceFile = new File(tempPath, filename);
             File distFile = new File(imageConfig.getStoragePath(), filename);
 
-            FileUtil.copy(sourceFile, distFile, true);
+            FileUtil.move(sourceFile, distFile, true);
         }
     }
 }
