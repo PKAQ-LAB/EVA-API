@@ -82,7 +82,9 @@ public abstract class StdBaseService<M extends BaseMapper<T>, T extends StdBaseE
      * @return 返回结果
      */
     protected List<T> list(T entity){
-        Wrapper<T> wrapper = new QueryWrapper<>(entity);
+        QueryWrapper<T> wrapper = new QueryWrapper<>(entity);
+        wrapper.orderByDesc("gmt_Modify","desc");
+
         return this.mapper.selectList(wrapper);
     }
     /**
@@ -93,7 +95,9 @@ public abstract class StdBaseService<M extends BaseMapper<T>, T extends StdBaseE
      * @return          分页模型类
      */
     protected IPage<T> listPage(T entity, Integer page, Integer size) {
-        Wrapper<T> wrapper = new QueryWrapper<>(entity);
+        QueryWrapper<T> wrapper = new QueryWrapper<>(entity);
+        wrapper.orderByDesc("gmt_Modify","desc");
+
         Page pagination = new Page();
         pagination.setCurrent(page);
         pagination.setSize(size);
@@ -110,7 +114,8 @@ public abstract class StdBaseService<M extends BaseMapper<T>, T extends StdBaseE
     public IPage<T> listPage(T entity, Integer page) {
         page = null != page ? page : 1;
         // 查询条件
-        Wrapper<T> wrapper = new QueryWrapper<>(entity);
+        QueryWrapper<T> wrapper = new QueryWrapper<>(entity);
+        wrapper.orderByDesc("gmt_Modify","desc");
         // 分页条件
         Page pagination = new Page();
         pagination.setCurrent(page);
