@@ -49,7 +49,7 @@ public class AuthCtrl {
     private JwtUtil jwtUtil;
 
     @Autowired
-    private SecurityUtil securityHelper;
+    private SecurityUtil securityUtil;
 
     @Autowired
     private HttpServletResponse response;
@@ -92,7 +92,7 @@ public class AuthCtrl {
     public Response fetch() throws OathException {
         log.info("[auth/fetch ] - Current active profile is : " + activeProfile);
         // 开发环境不鉴权直接取admin菜单
-        final String account = securityHelper.getJwtUserId();
+        final String account = securityUtil.getJwtUserId();
 
         return new Response().success(this.userService.fetch(account));
     }

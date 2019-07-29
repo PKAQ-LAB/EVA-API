@@ -66,3 +66,5 @@ upload:
   tempPath: E://temp/11
   storagePath: E://temp/22
   allowSuffixName: jpg,png
+security:
+  permit: /auth/login, /auth/logout

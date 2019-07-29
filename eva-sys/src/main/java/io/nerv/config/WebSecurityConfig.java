@@ -42,6 +42,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${spring.profiles.active}")
     private String activeProfile;
 
+    @Value("${security.permit}")
+    private String[] permit;
+
     @Autowired
     private JwtConfig jwtConfig;
 
@@ -125,9 +128,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
             .authorizeRequests()
             // 对于获取token的rest api要允许匿名访问
-            .antMatchers("/auth/login","/auth/logout").permitAll()
+            .antMatchers(permit).permitAll()
             // 除上面外的所有请求全部需要鉴权认证
-            // FIXME 此处配置会导致@PermitAll @DenyAll注解无效
             .anyRequest().authenticated();
 
             httpSecurity.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
