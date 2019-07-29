@@ -83,7 +83,7 @@ public abstract class StdBaseService<M extends BaseMapper<T>, T extends StdBaseE
      */
     protected List<T> list(T entity){
         QueryWrapper<T> wrapper = new QueryWrapper<>(entity);
-        wrapper.orderByDesc("gmt_Modify","desc");
+        wrapper.orderByDesc("gmt_Modify");
 
         return this.mapper.selectList(wrapper);
     }
@@ -96,7 +96,7 @@ public abstract class StdBaseService<M extends BaseMapper<T>, T extends StdBaseE
      */
     protected IPage<T> listPage(T entity, Integer page, Integer size) {
         QueryWrapper<T> wrapper = new QueryWrapper<>(entity);
-        wrapper.orderByDesc("gmt_Modify","desc");
+        wrapper.orderByDesc("gmt_Modify");
 
         Page pagination = new Page();
         pagination.setCurrent(page);
@@ -115,7 +115,7 @@ public abstract class StdBaseService<M extends BaseMapper<T>, T extends StdBaseE
         page = null != page ? page : 1;
         // 查询条件
         QueryWrapper<T> wrapper = new QueryWrapper<>(entity);
-        wrapper.orderByDesc("gmt_Modify","desc");
+        wrapper.orderByDesc("gmt_Modify");
         // 分页条件
         Page pagination = new Page();
         pagination.setCurrent(page);

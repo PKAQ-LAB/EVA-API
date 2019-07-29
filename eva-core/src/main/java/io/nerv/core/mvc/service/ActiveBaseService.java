@@ -64,7 +64,7 @@ public abstract class ActiveBaseService<M extends BaseMapper<T>, T extends Model
      */
     protected List<T> list(T entity){
         QueryWrapper<T> wrapper = new QueryWrapper<>(entity);
-        wrapper.orderByDesc("gmt_Modify","desc");
+        wrapper.orderByDesc("gmt_Modify");
 
         return entity.selectList(wrapper);
     }
@@ -78,7 +78,7 @@ public abstract class ActiveBaseService<M extends BaseMapper<T>, T extends Model
     protected IPage<T> listPage(T entity, Integer page, Integer size) {
 
         QueryWrapper<T> wrapper = new QueryWrapper<>(entity);
-        wrapper.orderByDesc("gmt_Modify","desc");
+        wrapper.orderByDesc("gmt_Modify");
 
         Page pagination = new Page();
         pagination.setCurrent(page);
@@ -98,7 +98,7 @@ public abstract class ActiveBaseService<M extends BaseMapper<T>, T extends Model
         page = null != page ? page : 1;
         // 查询条件
         QueryWrapper<T> wrapper = new QueryWrapper<>(entity);
-        wrapper.orderByDesc("gmt_Modify","desc");
+        wrapper.orderByDesc("gmt_Modify");
 
         // 分页条件
         Page pagination = new Page();
