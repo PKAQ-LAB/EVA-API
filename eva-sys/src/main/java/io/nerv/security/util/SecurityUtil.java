@@ -26,7 +26,6 @@ public class SecurityUtil {
                 .map(GrantedAuthority::getAuthority)
                 .anyMatch(str -> str.equals("ROLE_ADMIN"));
     }
-
     /**
      * 获取当前用户的权限数组
      * @return

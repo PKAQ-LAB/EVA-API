@@ -21,14 +21,25 @@ public class JwtUser implements UserDetails {
     /**密码**/
     @JSONField(serialize = false)
     private final String password;
+    /**部门id**/
+    private String deptId;
+    /**部门名称**/
+    private String deptName;
+    /**用户姓名**/
+    private String name;
+    /**用户昵称**/
+    private String nickName;
     /**权限集合**/
     private final Collection<? extends GrantedAuthority> authorities;
 
-
-    JwtUser(String id, String account, String password, Collection<? extends GrantedAuthority> authorities) {
+    public JwtUser(String id, String account, String password, String deptId, String deptName, String name, String nickName, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.account = account;
         this.password = password;
+        this.deptId = deptId;
+        this.deptName = deptName;
+        this.name = name;
+        this.nickName = nickName;
         this.authorities = authorities;
     }
 
