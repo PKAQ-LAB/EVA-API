@@ -7,5 +7,5 @@ package io.nerv.core.constant;
  */
 public interface TokenConst {
     final static String TOKEN_KEY = "auth_token";
-    final static String USER_KEY = "user_token";
+    final static String USER_KEY = "user_info";
 }
