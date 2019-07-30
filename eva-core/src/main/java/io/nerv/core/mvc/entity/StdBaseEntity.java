@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -28,6 +29,7 @@ public abstract class StdBaseEntity implements Entity, Serializable {
 
     @ApiModelProperty("创建时间")
     @TableField(fill = FieldFill.INSERT)
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date gmtCreate;
 
     @ApiModelProperty("修改人")
@@ -36,6 +38,7 @@ public abstract class StdBaseEntity implements Entity, Serializable {
 
     @ApiModelProperty("修改时间")
     @TableField(fill = FieldFill.INSERT_UPDATE)
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date gmtModify;
 
     @ApiModelProperty("备注")
