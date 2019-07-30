@@ -1,5 +1,7 @@
 package io.nerv.config;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
 import io.nerv.security.entrypoint.UnauthorizedHandler;
 import io.nerv.security.filter.JwtAuthFilter;
 import io.nerv.security.filter.RestAccessDeniedHandler;
@@ -89,7 +91,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(this.jwtConfig.getCreditUrl());
+        configuration.setAllowedOrigins(CollUtil.isEmpty(jwtConfig.getCreditUrl())?Arrays.asList("*"): jwtConfig.getCreditUrl());
         configuration.setAllowCredentials(true);
         configuration.setAllowedMethods(Arrays.asList("PUT", "DELETE", "GET", "POST", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));

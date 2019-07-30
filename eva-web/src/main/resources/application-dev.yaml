@@ -32,8 +32,5 @@ cache:
   type: redis
   cache-names: sys
 jwt:
-  creditUrl:
-    - "http://localhost:8000"
   cookie:
     maxAge: 3600
-    domain: localhost
