@@ -78,7 +78,7 @@ public class ModuleCtrl extends PureBaseCtrl<ModuleService> {
     public Response sortModule(@ApiParam(name = "module", value = "{id,orders}")
                                @RequestBody ModuleEntity[] switchObj){
         this.service.sortModule(switchObj);
-        return success(this.service.listModuleByAttr(null));
+        return success(this.service.listModule(null));
     }
 
     @PostMapping("/switchStatus")
