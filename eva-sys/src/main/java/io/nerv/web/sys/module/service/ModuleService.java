@@ -63,7 +63,8 @@ public class ModuleService extends StdBaseService<ModuleMapper, ModuleEntity> {
     public Response editModule(ModuleEntity module){
         Response response=new Response();
         String moduleId = module.getId();
-        ModuleEntity oldModule=this.mapper.selectById(moduleId);
+
+        ModuleEntity originModule = this.getById(moduleId);
 
         // 获取上级节点
         String pid = module.getParentId();
@@ -80,6 +81,7 @@ public class ModuleService extends StdBaseService<ModuleMapper, ModuleEntity> {
             disableChild(module);
         }else{
             //新增设置orders为同级模块中最大的orders+1
+            module.setIsleaf(true);
             module.setOrders(this.mapper.listOrder(pid)+1);
         }
 
@@ -93,61 +95,71 @@ public class ModuleService extends StdBaseService<ModuleMapper, ModuleEntity> {
             String pathName = StrUtil.format("{}/{}", parentModule.getName(), module.getName()); //pathName
 
             String oldFatherPath = null;
-            if(moduleId != null ){
-                if(oldModule != null){
-                    //得到原来父节点的path路径
-                    if(StrUtil.isNotBlank(oldModule.getParentId())){
-                       ModuleEntity oldParent= this.mapper.selectById(oldModule.getParentId());
-                       oldFatherPath=oldParent != null ? oldParent.getPath() : null;
-                    }
-                }
+
+            if(moduleId != null && originModule != null && StrUtil.isNotBlank(originModule.getParentId())){
+                //得到原来父节点的path路径
+               ModuleEntity oldParent= this.mapper.selectById(originModule.getParentId());
+               oldFatherPath=oldParent != null ? oldParent.getPath() : null;
             }
+
             module.setPath(TreeHelper.assemblePath(parentModule.getPath(), module.getPath(),oldFatherPath));
-
-
             module.setPathName(pathName);
             module.setParentName(parentModule.getName());
 
-        } else {
-            //  当前编辑节点为根节点
-            // 父节点为空, 根节点 设置为非叶子
-            module.setIsleaf(false);
-            //父节点为空，则pathid为空
-            module.setPathId(null);
-            module.setParentName(module.getName());
         }
 
-        // 检查原父节点是否还存在子节点 不存在设置leaf为false
-        ModuleEntity moduleinNode = this.mapper.getParentById(moduleId);
+        // 判断是否更换了父节点
 
         // 如果更换了父节点 重新确定原父节点的 leaf属性，以及所修改节点的orders属性
-        if(null != moduleinNode
-                && null != pid
-                && !pid.equals(moduleinNode.getParentId())){
-            int brothers = this.mapper.countPrantLeaf(moduleId) - 1;
-            if(brothers < 1){
-                moduleinNode.setIsleaf(true);
-                this.updateModule(moduleinNode);
+        if(this.parentChanged(originModule.getParentId(), pid)){
+            // 更新原节点
+            // 检查原父节点是否还存在子节点 来重新确定原始父节点得isleaf属性
+            // 由于数据还未提交 节点仍然挂载在原始节点上 所以这里要 -1
+            int originParentChilds = this.mapper.countPrantLeaf(originModule.getParentId())-1 ;
+            if(originParentChilds < 1){
+                ModuleEntity originParentModule = new ModuleEntity();
+                originParentModule.setIsleaf(true);
+                originParentModule.setId(originModule.getParentId());
+                this.mapper.updateById(originParentModule);
             }
+            // 更新新节点 isleaf属性
+            int newParentChilds = this.mapper.countPrantLeaf(pid) ;
+            ModuleEntity newParentModule = new ModuleEntity();
+            newParentModule.setIsleaf(false);
+            newParentModule.setId(pid);
+            this.mapper.updateById(newParentModule);
+            // 重新设置节点顺序
+            module.setOrders(newParentChilds+1);
 
         }
         // 持久化
         this.merge(module);
 
         // 刷新所有子节点的 path parent_name path_name 当修改状态的时候不用刷新子节点信息
-        if(StrUtil.isNotBlank(module.getName())) {
-            this.refreshChild(module, oldModule);
-        }
+        this.refreshChild(module, originModule);
+
         return response.success(this.listModule(null));
+    }
+
+    /**
+     * 判断是否更换了父节点
+     * @param originPId 原始父节点id
+     * @param newPid 新的父节点Id
+     * @return
+     */
+    private boolean parentChanged(String originPId, String newPid){
+        originPId = StrUtil.isBlank(originPId)? "0" : originPId;
+        newPid = StrUtil.isBlank(newPid)? "0" : newPid;
+        return !originPId.equals(newPid);
     }
 
     // 父节点信息有修改 刷新子节点相关数据
     public void refreshChild(ModuleEntity module,ModuleEntity oldModule){
-        // 刷新子节点名称
-        this.mapper.updateChildParentName(module.getName(), module.getId());
-        // TODO 刷新所有子节点的 path_name 和 path path_id
-        // 不同父级路由的节点散落在同一个路由下修改会导致字节点路由被错误的更改
-        //this.mapper.updateChildPathInfo(module,oldModule);
+        // 刷新子节点所有名称
+        this.mapper.updateChildParentName(
+                module.getPathName(), oldModule.getPathName(),
+                module.getPathId(), oldModule.getPathId(),
+                module.getName(), module.getId());
     }
     /**
      * 根据ID更新

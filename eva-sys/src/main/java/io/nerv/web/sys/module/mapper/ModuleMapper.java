@@ -80,11 +80,9 @@ public interface ModuleMapper extends BaseMapper<ModuleEntity> {
     /**
      * 刷新子节点名称
      */
-    void updateChildParentName(@Param("name") String name, @Param("id") String id);
+    void updateChildParentName(@Param("newPathName") String newPathName, @Param("oldPathName") String oldPathName,
+                               @Param("newPathId") String newPathId, @Param("oldPathId") String oldPathId,
+                               @Param("name") String name, @Param("id") String id);
 
-    /**
-     *     刷新子节点的path_name  和 path
-     */
-    void updateChildPathInfo(@Param("newModule") ModuleEntity newModule, @Param("oldModule") ModuleEntity oldModule);
 
 }
