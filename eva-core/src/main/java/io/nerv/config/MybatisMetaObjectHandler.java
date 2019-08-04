@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -17,13 +18,14 @@ public class MybatisMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {
         log.debug("start insert fill ....");
-        this.setInsertFieldValByName("gmtCreate", new Date(), metaObject);
-        this.setInsertFieldValByName("gmtModify", new Date(), metaObject);
+
+        this.setInsertFieldValByName("gmtCreate", LocalDateTime.now(), metaObject);
+        this.setInsertFieldValByName("gmtModify", LocalDateTime.now(), metaObject);
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
         log.debug("start update fill ....");
-        this.setInsertFieldValByName("gmtModify", new Date(), metaObject);
+        this.setInsertFieldValByName("gmtModify", LocalDateTime.now(), metaObject);
     }
 }

@@ -6,12 +6,10 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * 实体类基类，用于存放公共属性
@@ -30,7 +28,7 @@ public abstract class StdBaseEntity implements Entity, Serializable {
     @ApiModelProperty("创建时间")
     @TableField(fill = FieldFill.INSERT)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date gmtCreate;
+    private LocalDateTime gmtCreate;
 
     @ApiModelProperty("修改人")
     @TableField(fill = FieldFill.INSERT_UPDATE)
@@ -39,7 +37,7 @@ public abstract class StdBaseEntity implements Entity, Serializable {
     @ApiModelProperty("修改时间")
     @TableField(fill = FieldFill.INSERT_UPDATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date gmtModify;
+    private LocalDateTime gmtModify;
 
     @ApiModelProperty("备注")
     private String remark;

@@ -33,7 +33,7 @@ public class BaseTreeEntity extends StdBaseEntity {
     private String pathName;
 
     @ApiModelProperty("是否叶子")
-    private boolean isleaf;
+    private Boolean isleaf;
 
     @TableField(exist = false)
     @ApiModelProperty("子节点")
@@ -45,7 +45,7 @@ public class BaseTreeEntity extends StdBaseEntity {
 
     @ApiModelProperty("exact")
     @TableField(exist = false)
-    private boolean exact;
+    private Boolean exact;
 
     @TableField(exist = false)
     @ApiModelProperty("国际化面包屑")
@@ -59,7 +59,7 @@ public class BaseTreeEntity extends StdBaseEntity {
         return this.getId();
     }
 
-    public boolean getExact(){
+    public Boolean getExact(){
         return this.isleaf;
     }
 
