@@ -77,6 +77,9 @@ public abstract class ActiveBaseService<M extends BaseMapper<T>, T extends Model
      */
     protected IPage<T> listPage(T entity, Integer page, Integer size) {
 
+        page = null != page ? page : 1;
+        size = null != size ? size : 10;
+
         QueryWrapper<T> wrapper = new QueryWrapper<>(entity);
         wrapper.orderByDesc("gmt_Modify");
 

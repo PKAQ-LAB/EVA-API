@@ -95,6 +95,9 @@ public abstract class StdBaseService<M extends BaseMapper<T>, T extends StdBaseE
      * @return          分页模型类
      */
     protected IPage<T> listPage(T entity, Integer page, Integer size) {
+        page = null != page ? page : 1;
+        size = null != size ? size : 10;
+
         QueryWrapper<T> wrapper = new QueryWrapper<>(entity);
         wrapper.orderByDesc("gmt_Modify");
 
