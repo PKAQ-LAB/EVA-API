@@ -53,8 +53,8 @@ public abstract class StdBaseCtrl<T extends StdBaseService, E extends StdBaseEnt
     @GetMapping("list")
     @ApiOperation(value = "列表查询",response = Response.class)
     public Response list(@ApiParam(name ="condition", value = "模型对象")
-                                 E entity, Integer pageNo){
-        return this.success(this.service.listPage(entity, pageNo));
+                                 E entity, Integer pageNo, Integer pageSize){
+        return this.success(this.service.listPage(entity, pageNo, pageSize));
     }
 
     @GetMapping("/get/{id}")

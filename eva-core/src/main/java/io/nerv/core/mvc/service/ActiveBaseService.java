@@ -75,7 +75,7 @@ public abstract class ActiveBaseService<M extends BaseMapper<T>, T extends Model
      * @param size      分页条数
      * @return          分页模型类
      */
-    protected IPage<T> listPage(T entity, Integer page, Integer size) {
+    public IPage<T> listPage(T entity, Integer page, Integer size) {
 
         page = null != page ? page : 1;
         size = null != size ? size : 10;
