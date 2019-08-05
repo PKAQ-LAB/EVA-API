@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author: S.PKAQ
  * @Datetime: 2018/4/4 8:00
  */
-@Api( description = "采购入库单")
+@Api( tags = "采购入库单")
 @RestController
 @RequestMapping("instock")
 public class PurchasingOrderCtrl extends PureBaseCtrl<PurchasingService> {
