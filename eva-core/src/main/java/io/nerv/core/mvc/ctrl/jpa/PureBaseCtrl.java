@@ -1,7 +1,7 @@
-package io.nerv.core.mvc.ctrl;
+package io.nerv.core.mvc.ctrl.jpa;
 
 import io.nerv.core.enums.HttpCodeEnum;
-import io.nerv.core.mvc.service.StdBaseService;
+import io.nerv.core.mvc.service.jpa.StdBaseService;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.util.I18NHelper;
 import lombok.Getter;

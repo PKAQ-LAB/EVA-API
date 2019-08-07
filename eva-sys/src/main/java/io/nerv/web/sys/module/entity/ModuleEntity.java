@@ -3,7 +3,7 @@ package io.nerv.web.sys.module.entity;
 import com.baomidou.mybatisplus.annotation.SqlCondition;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.nerv.core.mvc.entity.tree.BaseTreeEntity;
+import io.nerv.core.mvc.entity.mybatis.BaseTreeEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

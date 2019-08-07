@@ -1,13 +1,13 @@
 package io.nerv.core.bizlog.supporter.mybatis;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.nerv.core.bizlog.base.BizLogEntity;
 import io.nerv.core.bizlog.base.BizLogSupporter;
 import io.nerv.core.bizlog.condition.MybatisSupporterCondition;
 import io.nerv.core.bizlog.supporter.mybatis.entity.MybatisBizLogEntity;
 import io.nerv.core.bizlog.supporter.mybatis.mapper.MybatisSupporterMapper;
-import io.nerv.core.util.UUIDHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Conditional;
@@ -41,7 +41,7 @@ public class MybatisSupporter implements BizLogSupporter {
     @Override
     public void save(BizLogEntity bizLogEntity) {
         MybatisBizLogEntity mybatisBizLogEntity = new MybatisBizLogEntity();
-        mybatisBizLogEntity.setId(UUIDHelper.id());
+        mybatisBizLogEntity.setId(IdUtil.fastSimpleUUID());
         mybatisBizLogEntity.setDescription(bizLogEntity.getDescription());
         mybatisBizLogEntity.setOperateType(bizLogEntity.getOperateType());
         mybatisBizLogEntity.setOperator(bizLogEntity.getOperator());

@@ -1,4 +1,4 @@
-package io.nerv.core.mvc.entity;
+package io.nerv.core.mvc.entity.mybatis;
 
 /**
  * @author: S.PKAQ

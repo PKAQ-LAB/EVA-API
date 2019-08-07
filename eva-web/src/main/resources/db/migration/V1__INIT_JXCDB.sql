@@ -107,7 +107,7 @@ CREATE TABLE JXC_CASHJOURNAL
 /*==============================================================*/
 CREATE TABLE JXC_PORDER_LINE
 (
-   ID                   VARCHAR(40) NOT NULL COMMENT 'ID',
+   LINE_ID              VARCHAR(40) NOT NULL COMMENT 'LINE_ID',
    MAIN_ID              VARCHAR(40),
    GOODS_ID             VARCHAR(60) COMMENT '商品ID',
    NAME                 VARCHAR(40) COMMENT '品名',
@@ -125,7 +125,7 @@ CREATE TABLE JXC_PORDER_LINE
    NOTAX_AMOUNT         NUMERIC(12,4) COMMENT '不含税金额',
    STOCK_NUM            NUMERIC(12,4) COMMENT '库存数量',
    STOCK_AMOUNT         NUMERIC(12,4) COMMENT '库存金额',
-   PRIMARY KEY (ID)
+   PRIMARY KEY (LINE_ID)
 );
 
 /*==============================================================*/

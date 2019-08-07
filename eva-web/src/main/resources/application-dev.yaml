@@ -28,6 +28,11 @@ spring:
     password: 8i9o0p
     timeout: 10000
     database: 0
+# 校验表结构
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQL5Dialect
 cache:
   type: redis
   cache-names: sys

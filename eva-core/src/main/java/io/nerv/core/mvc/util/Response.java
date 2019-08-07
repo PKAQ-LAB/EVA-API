@@ -5,6 +5,7 @@ import io.nerv.core.enums.HttpCodeEnum;
 import io.nerv.core.enums.ResponseEnumm;
 import io.nerv.core.exception.ReflectException;
 import io.nerv.core.util.ReflectHelper;
+import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -14,6 +15,7 @@ import java.util.Map;
 
 @Data
 @Slf4j
+@Builder
 public class Response{
     private int status;
     private boolean success;
@@ -50,6 +52,16 @@ public class Response{
         this.success = true;
         this.status = HttpCodeEnum.QUERY_SUCCESS.getIndex();
 
+        return this;
+    }
+    /**
+     * 响应成功
+     * @param msg
+     * @return
+     */
+    public Response success(String msg) {
+        this.success = true;
+        this.status = HttpCodeEnum.QUERY_SUCCESS.getIndex();
         return this;
     }
     /**

@@ -3,7 +3,7 @@ package io.nerv.web.sys.module.service;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import io.nerv.core.mvc.service.StdBaseService;
+import io.nerv.core.mvc.service.mybatis.StdBaseService;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.util.tree.TreeHelper;
 import io.nerv.web.sys.module.entity.ModuleEntity;

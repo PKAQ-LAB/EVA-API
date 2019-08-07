@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="common">
-  <resultMap id="resultMap" type="io.nerv.core.mvc.entity.StdBaseEntity">
+  <resultMap id="resultMap" type="io.nerv.core.mvc.entity.mybatis.StdBaseEntity">
     <id column="ID" jdbcType="VARCHAR" property="id" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />

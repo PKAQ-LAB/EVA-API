@@ -3,7 +3,7 @@ package io.nerv.web.sys.role.ctrl;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import io.nerv.core.exception.ParamException;
-import io.nerv.core.mvc.ctrl.PureBaseCtrl;
+import io.nerv.core.mvc.ctrl.mybatis.PureBaseCtrl;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.mvc.util.SingleArray;
 import io.nerv.web.sys.role.entity.RoleEntity;

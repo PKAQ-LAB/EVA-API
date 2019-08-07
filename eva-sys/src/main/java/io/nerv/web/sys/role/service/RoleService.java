@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.nerv.core.enums.LockEnumm;
 import io.nerv.core.enums.StatusEnumm;
-import io.nerv.core.mvc.service.StdBaseService;
+import io.nerv.core.mvc.service.mybatis.StdBaseService;
 import io.nerv.security.util.SecurityUtil;
 import io.nerv.web.sys.module.entity.ModuleEntity;
 import io.nerv.web.sys.module.mapper.ModuleMapper;

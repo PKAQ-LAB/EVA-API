@@ -16,8 +16,6 @@ mybatis-plus:
     refresh: true
     db-config:
       id-type: id_worker
-#      字段策略
-      field-strategy: not_empty
 #      驼峰下划线转换
       table-underline: true
   configuration:

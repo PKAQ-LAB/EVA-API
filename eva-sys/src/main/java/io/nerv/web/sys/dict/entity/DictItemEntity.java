@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
-import io.nerv.core.mvc.entity.StdBaseEntity;
+import io.nerv.core.mvc.entity.mybatis.StdBaseEntity;
 
 import javax.validation.constraints.NotBlank;
 

@@ -4,7 +4,7 @@ import io.nerv.web.jxc.sales.orders.service.SaleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import io.nerv.core.mvc.ctrl.StdBaseCtrl;
+import io.nerv.core.mvc.ctrl.mybatis.StdBaseCtrl;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.mvc.util.SingleArray;
 import io.nerv.web.jxc.sale.entity.SaleEntity;

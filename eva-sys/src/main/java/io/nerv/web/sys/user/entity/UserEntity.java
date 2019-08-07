@@ -5,14 +5,14 @@ import com.baomidou.mybatisplus.annotation.SqlCondition;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.nerv.core.mvc.entity.tree.BaseTreeEntity;
+import io.nerv.core.mvc.entity.mybatis.BaseTreeEntity;
 import io.nerv.web.sys.role.entity.RoleEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
-import io.nerv.core.mvc.entity.StdBaseEntity;
+import io.nerv.core.mvc.entity.mybatis.StdBaseEntity;
 
 import java.sql.Date;
 import java.util.ArrayList;

@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
-import io.nerv.core.mvc.entity.StdBaseEntity;
+import io.nerv.core.mvc.entity.mybatis.StdBaseEntity;
 
 /**
  * 零售开单实体类

@@ -1,7 +1,7 @@
 package io.nerv.core.util.tree;
 
 import cn.hutool.core.util.StrUtil;
-import io.nerv.core.mvc.entity.tree.BaseTreeEntity;
+import io.nerv.core.mvc.entity.mybatis.BaseTreeEntity;
 
 import java.util.ArrayList;
 import java.util.List;

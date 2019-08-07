@@ -6,7 +6,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.nerv.core.exception.ParamException;
-import io.nerv.core.mvc.ctrl.PureBaseCtrl;
+import io.nerv.core.mvc.ctrl.mybatis.PureBaseCtrl;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.mvc.util.SingleArray;
 import io.nerv.web.sys.user.entity.UserEntity;

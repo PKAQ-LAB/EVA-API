@@ -1,7 +1,7 @@
 package io.nerv.web.jxc.base.category.ctrl;
 
 import cn.hutool.core.collection.CollectionUtil;
-import io.nerv.core.mvc.ctrl.PureBaseCtrl;
+import io.nerv.core.mvc.ctrl.mybatis.PureBaseCtrl;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.mvc.util.SingleArray;
 import io.swagger.annotations.Api;

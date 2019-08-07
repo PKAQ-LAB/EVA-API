@@ -1,6 +1,6 @@
 package io.nerv.web.sys.dict.ctrl;
 
-import io.nerv.core.mvc.ctrl.PureBaseCtrl;
+import io.nerv.core.mvc.ctrl.mybatis.PureBaseCtrl;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.web.sys.dict.entity.DictItemEntity;
 import io.nerv.web.sys.dict.service.DictItemService;

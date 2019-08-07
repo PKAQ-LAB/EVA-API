@@ -2,7 +2,7 @@ package io.nerv.web.jxc.inventory.accbook.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import io.nerv.core.mvc.service.StdBaseService;
+import io.nerv.core.mvc.service.mybatis.StdBaseService;
 import io.nerv.web.jxc.inventory.accbook.entity.StockEntity;
 import io.nerv.web.jxc.inventory.accbook.mapper.StockMapper;
 import org.springframework.stereotype.Service;

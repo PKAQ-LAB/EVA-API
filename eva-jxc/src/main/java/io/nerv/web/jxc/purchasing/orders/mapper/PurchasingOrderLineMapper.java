@@ -1,9 +1,8 @@
 package io.nerv.web.jxc.purchasing.orders.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Mapper;
 import io.nerv.web.jxc.purchasing.orders.entity.PurchasingOrderLineEntity;
-import org.springframework.stereotype.Repository;
+import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
@@ -13,7 +12,6 @@ import java.util.List;
  * @Datetime: 2018/4/4 7:57
  */
 @Mapper
-@Repository
 public interface PurchasingOrderLineMapper extends BaseMapper<PurchasingOrderLineEntity> {
     List<PurchasingOrderLineEntity> listByMainId(String mainId);
 }

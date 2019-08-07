@@ -1,7 +1,7 @@
 package io.nerv.web.sys.module.ctrl;
 
 import cn.hutool.core.collection.CollectionUtil;
-import io.nerv.core.mvc.ctrl.PureBaseCtrl;
+import io.nerv.core.mvc.ctrl.mybatis.PureBaseCtrl;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.mvc.util.SingleArray;
 import io.nerv.web.sys.module.entity.ModuleEntity;

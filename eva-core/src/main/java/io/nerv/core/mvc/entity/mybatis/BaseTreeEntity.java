@@ -1,11 +1,10 @@
-package io.nerv.core.mvc.entity.tree;
+package io.nerv.core.mvc.entity.mybatis;
 
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.annotation.TableField;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import io.nerv.core.mvc.entity.StdBaseEntity;
 
 import java.util.List;
 

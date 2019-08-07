@@ -1,7 +1,7 @@
 package io.nerv.web.jxc.sales.orders.service;
 
 import io.nerv.core.util.OrderHelper;
-import io.nerv.core.mvc.service.StdBaseService;
+import io.nerv.core.mvc.service.mybatis.StdBaseService;
 import io.nerv.web.jxc.sales.orders.mapper.SaleMapper;
 import io.nerv.web.jxc.sale.entity.SaleEntity;
 import org.springframework.stereotype.Service;

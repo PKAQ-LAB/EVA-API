@@ -5,7 +5,7 @@ import io.nerv.web.jxc.base.goods.service.GoodsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import io.nerv.core.mvc.ctrl.StdBaseCtrl;
+import io.nerv.core.mvc.ctrl.mybatis.StdBaseCtrl;
 import io.nerv.core.mvc.util.Response;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

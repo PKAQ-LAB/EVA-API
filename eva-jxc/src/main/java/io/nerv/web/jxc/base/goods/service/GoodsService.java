@@ -1,7 +1,7 @@
 package io.nerv.web.jxc.base.goods.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import io.nerv.core.mvc.service.StdBaseService;
+import io.nerv.core.mvc.service.mybatis.StdBaseService;
 import io.nerv.web.jxc.base.goods.entity.GoodsEntity;
 import io.nerv.web.jxc.base.goods.mapper.GoodsMapper;
 import org.springframework.stereotype.Service;

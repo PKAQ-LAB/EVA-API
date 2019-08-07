@@ -2,7 +2,7 @@ package io.nerv.web.jxc.base.category.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.nerv.core.mvc.entity.tree.BaseTreeEntity;
+import io.nerv.core.mvc.entity.mybatis.BaseTreeEntity;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

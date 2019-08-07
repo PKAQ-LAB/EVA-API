@@ -1,4 +1,4 @@
-package io.nerv.core.mvc.entity;
+package io.nerv.core.mvc.entity.mybatis;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;

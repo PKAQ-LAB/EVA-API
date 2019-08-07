@@ -1,6 +1,6 @@
 package io.nerv.web.sys.dict.service;
 
-import io.nerv.core.mvc.service.StdBaseService;
+import io.nerv.core.mvc.service.mybatis.StdBaseService;
 import io.nerv.web.sys.dict.entity.DictEntity;
 import io.nerv.web.sys.dict.entity.DictItemEntity;
 import io.nerv.web.sys.dict.cache.DictHelperProvider;

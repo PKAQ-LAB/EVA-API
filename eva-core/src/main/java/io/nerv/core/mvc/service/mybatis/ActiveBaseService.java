@@ -1,11 +1,11 @@
-package io.nerv.core.mvc.service;
+package io.nerv.core.mvc.service.mybatis;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import io.nerv.core.mvc.entity.StdBaseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +21,7 @@ import java.util.List;
  * @author S.PKAQ
  */
 @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-public abstract class StdBaseService<M extends BaseMapper<T>, T extends StdBaseEntity> {
+public abstract class ActiveBaseService<M extends BaseMapper<T>, T extends Model> {
     @Autowired
     protected M mapper;
     /**
@@ -36,45 +36,26 @@ public abstract class StdBaseService<M extends BaseMapper<T>, T extends StdBaseE
     /**
      * 查询符合条件得记录条数
      * @param entity
-     * @return
      */
-    public Integer selectCount(T entity){
+    public void selectCount(T entity){
         Wrapper<T> wrapper = new QueryWrapper<>(entity);
-        return this.mapper.selectCount(wrapper);
+        entity.selectCount(wrapper);
     }
 
     /**
      * 根据条件获取一条记录
      * @param entity
-     * @return
      */
-    public T getByEntity(T entity){
+    public void getByEntity(T entity){
         Wrapper<T> wrapper = new QueryWrapper<>(entity);
-        return this.mapper.selectOne(wrapper);
+        entity.selectOne(wrapper);
     }
     /**
      * 合并保存,如果不存在id执行插入,存在ID执行更新
      * @param entity 实体类对象
      */
     public void merge(T entity){
-        if (entity.getId() == null){
-            this.mapper.insert(entity);
-        } else {
-            this.mapper.updateById(entity);
-        }
-    }
-
-    /***
-     * 根据指定条件合并
-     * @param entity
-     * @param wrapper
-     */
-    public void merge(T entity, Wrapper<T> wrapper){
-        if (entity.getId() == null){
-            this.mapper.insert(entity);
-        } else {
-            this.mapper.update(entity, wrapper);
-        }
+        entity.insertOrUpdate();
     }
     /**
      * 查询所有
@@ -85,7 +66,7 @@ public abstract class StdBaseService<M extends BaseMapper<T>, T extends StdBaseE
         QueryWrapper<T> wrapper = new QueryWrapper<>(entity);
         wrapper.orderByDesc("gmt_Modify");
 
-        return this.mapper.selectList(wrapper);
+        return entity.selectList(wrapper);
     }
     /**
      * 按分页查询
@@ -95,6 +76,7 @@ public abstract class StdBaseService<M extends BaseMapper<T>, T extends StdBaseE
      * @return          分页模型类
      */
     public IPage<T> listPage(T entity, Integer page, Integer size) {
+
         page = null != page ? page : 1;
         size = null != size ? size : 10;
 
@@ -105,7 +87,7 @@ public abstract class StdBaseService<M extends BaseMapper<T>, T extends StdBaseE
         pagination.setCurrent(page);
         pagination.setSize(size);
 
-        return this.mapper.selectPage(pagination,wrapper);
+        return entity.selectPage(pagination, wrapper);
     }
 
     /**
@@ -115,24 +97,23 @@ public abstract class StdBaseService<M extends BaseMapper<T>, T extends StdBaseE
      * @return          分页模型类
      */
     public IPage<T> listPage(T entity, Integer page) {
+
         page = null != page ? page : 1;
         // 查询条件
         QueryWrapper<T> wrapper = new QueryWrapper<>(entity);
         wrapper.orderByDesc("gmt_Modify");
+
         // 分页条件
         Page pagination = new Page();
         pagination.setCurrent(page);
-        return this.mapper.selectPage(pagination,wrapper);
+
+        return entity.selectPage(pagination, wrapper);
     }
     /**
      * 通用删除
      * @param param
-     * @return
      */
-    public IPage<T> delete(ArrayList<String> param){
+    public void delete(ArrayList<String> param){
         this.mapper.deleteBatchIds(param);
-        Page pagination = new Page();
-        pagination.setCurrent(1);
-        return this.mapper.selectPage(pagination, null);
     }
 }

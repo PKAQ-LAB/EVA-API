@@ -2,7 +2,7 @@ package io.nerv.web.sys.dict.ctrl;
 
 import cn.hutool.core.util.StrUtil;
 import io.nerv.core.enums.HttpCodeEnum;
-import io.nerv.core.mvc.ctrl.PureBaseCtrl;
+import io.nerv.core.mvc.ctrl.mybatis.PureBaseCtrl;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.web.sys.dict.entity.DictEntity;
 import io.nerv.web.sys.dict.cache.DictHelperProvider;
