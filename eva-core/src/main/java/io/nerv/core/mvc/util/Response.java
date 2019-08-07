@@ -15,7 +15,6 @@ import java.util.Map;
 
 @Data
 @Slf4j
-@Builder
 public class Response{
     private int status;
     private boolean success;

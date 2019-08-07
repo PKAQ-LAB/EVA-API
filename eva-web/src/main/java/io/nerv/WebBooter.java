@@ -1,9 +1,5 @@
 package io.nerv;
 
-import com.alibaba.fastjson.JSON;
-import io.nerv.web.jxc.purchasing.order.domain.PurchasingOrder;
-import io.nerv.web.jxc.purchasing.order.service.PurchasingServices;
-import io.nerv.web.jxc.purchasing.orders.service.PurchasingService;
 import io.nerv.web.sys.dict.cache.DictHelperProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.connector.Connector;
@@ -39,20 +35,13 @@ import java.util.concurrent.TimeUnit;
 public class WebBooter implements CommandLineRunner {
 
     @Autowired
-    private PurchasingService purchasingService;
-
-    @Autowired
     private DictHelperProvider dictHelperProvider;
-    @Autowired
-    private PurchasingServices purchasingServices;
+
     @Override
     public void run(String... args) {
         log.info(" ---- 字典初始化 开始 ---- ");
         dictHelperProvider.init();
         log.info(" ---- 字典初始化 结束 ---- ");
-
-        this.purchasingServices.test();
-
     }
 
     public static void main(String[] args) {
