@@ -4,20 +4,20 @@ plugins {
 }
 
 ext {
-    springBootVersion = '2.1.6.RELEASE'
+    springBootVersion = '2.1.7.RELEASE'
     mysql = "8.0.17"
     fastjson = "1.2.59"
     mybatis_plus_starter = "3.1.2"
     lombok = "1.18.8"
     swagger = "2.9.2"
-	swagger_ui = "1.9.4"
-    hutool = "4.5.18"
+	swagger_ui = "1.9.5"
+    hutool = "4.6.1"
     jaxb_api = "2.3.1"
     jjwt = "0.9.1"
     auth0 = "3.8.1"
     sharding_jdbc = "3.0.0"
     jasypt = "2.1.1"
-    p6spy = "3.8.3"
+    p6spy = "3.8.5"
     flyway = "5.2.4"
     commons_io = "2.6"
 }
