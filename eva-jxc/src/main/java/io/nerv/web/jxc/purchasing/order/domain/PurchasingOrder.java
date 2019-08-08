@@ -54,7 +54,7 @@ public class PurchasingOrder extends StdBaseDomain {
     @ApiModelProperty(value = "供应商名称")
     private String supplierNm;
 
-    @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE }, orphanRemoval = true)
+    @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE }, orphanRemoval = true, fetch=FetchType.LAZY)
     @JoinColumn(name = "main_id")
     private List<PurchasingOrderLine> line;
 }

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Api( tags = "采购入库单")
 @RestController
-@RequestMapping("/purchasing/instock")
+@RequestMapping("/purchasing")
 public class PurchasingOrderCtrl extends StdBaseCtrl<PurchasingServices, PurchasingOrder> {
 
 }

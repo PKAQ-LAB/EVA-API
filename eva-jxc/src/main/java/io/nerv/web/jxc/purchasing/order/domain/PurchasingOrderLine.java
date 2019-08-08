@@ -27,9 +27,9 @@ public class PurchasingOrderLine {
     @Id
     private String lineId;
 
-    @ManyToOne(cascade = { CascadeType.REFRESH }, fetch=FetchType.LAZY)
-    @JoinColumn(name="main_id")
-    private PurchasingOrder mainId;
+    @ApiModelProperty(value = "主键ID")
+    @Column(name = "MAIN_ID")
+    private String mainId;
 
     @ApiModelProperty(value = "商品ID")
     private String goodsId;
