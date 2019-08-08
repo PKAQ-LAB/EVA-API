@@ -1,0 +1,20 @@
+plugins {
+	id 'org.springframework.boot' version '2.1.7.RELEASE'
+}
+apply plugin: 'io.spring.dependency-management'
+
+ext{
+    velocity = "2.1"
+    mybatis_plus_generator = "3.1.0"
+}
+jar {
+	enabled = true
+}
+
+description = """generator"""
+// 依赖配置
+dependencies {
+	implementation  project(":eva-core"),
+					"org.apache.velocity:velocity-engine-core:${velocity}",
+					"com.baomidou:mybatis-plus-generator:${mybatis_plus_generator}"
+}

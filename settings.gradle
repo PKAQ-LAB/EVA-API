@@ -3,6 +3,7 @@ include 'eva-web'
 include 'eva-jxc'
 include 'eva-core'
 include 'eva-sys'
+include 'eva-generator'
 include 'addon-pay'
 include 'addon-cache'
 
