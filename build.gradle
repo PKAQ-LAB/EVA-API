@@ -49,6 +49,7 @@ subprojects {
         mavenLocal()
 		maven { url"http://maven.springframework.org"}
         maven { url"https://repo.spring.io/libs-release" }
+		maven { url"https://mirrors.huaweicloud.com" }
         jcenter()
         mavenCentral()
     }
