@@ -2,6 +2,7 @@ package io.nerv.core.mvc.service.jpa;
 
 import io.nerv.core.constant.PageConstant;
 import io.nerv.core.mvc.entity.jpa.StdBaseDomain;
+import io.nerv.core.mvc.vo.PageVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -83,9 +84,23 @@ public abstract class StdBaseService<R extends JpaRepository, D extends StdBaseD
      * @param size      分页条数
      * @return          分页模型类
      */
-    public Page listPage(D domain, Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.Direction.ASC, "gmtModify");
-        return this.repository.findAll(Example.of(domain), pageable);
+    public PageVo<D> listPage(D domain, Integer page, Integer size) {
+        page = page == null? 0: page - 1;
+        size = size == null? PageConstant.PAGE_SIZE: size;
+
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "gmtModify");
+
+        Page<D> result = null;
+        if (null == domain){
+            result = this.repository.findAll(pageable);
+        } else {
+            result = this.repository.findAll(Example.of(domain), pageable);
+        }
+
+        return new PageVo<D>().setCurrent(result.getNumber() + 1)
+                              .setSize(result.getSize())
+                              .setTotal(result.getTotalElements())
+                              .setRecords(result.getContent());
     }
 //
     /**
@@ -94,9 +109,16 @@ public abstract class StdBaseService<R extends JpaRepository, D extends StdBaseD
      * @param page      当前页码
      * @return          分页模型类
      */
-    public Page listPage(D domain, Integer page) {
+    public PageVo<D> listPage(D domain, Integer page) {
+        page = page == null? 0: page - 1;
+
         Pageable pageable = PageRequest.of(page, PageConstant.PAGE_SIZE, Sort.Direction.ASC, "gmtModify");
-        return this.repository.findAll(Example.of(domain), pageable);
+        Page<D> result =  this.repository.findAll(Example.of(domain), pageable);
+
+        return new PageVo<D>().setCurrent(result.getNumber() + 1)
+                              .setSize(result.getSize())
+                              .setTotal(result.getTotalElements())
+                              .setRecords(result.getContent());
     }
     /**
      * 通用删除

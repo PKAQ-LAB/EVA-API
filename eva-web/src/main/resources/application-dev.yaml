@@ -31,7 +31,7 @@ spring:
 # 校验表结构
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     database-platform: org.hibernate.dialect.MySQL5Dialect
 cache:
   type: redis

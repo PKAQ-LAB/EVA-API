@@ -36,7 +36,6 @@ public class Response{
      */
     public Response success(){
         this.success = true;
-        this.message = ResponseEnumm.OPERATE_SUCCESS.getName();
         this.status = HttpCodeEnum.QUERY_SUCCESS.getIndex();
 
         return this;
@@ -60,6 +59,7 @@ public class Response{
      */
     public Response success(String msg) {
         this.success = true;
+        this.message = msg;
         this.status = HttpCodeEnum.QUERY_SUCCESS.getIndex();
         return this;
     }
