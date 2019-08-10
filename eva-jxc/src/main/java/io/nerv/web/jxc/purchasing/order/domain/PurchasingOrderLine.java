@@ -1,5 +1,6 @@
 package io.nerv.web.jxc.purchasing.order.domain;
 
+import io.nerv.core.annotation.CodeFilter;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -39,6 +40,12 @@ public class PurchasingOrderLine {
 
     @ApiModelProperty(value = "品类")
     private String category;
+
+    @ApiModelProperty(value = "品类")
+    @CodeFilter("goods_type")
+    @Column(name="category")
+    @Transient
+    private String categoryName;
 
     @ApiModelProperty(value = "产品型号")
     private String model;

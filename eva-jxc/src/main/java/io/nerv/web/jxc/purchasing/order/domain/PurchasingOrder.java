@@ -8,9 +8,11 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Cascade;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -28,7 +30,8 @@ public class PurchasingOrder extends StdBaseDomain {
     private String code;
 
     @ApiModelProperty(value = "入库日期")
-    private LocalDate orderDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime orderDate;
 
     @ApiModelProperty(value = "仓库")
     private String stock;
