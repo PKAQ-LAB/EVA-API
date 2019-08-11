@@ -1,11 +1,5 @@
-plugins {
-     id 'org.springframework.boot' version '2.1.7.RELEASE'
-}
-apply plugin: 'io.spring.dependency-management'
-
-jar {
-	enabled = true
-}
+apply from: '../publish.gradle'
+project.archivesBaseName = 'addon-pay'
 
 ext{
     alipay = "3.7.110.ALL"
@@ -13,7 +7,7 @@ ext{
 }
 
 dependencies {
-	api	project(":eva-core")
+    implementation	project(":eva-core")
 	
     implementation "com.alipay.sdk:alipay-sdk-java:${alipay}",
 					"com.google.zxing:core:${zxing}"

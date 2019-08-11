@@ -1,5 +1,4 @@
 apply from: '../publish.gradle'
-
 project.archivesBaseName = 'addon-cache'
 
 dependencies {

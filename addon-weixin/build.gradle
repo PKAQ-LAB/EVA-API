@@ -1,18 +1,12 @@
-plugins {
-    id 'org.springframework.boot' version '2.1.7.RELEASE'
-}
-apply plugin: 'io.spring.dependency-management'
-
-jar {
-    enabled = true
-}
+apply from: '../publish.gradle'
+project.archivesBaseName = 'addon-weixin'
 
 ext{
     weixin_cp = "3.5.0"
 }
 
 dependencies {
-    api	project(":eva-core")
+    implementation	project(":eva-core")
 
     implementation "com.github.binarywang:weixin-java-cp:${weixin_cp}"
 }
