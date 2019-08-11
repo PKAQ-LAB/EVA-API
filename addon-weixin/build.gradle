@@ -1,0 +1,18 @@
+plugins {
+    id 'org.springframework.boot' version '2.1.7.RELEASE'
+}
+apply plugin: 'io.spring.dependency-management'
+
+jar {
+    enabled = true
+}
+
+ext{
+    weixin_cp = "3.5.0"
+}
+
+dependencies {
+    api	project(":eva-core")
+
+    implementation "com.github.binarywang:weixin-java-cp:${weixin_cp}"
+}

@@ -7,11 +7,6 @@ jar {
 	enabled = true
 }
 
-bootJar {
-    archiveBaseName = "alipay"
-	mainClassName = 'io.nerv.AlipayBooter'
-}
-
 ext{
     alipay = "3.7.110.ALL"
     zxing = "3.4.0"

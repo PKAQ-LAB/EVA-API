@@ -6,4 +6,5 @@ include 'eva-sys'
 include 'eva-generator'
 include 'addon-pay'
 include 'addon-cache'
+include 'addon-weixin'
 
