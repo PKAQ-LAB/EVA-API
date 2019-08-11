@@ -1,0 +1,40 @@
+package ${package.getPackage()};
+
+import io.nerv.core.mvc.entity.jpa.StdBaseDomain;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+import javax.persistence.*;
+import java.util.List;
+
+/**
+ * $!{table.comment} 实体类
+ * @author $!{author}
+ * @since $!{date}
+ */
+@Data
+@Entity
+@ApiModel($!{title} - ${description})
+@Table(name = $!{table.name})
+@EqualsAndHashCode(callSuper = true)
+public class ${domainName} extends StdBaseDomain {
+    ## 遍历生成字段
+    #foreach($field in ${table.fields})
+        #if("$!field.comment" != "")
+        @ApiModelProperty(value = "${field.comment}")
+        #end
+        #if("$!field.codeMapping" != "")
+        @CodeFilter(${field.codeMapping})
+        #end
+        private ${field.propertyType} ${field.propertyName};
+    #end
+
+    #foreach($child in ${childs})
+        ## 子表
+        @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE }, orphanRemoval = true, fetch=FetchType.LAZY)
+        @JoinColumn(name = "main_id")
+        private List<${child}DomainLine}> line;
+    #end
+}
