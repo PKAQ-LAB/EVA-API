@@ -5,7 +5,6 @@ import io.nerv.core.enums.HttpCodeEnum;
 import io.nerv.core.enums.ResponseEnumm;
 import io.nerv.core.exception.ReflectException;
 import io.nerv.core.util.ReflectHelper;
-import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,7 +15,7 @@ import java.util.Map;
 @Data
 @Slf4j
 public class Response{
-    private int status;
+    private int code;
     private boolean success;
     private String message;
     private Object data;
@@ -36,7 +35,7 @@ public class Response{
      */
     public Response success(){
         this.success = true;
-        this.status = HttpCodeEnum.QUERY_SUCCESS.getIndex();
+        this.code = HttpCodeEnum.QUERY_SUCCESS.getIndex();
 
         return this;
     }
@@ -48,7 +47,7 @@ public class Response{
     public Response success(Object data) {
         this.data = data;
         this.success = true;
-        this.status = HttpCodeEnum.QUERY_SUCCESS.getIndex();
+        this.code = HttpCodeEnum.QUERY_SUCCESS.getIndex();
 
         return this;
     }
@@ -60,7 +59,7 @@ public class Response{
     public Response success(String msg) {
         this.success = true;
         this.message = msg;
-        this.status = HttpCodeEnum.QUERY_SUCCESS.getIndex();
+        this.code = HttpCodeEnum.QUERY_SUCCESS.getIndex();
         return this;
     }
     /**
@@ -72,8 +71,21 @@ public class Response{
         this.data = data;
         this.success = true;
         this.message = msg;
-        this.status = HttpCodeEnum.QUERY_SUCCESS.getIndex();
+        this.code = HttpCodeEnum.QUERY_SUCCESS.getIndex();
 
+        return this;
+    }
+
+    /**
+     * 响应成功
+     * @param data
+     * @return
+     */
+    public Response success(Object data, String msg, int code) {
+        this.data = data;
+        this.success = true;
+        this.message = msg;
+        this.code = code;
         return this;
     }
 
@@ -86,7 +98,7 @@ public class Response{
         this.data = data;
         this.message = ResponseEnumm.OPERATE_FAILED.getName();
         this.success = false;
-        this.status = HttpCodeEnum.REQEUST_FAILURE.getIndex();
+        this.code = HttpCodeEnum.REQEUST_FAILURE.getIndex();
 
         return this;
     }
@@ -98,7 +110,7 @@ public class Response{
      */
     public Response failure(int status) {
         this.success = false;
-        this.status = status;
+        this.code = status;
         this.message = HttpCodeEnum.getName(status);
 
         return this;
@@ -111,7 +123,7 @@ public class Response{
      */
     public Response failure(int status, String message) {
         this.success = false;
-        this.status = status;
+        this.code = status;
         this.message = message;
 
         return this;
@@ -122,11 +134,11 @@ public class Response{
      * @param data
      * @return
      */
-    public Response failure(int status, String message, Object data) {
+    public Response failure(int code, String message, Object data) {
         this.data = data;
         this.message = message;
         this.success = false;
-        this.status = HttpCodeEnum.REQEUST_FAILURE.getIndex();
+        this.code = code;
 
         return this;
     }
