@@ -1,4 +1,4 @@
-package io.nerv.web.jxc.purchasing.order.domain;
+package ${packageName}.domain;
 
 import io.nerv.core.annotation.CodeFilter;
 import io.swagger.annotations.ApiModel;
@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @Entity
-@ApiModel("采购入库明细")
+@ApiModel($!{child.name} - ${child.comment})
 @Table(name = "jxc_porder_line")
 public class PurchasingOrderLine {
     private static final long serialVersionUID = 1L;

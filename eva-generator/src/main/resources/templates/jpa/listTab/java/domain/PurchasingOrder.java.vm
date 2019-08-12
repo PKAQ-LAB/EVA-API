@@ -1,4 +1,4 @@
-package ${package.getPackage()};
+package ${packageName}.domain;
 
 import io.nerv.core.mvc.entity.jpa.StdBaseDomain;
 import io.swagger.annotations.ApiModel;

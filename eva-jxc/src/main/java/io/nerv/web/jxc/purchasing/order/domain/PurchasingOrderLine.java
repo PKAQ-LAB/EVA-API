@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 @Setter
 @Entity
 @ApiModel("采购入库明细")
-@Table(name = "jxc_porder_line")
+@Table(name = "JXC_PURCHASING_LINE")
 public class PurchasingOrderLine {
     private static final long serialVersionUID = 1L;
 
