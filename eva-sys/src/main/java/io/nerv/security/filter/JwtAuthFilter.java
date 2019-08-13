@@ -55,7 +55,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
              * token即将过期 刷新
              */
             try {
+                // 验证token 是否合法
                 isvalid = jwtUtil.valid(authToken);
+                // token 即将过期 续命
                 if (jwtUtil.isTokenExpiring(authToken)){
                     // reponse请求头返回刷新后的token
                     response.setHeader(TokenConst.TOKEN_KEY,jwtUtil.refreshToken(authToken));
