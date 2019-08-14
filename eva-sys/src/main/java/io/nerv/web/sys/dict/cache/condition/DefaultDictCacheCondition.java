@@ -14,7 +14,7 @@ public class DefaultDictCacheCondition implements Condition {
 
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        String impl = context.getEnvironment().getProperty("cache.type");
+        String impl = context.getEnvironment().getProperty("eva.cache.type");
 
         return StrUtil.isBlank(impl) || cacheStr.contains(impl);
     }
