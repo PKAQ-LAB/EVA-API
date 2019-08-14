@@ -80,8 +80,8 @@ public class ImageUploadUtil {
 
         for (String filename : filenames) {
             File sourceFile = new File(tempPath, filename);
+            if (!sourceFile.exists()) continue;
             File distFile = new File(imageConfig.getStoragePath(), filename);
-
             FileUtil.move(sourceFile, distFile, true);
         }
     }
