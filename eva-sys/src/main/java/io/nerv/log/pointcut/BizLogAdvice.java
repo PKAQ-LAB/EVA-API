@@ -1,6 +1,7 @@
 package io.nerv.log.pointcut;
 
 import cn.hutool.core.date.DateUtil;
+import com.alibaba.fastjson.JSON;
 import io.nerv.core.bizlog.annotation.BizLog;
 import io.nerv.core.bizlog.base.BizLogEntity;
 import io.nerv.core.bizlog.base.BizLogSupporter;
@@ -8,6 +9,8 @@ import io.nerv.core.bizlog.condition.BizlogSupporterCondition;
 import io.nerv.security.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
@@ -35,17 +38,29 @@ public class BizLogAdvice {
     @Pointcut("@annotation(io.nerv.core.bizlog.annotation.BizLog)")
     private void bizLog(){}
 
-    @Before("bizLog()")
-    public void doBefore(JoinPoint joinPoint) {
+    @Around("bizLog()")
+    public void doBefore(ProceedingJoinPoint joinPoint) throws Throwable {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         BizLog  bizlog = signature.getMethod().getAnnotation(BizLog.class);
 
+        Object result = joinPoint.proceed();
+
         if (null != bizlog){
             BizLogEntity bizLogEntity = new BizLogEntity();
-            bizLogEntity.setOperator(securityUtil.getJwtUserName());
-            bizLogEntity.setDescription(bizlog.description());
-            bizLogEntity.setOperateDatetime(DateUtil.now());
-            bizLogEntity.setOperateType(bizlog.operateType().getIndex());
+            bizLogEntity.setOperator(securityUtil.getJwtUserName())
+                        .setDescription(bizlog.description())
+                        .setOperateDatetime(DateUtil.now())
+                        .setOperateType(bizlog.operateType().getIndex());
+
+            var className = joinPoint.getTarget().getClass().getName();
+            var methodName = joinPoint.getSignature().getName();
+            var args = JSON.toJSONString(joinPoint.getArgs());
+            var response = JSON.toJSONString(result);
+
+            bizLogEntity.setClassName(className)
+                        .setMethod(methodName)
+                        .setParams(args)
+                        .setResponse(response);
 
             this.bizLogSupporter.save(bizLogEntity);
         }
