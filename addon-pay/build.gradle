@@ -2,7 +2,7 @@ apply from: '../publish.gradle'
 project.archivesBaseName = 'addon-pay'
 
 ext{
-    alipay = "3.7.110.ALL"
+    alipay = "4.3.0.ALL"
     zxing = "3.4.0"
 }
 

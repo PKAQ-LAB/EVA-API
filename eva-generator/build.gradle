@@ -5,7 +5,7 @@ apply plugin: 'io.spring.dependency-management'
 
 ext{
     velocity = "2.1"
-    mybatis_plus_generator = "3.1.0"
+    mybatis_plus_generator = "3.1.2"
 }
 jar {
 	enabled = true
