@@ -1,9 +1,8 @@
 package io.nerv.web.jxc.purchasing.order.domain;
 
-import io.nerv.core.annotation.CodeFilter;
+import io.nerv.core.annotation.Code;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
@@ -42,7 +41,7 @@ public class PurchasingOrderLine {
     private String category;
 
     @ApiModelProperty(value = "品类")
-    @CodeFilter("goods_type")
+    @Code("goods_type")
     @Column(name="category")
     @Transient
     private String categoryName;
