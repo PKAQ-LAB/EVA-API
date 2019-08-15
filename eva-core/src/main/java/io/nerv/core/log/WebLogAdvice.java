@@ -1,11 +1,9 @@
 package io.nerv.core.log;
 
 import lombok.extern.slf4j.Slf4j;
+import org.aopalliance.intercept.Joinpoint;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -33,7 +31,8 @@ public class WebLogAdvice {
      * ~ 第五个 * 任意方法
      * ~ .. 匹配任意数量的参数.
      */
-    @Pointcut("execution(public * *..*Ctrl.*(..))")
+    @Pointcut("@within(org.springframework.web.bind.annotation.RestController)" +
+              "@within(org.springframework.stereotype.Controller)")
     public void webLog(){}
 
     @Before("webLog()")
@@ -46,15 +45,14 @@ public class WebLogAdvice {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if(null != attributes){
             HttpServletRequest request = attributes.getRequest();
-
             // 记录下请求内容
-            log.debug("---------------------------start---------------------------");
-            log.debug("URL : " + request.getRequestURL().toString());
-            log.debug("HTTP_METHOD : " + request.getMethod());
-            log.debug("IP : " + request.getRemoteAddr());
-            log.debug("CLASS_METHOD : " + joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName());
-            log.debug("ARGS : " + Arrays.toString(joinPoint.getArgs()));
-            log.debug("---------------------------end---------------------------");
+            log.info("---------------------------start---------------------------");
+            log.info("URL : " + request.getRequestURL().toString());
+            log.info("HTTP_METHOD : " + request.getMethod());
+            log.info("IP : " + request.getRemoteAddr());
+            log.info("CLASS_METHOD : " + joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName());
+            log.info("ARGS : " + Arrays.toString(joinPoint.getArgs()));
+            log.info("---------------------------end---------------------------");
         }
     }
 
@@ -64,6 +62,11 @@ public class WebLogAdvice {
         // 处理完请求，返回内容
         log.info("RESPONSE : " + ret);
         log.info("SPEND TIME : " + (System.currentTimeMillis() - startTime.get()));
+    }
+
+    @AfterThrowing(pointcut = "webLog()", throwing="ex")
+    public void doWhenThrowing(Throwable ex){
+        log.error("系统异常，持久化");
     }
 }
 
