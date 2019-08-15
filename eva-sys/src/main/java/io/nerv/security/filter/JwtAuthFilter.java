@@ -7,6 +7,7 @@ import io.nerv.core.enums.HttpCodeEnum;
 import io.nerv.core.exception.OathException;
 import io.nerv.security.jwt.JwtConfig;
 import io.nerv.security.jwt.JwtUtil;
+import io.nerv.security.util.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,6 +37,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Autowired
     private JwtConfig jwtConfig;
 
+    @Autowired
+    private TokenUtil tokenUtil;
+
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
@@ -44,7 +48,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         var isvalid = false;
 
-        var authToken = this.getToken(request);
+        var authToken = tokenUtil.getToken(request);
 
         if(null != ServletUtil.getCookie(request, TokenConst.TOKEN_KEY)){
             authToken = ServletUtil.getCookie(request, TokenConst.TOKEN_KEY).getValue();
@@ -106,24 +110,5 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             }
         }
         chain.doFilter(request, response);
-    }
-
-    /**
-     * 获取基线代码
-     * @param request
-     * @return
-     */
-    private String getToken(HttpServletRequest request){
-        String authToken = null;
-
-        var authHeader = request.getHeader(jwtConfig.getHeader());
-
-        if(null != ServletUtil.getCookie(request, TokenConst.TOKEN_KEY)){
-            authToken = ServletUtil.getCookie(request, TokenConst.TOKEN_KEY).getValue();
-        } else  if (StrUtil.isNotBlank(authHeader) && authHeader.startsWith(jwtConfig.getTokenHead())) {
-            authToken = authHeader.substring(jwtConfig.getTokenHead().length());
-        }
-
-        return authToken;
     }
 }

@@ -1,12 +1,7 @@
 package io.nerv.security.jwt;
 
 import cn.hutool.core.codec.Base64;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Clock;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.impl.DefaultClock;
 import io.nerv.core.exception.OathException;
 import lombok.Data;
@@ -170,7 +165,7 @@ public class JwtUtil {
      */
     public Boolean isTokenExpiring(String token) throws OathException {
         Date expiration = getExpirationDateFromToken(token);
-        return (clock.now().getTime() - expiration.getTime()) < (jwtConfig.getThreshold());
+        return (expiration.getTime() - clock.now().getTime()) < (jwtConfig.getThreshold());
     }
     /**
      * 重新计算过期时间

@@ -2,7 +2,7 @@ debug: false
 # 日志
 logging:
   pattern:
-    level: warn
+    level: WARN
   # 日志文件配置
   path: /opt/data/logs/webapp.log
 # 数据源

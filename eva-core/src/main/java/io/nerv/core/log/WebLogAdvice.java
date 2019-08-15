@@ -33,7 +33,7 @@ public class WebLogAdvice {
      * ~ 第五个 * 任意方法
      * ~ .. 匹配任意数量的参数.
      */
-    @Pointcut("execution(public * io.nerv.web..*.*(..))")
+    @Pointcut("execution(public * *..*Ctrl.*(..))")
     public void webLog(){}
 
     @Before("webLog()")
@@ -48,13 +48,13 @@ public class WebLogAdvice {
             HttpServletRequest request = attributes.getRequest();
 
             // 记录下请求内容
-            log.info("---------------------------start---------------------------");
-            log.info("URL : " + request.getRequestURL().toString());
-            log.info("HTTP_METHOD : " + request.getMethod());
-            log.info("IP : " + request.getRemoteAddr());
-            log.info("CLASS_METHOD : " + joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName());
-            log.info("ARGS : " + Arrays.toString(joinPoint.getArgs()));
-            log.info("---------------------------end---------------------------");
+            log.debug("---------------------------start---------------------------");
+            log.debug("URL : " + request.getRequestURL().toString());
+            log.debug("HTTP_METHOD : " + request.getMethod());
+            log.debug("IP : " + request.getRemoteAddr());
+            log.debug("CLASS_METHOD : " + joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName());
+            log.debug("ARGS : " + Arrays.toString(joinPoint.getArgs()));
+            log.debug("---------------------------end---------------------------");
         }
     }
 

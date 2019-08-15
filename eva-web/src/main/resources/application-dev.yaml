@@ -2,7 +2,7 @@ debug: false
 # 日志
 logging:
   pattern:
-    level: debug
+    level: WARN
   # 日志文件配置 file 和 path只需配置一个 不可同时配置 ， 同时配置只生效file
   file: e:/applogs/webapp.log
 # 数据源
