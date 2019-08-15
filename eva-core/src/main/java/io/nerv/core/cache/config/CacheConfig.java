@@ -22,8 +22,8 @@ public class CacheConfig {
     /**  容量 - 0 无限制 **/
     private int capacity = 0;
 
-    /**  有效时长 默认5秒 **/
+    /**  有效时长 默认3秒 **/
     /** <code>0</code> 表示没有设置，单位毫秒 **/
-    private long timeout = DateUnit.SECOND.getMillis() * 5;
+    private long timeout = DateUnit.SECOND.getMillis() * 3;
 
 }

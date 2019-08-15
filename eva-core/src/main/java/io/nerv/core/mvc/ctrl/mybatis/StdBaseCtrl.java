@@ -1,6 +1,7 @@
 package io.nerv.core.mvc.ctrl.mybatis;
 
 import cn.hutool.core.collection.CollectionUtil;
+import io.nerv.core.annotation.NoRepeatSubmit;
 import io.nerv.core.enums.HttpCodeEnum;
 import io.nerv.core.enums.ResponseEnumm;
 import io.nerv.core.mvc.service.mybatis.StdBaseService;
@@ -32,6 +33,7 @@ public abstract class StdBaseCtrl<T extends StdBaseService, E extends StdBaseEnt
 
     @PostMapping("del")
     @ApiOperation(value = "根据ID删除/批量删除记录",response = Response.class)
+    @NoRepeatSubmit
     public Response del(@ApiParam(name = "ids", value = "[记录ID]")
                         @RequestBody SingleArray<String> ids){
 
@@ -44,6 +46,7 @@ public abstract class StdBaseCtrl<T extends StdBaseService, E extends StdBaseEnt
 
     @PostMapping("edit")
     @ApiOperation(value = "新增/编辑记录",response = Response.class)
+    @NoRepeatSubmit
     public Response save(@ApiParam(name ="formdata", value = "模型对象")
                          @RequestBody E entity){
         this.service.merge(entity);
@@ -52,6 +55,7 @@ public abstract class StdBaseCtrl<T extends StdBaseService, E extends StdBaseEnt
 
     @GetMapping("list")
     @ApiOperation(value = "列表查询",response = Response.class)
+    @NoRepeatSubmit
     public Response list(@ApiParam(name ="condition", value = "模型对象")
                                  E entity, Integer pageNo, Integer pageSize){
         return this.success(this.service.listPage(entity, pageNo, pageSize));
@@ -59,6 +63,7 @@ public abstract class StdBaseCtrl<T extends StdBaseService, E extends StdBaseEnt
 
     @GetMapping("/get/{id}")
     @ApiOperation(value = "根据ID获得记录信息", response = Response.class)
+    @NoRepeatSubmit
     public Response get(@ApiParam(name = "id", value = "记录ID")
                             @PathVariable("id") String id){
         return this.success(this.service.getById(id));
