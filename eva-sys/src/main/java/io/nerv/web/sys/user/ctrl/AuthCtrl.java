@@ -6,7 +6,7 @@ import com.alibaba.fastjson.JSON;
 import io.nerv.core.constant.TokenConst;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.util.I18NHelper;
-import io.nerv.exception.OathException;
+import io.nerv.core.exception.OathException;
 import io.nerv.security.jwt.JwtConfig;
 import io.nerv.security.jwt.JwtUtil;
 import io.nerv.security.util.SecurityUtil;

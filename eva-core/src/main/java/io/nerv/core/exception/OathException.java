@@ -1,4 +1,4 @@
-package io.nerv.exception;
+package io.nerv.core.exception;
 
 /**
  * 权限异常类

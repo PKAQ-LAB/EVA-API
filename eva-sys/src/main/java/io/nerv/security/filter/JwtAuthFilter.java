@@ -4,7 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.ServletUtil;
 import io.nerv.core.constant.TokenConst;
 import io.nerv.core.enums.HttpCodeEnum;
-import io.nerv.exception.OathException;
+import io.nerv.core.exception.OathException;
 import io.nerv.security.jwt.JwtConfig;
 import io.nerv.security.jwt.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;

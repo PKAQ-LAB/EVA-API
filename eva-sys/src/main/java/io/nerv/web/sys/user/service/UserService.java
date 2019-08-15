@@ -12,7 +12,7 @@ import io.nerv.core.enums.LockEnumm;
 import io.nerv.core.mvc.entity.mybatis.BaseTreeEntity;
 import io.nerv.core.mvc.service.mybatis.StdBaseService;
 import io.nerv.core.util.tree.TreeHelper;
-import io.nerv.exception.OathException;
+import io.nerv.core.exception.OathException;
 import io.nerv.web.sys.organization.mapper.OrganizationMapper;
 import io.nerv.web.sys.user.entity.UserEntity;
 import io.nerv.web.sys.user.mapper.UserMapper;

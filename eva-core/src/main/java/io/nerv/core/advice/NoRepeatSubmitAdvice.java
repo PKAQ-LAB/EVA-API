@@ -24,7 +24,6 @@ public class NoRepeatSubmitAdvice {
     @Qualifier("fifoCache")
     private Cache<String, Integer> cache;
 
-
     @Around("@annotation(io.nerv.core.annotation.NoRepeatSubmit)")
     public Object arround(ProceedingJoinPoint pjp) {
         try {
