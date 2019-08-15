@@ -7,7 +7,7 @@ import com.alibaba.fastjson.serializer.PropertyFilter;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
-import io.nerv.core.annotation.CodeFilter;
+import io.nerv.core.annotation.Code;
 import io.nerv.web.sys.dict.cache.DictHelperProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
@@ -48,7 +48,7 @@ public class FastjsonConfiguration {
                 return value;
             }
             //根据注解判断该属性值是否需要转换
-            CodeFilter codeFilter = context.getAnnation(CodeFilter.class);
+            Code codeFilter = context.getAnnation(Code.class);
             if (codeFilter != null) {
                 String dictValue = dictHelper.get(StrUtil.isBlank(codeFilter.value()) ? name : codeFilter.value(), value.toString());
                 value = StrUtil.isNotBlank(dictValue) ? dictValue : value;
