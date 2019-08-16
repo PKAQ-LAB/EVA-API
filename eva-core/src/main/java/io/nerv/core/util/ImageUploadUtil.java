@@ -1,5 +1,6 @@
 package io.nerv.core.util;
 
+import cn.hutool.core.img.ImgUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
@@ -85,4 +86,42 @@ public class ImageUploadUtil {
             FileUtil.move(sourceFile, distFile, true);
         }
     }
+
+    /**
+     * 将图片从缓存目录移动到storage目录并生成缩略图
+     * @param filenames
+     */
+    public void storageWithThumbnail(float scale, String... filenames){
+        String tempPath = imageConfig.getTempPath();
+
+        for (String filename : filenames) {
+            File sourceFile = new File(tempPath, filename);
+            if (!sourceFile.exists()) continue;
+            File distFile = new File(imageConfig.getStoragePath(), filename);
+            File distFileThumbnail = new File(imageConfig.getStoragePath(), "thumbnail_" + filename);
+            this.thumbnail(sourceFile, distFileThumbnail, scale);
+            FileUtil.move(sourceFile, distFile, true);
+        }
+    }
+
+    /**
+     * 生成缩略图
+     * @param file
+     * @param scale
+     */
+    public void thumbnail(File file, float scale){
+        File destFile = new File(file.getParent(), "thumbnail_" + file.getName());
+        ImgUtil.scale(file, destFile, scale);
+    }
+
+    /**
+     * 生成缩略图
+     * @param file
+     * @param dest
+     * @param scale
+     */
+    public void thumbnail(File file, File dest, float scale){
+        ImgUtil.scale(file, dest, scale);
+    }
+
 }

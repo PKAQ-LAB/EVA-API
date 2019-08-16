@@ -34,6 +34,26 @@ CREATE TABLE `log_biz`  (
   PRIMARY KEY (`ID`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
+/*==============================================================*/
+/* Table: LOG_ERROR                                             */
+/*==============================================================*/
+DROP TABLE IF EXISTS LOG_ERROR;
+CREATE TABLE LOG_ERROR
+(
+   ID                   VARCHAR(40) NOT NULL,
+   REQUEST_TIME         VARCHAR(40) COMMENT '记录时间',
+   IP                   VARCHAR(40) COMMENT '请求ip',
+   SPEND_TIME           VARCHAR(40) COMMENT '请求耗时',
+   CLASS_NAME           VARCHAR(200) COMMENT '类名',
+   METHOD               VARCHAR(200) COMMENT '方法名',
+   PARAMS               VARCHAR(2000) COMMENT '方法参数',
+   EX_DESC              TEXT COMMENT '异常描述',
+   LOGIN_USER           VARCHAR(40) COMMENT '登录用户',
+   PRIMARY KEY (ID)
+);
+
+ALTER TABLE LOG_ERROR COMMENT '日志监控_异常日志';
+
 -- ----------------------------
 -- Table structure for sys_dict
 -- ----------------------------
