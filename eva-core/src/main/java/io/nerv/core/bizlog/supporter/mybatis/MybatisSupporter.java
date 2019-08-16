@@ -1,5 +1,6 @@
 package io.nerv.core.bizlog.supporter.mybatis;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -41,11 +42,7 @@ public class MybatisSupporter implements BizLogSupporter {
     @Override
     public void save(BizLogEntity bizLogEntity) {
         MybatisBizLogEntity mybatisBizLogEntity = new MybatisBizLogEntity();
-        mybatisBizLogEntity.setId(IdUtil.fastSimpleUUID());
-        mybatisBizLogEntity.setDescription(bizLogEntity.getDescription());
-        mybatisBizLogEntity.setOperateType(bizLogEntity.getOperateType());
-        mybatisBizLogEntity.setOperator(bizLogEntity.getOperator());
-        mybatisBizLogEntity.setOperateDatetime(DateUtil.now());
+        BeanUtil.copyProperties(bizLogEntity, mybatisBizLogEntity);
 
         this.mybatisSupporterMapper.insert(mybatisBizLogEntity);
     }

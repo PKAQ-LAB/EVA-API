@@ -1,5 +1,6 @@
 package io.nerv.core.bizlog.supporter.mybatis.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.nerv.core.bizlog.base.BizLogEntity;
@@ -17,6 +18,6 @@ import org.apache.ibatis.type.Alias;
 @TableName("log_biz")
 @EqualsAndHashCode(callSuper = true)
 public class MybatisBizLogEntity extends BizLogEntity {
-    @TableId
+    @TableId(type = IdType.ID_WORKER_STR)
     private String id;
 }

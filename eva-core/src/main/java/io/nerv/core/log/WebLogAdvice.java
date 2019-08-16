@@ -1,10 +1,15 @@
 package io.nerv.core.log;
 
+import cn.hutool.core.date.DateUtil;
+import com.alibaba.fastjson.JSON;
+import io.nerv.core.exception.entity.ErrorlogEntity;
+import io.nerv.core.exception.mapper.ErrorlogMapper;
+import io.nerv.core.util.IpUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.aopalliance.intercept.Joinpoint;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -22,6 +27,8 @@ import java.util.Arrays;
 public class WebLogAdvice {
     private ThreadLocal<Long> startTime = new ThreadLocal<>();
 
+    @Autowired
+    private ErrorlogMapper errorlogMapper;
     /**
      * 定义一个切入点.
      * ~ 第一个 * 代表任意修饰符及任意返回值.
@@ -65,8 +72,31 @@ public class WebLogAdvice {
     }
 
     @AfterThrowing(pointcut = "webLog()", throwing="ex")
-    public void doWhenThrowing(Throwable ex){
-        log.error("系统异常，持久化");
+    public void doWhenThrowing(JoinPoint joinPoint,Throwable ex){
+        String jsontStack = JSON.toJSONString(ex.getStackTrace());
+        log.error(JSON.toJSONString(ex.getStackTrace()));
+
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+
+        if(null != attributes){
+            HttpServletRequest request = attributes.getRequest();
+            var ip = IpUtil.getIPAddress(request);
+            var className = joinPoint.getTarget().getClass().getName();
+            var methodName = joinPoint.getSignature().getName();
+            var args = JSON.toJSONString(joinPoint.getArgs());
+
+            ErrorlogEntity errorlogEntity = new ErrorlogEntity();
+
+
+            errorlogEntity.setRequestTime(DateUtil.now())
+                          .setClassName(className)
+                          .setMethod(methodName)
+                          .setParams(JSON.toJSONString(args))
+                          .setExDesc(jsontStack)
+                          .setIp(ip)
+                          .setSpendTime(String.valueOf(System.currentTimeMillis() - startTime.get()));
+            this.errorlogMapper.insert(errorlogEntity);
+        }
     }
 }
 
