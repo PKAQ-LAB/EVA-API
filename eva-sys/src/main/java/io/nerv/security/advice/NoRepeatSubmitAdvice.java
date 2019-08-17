@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 public class NoRepeatSubmitAdvice {
     @Autowired
-    @Qualifier("fifoCache")
     private Cache<String, Integer> cache;
 
     @Autowired
