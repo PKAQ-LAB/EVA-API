@@ -1,17 +1,22 @@
-package io.nerv.config;
+package io.nerv.cache.config;
 
+import cn.hutool.cache.Cache;
+import cn.hutool.cache.impl.FIFOCache;
 import com.alibaba.fastjson.support.spring.FastJsonRedisSerializer;
+import io.nerv.cache.condition.DefaultCacheCondition;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.cache.RedisCacheWriter;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
@@ -19,12 +24,15 @@ import java.time.Duration;
 
 @Slf4j
 @Configuration
-public class RedisConfigConfiguration extends CachingConfigurerSupport {
+@EnableConfigurationProperties(CacheConfig.class)
+public class CacheConfiguration extends CachingConfigurerSupport {
+
+    @Autowired
+    private CacheConfig cacheConfig;
 
     /*
      * 定义缓存数据 key 生成策略的bean 包名+类名+方法名+所有参数
      */
-    @Override
     public KeyGenerator keyGenerator() {
         return (o, method, objects) -> {
             //格式化缓存key字符串
@@ -55,33 +63,23 @@ public class RedisConfigConfiguration extends CachingConfigurerSupport {
                                                          //如果是空值，不缓存
                                                          .disableCachingNullValues()
                                                          //设置key序列化器
-                                                        .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-                                                        //设置value序列化器
-                                                        .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer((new FastJsonRedisSerializer<>(Object.class))));
+                                                         .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+                                                         //设置value序列化器
+                                                         .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer((new FastJsonRedisSerializer<>(Object.class))));
 
         log.debug("自定义RedisCacheManager加载完成");
 
-
-
         return RedisCacheManager.builder(RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory))
-                .cacheDefaults(redisCacheConfiguration).build();
+                                .cacheDefaults(redisCacheConfiguration).build();
     }
+
     /**
-     * @Description: 防止redis入库序列化乱码的问题
-     * @return     返回类型
-     * @date 2018/4/12 10:54
+     * Map 缓存
+     * @return
      */
     @Bean
-    public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory){
-        RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(redisConnectionFactory);
-        //key序列化
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-        //value序列化
-        redisTemplate.setValueSerializer(new FastJsonRedisSerializer<>(Object.class));
-
-        redisTemplate.afterPropertiesSet();
-        return redisTemplate;
+    @Conditional(DefaultCacheCondition.class)
+    public Cache mapCacheHelper(){
+        return new FIFOCache(cacheConfig.getCapacity(), cacheConfig.getTimeout());
     }
-
 }

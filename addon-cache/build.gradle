@@ -3,5 +3,6 @@ project.archivesBaseName = 'addon-cache'
 
 dependencies {
     implementation "org.springframework.boot:spring-boot-starter-data-redis:${springBootVersion}",
-                   "com.alibaba:fastjson:${fastjson}"
+                    "cn.hutool:hutool-cache:${hutool}",
+                    "com.alibaba:fastjson:${fastjson}"
 }

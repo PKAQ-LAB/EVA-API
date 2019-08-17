@@ -1,4 +1,4 @@
-package io.nerv.config;
+package io.nerv.cache.config;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;

@@ -1,11 +1,7 @@
-package io.nerv.core.cache.config;
+package io.nerv.cache.config;
 
-import cn.hutool.core.date.DateUnit;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-
-import java.util.List;
 
 /**
  * jwt配置
@@ -24,6 +20,6 @@ public class CacheConfig {
 
     /**  有效时长 默认3秒 **/
     /** <code>0</code> 表示没有设置，单位毫秒 **/
-    private long timeout = DateUnit.SECOND.getMillis() * 3;
+    private long timeout = 1000 * 3;
 
 }
