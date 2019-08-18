@@ -1,5 +1,5 @@
 plugins {
-   id "name.remal.check-dependency-updates" version "1.0.153"
+   id "name.remal.check-dependency-updates" version "1.0.154"
    id "com.jfrog.bintray" version "1.8.4"
 }
 
@@ -11,21 +11,19 @@ ext {
     lombok = "1.18.8"
     swagger = "2.9.2"
 	swagger_ui = "1.9.5"
-    hutool = "4.6.1"
+    hutool = "4.6.2"
     jaxb_api = "2.3.1"
     jjwt = "0.9.1"
-    auth0 = "3.8.1"
-    sharding_jdbc = "3.0.0"
+    auth0 = "3.8.2"
     jasypt = "2.1.1"
     p6spy = "3.8.5"
-    flyway = "5.2.4"
-    commons_io = "2.6"
+    flyway = "6.0.0"
 }
 
 allprojects {
     apply plugin: "name.remal.check-dependency-updates"
     group = 'io.nerv'
-    version = '1.5.5'
+    version = '1.5.6'
 }
 
 subprojects {

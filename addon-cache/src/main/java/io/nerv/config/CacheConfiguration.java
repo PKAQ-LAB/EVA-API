@@ -1,4 +1,4 @@
-package io.nerv.cache.config;
+package io.nerv.config;
 
 import cn.hutool.cache.Cache;
 import cn.hutool.cache.impl.FIFOCache;

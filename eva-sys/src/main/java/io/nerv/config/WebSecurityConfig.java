@@ -1,7 +1,6 @@
-package io.nerv.cache.config;
+package io.nerv.config;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.StrUtil;
 import io.nerv.security.entrypoint.UnauthorizedHandler;
 import io.nerv.security.filter.JwtAuthFilter;
 import io.nerv.security.filter.RestAccessDeniedHandler;

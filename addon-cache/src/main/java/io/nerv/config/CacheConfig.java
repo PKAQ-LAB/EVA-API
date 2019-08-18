@@ -1,4 +1,4 @@
-package io.nerv.cache.config;
+package io.nerv.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

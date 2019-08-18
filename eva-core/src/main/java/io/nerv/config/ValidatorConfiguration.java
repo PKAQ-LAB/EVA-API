@@ -1,4 +1,4 @@
-package io.nerv.cache.config;
+package io.nerv.config;
 
 import org.hibernate.validator.HibernateValidator;
 import org.springframework.context.annotation.Bean;

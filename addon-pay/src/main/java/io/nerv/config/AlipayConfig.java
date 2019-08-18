@@ -1,4 +1,4 @@
-package io.nerv.pay.alipay.config;
+package io.nerv.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

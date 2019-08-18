@@ -12,8 +12,8 @@ dependencies {
     api		"org.springframework.boot:spring-boot-starter-web:${springBootVersion}",
             // AOP
             "org.springframework.boot:spring-boot-starter-aop:${springBootVersion}",
-			"org.springframework.boot:spring-boot-starter-data-redis:${springBootVersion}",
 			"org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}",
+			"org.springframework.boot:spring-boot-configuration-processor:${springBootVersion}",
             // json
             "com.alibaba:fastjson:${fastjson}",
 			// hutool

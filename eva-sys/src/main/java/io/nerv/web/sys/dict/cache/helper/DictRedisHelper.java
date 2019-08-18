@@ -2,7 +2,7 @@ package io.nerv.web.sys.dict.cache.helper;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import io.nerv.core.util.RedisUtil;
+import io.nerv.util.RedisUtil;
 import io.nerv.web.sys.dict.cache.DictHelperProvider;
 import io.nerv.web.sys.dict.cache.condition.RedisDictCacheCondition;
 import io.nerv.web.sys.dict.service.DictService;

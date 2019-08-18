@@ -1,4 +1,4 @@
-package io.nerv.core.util;
+package io.nerv.util;
 
 import cn.hutool.core.collection.CollUtil;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,9 +1,11 @@
-package io.nerv.cache.config;
+package io.nerv.config;
 
 import cn.hutool.core.collection.CollUtil;
+import com.google.common.base.Predicate;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
+import springfox.documentation.RequestHandler;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -12,9 +14,6 @@ import springfox.documentation.service.ApiKey;
 import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
-
-import java.util.List;
 
 /**
  * swagger配置类
@@ -23,27 +22,29 @@ import java.util.List;
  * @Profile()
  */
 @Configuration
-@EnableSwagger2
-@Profile("dev")
-public class SwaggerConfiguration {
+@ConditionalOnProperty(prefix = "spring.profiles", name = "active", havingValue = "dev")
+public class SysAPIConfiguration {
     @Bean
-    public Docket createRestApi() {
+    public Docket sysApi() {
+        Predicate<RequestHandler> sys = RequestHandlerSelectors.basePackage("io.nerv");
+
         return new Docket(DocumentationType.SWAGGER_2)
+                .groupName("系统管理")
                 .securitySchemes(CollUtil.toList(
                         new ApiKey("Authorization", "Authorization", "header")))
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("io.nerv"))
+                .apis(sys)
                 .paths(PathSelectors.any())
                 .build();
     }
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("RESTful APIs")
+                .title("EVA-Sys API接口文档")
                 .description("http://pkaq.org")
                 .termsOfServiceUrl("http://pkaq.org/")
-                .contact(new Contact("pkaq","http://pkaq.org","pkaq@msn.com"))
+                .contact(new Contact("PKAQ","http://pkaq.org","pkaq@msn.com"))
                 .version("1.0")
                 .build();
     }

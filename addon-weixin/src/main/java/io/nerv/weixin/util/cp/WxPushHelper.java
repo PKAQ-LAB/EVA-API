@@ -1,6 +1,6 @@
 package io.nerv.weixin.util.cp;
 
-import io.nerv.weixin.config.WxCpConfiguration;
+import io.nerv.config.WxCpConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.cp.bean.WxCpMessage;

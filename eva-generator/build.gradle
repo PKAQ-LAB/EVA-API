@@ -1,7 +1,5 @@
-plugins {
-	id 'org.springframework.boot' version '2.1.7.RELEASE'
-}
-apply plugin: 'io.spring.dependency-management'
+apply from: '../publish.gradle'
+project.archivesBaseName = 'addon-generator'
 
 ext{
     velocity = "2.1"

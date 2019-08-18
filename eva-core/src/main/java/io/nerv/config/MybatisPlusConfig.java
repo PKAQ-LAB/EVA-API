@@ -1,4 +1,4 @@
-package io.nerv.cache.config;
+package io.nerv.config;
 
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import org.mybatis.spring.annotation.MapperScan;

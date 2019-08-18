@@ -1,4 +1,4 @@
-package io.nerv.weixin.config;
+package io.nerv.config;
 
 import com.google.common.collect.Maps;
 import io.nerv.weixin.properties.WxCpProperties;

@@ -2,7 +2,7 @@ package io.nerv.pay.alipay.util;
 
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
-import io.nerv.pay.alipay.config.AlipayConfig;
+import io.nerv.config.AlipayConfig;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
