@@ -6,7 +6,6 @@ ext{
 }
 
 dependencies {
-    implementation	project(":eva-core")
-
-    implementation "com.github.binarywang:weixin-java-cp:${weixin_cp}"
+    implementation	project(":eva-core"),
+                    "com.github.binarywang:weixin-java-cp:${weixin_cp}"
 }
