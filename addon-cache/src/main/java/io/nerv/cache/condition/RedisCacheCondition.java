@@ -14,6 +14,6 @@ public class RedisCacheCondition implements Condition {
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
         String cacheType = context.getEnvironment().getProperty("eva.cache.type");
-        return StrUtil.isBlank(cacheType) || "redis".equals(cacheType);
+        return "redis".equals(cacheType);
     }
 }
