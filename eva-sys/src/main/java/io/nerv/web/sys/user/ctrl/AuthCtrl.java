@@ -4,9 +4,9 @@ import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.extra.servlet.ServletUtil;
 import com.alibaba.fastjson.JSON;
 import io.nerv.core.constant.TokenConst;
+import io.nerv.core.exception.OathException;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.util.I18NHelper;
-import io.nerv.core.exception.OathException;
 import io.nerv.properties.EvaConfig;
 import io.nerv.security.jwt.JwtUtil;
 import io.nerv.security.util.SecurityUtil;
@@ -68,17 +68,17 @@ public class AuthCtrl {
         ServletUtil.addCookie(response,
                               TokenConst.TOKEN_KEY,
                               token,
-                              evaConfig.getJwt().getCookie().getMaxAge(),
+                              evaConfig.getCookie().getMaxAge(),
                              "/",
-                              evaConfig.getJwt().getCookie().getDomain());
+                              evaConfig.getCookie().getDomain());
 
 
         ServletUtil.addCookie(response,
                 TokenConst.USER_KEY,
                 URLEncoder.encode(JSON.toJSONString(user), CharsetUtil.UTF_8),
-                evaConfig.getJwt().getCookie().getMaxAge(),
+                evaConfig.getCookie().getMaxAge(),
                 "/",
-                evaConfig.getJwt().getCookie().getDomain());
+                evaConfig.getCookie().getDomain());
 
         Map<String, Object> map = new HashMap<>(2);
         map.put("user", user);
@@ -108,7 +108,7 @@ public class AuthCtrl {
                 null,
                 0,
                 "/",
-                evaConfig.getJwt().getCookie().getDomain());
+                evaConfig.getCookie().getDomain());
 
 
         ServletUtil.addCookie(response,
@@ -116,7 +116,7 @@ public class AuthCtrl {
                 null,
                 0,
                 "/",
-                evaConfig.getJwt().getCookie().getDomain());
+                evaConfig.getCookie().getDomain());
         return new Response().success();
     }
 }

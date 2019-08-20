@@ -68,9 +68,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     // 后台设置前台cookie值
                     ServletUtil.addCookie(response, TokenConst.TOKEN_KEY,
                                                     jwtUtil.refreshToken(authToken),
-                                                    evaConfig.getJwt().getCookie().getMaxAge(),
+                                                    evaConfig.getCookie().getMaxAge(),
                                                 "/",
-                                                    evaConfig.getJwt().getCookie().getDomain());
+                                                    evaConfig.getCookie().getDomain());
                 }
             } catch (OathException e) {
                 logger.warn("鉴权失败 Token已过期");

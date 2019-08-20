@@ -37,7 +37,4 @@ public class Jwt {
     /** 可信任域 **/
     private List<String> creditUrl;
 
-    /** cookie 配置 **/
-    private Cookie cookie;
-
 }

@@ -26,4 +26,27 @@ public class EvaConfig {
 
     /** jwt配置 **/
     private Jwt jwt;
+
+    /** cookie 配置 **/
+    private Cookie cookie;
+
+    public BizLog getBizlog() {
+        return null == this.bizlog? new BizLog() : bizlog;
+    }
+
+    public ErrorLog getErrorLog() {
+        return null == this.errorLog? new ErrorLog() : errorLog;
+    }
+
+    public Upload getUpload() {
+        return null == this.upload? new Upload() : upload;
+    }
+
+    public Jwt getJwt() {
+        return null == this.jwt? new Jwt() : jwt;
+    }
+
+    public Cookie getCookie() {
+        return null == this.cookie? new Cookie() : cookie;
+    }
 }

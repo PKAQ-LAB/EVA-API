@@ -48,8 +48,6 @@ server:
   servlet:
     context-path: /api
   port: 9009
-  tomcat:
-    uri-encoding: utf-8
 # 业务日志
 eva:
   # 缓存配置
