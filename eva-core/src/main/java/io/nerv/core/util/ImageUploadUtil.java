@@ -6,7 +6,7 @@ import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import io.nerv.core.exception.ImageUploadException;
-import io.nerv.core.upload.config.ImageConfig;
+import io.nerv.properties.EvaConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,7 +24,7 @@ public class ImageUploadUtil {
     private Snowflake snowflake = IdUtil.createSnowflake(SNOW, FLAKE);
 
     @Autowired
-    private ImageConfig imageConfig;
+    private EvaConfig evaConfig;
 
     private final static long SNOW = 16;
 
@@ -51,9 +51,9 @@ public class ImageUploadUtil {
             throw new ImageUploadException("文件名错误");
         }
         // 判断上传图片是否符合格式
-        if (imageConfig.getAllowSuffixName().contains(suffixName)){
+        if (evaConfig.getUpload().getAllowSuffixName().contains(suffixName)){
             // 创建临时文件夹
-            File tempFileFolder = new File(imageConfig.getTempPath());
+            File tempFileFolder = new File(evaConfig.getUpload().getTempPath());
             if (!tempFileFolder.exists() && !tempFileFolder.isDirectory()){
                 tempFileFolder.mkdir();
             }
@@ -77,12 +77,12 @@ public class ImageUploadUtil {
      * @param filenames
      */
     public void storage(String... filenames){
-        String tempPath = imageConfig.getTempPath();
+        String tempPath = evaConfig.getUpload().getTempPath();
 
         for (String filename : filenames) {
             File sourceFile = new File(tempPath, filename);
             if (!sourceFile.exists()) continue;
-            File distFile = new File(imageConfig.getStoragePath(), filename);
+            File distFile = new File(evaConfig.getUpload().getStoragePath(), filename);
             FileUtil.move(sourceFile, distFile, true);
         }
     }
@@ -92,13 +92,13 @@ public class ImageUploadUtil {
      * @param filenames
      */
     public void storageWithThumbnail(float scale, String... filenames){
-        String tempPath = imageConfig.getTempPath();
+        String tempPath = evaConfig.getUpload().getTempPath();
 
         for (String filename : filenames) {
             File sourceFile = new File(tempPath, filename);
             if (!sourceFile.exists()) continue;
-            File distFile = new File(imageConfig.getStoragePath(), filename);
-            File distFileThumbnail = new File(imageConfig.getStoragePath(), "thumbnail_" + filename);
+            File distFile = new File(evaConfig.getUpload().getStoragePath(), filename);
+            File distFileThumbnail = new File(evaConfig.getUpload().getStoragePath(), "thumbnail_" + filename);
             this.thumbnail(sourceFile, distFileThumbnail, scale);
             FileUtil.move(sourceFile, distFile, true);
         }

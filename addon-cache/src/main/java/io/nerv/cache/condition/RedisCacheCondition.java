@@ -1,10 +1,8 @@
 package io.nerv.cache.condition;
 
-import cn.hutool.core.util.StrUtil;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
-
 /**
  * 缓存启用条件， 是否启用redis
  * @author: S.PKAQ

@@ -39,14 +39,6 @@ mybatis-plus:
     map-underscore-to-camel-case: true
     cache-enabled: false
     log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
-# JWT配置
-jwt:
-  header: Authorization
-  token-head: Bearer
-  sign: PKAQ
-  secert: aHR0cDovL3BrYXEub3Jn
-  ttl: 2592000000
-  threshold: 86400000
 # 配置加密
 jasypt:
   encryptor:
@@ -59,13 +51,32 @@ server:
   tomcat:
     uri-encoding: utf-8
 # 业务日志
-bizlog:
-  enabled: true
-  impl: MybatisSupporter
-# 图片上传
-upload:
-  tempPath: E://temp/11
-  storagePath: E://temp/22
-  allowSuffixName: jpg,png
-security:
-  permit: /auth/login, /auth/logout
+eva:
+  # 缓存配置
+  cache:
+    timeout: 500
+    type: redis
+    cache-names: sys
+  # 错误日志
+  errorlog:
+    enabled: true
+  # 业务日志
+  bizlog:
+    enabled: true
+    impl: MybatisSupporter
+  # 图片上传
+  upload:
+    tempPath: E://temp/11
+    storagePath: E://temp/22
+    allowSuffixName: jpg,png
+  # JWT配置
+  jwt:
+    header: Authorization
+    token-head: Bearer
+    sign: PKAQ
+    secert: aHR0cDovL3BrYXEub3Jn
+    ttl: 2592000000
+    threshold: 86400000
+  # 无需鉴权路径
+  security:
+    permit: /auth/login, /auth/logout

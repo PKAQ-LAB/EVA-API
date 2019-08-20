@@ -3,6 +3,8 @@ package io.nerv.security.jwt;
 import cn.hutool.core.codec.Base64;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.impl.DefaultClock;
+import io.nerv.properties.EvaConfig;
+import io.nerv.properties.Jwt;
 import io.nerv.core.exception.OathException;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -24,16 +26,20 @@ import java.util.function.Function;
 @Slf4j
 public class JwtUtil {
     @Autowired
-    private JwtConfig jwtConfig;
+    private EvaConfig evaConfig;
 
     private Clock clock = DefaultClock.INSTANCE;
+
+    public Jwt jwtConfig(){
+        return this.evaConfig.getJwt();
+    }
 
     /**
      * 生成加密K
      * @return
      */
     private SecretKey generalKey() {
-        byte[] encodedKey = Base64.decode(jwtConfig.getSecert());
+        byte[] encodedKey = Base64.decode(evaConfig.getJwt().getSecert());
         return new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
     }
     /**
@@ -100,7 +106,7 @@ public class JwtUtil {
                 // 签发时间
                 .setIssuedAt(new Date(nowMillis))
                 // 签发人
-                .setIssuer(jwtConfig.getSign())
+                .setIssuer(this.jwtConfig().getSign())
                 // 主题
                 .setSubject(uid);
 
@@ -145,7 +151,7 @@ public class JwtUtil {
 
         return Jwts.builder()
                 .setClaims(claims)
-                .signWith(SignatureAlgorithm.HS512, jwtConfig.getSecert())
+                .signWith(SignatureAlgorithm.HS512, this.jwtConfig().getSecert())
                 .compact();
     }
     /**
@@ -165,7 +171,7 @@ public class JwtUtil {
      */
     public Boolean isTokenExpiring(String token) throws OathException {
         Date expiration = getExpirationDateFromToken(token);
-        return (expiration.getTime() - clock.now().getTime()) < (jwtConfig.getThreshold());
+        return (expiration.getTime() - clock.now().getTime()) < (this.jwtConfig().getThreshold());
     }
     /**
      * 重新计算过期时间
@@ -173,7 +179,7 @@ public class JwtUtil {
      * @return
      */
     private Date calculateExpirationDate(Date createdDate) {
-        return new Date(clock.now().getTime() + jwtConfig.getTtl());
+        return new Date(clock.now().getTime() + this.jwtConfig().getTtl());
 
     }
     /**

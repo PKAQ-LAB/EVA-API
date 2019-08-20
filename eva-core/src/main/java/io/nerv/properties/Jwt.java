@@ -1,7 +1,6 @@
-package io.nerv.security.jwt;
+package io.nerv.properties;
 
 import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.List;
 
@@ -11,8 +10,7 @@ import java.util.List;
  * @Datetime: 2018/4/20 15:39
  */
 @Data
-@ConfigurationProperties(prefix = "jwt")
-public class JwtConfig {
+public class Jwt {
     //刷新TOKEN(有返回数据)
     //private int rescode_reftoken_msg = 1006;
     ////刷新TOKEN
@@ -40,5 +38,6 @@ public class JwtConfig {
     private List<String> creditUrl;
 
     /** cookie 配置 **/
-    private CookieProperties cookie;
+    private Cookie cookie;
+
 }

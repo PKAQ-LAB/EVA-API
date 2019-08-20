@@ -38,10 +38,6 @@ spring:
   # 生产环境禁用flyway
   flyway:
     enabled: false
-eva:
-  cache:
-    type: redis
-    cache-names: sys
 jwt:
   cookie:
     maxAge: 3600

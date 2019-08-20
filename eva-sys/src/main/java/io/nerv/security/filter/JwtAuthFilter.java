@@ -5,7 +5,7 @@ import cn.hutool.extra.servlet.ServletUtil;
 import io.nerv.core.constant.TokenConst;
 import io.nerv.core.enums.HttpCodeEnum;
 import io.nerv.core.exception.OathException;
-import io.nerv.security.jwt.JwtConfig;
+import io.nerv.properties.EvaConfig;
 import io.nerv.security.jwt.JwtUtil;
 import io.nerv.security.util.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private JwtUtil jwtUtil;
 
     @Autowired
-    private JwtConfig jwtConfig;
+    private EvaConfig evaConfig;
 
     @Autowired
     private TokenUtil tokenUtil;
@@ -68,9 +68,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     // 后台设置前台cookie值
                     ServletUtil.addCookie(response, TokenConst.TOKEN_KEY,
                                                     jwtUtil.refreshToken(authToken),
-                                                    jwtConfig.getCookie().getMaxAge(),
+                                                    evaConfig.getJwt().getCookie().getMaxAge(),
                                                 "/",
-                                                    jwtConfig.getCookie().getDomain());
+                                                    evaConfig.getJwt().getCookie().getDomain());
                 }
             } catch (OathException e) {
                 logger.warn("鉴权失败 Token已过期");

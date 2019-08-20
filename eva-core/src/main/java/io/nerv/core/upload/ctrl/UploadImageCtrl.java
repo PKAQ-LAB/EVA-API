@@ -7,7 +7,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import io.nerv.core.enums.HttpCodeEnum;
 import io.nerv.core.mvc.util.Response;
-import io.nerv.core.upload.config.ImageConfig;
+import io.nerv.properties.EvaConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,7 +27,7 @@ import java.io.File;
 public class UploadImageCtrl{
 
     @Autowired
-    private ImageConfig imageConfig;
+    private EvaConfig evaConfig;
 
     private Snowflake snowflake = IdUtil.createSnowflake(1, 1);
 
@@ -48,8 +48,8 @@ public class UploadImageCtrl{
             return response.failure(HttpCodeEnum.SERVER_ERROR.getIndex(), "文件名错误");
         }
         // 判断上传图片是否符合格式
-        if (imageConfig.getAllowSuffixName().toLowerCase().contains(suffixName)){
-            String destPath = imageConfig.getTempPath();
+        if (evaConfig.getUpload().getAllowSuffixName().toLowerCase().contains(suffixName)){
+            String destPath = evaConfig.getUpload().getTempPath();
             if (StrUtil.isNotBlank(destPath) && !destPath.endsWith("/")){
                 destPath += "/";
             }

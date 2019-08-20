@@ -1,7 +1,7 @@
 package io.nerv;
 
 import io.nerv.core.exception.OathException;
-import io.nerv.security.jwt.JwtConfig;
+import io.nerv.properties.Jwt;
 import io.nerv.security.jwt.JwtUtil;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
  */
 public class JwtTest extends BaseTest{
     @Autowired
-    private JwtConfig jwtConfig;
+    private Jwt jwtConfig;
     @Test
     public void bcryptTest() {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();

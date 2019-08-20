@@ -7,7 +7,7 @@ import io.nerv.core.constant.TokenConst;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.util.I18NHelper;
 import io.nerv.core.exception.OathException;
-import io.nerv.security.jwt.JwtConfig;
+import io.nerv.properties.EvaConfig;
 import io.nerv.security.jwt.JwtUtil;
 import io.nerv.security.util.SecurityUtil;
 import io.nerv.web.sys.user.entity.UserEntity;
@@ -43,7 +43,7 @@ public class AuthCtrl {
     protected I18NHelper i18NHelper;
 
     @Autowired
-    private JwtConfig jwtConfig;
+    private EvaConfig evaConfig;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -63,22 +63,22 @@ public class AuthCtrl {
                           @RequestBody UserEntity user) throws OathException, UnsupportedEncodingException {
         user =this.userService.validate(user);
         // 签发token
-        String token = jwtUtil.build(jwtConfig.getTtl(), user.getAccount());
+        String token = jwtUtil.build(evaConfig.getJwt().getTtl(), user.getAccount());
 
         ServletUtil.addCookie(response,
                               TokenConst.TOKEN_KEY,
                               token,
-                              jwtConfig.getCookie().getMaxAge(),
+                              evaConfig.getJwt().getCookie().getMaxAge(),
                              "/",
-                              jwtConfig.getCookie().getDomain());
+                              evaConfig.getJwt().getCookie().getDomain());
 
 
         ServletUtil.addCookie(response,
                 TokenConst.USER_KEY,
                 URLEncoder.encode(JSON.toJSONString(user), CharsetUtil.UTF_8),
-                jwtConfig.getCookie().getMaxAge(),
+                evaConfig.getJwt().getCookie().getMaxAge(),
                 "/",
-                jwtConfig.getCookie().getDomain());
+                evaConfig.getJwt().getCookie().getDomain());
 
         Map<String, Object> map = new HashMap<>(2);
         map.put("user", user);
@@ -108,7 +108,7 @@ public class AuthCtrl {
                 null,
                 0,
                 "/",
-                jwtConfig.getCookie().getDomain());
+                evaConfig.getJwt().getCookie().getDomain());
 
 
         ServletUtil.addCookie(response,
@@ -116,7 +116,7 @@ public class AuthCtrl {
                 null,
                 0,
                 "/",
-                jwtConfig.getCookie().getDomain());
+                evaConfig.getJwt().getCookie().getDomain());
         return new Response().success();
     }
 }

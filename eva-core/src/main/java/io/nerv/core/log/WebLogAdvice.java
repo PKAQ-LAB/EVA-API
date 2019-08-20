@@ -2,6 +2,7 @@ package io.nerv.core.log;
 
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
+import io.nerv.properties.EvaConfig;
 import io.nerv.core.exception.entity.ErrorlogEntity;
 import io.nerv.core.exception.mapper.ErrorlogMapper;
 import io.nerv.core.util.IpUtil;
@@ -29,6 +30,9 @@ public class WebLogAdvice {
 
     @Autowired
     private ErrorlogMapper errorlogMapper;
+
+    @Autowired
+    private EvaConfig evaConfig;
     /**
      * 定义一个切入点.
      * ~ 第一个 * 代表任意修饰符及任意返回值.
@@ -74,7 +78,9 @@ public class WebLogAdvice {
     @AfterThrowing(pointcut = "webLog()", throwing="ex")
     public void doWhenThrowing(JoinPoint joinPoint,Throwable ex){
         String jsontStack = JSON.toJSONString(ex.getStackTrace());
-        log.error(JSON.toJSONString(ex.getStackTrace()));
+        log.error(jsontStack);
+
+        if (!evaConfig.getErrorLog().isEnabled()) return;
 
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 

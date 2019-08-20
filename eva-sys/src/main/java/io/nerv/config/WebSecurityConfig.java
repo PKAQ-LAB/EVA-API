@@ -1,14 +1,13 @@
 package io.nerv.config;
 
 import cn.hutool.core.collection.CollUtil;
+import io.nerv.properties.EvaConfig;
 import io.nerv.security.entrypoint.UnauthorizedHandler;
 import io.nerv.security.filter.JwtAuthFilter;
 import io.nerv.security.filter.RestAccessDeniedHandler;
-import io.nerv.security.jwt.JwtConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -37,18 +36,17 @@ import java.util.Arrays;
  */
 @Configuration
 @EnableWebSecurity
-@EnableConfigurationProperties(JwtConfig.class)
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Value("${spring.profiles.active}")
     private String activeProfile;
 
-    @Value("${security.permit}")
+    @Value("${eva.security.permit}")
     private String[] permit;
 
     @Autowired
-    private JwtConfig jwtConfig;
+    private EvaConfig evaConfig;
 
     @Autowired
     private UnauthorizedHandler unauthorizedHandler;
@@ -62,11 +60,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private JwtAuthFilter jwtAuthFilter;
-
-    @Bean
-    public JwtConfig jwtConfig(){
-        return new JwtConfig();
-    }
 
     @Autowired
     public void configureAuthentication(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
@@ -91,7 +84,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(CollUtil.isEmpty(jwtConfig.getCreditUrl())?Arrays.asList("*"): jwtConfig.getCreditUrl());
+        configuration.setAllowedOrigins(CollUtil.isEmpty(evaConfig.getJwt().getCreditUrl())?Arrays.asList("*"): evaConfig.getJwt().getCreditUrl());
         configuration.setAllowCredentials(true);
         configuration.setAllowedMethods(Arrays.asList("PUT", "DELETE", "GET", "POST", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));

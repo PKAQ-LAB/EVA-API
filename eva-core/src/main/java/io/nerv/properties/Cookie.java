@@ -1,9 +1,9 @@
-package io.nerv.security.jwt;
+package io.nerv.properties;
 
 import lombok.Data;
 
 @Data
-public class CookieProperties {
+public class Cookie {
     /** 可信任域 **/
     private String domain;
 
