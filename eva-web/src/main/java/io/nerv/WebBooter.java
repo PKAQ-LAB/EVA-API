@@ -1,6 +1,7 @@
 package io.nerv;
 
-import io.nerv.undertow.GracefulShutdownUndertowWrapper;
+import com.github.xiaoymin.swaggerbootstrapui.annotations.EnableSwaggerBootstrapUI;
+import io.nerv.server.undertow.GracefulShutdownUndertowWrapper;
 import io.nerv.web.sys.dict.cache.DictHelperProvider;
 import io.undertow.UndertowOptions;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @EnableJpaAuditing
 @SpringBootApplication
 @ComponentScan(basePackages = {"io.nerv.*"})
+@EnableSwaggerBootstrapUI
 public class WebBooter implements CommandLineRunner {
 
     @Autowired

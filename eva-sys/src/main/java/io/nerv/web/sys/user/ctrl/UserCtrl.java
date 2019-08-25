@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author: S.PKAQ
  * @Datetime: 2018/3/30 0:03
  */
-@Api(description = "用户管理")
+@Api("用户管理")
 @RestController
 @RequestMapping("/account")
 public class UserCtrl extends PureBaseCtrl<UserService> {

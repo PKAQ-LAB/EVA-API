@@ -32,7 +32,7 @@ import java.util.Map;
  * @Datetime: 2018/4/22 17:12
  */
 @Slf4j
-@Api(tags = "用户登录")
+@Api("用户登录")
 @RestController
 @RequestMapping("/auth")
 public class AuthCtrl {

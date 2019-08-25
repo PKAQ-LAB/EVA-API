@@ -21,7 +21,7 @@ import javax.validation.Valid;
  * @author: S.PKAQ
  * @Datetime: 2018/3/22 0:35
  */
-@Api( description = "字典项管理")
+@Api("字典项管理")
 @RestController
 @RequestMapping("/dictItem")
 public class DictItemCtrl extends PureBaseCtrl<DictItemService> {

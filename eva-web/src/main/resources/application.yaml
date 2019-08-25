@@ -77,4 +77,4 @@ eva:
     threshold: 86400000
   # 无需鉴权路径
   security:
-    permit: /auth/login, /auth/logout
+    permit: /auth/login,/auth/logout

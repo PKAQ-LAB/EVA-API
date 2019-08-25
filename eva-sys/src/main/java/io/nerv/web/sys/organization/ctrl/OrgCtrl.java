@@ -10,6 +10,8 @@ import io.nerv.core.mvc.util.Response;
 import io.nerv.core.mvc.util.SingleArray;
 import io.nerv.web.sys.organization.entity.OrganizationEntity;
 import io.nerv.web.sys.organization.service.OrganizationService;
+import org.springframework.context.annotation.Role;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Datetime: 2018/2/9 10:55
  * @author PKAQ
  */
-@Api( description = "组织管理")
+@Api("组织管理")
 @RestController
 @RequestMapping("/organization")
 public class OrgCtrl extends PureBaseCtrl<OrganizationService> {
@@ -34,6 +36,7 @@ public class OrgCtrl extends PureBaseCtrl<OrganizationService> {
         boolean exist = this.service.checkUnique(organization);
         return exist? failure(): success();
     }
+
     @GetMapping({"/list","/list/{condition}"})
     @ApiOperation(value = "获取组织列表",response = Response.class)
     public Response listOrg(@ApiParam(name = "condition", value = "组织名称或编码")
