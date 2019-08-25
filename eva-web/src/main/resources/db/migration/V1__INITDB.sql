@@ -123,6 +123,7 @@ CREATE TABLE `sys_module`  (
   PRIMARY KEY (`ID`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
+
 -- ----------------------------
 -- Records of sys_module
 -- ----------------------------
@@ -132,6 +133,25 @@ INSERT INTO `sys_module` VALUES ('6', '组织管理', 'flag', NULL, NULL, '5,5',
 INSERT INTO `sys_module` VALUES ('7', '模块管理', 'bars', NULL, NULL, '5,5', '5', '系统管理', '/sys/module', NULL, 0, 0, '0001', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `sys_module` VALUES ('8', '用户管理', 'usergroup-add', NULL, NULL, '5,5', '5', '系统管理', '/sys/account', NULL, 0, 4, '0001', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `sys_module` VALUES ('9', '权限管理', 'form', NULL, NULL, '5,5', '5', '系统管理', '/sys/role', NULL, 0, 2, '0001', NULL, NULL, NULL, NULL, NULL);
+
+/*==============================================================*/
+/* Table: SYS_MODULE_RESOURCES                                  */
+/*==============================================================*/
+DROP TABLE IF EXISTS SYS_MODULE_RESOURCES;
+
+CREATE TABLE SYS_MODULE_RESOURCES
+(
+   ID                   VARCHAR(40),
+   MODULE_ID            VARCHAR(40) COMMENT '模块ID',
+   RESOURCE_DESC        VARCHAR(300) COMMENT '资源描述',
+   RESOURCE_URL         VARCHAR(120) COMMENT '资源路径',
+   RESOURCE_TYPE        VARCHAR(6) COMMENT '资源类型'
+);
+
+ALTER TABLE SYS_MODULE_RESOURCES COMMENT '基础管理_模块管理_模块资源';
+
+ALTER TABLE SYS_MODULE_RESOURCES ADD CONSTRAINT FK_REFERENCE_6 FOREIGN KEY (MODULE_ID)
+      REFERENCES SYS_MODULE (ID) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 -- ----------------------------
 -- Table structure for sys_organization
@@ -202,6 +222,28 @@ CREATE TABLE `sys_role`  (
 -- ----------------------------
 INSERT INTO `sys_role` VALUES ('1', '系统管理员', 'ROLE_ADMIN', NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL);
 
+DROP TABLE IF EXISTS SYS_ROLE_CONFIGURATION;
+
+/*==============================================================*/
+/* Table: SYS_ROLE_CONFIGURATION                                */
+/*==============================================================*/
+CREATE TABLE SYS_ROLE_CONFIGURATION
+(
+   ID                   VARCHAR(40) NOT NULL,
+   ROLE_ID              VARCHAR(40) COMMENT '角色ID',
+   CODE                 VARCHAR(40) COMMENT '参数编码',
+   PARENTID2            VARCHAR(40) COMMENT '参数值',
+   PARENTNAME           VARCHAR(40) COMMENT '参数类型',
+   PERIOD               INT COMMENT '权重',
+   ORDERS               INT COMMENT '排序',
+   STATUS               VARCHAR(8) COMMENT '状态',
+   PRIMARY KEY (ID)
+);
+
+ALTER TABLE SYS_ROLE_CONFIGURATION ADD CONSTRAINT FK_SYS_ROLE_CONFIGURATION FOREIGN KEY (ROLE_ID)
+      REFERENCES SYS_ROLE (ID) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+
 -- ----------------------------
 -- Table structure for sys_role_module
 -- ----------------------------
@@ -238,6 +280,23 @@ CREATE TABLE `sys_role_user`  (
 -- Records of sys_role_user
 -- ----------------------------
 INSERT INTO `sys_role_user` VALUES ('dec21313079d77df75f8b2551843319f', '1', '9199482d76b443ef9f13fefddcf0046c');
+
+/*==============================================================*/
+/* Table: SYS_ROLE_DATAPERM                                     */
+/*==============================================================*/
+DROP TABLE IF EXISTS SYS_ROLE_DATAPERM;
+
+CREATE TABLE SYS_ROLE_DATAPERM
+(
+   ID                   VARCHAR(40),
+   ROLE_ID              VARCHAR(40) COMMENT '角色ID',
+   DEPT_ID              VARCHAR(40) COMMENT '部门ID'
+);
+
+ALTER TABLE SYS_ROLE_DATAPERM COMMENT '基础管理_角色管理_数据权限';
+
+ALTER TABLE SYS_ROLE_DATAPERM ADD CONSTRAINT FK_REFERENCE_8 FOREIGN KEY (ROLE_ID)
+      REFERENCES SYS_ROLE (ID) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 -- ----------------------------
 -- Table structure for sys_user_info
