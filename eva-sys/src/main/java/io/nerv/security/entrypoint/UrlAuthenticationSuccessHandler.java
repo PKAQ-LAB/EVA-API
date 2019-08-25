@@ -41,7 +41,6 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
                                         HttpServletResponse httpServletResponse,
                                         Authentication authentication) throws IOException {
 
-        System.out.println("4");
         httpServletResponse.setCharacterEncoding("UTF-8");
 
         //表单输入的用户名

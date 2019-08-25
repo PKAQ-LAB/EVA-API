@@ -22,7 +22,6 @@ public class UnauthorizedHandler implements AuthenticationEntryPoint, Serializab
     public void commence(HttpServletRequest request,
                          HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
-        System.out.println("1");
         //返回json形式的错误信息
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");

@@ -16,8 +16,6 @@ public class UrlAuthenticationFailureHandler implements AuthenticationFailureHan
     public void onAuthenticationFailure(HttpServletRequest httpServletRequest,
                                         HttpServletResponse httpServletResponse,
                                         AuthenticationException e) throws IOException {
-        System.out.println(3);
-
         httpServletResponse.sendError(401, "登录失败,请联系管理员");
     }
 }

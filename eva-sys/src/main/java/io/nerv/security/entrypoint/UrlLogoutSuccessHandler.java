@@ -28,7 +28,6 @@ public class UrlLogoutSuccessHandler implements LogoutSuccessHandler {
     public void onLogoutSuccess(HttpServletRequest httpServletRequest,
                                 HttpServletResponse httpServletResponse,
                                 Authentication authentication) throws IOException {
-        System.out.println("5");
         // 获取用户jwt
         // 清空redis中的jwt 刷新用户secret
         ServletUtil.addCookie(httpServletResponse,

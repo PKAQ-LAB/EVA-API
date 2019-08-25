@@ -1,5 +1,6 @@
 package io.nerv.security.provider;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.ConfigAttribute;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 
+@Slf4j
 @Component
 public class UrlAccessDecisionManager implements AccessDecisionManager {
 
@@ -21,11 +23,11 @@ public class UrlAccessDecisionManager implements AccessDecisionManager {
     @Override
     public void decide(Authentication authentication, Object o,
                        Collection<ConfigAttribute> collection) throws AccessDeniedException, InsufficientAuthenticationException {
-        System.out.println("collection=" + collection);
+        log.debug("collection=" + collection);
         for (ConfigAttribute configAttribute : collection) {
             // 当前请求需要的权限
             String needRole = configAttribute.getAttribute();
-            System.out.println("needRole=" + needRole);
+            log.debug("needRole=" + needRole);
             if ("ROLE_USER".equals(needRole)) {
                 if (authentication instanceof AnonymousAuthenticationToken) {
                     throw new BadCredentialsException("认证失败.");
@@ -35,7 +37,7 @@ public class UrlAccessDecisionManager implements AccessDecisionManager {
             }
             // 当前用户所具有的权限
             Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-            System.out.println("authorities=" + authorities);
+           log.debug("authorities=" + authorities);
             for (GrantedAuthority grantedAuthority : authorities) {
                 if (grantedAuthority.getAuthority().equals(needRole)) {
                     return;
