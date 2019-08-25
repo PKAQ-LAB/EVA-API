@@ -72,6 +72,13 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
         pagination.setCurrent(page);
         return this.mapper.selectPage(pagination,wrapper);
     }
+    /**
+     * 根据请求的URL查询角色所属权限
+     * @return
+     */
+    public List<Map<String, String>> listRoleNamesWithPath(){
+        return this.roleModuleMapper.listRoleNamesWithPath();
+    }
 
     /**
      * 批量删除角色

@@ -3,8 +3,11 @@ package io.nerv.config;
 import cn.hutool.core.collection.CollUtil;
 import io.nerv.properties.EvaConfig;
 import io.nerv.security.entrypoint.UnauthorizedHandler;
+import io.nerv.security.entrypoint.UrlAccessDeniedHandler;
+import io.nerv.security.entrypoint.UrlAuthenticationFailureHandler;
+import io.nerv.security.entrypoint.UrlAuthenticationSuccessHandler;
 import io.nerv.security.filter.JwtAuthFilter;
-import io.nerv.security.filter.RestAccessDeniedHandler;
+import io.nerv.security.provider.UrlFilterSecurityInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +24,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -48,14 +52,25 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private EvaConfig evaConfig;
 
+    //自定义未登录时JSON数据
     @Autowired
     private UnauthorizedHandler unauthorizedHandler;
 
     @Autowired
-    private RestAccessDeniedHandler restAccessDeniedHandler;
+    private UrlAuthenticationSuccessHandler urlAuthenticationSuccessHandler;
+
+    @Autowired
+    private UrlAuthenticationFailureHandler urlAuthenticationFailureHandler;
+
+    @Autowired
+    private UrlAccessDeniedHandler urlAccessDeniedHandler;
+
+    @Autowired
+    private UrlFilterSecurityInterceptor urlFilterSecurityInterceptor;
+
     /** Spring会自动寻找同样类型的具体类注入，这里就是JwtUserDetailsServiceImpl了**/
     @Autowired
-    @Qualifier("jwtUserDetailsServiceImpl")
+    @Qualifier("jwtUserDetailsService")
     private UserDetailsService userDetailsService;
 
     @Autowired
@@ -89,7 +104,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         configuration.setAllowedMethods(Arrays.asList("PUT", "DELETE", "GET", "POST", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setMaxAge(1800l);
-//        response.setHeader("P3P","CP='IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'");
         configuration.setExposedHeaders(Arrays.asList("Access-Control-Allow-Headers",
                                                       "Access-Control-Allow-Methods",
                                                       "Access-Control-Expose-Headers",
@@ -113,12 +127,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
             // 关闭csrf 由于使用的是JWT，我们这里不需要csrf
             .csrf().disable()
-            .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
-            .accessDeniedHandler(restAccessDeniedHandler)
-            .and()
             //允许加载iframe内容 X-Frame-Options
             .headers().frameOptions().disable()
-             .xssProtection().block(true)
+            .xssProtection().block(true)
             .and()
             // 适配IE
             .addHeaderWriter(new StaticHeadersWriter("P3P","CP='CAO IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'"))
@@ -131,8 +142,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers(permit).permitAll()
             // 除上面外的所有请求全部需要鉴权认证
             .anyRequest().authenticated();
+//
+//            httpSecurity.formLogin().loginProcessingUrl("/auth/login")
+//                                    .successHandler(urlAuthenticationSuccessHandler)
+//                                    .failureHandler(urlAuthenticationFailureHandler);
 
-            httpSecurity.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+            httpSecurity.exceptionHandling()
+                        .accessDeniedHandler(urlAccessDeniedHandler)
+                        .and()
+                        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                        .addFilterAt(urlFilterSecurityInterceptor, FilterSecurityInterceptor.class);
 
             // disable page caching
             httpSecurity
@@ -145,17 +164,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         web
             .ignoring()
-            .antMatchers(
-                HttpMethod.POST,
-    "/auth"
-            )
-
             // allow anonymous resource requests
             .and()
             .ignoring()
             .antMatchers(
                     HttpMethod.GET,
                     "/",
+                    "/static/**",
                     "/*.html",
                     "/*.xls",
                     "/*.xlsx",

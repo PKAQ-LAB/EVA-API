@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 模块管理module
@@ -16,6 +17,8 @@ import java.util.List;
 @Mapper
 @Repository
 public interface ModuleMapper extends BaseMapper<ModuleEntity> {
+
+
     /**
      * 查询用户拥有权限的模块树
      * @param condition

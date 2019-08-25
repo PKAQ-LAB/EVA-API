@@ -109,9 +109,8 @@ public class ModuleService extends StdBaseService<ModuleMapper, ModuleEntity> {
         }
 
         // 判断是否更换了父节点
-
         // 如果更换了父节点 重新确定原父节点的 leaf属性，以及所修改节点的orders属性
-        if(this.parentChanged(originModule.getParentId(), pid)){
+        if(null != originModule && this.parentChanged(originModule.getParentId(), pid)){
             // 更新原节点
             // 检查原父节点是否还存在子节点 来重新确定原始父节点得isleaf属性
             // 由于数据还未提交 节点仍然挂载在原始节点上 所以这里要 -1
@@ -136,7 +135,9 @@ public class ModuleService extends StdBaseService<ModuleMapper, ModuleEntity> {
         this.merge(module);
 
         // 刷新所有子节点的 path parent_name path_name 当修改状态的时候不用刷新子节点信息
-        this.refreshChild(module, originModule);
+        if (StrUtil.isNotBlank(module.getId()) && null != originModule){
+            this.refreshChild(module, originModule);
+        }
 
         return response.success(this.listModule(null));
     }

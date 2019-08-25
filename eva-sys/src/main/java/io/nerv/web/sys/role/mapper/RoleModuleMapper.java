@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 角色模块关系mapper
@@ -23,4 +24,10 @@ public interface RoleModuleMapper extends BaseMapper<RoleModuleEntity> {
      * @return
      */
     List<RoleModuleEntity> roleModuleList(@Param("entity") RoleModuleEntity roleModuleEntity);
+
+    /**
+     * 根据URL返回匹配的权限名称
+     * @return
+     */
+    List<Map<String, String>> listRoleNamesWithPath();
 }

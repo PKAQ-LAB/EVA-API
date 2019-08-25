@@ -1,5 +1,6 @@
 package io.nerv.security.domain;
 
+import io.nerv.core.enums.LockEnumm;
 import io.nerv.web.sys.role.entity.RoleEntity;
 import io.nerv.web.sys.user.entity.UserEntity;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,8 +14,8 @@ public final class JwtUserFactory {
     private JwtUserFactory() {
     }
 
-    public static JwtUser create(UserEntity user) {
-        return new JwtUser(
+    public static JwtUserDetail create(UserEntity user) {
+        return new JwtUserDetail(
                 String.valueOf(user.getId()),
                 user.getAccount(),
                 user.getName(),
@@ -22,6 +23,7 @@ public final class JwtUserFactory {
                 user.getDeptId(),
                 user.getDeptName(),
                 user.getPassword(),
+                LockEnumm.LOCK.getIndex().equals(user.getLocked()),
                 mapToGrantedAuthorities(user.getRoles().stream().map(RoleEntity::getCode).collect(Collectors.toList()))
         );
     }

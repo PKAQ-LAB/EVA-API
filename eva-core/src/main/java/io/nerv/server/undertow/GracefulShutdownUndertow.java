@@ -1,4 +1,4 @@
-package io.nerv.undertow;
+package io.nerv.server.undertow;
 
 import io.undertow.Undertow;
 import io.undertow.server.ConnectorStatistics;

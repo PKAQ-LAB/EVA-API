@@ -46,7 +46,7 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
         String pwd = userEntity.getPassword();
         UserEntity ue = new UserEntity();
         ue.setAccount(userEntity.getAccount());
-        ue = this.mapper.selectOne  (new QueryWrapper<>(ue));
+        ue = this.mapper.selectOne(new QueryWrapper<>(ue));
 
         if (null == ue){
             throw new OathException("用户名或密码错误");
@@ -62,7 +62,6 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
             throw new OathException("用户名或密码错误");
         }
     }
-
     /**
      * 查询用户列表
      * @param userEntity

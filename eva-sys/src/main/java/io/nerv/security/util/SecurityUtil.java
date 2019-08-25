@@ -1,6 +1,6 @@
 package io.nerv.security.util;
 
-import io.nerv.security.domain.JwtUser;
+import io.nerv.security.domain.JwtUserDetail;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -58,8 +58,8 @@ public class SecurityUtil {
      * 获取当前登录用户对象
      * @return
      */
-    public JwtUser getJwtUser() throws ClassCastException{
-        return (JwtUser)this.getAuthentication().getPrincipal();
+    public JwtUserDetail getJwtUser() throws ClassCastException{
+        return (JwtUserDetail)this.getAuthentication().getPrincipal();
     }
 
     /**

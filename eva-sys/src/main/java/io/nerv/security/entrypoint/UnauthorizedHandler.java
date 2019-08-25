@@ -22,8 +22,7 @@ public class UnauthorizedHandler implements AuthenticationEntryPoint, Serializab
     public void commence(HttpServletRequest request,
                          HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
-        // This is invoked when user tries to access a secured REST resource without supplying any credentials
-        // We should just send a 401 Unauthorized response because there is no 'login page' to redirect to
+        System.out.println("1");
         //返回json形式的错误信息
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");

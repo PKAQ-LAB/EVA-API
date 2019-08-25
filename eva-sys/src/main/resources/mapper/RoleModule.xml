@@ -21,4 +21,20 @@
     </if>
     order by m.id
   </select>
+
+  <select id="listRoleNamesWithPath" resultType="java.util.Map">
+    SELECT
+        DISTINCT m.path, r.code
+    FROM
+        sys_role_module rm,
+        sys_module m,
+        sys_role r
+    WHERE
+        rm.MODULE_ID = m.ID
+        AND
+        rm.ROLE_ID = r.ID
+        AND
+        m.isleaf = '1'
+  </select>
+
 </mapper>
