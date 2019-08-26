@@ -6,6 +6,7 @@ import io.nerv.core.constant.TokenConst;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.properties.EvaConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -45,6 +46,10 @@ public class UrlLogoutSuccessHandler implements LogoutSuccessHandler {
                 "/",
                 evaConfig.getCookie().getDomain());
 
-        httpServletResponse.getWriter().write(JSON.toJSONString(new Response().success(null, "您已退出登录")));
+        httpServletResponse.setCharacterEncoding("UTF-8");
+        httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        httpServletResponse.setStatus(HttpServletResponse.SC_OK);
+
+        httpServletResponse.getWriter().write(JSON.toJSONString(new Response().failure(401, "你已经退出登录")));
     }
 }

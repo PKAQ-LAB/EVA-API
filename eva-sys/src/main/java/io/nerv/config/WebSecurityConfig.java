@@ -2,10 +2,7 @@ package io.nerv.config;
 
 import cn.hutool.core.collection.CollUtil;
 import io.nerv.properties.EvaConfig;
-import io.nerv.security.entrypoint.UnauthorizedHandler;
-import io.nerv.security.entrypoint.UrlAccessDeniedHandler;
-import io.nerv.security.entrypoint.UrlAuthenticationFailureHandler;
-import io.nerv.security.entrypoint.UrlAuthenticationSuccessHandler;
+import io.nerv.security.entrypoint.*;
 import io.nerv.security.filter.JwtAuthFilter;
 import io.nerv.security.provider.UrlFilterSecurityInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +58,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private UrlAuthenticationFailureHandler urlAuthenticationFailureHandler;
+
+    @Autowired
+    private UrlLogoutSuccessHandler urlLogoutSuccessHandler;
 
     @Autowired
     private UrlAccessDeniedHandler urlAccessDeniedHandler;
@@ -146,6 +146,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //            httpSecurity.formLogin().loginProcessingUrl("/auth/login")
 //                                    .successHandler(urlAuthenticationSuccessHandler)
 //                                    .failureHandler(urlAuthenticationFailureHandler);
+
+            httpSecurity.logout().logoutUrl("/auth/logout").logoutSuccessHandler(urlLogoutSuccessHandler);
 
             httpSecurity.exceptionHandling()
                         .accessDeniedHandler(urlAccessDeniedHandler)

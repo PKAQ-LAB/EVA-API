@@ -97,26 +97,26 @@ public class AuthCtrl {
         return new Response().success(this.userService.fetch(account));
     }
 
-    @PostMapping("/logout")
-    @ApiOperation(value = "用户退出", response = Response.class)
-    public Response logout(@ApiParam(name = "{user}", value = "用户对象")
-                                 @RequestBody UserEntity user){
-        // 获取用户jwt
-        // 清空redis中的jwt 刷新用户secret
-        ServletUtil.addCookie(response,
-                TokenConst.TOKEN_KEY,
-                null,
-                0,
-                "/",
-                evaConfig.getCookie().getDomain());
-
-
-        ServletUtil.addCookie(response,
-                TokenConst.USER_KEY,
-                null,
-                0,
-                "/",
-                evaConfig.getCookie().getDomain());
-        return new Response().success();
-    }
+//    @PostMapping("/logout")
+//    @ApiOperation(value = "用户退出", response = Response.class)
+//    public Response logout(@ApiParam(name = "{user}", value = "用户对象")
+//                                 @RequestBody UserEntity user){
+//        // 获取用户jwt
+//        // 清空redis中的jwt 刷新用户secret
+//        ServletUtil.addCookie(response,
+//                TokenConst.TOKEN_KEY,
+//                null,
+//                0,
+//                "/",
+//                evaConfig.getCookie().getDomain());
+//
+//
+//        ServletUtil.addCookie(response,
+//                TokenConst.USER_KEY,
+//                null,
+//                0,
+//                "/",
+//                evaConfig.getCookie().getDomain());
+//        return new Response().success();
+//    }
 }

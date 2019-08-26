@@ -1,6 +1,8 @@
 package io.nerv.security.entrypoint;
 
-import io.nerv.core.enums.HttpCodeEnum;
+import com.alibaba.fastjson.JSON;
+import io.nerv.core.mvc.util.Response;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
@@ -17,10 +19,11 @@ public class UrlAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException e) throws IOException {
-        response.setHeader("Access-Control-Allow-Origin", "*");
         response.setCharacterEncoding("UTF-8");
-        response.setContentType("application/json");
-        response.sendError(HttpServletResponse.SC_FORBIDDEN, HttpCodeEnum.REQEUST_REFUSED.getName());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+
+        response.getWriter().write(JSON.toJSONString(new Response().failure(401, "用户权限不足")));
     }
 
 }
