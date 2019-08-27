@@ -96,25 +96,25 @@ public class Response{
 
     /**
      * 失败响应,根据status设置statusText
-     * @param status
+     * @param code
      * @return
      */
-    public Response failure(int status) {
+    public Response failure(int code) {
         this.success = false;
-        this.code = status;
-        this.message = HttpCodeEnum.getName(status);
+        this.code = code;
+        this.message = HttpCodeEnum.getName(code);
 
         return this;
     }
 
     /**
      * 失败响应，自定义响应码和消息
-     * @param status
+     * @param code
      * @return
      */
-    public Response failure(int status, String message) {
+    public Response failure(int code, String message) {
         this.success = false;
-        this.code = status;
+        this.code = code;
         this.message = message;
 
         return this;
