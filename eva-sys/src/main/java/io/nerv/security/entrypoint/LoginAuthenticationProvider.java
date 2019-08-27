@@ -1,55 +1,89 @@
 package io.nerv.security.entrypoint;
 
 import cn.hutool.core.util.StrUtil;
-import io.nerv.security.service.JwtUserDetailsService;
+import io.nerv.core.enums.ErrorCodeEnum;
+import io.nerv.security.exception.OathException;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 /**
  * 自定义登录验证逻辑
  */
+@Getter
+@Setter
 @Component
-public class LoginAuthenticationProvider implements AuthenticationProvider {
+public class LoginAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
+
+    private UserDetailsService userDetailsService;
+
+    private PasswordEncoder passwordEncoder;
+
     @Autowired
-    private JwtUserDetailsService userDetailsService;
+    public LoginAuthenticationProvider(UserDetailsService jwtUserDetailsService, PasswordEncoder passwordEncoder) {
+        this.setUserDetailsService(jwtUserDetailsService);
+        this.setPasswordEncoder(passwordEncoder);
+        this.setHideUserNotFoundExceptions(false);
+    }
 
+    /**
+     * 查询用户
+     * @param username
+     * @param authentication
+     * @return
+     * @throws OathException
+     */
     @Override
-    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        UsernamePasswordAuthenticationToken token
-                = (UsernamePasswordAuthenticationToken) authentication;
-
-        var username = token.getName();
-        String password = (String)token.getCredentials();
+    protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication) throws OathException {
+        String password = (String)authentication.getCredentials();
 
         if (StrUtil.isBlank(username) || StrUtil.isBlank(password)){
-            throw new BadCredentialsException("登录失败,请输入正确的用户名或密码.");
+            throw new OathException(ErrorCodeEnum.ACCOUNT_OR_PWD_ERROR);
         }
 
         username = username.trim();
-        password = password.trim();
 
-        UserDetails user = userDetailsService.loadUserByUsername(username);
+        UserDetails user = this.getUserDetailsService().loadUserByUsername(username);
         if (null == user){
-            throw new BadCredentialsException("登录失败,该用户不存在.");
+            throw new OathException(ErrorCodeEnum.ACCOUNT_NOT_EXIST);
         }
-
-        boolean matches = new BCryptPasswordEncoder().matches(password, user.getPassword());
-
-        if (!matches) {
-            throw new BadCredentialsException("登录失败,用户名或密码错误.");
-        }
-        return new UsernamePasswordAuthenticationToken(username, user.getPassword(), user.getAuthorities());
+        return user;
     }
 
+    /**
+     * 校验密码
+     * @param userDetails
+     * @param authentication
+     * @throws OathException
+     */
+    @Override
+    protected void additionalAuthenticationChecks(UserDetails userDetails,
+                                                  UsernamePasswordAuthenticationToken authentication) throws OathException {
+        if (authentication.getCredentials() == null) {
+            logger.debug("登录失败，鉴权信息为空");
+
+            throw new BadCredentialsException(messages.getMessage(
+                    "AbstractUserDetailsAuthenticationProvider.badCredentials",
+                    ErrorCodeEnum.LOGIN_ERROR.getName()));
+        }
+
+        String presentedPassword = authentication.getCredentials().toString();
+
+        boolean matches = this.getPasswordEncoder().matches(presentedPassword, userDetails.getPassword());
+
+        if (!matches) {
+            throw new OathException(ErrorCodeEnum.ACCOUNT_OR_PWD_ERROR);
+        }
+    }
     @Override
     public boolean supports(Class<?> authentication) {
-        return true;
+        return (UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication));
     }
 }

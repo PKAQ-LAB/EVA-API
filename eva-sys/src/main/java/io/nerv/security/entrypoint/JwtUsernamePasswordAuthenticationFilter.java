@@ -2,7 +2,6 @@ package io.nerv.security.entrypoint;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -56,7 +55,6 @@ public class JwtUsernamePasswordAuthenticationFilter extends AbstractAuthenticat
      */
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException {
-//        User user = new ObjectMapper().readValue(request.getInputStream(), User.class);
 
         String params = request.getReader().lines().collect(Collectors.joining());
         System.out.println(params);
@@ -68,7 +66,7 @@ public class JwtUsernamePasswordAuthenticationFilter extends AbstractAuthenticat
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password, authorities);
 
-        return authenticationToken;
+        return this.authenticationManager.authenticate(authenticationToken);
     }
 
     @Override

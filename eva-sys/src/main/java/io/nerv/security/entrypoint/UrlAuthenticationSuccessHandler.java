@@ -6,9 +6,8 @@ import com.alibaba.fastjson.JSON;
 import io.nerv.core.constant.TokenConst;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.properties.EvaConfig;
+import io.nerv.security.domain.JwtUserDetail;
 import io.nerv.security.jwt.JwtUtil;
-import io.nerv.web.sys.user.entity.UserEntity;
-import io.nerv.web.sys.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
@@ -34,9 +33,6 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
     @Autowired
     private EvaConfig evaConfig;
 
-    @Autowired
-    private UserService userService;
-
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse httpServletResponse,
@@ -47,11 +43,9 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         httpServletResponse.setStatus(HttpServletResponse.SC_OK);
 
         //表单输入的用户名
-        String username = (String) authentication.getPrincipal();
-
-        UserEntity user = userService.getUser(username);
+        JwtUserDetail user = (JwtUserDetail) authentication.getPrincipal();
         // 签发token
-        String token = jwtUtil.build(evaConfig.getJwt().getTtl(), username);
+        String token = jwtUtil.build(evaConfig.getJwt().getTtl(), user.getAccount());
 
         ServletUtil.addCookie(httpServletResponse,
                 TokenConst.TOKEN_KEY,

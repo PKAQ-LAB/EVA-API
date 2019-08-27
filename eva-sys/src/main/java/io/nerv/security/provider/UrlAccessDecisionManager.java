@@ -1,11 +1,12 @@
 package io.nerv.security.provider;
 
+import io.nerv.core.enums.ErrorCodeEnum;
+import io.nerv.security.exception.OathException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -30,7 +31,7 @@ public class UrlAccessDecisionManager implements AccessDecisionManager {
             log.debug("needRole=" + needRole);
             if ("ROLE_USER".equals(needRole)) {
                 if (authentication instanceof AnonymousAuthenticationToken) {
-                    throw new BadCredentialsException("认证失败.");
+                    throw new OathException(ErrorCodeEnum.PERMISSION_DENY);
                 } else {
                     return;
                 }

@@ -6,19 +6,16 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import io.nerv.core.bizlog.annotation.BizLog;
-import io.nerv.core.bizlog.base.BizLogEnum;
-import io.nerv.core.enums.LockEnumm;
 import io.nerv.core.mvc.entity.mybatis.BaseTreeEntity;
 import io.nerv.core.mvc.service.mybatis.StdBaseService;
 import io.nerv.core.util.tree.TreeHelper;
-import io.nerv.core.exception.OathException;
+import io.nerv.security.exception.OathException;
 import io.nerv.web.sys.organization.mapper.OrganizationMapper;
 import io.nerv.web.sys.user.entity.UserEntity;
 import io.nerv.web.sys.user.mapper.UserMapper;
 import io.nerv.web.sys.user.vo.UserCenterVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -31,37 +28,12 @@ import java.util.List;
  */
 @Service
 public class UserService extends StdBaseService<UserMapper, UserEntity> {
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+
+    private BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+
     @Autowired
     private OrganizationMapper organizationMapper;
-    /**
-     * 用户登录校验
-     * @param userEntity
-     * @return
-     */
-    @BizLog(description = "用户登录", operateType = BizLogEnum.QUERY)
-    public UserEntity validate(UserEntity userEntity) throws OathException {
-        // 得到客户端传递过来的md5之后的密码
-        String pwd = userEntity.getPassword();
-        UserEntity ue = new UserEntity();
-        ue.setAccount(userEntity.getAccount());
-        ue = this.mapper.selectOne(new QueryWrapper<>(ue));
 
-        if (null == ue){
-            throw new OathException("用户名或密码错误");
-        }
-
-        if(LockEnumm.LOCK.getIndex().equals(ue.getLocked())){
-            throw new OathException("该用户已被锁定，请联系管理员");
-        }
-
-        if( passwordEncoder.matches(pwd, ue.getPassword())){
-           return ue;
-        } else {
-            throw new OathException("用户名或密码错误");
-        }
-    }
     /**
      * 查询用户列表
      * @param userEntity
@@ -69,14 +41,6 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
      */
     public IPage<UserEntity> listUser(UserEntity userEntity, Integer page) {
         return this.listPage(userEntity, page);
-    }
-
-    /**
-     * 批量删除用户
-     * @param ids
-     */
-    public void deleteUser(ArrayList<String> ids) {
-        this.mapper.deleteBatchIds(ids);
     }
 
     /**
@@ -114,7 +78,7 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
         // 这里传递过来的密码是进行md5加密后的
         String pwd = user.getPassword();
         if (StrUtil.isNotBlank(pwd)){
-            pwd = passwordEncoder.encode(pwd);
+            pwd = bCryptPasswordEncoder.encode(pwd);
             user.setPassword(pwd);
         }
         //设置部门名称
@@ -161,20 +125,5 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
         userEntity.setModules(treeModule);
 
         return userEntity;
-    }
-
-    /**
-     * 新增/编辑用户信息
-     * @param user 用户对象
-     */
-    public void saveUserForOther(UserEntity user) {
-        // 用户资料发生修改后 重新生成密码
-        // 这里传递过来的密码是进行md5加密后的
-        String pwd = user.getPassword();
-        if (StrUtil.isNotBlank(pwd)){
-            pwd = passwordEncoder.encode(pwd);
-            user.setPassword(pwd);
-        }
-        this.merge(user);
     }
 }

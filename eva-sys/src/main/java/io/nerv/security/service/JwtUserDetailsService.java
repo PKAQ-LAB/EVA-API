@@ -1,6 +1,8 @@
 package io.nerv.security.service;
 
+import io.nerv.core.enums.ErrorCodeEnum;
 import io.nerv.security.domain.JwtUserFactory;
+import io.nerv.security.exception.OathException;
 import io.nerv.web.sys.user.entity.UserEntity;
 import io.nerv.web.sys.user.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +27,12 @@ public class JwtUserDetailsService implements UserDetailsService {
      * @throws UsernameNotFoundException
      */
     @Override
-    public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String id) {
 
         UserEntity user = userMapper.getUserWithRoleById(id);
 
         if (user == null) {
-            throw new UsernameNotFoundException(String.format("找不到该用户 '%s'.", id));
+            throw new OathException(ErrorCodeEnum.ACCOUNT_NOT_EXIST);
         } else {
             return JwtUserFactory.create(user);
         }

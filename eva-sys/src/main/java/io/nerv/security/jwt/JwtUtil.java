@@ -5,10 +5,11 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.impl.DefaultClock;
 import io.nerv.properties.EvaConfig;
 import io.nerv.properties.Jwt;
-import io.nerv.core.exception.OathException;
+import io.nerv.security.exception.OathException;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;

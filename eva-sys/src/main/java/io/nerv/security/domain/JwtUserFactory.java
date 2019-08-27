@@ -18,12 +18,12 @@ public final class JwtUserFactory {
         return new JwtUserDetail(
                 String.valueOf(user.getId()),
                 user.getAccount(),
-                user.getName(),
-                user.getNickName(),
+                user.getPassword(),
                 user.getDeptId(),
                 user.getDeptName(),
-                user.getPassword(),
-                LockEnumm.LOCK.getIndex().equals(user.getLocked()),
+                user.getName(),
+                user.getNickName(),
+                LockEnumm.UNLOCK.getIndex().equals(user.getLocked()),
                 mapToGrantedAuthorities(user.getRoles().stream().map(RoleEntity::getCode).collect(Collectors.toList()))
         );
     }

@@ -20,6 +20,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -49,10 +50,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private EvaConfig evaConfig;
 
-    //自定义未登录时JSON数据
-    @Autowired
-    private UnauthorizedHandler unauthorizedHandler;
-
     @Autowired
     private LoginAuthenticationProvider loginAuthenticationProvider;
 
@@ -79,19 +76,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private JwtAuthFilter jwtAuthFilter;
 
-    @Autowired
-    public void configureAuthentication(AuthenticationManagerBuilder auth) throws Exception {
+    @Bean
+    public static PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
+    @Override
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(loginAuthenticationProvider)
             // 设置UserDetailsService
             .userDetailsService(this.userDetailsService)
             // 使用BCrypt进行密码的hash
             .passwordEncoder(passwordEncoder());
-    }
-
-    /**装载BCrypt密码编码器**/
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        // 默认超级用户
+        auth.inMemoryAuthentication()
+                .withUser("toor")
+                .password(new BCryptPasswordEncoder().encode("nerv_toor_eva"))
+                .roles("ADMIN");
     }
 
     @Bean
@@ -153,7 +154,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         .and()
                         .addFilterAt(urlFilterSecurityInterceptor, FilterSecurityInterceptor.class)
                         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                        .addFilterBefore(new JwtUsernamePasswordAuthenticationFilter("/auth/login",authenticationManager(), urlAuthenticationSuccessHandler, urlAuthenticationFailureHandler),
+                        .addFilterBefore(new JwtUsernamePasswordAuthenticationFilter("/auth/login",
+                                                                                          authenticationManager(),
+                                                                                          urlAuthenticationSuccessHandler,
+                                                                                          urlAuthenticationFailureHandler),
                                          UsernamePasswordAuthenticationFilter.class);
 
             // disable page caching
@@ -190,4 +194,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             );
 
     }
+
 }
