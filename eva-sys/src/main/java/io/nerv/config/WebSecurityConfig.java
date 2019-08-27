@@ -54,6 +54,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private UnauthorizedHandler unauthorizedHandler;
 
     @Autowired
+    private LoginAuthenticationProvider loginAuthenticationProvider;
+
+    @Autowired
     private UrlAuthenticationSuccessHandler urlAuthenticationSuccessHandler;
 
     @Autowired
@@ -77,12 +80,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private JwtAuthFilter jwtAuthFilter;
 
     @Autowired
-    public void configureAuthentication(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-        authenticationManagerBuilder
-                // 设置UserDetailsService
-                .userDetailsService(this.userDetailsService)
-                // 使用BCrypt进行密码的hash
-                .passwordEncoder(passwordEncoder());
+    public void configureAuthentication(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(loginAuthenticationProvider)
+            // 设置UserDetailsService
+            .userDetailsService(this.userDetailsService)
+            // 使用BCrypt进行密码的hash
+            .passwordEncoder(passwordEncoder());
     }
 
     /**装载BCrypt密码编码器**/
@@ -142,18 +145,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers(permit).permitAll()
             // 除上面外的所有请求全部需要鉴权认证
             .anyRequest().authenticated();
-//
-//            httpSecurity.formLogin().loginProcessingUrl("/auth/login")
-//                                    .successHandler(urlAuthenticationSuccessHandler)
-//                                    .failureHandler(urlAuthenticationFailureHandler);
 
             httpSecurity.logout().logoutUrl("/auth/logout").logoutSuccessHandler(urlLogoutSuccessHandler);
 
             httpSecurity.exceptionHandling()
                         .accessDeniedHandler(urlAccessDeniedHandler)
                         .and()
+                        .addFilterAt(urlFilterSecurityInterceptor, FilterSecurityInterceptor.class)
                         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                        .addFilterAt(urlFilterSecurityInterceptor, FilterSecurityInterceptor.class);
+                        .addFilterBefore(new JwtUsernamePasswordAuthenticationFilter("/auth/login",authenticationManager(), urlAuthenticationSuccessHandler, urlAuthenticationFailureHandler),
+                                         UsernamePasswordAuthenticationFilter.class);
 
             // disable page caching
             httpSecurity

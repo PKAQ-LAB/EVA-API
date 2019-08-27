@@ -10,6 +10,7 @@ import io.nerv.security.jwt.JwtUtil;
 import io.nerv.web.sys.user.entity.UserEntity;
 import io.nerv.web.sys.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -42,6 +43,8 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
                                         Authentication authentication) throws IOException {
 
         httpServletResponse.setCharacterEncoding("UTF-8");
+        httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        httpServletResponse.setStatus(HttpServletResponse.SC_OK);
 
         //表单输入的用户名
         String username = (String) authentication.getPrincipal();
