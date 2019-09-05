@@ -23,8 +23,13 @@ import java.io.Serializable;
 public class RoleModuleEntity{
     @TableId
     private String id;
+
     @ApiModelProperty("角色ID")
     private String roleId;
+
     @ApiModelProperty("模块ID")
     private String moduleId;
+
+    @ApiModelProperty("资源ID")
+    private String resourId;
 }

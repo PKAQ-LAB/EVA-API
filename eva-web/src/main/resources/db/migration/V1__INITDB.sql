@@ -44,9 +44,9 @@ CREATE TABLE LOG_ERROR
    REQUEST_TIME         VARCHAR(40) COMMENT '记录时间',
    IP                   VARCHAR(40) COMMENT '请求ip',
    SPEND_TIME           VARCHAR(40) COMMENT '请求耗时',
-   CLASS_NAME           VARCHAR(200) COMMENT '类名',
-   METHOD               VARCHAR(200) COMMENT '方法名',
-   PARAMS               VARCHAR(2000) COMMENT '方法参数',
+   CLASS_NAME           VARCHAR(800) COMMENT '类名',
+   METHOD               VARCHAR(800) COMMENT '方法名',
+   PARAMS               VARCHAR(6000) COMMENT '方法参数',
    EX_DESC              TEXT COMMENT '异常描述',
    LOGIN_USER           VARCHAR(40) COMMENT '登录用户',
    PRIMARY KEY (ID)
@@ -62,7 +62,7 @@ CREATE TABLE `sys_dict`  (
   `ID` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `code` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '字典编码',
   `name` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '字典描述',
-  `PARENT_ID` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '????ID',
+  `PARENT_ID` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '上级ID',
   `remark` varchar(400) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `gmt_create` datetime(0) NULL DEFAULT NULL,
   `gmt_modify` datetime(0) NULL DEFAULT NULL,
@@ -127,12 +127,12 @@ CREATE TABLE `sys_module`  (
 -- ----------------------------
 -- Records of sys_module
 -- ----------------------------
-INSERT INTO `sys_module` VALUES ('10', '字典管理', 'profile', NULL, NULL, '5,5', '5', '系统管理', '/sys/dictionary', NULL, 0, 3, '0001', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `sys_module` VALUES ('10', '字典管理', 'profile', NULL, NULL, '5,5', '5', '系统管理', '/sys/dictionary', NULL, 1, 3, '0001', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `sys_module` VALUES ('5', '系统管理', 'setting', NULL, NULL, '5', NULL, '系统管理', '/sys', NULL, 0, 0, '0001', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `sys_module` VALUES ('6', '组织管理', 'flag', NULL, NULL, '5,5', '5', '系统管理', '/sys/organization', NULL, 0, 1, '0001', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `sys_module` VALUES ('7', '模块管理', 'bars', NULL, NULL, '5,5', '5', '系统管理', '/sys/module', NULL, 0, 0, '0001', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `sys_module` VALUES ('8', '用户管理', 'usergroup-add', NULL, NULL, '5,5', '5', '系统管理', '/sys/account', NULL, 0, 4, '0001', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `sys_module` VALUES ('9', '权限管理', 'form', NULL, NULL, '5,5', '5', '系统管理', '/sys/role', NULL, 0, 2, '0001', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `sys_module` VALUES ('6', '组织管理', 'flag', NULL, NULL, '5,5', '5', '系统管理', '/sys/organization', NULL, 1, 1, '0001', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `sys_module` VALUES ('7', '模块管理', 'bars', NULL, NULL, '5,5', '5', '系统管理', '/sys/module', NULL, 1, 0, '0001', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `sys_module` VALUES ('8', '用户管理', 'usergroup-add', NULL, NULL, '5,5', '5', '系统管理', '/sys/account', NULL, 1, 4, '0001', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `sys_module` VALUES ('9', '权限管理', 'form', NULL, NULL, '5,5', '5', '系统管理', '/sys/role', NULL, 1, 2, '0001', NULL, NULL, NULL, NULL, NULL);
 
 /*==============================================================*/
 /* Table: SYS_MODULE_RESOURCES                                  */
@@ -153,6 +153,13 @@ ALTER TABLE SYS_MODULE_RESOURCES COMMENT '基础管理_模块管理_模块资源
 ALTER TABLE SYS_MODULE_RESOURCES ADD CONSTRAINT FK_REFERENCE_6 FOREIGN KEY (MODULE_ID)
       REFERENCES SYS_MODULE (ID) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
+
+INSERT INTO `jxc`.`sys_module_resources`(`ID`, `MODULE_ID`, `RESOURCE_DESC`, `RESOURCE_URL`, `RESOURCE_TYPE`) VALUES('10', '10', '全部资源', '**', '');
+INSERT INTO `jxc`.`sys_module_resources`(`ID`, `MODULE_ID`, `RESOURCE_DESC`, `RESOURCE_URL`, `RESOURCE_TYPE`) VALUES('8', '8', '全部资源', '**', '');
+INSERT INTO `jxc`.`sys_module_resources`(`ID`, `MODULE_ID`, `RESOURCE_DESC`, `RESOURCE_URL`, `RESOURCE_TYPE`) VALUES('9', '9', '全部资源', '**', '');
+INSERT INTO `jxc`.`sys_module_resources`(`ID`, `MODULE_ID`, `RESOURCE_DESC`, `RESOURCE_URL`, `RESOURCE_TYPE`) VALUES('5', '5', '全部资源', '**', '');
+INSERT INTO `jxc`.`sys_module_resources`(`ID`, `MODULE_ID`, `RESOURCE_DESC`, `RESOURCE_URL`, `RESOURCE_TYPE`) VALUES('6', '6', '全部资源', '**', '');
+INSERT INTO `jxc`.`sys_module_resources`(`ID`, `MODULE_ID`, `RESOURCE_DESC`, `RESOURCE_URL`, `RESOURCE_TYPE`) VALUES('7', '7', '全部资源', '**', '');
 -- ----------------------------
 -- Table structure for sys_organization
 -- ----------------------------
@@ -252,18 +259,19 @@ CREATE TABLE `sys_role_module`  (
   `ID` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `ROLE_ID` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '角色ID',
   `MODULE_ID` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '模块ID',
+  `RESOURCE_ID` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '资源ID',
   PRIMARY KEY (`ID`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_role_module
 -- ----------------------------
-INSERT INTO `sys_role_module` VALUES ('623df7e29e9cc1ccfdafb4013a406066', '1', '8');
-INSERT INTO `sys_role_module` VALUES ('63808bcc6383d5daa5470195d7043472', '1', '7');
-INSERT INTO `sys_role_module` VALUES ('9154eaf32a1c8551a97f18186d733073', '1', '10');
-INSERT INTO `sys_role_module` VALUES ('93fcbe4caf5794a1e6a737d5535c10c7', '1', '5');
-INSERT INTO `sys_role_module` VALUES ('ac070a22ae2b5b4d29c9460622e385fe', '1', '6');
-INSERT INTO `sys_role_module` VALUES ('d2ac85e592f8ba4b3aa0261901d78aad', '1', '9');
+INSERT INTO `sys_role_module` VALUES ('623df7e29e9cc1ccfdafb4013a406066', '1', '8','8');
+INSERT INTO `sys_role_module` VALUES ('63808bcc6383d5daa5470195d7043472', '1', '7','7');
+INSERT INTO `sys_role_module` VALUES ('9154eaf32a1c8551a97f18186d733073', '1', '10','10');
+INSERT INTO `sys_role_module` VALUES ('93fcbe4caf5794a1e6a737d5535c10c7', '1', '5','5');
+INSERT INTO `sys_role_module` VALUES ('ac070a22ae2b5b4d29c9460622e385fe', '1', '6','6');
+INSERT INTO `sys_role_module` VALUES ('d2ac85e592f8ba4b3aa0261901d78aad', '1', '9','9');
 
 -- ----------------------------
 -- Table structure for sys_role_user

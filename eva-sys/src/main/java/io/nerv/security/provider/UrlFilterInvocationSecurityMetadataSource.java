@@ -1,5 +1,6 @@
 package io.nerv.security.provider;
 
+import cn.hutool.core.util.StrUtil;
 import io.nerv.web.sys.role.service.RoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
@@ -8,13 +9,13 @@ import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import java.sql.Struct;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -25,7 +26,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource, InitializingBean {
     @Autowired
     private RoleService roleService;
-
     /**
      * 资源权限
      */
@@ -43,6 +43,13 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
         menusUrl.stream().forEach(item -> {
             var path = item.get("path");
             var role_code = item.get("code");
+            var resoure_path = item.get("resource_url");
+
+            if (StrUtil.isNotBlank(resoure_path)){
+                resoure_path = resoure_path.startsWith("/")? resoure_path.substring(1): resoure_path;
+            }
+
+            path = path.endsWith("/")? path+resoure_path: path+"/"+resoure_path;
 
             Collection<ConfigAttribute> values = urlPermMap.get(path);
 
@@ -60,6 +67,8 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
     @Override
     public Collection<ConfigAttribute> getAttributes(Object o) throws IllegalArgumentException {
 
+        HttpServletRequest request = ((FilterInvocation) o).getHttpRequest();
+
         Collection<ConfigAttribute> set = null;
         // 获取请求地址
         String requestUrl = ((FilterInvocation) o).getRequestUrl();
@@ -69,24 +78,23 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
         var keys = urlPermMap.keys().asIterator();
         while (keys.hasNext()){
             var key = keys.next();
-            if(requestUrl.contains(key)){
-                return urlPermMap.get(key);
+            var urlMatcher = new AntPathRequestMatcher(key);
+
+            if (urlMatcher.matches(request)|| StrUtil.equals(requestUrl,key)) {
+                if (null == set){
+                    set = new HashSet<>();
+                }
+                set.addAll(urlPermMap.get(key));
             }
-            // TODO 判断 全部资源: /sys/role/** 部分资源 /sys/role/list
-//            urlMatcher = new AntPathRequestMatcher(resURL);
-//
-//            if (urlMatcher.matches(request)||StringUtils.equals(request.getRequestURI(),resURL)) {
-//                attrSet.addAll(attrMap.get(resURL));
-//            }
 
         }
 
 //      未配置过权限的页面都不需要鉴权，jwtauthfilter已经进行了登录鉴权
-//      该过滤器是过滤链中的最后一个，该处判断返回ROLE_USER会使premitall无效
+//      该过滤器是过滤链中的最后一个，该处判断返回ROLE_USER会使 premitall 无效
 //      如需配置非授权接口均不可访问需修改此处
         if (ObjectUtils.isEmpty(set)) {
-            return null;
-//            return SecurityConfig.createList("ROLE_USER");
+//            return null;
+            return SecurityConfig.createList("ROLE_USER");
         }
         return set;
     }
