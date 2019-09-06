@@ -78,5 +78,5 @@ eva:
   # 无需鉴权路径
   security:
     permit: /auth/login,/auth/logout
-    # 鉴权模式，strict（严格模式， 从未授权的资源不可访问） || simple(简单模式，从未授权全可访问)
+    # 鉴权模式，strict（严格模式， 从未授权的资源不可访问 : 注意 这里是所有url 不仅仅只是菜单） || simple(简单模式，从未授权全可访问)
     mode: simple
