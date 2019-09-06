@@ -131,7 +131,7 @@ public class Response{
 
         this.code = errorCodeEnum.getIndex();
 
-        this.message = String.format("[{0}] {1}",
+        this.message = String.format("[%s] %s",
                                      errorCodeEnum.getIndex(), errorCodeEnum.getName());
 
         return this;
