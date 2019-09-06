@@ -24,12 +24,12 @@ public class UrlAccessDeniedHandler implements AccessDeniedHandler {
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException e) throws IOException {
         response.setCharacterEncoding("UTF-8");
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        response.setStatus(HttpServletResponse.SC_OK);
 
         try(PrintWriter printWriter = response.getWriter()){
             printWriter.write(JSON.toJSONString(
                                 new Response()
-                                        .failure(401, "["+ ErrorCodeEnum.PERMISSION_DENY.getIndex() +"] 用户权限不足")));
+                                        .failure(ErrorCodeEnum.PERMISSION_DENY)));
             printWriter.flush();
         }
     }

@@ -1,4 +1,4 @@
-package io.nerv.security.entrypoint;
+package io.nerv.security.provider;
 
 import cn.hutool.core.util.StrUtil;
 import io.nerv.core.enums.ErrorCodeEnum;

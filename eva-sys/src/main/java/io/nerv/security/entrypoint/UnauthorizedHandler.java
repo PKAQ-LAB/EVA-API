@@ -25,6 +25,6 @@ public class UnauthorizedHandler implements AuthenticationEntryPoint, Serializab
         //返回json形式的错误信息
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, HttpCodeEnum.ROLE_ERROR.getName());
+        response.sendError(HttpServletResponse.SC_OK, HttpCodeEnum.ROLE_ERROR.getName());
     }
 }

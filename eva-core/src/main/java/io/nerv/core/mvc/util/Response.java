@@ -1,6 +1,7 @@
 package io.nerv.core.mvc.util;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import io.nerv.core.enums.ErrorCodeEnum;
 import io.nerv.core.enums.HttpCodeEnum;
 import io.nerv.core.enums.ResponseEnumm;
 import io.nerv.core.exception.ReflectException;
@@ -116,6 +117,22 @@ public class Response{
         this.success = false;
         this.code = code;
         this.message = message;
+
+        return this;
+    }
+
+    /**
+     * 失败响应，自定义响应码和消息
+     * @param errorCodeEnum
+     * @return
+     */
+    public Response failure(ErrorCodeEnum errorCodeEnum) {
+        this.success = false;
+
+        this.code = errorCodeEnum.getIndex();
+
+        this.message = String.format("[{0}] {1}",
+                                     errorCodeEnum.getIndex(), errorCodeEnum.getName());
 
         return this;
     }

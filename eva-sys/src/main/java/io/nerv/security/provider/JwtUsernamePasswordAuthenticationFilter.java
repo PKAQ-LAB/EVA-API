@@ -1,4 +1,4 @@
-package io.nerv.security.entrypoint;
+package io.nerv.security.provider;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -57,7 +57,6 @@ public class JwtUsernamePasswordAuthenticationFilter extends AbstractAuthenticat
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException {
 
         String params = request.getReader().lines().collect(Collectors.joining());
-        System.out.println(params);
         JSONObject param = JSON.parseObject(params);
 
         String username = param.getString("account");

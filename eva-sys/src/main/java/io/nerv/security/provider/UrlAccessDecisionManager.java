@@ -33,7 +33,7 @@ public class UrlAccessDecisionManager implements AccessDecisionManager {
             // 当前请求需要的权限
             String needRole = configAttribute.getAttribute();
             log.debug("needRole=" + needRole);
-            if ("ROLE_USER".equals(needRole) && authentication instanceof AnonymousAuthenticationToken) {
+            if ("ROLE_USER".equals(needRole)) {
                 // 所有未授权的菜单都会被认定为 需要 ROLE_USER 权限，
                 // 采用严格模式，只允许授权的url进行访问 所有未授权的不许访问
                 // 也可采用简单模式， 只对授权的url进行鉴权，未进行过授权配置的url都可访问
@@ -46,7 +46,7 @@ public class UrlAccessDecisionManager implements AccessDecisionManager {
             }
             // 当前用户所具有的权限
             Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-           log.debug("authorities=" + authorities);
+            log.debug("authorities=" + authorities);
             for (GrantedAuthority grantedAuthority : authorities) {
                 if (grantedAuthority.getAuthority().equals(needRole)) {
                     return;
