@@ -52,7 +52,7 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
         UserEntity user = new UserEntity();
         user.setLocked(lock);
         QueryWrapper<UserEntity> wrapper = new QueryWrapper<>();
-        wrapper.in("id",CollectionUtil.join(ids,","));
+        wrapper.in("id", ids);
 
         this.mapper.update(user, wrapper);
     }
@@ -95,12 +95,9 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
      */
     public boolean checkUnique(UserEntity user) {
         QueryWrapper<UserEntity> entityWrapper = new QueryWrapper<>();
-        entityWrapper.like("code", user.getCode());
-        if (StrUtil.isNotBlank(user.getCode()) && StrUtil.isNotBlank(user.getAccount())){
-            entityWrapper.or();
+        if (StrUtil.isNotBlank(user.getAccount())){
+            entityWrapper.eq("account", user.getAccount());
         }
-        entityWrapper.like("account", user.getAccount());
-
         int records = this.mapper.selectCount(entityWrapper);
         return records>0;
     }

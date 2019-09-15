@@ -145,7 +145,7 @@ public class OrganizationService extends StdBaseService<OrganizationMapper, Orga
      * @return 组织树列表
      */
     @Cacheable(value="sys")
-    public List<OrganizationEntity> listOrgByAttr(OrganizationEntity organization) {
+    public List<OrganizationEntity> list(OrganizationEntity organization) {
         return  this.mapper.listOrg(null, organization);
     }
 

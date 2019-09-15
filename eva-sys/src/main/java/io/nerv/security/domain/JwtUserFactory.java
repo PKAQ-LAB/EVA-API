@@ -23,7 +23,7 @@ public final class JwtUserFactory {
                 user.getDeptName(),
                 user.getName(),
                 user.getNickName(),
-                LockEnumm.UNLOCK.getIndex().equals(user.getLocked()),
+                LockEnumm.LOCK.getIndex().equals(user.getLocked()),
                 mapToGrantedAuthorities(user.getRoles().stream().map(RoleEntity::getCode).collect(Collectors.toList()))
         );
     }

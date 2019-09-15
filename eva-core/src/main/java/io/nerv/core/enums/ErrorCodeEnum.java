@@ -22,6 +22,7 @@ public enum ErrorCodeEnum {
     ACCOUNT_OR_PWD_ERROR("用户名或密码错误", 4102),
     ACCOUNT_LOCKED("用户已经被锁定", 4103),
     LOGIN_ERROR("登录遇到未知错误", 4104),
+    ACCOUNT_ALREADY_EXIST("账号名已存在", 4110),
     /** 用户相关 **/
     PERMISSION_DENY ("权限不足", 4200);
 

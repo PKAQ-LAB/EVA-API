@@ -81,19 +81,6 @@ public class Response{
         return this;
     }
 
-    /**
-     * 响应失败
-     * @param data
-     * @return
-     */
-    public Response failure(Object data) {
-        this.data = data;
-        this.message = ResponseEnumm.OPERATE_FAILED.getName();
-        this.success = false;
-        this.code = HttpCodeEnum.REQEUST_FAILURE.getIndex();
-
-        return this;
-    }
 
     /**
      * 失败响应,根据status设置statusText

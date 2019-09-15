@@ -22,7 +22,6 @@ public abstract class StdBaseEntity implements Entity, Serializable {
     private String id;
 
     @ApiModelProperty("创建人")
-    @TableField(fill = FieldFill.INSERT)
     private String createBy;
 
     @ApiModelProperty("创建时间")
@@ -31,7 +30,6 @@ public abstract class StdBaseEntity implements Entity, Serializable {
     private LocalDateTime gmtCreate;
 
     @ApiModelProperty("修改人")
-    @TableField(fill = FieldFill.INSERT_UPDATE)
     private String modifyBy;
 
     @ApiModelProperty("修改时间")

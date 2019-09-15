@@ -1,6 +1,7 @@
 package io.nerv.web.sys.user.ctrl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import io.nerv.core.enums.ErrorCodeEnum;
 import io.nerv.web.sys.user.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,7 +34,7 @@ public class UserCtrl extends PureBaseCtrl<UserService> {
     public Response checkUnique(@ApiParam(name ="userEntity", value = "要进行校验的参数")
                                 @RequestBody UserEntity user){
         boolean exist = this.service.checkUnique(user);
-        return exist? failure(): success();
+        return exist? failure(ErrorCodeEnum.ACCOUNT_ALREADY_EXIST): success();
     }
 
     @PostMapping("/del")
@@ -44,8 +45,8 @@ public class UserCtrl extends PureBaseCtrl<UserService> {
         if (null == ids || CollectionUtil.isEmpty(ids.getParam())){
             throw new ParamException(locale("param_id_notnull"));
         }
-
-        return success(this.service.delete(ids.getParam()));
+        this.service.delete(ids.getParam());
+        return success(this.service.listPage(null, 1));
     }
 
     @PostMapping("edit")

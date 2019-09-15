@@ -37,17 +37,17 @@ public class OrgCtrl extends PureBaseCtrl<OrganizationService> {
         return exist? failure(): success();
     }
 
-    @GetMapping({"/list","/list/{condition}"})
-    @ApiOperation(value = "获取组织列表",response = Response.class)
-    public Response listOrg(@ApiParam(name = "condition", value = "组织名称或编码")
-                            @PathVariable(value = "condition", required = false) String condition){
-        return success(this.service.listOrg(condition));
-    }
+//    @GetMapping({"/list","/list/{condition}"})
+//    @ApiOperation(value = "获取组织列表",response = Response.class)
+//    public Response listOrg(@ApiParam(name = "condition", value = "组织名称或编码")
+//                            @PathVariable(value = "condition", required = false) String condition){
+//        return success(this.service.listOrg(condition));
+//    }
 
-    @GetMapping("/listOrgByAttr")
+    @GetMapping("/list")
     @ApiOperation(value = "根据实体类属性获取相应的组织树 ", response = Response.class)
     public Response listOrgByAttr(@ApiParam(name = "organization", value= "{key: value}") OrganizationEntity organization){
-       return success(this.service.listOrgByAttr(organization));
+       return success(this.service.list(organization));
     }
 
     @GetMapping("/get/{id}")

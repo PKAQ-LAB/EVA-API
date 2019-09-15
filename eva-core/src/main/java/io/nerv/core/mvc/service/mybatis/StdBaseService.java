@@ -129,10 +129,7 @@ public abstract class StdBaseService<M extends BaseMapper<T>, T extends StdBaseE
      * @param param
      * @return
      */
-    public IPage<T> delete(ArrayList<String> param){
+    public void delete(ArrayList<String> param){
         this.mapper.deleteBatchIds(param);
-        Page pagination = new Page();
-        pagination.setCurrent(1);
-        return this.mapper.selectPage(pagination, null);
     }
 }

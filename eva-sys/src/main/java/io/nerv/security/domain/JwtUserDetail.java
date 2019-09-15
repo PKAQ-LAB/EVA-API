@@ -43,7 +43,7 @@ public class JwtUserDetail implements UserDetails {
         this.deptName = deptName;
         this.name = name;
         this.nickName = nickName;
-        this.accountNonLocked = accountNonLocked;
+        this.accountNonLocked = !accountNonLocked;
         this.authorities = authorities;
     }
 

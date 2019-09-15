@@ -40,8 +40,8 @@ public abstract class StdBaseCtrl<T extends StdBaseService, E extends StdBaseEnt
         if (null == ids || CollectionUtil.isEmpty(ids.getParam())){
             throw new ParamException(locale("param_id_notnull"));
         }
-
-        return success(this.service.delete(ids.getParam()), ResponseEnumm.DELETE_SUCCESS.getName());
+        this.service.delete(ids.getParam());
+        return success(this.service.list(null), ResponseEnumm.DELETE_SUCCESS.getName());
     }
 
     @PostMapping("edit")
