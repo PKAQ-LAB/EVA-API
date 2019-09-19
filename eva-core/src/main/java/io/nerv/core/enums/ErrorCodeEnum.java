@@ -23,10 +23,11 @@ public enum ErrorCodeEnum {
     ACCOUNT_LOCKED("用户已经被锁定", 4103),
     LOGIN_ERROR("登录遇到未知错误", 4104),
     ACCOUNT_ALREADY_EXIST("账号名已存在", 4110),
-    /** 用户相关 **/
+    /** 业务 **/
+    PATH_ALREADY_EXIST("模块路径已经存在", 4301),
+    CHILD_EXIST("存在子节点，无法删除。", 4302),
+    /** 权限相关 **/
     PERMISSION_DENY ("权限不足", 4200);
-
-    ;
 
     /**
      * 名称

@@ -77,7 +77,7 @@ public class WebLogAdvice {
 
     @AfterThrowing(pointcut = "webLog()", throwing="ex")
     public void doWhenThrowing(JoinPoint joinPoint,Throwable ex){
-        String jsontStack = JSON.toJSONString(ex.getStackTrace());
+        String jsontStack = ex.getStackTrace().toString();
         log.error(jsontStack);
 
         if (!evaConfig.getErrorLog().isEnabled()) return;
