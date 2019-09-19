@@ -92,6 +92,11 @@ public class DictMapHelper implements DictHelperProvider {
     }
 
     @Override
+    public void update(String code, LinkedHashMap<String, String> item) {
+        this.dictMap.put(code, item);
+    }
+
+    @Override
     public void add(String code, LinkedHashMap<String, String> item) {
         this.dictMap.put(code, item);
     }

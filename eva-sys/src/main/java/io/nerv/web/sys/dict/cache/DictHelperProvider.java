@@ -59,6 +59,13 @@ public interface DictHelperProvider {
     void update(String code, String key, String value);
 
     /**
+     * 更新字典
+     * @param code
+     * @param item
+     */
+    void update(String code, LinkedHashMap<String, String> item);
+
+    /**
      * 新增字典
      * @param code
      * @param item

@@ -28,12 +28,6 @@ public interface DictMapper extends BaseMapper<DictEntity> {
     List<DictEntity> listChildren(String id);
 
     /**
-     * 根据ID删除（物理删除）
-     * @param id
-     */
-    void deleteDictById(String id);
-
-    /**
      * 根据ID加载一条字典详情
      * @param id
      * @return

@@ -3,6 +3,7 @@ package io.nerv.web.sys.module.service;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import io.nerv.core.enums.LockEnumm;
 import io.nerv.core.mvc.service.mybatis.StdBaseService;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.util.tree.TreeHelper;
@@ -70,7 +71,7 @@ public class ModuleService extends StdBaseService<ModuleMapper, ModuleEntity> {
         String pid = module.getParentId();
         if(StrUtil.isNotBlank(moduleId)){
             //是否启用的逻辑
-            if(StrUtil.isNotBlank(module.getStatus()) && module.getStatus().equals("0001")) {
+            if(StrUtil.isNotBlank(module.getStatus()) && LockEnumm.UNLOCK.getIndex().equals(module.getStatus())) {
                 if(!isDisable(module)){
                     //如果父节点状态为禁用，则子节点状态也只能为禁用
                     response.failure(501, "父节点为禁用状态，无法启用。", null);
@@ -166,14 +167,13 @@ public class ModuleService extends StdBaseService<ModuleMapper, ModuleEntity> {
      * 根据ID更新
      */
     public void updateModule(ModuleEntity moduleEntity){
-        if(StrUtil.isNotBlank(moduleEntity.getStatus()) && moduleEntity.getStatus().equals("0001")) {
+        if(StrUtil.isNotBlank(moduleEntity.getStatus()) && LockEnumm.UNLOCK.getIndex().equals(moduleEntity.getStatus())) {
             if(!isDisable(moduleEntity)){
                 return;
             }
         }
-            disableChild(moduleEntity);
-            this.mapper.updateById(moduleEntity);
-
+        disableChild(moduleEntity);
+        this.mapper.updateById(moduleEntity);
     }
 
 
@@ -213,7 +213,11 @@ public class ModuleService extends StdBaseService<ModuleMapper, ModuleEntity> {
     public boolean checkUnique(ModuleEntity module) {
         QueryWrapper<ModuleEntity> entityWrapper = new QueryWrapper<>();
         entityWrapper.eq("path", module.getPath());
-        entityWrapper.eq("parent_id", module.getParentId());
+        if (StrUtil.isBlank(module.getParentId())){
+            entityWrapper.isNull("parent_id");
+        } else {
+            entityWrapper.eq("parent_id", module.getParentId());
+        }
 
         int records = this.mapper.selectCount(entityWrapper);
         return records > 0;
@@ -224,7 +228,7 @@ public class ModuleService extends StdBaseService<ModuleMapper, ModuleEntity> {
      */
     public void disableChild(ModuleEntity module){
         //判断是不是禁用
-        if(StrUtil.isBlank(module.getStatus()) || module.getStatus().equals("0001")){
+        if(StrUtil.isBlank(module.getStatus()) || LockEnumm.LOCK.getIndex().equals(module.getStatus())){
             return;
         }
         //禁用该父节点下的所有子节点
@@ -244,11 +248,10 @@ public class ModuleService extends StdBaseService<ModuleMapper, ModuleEntity> {
                 //得到父节点
                 ModuleEntity fatherModule=this.mapper.selectById(module.getParentId());
                 if(fatherModule != null && StrUtil.isNotBlank(fatherModule.getStatus())){
-                    return fatherModule.getStatus().equals("0000") ? false : true;
+                    return LockEnumm.LOCK.getIndex().equals(fatherModule.getStatus()) ? false : true;
                 }
 
             }
         return true;
     }
-
 }

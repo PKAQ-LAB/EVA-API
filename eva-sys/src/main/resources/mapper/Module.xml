@@ -122,7 +122,7 @@
 
   <!-- 根据id禁用节点-->
   <update id="disableChild">
-    update sys_module set status = '0000'
+    update sys_module set status = '0001'
    where path_id like concat('%',#{id},'%');
   </update>
 

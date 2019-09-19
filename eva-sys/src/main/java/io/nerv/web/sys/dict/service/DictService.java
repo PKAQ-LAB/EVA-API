@@ -1,12 +1,16 @@
 package io.nerv.web.sys.dict.service;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import io.nerv.core.exception.ParamException;
 import io.nerv.core.mvc.service.mybatis.StdBaseService;
 import io.nerv.web.sys.dict.entity.DictEntity;
+import io.nerv.web.sys.dict.entity.DictItemEntity;
 import io.nerv.web.sys.dict.entity.DictViewEntity;
 import io.nerv.web.sys.dict.cache.DictHelperProvider;
+import io.nerv.web.sys.dict.mapper.DictItemMapper;
 import io.nerv.web.sys.dict.mapper.DictMapper;
 import io.nerv.web.sys.dict.mapper.DictViewMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +32,9 @@ public class DictService extends StdBaseService<DictMapper, DictEntity> {
 
     @Autowired
     private DictViewMapper dictViewMapper;
+
+    @Autowired
+    private DictItemMapper dictItemMapper;
 
     /**
      * 查询字典缓存
@@ -77,7 +84,13 @@ public class DictService extends StdBaseService<DictMapper, DictEntity> {
      * @param id 字典ID
      */
     public void delDict(String id){
-        this.mapper.deleteDictById(id);
+
+        // 先删除子表 再删除主表
+        QueryWrapper<DictItemEntity> deleteWrapper = new QueryWrapper();
+        deleteWrapper.eq("main_id", id);
+        this.dictItemMapper.delete(deleteWrapper);
+
+        this.mapper.deleteById(id);
 
         //删掉字典之后，移除字典缓存中的相关字典
         DictEntity dictEntity=this.mapper.getDict(id);
@@ -101,7 +114,17 @@ public class DictService extends StdBaseService<DictMapper, DictEntity> {
             if (null != conditionEntity){
                 throw new ParamException("编码已存在");
             } else {
+                // 保存主表
+                String mainID = IdWorker.getId()+"";
+                dictEntity.setId(mainID);
                 this.mapper.insert(dictEntity);
+                // 保存子表
+                if (CollUtil.isNotEmpty(dictEntity.getLines())){
+                    dictEntity.getLines().forEach(item -> {
+                        item.setMainId(mainID);
+                        dictItemMapper.insert(item);
+                    });
+                }
             }
         } else {
 
@@ -111,6 +134,16 @@ public class DictService extends StdBaseService<DictMapper, DictEntity> {
 
                 this.mapper.updateById(dictEntity);
 
+                // 更新子表， 先删除再插入
+                QueryWrapper<DictItemEntity> deleteWrapper = new QueryWrapper();
+                deleteWrapper.eq("main_id", id);
+                this.dictItemMapper.delete(deleteWrapper);
+
+                if (CollUtil.isNotEmpty(dictEntity.getLines())){
+                    dictEntity.getLines().forEach(item -> {
+                        dictItemMapper.insert(item);
+                    });
+                }
 
                 //修改了字典的code则把原来的删掉加上最新的
                 if(!code.equals(dictEntity.getCode())){

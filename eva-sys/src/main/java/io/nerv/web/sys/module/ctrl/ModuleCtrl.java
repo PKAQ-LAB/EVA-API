@@ -1,6 +1,7 @@
 package io.nerv.web.sys.module.ctrl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import io.nerv.core.enums.ErrorCodeEnum;
 import io.nerv.core.mvc.ctrl.mybatis.PureBaseCtrl;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.mvc.util.SingleArray;
@@ -32,7 +33,7 @@ public class ModuleCtrl extends PureBaseCtrl<ModuleService> {
     public Response checkUnique(@ApiParam(name ="moduleEntity", value = "要进行校验的参数")
                                 @RequestBody ModuleEntity module){
         boolean exist = this.service.checkUnique(module);
-        return exist? failure(): success();
+        return exist? failure(ErrorCodeEnum.PATH_ALREADY_EXIST): success();
     }
 
     @PostMapping("/del")

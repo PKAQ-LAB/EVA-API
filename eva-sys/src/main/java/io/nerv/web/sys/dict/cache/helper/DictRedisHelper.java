@@ -101,6 +101,11 @@ public class DictRedisHelper implements DictHelperProvider {
     }
 
     @Override
+    public void update(String code, LinkedHashMap<String, String> item) {
+        this.redisUtil.set(DICT_CACHE_KEY+code, JSON.toJSONString(item));
+    }
+
+    @Override
     public void add(String code, LinkedHashMap<String, String> item) {
         this.redisUtil.set(DICT_CACHE_KEY+code, JSON.toJSONString(item));
     }

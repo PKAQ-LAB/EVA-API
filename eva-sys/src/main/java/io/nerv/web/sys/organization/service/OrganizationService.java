@@ -3,11 +3,11 @@ package io.nerv.web.sys.organization.service;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import io.nerv.core.enums.ErrorCodeEnum;
 import io.nerv.core.mvc.service.mybatis.StdBaseService;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.web.sys.organization.entity.OrganizationEntity;
 import io.nerv.web.sys.organization.mapper.OrganizationMapper;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -44,7 +44,7 @@ public class OrganizationService extends StdBaseService<OrganizationMapper, Orga
         if (CollectionUtil.isNotEmpty(leafList)){
             List<Object> list = CollectionUtil.getFieldValues(leafList, "parentName");
             String name = CollectionUtil.join(list, ",");
-            response = new Response().failure(501, StrUtil.format("[{}] 存在子节点，无法删除。",name), null);
+            response = new Response().failure(ErrorCodeEnum.CHILD_EXIST.getIndex(), StrUtil.format("[{}] 存在子节点，无法删除。",name), null);
          } else {
             this.mapper.deleteBatchIds(ids);
             response = new Response().success(this.mapper.listOrg(null, null));
@@ -134,7 +134,6 @@ public class OrganizationService extends StdBaseService<OrganizationMapper, Orga
      * @param id 组织ID
      * @return 组织信息
      */
-    @Cacheable(value="sys")
     public OrganizationEntity getOrg(String id) {
         return this.getById(id);
     }
@@ -144,7 +143,6 @@ public class OrganizationService extends StdBaseService<OrganizationMapper, Orga
      * @param organization 属性实体类
      * @return 组织树列表
      */
-    @Cacheable(value="sys")
     public List<OrganizationEntity> list(OrganizationEntity organization) {
         return  this.mapper.listOrg(null, organization);
     }
