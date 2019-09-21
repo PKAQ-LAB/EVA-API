@@ -58,14 +58,9 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
      */
     public IPage<RoleEntity> listRole(RoleEntity roleEntity, Integer page) {
 
-        boolean isAdmin = securityUtil.isAdmin();
         page = null != page ? page : 1;
         // 查询条件
         QueryWrapper<RoleEntity> wrapper = new QueryWrapper<>(roleEntity);
-        // 非管理员只查询当前拥有权限 或 当前创建人创建的角色 列表
-        if (!isAdmin) {
-            wrapper.in("CREATE_BY", securityUtil.getJwtUserId());
-        }
 
         // 分页条件
         Page pagination = new Page();
@@ -85,6 +80,11 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
      * @param ids
      */
     public void deleteRole(ArrayList<String> ids) {
+        // 删除角色相关的 授权用户
+        // 删除角色相关的 授权模块
+        // 删除角色相关的 授权参数
+        // 删除角色相关的 数据权限
+
         this.mapper.deleteBatchIds(ids);
     }
 
@@ -95,7 +95,7 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
      */
     public void updateRole(ArrayList<String> ids, String lock) {
         RoleEntity role = new RoleEntity();
-        role.setLocked(LockEnumm.LOCK.getIndex().equals(lock));
+        role.setLocked(lock);
         QueryWrapper<RoleEntity> wrapper = new QueryWrapper<>();
         wrapper.in("id", CollectionUtil.join(ids,","));
 
@@ -208,9 +208,13 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
      * @param roleId 权限条件
      * @return
      */
-    public Map<String, Object> listUser(String roleId, Integer page) {
+    public Map<String, Object> listUser(String roleId, String deptId, Integer page) {
         // 获取所有用户
         UserEntity userEntity = new UserEntity();
+        if (StrUtil.isNotBlank(deptId)){
+            userEntity.setDeptId(deptId);
+        }
+
         userEntity.setLocked(LockEnumm.UNLOCK.getIndex());
 
         IPage<UserEntity> pager = this.userService.listUser(userEntity, page);

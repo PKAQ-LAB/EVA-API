@@ -10,7 +10,7 @@
     <result column="PATH_NAME" jdbcType="VARCHAR" property="pathName" />
     <result column="ISLEAF" jdbcType="TINYINT" property="isleaf" />
     <result column="ORDERS" jdbcType="INTEGER" property="orders" />
-    <result column="LOCKED" jdbcType="TINYINT" property="locked" />
+    <result column="LOCKED" jdbcType="VARCHAR" property="locked" />
   </resultMap>
   <!-- 根据userId获取 权限相关信息-->
   <select id="selectByUserId" resultType="role">
@@ -19,7 +19,7 @@
     <where>
         R.ID= RU.ROLE_ID
         and
-        R.LOCKED=0
+        R.LOCKED != '0001'
         and
         RU.USER_ID=#{userId}
     </where>

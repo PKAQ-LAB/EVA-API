@@ -72,8 +72,10 @@ public class RoleCtrl extends PureBaseCtrl<RoleService> {
     @GetMapping({"/listUser"})
     @ApiOperation(value = "获得角色绑定的用户列表", response = Response.class)
     public Response listUser(@ApiParam(name = "roleEntity", value = "包含角色对象属性的查询条件", required = true)
-                             @RequestParam String roleId, Integer page) {
-        return success(this.service.listUser(roleId, page));
+                             @RequestParam String roleId,
+                             @RequestParam(required = false) String deptId,
+                             @RequestParam(required = false) Integer page) {
+        return success(this.service.listUser(roleId, deptId, page));
     }
 
     @PostMapping({"/saveUser"})

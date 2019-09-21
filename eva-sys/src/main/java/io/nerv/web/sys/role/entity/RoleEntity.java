@@ -50,7 +50,7 @@ public class RoleEntity extends StdBaseEntity {
     private Integer orders;
 
     @ApiModelProperty("是否锁定")
-    private Boolean locked;
+    private String locked;
 
     @TableField(exist = false)
     @ApiModelProperty("角色拥有的模块列表")
