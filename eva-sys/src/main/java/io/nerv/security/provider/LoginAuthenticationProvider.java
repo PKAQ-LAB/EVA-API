@@ -1,7 +1,7 @@
 package io.nerv.security.provider;
 
 import cn.hutool.core.util.StrUtil;
-import io.nerv.core.enums.ErrorCodeEnum;
+import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.security.exception.OathException;
 import lombok.Getter;
 import lombok.Setter;
@@ -45,14 +45,14 @@ public class LoginAuthenticationProvider extends AbstractUserDetailsAuthenticati
         String password = (String)authentication.getCredentials();
 
         if (StrUtil.isBlank(username) || StrUtil.isBlank(password)){
-            throw new OathException(ErrorCodeEnum.ACCOUNT_OR_PWD_ERROR);
+            throw new OathException(BizCodeEnum.ACCOUNT_OR_PWD_ERROR);
         }
 
         username = username.trim();
 
         UserDetails user = this.getUserDetailsService().loadUserByUsername(username);
         if (null == user){
-            throw new OathException(ErrorCodeEnum.ACCOUNT_NOT_EXIST);
+            throw new OathException(BizCodeEnum.ACCOUNT_NOT_EXIST);
         }
         return user;
     }
@@ -71,7 +71,7 @@ public class LoginAuthenticationProvider extends AbstractUserDetailsAuthenticati
 
             throw new BadCredentialsException(messages.getMessage(
                     "AbstractUserDetailsAuthenticationProvider.badCredentials",
-                    ErrorCodeEnum.LOGIN_ERROR.getName()));
+                    BizCodeEnum.LOGIN_ERROR.getName()));
         }
 
         String presentedPassword = authentication.getCredentials().toString();
@@ -79,7 +79,7 @@ public class LoginAuthenticationProvider extends AbstractUserDetailsAuthenticati
         boolean matches = this.getPasswordEncoder().matches(presentedPassword, userDetails.getPassword());
 
         if (!matches) {
-            throw new OathException(ErrorCodeEnum.ACCOUNT_OR_PWD_ERROR);
+            throw new OathException(BizCodeEnum.ACCOUNT_OR_PWD_ERROR);
         }
     }
     @Override

@@ -11,7 +11,7 @@ public enum  HttpCodeEnum {
     /**
      * 请求成功
      */
-    QUERY_SUCCESS("服务器成功返回请求的数据", 200),
+    QUERY_SUCCESS("服务器成功返回请求的数据", 0000),
     EDIT_SUCCESS("新建或修改数据成功", 201),
     POST_SUCCESS("一个请求已经进入后台排队（异步任务）。", 202),
     DEL_SUCCESS("删除数据成功.", 204),

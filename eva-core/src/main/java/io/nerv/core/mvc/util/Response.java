@@ -1,9 +1,8 @@
 package io.nerv.core.mvc.util;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import io.nerv.core.enums.ErrorCodeEnum;
+import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.enums.HttpCodeEnum;
-import io.nerv.core.enums.ResponseEnumm;
 import io.nerv.core.exception.ReflectException;
 import io.nerv.core.util.ReflectHelper;
 import lombok.Data;
@@ -38,7 +37,7 @@ public class Response{
      */
     public Response success(){
         this.success = true;
-        this.code = HttpCodeEnum.QUERY_SUCCESS.getIndex();
+        this.code = BizCodeEnum.REQUEST_SUCCESS.getIndex();
 
         return this;
     }
@@ -50,7 +49,7 @@ public class Response{
     public Response success(Object data) {
         this.data = data;
         this.success = true;
-        this.code = HttpCodeEnum.QUERY_SUCCESS.getIndex();
+        this.code = BizCodeEnum.REQUEST_SUCCESS.getIndex();
 
         return this;
     }
@@ -63,7 +62,7 @@ public class Response{
         this.data = data;
         this.success = true;
         this.message = msg;
-        this.code = HttpCodeEnum.QUERY_SUCCESS.getIndex();
+        this.code = BizCodeEnum.REQUEST_SUCCESS.getIndex();
 
         return this;
     }
@@ -113,7 +112,7 @@ public class Response{
      * @param errorCodeEnum
      * @return
      */
-    public Response failure(ErrorCodeEnum errorCodeEnum) {
+    public Response failure(BizCodeEnum errorCodeEnum) {
         this.success = false;
 
         this.code = errorCodeEnum.getIndex();

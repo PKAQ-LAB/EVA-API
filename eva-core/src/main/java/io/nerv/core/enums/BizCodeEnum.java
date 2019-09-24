@@ -3,14 +3,15 @@ package io.nerv.core.enums;
 import lombok.Getter;
 
 /**
- * 错误状态码 统一为 4xxx
+ * 状态码
+ * 错误统一为 4xxx
  * @author PKAQ
  */
 @Getter
-public enum ErrorCodeEnum {
-    /**
-     * 请求成功
-     */
+public enum BizCodeEnum {
+    /** 请求成功 **/
+    REQUEST_SUCCESS("请求成功", 0000),
+    /** 请求失败 **/
     PARAM_ERROR("请求参数错误.", 4000),
     PARAM_LOST("请求参数丢失.", 4001),
     PARAM_TYPEERROR("参数类型错误 ", 4002),
@@ -25,7 +26,8 @@ public enum ErrorCodeEnum {
     ACCOUNT_ALREADY_EXIST("账号名已存在", 4110),
     /** 业务 **/
     PATH_ALREADY_EXIST("模块路径已经存在", 4301),
-    CHILD_EXIST("存在子节点，无法删除。", 4302),
+    CHILD_EXIST("存在子节点,无法删除", 4302),
+    ROLE_CODE_EXIST("权限编码已经存在", 4303),
     /** 权限相关 **/
     PERMISSION_DENY ("权限不足", 4200);
 
@@ -38,13 +40,13 @@ public enum ErrorCodeEnum {
      */
     private int index;
 
-    ErrorCodeEnum(String name, int index) {
+    BizCodeEnum(String name, int index) {
         this.name = name;
         this.index = index;
     }
 
     public static String getName(int index) {
-        for (ErrorCodeEnum p : ErrorCodeEnum.values()) {
+        for (BizCodeEnum p : BizCodeEnum.values()) {
             if ( index == p.getIndex() ) {
                 return p.name;
             }

@@ -1,6 +1,6 @@
 package io.nerv.core.mvc.ctrl.mybatis;
 
-import io.nerv.core.enums.ErrorCodeEnum;
+import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.enums.HttpCodeEnum;
 import io.nerv.core.mvc.service.mybatis.StdBaseService;
 import io.nerv.core.mvc.util.Response;
@@ -70,7 +70,7 @@ public abstract class PureBaseCtrl<T extends StdBaseService> {
      * @param failCode
      * @return
      */
-    protected Response failure(ErrorCodeEnum failCode){
+    protected Response failure(BizCodeEnum failCode){
         return new Response().failure(failCode);
     }
     /**

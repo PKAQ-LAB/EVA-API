@@ -1,14 +1,12 @@
 package io.nerv.security.provider;
 
-import io.nerv.core.enums.ErrorCodeEnum;
+import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.security.exception.OathException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.ConfigAttribute;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
@@ -39,7 +37,7 @@ public class UrlAccessDecisionManager implements AccessDecisionManager {
                 // 也可采用简单模式， 只对授权的url进行鉴权，未进行过授权配置的url都可访问
                 // 若采用第二种方式，可以通过用户登录后默认授予ROLE_USER权限 或 放开下面的注释即可
                 if ("strict".equals(this.mode)) {
-                    throw new OathException(ErrorCodeEnum.PERMISSION_DENY);
+                    throw new OathException(BizCodeEnum.PERMISSION_DENY);
                 } else {
                     return;
                 }
@@ -53,7 +51,7 @@ public class UrlAccessDecisionManager implements AccessDecisionManager {
                 }
             }
         }
-        throw new AccessDeniedException(ErrorCodeEnum.PERMISSION_DENY.getName());
+        throw new AccessDeniedException(BizCodeEnum.PERMISSION_DENY.getName());
     }
 
     @Override

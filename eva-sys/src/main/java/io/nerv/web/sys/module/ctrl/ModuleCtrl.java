@@ -1,7 +1,8 @@
 package io.nerv.web.sys.module.ctrl;
 
 import cn.hutool.core.collection.CollectionUtil;
-import io.nerv.core.enums.ErrorCodeEnum;
+import io.nerv.core.enums.BizCodeEnum;
+import io.nerv.core.exception.ParamException;
 import io.nerv.core.mvc.ctrl.mybatis.PureBaseCtrl;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.mvc.util.SingleArray;
@@ -10,13 +11,7 @@ import io.nerv.web.sys.module.service.ModuleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import io.nerv.core.exception.ParamException;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 模块管理controller
@@ -33,7 +28,7 @@ public class ModuleCtrl extends PureBaseCtrl<ModuleService> {
     public Response checkUnique(@ApiParam(name ="moduleEntity", value = "要进行校验的参数")
                                 @RequestBody ModuleEntity module){
         boolean exist = this.service.checkUnique(module);
-        return exist? failure(ErrorCodeEnum.PATH_ALREADY_EXIST): success();
+        return exist? failure(BizCodeEnum.PATH_ALREADY_EXIST): success();
     }
 
     @PostMapping("/del")

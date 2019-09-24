@@ -85,6 +85,10 @@ public class OrganizationEntity extends StdBaseEntity {
         return this.name;
     }
 
+    public String getValue() {
+        return this.getId();
+    }
+
     public List<OrganizationEntity> getChildren() {
         return children == null || children.size()<1?null:children;
     }

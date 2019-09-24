@@ -1,6 +1,6 @@
 package io.nerv.security.exception;
 
-import io.nerv.core.enums.ErrorCodeEnum;
+import io.nerv.core.enums.BizCodeEnum;
 import org.springframework.security.core.AuthenticationException;
 
 /**
@@ -12,7 +12,7 @@ public class OathException extends AuthenticationException {
         super(msg);
     }
 
-    public OathException(ErrorCodeEnum errorCodeEnum) {
+    public OathException(BizCodeEnum errorCodeEnum) {
         super(errorCodeEnum.getName());
     }
 }

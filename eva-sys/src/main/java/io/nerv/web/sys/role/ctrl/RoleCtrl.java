@@ -2,6 +2,7 @@ package io.nerv.web.sys.role.ctrl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
+import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.exception.ParamException;
 import io.nerv.core.mvc.ctrl.mybatis.PureBaseCtrl;
 import io.nerv.core.mvc.util.Response;
@@ -13,13 +14,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 角色管理
@@ -36,7 +31,7 @@ public class RoleCtrl extends PureBaseCtrl<RoleService> {
     public Response checkUnique(@ApiParam(name ="roleEntity", value = "要进行校验的参数")
                                 @RequestBody RoleEntity role){
         boolean exist = this.service.checkUnique(role);
-        return exist? failure(): success();
+        return exist? failure(BizCodeEnum.ROLE_CODE_EXIST): success();
     }
 
     @GetMapping("/get/{id}")
@@ -73,9 +68,8 @@ public class RoleCtrl extends PureBaseCtrl<RoleService> {
     @ApiOperation(value = "获得角色绑定的用户列表", response = Response.class)
     public Response listUser(@ApiParam(name = "roleEntity", value = "包含角色对象属性的查询条件", required = true)
                              @RequestParam String roleId,
-                             @RequestParam(required = false) String deptId,
-                             @RequestParam(required = false) Integer page) {
-        return success(this.service.listUser(roleId, deptId, page));
+                             @RequestParam(required = false) String deptId) {
+        return success(this.service.listUser(roleId, deptId));
     }
 
     @PostMapping({"/saveUser"})

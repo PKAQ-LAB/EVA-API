@@ -1,11 +1,10 @@
 package io.nerv.security.entrypoint;
 
 import com.alibaba.fastjson.JSON;
-import io.nerv.core.enums.ErrorCodeEnum;
+import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.util.Response;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +28,7 @@ public class UrlAccessDeniedHandler implements AccessDeniedHandler {
         try(PrintWriter printWriter = response.getWriter()){
             printWriter.write(JSON.toJSONString(
                                 new Response()
-                                        .failure(ErrorCodeEnum.PERMISSION_DENY)));
+                                        .failure(BizCodeEnum.PERMISSION_DENY)));
             printWriter.flush();
         }
     }

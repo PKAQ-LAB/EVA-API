@@ -1,22 +1,17 @@
 package io.nerv.web.sys.user.ctrl;
 
 import cn.hutool.core.collection.CollectionUtil;
-import io.nerv.core.enums.ErrorCodeEnum;
-import io.nerv.web.sys.user.service.UserService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.exception.ParamException;
 import io.nerv.core.mvc.ctrl.mybatis.PureBaseCtrl;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.mvc.util.SingleArray;
 import io.nerv.web.sys.user.entity.UserEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import io.nerv.web.sys.user.service.UserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 用户管理实体类
@@ -34,7 +29,7 @@ public class UserCtrl extends PureBaseCtrl<UserService> {
     public Response checkUnique(@ApiParam(name ="userEntity", value = "要进行校验的参数")
                                 @RequestBody UserEntity user){
         boolean exist = this.service.checkUnique(user);
-        return exist? failure(ErrorCodeEnum.ACCOUNT_ALREADY_EXIST): success();
+        return exist? failure(BizCodeEnum.ACCOUNT_ALREADY_EXIST): success();
     }
 
     @PostMapping("/del")

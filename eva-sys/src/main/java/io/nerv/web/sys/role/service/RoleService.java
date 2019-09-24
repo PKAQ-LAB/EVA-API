@@ -21,6 +21,7 @@ import io.nerv.web.sys.role.mapper.RoleUserMapper;
 import io.nerv.web.sys.user.entity.UserEntity;
 import io.nerv.web.sys.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -158,7 +159,7 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
 
         // 获取所有菜单
         ModuleEntity moduleEntity = new ModuleEntity();
-        moduleEntity.setStatus(StatusEnumm.ENABLE.getIndex());
+        moduleEntity.setStatus(LockEnumm.UNLOCK.getIndex());
         List<ModuleEntity> moduleList = null;
 
         // 非管理员仅能授权当前权限范围内的模块
@@ -208,7 +209,7 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
      * @param roleId 权限条件
      * @return
      */
-    public Map<String, Object> listUser(String roleId, String deptId, Integer page) {
+    public Map<String, Object> listUser(String roleId, String deptId) {
         // 获取所有用户
         UserEntity userEntity = new UserEntity();
         if (StrUtil.isNotBlank(deptId)){
@@ -217,7 +218,7 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
 
         userEntity.setLocked(LockEnumm.UNLOCK.getIndex());
 
-        IPage<UserEntity> pager = this.userService.listUser(userEntity, page);
+        List<UserEntity> users  = this.userService.listUser(userEntity);
         // 获取已选的模块
         RoleUserEntity roleUserEntity = new RoleUserEntity();
         roleUserEntity.setRoleId(roleId);
@@ -234,7 +235,7 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
             }
         }
         Map<String, Object> map = new HashMap<>(2);
-        map.put("users", pager);
+        map.put("users", users);
         map.put("checked", checked);
         return map;
     }

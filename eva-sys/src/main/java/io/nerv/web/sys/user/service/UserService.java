@@ -44,6 +44,15 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
     }
 
     /**
+     * 查询用户列表 无分页
+     * @param userEntity
+     * @return
+     */
+    public List<UserEntity> listUser(UserEntity userEntity) {
+        return this.list(userEntity);
+    }
+
+    /**
      * 解锁/锁定用户
      * @param ids
      * @param lock

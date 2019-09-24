@@ -1,7 +1,7 @@
 package io.nerv.security.entrypoint;
 
 import com.alibaba.fastjson.JSON;
-import io.nerv.core.enums.ErrorCodeEnum;
+import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.util.Response;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -30,9 +30,9 @@ public class UrlAuthenticationFailureHandler implements AuthenticationFailureHan
         var msg = e.getMessage();
 
         if (e instanceof BadCredentialsException){
-            msg = ErrorCodeEnum.ACCOUNT_OR_PWD_ERROR.getName();
+            msg = BizCodeEnum.ACCOUNT_OR_PWD_ERROR.getName();
         }
-        Response response = new Response().failure(ErrorCodeEnum.LOGIN_FAILED.getIndex(), msg);
+        Response response = new Response().failure(BizCodeEnum.LOGIN_FAILED.getIndex(), msg);
         httpServletResponse.getWriter().write(JSON.toJSONString(response));
     }
 }

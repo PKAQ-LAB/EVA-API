@@ -1,6 +1,6 @@
 package io.nerv.security.service;
 
-import io.nerv.core.enums.ErrorCodeEnum;
+import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.security.domain.JwtUserFactory;
 import io.nerv.security.exception.OathException;
 import io.nerv.web.sys.user.entity.UserEntity;
@@ -32,7 +32,7 @@ public class JwtUserDetailsService implements UserDetailsService {
         UserEntity user = userMapper.getUserWithRoleById(id);
 
         if (user == null) {
-            throw new OathException(ErrorCodeEnum.ACCOUNT_NOT_EXIST);
+            throw new OathException(BizCodeEnum.ACCOUNT_NOT_EXIST);
         } else {
             return JwtUserFactory.create(user);
         }
