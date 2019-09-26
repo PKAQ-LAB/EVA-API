@@ -1,4 +1,5 @@
 package io.nerv.web.sys.role.entity;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
@@ -21,7 +22,7 @@ import javax.validation.constraints.NotNull;
 @EqualsAndHashCode()
 @ApiModel("角色用户关系")
 public class RoleUserEntity{
-    @TableId
+    @TableId(type = IdType.ID_WORKER_STR)
     private String id;
 
     @NotBlank
