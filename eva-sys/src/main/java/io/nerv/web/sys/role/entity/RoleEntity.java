@@ -11,6 +11,7 @@ import org.apache.ibatis.type.Alias;
 import io.nerv.core.mvc.entity.mybatis.StdBaseEntity;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 角色管理模型类
@@ -59,4 +60,8 @@ public class RoleEntity extends StdBaseEntity {
     @TableField(exist = false)
     @ApiModelProperty("角色拥有的用户列表")
     private List<RoleUserEntity> users;
+
+    @TableField(exist = false)
+    @ApiModelProperty("模块权限")
+    private Map<String, String[]> resources;
 }

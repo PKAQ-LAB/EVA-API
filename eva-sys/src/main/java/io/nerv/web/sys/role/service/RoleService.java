@@ -1,13 +1,14 @@
 package io.nerv.web.sys.role.service;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.nerv.core.enums.LockEnumm;
-import io.nerv.core.enums.StatusEnumm;
 import io.nerv.core.mvc.service.mybatis.StdBaseService;
 import io.nerv.security.util.SecurityUtil;
 import io.nerv.web.sys.module.entity.ModuleEntity;
@@ -15,19 +16,13 @@ import io.nerv.web.sys.module.mapper.ModuleMapper;
 import io.nerv.web.sys.role.entity.RoleEntity;
 import io.nerv.web.sys.role.entity.RoleModuleEntity;
 import io.nerv.web.sys.role.entity.RoleUserEntity;
-import io.nerv.web.sys.role.mapper.RoleMapper;
-import io.nerv.web.sys.role.mapper.RoleModuleMapper;
-import io.nerv.web.sys.role.mapper.RoleUserMapper;
+import io.nerv.web.sys.role.mapper.*;
 import io.nerv.web.sys.user.entity.UserEntity;
 import io.nerv.web.sys.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author: S.PKAQ
@@ -46,6 +41,12 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
 
     @Autowired
     private RoleUserMapper roleUserMapper;
+
+    @Autowired
+    private RoleDataMapper roleDataMapper;
+
+    @Autowired
+    private RoleConfigMapper roleConfigMapper;
 
     @Autowired
     private UserService userService;
@@ -81,11 +82,18 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
      * @param ids
      */
     public void deleteRole(ArrayList<String> ids) {
-        // 删除角色相关的 授权用户
-        // 删除角色相关的 授权模块
-        // 删除角色相关的 授权参数
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.in("role_id", ids);
         // 删除角色相关的 数据权限
+        this.roleDataMapper.delete(queryWrapper);
+        // 删除角色相关的 授权用户
+        this.roleUserMapper.delete(queryWrapper);
+        // 删除角色相关的 授权模块
+        this.roleModuleMapper.delete(queryWrapper);
+        // 删除角色相关的 授权参数
+        this.roleConfigMapper.delete(queryWrapper);
 
+        //删除角色
         this.mapper.deleteBatchIds(ids);
     }
 
@@ -171,18 +179,35 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
 
         //获取已选且是叶子节点的模块
         List<RoleModuleEntity> roleModuleList = this.roleModuleMapper.roleModuleList(roleModule);
-        //只返回moduleId
-        List<String> checked = null;
+        // 已选的moduleId
+        HashSet<String> checked = null;
+        // 已选的资源权限
+        Map<String, List<String>> checkedResource = new HashMap<>(roleModuleList.size());
+
         if (CollectionUtils.isNotEmpty(roleModuleList)){
-            checked = new ArrayList<>(roleModuleList.size());
+            checked = new HashSet<>(roleModuleList.size());
             for (RoleModuleEntity rme : roleModuleList) {
-                checked.add(rme.getModuleId());
+                if (!checked.contains(rme.getModuleId())){
+                    checked.add(rme.getModuleId());
+                }
+
+
+                String rid = rme.getResourceId();
+                String mid = rme.getModuleId();
+
+                List<String> list = checkedResource.get(mid);
+                if (CollUtil.isEmpty(list)){
+                    list = new ArrayList<>();
+                }
+                list.add(rid);
+                checkedResource.put(rme.getModuleId(), list);
             }
         }
 
-        Map<String, Object> map = new HashMap<>(2);
+        Map<String, Object> map = new HashMap<>(3);
         map.put("modules", moduleList);
         map.put("checked", checked);
+        map.put("checkedResource", checkedResource);
         return map;
     }
 
@@ -192,14 +217,27 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
     public void saveModule(RoleEntity role) {
         QueryWrapper<RoleModuleEntity> wrapper = new QueryWrapper<>();
         wrapper.eq("role_id", role.getId());
-        // 删除原有角色
+        // 删除角色原有的模块
         this.roleModuleMapper.delete(wrapper);
+
         // 插入新的权限信息
         if(CollectionUtil.isNotEmpty(role.getModules())){
             List<RoleModuleEntity> modules = role.getModules();
+            Map<String, String[]> resourceMap = role.getResources();
+
             for (RoleModuleEntity module : modules) {
                 module.setRoleId(role.getId());
-                this.roleModuleMapper.insert(module);
+                //设置角色拥有的资源
+                String[] resources = null != resourceMap? resourceMap.get(module.getModuleId()+"") : null;
+                if (null == resources || resources.length < 1){
+                    this.roleModuleMapper.insert(module);
+                } else {
+                    for (String s : resources) {
+                        module.setId(IdWorker.getIdStr());
+                        module.setResourceId(s);
+                        this.roleModuleMapper.insert(module);
+                    }
+                }
             }
         }
     }

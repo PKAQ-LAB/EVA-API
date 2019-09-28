@@ -1,6 +1,7 @@
 package io.nerv.security.provider;
 
 import cn.hutool.core.util.StrUtil;
+import io.nerv.security.util.SecurityUtil;
 import io.nerv.web.sys.role.service.RoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
@@ -26,6 +27,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource, InitializingBean {
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private SecurityUtil securityUtil;
     /**
      * 资源权限
      */
@@ -92,6 +96,10 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
 //      未配置过权限的页面都不需要鉴权，jwtauthfilter已经进行了登录鉴权
 //      该过滤器是过滤链中的最后一个，该处判断返回ROLE_USER会使 premitall 无效
 //      如需配置非授权接口均不可访问需修改此处
+        if (securityUtil.isAdmin()){
+            return null;
+        }
+
         if (ObjectUtils.isEmpty(set)) {
 //            return null;
             return SecurityConfig.createList("ROLE_USER");

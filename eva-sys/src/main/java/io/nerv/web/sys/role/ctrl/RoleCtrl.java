@@ -28,7 +28,7 @@ public class RoleCtrl extends PureBaseCtrl<RoleService> {
 
     @PostMapping("/checkUnique")
     @ApiOperation(value = "校验角色编码唯一性",response = Response.class)
-    public Response checkUnique(@ApiParam(name ="roleEntity", value = "要进行校验的参数")
+    public Response checkUnique(@ApiParam(name ="roleEsaveModulentity", value = "要进行校验的参数")
                                 @RequestBody RoleEntity role){
         boolean exist = this.service.checkUnique(role);
         return exist? failure(BizCodeEnum.ROLE_CODE_EXIST): success();

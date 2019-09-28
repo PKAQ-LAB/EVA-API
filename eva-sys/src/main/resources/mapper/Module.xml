@@ -15,11 +15,21 @@
     <result column="ORDERS" jdbcType="INTEGER" property="orders" />
     <result column="STATUS" jdbcType="VARCHAR" property="status" />
     <collection property="children"  column="{id=id}" select="listChildren" />
+    <collection property="resources" javaType="java.util.List" ofType="moduleResource">
+      <id column="R_ID" property="id" jdbcType="VARCHAR" />
+      <result column="MODULE_ID" property="moduleId" jdbcType="VARCHAR" />
+      <result column="RESOURCE_DESC" property="resourceDesc" jdbcType="VARCHAR" />
+      <result column="RESOURCE_URL" property="resourceUrl" jdbcType="VARCHAR" />
+      <result column="RESOURCE_TYPE" property="resourceType" jdbcType="VARCHAR" />
+    </collection>
   </resultMap>
 
   <!--根据权限ID查询用户拥有的模块-->
   <select id="getRoleModuleByUserId" resultType="module">
-      select distinct m.* from
+      select
+        distinct
+        m.*
+      from
         SYS_MODULE M,
         SYS_ROLE R,
         SYS_ROLE_MODULE RM,
@@ -66,31 +76,48 @@
 
   <!--根据条件查询菜单数据-->
   <select id="listModule" resultMap="BaseResultMap">
-    select * from sys_module
+    select
+      SM.*,
+      SMR.ID R_ID,
+      SMR.MODULE_ID,
+      SMR.RESOURCE_DESC,
+      SMR.RESOURCE_URL,
+      SMR.RESOURCE_TYPE
+    from
+      SYS_MODULE SM
+      LEFT JOIN
+      SYS_MODULE_RESOURCES SMR
+      ON  SM.ID = SMR.MODULE_ID
     <where>
-      <choose>
-        <when test="null == condition or '' == condition">
-          (parent_Id = '0' or parent_Id is null)
-        </when>
-        <otherwise>
-          name like concat('%',#{condition},'%')
-        </otherwise>
-      </choose>
-      <if test="null != module">
-        <if test="null != module.status and module.status != '' ">
+        <if test="null != module">
+          <if test="null == module.parentId or '' == module.parentId">
+            and (parent_id is null or parent_id = '0')
+          </if>
+          <if test="null != module.status and module.status != '' ">
             and status = #{module.status}
+          </if>
+          <if test="null != module.name and module.name != '' ">
+            and name like concat('%',#{module.name},'%')
+          </if>
         </if>
-        <if test="null != module.name and module.name != '' ">
-          and name like concat('%',#{module.name},'%')
-        </if>
-      </if>
     </where>
     order by orders asc
   </select>
   <!-- 根据parentId查询子节点数据-->
   <select id="listChildren" resultMap="BaseResultMap">
-    select *
-    from sys_module where parent_ID = #{id}
+    select
+      SM.*,
+      SMR.ID R_ID,
+      SMR.MODULE_ID,
+      SMR.RESOURCE_DESC,
+      SMR.RESOURCE_URL,
+      SMR.RESOURCE_TYPE
+    from
+      sys_module SM
+      LEFT JOIN
+      SYS_MODULE_RESOURCES SMR
+        ON  SM.ID = SMR.MODULE_ID
+    where parent_ID = #{id}
     order by orders asc
   </select>
   <!-- 根据ID查询-->

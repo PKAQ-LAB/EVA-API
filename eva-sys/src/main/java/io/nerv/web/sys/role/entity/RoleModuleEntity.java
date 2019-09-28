@@ -19,7 +19,6 @@ import java.io.Serializable;
 @Data
 @Alias("roleModule")
 @TableName("sys_role_module")
-@EqualsAndHashCode()
 @ApiModel("角色模块关系")
 public class RoleModuleEntity{
     @TableId(type = IdType.ID_WORKER_STR)
@@ -32,5 +31,5 @@ public class RoleModuleEntity{
     private String moduleId;
 
     @ApiModelProperty("资源ID")
-    private String resourId;
+    private String resourceId;
 }

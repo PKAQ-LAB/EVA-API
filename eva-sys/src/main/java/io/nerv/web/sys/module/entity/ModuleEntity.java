@@ -10,6 +10,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
 
+import java.util.List;
+
 /**
  * 模块管理
  * @author : PKAQ
@@ -40,5 +42,9 @@ public class ModuleEntity extends BaseTreeEntity {
 
     @ApiModelProperty("状态")
     private String status;
+
+    @TableField(exist = false)
+    @ApiModelProperty("模块拥有的资源")
+    private List<ModuleResources> resources;
 
 }
