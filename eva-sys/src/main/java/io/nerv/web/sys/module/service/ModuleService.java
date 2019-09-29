@@ -25,8 +25,8 @@ public class ModuleService extends StdBaseService<ModuleMapper, ModuleEntity> {
      * 查询模块结构树
      * @return
      */
-    public List<ModuleEntity> listModule(String condition){
-        return this.mapper.listModule(condition, null);
+    public List<ModuleEntity> listModule(ModuleEntity module){
+        return this.mapper.listModule(module);
     }
 
     /**
@@ -193,7 +193,7 @@ public class ModuleService extends StdBaseService<ModuleMapper, ModuleEntity> {
      */
     public List<ModuleEntity> listModuleByAttr(ModuleEntity module) {
         //根据名字查询节点信息
-        return this.mapper.listModule(module.getName(), module);
+        return this.mapper.listModule(module);
     }
 
     /**

@@ -172,7 +172,7 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
 
         // 非管理员仅能授权当前权限范围内的模块
         if (isAdmin){
-            moduleList = this.moduleMapper.listModule(null, moduleEntity);
+            moduleList = this.moduleMapper.listModule(moduleEntity);
         } else {
             moduleList = this.moduleMapper.listGrantedModule(null, moduleEntity, securityUtil.getRoleNames());
         }

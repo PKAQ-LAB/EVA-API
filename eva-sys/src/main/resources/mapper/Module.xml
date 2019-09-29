@@ -89,17 +89,20 @@
       SYS_MODULE_RESOURCES SMR
       ON  SM.ID = SMR.MODULE_ID
     <where>
-        <if test="null != module">
-          <if test="null == module.parentId or '' == module.parentId">
-            and (parent_id is null or parent_id = '0')
-          </if>
-          <if test="null != module.status and module.status != '' ">
-            and status = #{module.status}
-          </if>
-          <if test="null != module.name and module.name != '' ">
-            and name like concat('%',#{module.name},'%')
-          </if>
+      <if test="null == module or null == module.parentId or '' == module.parentId">
+        and (parent_id is null or parent_id = '0')
+      </if>
+      <if test="null != module">
+         <if test="null != module.parentId and '' != module.parentId">
+          and parent_id = #{module.parent_id}
         </if>
+        <if test="null != module.status and module.status != '' ">
+          and status = #{module.status}
+        </if>
+        <if test="null != module.name and module.name != '' ">
+          and name like concat('%',#{module.name},'%')
+        </if>
+      </if>
     </where>
     order by orders asc
   </select>

@@ -31,12 +31,10 @@ public interface ModuleMapper extends BaseMapper<ModuleEntity> {
                                          @Param("roleNames") String[] roleNames);
     /**
      * 查询所有符合条件的树
-     * @param condition 包含查询条件的实体类
      * @param module 符合条件的List
      * @return 符合查询条件的List
      */
-    List<ModuleEntity> listModule(@Param("condition") String condition,
-                                  @Param("module") ModuleEntity module);
+    List<ModuleEntity> listModule(@Param("module") ModuleEntity module);
 
     /**
      * 根据parentID查询子节点数据
