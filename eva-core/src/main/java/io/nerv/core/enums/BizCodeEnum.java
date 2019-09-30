@@ -26,8 +26,11 @@ public enum BizCodeEnum {
     ACCOUNT_ALREADY_EXIST("账号名已存在", 4110),
     /** 业务 **/
     PATH_ALREADY_EXIST("模块路径已经存在", 4301),
-    CHILD_EXIST("存在子节点,无法删除", 4302),
+    CHILD_EXIST("[{}] 存在子节点，无法删除。", 4302),
     ROLE_CODE_EXIST("权限编码已经存在", 4303),
+    RESOURCE_USED("资源已经被引用，无法删除。", 4304),
+    PARENT_NOT_AVAILABLE("父节点为禁用状态，无法启用。", 4305),
+
     /** 权限相关 **/
     PERMISSION_DENY ("权限不足", 4200);
 

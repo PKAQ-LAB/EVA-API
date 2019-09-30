@@ -1,14 +1,20 @@
 package io.nerv.web.sys.module.service;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.enums.LockEnumm;
+import io.nerv.core.exception.BizException;
 import io.nerv.core.mvc.service.mybatis.StdBaseService;
-import io.nerv.core.mvc.util.Response;
 import io.nerv.core.util.tree.TreeHelper;
 import io.nerv.web.sys.module.entity.ModuleEntity;
+import io.nerv.web.sys.module.entity.ModuleResources;
 import io.nerv.web.sys.module.mapper.ModuleMapper;
+import io.nerv.web.sys.module.mapper.ModuleResourceMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,6 +27,10 @@ import java.util.List;
  */
 @Service
 public class ModuleService extends StdBaseService<ModuleMapper, ModuleEntity> {
+
+    @Autowired
+    private ModuleResourceMapper moduleResourceMapper;
+
     /**
      * 查询模块结构树
      * @return
@@ -34,8 +44,7 @@ public class ModuleService extends StdBaseService<ModuleMapper, ModuleEntity> {
      * @param ids
      * @return
      */
-    public Response deleteModule(ArrayList<String> ids){
-        Response response = null;
+    public void deleteModule(ArrayList<String> ids){
         // 检查是否存在子节点，存在子节点不允许删除
         QueryWrapper<ModuleEntity> oew = new QueryWrapper<>();
         oew.setEntity( new ModuleEntity() );
@@ -48,21 +57,22 @@ public class ModuleService extends StdBaseService<ModuleMapper, ModuleEntity> {
             List<Object> list = CollectionUtil.getFieldValues(leafList, "parentName");
             // 拼接名称
             String name = CollectionUtil.join(list, ",");
-            response=new Response();
-            response = response.failure(501, StrUtil.format("[{}] 存在子节点，无法删除。",name), null);
+            throw new BizException(BizCodeEnum.CHILD_EXIST.getIndex(), StrUtil.format(BizCodeEnum.CHILD_EXIST.getName(), name));
         } else {
             this.mapper.deleteBatchIds(ids);
+            // 删除相关资源
+            QueryWrapper<ModuleResources> deleteWrapper = new QueryWrapper<>();
+            deleteWrapper.in("module_id", ids);
+            this.moduleResourceMapper.delete(deleteWrapper);
         }
-
-        return response;
     }
+
     /**
      * 新增/编辑一条模块信息
      * @param module 要 新增/编辑 得模块对象
      * @return 重新查询模块列表
      */
-    public Response editModule(ModuleEntity module){
-        Response response=new Response();
+    public void editModule(ModuleEntity module){
         String moduleId = module.getId();
 
         ModuleEntity originModule = this.getById(moduleId);
@@ -74,8 +84,7 @@ public class ModuleService extends StdBaseService<ModuleMapper, ModuleEntity> {
             if(StrUtil.isNotBlank(module.getStatus()) && LockEnumm.UNLOCK.getIndex().equals(module.getStatus())) {
                 if(!isDisable(module)){
                     //如果父节点状态为禁用，则子节点状态也只能为禁用
-                    response.failure(501, "父节点为禁用状态，无法启用。", null);
-                    return response;
+                    throw new BizException(BizCodeEnum.PARENT_NOT_AVAILABLE);
                 }
             }
             //是否禁用的逻辑
@@ -85,6 +94,42 @@ public class ModuleService extends StdBaseService<ModuleMapper, ModuleEntity> {
             module.setIsleaf(true);
             module.setOrders(this.mapper.listOrder(pid)+1);
         }
+
+        /**
+        写入资源信息, 先删除
+            有id 更新
+            无id 新增
+        */
+        List<ModuleResources> resources = module.getResources();
+
+        if (CollUtil.isNotEmpty(resources)){
+            List<String> ids = new ArrayList<>(resources.size());
+            resources.forEach(item -> {
+                if (StrUtil.isNotBlank(item.getId())){
+                    this.moduleResourceMapper.updateById(item);
+                } else {
+                    item.setId(IdWorker.getIdStr());
+                    item.setModuleId(moduleId);
+                    this.moduleResourceMapper.insert(item);
+                }
+
+                ids.add(item.getId());
+            });
+
+            // 移除被删除的
+            if (StrUtil.isNotBlank(moduleId)){
+                QueryWrapper<ModuleResources> deleteWrapper = new QueryWrapper();
+                deleteWrapper.notIn("id", ids);
+                deleteWrapper.eq("module_id", moduleId);
+                try{
+                    this.moduleResourceMapper.delete(deleteWrapper);
+                } catch(Exception e){
+                    throw new BizException(BizCodeEnum.RESOURCE_USED);
+                }
+
+            }
+        }
+
 
         String root = "0";
         //  当前编辑节点为子节点
@@ -140,7 +185,6 @@ public class ModuleService extends StdBaseService<ModuleMapper, ModuleEntity> {
             this.refreshChild(module, originModule);
         }
 
-        return response.success(this.listModule(null));
     }
 
     /**
@@ -183,7 +227,15 @@ public class ModuleService extends StdBaseService<ModuleMapper, ModuleEntity> {
      * @return 模块信息
      */
     public ModuleEntity getModule(String id) {
-        return this.getById(id);
+        ModuleEntity module = this.getById(id);
+        // 获取资源信息
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("module_id", id);
+        List<ModuleResources> resourceList = this.moduleResourceMapper.selectList(queryWrapper);
+
+        module.setResources(resourceList);
+
+        return module;
     }
 
     /**
@@ -213,6 +265,11 @@ public class ModuleService extends StdBaseService<ModuleMapper, ModuleEntity> {
     public boolean checkUnique(ModuleEntity module) {
         QueryWrapper<ModuleEntity> entityWrapper = new QueryWrapper<>();
         entityWrapper.eq("path", module.getPath());
+
+        if (StrUtil.isNotBlank(module.getId())){
+            entityWrapper.ne("id", module.getId());
+        }
+
         if (StrUtil.isBlank(module.getParentId())){
             entityWrapper.isNull("parent_id");
         } else {
