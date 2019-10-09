@@ -44,7 +44,7 @@ public class UserCtrl extends PureBaseCtrl<UserService> {
         return success(this.service.listPage(null, 1));
     }
 
-    @PostMapping("edit")
+    @PostMapping("/edit")
     @ApiOperation(value = "新增/编辑记录",response = Response.class)
     public Response save(@ApiParam(name ="formdata", value = "用户对象")
                          @RequestBody UserEntity entity){
@@ -52,7 +52,7 @@ public class UserCtrl extends PureBaseCtrl<UserService> {
         return success(this.service.saveUser(entity));
     }
 
-    @GetMapping("list")
+    @GetMapping("/list")
     @ApiOperation(value = "列表查询",response = Response.class)
     public Response list(@ApiParam(name ="condition", value = "用户对象")
                                      UserEntity entity, Integer pageNo){

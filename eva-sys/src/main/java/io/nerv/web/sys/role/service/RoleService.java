@@ -58,6 +58,18 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
      * @param roleEntity
      * @return
      */
+    public List<RoleEntity> listRole(RoleEntity roleEntity) {
+        // 查询条件
+        QueryWrapper<RoleEntity> wrapper = new QueryWrapper<>(roleEntity);
+        // 分页条件
+        return this.mapper.selectList(wrapper);
+    }
+
+    /**
+     * 查询角色列表
+     * @param roleEntity
+     * @return
+     */
     public IPage<RoleEntity> listRole(RoleEntity roleEntity, Integer page) {
 
         page = null != page ? page : 1;

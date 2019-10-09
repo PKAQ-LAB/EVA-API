@@ -3,14 +3,19 @@ package io.nerv.web.sys.user.service;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import io.nerv.core.mvc.entity.mybatis.BaseTreeEntity;
 import io.nerv.core.mvc.service.mybatis.StdBaseService;
+import io.nerv.core.util.ImageUploadUtil;
 import io.nerv.core.util.tree.TreeHelper;
 import io.nerv.security.exception.OathException;
 import io.nerv.web.sys.organization.mapper.OrganizationMapper;
+import io.nerv.web.sys.role.entity.RoleUserEntity;
+import io.nerv.web.sys.role.mapper.RoleUserMapper;
 import io.nerv.web.sys.user.entity.UserEntity;
 import io.nerv.web.sys.user.mapper.UserMapper;
 import io.nerv.web.sys.user.vo.UserCenterVO;
@@ -34,6 +39,11 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
     @Autowired
     private OrganizationMapper organizationMapper;
 
+    @Autowired
+    private RoleUserMapper roleUserMapper;
+
+    @Autowired
+    private ImageUploadUtil imageUploadUtil;
     /**
      * 查询用户列表
      * @param userEntity
@@ -94,6 +104,41 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
         if(StrUtil.isNotBlank(user.getDeptId())){
             user.setDeptName(organizationMapper.selectById(user.getDeptId()).getName());
         }
+
+        // 新增手工生成主键
+        // 编辑， 删除原有头像文件，保存新的头像文件
+        String userId = user.getId();
+        if (StrUtil.isBlank(userId)){
+            userId = IdWorker.getIdStr();
+            user.setId(userId);
+        } else {
+            UserEntity oldUser = this.mapper.selectById(userId);
+            String avatar = oldUser.getAvatar();
+            if (StrUtil.isNotBlank(avatar)){
+                imageUploadUtil.delFromStorage(avatar);
+            }
+        }
+
+        // 保存新的头像文件
+        imageUploadUtil.storageWithThumbnail(0.3f, user.getAvatar());
+        // 保存权限
+        if (CollUtil.isNotEmpty(user.getRoles())){
+            // 先删除该用户原有的权限
+            QueryWrapper<RoleUserEntity> deleteWrapper = new QueryWrapper<>();
+            deleteWrapper.eq("user_id", user.getId());
+
+            this.roleUserMapper.delete(deleteWrapper);
+            // 再插入更新后的权限
+            user.getRoles().forEach(item -> {
+                RoleUserEntity roleUserEntity = new RoleUserEntity();
+                roleUserEntity.setRoleId(item.getId());
+                roleUserEntity.setUserId(user.getId());
+                roleUserMapper.insert(roleUserEntity);
+            });
+        }
+
+
+
         this.merge(user);
         return this.listUser(null, 1);
     }
@@ -106,6 +151,9 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
         QueryWrapper<UserEntity> entityWrapper = new QueryWrapper<>();
         if (StrUtil.isNotBlank(user.getAccount())){
             entityWrapper.eq("account", user.getAccount());
+        }
+        if (StrUtil.isNotBlank(user.getId())){
+            entityWrapper.ne("id", user.getId());
         }
         int records = this.mapper.selectCount(entityWrapper);
         return records>0;

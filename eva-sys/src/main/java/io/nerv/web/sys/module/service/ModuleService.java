@@ -59,11 +59,15 @@ public class ModuleService extends StdBaseService<ModuleMapper, ModuleEntity> {
             String name = CollectionUtil.join(list, ",");
             throw new BizException(BizCodeEnum.CHILD_EXIST.getIndex(), StrUtil.format(BizCodeEnum.CHILD_EXIST.getName(), name));
         } else {
-            this.mapper.deleteBatchIds(ids);
-            // 删除相关资源
-            QueryWrapper<ModuleResources> deleteWrapper = new QueryWrapper<>();
-            deleteWrapper.in("module_id", ids);
-            this.moduleResourceMapper.delete(deleteWrapper);
+            try{
+                this.mapper.deleteBatchIds(ids);
+                // 删除相关资源
+                QueryWrapper<ModuleResources> deleteWrapper = new QueryWrapper<>();
+                deleteWrapper.in("module_id", ids);
+                this.moduleResourceMapper.delete(deleteWrapper);
+            } catch(Exception e){
+                throw new BizException(BizCodeEnum.MODULE_RESOURCE_USED);
+            }
         }
     }
 
@@ -126,7 +130,6 @@ public class ModuleService extends StdBaseService<ModuleMapper, ModuleEntity> {
                 } catch(Exception e){
                     throw new BizException(BizCodeEnum.RESOURCE_USED);
                 }
-
             }
         }
 

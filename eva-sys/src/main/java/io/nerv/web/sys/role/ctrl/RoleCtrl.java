@@ -44,9 +44,16 @@ public class RoleCtrl extends PureBaseCtrl<RoleService> {
 
     @GetMapping({"/list"})
     @ApiOperation(value = "获取角色列表", response = Response.class)
-    public Response listRole(@ApiParam(name = "roleEntity", value = "包含角色对象属性的查询条件")
+    public Response listRoles(@ApiParam(name = "roleEntity", value = "包含角色对象属性的查询条件")
                              RoleEntity roleEntity, Integer page) {
         return success(this.service.listRole(roleEntity, page));
+    }
+
+    @GetMapping({"/listAll"})
+    @ApiOperation(value = "获取角色列表 - 无分页", response = Response.class)
+    public Response listAllRoles(@ApiParam(name = "roleEntity", value = "包含角色对象属性的查询条件")
+                                     RoleEntity roleEntity) {
+        return success(this.service.listRole(roleEntity));
     }
 
     @GetMapping({"/listModule"})

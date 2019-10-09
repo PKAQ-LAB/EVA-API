@@ -5,7 +5,9 @@ import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.enums.HttpCodeEnum;
+import io.nerv.core.exception.BizException;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.properties.EvaConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +26,7 @@ import java.io.File;
 @Slf4j
 @RestController
 @RequestMapping("/upload")
-public class UploadImageCtrl{
+public class ImageUploadCtrl {
 
     @Autowired
     private EvaConfig evaConfig;
@@ -45,7 +47,7 @@ public class UploadImageCtrl{
             newFileName = snowflake.nextIdStr() + "." + suffixName;
         } else {
             log.error("文件名错误：");
-            return response.failure(HttpCodeEnum.SERVER_ERROR.getIndex(), "文件名错误");
+            throw new BizException(BizCodeEnum.FILENAME_ERROR);
         }
         // 判断上传图片是否符合格式
         if (evaConfig.getUpload().getAllowSuffixName().toLowerCase().contains(suffixName)){
@@ -64,12 +66,13 @@ public class UploadImageCtrl{
             try {
                 file.transferTo(tempFile);
             } catch (Exception e) {
+                e.printStackTrace();
                 log.error("图片保存错误："+e.getMessage());
-                return response.failure(HttpCodeEnum.SERVER_ERROR.getIndex(), "图片保存错误");
+                throw new BizException(BizCodeEnum.FILESAVE_ERROR);
             }
         } else {
             log.error("上传格式错误：");
-            return response.failure(HttpCodeEnum.SERVER_ERROR.getIndex(), "上传格式错误");
+            throw new BizException(BizCodeEnum.FILETYPE_NOT_SUPPORTED);
         }
 
         return response.success(MapUtil.of("pname", newFileName));
