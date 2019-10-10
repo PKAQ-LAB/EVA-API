@@ -11,6 +11,7 @@ import lombok.Getter;
 public enum BizCodeEnum {
     /** 请求成功 **/
     REQUEST_SUCCESS("请求成功", 0000),
+    SAVE_SUCCESS("数据保存成功", 0001),
     /** 请求失败 **/
     PARAM_ERROR("请求参数错误.", 4000),
     PARAM_LOST("请求参数丢失.", 4001),
@@ -30,6 +31,11 @@ public enum BizCodeEnum {
     ROLE_CODE_EXIST("权限编码已经存在", 4303),
     RESOURCE_USED("资源已经被引用，无法删除。", 4304),
     PARENT_NOT_AVAILABLE("父节点为禁用状态，无法启用。", 4305),
+    MODULE_RESOURCE_USED("模块下存在已经被引用的资源，无法删除。", 4306),
+    /** 上传相关 **/
+    FILENAME_ERROR("上传名称错误",4307),
+    FILESAVE_ERROR("文件保存失败",4308),
+    FILETYPE_NOT_SUPPORTED("不支持的文件格式",4309),
 
     /** 权限相关 **/
     PERMISSION_DENY ("权限不足", 4200);

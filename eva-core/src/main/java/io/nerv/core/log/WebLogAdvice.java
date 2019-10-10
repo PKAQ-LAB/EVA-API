@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
@@ -89,15 +90,21 @@ public class WebLogAdvice {
             var ip = IpUtil.getIPAddress(request);
             var className = joinPoint.getTarget().getClass().getName();
             var methodName = joinPoint.getSignature().getName();
-            var args = JSON.toJSONString(joinPoint.getArgs());
+
+            Object[] args = joinPoint.getArgs();
+
+            String argStr = "";
+            for (Object arg : args) {
+                if (arg instanceof MultipartFile) continue;
+                argStr += arg;
+            }
 
             ErrorlogEntity errorlogEntity = new ErrorlogEntity();
-
 
             errorlogEntity.setRequestTime(DateUtil.now())
                           .setClassName(className)
                           .setMethod(methodName)
-                          .setParams(JSON.toJSONString(args))
+                          .setParams(argStr)
                           .setExDesc(jsontStack)
                           .setIp(ip)
                           .setSpendTime(String.valueOf(System.currentTimeMillis() - startTime.get()));

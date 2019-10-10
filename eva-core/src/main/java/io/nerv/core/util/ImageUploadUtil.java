@@ -23,6 +23,8 @@ public class ImageUploadUtil {
 
     private Snowflake snowflake = IdUtil.createSnowflake(SNOW, FLAKE);
 
+    private final static String THUMBNAIL_NAME = "thumbnail_";
+
     @Autowired
     private EvaConfig evaConfig;
 
@@ -98,7 +100,7 @@ public class ImageUploadUtil {
             File sourceFile = new File(tempPath, filename);
             if (!sourceFile.exists()) continue;
             File distFile = new File(evaConfig.getUpload().getStoragePath(), filename);
-            File distFileThumbnail = new File(evaConfig.getUpload().getStoragePath(), "thumbnail_" + filename);
+            File distFileThumbnail = new File(evaConfig.getUpload().getStoragePath(), this.THUMBNAIL_NAME + filename);
             this.thumbnail(sourceFile, distFileThumbnail, scale);
             FileUtil.move(sourceFile, distFile, true);
         }
@@ -110,7 +112,7 @@ public class ImageUploadUtil {
      * @param scale
      */
     public void thumbnail(File file, float scale){
-        File destFile = new File(file.getParent(), "thumbnail_" + file.getName());
+        File destFile = new File(file.getParent(), this.THUMBNAIL_NAME + file.getName());
         ImgUtil.scale(file, destFile, scale);
     }
 
@@ -122,6 +124,24 @@ public class ImageUploadUtil {
      */
     public void thumbnail(File file, File dest, float scale){
         ImgUtil.scale(file, dest, scale);
+    }
+
+    /**
+     * 从持久目录删除图片以及缩略图
+     * @param fileName
+     */
+    public void delFromStorage(String fileName){
+        String tempPath = evaConfig.getUpload().getTempPath();
+        File sourceFile = new File(tempPath, fileName);
+        File sourceThumbnailFile = new File(tempPath, this.THUMBNAIL_NAME+fileName);
+        // 删除原图
+        if (sourceFile.exists()) {
+            sourceFile.delete();
+        };
+        // 删除缩略图
+        if (sourceThumbnailFile.exists()) {
+            sourceThumbnailFile.delete();
+        };
     }
 
 }

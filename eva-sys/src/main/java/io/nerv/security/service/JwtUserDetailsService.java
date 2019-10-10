@@ -22,14 +22,17 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     /**
      * 提供一种从用户名可以查到用户并返回的方法
-     * @param id userid
+     * @param account
      * @return UserDetails
      * @throws UsernameNotFoundException
      */
     @Override
-    public UserDetails loadUserByUsername(String id) {
+    public UserDetails loadUserByUsername(String account) {
 
-        UserEntity user = userMapper.getUserWithRoleById(id);
+        UserEntity user = new UserEntity();
+        user.setAccount(account);
+
+        user = userMapper.getUserWithRole(user);
 
         if (user == null) {
             throw new OathException(BizCodeEnum.ACCOUNT_NOT_EXIST);

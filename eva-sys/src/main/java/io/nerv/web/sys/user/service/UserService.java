@@ -2,12 +2,11 @@ package io.nerv.web.sys.user.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.nerv.core.mvc.entity.mybatis.BaseTreeEntity;
 import io.nerv.core.mvc.service.mybatis.StdBaseService;
 import io.nerv.core.util.ImageUploadUtil;
@@ -50,7 +49,12 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
      * @return
      */
     public IPage<UserEntity> listUser(UserEntity userEntity, Integer page) {
-        return this.listPage(userEntity, page);
+        page = null != page ? page : 1;
+
+        Page pagination = new Page();
+        pagination.setCurrent(page);
+
+        return this.mapper.getUerWithRoleId(pagination, userEntity);
     }
 
     /**
@@ -83,7 +87,9 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
      */
     public UserCenterVO getUser(String id) {
         UserCenterVO userCenterVO = new UserCenterVO();
-        BeanUtil.copyProperties(this.mapper.selectById(id), userCenterVO);
+        UserEntity userEntity = new UserEntity();
+        userEntity.setId(id);
+        BeanUtil.copyProperties(this.mapper.getUserWithRole(userEntity), userCenterVO);
         return userCenterVO;
     }
 
@@ -120,7 +126,10 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
         }
 
         // 保存新的头像文件
-        imageUploadUtil.storageWithThumbnail(0.3f, user.getAvatar());
+        if (StrUtil.isNotBlank(user.getAvatar())){
+            imageUploadUtil.storageWithThumbnail(0.3f, user.getAvatar());
+        }
+
         // 保存权限
         if (CollUtil.isNotEmpty(user.getRoles())){
             // 先删除该用户原有的权限
@@ -137,10 +146,8 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
             });
         }
 
-
-
         this.merge(user);
-        return this.listUser(null, 1);
+        return this.listPage(null, 1);
     }
     /**
      * 校验账号是否唯一
@@ -156,7 +163,7 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
             entityWrapper.ne("id", user.getId());
         }
         int records = this.mapper.selectCount(entityWrapper);
-        return records>0;
+        return records > 0;
     }
 
     /**

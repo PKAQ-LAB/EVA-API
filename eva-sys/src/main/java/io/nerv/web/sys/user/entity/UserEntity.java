@@ -89,8 +89,6 @@ public class UserEntity extends StdBaseEntity {
     @TableField(exist = false)
     private List<BaseTreeEntity> modules = new ArrayList<>();
 
-    private static final long serialVersionUID = 1L;
-
     @TableLogic
     @ApiModelProperty("逻辑删除状态")
     private String deleted;

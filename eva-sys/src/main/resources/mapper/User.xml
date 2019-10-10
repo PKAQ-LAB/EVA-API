@@ -23,16 +23,56 @@
   <resultMap id="UserWithRole" type="user" extends="BaseResultMap">
     <collection property="roles" column="{userId=id}" select="io.nerv.web.sys.role.mapper.RoleMapper.selectByUserId" ofType="role"/>
   </resultMap>
+
+  <!-- 获取包含权限列表的用户信息-->
+  <resultMap id="UserWithRoleId" type="user" extends="BaseResultMap">
+    <collection property="roles" javaType="java.util.List" ofType="roleUser">
+      <id column="R_ID" property="id" jdbcType="VARCHAR" />
+      <result column="ROLE_ID" property="roleId" jdbcType="VARCHAR" />
+    </collection>
+  </resultMap>
+
   <!-- 获取包含模块 权限列表的用户信息-->
   <resultMap id="UserWithModuleAndRole" type="user" extends="BaseResultMap">
     <collection property="roles" column="{userId=id}" select="io.nerv.web.sys.role.mapper.RoleMapper.selectByUserId" ofType="role"/>
     <collection property="modules" column="{userId=id}" select="io.nerv.web.sys.module.mapper.ModuleMapper.getRoleModuleByUserId" ofType="module"/>
   </resultMap>
 
+  <select id="getUerWithRoleId" resultMap="UserWithRoleId">
+   SELECT
+      su.*,
+      sru.id R_ID,
+      sru.ROLE_ID
+    FROM
+      sys_user_info su
+    LEFT JOIN sys_role_user sru
+      ON su.id = sru.USER_ID
+    <where>
+      <if test="null != user.deptId and user.deptId != ''">
+        su.deptId = #{user.deptId}
+      </if>
+      <if test="null != user.account and user.account != ''">
+        and su.account = #{user.account}
+      </if>
+      <if test="null != user.name and user.name != ''">
+        and su.name = #{user.name}
+      </if>
+      <if test="null != user.tel and user.tel != ''">
+        and su.tel = #{user.tel}
+      </if>
+    </where>
+  </select>
    <!-- 根据用户id获取包含权限列表的用户信息 -->
-   <select id="getUserWithRoleById" resultMap="UserWithRole">
-       select * from sys_user_info
-       where account=#{userId}
+   <select id="getUserWithRole" resultMap="UserWithRole">
+       select * from sys_user_info su
+       <where>
+         <if test="null != id and id != ''">
+           su.id = #{id}
+         </if>
+         <if test="null != account and account != ''">
+           and su.account = #{account}
+         </if>
+       </where>
    </select>
     <!-- 根据用户ID 获取包含模块 权限列表的用户信息-->
   <select id="getUserWithModuleAndRoleById" resultMap="UserWithModuleAndRole">

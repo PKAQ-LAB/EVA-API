@@ -2,6 +2,7 @@ package io.nerv.core.mvc.ctrl.mybatis;
 
 import cn.hutool.core.collection.CollectionUtil;
 import io.nerv.core.annotation.NoRepeatSubmit;
+import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.enums.HttpCodeEnum;
 import io.nerv.core.enums.ResponseEnumm;
 import io.nerv.core.mvc.service.mybatis.StdBaseService;
@@ -98,6 +99,16 @@ public abstract class StdBaseCtrl<T extends StdBaseService, E extends StdBaseEnt
      */
     protected Response success(Object data, String msg){
         return new Response().success(data, msg);
+    }
+
+    /**
+     * 返回成功结果
+     * @param data
+     * @param msg
+     * @return  
+     */
+    protected Response success(Object data, BizCodeEnum msg){
+        return new Response().success(data, msg.getName());
     }
     /**
      * 返回失败结果

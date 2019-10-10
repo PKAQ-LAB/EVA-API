@@ -57,6 +57,16 @@ public abstract class PureBaseCtrl<T extends StdBaseService> {
     protected Response success(Object data, String msg){
         return new Response().success(data, msg);
     }
+
+    /**
+     * 返回成功结果
+     * @param data
+     * @param msg
+     * @return
+     */
+    protected Response success(Object data, BizCodeEnum msg){
+        return new Response().success(data, msg.getName());
+    }
     /**
      * 返回失败结果
      * @param failCode

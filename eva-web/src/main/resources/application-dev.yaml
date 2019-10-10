@@ -35,6 +35,11 @@ spring:
     hibernate:
       ddl-auto: none
     database-platform: org.hibernate.dialect.MySQL5Dialect
-jwt:
+eva:
+  # 图片上传
+  upload:
+    tempPath: E://evapic/temp
+    storagePath: E://evapic/storage
+    allowSuffixName: jpg,png,jpeg
   cookie:
     maxAge: 3600

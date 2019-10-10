@@ -8,6 +8,7 @@ import io.nerv.core.mvc.util.Response;
 import io.nerv.core.mvc.util.SingleArray;
 import io.nerv.web.sys.user.entity.UserEntity;
 import io.nerv.web.sys.user.service.UserService;
+import io.nerv.web.sys.user.vo.UserCenterVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -63,7 +64,8 @@ public class UserCtrl extends PureBaseCtrl<UserService> {
     @ApiOperation(value = "根据ID获得记录信息", response = Response.class)
     public Response getRole(@ApiParam(name = "id", value = "记录ID")
                             @PathVariable("id") String id){
-        return this.success(this.service.getUser(id));
+        UserCenterVO userCenterVO = this.service.getUser(id);
+        return null == userCenterVO? this.failure() : this.success(userCenterVO, BizCodeEnum.SAVE_SUCCESS);
     }
 
     @PostMapping("/lock")
