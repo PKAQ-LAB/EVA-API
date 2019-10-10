@@ -85,12 +85,10 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
      * @param id 用户id
      * @return 符合条件的用户对象
      */
-    public UserCenterVO getUser(String id) {
-        UserCenterVO userCenterVO = new UserCenterVO();
+    public UserEntity getUser(String id) {
         UserEntity userEntity = new UserEntity();
         userEntity.setId(id);
-        BeanUtil.copyProperties(this.mapper.getUserWithRole(userEntity), userCenterVO);
-        return userCenterVO;
+        return this.mapper.getUserWithRole(userEntity);
     }
 
     /**
@@ -120,7 +118,7 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
         } else {
             UserEntity oldUser = this.mapper.selectById(userId);
             String avatar = oldUser.getAvatar();
-            if (StrUtil.isNotBlank(avatar)){
+            if (StrUtil.isNotBlank(avatar) && !avatar.equals(user.getAvatar())){
                 imageUploadUtil.delFromStorage(avatar);
             }
         }
@@ -129,26 +127,13 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
         if (StrUtil.isNotBlank(user.getAvatar())){
             imageUploadUtil.storageWithThumbnail(0.3f, user.getAvatar());
         }
-
         // 保存权限
-        if (CollUtil.isNotEmpty(user.getRoles())){
-            // 先删除该用户原有的权限
-            QueryWrapper<RoleUserEntity> deleteWrapper = new QueryWrapper<>();
-            deleteWrapper.eq("user_id", user.getId());
-
-            this.roleUserMapper.delete(deleteWrapper);
-            // 再插入更新后的权限
-            user.getRoles().forEach(item -> {
-                RoleUserEntity roleUserEntity = new RoleUserEntity();
-                roleUserEntity.setRoleId(item.getId());
-                roleUserEntity.setUserId(user.getId());
-                roleUserMapper.insert(roleUserEntity);
-            });
-        }
+        this.saveRoles(user);
 
         this.merge(user);
         return this.listPage(null, 1);
     }
+
     /**
      * 校验账号是否唯一
      * @param user
@@ -186,5 +171,27 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
         userEntity.setModules(treeModule);
 
         return userEntity;
+    }
+
+    /**
+     * 保存用户权限
+     * @param user
+     */
+    public void saveRoles(UserEntity user){
+        // 保存权限
+        if (CollUtil.isNotEmpty(user.getRoles())){
+            // 先删除该用户原有的权限
+            QueryWrapper<RoleUserEntity> deleteWrapper = new QueryWrapper<>();
+            deleteWrapper.eq("user_id", user.getId());
+
+            this.roleUserMapper.delete(deleteWrapper);
+            // 再插入更新后的权限
+            user.getRoles().forEach(item -> {
+                RoleUserEntity roleUserEntity = new RoleUserEntity();
+                roleUserEntity.setRoleId(item.getId());
+                roleUserEntity.setUserId(user.getId());
+                roleUserMapper.insert(roleUserEntity);
+            });
+        }
     }
 }

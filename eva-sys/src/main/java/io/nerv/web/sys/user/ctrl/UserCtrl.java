@@ -53,6 +53,15 @@ public class UserCtrl extends PureBaseCtrl<UserService> {
         return success(this.service.saveUser(entity));
     }
 
+    @PostMapping("/grant")
+    @ApiOperation(value = "授权",response = Response.class)
+    public Response grant(@ApiParam(name ="formdata", value = "用户对象")
+                         @RequestBody UserEntity entity){
+
+        this.service.saveRoles(entity);
+        return success(null, BizCodeEnum.SAVE_SUCCESS);
+    }
+
     @GetMapping("/list")
     @ApiOperation(value = "列表查询",response = Response.class)
     public Response list(@ApiParam(name ="condition", value = "用户对象")
@@ -64,8 +73,8 @@ public class UserCtrl extends PureBaseCtrl<UserService> {
     @ApiOperation(value = "根据ID获得记录信息", response = Response.class)
     public Response getRole(@ApiParam(name = "id", value = "记录ID")
                             @PathVariable("id") String id){
-        UserCenterVO userCenterVO = this.service.getUser(id);
-        return null == userCenterVO? this.failure() : this.success(userCenterVO, BizCodeEnum.SAVE_SUCCESS);
+        UserEntity user = this.service.getUser(id);
+        return null == user? this.failure() : this.success(user);
     }
 
     @PostMapping("/lock")
