@@ -4,9 +4,11 @@ import cn.hutool.core.collection.CollUtil;
 import io.nerv.properties.EvaConfig;
 import io.nerv.security.entrypoint.*;
 import io.nerv.security.filter.JwtAuthFilter;
+import io.nerv.security.mybatis.PermissionInterceptor;
 import io.nerv.security.provider.JwtUsernamePasswordAuthenticationFilter;
 import io.nerv.security.provider.LoginAuthenticationProvider;
 import io.nerv.security.provider.UrlFilterSecurityInterceptor;
+import io.nerv.security.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -82,6 +84,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public static PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
+
 
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {

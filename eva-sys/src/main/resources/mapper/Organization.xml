@@ -23,15 +23,15 @@
              and (parent_ID = '0' or parent_ID is null)
           </when>
           <otherwise>
-           and (name like '%${condition}%' or code like '%${condition}%')
+             and (name like '%${condition}%' or code like '%${condition}%')
           </otherwise>
         </choose>
        <if test="null != organization">
            <if test="organization.status != '' and null != organization.status">
-               and status = #{organization.status}
+               and status = #{organization.status, jdbcType=VARCHAR}
            </if>
            <if test="organization.name != '' and null != organization.name">
-               and name = #{organization.name}
+               and name = #{organization.name, jdbcType=VARCHAR}
            </if>
        </if>
        </where>
@@ -40,45 +40,45 @@
   <!-- 根据parentId查询子节点数据-->
   <select id="listChildren" resultMap="BaseResultMap">
     select *
-      from sys_organization where parent_ID = #{id} and  deleted = '0001'
+      from sys_organization where parent_ID = #{id, jdbcType=VARCHAR} and  deleted = '0001'
     order by orders asc
   </select>
   <!-- 根据ID查询-->
   <select id="getParentById" resultMap="BaseResultMap">
       select * from sys_organization org
-      where org.id = (select parent_id from sys_organization og where og.id = #{id}) and  deleted = '0001'
+      where org.id = (select parent_id from sys_organization og where og.id = #{id, jdbcType=VARCHAR}) and  deleted = '0001'
   </select>
 
   <select id="countPrantLeaf" resultType="int">
       select count(id)
       from sys_organization
-      where parent_ID=#{id} and  deleted = '0001'
+      where parent_ID=#{id, jdbcType=VARCHAR} and  deleted = '0001'
   </select>
   <!-- 切换可用状态 -->
   <update id="switchStatus">
       update sys_organization
         set status=#{status}
-      where (path like concat('%,',#{id},',%') or id = #{id})
+      where (path like concat('%,',#{id},',%') or id = #{id, jdbcType=VARCHAR})
         and  deleted = '0001'
   </update>
   <!--  刷新子节点名称-->
   <update id="updateChildParentName">
     update sys_organization
-      set PARENT_NAME=#{name}
+      set PARENT_NAME=#{name,jdbcType=VARCHAR}
     where
-        parent_id like  concat(#{id},'%')
+        parent_id like  concat(#{id,jdbcType=VARCHAR},'%')
         and
         deleted = '0001'
   </update>
     <!--  刷新子节点的path_name  和 path -->
     <update id="updateChildPathInfo">
         update sys_organization set
-        PATH_NAME=REPLACE(PATH_NAME,#{oldorgin.pathName},#{neworgin.pathName}),
-        PATH=REPLACE(PATH,#{oldorgin.path},#{neworgin.path})
+        PATH_NAME=REPLACE(PATH_NAME,#{oldorgin.pathName,jdbcType=VARCHAR},#{neworgin.pathName,jdbcType=VARCHAR}),
+        PATH=REPLACE(PATH,#{oldorgin.path,jdbcType=VARCHAR},#{neworgin.path,jdbcType=VARCHAR})
         where
-            path like concat('%',#{oldorgin.id},'%')
+            path like concat('%',#{oldorgin.id,jdbcType=VARCHAR},'%')
             and
-            id != #{oldorgin.id}
+            id != #{oldorgin.id,jdbcType=VARCHAR}
             and
             deleted = '0001'
     </update>

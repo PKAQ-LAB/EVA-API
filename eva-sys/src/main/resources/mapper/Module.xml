@@ -59,15 +59,15 @@
           and (m.parent_Id = '0' or m.parent_Id is null)
         </when>
         <otherwise>
-          and m.name like concat('%',#{condition},'%')
+          and m.name like concat('%',#{condition,jdbcType=VARCHAR},'%')
         </otherwise>
       </choose>
       <if test="null != module">
         <if test="null != module.status and module.status != '' ">
-          and m.status = #{module.status}
+          and m.status = #{module.status,jdbcType=VARCHAR}
         </if>
         <if test="null != module.name and module.name != '' ">
-          and m.name like concat('%',#{module.name},'%')
+          and m.name like concat('%',#{module.name,jdbcType=VARCHAR},'%')
         </if>
       </if>
     </where>
@@ -94,13 +94,13 @@
       </if>
       <if test="null != module">
          <if test="null != module.parentId and '' != module.parentId">
-          and parent_id = #{module.parent_id}
+          and parent_id = #{module.parent_id,jdbcType=VARCHAR}
         </if>
         <if test="null != module.status and module.status != '' ">
-          and status = #{module.status}
+          and status = #{module.status,jdbcType=VARCHAR}
         </if>
         <if test="null != module.name and module.name != '' ">
-          and name like concat('%',#{module.name},'%')
+          and name like concat('%',#{module.name,jdbcType=VARCHAR},'%')
         </if>
       </if>
     </where>
@@ -120,20 +120,20 @@
       LEFT JOIN
       SYS_MODULE_RESOURCES SMR
         ON  SM.ID = SMR.MODULE_ID
-    where parent_ID = #{id}
+    where parent_ID = #{id,jdbcType=VARCHAR}
     order by orders asc
   </select>
   <!-- 根据ID查询-->
   <select id="getParentById" resultMap="BaseResultMap">
     select * from sys_module module
-    where module.id = (select parent_Id from sys_module og where og.id = #{id})
+    where module.id = (select parent_Id from sys_module og where og.id = #{id,jdbcType=VARCHAR})
     order by orders asc
   </select>
   <!--查询叶子节点数量-->
   <select id="countPrantLeaf" resultType="int">
     select count(id)
     from sys_module
-    where parent_Id=#{id}
+    where parent_Id=#{id,jdbcType=VARCHAR}
   </select>
 
   <!-- 根据parentId查询子节点数据-->
@@ -145,7 +145,7 @@
           parent_ID is null
       </when>
       <otherwise>
-          parent_ID = #{pid}
+          parent_ID = #{pid,jdbcType=VARCHAR}
       </otherwise>
     </choose>
   </select>
@@ -153,27 +153,27 @@
   <!-- 根据id禁用节点-->
   <update id="disableChild">
     update sys_module set status = '0001'
-   where path_id like concat('%',#{id},'%');
+   where path_id like concat('%',#{id,jdbcType=VARCHAR},'%');
   </update>
 
   <!-- 根据id查询数据-->
   <select id="selectId" resultMap="BaseResultMap">
     select  *
-    from sys_module where id = #{id}
+    from sys_module where id = #{id,jdbcType=VARCHAR}
   </select>
   <!--  刷新子节点名称-->
   <update id="updateChildParentName">
     update sys_module
-      set PARENT_NAME=#{name}
-    where  parent_id like  concat(#{id},'%');
+      set PARENT_NAME=#{name,jdbcType=VARCHAR}
+    where  parent_id like  concat(#{id,jdbcType=VARCHAR},'%');
   </update>
 
     <!--  刷新子节点的path_name  和 path -->
     <update id="updateChildPathInfo">
         update sys_module set
-        PATH_NAME=REPLACE(PARENT_NAME,#{oldModule.name},#{newModule.name}),
-        PATH=REPLACE(PATH,#{oldModule.path},#{newModule.path})
-      where path like concat('%',#{oldModule.path},'%') and id != #{oldModule.id}
+        PATH_NAME=REPLACE(PARENT_NAME,#{oldModule.name,jdbcType=VARCHAR},#{newModule.name,jdbcType=VARCHAR}),
+        PATH=REPLACE(PATH,#{oldModule.path,jdbcType=VARCHAR},#{newModule.path,jdbcType=VARCHAR})
+      where path like concat('%',#{oldModule.path,jdbcType=VARCHAR},'%') and id != #{oldModule.id,jdbcType=VARCHAR}
     </update>
 
 </mapper>

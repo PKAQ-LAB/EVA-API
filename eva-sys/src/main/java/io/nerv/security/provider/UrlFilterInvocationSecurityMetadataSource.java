@@ -8,6 +8,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -90,7 +91,6 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
                 }
                 set.addAll(urlPermMap.get(key));
             }
-
         }
 
 //      未配置过权限的页面都不需要鉴权，jwtauthfilter已经进行了登录鉴权
@@ -101,7 +101,6 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
         }
 
         if (ObjectUtils.isEmpty(set)) {
-//            return null;
             return SecurityConfig.createList("ROLE_USER");
         }
         return set;

@@ -49,16 +49,16 @@
       ON su.id = sru.USER_ID
     <where>
       <if test="null != user.deptId and user.deptId != ''">
-        su.deptId = #{user.deptId}
+        su.deptId = #{user.deptId,jdbcType=VARCHAR}
       </if>
       <if test="null != user.account and user.account != ''">
-        and su.account = #{user.account}
+        and su.account = #{user.account,jdbcType=VARCHAR}
       </if>
       <if test="null != user.name and user.name != ''">
-        and su.name = #{user.name}
+        and su.name = #{user.name,jdbcType=VARCHAR}
       </if>
       <if test="null != user.tel and user.tel != ''">
-        and su.tel = #{user.tel}
+        and su.tel = #{user.tel,jdbcType=VARCHAR}
       </if>
     </where>
   </select>
@@ -67,16 +67,16 @@
        select * from sys_user_info su
        <where>
          <if test="null != id and id != ''">
-           su.id = #{id}
+           su.id = #{id,jdbcType=VARCHAR}
          </if>
          <if test="null != account and account != ''">
-           and su.account = #{account}
+           and su.account = #{account,jdbcType=VARCHAR}
          </if>
        </where>
    </select>
     <!-- 根据用户ID 获取包含模块 权限列表的用户信息-->
   <select id="getUserWithModuleAndRoleById" resultMap="UserWithModuleAndRole">
     select * from sys_user_info
-    where id=#{userId}
+    where id=#{userId,jdbcType=VARCHAR}
   </select>
 </mapper>

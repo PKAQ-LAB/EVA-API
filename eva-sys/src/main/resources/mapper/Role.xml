@@ -21,7 +21,7 @@
         and
         R.LOCKED != '0001'
         and
-        RU.USER_ID=#{userId}
+        RU.USER_ID=#{userId,jdbcType=VARCHAR}
     </where>
   </select>
 </mapper>

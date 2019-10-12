@@ -20,22 +20,22 @@ public class SecurityUtil {
      * @return
      */
     public boolean isAdmin(){
-        return this.getAuthentication()
-                .getAuthorities()
-                .stream()
-                .map(GrantedAuthority::getAuthority)
-                .anyMatch(str -> str.equals("ROLE_ADMIN"));
+        return this .getAuthentication()
+                    .getAuthorities()
+                    .stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .anyMatch(str -> str.equals("ROLE_ADMIN"));
     }
     /**
      * 获取当前用户的权限数组
      * @return
      */
     public String[] getRoleNames(){
-        return this.getAuthentication()
-                .getAuthorities()
-                .stream()
-                .map(GrantedAuthority::getAuthority)
-                .toArray(String[]::new);
+        return this .getAuthentication()
+                    .getAuthorities()
+                    .stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .toArray(String[]::new);
     }
     /**
      *  获取权限对象
