@@ -1,21 +1,20 @@
-package io.nerv.web.sys.dict.cache.condition;
+package io.nerv.core.cache;
 
-import cn.hutool.core.util.StrUtil;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /**
- * 是否启用默认hashmap缓存
+ * 是否启用redis字典缓存
  */
-public class DefaultDictCacheCondition implements Condition {
+public class RedisCacheCondition implements Condition {
 
-    private final static String cacheStr = "map,default";
+    private final static String cacheStr = "redis";
 
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
         String impl = context.getEnvironment().getProperty("eva.cache.type");
 
-        return StrUtil.isBlank(impl) || cacheStr.contains(impl);
+        return cacheStr.equalsIgnoreCase(impl);
     }
 }

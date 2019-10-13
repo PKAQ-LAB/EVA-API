@@ -3,12 +3,13 @@ package io.nerv.security.domain;
 import io.nerv.core.enums.LockEnumm;
 import io.nerv.web.sys.role.entity.RoleEntity;
 import io.nerv.web.sys.user.entity.UserEntity;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * JwtUser 工厂
+ */
 public final class JwtUserFactory {
 
     private JwtUserFactory() {
@@ -24,13 +25,13 @@ public final class JwtUserFactory {
                 user.getName(),
                 user.getNickName(),
                 LockEnumm.LOCK.getIndex().equals(user.getLocked()),
-                mapToGrantedAuthorities(user.getRoles().stream().map(RoleEntity::getCode).collect(Collectors.toList()))
+                mapToGrantedAuthorities(user.getRoles())
         );
     }
 
-    private static List<GrantedAuthority> mapToGrantedAuthorities(List<String> authorities) {
+    private static List<JwtGrantedAuthority> mapToGrantedAuthorities(List<RoleEntity> authorities) {
         return authorities.stream()
-                .map(SimpleGrantedAuthority::new)
+                .map(item -> new JwtGrantedAuthority(item.getCode(), item))
                 .collect(Collectors.toList());
     }
 }

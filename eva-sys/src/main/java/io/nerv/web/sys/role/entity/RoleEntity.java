@@ -53,6 +53,12 @@ public class RoleEntity extends StdBaseEntity {
     @ApiModelProperty("是否锁定")
     private String locked;
 
+    @ApiModelProperty("数据权限类型")
+    private String dataPermissionType;
+
+    @ApiModelProperty("数据权限部门ID")
+    private String dataPermissionDeptid;
+
     @TableField(exist = false)
     @ApiModelProperty("角色拥有的模块列表")
     private List<RoleModuleEntity> modules;

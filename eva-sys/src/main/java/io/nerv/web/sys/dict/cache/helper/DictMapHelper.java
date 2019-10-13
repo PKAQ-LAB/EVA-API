@@ -1,7 +1,7 @@
 package io.nerv.web.sys.dict.cache.helper;
 
 import io.nerv.web.sys.dict.cache.DictHelperProvider;
-import io.nerv.web.sys.dict.cache.condition.DefaultDictCacheCondition;
+import io.nerv.core.cache.DefaultCacheCondition;
 import io.nerv.web.sys.dict.service.DictService;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import java.util.Map;
  */
 @Data
 @Component
-@Conditional(DefaultDictCacheCondition.class)
+@Conditional(DefaultCacheCondition.class)
 public class DictMapHelper implements DictHelperProvider {
     @Autowired
     private DictService dictService;

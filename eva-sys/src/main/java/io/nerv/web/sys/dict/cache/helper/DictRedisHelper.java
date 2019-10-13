@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import io.nerv.util.RedisUtil;
 import io.nerv.web.sys.dict.cache.DictHelperProvider;
-import io.nerv.web.sys.dict.cache.condition.RedisDictCacheCondition;
+import io.nerv.core.cache.RedisCacheCondition;
 import io.nerv.web.sys.dict.service.DictService;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ import java.util.Map;
  */
 @Data
 @Component
-@Conditional(RedisDictCacheCondition.class)
+@Conditional(RedisCacheCondition.class)
 public class DictRedisHelper implements DictHelperProvider {
     @Autowired
     private DictService dictService;
