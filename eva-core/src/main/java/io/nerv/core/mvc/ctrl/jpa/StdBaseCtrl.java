@@ -1,7 +1,7 @@
 package io.nerv.core.mvc.ctrl.jpa;
 
 import cn.hutool.core.collection.CollectionUtil;
-import io.nerv.core.enums.HttpCodeEnum;
+import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.enums.ResponseEnumm;
 import io.nerv.core.exception.ParamException;
 import io.nerv.core.mvc.entity.jpa.StdBaseDomain;
@@ -116,5 +116,5 @@ public abstract class StdBaseCtrl<T extends StdBaseService, D extends StdBaseDom
      * 返回失败结果
      * @return
      */
-    protected Response failure() { return new Response().failure(HttpCodeEnum.RULECHECK_FAILED.getIndex());}
+    protected Response failure() { return new Response().failure(BizCodeEnum.SERVER_ERROR);}
 }

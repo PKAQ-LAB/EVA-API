@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * 自定义登录失败处理器
@@ -32,7 +33,13 @@ public class UrlAuthenticationFailureHandler implements AuthenticationFailureHan
         if (e instanceof BadCredentialsException){
             msg = BizCodeEnum.ACCOUNT_OR_PWD_ERROR.getName();
         }
-        Response response = new Response().failure(BizCodeEnum.LOGIN_FAILED.getIndex(), msg);
-        httpServletResponse.getWriter().write(JSON.toJSONString(response));
+
+
+        try(PrintWriter printWriter = httpServletResponse.getWriter()){
+            printWriter.write(JSON.toJSONString(
+                    new Response()
+                            .failure(BizCodeEnum.LOGIN_FAILED.getIndex(), msg)));
+            printWriter.flush();
+        }
     }
 }

@@ -2,7 +2,6 @@ package io.nerv.core.mvc.util;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.core.enums.HttpCodeEnum;
 import io.nerv.core.exception.ReflectException;
 import io.nerv.core.util.ReflectHelper;
 import lombok.Data;
@@ -89,7 +88,7 @@ public class Response{
     public Response failure(int code) {
         this.success = false;
         this.code = code;
-        this.message = HttpCodeEnum.getName(code);
+        this.message = BizCodeEnum.getName(code);
 
         return this;
     }

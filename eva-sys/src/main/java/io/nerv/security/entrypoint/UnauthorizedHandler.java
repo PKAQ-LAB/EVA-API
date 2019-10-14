@@ -1,6 +1,7 @@
 package io.nerv.security.entrypoint;
 
-import io.nerv.core.enums.HttpCodeEnum;
+import io.nerv.core.enums.BizCodeEnum;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -24,7 +25,7 @@ public class UnauthorizedHandler implements AuthenticationEntryPoint, Serializab
                          AuthenticationException authException) throws IOException {
         //返回json形式的错误信息
         response.setCharacterEncoding("UTF-8");
-        response.setContentType("application/json");
-        response.sendError(HttpServletResponse.SC_OK, HttpCodeEnum.ROLE_ERROR.getName());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, BizCodeEnum.LOGIN_EXPIRED.getName());
     }
 }

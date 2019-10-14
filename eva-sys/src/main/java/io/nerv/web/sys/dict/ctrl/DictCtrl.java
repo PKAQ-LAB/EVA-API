@@ -1,7 +1,6 @@
 package io.nerv.web.sys.dict.ctrl;
 
 import cn.hutool.core.util.StrUtil;
-import io.nerv.core.enums.HttpCodeEnum;
 import io.nerv.core.mvc.ctrl.mybatis.PureBaseCtrl;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.web.sys.dict.entity.DictEntity;
@@ -55,7 +54,7 @@ public class DictCtrl extends PureBaseCtrl<DictService> {
                             @PathVariable(value = "code", required = false) String code){
         // 参数校验
         if (StrUtil.isBlank(id) && StrUtil.isBlank(code)){
-            return failure(HttpCodeEnum.REQEUST_FAILURE.getIndex());
+            throw new ParamException();
         }
         DictEntity dictEntity = new DictEntity();
         dictEntity.setId(id);

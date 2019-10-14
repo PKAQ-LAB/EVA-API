@@ -11,7 +11,8 @@ import lombok.Getter;
 public enum BizCodeEnum {
     /** 请求成功 **/
     REQUEST_SUCCESS("请求成功", 0000),
-    SAVE_SUCCESS("数据保存成功", 0001),
+    LOGIN_SUCCESS("登录成功，欢迎回来。", 0001),
+    SAVE_SUCCESS("数据保存成功", 0002),
     /** 请求失败 **/
     PARAM_ERROR("请求参数错误.", 4000),
     PARAM_LOST("请求参数丢失.", 4001),
@@ -24,6 +25,7 @@ public enum BizCodeEnum {
     ACCOUNT_OR_PWD_ERROR("用户名或密码错误", 4102),
     ACCOUNT_LOCKED("用户已经被锁定", 4103),
     LOGIN_ERROR("登录遇到未知错误", 4104),
+    LOGIN_EXPIRED("您的登录已失效,请重新登录", 4105),
     ACCOUNT_ALREADY_EXIST("账号名已存在", 4110),
     /** 业务 **/
     PATH_ALREADY_EXIST("模块路径已经存在", 4301),
@@ -39,6 +41,7 @@ public enum BizCodeEnum {
 
     /** 权限相关 **/
     PERMISSION_DENY ("权限不足", 4200);
+
 
     /**
      * 名称

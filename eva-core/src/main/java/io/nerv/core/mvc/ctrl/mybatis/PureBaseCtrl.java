@@ -1,7 +1,6 @@
 package io.nerv.core.mvc.ctrl.mybatis;
 
 import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.core.enums.HttpCodeEnum;
 import io.nerv.core.mvc.service.mybatis.StdBaseService;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.util.I18NHelper;
@@ -96,5 +95,5 @@ public abstract class PureBaseCtrl<T extends StdBaseService> {
      * 返回失败结果
      * @return
      */
-    protected Response failure() { return new Response().failure(HttpCodeEnum.RULECHECK_FAILED.getIndex());}
+    protected Response failure() { return new Response().failure(BizCodeEnum.SERVER_ERROR);}
 }

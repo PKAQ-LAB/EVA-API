@@ -3,7 +3,7 @@ package io.nerv.security.filter;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.ServletUtil;
 import io.nerv.core.constant.TokenConst;
-import io.nerv.core.enums.HttpCodeEnum;
+import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.security.exception.OathException;
 import io.nerv.properties.EvaConfig;
 import io.nerv.security.jwt.JwtUtil;
@@ -74,7 +74,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 }
             } catch (OathException e) {
                 logger.warn("鉴权失败 Token已过期");
-                response.sendError(HttpCodeEnum.ROLE_ERROR.getIndex(), "您的登录已过期, 请重新登录.");
+                response.sendError(BizCodeEnum.LOGIN_EXPIRED.getIndex(), "您的登录已过期, 请重新登录.");
                 return;
             }
         } else {

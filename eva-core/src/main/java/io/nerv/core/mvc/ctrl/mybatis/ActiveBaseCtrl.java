@@ -2,7 +2,7 @@ package io.nerv.core.mvc.ctrl.mybatis;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-import io.nerv.core.enums.HttpCodeEnum;
+import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.enums.ResponseEnumm;
 import io.nerv.core.exception.ParamException;
 import io.nerv.core.mvc.service.mybatis.ActiveBaseService;
@@ -107,5 +107,5 @@ public abstract class ActiveBaseCtrl<T extends ActiveBaseService, E extends Mode
      * 返回失败结果
      * @return
      */
-    protected Response failure() { return new Response().failure(HttpCodeEnum.RULECHECK_FAILED.getIndex());}
+    protected Response failure() { return new Response().failure(BizCodeEnum.SERVER_ERROR);}
 }

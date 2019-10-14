@@ -6,7 +6,6 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.core.enums.HttpCodeEnum;
 import io.nerv.core.exception.BizException;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.properties.EvaConfig;

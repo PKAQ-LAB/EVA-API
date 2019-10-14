@@ -4,6 +4,7 @@ import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.extra.servlet.ServletUtil;
 import com.alibaba.fastjson.JSON;
 import io.nerv.core.constant.TokenConst;
+import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.properties.EvaConfig;
 import io.nerv.security.domain.JwtUserDetail;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
@@ -66,7 +68,11 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         map.put("user", user);
         map.put("token", token);
 
-        Response response = new Response().success(map, "登录成功");
-        httpServletResponse.getWriter().write(JSON.toJSONString(response));
+        try(PrintWriter printWriter = httpServletResponse.getWriter()){
+            printWriter.write(JSON.toJSONString(
+                    new Response()
+                            .success(BizCodeEnum.LOGIN_SUCCESS)));
+            printWriter.flush();
+        }
     }
 }
