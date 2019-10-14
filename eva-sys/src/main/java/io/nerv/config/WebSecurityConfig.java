@@ -70,6 +70,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private UrlAccessDeniedHandler urlAccessDeniedHandler;
 
     @Autowired
+    private UnauthorizedHandler unauthorizedHandler;
+
+    @Autowired
     private UrlFilterSecurityInterceptor urlFilterSecurityInterceptor;
 
     /** Spring会自动寻找同样类型的具体类注入，这里就是JwtUserDetailsServiceImpl了**/
@@ -155,6 +158,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             httpSecurity.logout().logoutUrl("/auth/logout").logoutSuccessHandler(urlLogoutSuccessHandler);
 
             httpSecurity.exceptionHandling()
+                        .authenticationEntryPoint(unauthorizedHandler)
                         .accessDeniedHandler(urlAccessDeniedHandler)
                         .and()
                         .addFilterAt(urlFilterSecurityInterceptor, FilterSecurityInterceptor.class)
