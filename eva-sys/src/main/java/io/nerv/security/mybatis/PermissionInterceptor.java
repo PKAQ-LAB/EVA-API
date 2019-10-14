@@ -1,6 +1,5 @@
 package io.nerv.security.mybatis;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.extension.handlers.AbstractSqlParserHandler;
@@ -8,7 +7,6 @@ import io.nerv.security.domain.JwtGrantedAuthority;
 import io.nerv.security.domain.JwtUserDetail;
 import io.nerv.security.util.SecurityUtil;
 import io.nerv.web.sys.role.entity.RoleEntity;
-import io.nerv.web.sys.role.mapper.RoleMapper;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.expression.Expression;
@@ -21,10 +19,12 @@ import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.plugin.*;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
-import org.springframework.security.core.GrantedAuthority;
 
 import java.sql.Connection;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 /**
@@ -36,7 +36,6 @@ import java.util.stream.Collectors;
 public class PermissionInterceptor extends AbstractSqlParserHandler implements Interceptor {
 
     private SecurityUtil securityUtil;
-
 
     public PermissionInterceptor(SecurityUtil securityUtil) {
         super();
@@ -120,7 +119,7 @@ public class PermissionInterceptor extends AbstractSqlParserHandler implements I
             if (null == item.getDataPermissionType()) return;
             switch (item.getDataPermissionType()){
                 // 仅本部门
-                case "0001":    var fchildSql = "select id from sys_user_info where dept_id = '"+item.getDataPermissionDeptid()+"'";
+                case "0001":    var fchildSql = "select id from sys_user_info where dept_id = '"+jwtUserDetail.getDeptId()+"'";
                                 permissionSql.append(" ( CREATE_BY in ( ");
                                 permissionSql.append(fchildSql);
                                 permissionSql.append(" ) OR ");
@@ -129,7 +128,7 @@ public class PermissionInterceptor extends AbstractSqlParserHandler implements I
                                 permissionSql.append(" ) ) ");
                                 break;
                 // 本人所属部门及下属部门
-                case "0002":    var schildSql = "select id from sys_user_info sui where dept_id in (select so.id  from  sys_organization so  where so.id='"+item.getDataPermissionDeptid()+"' or so.path like '"+item.getDataPermissionDeptid()+"%')";
+                case "0002":    var schildSql = "select id from sys_user_info sui where dept_id in (select so.id  from  sys_organization so  where so.id='"+jwtUserDetail.getDeptId()+"' or so.path like '"+jwtUserDetail.getDeptId()+"%')";
                                 permissionSql.append(" ( CREATE_BY in ( ");
                                 permissionSql.append(schildSql);
                                 permissionSql.append(" ) OR ");

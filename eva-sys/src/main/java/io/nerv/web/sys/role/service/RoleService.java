@@ -43,9 +43,6 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
     private RoleUserMapper roleUserMapper;
 
     @Autowired
-    private RoleDataMapper roleDataMapper;
-
-    @Autowired
     private RoleConfigMapper roleConfigMapper;
 
     @Autowired
@@ -96,8 +93,6 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
     public void deleteRole(ArrayList<String> ids) {
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.in("role_id", ids);
-        // 删除角色相关的 数据权限
-        this.roleDataMapper.delete(queryWrapper);
         // 删除角色相关的 授权用户
         this.roleUserMapper.delete(queryWrapper);
         // 删除角色相关的 授权模块
@@ -142,6 +137,7 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
         if(!role.getCode().startsWith(AUTH_PREFIX)){
             role.setCode((AUTH_PREFIX+role.getCode()).toUpperCase());
         }
+
         // 设置创建人 修改人
         if (StrUtil.isBlank(role.getId())){
             role.setCreateBy(securityUtil.getJwtUserId());
