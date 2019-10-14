@@ -51,7 +51,7 @@ public class ModuleCtrl extends PureBaseCtrl<ModuleService> {
     public Response save(@ApiParam(name ="formdata", value = "模块对象")
                          @RequestBody ModuleEntity entity){
         this.service.editModule(entity);
-        return this.success(this.service.list(null));
+        return this.success(this.service.listModuleByAttr(null));
     }
 
     @GetMapping("/get/{id}")
