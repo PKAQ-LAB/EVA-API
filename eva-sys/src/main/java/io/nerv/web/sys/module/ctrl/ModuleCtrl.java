@@ -43,10 +43,10 @@ public class ModuleCtrl extends PureBaseCtrl<ModuleService> {
         //如果Response不为空，则表示该节点下有子节点，返回错误给前台
         this.service.deleteModule(ids.getParam());
 
-        return this.success(this.service.listModule(null));
+        return this.success(this.service.listModule(null), BizCodeEnum.OPERATE_SUCCESS);
     }
 
-    @PostMapping("edit")
+    @PostMapping("/edit")
     @ApiOperation(value = "新增/编辑记录",response = Response.class)
     public Response save(@ApiParam(name ="formdata", value = "模块对象")
                          @RequestBody ModuleEntity entity){
@@ -61,7 +61,7 @@ public class ModuleCtrl extends PureBaseCtrl<ModuleService> {
         return this.success(this.service.getModule(id));
     }
 
-    @GetMapping({"listModuleByAttr","listNoPage"})
+    @GetMapping({"/listModuleByAttr","/listNoPage"})
     @ApiOperation(value = "根据实体类属性获取相应的模块树 ", response = Response.class)
     public Response listModuleByAttr(@ApiParam(name = "module", value= "{key: value}") ModuleEntity module){
         return success(this.service.listModuleByAttr(module));
@@ -72,7 +72,7 @@ public class ModuleCtrl extends PureBaseCtrl<ModuleService> {
     public Response sortModule(@ApiParam(name = "module", value = "{id,orders}")
                                @RequestBody ModuleEntity[] switchObj){
         this.service.sortModule(switchObj);
-        return success(this.service.listModule(null));
+        return success(this.service.listModule(null), BizCodeEnum.OPERATE_SUCCESS);
     }
 
     @PostMapping("/switchStatus")
