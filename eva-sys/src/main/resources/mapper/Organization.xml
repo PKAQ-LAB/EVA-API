@@ -17,7 +17,7 @@
    <select id="listOrg" resultMap="BaseResultMap">
        select * from sys_organization
        <where>
-            deleted = '0001'
+            deleted = '0000'
            <if test="null == organization">
                  and (parent_ID = '0' or parent_ID is null)
            </if>
@@ -41,26 +41,26 @@
   <!-- 根据parentId查询子节点数据-->
   <select id="listChildren" resultMap="BaseResultMap">
     select *
-      from sys_organization where parent_ID = #{id, jdbcType=VARCHAR} and  deleted = '0001'
+      from sys_organization where parent_ID = #{id, jdbcType=VARCHAR} and  deleted = '0000'
     order by orders asc
   </select>
   <!-- 根据ID查询-->
   <select id="getParentById" resultMap="BaseResultMap">
       select * from sys_organization org
-      where org.id = (select parent_id from sys_organization og where og.id = #{id, jdbcType=VARCHAR}) and  deleted = '0001'
+      where org.id = (select parent_id from sys_organization og where og.id = #{id, jdbcType=VARCHAR}) and  deleted = '0000'
   </select>
 
   <select id="countPrantLeaf" resultType="int">
       select count(id)
       from sys_organization
-      where parent_ID=#{id, jdbcType=VARCHAR} and  deleted = '0001'
+      where parent_ID=#{id, jdbcType=VARCHAR} and  deleted = '0000'
   </select>
   <!-- 切换可用状态 -->
   <update id="switchStatus">
       update sys_organization
         set status=#{status}
       where (path like concat('%,',#{id},',%') or id = #{id, jdbcType=VARCHAR})
-        and  deleted = '0001'
+        and  deleted = '0000'
   </update>
   <!--  刷新子节点名称-->
   <update id="updateChildParentName">
@@ -69,7 +69,7 @@
     where
         parent_id like  concat(#{id,jdbcType=VARCHAR},'%')
         and
-        deleted = '0001'
+        deleted = '0000'
   </update>
     <!--  刷新子节点的path_name  和 path -->
     <update id="updateChildPathInfo">
@@ -81,6 +81,6 @@
             and
             id != #{oldorgin.id,jdbcType=VARCHAR}
             and
-            deleted = '0001'
+            deleted = '0000'
     </update>
 </mapper>
