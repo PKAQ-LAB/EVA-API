@@ -16,14 +16,14 @@ public class BizException extends RuntimeException{
     private BizCodeEnum bizCodeEnum;
 
     public BizException(String msg){
-        super();
+        super(msg);
         this.msg=msg;
     }
 
     public BizException(int code, String msg){
-        super();
+        super(msg);
         this.code = code;
-        this.msg=msg;
+        this.msg = msg;
     }
 
     public BizException(BizCodeEnum resourceUsed) {
