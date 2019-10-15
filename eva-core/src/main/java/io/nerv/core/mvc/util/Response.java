@@ -36,7 +36,7 @@ public class Response{
      */
     public Response success(){
         this.success = true;
-        this.code = BizCodeEnum.REQUEST_SUCCESS.getIndex();
+        this.code = BizCodeEnum.OPERATE_SUCCESS.getIndex();
 
         return this;
     }
@@ -48,7 +48,7 @@ public class Response{
     public Response success(Object data) {
         this.data = data;
         this.success = true;
-        this.code = BizCodeEnum.REQUEST_SUCCESS.getIndex();
+        this.code = BizCodeEnum.OPERATE_SUCCESS.getIndex();
 
         return this;
     }
@@ -61,7 +61,7 @@ public class Response{
         this.data = data;
         this.success = true;
         this.message = msg;
-        this.code = BizCodeEnum.REQUEST_SUCCESS.getIndex();
+        this.code = BizCodeEnum.OPERATE_SUCCESS.getIndex();
 
         return this;
     }

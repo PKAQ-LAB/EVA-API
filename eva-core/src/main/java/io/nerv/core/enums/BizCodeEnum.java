@@ -10,7 +10,7 @@ import lombok.Getter;
 @Getter
 public enum BizCodeEnum {
     /** 请求成功 **/
-    REQUEST_SUCCESS("请求成功", 0000),
+    OPERATE_SUCCESS("操作成功", 0000),
     LOGIN_SUCCESS("登录成功，欢迎回来。", 0001),
     SAVE_SUCCESS("数据保存成功", 0002),
     /** 请求失败 **/
