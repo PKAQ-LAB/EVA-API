@@ -50,6 +50,9 @@ server:
   port: 9009
 # 业务日志
 eva:
+  # 数据权限
+  datapermission:
+    exclude: sys_module_resources
   # 缓存配置
   cache:
     timeout: 500

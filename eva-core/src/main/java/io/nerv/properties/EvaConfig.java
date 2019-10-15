@@ -30,6 +30,9 @@ public class EvaConfig {
     /** cookie 配置 **/
     private Cookie cookie;
 
+    /** 数据权限配置 **/
+    private DataPermission dataPermission;
+
     public BizLog getBizlog() {
         return null == this.bizlog? new BizLog() : bizlog;
     }

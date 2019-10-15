@@ -1,12 +1,16 @@
 package io.nerv.security.mybatis;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.extension.handlers.AbstractSqlParserHandler;
+import io.nerv.properties.EvaConfig;
 import io.nerv.security.domain.JwtGrantedAuthority;
 import io.nerv.security.domain.JwtUserDetail;
 import io.nerv.security.util.SecurityUtil;
 import io.nerv.web.sys.role.entity.RoleEntity;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.expression.Expression;
@@ -14,6 +18,7 @@ import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectBody;
+import net.sf.jsqlparser.util.TablesNamesFinder;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.plugin.*;
@@ -31,9 +36,13 @@ import java.util.stream.Collectors;
  * 数据权限拦截插件
  */
 @Slf4j
+@Getter
+@Setter
 @Accessors(chain = true)
 @Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
 public class PermissionInterceptor extends AbstractSqlParserHandler implements Interceptor {
+
+    private EvaConfig evaConfig;
 
     private SecurityUtil securityUtil;
 
@@ -59,24 +68,22 @@ public class PermissionInterceptor extends AbstractSqlParserHandler implements I
         // 获得原始sql
         BoundSql boundSql = (BoundSql) metaObject.getValue("delegate.boundSql");
         String originalSql = boundSql.getSql();
-
         Select select = (Select) CCJSqlParserUtil.parse(originalSql);
         SelectBody selectBody = select.getSelectBody();
         PlainSelect plainSelect = (PlainSelect)selectBody;
-        if (securityUtil.getAuthentication() != null){
+
+        if (securityUtil.getAuthentication() != null && !this.isExcluded(select)){
             // 获得当前请求需要的权限
             List<RoleEntity> roles = securityUtil.getAuthentication()
                                                  .getAuthorities()
                                                  .stream()
                                                  .map(item -> {
                                                      JwtGrantedAuthority jwtGrantedAuthority = (JwtGrantedAuthority) item;
+                                                     log.debug(" ||| -- 当前用户权限为 -- ||| " + jwtGrantedAuthority.getRoleEntity());
                                                      return jwtGrantedAuthority.getRoleEntity();
                                                  })
                                                  .collect(Collectors.toList());
 
-            roles.forEach(item -> {
-                log.error("----------- ################# --------------"+ item);
-            });
             // 获得当前请求所需角色的数据权限
             String permissionSQL = this.permissionSql(roles);
 
@@ -164,6 +171,30 @@ public class PermissionInterceptor extends AbstractSqlParserHandler implements I
         permissionSql.append(" ) ");
 
         return permissionSql.toString();
+    }
+
+    /**
+     * 判断是否存在被排除得表
+     * @param select
+     * @return
+     */
+    public boolean isExcluded(Select select) {
+        List<String> excludeTables = evaConfig.getDataPermission().getExclude();
+        if (CollUtil.isEmpty(excludeTables)) return false;
+
+        TablesNamesFinder tablesNamesFinder = new TablesNamesFinder();
+        var tableList = tablesNamesFinder.getTableList(select);
+
+        return tableList.stream().filter(item -> {
+            boolean excluded = false;
+            for (String et : excludeTables) {
+                if (et.equals(item)){
+                    excluded = true;
+                    break;
+                };
+            }
+            return excluded;
+        }).count() > 0;
     }
     @Override
     public Object plugin(Object target) {

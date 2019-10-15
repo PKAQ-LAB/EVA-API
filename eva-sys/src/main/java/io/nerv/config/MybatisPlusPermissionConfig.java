@@ -1,5 +1,6 @@
 package io.nerv.config;
 
+import io.nerv.properties.EvaConfig;
 import io.nerv.security.mybatis.PermissionInterceptor;
 import io.nerv.security.util.SecurityUtil;
 import io.nerv.web.sys.role.mapper.RoleMapper;
@@ -16,12 +17,16 @@ public class MybatisPlusPermissionConfig {
     @Autowired
     private SecurityUtil securityUtil;
 
+    @Autowired
+    private EvaConfig evaConfig;
     /**
     * 分页插件
     * @return
     */
    @Bean
    public PermissionInterceptor permissionInterceptor() {
-       return new PermissionInterceptor(securityUtil);
+       PermissionInterceptor permissionInterceptor = new PermissionInterceptor(securityUtil);
+       permissionInterceptor.setEvaConfig(evaConfig);
+       return permissionInterceptor;
    }
 }
