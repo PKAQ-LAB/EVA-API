@@ -60,11 +60,12 @@ public class ModuleService extends StdBaseService<ModuleMapper, ModuleEntity> {
             throw new BizException(BizCodeEnum.CHILD_EXIST.getIndex(), StrUtil.format(BizCodeEnum.CHILD_EXIST.getName(), name));
         } else {
             try{
-                this.mapper.deleteBatchIds(ids);
                 // 删除相关资源
                 QueryWrapper<ModuleResources> deleteWrapper = new QueryWrapper<>();
                 deleteWrapper.in("module_id", ids);
                 this.moduleResourceMapper.delete(deleteWrapper);
+                // 删除模块
+                this.mapper.deleteBatchIds(ids);
             } catch(Exception e){
                 throw new BizException(BizCodeEnum.MODULE_RESOURCE_USED);
             }
