@@ -17,23 +17,24 @@
    <select id="listOrg" resultMap="BaseResultMap">
        select * from sys_organization
        <where>
-        deleted = '0001'
-        <choose>
-          <when test="null == condition or '' == condition">
-             and (parent_ID = '0' or parent_ID is null)
-          </when>
-          <otherwise>
-             and (name like '%${condition}%' or code like '%${condition}%')
-          </otherwise>
-        </choose>
-       <if test="null != organization">
-           <if test="organization.status != '' and null != organization.status">
-               and status = #{organization.status, jdbcType=VARCHAR}
+            deleted = '0001'
+           <if test="null == organization">
+                 and (parent_ID = '0' or parent_ID is null)
            </if>
-           <if test="organization.name != '' and null != organization.name">
-               and name = #{organization.name, jdbcType=VARCHAR}
+           <if test="null != organization">
+               <choose>
+                   <when test="organization.status != '' and null != organization.status">
+                     and status = #{organization.status, jdbcType=VARCHAR}
+                   </when>
+                   <when test="organization.name != '' and null != organization.name">
+                     and name like concat('%',#{organization.name},',%')
+
+                   </when>
+                   <otherwise>
+                    and (parent_ID = '0' or parent_ID is null)
+                   </otherwise>
+               </choose>
            </if>
-       </if>
        </where>
        order by orders asc
    </select>

@@ -18,12 +18,10 @@ import java.util.List;
 public interface OrganizationMapper extends BaseMapper<OrganizationEntity> {
     /**
      * 查询所有符合条件的树
-     * @param condition 包含查询条件的实体类
      * @param organization 符合条件的List
      * @return 符合查询条件的List
      */
-    List<OrganizationEntity> listOrg(@Param("condition") String condition,
-                                     @Param("organization") OrganizationEntity organization);
+    List<OrganizationEntity> listOrg(@Param("organization") OrganizationEntity organization);
 
     /**
      * 根据parentID查询子节点数据

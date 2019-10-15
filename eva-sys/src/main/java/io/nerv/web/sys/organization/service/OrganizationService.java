@@ -24,8 +24,8 @@ public class OrganizationService extends StdBaseService<OrganizationMapper, Orga
      * 查询组织结构树
      * @return
      */
-    public List<OrganizationEntity> listOrg(String condition){
-        return this.mapper.listOrg(condition, null);
+    public List<OrganizationEntity> listOrg(OrganizationEntity organizationEntity){
+        return this.mapper.listOrg(organizationEntity);
     }
 
     /**
@@ -47,7 +47,7 @@ public class OrganizationService extends StdBaseService<OrganizationMapper, Orga
             response = new Response().failure(BizCodeEnum.CHILD_EXIST.getIndex(), StrUtil.format("[{}] 存在子节点，无法删除。",name), null);
          } else {
             this.mapper.deleteBatchIds(ids);
-            response = new Response().success(this.mapper.listOrg(null, null));
+            response = new Response().success(this.mapper.listOrg(null));
         }
 
         return response;
@@ -144,7 +144,7 @@ public class OrganizationService extends StdBaseService<OrganizationMapper, Orga
      * @return 组织树列表
      */
     public List<OrganizationEntity> list(OrganizationEntity organization) {
-        return  this.mapper.listOrg(null, organization);
+        return  this.mapper.listOrg(organization);
     }
 
     /**

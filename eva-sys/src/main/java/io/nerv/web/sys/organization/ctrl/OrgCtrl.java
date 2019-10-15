@@ -1,6 +1,7 @@
 package io.nerv.web.sys.organization.ctrl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import io.nerv.core.enums.BizCodeEnum;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -36,13 +37,6 @@ public class OrgCtrl extends PureBaseCtrl<OrganizationService> {
         boolean exist = this.service.checkUnique(organization);
         return exist? failure(): success();
     }
-
-//    @GetMapping({"/list","/list/{condition}"})
-//    @ApiOperation(value = "获取组织列表",response = Response.class)
-//    public Response listOrg(@ApiParam(name = "condition", value = "组织名称或编码")
-//                            @PathVariable(value = "condition", required = false) String condition){
-//        return success(this.service.listOrg(condition));
-//    }
 
     @GetMapping("/list")
     @ApiOperation(value = "根据实体类属性获取相应的组织树 ", response = Response.class)
@@ -84,7 +78,7 @@ public class OrgCtrl extends PureBaseCtrl<OrganizationService> {
     public Response sortOrg(@ApiParam(name = "organization", value = "{id,orders}")
                             @RequestBody OrganizationEntity[] switchObj){
         this.service.sortOrg(switchObj);
-        return success(this.service.listOrg(null));
+        return success(this.service.listOrg(null), BizCodeEnum.OPERATE_SUCCESS);
     }
 
     @PostMapping("/switchStatus")
