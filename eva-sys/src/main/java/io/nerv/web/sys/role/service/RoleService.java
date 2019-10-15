@@ -67,15 +67,18 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
      * @param roleEntity
      * @return
      */
-    public IPage<RoleEntity> listRole(RoleEntity roleEntity, Integer page) {
+    public IPage<RoleEntity> listRole(RoleEntity roleEntity, Integer page, Integer pageSize) {
 
         page = null != page ? page : 1;
+        pageSize = null != pageSize? pageSize: 10;
         // 查询条件
         QueryWrapper<RoleEntity> wrapper = new QueryWrapper<>(roleEntity);
 
         // 分页条件
         Page pagination = new Page();
         pagination.setCurrent(page);
+        pagination.setSize(pageSize);
+
         return this.mapper.selectPage(pagination,wrapper);
     }
     /**
@@ -145,7 +148,7 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
         role.setModifyBy(securityUtil.getJwtUserId());
 
         this.merge(role);
-        return this.listRole(null, 1);
+        return this.listRole(null, 1, 10);
     }
 
     /**

@@ -45,8 +45,8 @@ public class RoleCtrl extends PureBaseCtrl<RoleService> {
     @GetMapping({"/list"})
     @ApiOperation(value = "获取角色列表", response = Response.class)
     public Response listRoles(@ApiParam(name = "roleEntity", value = "包含角色对象属性的查询条件")
-                             RoleEntity roleEntity, Integer page) {
-        return success(this.service.listRole(roleEntity, page));
+                             RoleEntity roleEntity, Integer page, Integer pageSize) {
+        return success(this.service.listRole(roleEntity, page, pageSize));
     }
 
     @GetMapping({"/listAll"})
@@ -106,7 +106,7 @@ public class RoleCtrl extends PureBaseCtrl<RoleService> {
             throw new ParamException(locale("param_id_notnull"));
         }
         this.service.deleteRole(ids.getParam());
-        return success(this.service.listRole(new RoleEntity(), 1));
+        return success(this.service.listRole(new RoleEntity(), 1, 10));
     }
 
     @PostMapping("/lock")
