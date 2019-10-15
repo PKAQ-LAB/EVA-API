@@ -52,7 +52,7 @@ server:
 eva:
   # 数据权限
   datapermission:
-    exclude: sys_module_resources
+    exclude: sys_module_resources,sys_role_user
   # 缓存配置
   cache:
     timeout: 500
