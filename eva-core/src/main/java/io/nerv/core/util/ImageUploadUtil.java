@@ -100,6 +100,7 @@ public class ImageUploadUtil {
             File sourceFile = new File(tempPath, filename);
             if (!sourceFile.exists()) continue;
             File distFile = new File(evaConfig.getUpload().getStoragePath(), filename);
+
             File distFileThumbnail = new File(evaConfig.getUpload().getStoragePath(), this.THUMBNAIL_NAME + filename);
             this.thumbnail(sourceFile, distFileThumbnail, scale);
             FileUtil.move(sourceFile, distFile, true);
@@ -131,9 +132,9 @@ public class ImageUploadUtil {
      * @param fileName
      */
     public void delFromStorage(String fileName){
-        String tempPath = evaConfig.getUpload().getTempPath();
-        File sourceFile = new File(tempPath, fileName);
-        File sourceThumbnailFile = new File(tempPath, this.THUMBNAIL_NAME+fileName);
+        String sotragePath = evaConfig.getUpload().getStoragePath();
+        File sourceFile = new File(sotragePath, fileName);
+        File sourceThumbnailFile = new File(sotragePath, this.THUMBNAIL_NAME+fileName);
         // 删除原图
         if (sourceFile.exists()) {
             sourceFile.delete();
