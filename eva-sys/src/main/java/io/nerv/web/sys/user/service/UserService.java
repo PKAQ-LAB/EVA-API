@@ -112,10 +112,12 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
         // 新增手工生成主键
         // 编辑， 删除原有头像文件，保存新的头像文件
         String userId = user.getId();
+        boolean isInsert = true;
         if (StrUtil.isBlank(userId)){
             userId = IdWorker.getIdStr();
             user.setId(userId);
         } else {
+            isInsert = false;
             UserEntity oldUser = this.mapper.selectById(userId);
             String avatar = oldUser.getAvatar();
             if (StrUtil.isNotBlank(avatar) && !avatar.equals(user.getAvatar())){
@@ -130,6 +132,11 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
         // 保存权限
         this.saveRoles(user);
 
+        if (isInsert){
+            this.mapper.insert(user);
+        } else {
+            this.mapper.updateById(user);
+        }
         this.merge(user);
         return this.listPage(null, 1);
     }
