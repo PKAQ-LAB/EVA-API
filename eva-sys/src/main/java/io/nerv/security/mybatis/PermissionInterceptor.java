@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.extension.handlers.AbstractSqlParserHandler;
+import io.nerv.core.annotation.Ignore;
 import io.nerv.properties.EvaConfig;
 import io.nerv.security.domain.JwtGrantedAuthority;
 import io.nerv.security.domain.JwtUserDetail;
@@ -25,6 +26,8 @@ import org.apache.ibatis.plugin.*;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,6 +56,11 @@ public class PermissionInterceptor extends AbstractSqlParserHandler implements I
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
+        //  判断是否启用了数据权限
+        if (null != evaConfig.getDataPermission() && !evaConfig.getDataPermission().isEnable()){
+            return invocation.proceed();
+        }
+
         StatementHandler statementHandler = PluginUtils.realTarget(invocation.getTarget());
         MetaObject metaObject = SystemMetaObject.forObject(statementHandler);
 
@@ -61,6 +69,12 @@ public class PermissionInterceptor extends AbstractSqlParserHandler implements I
 
         // 先判断是不是SELECT操作
         MappedStatement mappedStatement = (MappedStatement) metaObject.getValue("delegate.mappedStatement");
+
+        // 是否为排除的语句 通过配置文件或注解
+        if (this.isIgnored(mappedStatement) || this.isExcluded(mappedStatement)){
+            return invocation.proceed();
+        }
+
         if (SqlCommandType.SELECT != mappedStatement.getSqlCommandType()
                 || StatementType.CALLABLE == mappedStatement.getStatementType()) {
             return invocation.proceed();
@@ -174,12 +188,43 @@ public class PermissionInterceptor extends AbstractSqlParserHandler implements I
     }
 
     /**
+     * 判断是否存在忽略注解
+     * @param mappedStatement
+     * @return
+     * @throws ClassNotFoundException
+     */
+    public boolean isIgnored(MappedStatement mappedStatement) throws ClassNotFoundException {
+        String namespace = mappedStatement.getId();
+        String className = namespace.substring(0,namespace.lastIndexOf("."));
+        String methedName= namespace.substring(namespace.lastIndexOf(".") + 1,namespace.length());
+        Method[] ms = Class.forName(className).getMethods();
+
+        return Arrays.stream(ms).filter(item ->
+                                        methedName.equals(item.getName()) && item.getAnnotation(Ignore.class) instanceof Ignore)
+                                .count() > 0;
+    }
+    /**
+     * 判断是否为排除不过滤的语句
+     * @param mappedStatement
+     * @return
+     */
+    public boolean isExcluded(MappedStatement mappedStatement){
+        List<String> excludeTables = evaConfig.getDataPermission().getExcludeStatements();
+        String statementId = mappedStatement.getId();
+        return CollUtil.isNotEmpty(excludeTables)
+               &&
+               excludeTables.stream()
+                            .filter(item -> statementId.equals(item))
+                            .count() > 0;
+    }
+    /**
      * 判断是否存在被排除得表
      * @param select
      * @return
      */
     public boolean isExcluded(Select select) {
-        List<String> excludeTables = evaConfig.getDataPermission().getExclude();
+        List<String> excludeTables = evaConfig.getDataPermission().getExcludeStatements();
+
         if (CollUtil.isEmpty(excludeTables)) return false;
 
         TablesNamesFinder tablesNamesFinder = new TablesNamesFinder();

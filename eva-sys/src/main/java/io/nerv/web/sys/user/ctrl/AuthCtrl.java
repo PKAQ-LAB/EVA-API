@@ -41,9 +41,8 @@ public class AuthCtrl {
     @ApiOperation(value = "获取当前登录用户的信息(菜单.权限.消息)",response = Response.class)
     public Response fetch() throws OathException {
         log.info("[auth/fetch ] - Current active profile is : " + activeProfile);
-        // 开发环境不鉴权直接取admin菜单
-        final String account = securityUtil.getJwtUserId();
+        final var id = securityUtil.getJwtUserId();
 
-        return new Response().success(this.userService.fetch(account));
+        return new Response().success(this.userService.fetch(id));
     }
 }

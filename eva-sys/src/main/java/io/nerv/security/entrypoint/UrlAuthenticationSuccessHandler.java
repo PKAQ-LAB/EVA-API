@@ -71,7 +71,7 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         try(PrintWriter printWriter = httpServletResponse.getWriter()){
             printWriter.write(JSON.toJSONString(
                     new Response()
-                            .success(BizCodeEnum.LOGIN_SUCCESS)));
+                            .success(map, BizCodeEnum.LOGIN_SUCCESS.getName())));
             printWriter.flush();
         }
     }

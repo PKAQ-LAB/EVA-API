@@ -1,6 +1,5 @@
 package io.nerv.web.sys.user.service;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -12,18 +11,20 @@ import io.nerv.core.mvc.service.mybatis.StdBaseService;
 import io.nerv.core.util.ImageUploadUtil;
 import io.nerv.core.util.tree.TreeHelper;
 import io.nerv.security.exception.OathException;
+import io.nerv.web.sys.module.entity.ModuleEntity;
+import io.nerv.web.sys.module.mapper.ModuleMapper;
 import io.nerv.web.sys.organization.mapper.OrganizationMapper;
 import io.nerv.web.sys.role.entity.RoleUserEntity;
 import io.nerv.web.sys.role.mapper.RoleUserMapper;
 import io.nerv.web.sys.user.entity.UserEntity;
 import io.nerv.web.sys.user.mapper.UserMapper;
-import io.nerv.web.sys.user.vo.UserCenterVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 用户管理
@@ -33,7 +34,8 @@ import java.util.List;
 @Service
 public class UserService extends StdBaseService<UserMapper, UserEntity> {
 
-    private BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private OrganizationMapper organizationMapper;
@@ -43,6 +45,9 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
 
     @Autowired
     private ImageUploadUtil imageUploadUtil;
+
+    @Autowired
+    private ModuleMapper moduleMapper;
     /**
      * 查询用户列表
      * @param userEntity
@@ -101,7 +106,7 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
         // 这里传递过来的密码是进行md5加密后的
         String pwd = user.getPassword();
         if (StrUtil.isNotBlank(pwd)){
-            pwd = bCryptPasswordEncoder.encode(pwd);
+            pwd = passwordEncoder.encode(pwd);
             user.setPassword(pwd);
         }
         //设置部门名称
@@ -163,21 +168,24 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
      * @param uid 用户ID
      * @return
      */
-    public UserEntity fetch(String uid) throws OathException {
-        UserEntity userEntity = this.mapper.getUserWithModuleAndRoleById(uid);
+    public Map<String, Object> fetch(String uid) throws OathException {
+        UserEntity userEntity = new UserEntity();
+        userEntity.setId(uid);
+
+        userEntity = this.mapper.getUserWithRole(userEntity);
 
         if (null == userEntity){
             throw new OathException("查询不到该用户");
         }
 
-        if (CollUtil.isEmpty(userEntity.getRoles()) || CollUtil.isEmpty(userEntity.getModules())){
+        List<ModuleEntity> moduleEntity = this.moduleMapper.getRoleModuleByUserId(userEntity.getId());
+        List<BaseTreeEntity> treeModule = new TreeHelper().bulid(moduleEntity);
+
+        if (CollUtil.isEmpty(userEntity.getRoles()) || CollUtil.isEmpty(treeModule)){
             throw new OathException("用户权限不足，请联系管理员");
         }
 
-        List<BaseTreeEntity> treeModule = new TreeHelper().bulid(userEntity.getModules());
-        userEntity.setModules(treeModule);
-
-        return userEntity;
+        return Map.of("user", userEntity, "menus", treeModule);
     }
 
     /**

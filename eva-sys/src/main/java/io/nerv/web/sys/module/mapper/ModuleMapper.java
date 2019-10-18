@@ -1,6 +1,7 @@
 package io.nerv.web.sys.module.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import io.nerv.core.annotation.Ignore;
 import io.nerv.web.sys.module.entity.ModuleEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -48,6 +49,7 @@ public interface ModuleMapper extends BaseMapper<ModuleEntity> {
      * @param userId 用户id
      * @return 符合条件的List
      */
+    @Ignore
     List<ModuleEntity> getRoleModuleByUserId(String userId);
 
     /**

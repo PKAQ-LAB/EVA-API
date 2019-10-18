@@ -97,7 +97,7 @@
           and parent_id = #{module.parent_id,jdbcType=VARCHAR}
         </if>
         <if test="null != module.status and module.status != '' ">
-          and status = #{module.status,jdbcType=VARCHAR}
+          and status in(#{module.status,jdbcType=VARCHAR},'9999')
         </if>
         <if test="null != module.name and module.name != '' ">
           and name like concat('%',#{module.name,jdbcType=VARCHAR},'%')

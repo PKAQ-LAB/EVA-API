@@ -1,5 +1,7 @@
 package io.nerv.web.sys.organization.entity;
 
+import cn.hutool.core.math.MathUtil;
+import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.annotation.SqlCondition;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
@@ -78,7 +80,7 @@ public class OrganizationEntity extends StdBaseEntity {
     private String title;
 
     public String getKey() {
-        return this.getId();
+        return this.getId()+ RandomUtil.randomString(5);
     }
 
     public String getTitle() {

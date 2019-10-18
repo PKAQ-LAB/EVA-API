@@ -28,8 +28,9 @@ public class LoginAuthenticationProvider extends AbstractUserDetailsAuthenticati
 
     @Autowired
     public LoginAuthenticationProvider(UserDetailsService jwtUserDetailsService, PasswordEncoder passwordEncoder) {
-        this.setUserDetailsService(jwtUserDetailsService);
-        this.setPasswordEncoder(passwordEncoder);
+        this.userDetailsService = jwtUserDetailsService;
+        this.passwordEncoder = passwordEncoder;
+
         this.setHideUserNotFoundExceptions(false);
     }
 
@@ -81,6 +82,7 @@ public class LoginAuthenticationProvider extends AbstractUserDetailsAuthenticati
         if (!matches) {
             throw new OathException(BizCodeEnum.ACCOUNT_OR_PWD_ERROR);
         }
+
     }
     @Override
     public boolean supports(Class<?> authentication) {

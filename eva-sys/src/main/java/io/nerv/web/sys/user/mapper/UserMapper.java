@@ -2,6 +2,7 @@ package io.nerv.web.sys.user.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import io.nerv.core.annotation.Ignore;
 import io.nerv.web.sys.user.entity.UserEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -22,12 +23,14 @@ public interface UserMapper extends BaseMapper<UserEntity> {
      * @param page
      * @return
      */
+    @Ignore
     IPage<UserEntity> getUerWithRoleId(IPage page, @Param("user") UserEntity user);
 
     /**
      * 根据用户account 获取包含权限列表的用户信息
      * @return
      */
+    @Ignore
     UserEntity getUserWithRole(UserEntity user);
 
     /**
@@ -35,5 +38,6 @@ public interface UserMapper extends BaseMapper<UserEntity> {
      * @param userId
      * @return
      */
+    @Ignore
     UserEntity getUserWithModuleAndRoleById(String userId);
 }
