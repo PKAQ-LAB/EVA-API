@@ -23,12 +23,14 @@
            </if>
            <if test="null != organization">
                <choose>
+                   <when test="organization.parentId == '' or null == organization.parentId">
+                       and (parent_ID = '0' or parent_ID is null)
+                   </when>
                    <when test="organization.status != '' and null != organization.status">
-                     and status = #{organization.status, jdbcType=VARCHAR}
+                     and status = #{organization.status}
                    </when>
                    <when test="organization.name != '' and null != organization.name">
                      and name like concat('%',#{organization.name},',%')
-
                    </when>
                    <otherwise>
                     and (parent_ID = '0' or parent_ID is null)
