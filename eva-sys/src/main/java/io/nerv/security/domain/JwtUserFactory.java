@@ -1,6 +1,7 @@
 package io.nerv.security.domain;
 
 import io.nerv.core.enums.LockEnumm;
+import io.nerv.core.security.domain.JwtUserDetail;
 import io.nerv.web.sys.role.entity.RoleEntity;
 import io.nerv.web.sys.user.entity.UserEntity;
 

@@ -27,6 +27,7 @@ public interface ModuleMapper extends BaseMapper<ModuleEntity> {
      * @param roleNames
      * @return
      */
+    @Ignore
     List<ModuleEntity> listGrantedModule(@Param("condition") String condition,
                                          @Param("module") ModuleEntity module,
                                          @Param("roleNames") String[] roleNames);

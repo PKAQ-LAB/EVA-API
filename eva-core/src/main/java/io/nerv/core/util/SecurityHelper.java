@@ -1,6 +1,6 @@
-package io.nerv.security.util;
+package io.nerv.core.util;
 
-import io.nerv.security.domain.JwtUserDetail;
+import io.nerv.core.security.domain.JwtUserDetail;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Slf4j
 @Component
-public class SecurityUtil {
+public class SecurityHelper {
     /**
      * 判断是否是管理员
      * @return

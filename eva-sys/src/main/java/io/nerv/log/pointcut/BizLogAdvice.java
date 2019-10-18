@@ -6,7 +6,7 @@ import io.nerv.core.bizlog.annotation.BizLog;
 import io.nerv.core.bizlog.base.BizLogEntity;
 import io.nerv.core.bizlog.base.BizLogSupporter;
 import io.nerv.core.bizlog.condition.BizlogSupporterCondition;
-import io.nerv.security.util.SecurityUtil;
+import io.nerv.core.util.SecurityHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
@@ -31,7 +31,7 @@ public class BizLogAdvice {
     private BizLogSupporter bizLogSupporter;
 
     @Autowired
-    private SecurityUtil securityUtil;
+    private SecurityHelper securityHelper;
 
     @Pointcut("@annotation(io.nerv.core.bizlog.annotation.BizLog)")
     private void bizLog(){}
@@ -51,8 +51,8 @@ public class BizLogAdvice {
         if (null != bizlog){
             BizLogEntity bizLogEntity = new BizLogEntity();
 
-            if( !"anonymousUser".equals(securityUtil.getAuthentication().getPrincipal())){
-                bizLogEntity.setOperator(securityUtil.getJwtUserName());
+            if( !"anonymousUser".equals(securityHelper.getAuthentication().getPrincipal())){
+                bizLogEntity.setOperator(securityHelper.getJwtUserName());
             }
 
             bizLogEntity.setDescription(bizlog.description())

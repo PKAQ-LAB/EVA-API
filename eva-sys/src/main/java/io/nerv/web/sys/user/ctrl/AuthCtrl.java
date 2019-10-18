@@ -1,9 +1,9 @@
 package io.nerv.web.sys.user.ctrl;
 
+import io.nerv.core.util.SecurityHelper;
 import io.nerv.security.exception.OathException;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.util.I18NHelper;
-import io.nerv.security.util.SecurityUtil;
 import io.nerv.web.sys.user.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,7 +31,7 @@ public class AuthCtrl {
     protected I18NHelper i18NHelper;
 
     @Autowired
-    private SecurityUtil securityUtil;
+    private SecurityHelper securityHelper;
 
 
     @Value("${spring.profiles.active}")
@@ -41,7 +41,7 @@ public class AuthCtrl {
     @ApiOperation(value = "获取当前登录用户的信息(菜单.权限.消息)",response = Response.class)
     public Response fetch() throws OathException {
         log.info("[auth/fetch ] - Current active profile is : " + activeProfile);
-        final var id = securityUtil.getJwtUserId();
+        final var id = securityHelper.getJwtUserId();
 
         return new Response().success(this.userService.fetch(id));
     }

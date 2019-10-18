@@ -1,7 +1,6 @@
-package io.nerv.security.domain;
+package io.nerv.core.security.domain;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import io.nerv.core.enums.LockEnumm;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

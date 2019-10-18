@@ -9,6 +9,8 @@ dependencies {
 					"javax.xml.bind:jaxb-api:${jaxb_api}",
 					"com.github.ulisesbocchio:jasypt-spring-boot-starter:${jasypt}"
 
+	api "org.springframework.boot:spring-boot-starter-security:${springBootVersion}"
+
 	// 使用undertow替代tomcat
     api("org.springframework.boot:spring-boot-starter-web:${springBootVersion}"){
 		exclude module: 'spring-boot-starter-tomcat'

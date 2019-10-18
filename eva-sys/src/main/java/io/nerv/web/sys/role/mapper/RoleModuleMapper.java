@@ -1,6 +1,7 @@
 package io.nerv.web.sys.role.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import io.nerv.core.annotation.Ignore;
 import org.apache.ibatis.annotations.Mapper;
 import io.nerv.web.sys.role.entity.RoleModuleEntity;
 import org.apache.ibatis.annotations.Param;
@@ -16,6 +17,7 @@ import java.util.Map;
  */
 @Mapper
 @Repository
+@Ignore
 public interface RoleModuleMapper extends BaseMapper<RoleModuleEntity> {
 
     /**

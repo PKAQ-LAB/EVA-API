@@ -10,7 +10,7 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.nerv.core.enums.LockEnumm;
 import io.nerv.core.mvc.service.mybatis.StdBaseService;
-import io.nerv.security.util.SecurityUtil;
+import io.nerv.core.util.SecurityHelper;
 import io.nerv.web.sys.module.entity.ModuleEntity;
 import io.nerv.web.sys.module.mapper.ModuleMapper;
 import io.nerv.web.sys.role.entity.RoleEntity;
@@ -49,7 +49,7 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
     private UserService userService;
 
     @Autowired
-    private SecurityUtil securityUtil;
+    private SecurityHelper securityHelper;
     /**
      * 查询角色列表
      * @param roleEntity
@@ -143,9 +143,9 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
 
         // 设置创建人 修改人
         if (StrUtil.isBlank(role.getId())){
-            role.setCreateBy(securityUtil.getJwtUserId());
+            role.setCreateBy(securityHelper.getJwtUserId());
         }
-        role.setModifyBy(securityUtil.getJwtUserId());
+        role.setModifyBy(securityHelper.getJwtUserId());
 
         this.merge(role);
         return this.listRole(null, 1, 10);
@@ -174,7 +174,7 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
      */
     public Map<String, Object> listModule(RoleModuleEntity roleModule) {
 
-        boolean isAdmin = securityUtil.isAdmin();
+        boolean isAdmin = securityHelper.isAdmin();
 
         // 获取所有菜单
         ModuleEntity moduleEntity = new ModuleEntity();
@@ -185,7 +185,7 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
         if (isAdmin){
             moduleList = this.moduleMapper.listModule(moduleEntity);
         } else {
-            moduleList = this.moduleMapper.listGrantedModule(null, moduleEntity, securityUtil.getRoleNames());
+            moduleList = this.moduleMapper.listGrantedModule(null, moduleEntity, securityHelper.getRoleNames());
         }
 
         //获取已选且是叶子节点的模块

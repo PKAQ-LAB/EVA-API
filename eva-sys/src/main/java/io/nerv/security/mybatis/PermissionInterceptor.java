@@ -5,10 +5,10 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.extension.handlers.AbstractSqlParserHandler;
 import io.nerv.core.annotation.Ignore;
+import io.nerv.core.security.domain.JwtUserDetail;
+import io.nerv.core.util.SecurityHelper;
 import io.nerv.properties.EvaConfig;
 import io.nerv.security.domain.JwtGrantedAuthority;
-import io.nerv.security.domain.JwtUserDetail;
-import io.nerv.security.util.SecurityUtil;
 import io.nerv.web.sys.role.entity.RoleEntity;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,7 +26,6 @@ import org.apache.ibatis.plugin.*;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -47,11 +46,11 @@ public class PermissionInterceptor extends AbstractSqlParserHandler implements I
 
     private EvaConfig evaConfig;
 
-    private SecurityUtil securityUtil;
+    private SecurityHelper securityHelper;
 
-    public PermissionInterceptor(SecurityUtil securityUtil) {
+    public PermissionInterceptor(SecurityHelper securityHelper) {
         super();
-        this.securityUtil = securityUtil;
+        this.securityHelper = securityHelper;
     }
 
     @Override
@@ -86,9 +85,9 @@ public class PermissionInterceptor extends AbstractSqlParserHandler implements I
         SelectBody selectBody = select.getSelectBody();
         PlainSelect plainSelect = (PlainSelect)selectBody;
 
-        if (securityUtil.getAuthentication() != null && !this.isExcluded(select)){
+        if (securityHelper.getAuthentication() != null && !this.isExcluded(select)){
             // 获得当前请求需要的权限
-            List<RoleEntity> roles = securityUtil.getAuthentication()
+            List<RoleEntity> roles = securityHelper.getAuthentication()
                                                  .getAuthorities()
                                                  .stream()
                                                  .map(item -> {
@@ -134,7 +133,7 @@ public class PermissionInterceptor extends AbstractSqlParserHandler implements I
     public String permissionSql(List<RoleEntity> dataPermission){
         StringBuilder permissionSql = new StringBuilder(" ( ");
 
-        JwtUserDetail jwtUserDetail = securityUtil.getJwtUser();
+        JwtUserDetail jwtUserDetail = securityHelper.getJwtUser();
 
         dataPermission.stream().forEach(item -> {
             if (null == item.getDataPermissionType()) return;
@@ -197,6 +196,13 @@ public class PermissionInterceptor extends AbstractSqlParserHandler implements I
         String namespace = mappedStatement.getId();
         String className = namespace.substring(0,namespace.lastIndexOf("."));
         String methedName= namespace.substring(namespace.lastIndexOf(".") + 1,namespace.length());
+        Class clazz = Class.forName(className);
+        // 判断类注解
+        if (null != clazz && clazz.getAnnotation(Ignore.class) instanceof Ignore){
+            return true;
+        }
+
+        // 判断方法注解
         Method[] ms = Class.forName(className).getMethods();
 
         return Arrays.stream(ms).filter(item ->

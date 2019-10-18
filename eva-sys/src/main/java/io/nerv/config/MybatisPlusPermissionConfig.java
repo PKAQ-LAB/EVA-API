@@ -1,9 +1,8 @@
 package io.nerv.config;
 
+import io.nerv.core.util.SecurityHelper;
 import io.nerv.properties.EvaConfig;
 import io.nerv.security.mybatis.PermissionInterceptor;
-import io.nerv.security.util.SecurityUtil;
-import io.nerv.web.sys.role.mapper.RoleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MybatisPlusPermissionConfig {
     @Autowired
-    private SecurityUtil securityUtil;
+    private SecurityHelper securityHelper;
 
     @Autowired
     private EvaConfig evaConfig;
@@ -25,7 +24,7 @@ public class MybatisPlusPermissionConfig {
     */
    @Bean
    public PermissionInterceptor permissionInterceptor() {
-       PermissionInterceptor permissionInterceptor = new PermissionInterceptor(securityUtil);
+       PermissionInterceptor permissionInterceptor = new PermissionInterceptor(securityHelper);
        permissionInterceptor.setEvaConfig(evaConfig);
        return permissionInterceptor;
    }

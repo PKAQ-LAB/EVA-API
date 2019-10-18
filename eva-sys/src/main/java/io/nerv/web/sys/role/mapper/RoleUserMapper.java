@@ -1,6 +1,7 @@
 package io.nerv.web.sys.role.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import io.nerv.core.annotation.Ignore;
 import org.apache.ibatis.annotations.Mapper;
 import io.nerv.web.sys.role.entity.RoleUserEntity;
 import org.springframework.stereotype.Repository;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Repository;
  */
 @Mapper
 @Repository
+@Ignore
 public interface RoleUserMapper extends BaseMapper<RoleUserEntity> {
 
 }
