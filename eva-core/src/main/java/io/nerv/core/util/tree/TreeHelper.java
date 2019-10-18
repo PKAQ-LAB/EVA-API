@@ -17,7 +17,7 @@ public class TreeHelper {
      * @param moduleEntitys
      * @return
      */
-    public List<BaseTreeEntity> bulid(List<BaseTreeEntity> moduleEntitys) {
+    public List<BaseTreeEntity> bulid(List<? extends BaseTreeEntity> moduleEntitys) {
 
         List<BaseTreeEntity> trees = new ArrayList<>();
 
