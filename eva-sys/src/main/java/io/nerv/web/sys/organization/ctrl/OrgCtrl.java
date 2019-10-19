@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Api("组织管理")
 @RestController
-@RequestMapping("/organization")
+@RequestMapping("/sys/organization")
 public class OrgCtrl extends PureBaseCtrl<OrganizationService> {
 
     @PostMapping("/checkUnique")

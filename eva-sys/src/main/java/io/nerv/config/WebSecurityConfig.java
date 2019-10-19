@@ -46,8 +46,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${spring.profiles.active}")
     private String activeProfile;
 
-    @Value("${eva.security.permit}")
-    private String[] permit;
+    @Value("${eva.security.anonymous}")
+    private String[] anonymous;
 
     @Autowired
     private EvaConfig evaConfig;
@@ -149,7 +149,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
             .authorizeRequests()
             // 对于获取token的rest api要允许匿名访问
-            .antMatchers(permit).permitAll()
+            .antMatchers(anonymous).permitAll()
             // 除上面外的所有请求全部需要鉴权认证
             .anyRequest().authenticated();
 
