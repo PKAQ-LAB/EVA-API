@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Type;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 初始化字典信息
@@ -55,7 +56,16 @@ public class DictRedisHelper implements DictHelperProvider {
 
     @Override
     public Map<String, ?> getAll() {
-        return redisUtil.getAll(DICT_CACHE_KEY+"*");
+        Set<Object> keys = redisUtil.keys(DICT_CACHE_KEY+"*");
+        Map<String, Object> map = new LinkedHashMap<>(keys.size());
+
+        keys.stream().forEach( item -> {
+            String dictKey = item+"";
+            dictKey = dictKey.substring(this.DICT_CACHE_KEY.length());
+            map.put(dictKey, JSON.parse(redisUtil.get(item+"")));
+        });
+
+        return map;
     }
 
     /**
