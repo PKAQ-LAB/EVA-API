@@ -1,5 +1,6 @@
 package io.nerv.web.sys.module.entity;
 
+import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.annotation.SqlCondition;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -46,5 +47,9 @@ public class ModuleEntity extends BaseTreeEntity {
     @TableField(exist = false)
     @ApiModelProperty("模块拥有的资源")
     private List<ModuleResources> resources;
+
+    public String getKey() {
+        return "";
+    }
 
 }
