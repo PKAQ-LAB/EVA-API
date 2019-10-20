@@ -1,7 +1,7 @@
 package io.nerv.web.sys.dict.cache.helper;
 
-import io.nerv.web.sys.dict.cache.DictHelperProvider;
 import io.nerv.core.cache.DefaultCacheCondition;
+import io.nerv.web.sys.dict.cache.DictHelperProvider;
 import io.nerv.web.sys.dict.service.DictService;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +43,11 @@ public class DictMapHelper implements DictHelperProvider {
     @Override
     public void init(Map<String, LinkedHashMap<String, String>> dictMap) {
         this.dictMap = Collections.synchronizedMap(new LinkedHashMap<>(dictMap));
+    }
+
+    @Override
+    public Map<String, LinkedHashMap<String, String>> getAll() {
+        return this.dictMap;
     }
 
     /**

@@ -18,6 +18,12 @@ public interface DictHelperProvider {
      * @param dictMap
      */
     void init(Map<String, LinkedHashMap<String, String>> dictMap);
+
+    /**
+     * 获取所有字典
+     * @return
+     */
+    Map<String, ?> getAll();
     /**
      * 根据code获取 字典项map
      * @param code

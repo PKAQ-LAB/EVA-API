@@ -11,6 +11,7 @@ import io.nerv.core.mvc.service.mybatis.StdBaseService;
 import io.nerv.core.util.ImageUploadUtil;
 import io.nerv.core.util.tree.TreeHelper;
 import io.nerv.security.exception.OathException;
+import io.nerv.web.sys.dict.cache.DictHelperProvider;
 import io.nerv.web.sys.module.entity.ModuleEntity;
 import io.nerv.web.sys.module.mapper.ModuleMapper;
 import io.nerv.web.sys.organization.mapper.OrganizationMapper;
@@ -19,6 +20,7 @@ import io.nerv.web.sys.role.mapper.RoleUserMapper;
 import io.nerv.web.sys.user.entity.UserEntity;
 import io.nerv.web.sys.user.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -48,6 +50,9 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
 
     @Autowired
     private ModuleMapper moduleMapper;
+
+    @Autowired
+    private DictHelperProvider dictHelperProvider;
     /**
      * 查询用户列表
      * @param userEntity
@@ -185,7 +190,7 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
             throw new OathException("用户权限不足，请联系管理员");
         }
 
-        return Map.of("user", userEntity, "menus", treeModule);
+        return Map.of("user", userEntity, "menus", treeModule, "dict", dictHelperProvider.getAll());
     }
 
     /**

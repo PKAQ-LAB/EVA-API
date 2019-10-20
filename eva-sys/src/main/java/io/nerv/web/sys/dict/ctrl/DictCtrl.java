@@ -28,7 +28,7 @@ import javax.validation.Valid;
  */
 @Api("字典管理")
 @RestController
-@RequestMapping("/dict")
+@RequestMapping("/sys/dict")
 public class DictCtrl extends PureBaseCtrl<DictService> {
     @Autowired
     private DictHelperProvider dictHelper;

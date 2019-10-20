@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Api("模块管理")
 @RestController
-@RequestMapping("/module")
+@RequestMapping("/sys/module")
 public class ModuleCtrl extends PureBaseCtrl<ModuleService> {
 
     @PostMapping("/checkUnique")

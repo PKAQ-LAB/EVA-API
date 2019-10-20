@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Api("用户管理")
 @RestController
-@RequestMapping("/account")
+@RequestMapping("/sys/account")
 public class UserCtrl extends PureBaseCtrl<UserService> {
 
     @PostMapping("/checkUnique")

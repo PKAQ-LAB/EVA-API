@@ -53,6 +53,11 @@ public class DictRedisHelper implements DictHelperProvider {
         redisUtil.set(DICT_CACHE_KEY, JSON.toJSONString(dictMap));
     }
 
+    @Override
+    public Map<String, ?> getAll() {
+        return redisUtil.getAll(DICT_CACHE_KEY+"*");
+    }
+
     /**
      * 根据key查找值
      * @param code

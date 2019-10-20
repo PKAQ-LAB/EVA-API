@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Api( tags = "角色管理")
 @RestController
-@RequestMapping("/role")
+@RequestMapping("/sys/role")
 public class RoleCtrl extends PureBaseCtrl<RoleService> {
 
     @PostMapping("/checkUnique")
