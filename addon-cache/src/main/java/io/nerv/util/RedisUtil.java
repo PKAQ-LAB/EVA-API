@@ -1,15 +1,13 @@
 package io.nerv.util;
 
 import cn.hutool.core.collection.CollUtil;
+import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -22,10 +20,6 @@ public class RedisUtil {
     @Autowired
     private RedisTemplate<Object,Object> redisTemplate;
     
-    public RedisTemplate<Object,Object> getInstance(){
-        return redisTemplate;
-    }
-    
     /**
      * 设置 String 类型 key-value
      * @param key
@@ -34,8 +28,7 @@ public class RedisUtil {
     public void set(String key,String value){
         redisTemplate.opsForValue().set(key, value);
     }
-    
-    
+
     /**
      * 获取 String 类型 key-value
      * @param key
@@ -43,6 +36,30 @@ public class RedisUtil {
      */
     public String get(String key){
         return (String) redisTemplate.opsForValue().get(key);
+    }
+
+    /**
+     * 模糊查询
+     * @param key
+     * @return
+     */
+    public Set<Object> keys(String key){
+        return this.redisTemplate.keys(key);
+    }
+    /**
+     * 模糊查询
+     * @param key
+     * @return
+     */
+    public Map<String, ?> getAll(String key){
+        Set<Object> keys = redisTemplate.keys(key);
+        Map<String, Object> map = new LinkedHashMap<>(keys.size());
+
+        keys.stream().forEach( item -> {
+            map.put(item+"", JSON.parse(this.get(item+"")));
+        });
+
+        return map;
     }
     
     /**
