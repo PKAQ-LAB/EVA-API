@@ -12,7 +12,7 @@ public class BizlogSupporterCondition implements Condition {
 
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        String enabled = context.getEnvironment().getProperty("bizlog.enabled");
+        String enabled = context.getEnvironment().getProperty("eva.bizlog.enabled");
         return "true".equalsIgnoreCase(enabled);
     }
 }

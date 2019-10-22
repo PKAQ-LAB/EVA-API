@@ -28,15 +28,16 @@ public class UrlAccessDecisionManager implements AccessDecisionManager {
     @Override
     public void decide(Authentication authentication, Object o,
                        Collection<ConfigAttribute> collection) throws AccessDeniedException {
-        log.debug("collection=" + collection);
+        log.info("collection=" + collection);
 
         HttpServletRequest request = ((FilterInvocation) o).getHttpRequest();
         String requestUrl = ((FilterInvocation) o).getRequestUrl();
+        log.info("当前请求资源为 ： " + requestUrl);
 
         for (ConfigAttribute configAttribute : collection) {
             // 当前请求需要的权限
             String url = configAttribute.getAttribute();
-            log.debug("当前请求资源为 ： " + url);
+
             var urlMatcher = new AntPathRequestMatcher(url);
 
             if (urlMatcher.matches(request)|| StrUtil.equals(requestUrl,url) || StrUtil.equalsAny(requestUrl, this.permit)) return;

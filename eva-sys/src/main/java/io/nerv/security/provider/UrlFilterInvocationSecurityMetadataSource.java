@@ -75,8 +75,8 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
         Collection<ConfigAttribute> set = new ArrayList<>();
         // 获取请求地址
         String requestUrl = ((FilterInvocation) o).getRequestUrl();
-        log.debug("请求URL >> " + requestUrl);
-        log.debug("当前权限：" + securityHelper.getRoleNames());
+        log.info("请求URL >> " + requestUrl);
+        log.info("当前权限：" + securityHelper.getRoleNames());
 
         ConfigAttribute securityConfig = new SecurityConfig("/auth/fetch");
         set.add(securityConfig);
@@ -90,9 +90,9 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
 //      未配置过权限的页面都不需要鉴权，jwtauthfilter已经进行了登录鉴权
 //      该过滤器是过滤链中的最后一个，该处判断返回ROLE_USER会使 premitall 无效
 //      如需配置非授权接口均不可访问需修改此处
-        if (securityHelper.isAdmin()){
-            return null;
-        }
+//        if (securityHelper.isAdmin()){
+//            return null;
+//        }
         return set;
     }
 

@@ -1,6 +1,7 @@
 package io.nerv.security.provider;
 
 import cn.hutool.core.util.StrUtil;
+import io.nerv.core.bizlog.annotation.BizLog;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.security.exception.OathException;
 import lombok.Getter;
@@ -65,6 +66,7 @@ public class LoginAuthenticationProvider extends AbstractUserDetailsAuthenticati
      * @throws OathException
      */
     @Override
+    @BizLog(description = "登录了系统")
     protected void additionalAuthenticationChecks(UserDetails userDetails,
                                                   UsernamePasswordAuthenticationToken authentication) throws OathException {
         if (authentication.getCredentials() == null) {
