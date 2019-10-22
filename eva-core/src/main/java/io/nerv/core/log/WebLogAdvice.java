@@ -2,11 +2,10 @@ package io.nerv.core.log;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.exceptions.ExceptionUtil;
-import com.alibaba.fastjson.JSON;
-import io.nerv.properties.EvaConfig;
 import io.nerv.core.exception.entity.ErrorlogEntity;
 import io.nerv.core.exception.mapper.ErrorlogMapper;
 import io.nerv.core.util.IpUtil;
+import io.nerv.properties.EvaConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
@@ -79,7 +78,7 @@ public class WebLogAdvice {
 
     @AfterThrowing(pointcut = "webLog()", throwing="ex")
     public void doWhenThrowing(JoinPoint joinPoint,Throwable ex){
-        String jsontStack = ExceptionUtil.getMessage(ex);
+        String jsontStack = ExceptionUtil.stacktraceToString(ex);
         log.error(jsontStack);
 
         if (!evaConfig.getErrorLog().isEnabled()) return;
