@@ -18,11 +18,11 @@ import java.time.LocalDate;
 public class DateRangeVo<T> implements Serializable {
     @ApiModelProperty("开始日期")
     @DateTimeFormat(pattern="yyyy-MM-dd")
-    private LocalDate begin = LocalDate.now();
+    private LocalDate begin;
 
     @ApiModelProperty("结束日期")
     @DateTimeFormat(pattern="yyyy-MM-dd")
-    private LocalDate end = LocalDate.now().plusDays(7l);
+    private LocalDate end;
 
     @ApiModelProperty("参数对象")
     private T obj;
