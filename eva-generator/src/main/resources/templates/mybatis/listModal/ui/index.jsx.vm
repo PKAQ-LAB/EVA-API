@@ -115,10 +115,27 @@ export default class Role extends React.PureComponent {
 
     return (
       <Form api={form} {...formItemLayout} colon layout="inline" onSubmit={this.handleSearch}>
-        <Input label="${title}名称" id="name" />
+      #foreach($item in ${search})
+        ## 支持三种类型的条件
+        ## input(0001) \ datapicker(0002) \ selector(0003)
+        #if($item.compomentType == "0001")
+        <Input label="${item.comment}" id="${item.propertyName}" />
 
-        <Input label="角色编码" id="code" />
+        #elseif($item.compomentType == "0002")
+        <DatePicker label="${item.comment}" id="${item.propertyName}" />
 
+        #elseif($item.compomentType == "0003")
+        <Selector label="${item.comment}"
+                  data={dict[$item.codeMapping]}
+                  id="${item.propertyName}"
+                  showAll={false}
+        />
+
+        #else
+        <Input label="${item.comment}" id="${item.propertyName}" />
+
+        #end
+      #end
         <Button type="primary" htmlType="submit" loading={loading}>
           查询
         </Button>
@@ -140,7 +157,9 @@ export default class Role extends React.PureComponent {
           {/* 操作按钮 */}
           <div>{this.renderButton(#if(${selection})selectedRowKeys#end)}</div>
           {/* 查询条件 */}
+          #if($search.size() > 0)
           <div>{this.renderSearchForm()}</div>
+          #end
         </div>
         {/* 删除条幅 */}
         #if(${selection})

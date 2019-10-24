@@ -1,7 +1,6 @@
-package io.nerv.generator.config;
+package io.nerv.web.entity;
 
 import cn.hutool.core.util.StrUtil;
-import io.nerv.generator.dbtype.MySqlTypeConvert;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -41,11 +40,10 @@ public class TableField {
    /** 显示名称 **/
     private String showName;
 
-    public String getPropertyType(){
-        return MySqlTypeConvert.getInstance().processTypeConvert(this.columnType).getType();
-    }
+    /**  属性名 */
+    private String propertyName;
 
-    public String getPropertyName(){
+    public String getPropertyName() {
         return StrUtil.toCamelCase(this.columnName);
     }
 }

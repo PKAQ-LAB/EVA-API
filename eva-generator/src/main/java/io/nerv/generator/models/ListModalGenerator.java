@@ -1,9 +1,10 @@
-package io.nerv.generator;
+package io.nerv.generator.models;
 
 import cn.hutool.extra.template.Template;
 import cn.hutool.extra.template.TemplateConfig;
 import cn.hutool.extra.template.TemplateEngine;
 import cn.hutool.extra.template.TemplateUtil;
+import io.nerv.generator.EvaCodeGenerator;
 
 import java.io.File;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package io.nerv.generator;
+package io.nerv.generator.models;
 
 import java.util.Map;
 

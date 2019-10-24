@@ -1,7 +1,7 @@
 package io.nerv.web.ctrl;
 
 import io.nerv.core.mvc.util.Response;
-import io.nerv.web.entity.GeneratorEntity;
+import io.nerv.web.entity.GeneratorConfig;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +20,7 @@ public class GeneratorCtrl {
     @PostMapping("/generate")
     @ApiOperation(value = "生成代码",response = Response.class)
     public Response generate(@ApiParam(name ="generatorEntity", value = "配置对象")
-                             @RequestBody GeneratorEntity generatorEntity){
+                             @RequestBody GeneratorConfig generatorConfig){
     return new Response().success();
     }
 }

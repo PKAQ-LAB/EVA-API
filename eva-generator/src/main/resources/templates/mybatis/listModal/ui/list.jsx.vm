@@ -67,18 +67,15 @@ export default class List extends React.PureComponent {
 
     const { roles, #if(${selection})selectedRowKeys#end } = this.props.role;
 
-    const columns = [{
-        title: '角色名称',
-        name: 'name',
+    const columns = [
+    #foreach(${column} in ${columns} )
+      {
+        title: '${column.comment}',
+        name: '${column.propertyName}',
         tableItem: {},
-      }, {
-        title: '角色编码',
-        name: 'code',
-        tableItem: {},
-      }, {
-        title: '备注',
-        name: 'remark',
-      }, {
+      },
+    #end
+      {
         tableItem: {
           render: (text, record) =>
             record.status === '0000' && (
@@ -86,18 +83,17 @@ export default class List extends React.PureComponent {
                 <a onClick={e => this.handleEditClick(record, e)}>编辑</a>
                 <Divider type="vertical" />
                 <Popconfirm
-                  title="确定要删除吗？"
-                  okText="确定"
-                  cancelText="取消"
-                  onConfirm={() => this.handleDeleteClick(record)}
+                    title="确定要删除吗？"
+                    okText="确定"
+                    cancelText="取消"
+                    onConfirm={() => this.handleDeleteClick(record)}
                 >
                   <a>删除</a>
                 </Popconfirm>
               </DataTable.Oper>
             ),
         },
-      },
-    ];
+      },]
 
     const dataTableProps = {
       columns,

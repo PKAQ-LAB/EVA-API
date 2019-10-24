@@ -1,7 +1,6 @@
-package io.nerv.generator.config;
+package io.nerv.web.entity;
 
 import cn.hutool.core.util.StrUtil;
-import io.nerv.web.entity.TableConfig;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
