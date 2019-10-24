@@ -17,17 +17,17 @@ public class SingleCodeGenerator {
     // 作者
     private final static String AUTHOR = "PKAQ";
     // 基础包名
-    private final static String BASEPKG = "com.hctms.web";
+    private final static String BASEPKG = "com.jxc.web";
     // 系统名
-    private final static String SYS_NAME = "hctms";
+    private final static String SYS_NAME = "jxc";
 
     // 数据库配置
-    private final static String IP_PORT = "139.219.11.26:3306";
-    private final static String DBNAME = "hctms";
+    private final static String IP_PORT = "192.168.10.166:12306";
+    private final static String DBNAME = "jxc";
     private final static String URL = "jdbc:mysql://"+IP_PORT+"/"+DBNAME+"?useUnicode=true&characterEncoding=UTF-8";
     private final static String DRIVER = "com.mysql.cj.jdbc.Driver";
-    private final static String USER = "hctms";
-    private final static String PWD = "hctms";
+    private final static String USER = "jxc";
+    private final static String PWD = "jxc";
     /**
      * <p>
      * 读取控制台内容
@@ -36,11 +36,10 @@ public class SingleCodeGenerator {
     public static void main(String[] args) {
         // 代码生成器
         AutoGenerator mpg = new AutoGenerator();
-
         // 全局配置
         GlobalConfig gc = new GlobalConfig();
         String projectPath = System.getProperty("user.dir");
-        gc.setOutputDir(projectPath + "/addon-generator/src/main/java");
+        gc.setOutputDir(projectPath + "/eva-generator/src/main/java");
         gc.setAuthor(AUTHOR);
         // 是否打开输出目录
         gc.setOpen(false);
@@ -63,8 +62,9 @@ public class SingleCodeGenerator {
 
         // 包配置
         PackageConfig pc = new PackageConfig();
-        pc.setModuleName("");
-            pc.setParent(BASEPKG);
+        //TODO 模块包名
+        pc.setModuleName("biz");
+        pc.setParent(BASEPKG);
         mpg.setPackageInfo(pc);
 
         // 模板配置
@@ -72,13 +72,13 @@ public class SingleCodeGenerator {
         // xml模板
         templateConfig.setXml(null);
         // entity模板
-        templateConfig.setEntity("/templates/single/entity.java");
+        templateConfig.setEntity("/templates/mybatis/listModal/java/entity.java");
         // controller模板
-        templateConfig.setController("templates/single/controller.java");
+        templateConfig.setController("templates/mybatis/listModal/java/controller.java");
         // mapper模板
-        templateConfig.setMapper("/templates/single/mapper.java");
+        templateConfig.setMapper("/templates/mybatis/listModal/java/mapper.java");
         // service模板
-        templateConfig.setService("/templates/single/service.java");
+        templateConfig.setService("/templates/mybatis/listModal/java/service.java");
         templateConfig.setServiceImpl(null);
 
         // 自定义配置
@@ -99,18 +99,20 @@ public class SingleCodeGenerator {
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
 
         // 定义基类
-        strategy.setSuperEntityClass("io.nerv.core.mvc.entity.StdBaseEntity");
-        strategy.setSuperControllerClass("io.nerv.core.mvc.ctrl.StdBaseCtrl");
+        strategy.setSuperEntityClass("io.nerv.core.mvc.entity.mybatis.StdBaseEntity");
+        strategy.setSuperControllerClass("io.nerv.core.mvc.ctrl.mybatis.StdBaseCtrl");
         strategy.setSuperMapperClass("com.baomidou.mybatisplus.core.mapper.BaseMapper");
-        strategy.setSuperServiceClass("io.nerv.core.mvc.service.StdBaseService");
+        strategy.setSuperServiceClass("io.nerv.core.mvc.service.mybatis.StdBaseService");
 
         strategy.setEntityLombokModel(true);
         strategy.setRestControllerStyle(true);
         strategy.setControllerMappingHyphenStyle(true);
 
-        strategy.setInclude("");
+        //TODO 表名
+        strategy.setInclude("log_biz");
         strategy.setSuperEntityColumns("ID","CREATE_BY","GMT_CREATE","MODIFY_BY","GMT_MODIFY","REMARK");
-        strategy.setTablePrefix("");
+        //TODO 去除表前缀
+        strategy.setTablePrefix("log_");
 
         mpg.setStrategy(strategy);
         mpg.setTemplateEngine(new VelocityTemplateEngine());

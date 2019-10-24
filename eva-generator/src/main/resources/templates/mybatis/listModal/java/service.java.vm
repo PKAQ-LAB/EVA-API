@@ -5,12 +5,8 @@ import ${package.Mapper}.${table.mapperName};
 import ${superServiceClassPackage};
 import org.springframework.stereotype.Service;
 /**
- * <p>
  * $!{table.comment} 服务类
- * </p>
- *
  * @author ${author}
- * @since ${date}
  */
 @Service
 #if(${kotlin})

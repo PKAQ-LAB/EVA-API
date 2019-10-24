@@ -35,6 +35,6 @@ public class ${domainName} extends StdBaseDomain {
         ## 子表
         @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE }, orphanRemoval = true, fetch=FetchType.LAZY)
         @JoinColumn(name = "main_id")
-        private List<${child}DomainLine}> line;
+        private ListJsx<${child}DomainLine}> line;
     #end
 }

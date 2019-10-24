@@ -18,6 +18,9 @@ public class GeneratorConfig {
     /** 名称 **/
     private String title;
 
+    /**  dva name space **/
+    private String namespace;
+
     /** 描述 **/
     private String description;
 
@@ -73,10 +76,19 @@ public class GeneratorConfig {
 
     /** 返回子表类名 **/
     public List<String> getChilds(){
-        return childTables.keySet().stream().map(item -> {
-            String tempStr = StrUtil.subAfter(item, "_", true);
-            tempStr = StrUtil.toCamelCase(tempStr);
-            return StrUtil.upperFirst(tempStr);
-        }).collect(Collectors.toList());
+        return childTables.keySet().stream()
+                          .map(item -> {
+                                    String tempStr = StrUtil.subAfter(item, "_", true);
+                                    tempStr = StrUtil.toCamelCase(tempStr);
+                                    return StrUtil.upperFirst(tempStr);
+                          })
+                          .collect(Collectors.toList());
+    }
+
+    public String getNamespace(){
+        if (StrUtil.isBlank(namespace)){
+            return projectName+"_"+moduleName;
+        }
+        return this.namespace;
     }
 }

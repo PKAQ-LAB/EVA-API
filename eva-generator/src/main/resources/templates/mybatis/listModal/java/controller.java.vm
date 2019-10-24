@@ -14,12 +14,8 @@ import ${superControllerClassPackage};
 #end
 
 /**
- * <p>
  * $!{table.comment} 控制器
- * </p>
- *
  * @author ${author}
- * @since ${date}
  */
 @Api(tags = {"${package.ModuleName}"})
 #if(${restControllerStyle})
@@ -28,10 +24,6 @@ import ${superControllerClassPackage};
 @Controller
 #end
 @RequestMapping("${cfg.sysName}/${package.ModuleName}")
-#if(${kotlin})
-class ${table.controllerName}#if(${superControllerClass}) : ${superControllerClass}()#end
-
-#else
 #if(${superControllerClass})
 public class ${table.controllerName} extends ${superControllerClass}<${table.serviceName}, ${entity}> {
 #else
@@ -39,5 +31,3 @@ public class ${table.controllerName} {
 #end
 
 }
-
-#end
