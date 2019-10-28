@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Modal, TreeSelect } from 'antd';
+import { Row, Col, Drawer } from 'antd';
 import { Form, Input } from 'antx';
 import Selector from '@/components/Selector';
 
@@ -49,7 +49,7 @@ export default class AOEForm extends Component {
     const { dict } = this.props.global;
     const { showDept } = this.state;
     const { modalType, currentItem, orgs } = this.props.role;
-    const { loading, form } = this.props;
+    const { submitting, form } = this.props;
 
     const title = { create: '新增', edit: '编辑', view: '查看' };
 
@@ -64,16 +64,14 @@ export default class AOEForm extends Component {
     };
 
     return (
-      <Modal
-        maskClosable={false}
-        confirmLoading={loading}
-        onCancel={() => this.handleCloseForm()}
-        visible={modalType !== ''}
-        width={600}
-        onOk={() => this.handleSaveClick()}
-        #set($modalTitle = '${title[modalType]')
-        title={`${modalTitle} || ''}${title}`}
-      >
+        <Drawer
+            width={640}
+            maskClosable={false}
+            onClose={() => this.handleCloseForm()}
+            visible={modalType !== ''}
+            #set($modalTitle = '${title[modalType]')
+            title={`${modalTitle} || ''}${title}`}
+        >
         <Form api={form} {...formItemLayout} colon data={currentItem}>
           <Row>
             <Col span={12}>
@@ -140,7 +138,27 @@ export default class AOEForm extends Component {
             />
           )}
         </Form>
-      </Modal>
+
+        <div
+            style={{
+              position: 'absolute',
+              left: 0,
+              bottom: 0,
+              width: '100%',
+              borderTop: '1px solid #e9e9e9',
+              padding: '10px 16px',
+              background: '#fff',
+              textAlign: 'right',
+            }}
+        >
+          <Button onClick={this.handleCloseForm} style={{ marginRight: 8 }} loading={submitting}>
+            取消
+          </Button>
+          <Button onClick={this.handleSaveClick} type="primary" loading={submitting}>
+            保存
+          </Button>
+        </div>
+      </Drawer>
     );
   }
 }

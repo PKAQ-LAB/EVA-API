@@ -1,4 +1,4 @@
-import { fetch, del, save, get, } from '../services/${namespace}Svc';
+import { fetch, del, save, get, } from '../services${namespace}Svc';
 
 export default {
   namespace: '${namespace}',

@@ -1,0 +1,34 @@
+import { stringify } from 'qs';
+import request from '@/utils/request';
+import { getNoUndefinedString } from '@/utils/utils';
+// 根据id获取${title}信息
+export async function get(params) {
+  #set($gnus = '${getNoUndefinedString(params.id)}');
+  return request(`/api/${projectName}/${moduleName}/get/${gnus}`);
+}
+
+// 查询${title}列表}
+export async function fetch(params) {
+  #set($sfy = '${stringify(params)}')
+  return request(`/api/${projectName}/${moduleName}/list?$sfy`);
+}
+
+// 根据ID删除${title}
+export async function del(params) {
+  return request('/api/${projectName}/${moduleName}/del', {
+    method: 'POST',
+    data: {
+      ...params,
+    },
+  });
+}
+
+// 保存${title}信息
+export async function save(params) {
+  return request('/api/${projectName}/${moduleName}/save', {
+    method: 'POST',
+    data: {
+      ...params,
+    },
+  });
+}

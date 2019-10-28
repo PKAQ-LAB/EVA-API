@@ -1,0 +1,193 @@
+import React from 'react';
+import { connect } from 'dva';
+import {#if(${selection})Alert, Popconfirm, #end Button, Divider,  } from 'antd';
+import { PageHeaderWrapper } from '@ant-design/pro-layout';
+import { Form, Input } from 'antx';
+import List from './list.jsx.vm';
+import AOEForm from './aoeform';
+/**
+ * ${title} 主界面
+ */
+@Form.create()
+@connect(state => ({
+  ${namespace}: state.${namespace},
+  loading: state.loading.${namespace},
+}))
+export default class Index extends React.PureComponent {
+  // 新增窗口
+  handlAddClick = () => {
+    this.props.dispatch({
+      type: '${namespace}/updateState',
+      payload: {
+        modalType: 'create',
+        currentItem: {},
+      },
+    });
+  };
+
+  // 重置事件
+  handleFormReset = () => {
+    const { form, dispatch } = this.props;
+    form.resetFields();
+    dispatch({
+      type: '${namespace}/fetch',
+    });
+  };
+
+  // 搜索事件
+  handleSearch = () => {
+    const { dispatch, form } = this.props;
+    form.validateFields((err, fieldsValue) => {
+      if (err) return;
+
+      const values = {
+        ...fieldsValue,
+      };
+
+      dispatch({
+        type: '${namespace}/fetch',
+        payload: values,
+      });
+    });
+  };
+
+  ## 是否批量删除
+  #if(${selection})
+  // 批量删除
+  handleRemoveClick = () => {
+    const { selectedRowKeys } = this.props.${namespace};
+
+    if (!selectedRowKeys) return;
+
+    this.props.dispatch({
+      type: '${namespace}/remove',
+      payload: {
+        param: selectedRowKeys,
+      },
+    });
+  };
+  #end
+  // 操作按钮
+  renderButton(#if(${selection})selectedRowKeys#end) {
+    const { loading } = this.props;
+    return (
+      <>
+        <Button
+          type="primary"
+          icon="plus"
+          onClick={() => this.handlAddClick('create')}
+          loading={loading}
+        >
+          新增${title}
+        </Button>
+        ##  是否渲染多选删除按钮
+        #if(${selection})
+        {selectedRowKeys.length > 0 && (
+          <>
+            <Divider type="vertical" />
+            <span>
+              <Popconfirm
+                title="确定要删除所选${title}吗}?"
+                placement="top"
+                onConfirm={this.handleRemoveClick}
+              >
+                <Button style={{ marginLeft: 8 }} type="danger" icon="remove" loading={loading}>
+                  删除${title}
+                </Button>
+              </Popconfirm>
+            </span>
+          </>
+        )}
+        #end
+      </>
+    );
+  }
+
+  // 简单搜索条件
+  renderSearchForm() {
+    const { form } = this.props;
+    const { loading } = this.props.${namespace};
+
+    const formItemLayout = {
+      labelCol: { span: 8 },
+      wrapperCol: { span: 16 },
+    };
+
+    return (
+      <Form api={form} {...formItemLayout} colon layout="inline" onSubmit={this.handleSearch}>
+      #foreach($item in ${search})
+        ## 支持三种类型的条件
+        ## input(0001) \ datapicker(0002) \ selector(0003)
+        #if($item.compomentType == "0001")
+        <Input label="${item.comment}" id="${item.propertyName}" />
+
+        #elseif($item.compomentType == "0002")
+        <DatePicker label="${item.comment}" id="${item.propertyName}" />
+
+        #elseif($item.compomentType == "0003")
+        <Selector label="${item.comment}"
+                  data={dict[$item.codeMapping]}
+                  id="${item.propertyName}"
+                  showAll={false}
+        />
+
+        #else
+        <Input label="${item.comment}" id="${item.propertyName}" />
+
+        #end
+      #end
+        <Button type="primary" htmlType="submit" loading={loading}>
+          查询
+        </Button>
+        <Divider type="vertical" />
+        <Button htmlType="reset" onClick={() => this.handleFormReset()} loading={loading}>
+          重置
+        </Button>
+      </Form>
+    );
+  }
+
+  render() {
+    const { form } = this.props;
+    const { modalType,#if(${selection}) selectedRowKeys, #end } = this.props.${namespace};
+    return (
+      <PageHeaderWrapper>
+        {/* 工具条 */}
+        <div className="eva-ribbon">
+          {/* 操作按钮 */}
+          <div>{this.renderButton(#if(${selection})selectedRowKeys#end)}</div>
+          {/* 查询条件 */}
+          #if($search.size() > 0)
+          <div>{this.renderSearchForm()}</div>
+          #end
+        </div>
+        {/* 删除条幅 */}
+        #if(${selection})
+        <div className="eva-alert">
+          {selectedRowKeys.length > 0 && (
+            <Alert
+              message={
+                <div>
+                  已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;
+                  {selectedRowKeys.length > 0 && (
+                    <a onClick={this.cleanSelectedKeys} style={{ marginLeft: 24 }}>
+                      清空选择
+                    </a>
+                  )}
+                </div>
+              }
+              type="info"
+              showIcon
+            />
+          )}
+        </div>
+        #end
+        <div className="eva-body">
+          <List searchForm={form} />
+        </div>
+        {/* 新增窗口 */}
+        {modalType !== '' && <AOEForm />}
+      </PageHeaderWrapper>
+    );
+  }
+}
