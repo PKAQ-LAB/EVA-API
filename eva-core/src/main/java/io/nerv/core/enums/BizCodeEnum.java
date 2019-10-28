@@ -12,6 +12,7 @@ public enum BizCodeEnum {
     /** 请求成功 **/
     OPERATE_SUCCESS("操作成功", 0000),
     LOGIN_SUCCESS("登录成功，欢迎回来。", 0001),
+    LOGIN_SUCCESS_WELCOME("登录成功，欢迎回来 [{}]", 0003),
     SAVE_SUCCESS("数据保存成功", 0002),
     /** 请求失败 **/
     PARAM_ERROR("请求参数错误.", 4000),

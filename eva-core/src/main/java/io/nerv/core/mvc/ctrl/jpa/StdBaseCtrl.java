@@ -7,6 +7,7 @@ import io.nerv.core.exception.ParamException;
 import io.nerv.core.mvc.entity.jpa.StdBaseDomain;
 import io.nerv.core.mvc.service.jpa.StdBaseService;
 import io.nerv.core.mvc.util.Response;
+import io.nerv.core.mvc.util.SingleArray;
 import io.nerv.core.util.I18NHelper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -34,12 +35,12 @@ public abstract class StdBaseCtrl<T extends StdBaseService, D extends StdBaseDom
     @PostMapping("del")
     @ApiOperation(value = "根据ID删除/批量删除记录",response = Response.class)
     public Response del(@ApiParam(name = "ids", value = "[记录ID]")
-                        @RequestBody List<D> ids){
+                        @RequestBody SingleArray<D> ids){
 
-        if (CollectionUtil.isEmpty(ids)){
+        if (CollectionUtil.isEmpty(ids.getParam())){
             throw new ParamException(locale("param_id_notnull"));
         }
-        this.service.delete(ids);
+        this.service.delete(ids.getParam());
         return success(ResponseEnumm.DELETE_SUCCESS.getName());
     }
 
