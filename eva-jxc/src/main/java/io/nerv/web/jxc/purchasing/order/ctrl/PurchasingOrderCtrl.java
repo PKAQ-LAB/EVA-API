@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Api( tags = "采购入库单")
 @RestController
-@RequestMapping("/purchasing")
+@RequestMapping("/pdos/purchasing")
 public class PurchasingOrderCtrl extends StdBaseCtrl<PurchasingServices, PurchasingOrder> {
     @GetMapping("/checkCode")
     @ApiOperation(value = "校验code唯一性",response = Response.class)

@@ -35,6 +35,6 @@ public interface PurchasingRepo extends JpaRepository<PurchasingOrder, String> {
     @Query(value = "select " +
             " id, code, order_Date, stock, purchasing_Type, purchaser_Nm, supplier_Nm, NAME, category,gmt_create,gmt_modify,create_by,modify_by " +
             " from " +
-            " jxc_purchasing_order,jxc_porder_line where id = main_id order by gmt_create desc", nativeQuery = true)
+            " jxc_purchasing_order,jxc_purchasing_line where id = main_id order by gmt_create desc", nativeQuery = true)
     Page<PurchasingVo> findAllPurchasingWithLine(Pageable pageable);
 }

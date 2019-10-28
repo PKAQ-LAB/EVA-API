@@ -1,11 +1,12 @@
 package io.nerv.web.sys.dict.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
-import io.nerv.core.mvc.entity.mybatis.StdBaseEntity;
 
 import javax.validation.constraints.NotBlank;
 
@@ -16,8 +17,10 @@ import javax.validation.constraints.NotBlank;
 @Data
 @Alias("dictItem")
 @TableName("sys_dict_item")
-@EqualsAndHashCode(callSuper = true)
-public class DictItemEntity extends StdBaseEntity {
+public class DictItemEntity {
+    @TableId(type = IdType.ID_WORKER_STR)
+    private String id;
+
     @NotBlank(message = "主表ID不允许为空")
     @ApiModelProperty(value = "主表ID", required = true)
     private String mainId;

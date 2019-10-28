@@ -1,5 +1,6 @@
 package io.nerv.core.advice;
 
+import io.nerv.core.bizlog.annotation.BizLog;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.exception.BizException;
 import io.nerv.core.exception.ParamException;
@@ -151,7 +152,7 @@ public class ExceptionAdvice {
     public Response handleException(Exception e) {
         log.error("服务运行异常:"+e.getMessage());
         e.printStackTrace();
-        return new Response().failure(500);
+        return new Response().failure(BizCodeEnum.SERVER_ERROR);
     }
 
     /**

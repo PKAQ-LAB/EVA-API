@@ -100,41 +100,6 @@ public class ModuleService extends StdBaseService<ModuleMapper, ModuleEntity> {
             module.setOrders(this.mapper.listOrder(pid)+1);
         }
 
-        /**
-        写入资源信息, 先删除
-            有id 更新
-            无id 新增
-        */
-        List<ModuleResources> resources = module.getResources();
-
-        if (CollUtil.isNotEmpty(resources)){
-            List<String> ids = new ArrayList<>(resources.size());
-            resources.forEach(item -> {
-                if (StrUtil.isNotBlank(item.getId())){
-                    this.moduleResourceMapper.updateById(item);
-                } else {
-                    item.setId(IdWorker.getIdStr());
-                    item.setModuleId(moduleId);
-                    this.moduleResourceMapper.insert(item);
-                }
-
-                ids.add(item.getId());
-            });
-
-            // 移除被删除的
-            if (StrUtil.isNotBlank(moduleId)){
-                QueryWrapper<ModuleResources> deleteWrapper = new QueryWrapper();
-                deleteWrapper.notIn("id", ids);
-                deleteWrapper.eq("module_id", moduleId);
-                try{
-                    this.moduleResourceMapper.delete(deleteWrapper);
-                } catch(Exception e){
-                    throw new BizException(BizCodeEnum.RESOURCE_USED);
-                }
-            }
-        }
-
-
         String root = "0";
         //  当前编辑节点为子节点
         if(!root.equals(pid) && StrUtil.isNotBlank(pid)){
@@ -182,7 +147,48 @@ public class ModuleService extends StdBaseService<ModuleMapper, ModuleEntity> {
 
         }
         // 持久化
-        this.merge(module);
+        if (StrUtil.isBlank(moduleId)){
+            moduleId = IdWorker.getIdStr();
+            module.setId(moduleId);
+            this.mapper.insert(module);
+        } else {
+            this.mapper.updateById(module);
+        }
+
+        /**
+         写入资源信息, 先删除
+         有id 更新
+         无id 新增
+         */
+        List<ModuleResources> resources = module.getResources();
+
+        if (CollUtil.isNotEmpty(resources)){
+            List<String> ids = new ArrayList<>(resources.size());
+            for (ModuleResources item : resources) {
+                if (StrUtil.isNotBlank(item.getId())){
+                    this.moduleResourceMapper.updateById(item);
+                } else {
+                    item.setId(IdWorker.getIdStr());
+                    item.setModuleId(moduleId);
+                    this.moduleResourceMapper.insert(item);
+                }
+
+                ids.add(item.getId());
+            }
+
+            // 移除被删除的
+            if (StrUtil.isNotBlank(moduleId)){
+                QueryWrapper<ModuleResources> deleteWrapper = new QueryWrapper();
+                deleteWrapper.notIn("id", ids);
+                deleteWrapper.eq("module_id", moduleId);
+                try{
+                    this.moduleResourceMapper.delete(deleteWrapper);
+                } catch(Exception e){
+                    throw new BizException(BizCodeEnum.RESOURCE_USED);
+                }
+            }
+        }
+
 
         // 刷新所有子节点的 path parent_name path_name 当修改状态的时候不用刷新子节点信息
         if (StrUtil.isNotBlank(module.getId()) && null != originModule){

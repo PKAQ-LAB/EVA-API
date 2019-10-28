@@ -141,6 +141,7 @@ public class DictService extends StdBaseService<DictMapper, DictEntity> {
 
                 if (CollUtil.isNotEmpty(dictEntity.getLines())){
                     dictEntity.getLines().forEach(item -> {
+                        item.setMainId(id);
                         dictItemMapper.insert(item);
                     });
                 }
