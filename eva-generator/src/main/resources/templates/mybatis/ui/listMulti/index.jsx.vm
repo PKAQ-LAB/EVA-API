@@ -1,0 +1,83 @@
+import React, { PureComponent } from 'react';
+import { connect } from 'dva';
+import { Card, Tabs, Icon } from 'antd';
+import { PageHeaderWrapper } from '@ant-design/pro-layout';
+import List from './list';
+import AOEForm from './aoeform';
+import ViewForm from './viewform';
+
+const { TabPane } = Tabs;
+/**
+ * ${title} 主界面
+ */
+@connect(state => ({
+  ${namespace}: state.${namespace},
+}))
+export default class Index extends PureComponent {
+  // tab 切换
+  handleTabChange = activeKey => {
+    this.props.dispatch({
+      type: '${namespace}/updateState',
+      payload: {
+        activeKey,
+      },
+    });
+  };
+
+  render() {
+    const { editTab, activeKey, operateType, viewTab } = this.props.${namespace};
+
+    return (
+      <PageHeaderWrapper title="${title}" content="${description}">
+        <Card bordered={false}>
+          <Tabs activeKey={activeKey} onChange={this.handleTabChange}>
+            {/* 列表界面 */}
+            <TabPane
+              tab={
+                <span>
+                  <Icon type="unordered-list" />
+                    ${title}列表
+                </span>
+              }
+              key="list"
+            >
+              <List />
+            </TabPane>
+
+            {/* 编辑界面 */}
+            {editTab && (
+              <TabPane
+                closable
+                tab={
+                  <span>
+                    <Icon type="edit" />
+                    {operateType === 'create' ? '新增'${title} : '编辑'${title}}
+                  </span>
+                }
+                key="edit"
+              >
+                <AOEForm />
+              </TabPane>
+            )}
+
+            {/* 查看界面 */}
+            {viewTab && (
+              <TabPane
+                closable
+                tab={
+                  <span>
+                    <Icon type="edit" />
+                    查看${title}
+                  </span>
+                }
+                key="view"
+              >
+                <ViewForm />
+              </TabPane>
+            )}
+          </Tabs>
+        </Card>
+      </PageHeaderWrapper>
+    );
+  }
+}

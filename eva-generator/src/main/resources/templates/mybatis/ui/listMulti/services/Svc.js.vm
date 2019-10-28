@@ -1,0 +1,40 @@
+import { stringify } from 'qs';
+import request from '@src/utils/request';
+import { getNoUndefinedString } from '@src/utils/utils';
+
+#set($sfy = '${stringify(params)}')
+// 查询列表
+export async function list(params) {
+  return request(`/api/${projectName}/${moduleName}/list?${sfy}`);
+}
+
+// 删除记录
+export async function del(params) {
+  return request('/api/${projectName}/${moduleName}/del', {
+    method: 'POST',
+    data: {
+      ...params,
+    },
+  });
+}
+
+// 校验编码是否唯一
+export async function checkCode(params) {
+  return request(`/api/${projectName}/${moduleName}/checkCode?${sfy}`);
+}
+
+// 保存运单信息
+export async function edit(params) {
+  return request('/api/${projectName}/${moduleName}/edit', {
+    method: 'POST',
+    data: {
+      ...params,
+    },
+  });
+}
+
+// 根据id获取全部信息
+export async function get(params) {
+    #set($gnus = '${getNoUndefinedString(params.id)}');
+  return request(`/api/${projectName}/${moduleName}/get/${gnus}`);
+}
