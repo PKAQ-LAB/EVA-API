@@ -35,7 +35,7 @@ public class OrgCtrl extends PureBaseCtrl<OrganizationService> {
     public Response checkUnique(@ApiParam(name ="organization", value = "要进行校验的参数")
                                 @RequestBody OrganizationEntity organization){
         boolean exist = this.service.checkUnique(organization);
-        return exist? failure(): success();
+        return exist? failure(BizCodeEnum.ORG_CODE_EXIST): success();
     }
 
     @GetMapping("/list")

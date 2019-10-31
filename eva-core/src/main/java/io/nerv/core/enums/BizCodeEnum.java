@@ -35,6 +35,8 @@ public enum BizCodeEnum {
     RESOURCE_USED("资源已经被引用，无法删除。", 4304),
     PARENT_NOT_AVAILABLE("父节点为禁用状态，无法启用。", 4305),
     MODULE_RESOURCE_USED("模块下存在已经被引用的资源，无法删除。", 4306),
+    // 部门管理
+    ORG_CODE_EXIST("组织(部门)编码已经存在", 4310),
     /** 上传相关 **/
     FILENAME_ERROR("上传名称错误",4307),
     FILESAVE_ERROR("文件保存失败",4308),
