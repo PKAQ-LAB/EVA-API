@@ -43,7 +43,7 @@ public class BizLogCtrl {
         QueryWrapper<MybatisBizLogEntity> wrapper = new QueryWrapper<>();
 
         LocalDate begin = dateRange.getBegin();
-        LocalDate end = LocalDate.now();
+        LocalDate end = dateRange.getEnd();
 
         if (null == begin){
             begin = LocalDate.now().minusDays(7);

@@ -1,9 +1,12 @@
 package io.nerv.security.entrypoint;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.ServletUtil;
 import com.alibaba.fastjson.JSON;
+import io.nerv.core.bizlog.base.BizLogEntity;
+import io.nerv.core.bizlog.base.BizLogSupporter;
 import io.nerv.core.constant.TokenConst;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.util.Response;
@@ -35,6 +38,9 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
 
     @Autowired
     private EvaConfig evaConfig;
+
+    @Autowired
+    private BizLogSupporter bizLogSupporter;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
@@ -68,6 +74,15 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         Map<String, Object> map = new HashMap<>(2);
         map.put("user", user);
         map.put("token", token);
+
+        BizLogEntity bizLogEntity = new BizLogEntity();
+        bizLogEntity.setDescription(user.getAccount() + " 登录了系统")
+                .setOperateDatetime(DateUtil.now())
+                .setOperator(user.getAccount())
+                .setOperateType("login");
+
+        bizLogSupporter.save(bizLogEntity);
+
 
         try(PrintWriter printWriter = httpServletResponse.getWriter()){
             printWriter.write(JSON.toJSONString(
