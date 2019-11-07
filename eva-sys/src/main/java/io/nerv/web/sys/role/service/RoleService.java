@@ -202,7 +202,6 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
                     checked.add(rme.getModuleId());
                 }
 
-
                 String rid = rme.getResourceId();
                 String mid = rme.getModuleId();
 

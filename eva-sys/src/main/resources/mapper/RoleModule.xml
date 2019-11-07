@@ -10,7 +10,6 @@
         sys_role_module rm ,sys_module m
     where
         rm.module_id=m.id
-        and m.isleaf=1
     <if test="@cn.hutool.core.util.StrUtil@isNotBlank(entity.roleId)">
         and rm.role_Id=#{entity.roleId,jdbcType=VARCHAR}
     </if>
