@@ -1,9 +1,13 @@
 package io.nerv.core.enums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /**
  * @author: S.PKAQ
- * @Datetime: 2018/4/10 7:21
  */
+@Getter
+@AllArgsConstructor
 public enum LockEnumm {
     /**
      * 锁定
@@ -19,25 +23,4 @@ public enum LockEnumm {
      * 索引
      */
     private String index;
-
-    LockEnumm(String name, String index) {
-        this.name = name;
-        this.index = index;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getIndex() {
-        return index;
-    }
-
-    public void setIndex(String index) {
-        this.index = index;
-    }
 }
