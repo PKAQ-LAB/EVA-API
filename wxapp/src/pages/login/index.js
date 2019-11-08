@@ -154,7 +154,7 @@ class Login extends Component {
     return (
       <View className="login-page" id="login-page">
         <View className="title">您好，请登录</View>
-        <View className="title-des">新用户注册即享18天会员98元</View>
+        <View className="title-des">未注册用户登录,系统将自动进行注册.</View>
         <View className="bgtopWrap">
           <View className="loginWrap">
             <View className="inpuWrapMpblie">
@@ -194,8 +194,7 @@ class Login extends Component {
               登录
             </Button>
             <View className="see-des" onClick={this.getVoiceCode}>
-              收不到短信？
-              <Text>使用语音验证码</Text>
+                忘记密码?
             </View>
           </View>
         </View>
