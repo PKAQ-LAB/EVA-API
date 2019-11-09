@@ -8,3 +8,7 @@
 /*.lock
 /*/out
 
+/wxapp/yarn.lock
+/wxapp/.history
+/wxapp/.temp
+/wxapp/node_modules

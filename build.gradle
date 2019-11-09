@@ -4,7 +4,7 @@ plugins {
 }
 
 ext {
-    springBootVersion = '2.1.9.RELEASE'
+    springBootVersion = '2.2.1.RELEASE'
     mysql = "8.0.18"
     fastjson = "1.2.62"
     mybatis_plus_starter = "3.2.0"
@@ -23,7 +23,7 @@ ext {
 allprojects {
     apply plugin: "name.remal.check-dependency-updates"
     group = 'io.nerv'
-    version = '2.0.0.beta'
+    version = '2.0.1.beta'
 }
 
 subprojects {
