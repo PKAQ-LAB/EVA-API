@@ -8,13 +8,16 @@ import lombok.Data;
 @Data
 public class Upload {
 
-    // 图片上传存储临时路径
+    // 上传存储临时路径
     private String tempPath;
 
-    // 图片上传存储路径
+    // 上传存储路径
     private String storagePath;
 
-    // 图片后缀名集
+    // 后缀名集
     private String allowSuffixName;
+
+    // 服务器地址
+    private String serverUrl;
 
 }

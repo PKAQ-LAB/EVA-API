@@ -1,9 +1,10 @@
-package io.nerv.core.util;
+package io.nerv.core.upload.util;
 
 import cn.hutool.core.img.ImgUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.http.HttpUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import io.nerv.core.exception.ImageUploadException;
 import io.nerv.properties.EvaConfig;
@@ -13,13 +14,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
- * 文件上传工具类
+ * 文件上传工具类 - 使用fastdfs
  */
 @Slf4j
 @Component
-public class ImageUploadUtil {
+public class DfsImageUploadUtil implements ImageUploadProvider {
 
     private Snowflake snowflake = IdUtil.createSnowflake(SNOW, FLAKE);
 
@@ -37,6 +41,7 @@ public class ImageUploadUtil {
      * @param image
      * @return
      */
+    @Override
     public String upload(MultipartFile image){
         // 上传图片名
         String fileName = image.getOriginalFilename();
@@ -74,25 +79,33 @@ public class ImageUploadUtil {
         return newFileName;
     }
 
+
     /**
      * 将图片从缓存目录移动到storage目录
      * @param filenames
+     * @return
      */
-    public void storage(String... filenames){
+    public List<String> storage(String... filenames){
+
         String tempPath = evaConfig.getUpload().getTempPath();
+
+        List results = new ArrayList(filenames.length);
 
         for (String filename : filenames) {
             File sourceFile = new File(tempPath, filename);
             if (!sourceFile.exists()) continue;
-            File distFile = new File(evaConfig.getUpload().getStoragePath(), filename);
-            FileUtil.move(sourceFile, distFile, true);
+
+            results.add(this.transfer(sourceFile));
         }
+
+        return results;
     }
 
     /**
      * 将图片从缓存目录移动到storage目录并生成缩略图
      * @param filenames
      */
+    @Override
     public void storageWithThumbnail(float scale, String... filenames){
         String tempPath = evaConfig.getUpload().getTempPath();
 
@@ -112,6 +125,7 @@ public class ImageUploadUtil {
      * @param file
      * @param scale
      */
+    @Override
     public void thumbnail(File file, float scale){
         File destFile = new File(file.getParent(), this.THUMBNAIL_NAME + file.getName());
         ImgUtil.scale(file, destFile, scale);
@@ -123,6 +137,7 @@ public class ImageUploadUtil {
      * @param dest
      * @param scale
      */
+    @Override
     public void thumbnail(File file, File dest, float scale){
         ImgUtil.scale(file, dest, scale);
     }
@@ -131,6 +146,7 @@ public class ImageUploadUtil {
      * 从持久目录删除图片以及缩略图
      * @param fileName
      */
+    @Override
     public void delFromStorage(String fileName){
         String sotragePath = evaConfig.getUpload().getStoragePath();
         File sourceFile = new File(sotragePath, fileName);
@@ -143,6 +159,25 @@ public class ImageUploadUtil {
         if (sourceThumbnailFile.exists()) {
             sourceThumbnailFile.delete();
         };
+    }
+
+    /**
+     * 传输到go-fastdfs
+     * @return
+     */
+    public String transfer(File file){
+        //声明参数集合
+        HashMap<String, Object> paramMap = new HashMap<>();
+        //文件
+        paramMap.put("file", file);
+        //输出
+        paramMap.put("output","json");
+        //自定义路径
+        paramMap.put("path","image");
+        //场景
+        paramMap.put("scene","image");
+        //上传
+        return HttpUtil.post(evaConfig.getUpload().getServerUrl(), paramMap);
     }
 
 }
