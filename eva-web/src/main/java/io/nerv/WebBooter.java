@@ -36,6 +36,7 @@ public class WebBooter implements CommandLineRunner {
     @Override
     public void run(String... args) {
         log.info(" ---- 字典初始化 开始 ---- ");
+
         this.dictHelperProvider.init();
         log.info(" ---- 字典初始化 结束 ---- ");
     }
@@ -43,6 +44,7 @@ public class WebBooter implements CommandLineRunner {
     public static void main(String[] args) {
         SpringApplication.run(WebBooter.class, args);
     }
+
     /**
      * 用于接受 shutdown 事件
      */

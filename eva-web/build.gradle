@@ -8,7 +8,7 @@ jar {
 }
 
 bootJar {
-	mainClassName = 'io.nerv.Booter'
+	mainClassName = 'io.nerv.WebBooter'
 }
 
 description = """web"""
