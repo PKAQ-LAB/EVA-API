@@ -76,7 +76,7 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
         // 获取请求地址
         String requestUrl = ((FilterInvocation) o).getRequestUrl();
         log.info("请求URL >> " + requestUrl);
-        log.info("当前权限：" + securityHelper.getRoleNames());
+        log.info("当前权限：" + securityHelper.getRoleNames().toString());
 
         ConfigAttribute securityConfig = new SecurityConfig("/auth/fetch");
         set.add(securityConfig);

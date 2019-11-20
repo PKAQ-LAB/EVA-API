@@ -40,7 +40,9 @@ public class UrlAccessDecisionManager implements AccessDecisionManager {
 
             var urlMatcher = new AntPathRequestMatcher(url);
 
-            if (urlMatcher.matches(request)|| StrUtil.equals(requestUrl,url) || StrUtil.equalsAny(requestUrl, this.permit)) return;
+            if (urlMatcher.matches(request) ||
+                StrUtil.equals(requestUrl,url) ||
+                StrUtil.startWithAny(requestUrl, this.permit)) return;
         }
         throw new AccessDeniedException(BizCodeEnum.PERMISSION_DENY.getName());
     }
