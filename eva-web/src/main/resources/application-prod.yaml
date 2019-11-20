@@ -4,7 +4,8 @@ logging:
   pattern:
     level: WARN
   # 日志文件配置
-  path: /opt/data/logs/webapp.log
+  file:
+    path: /opt/data/logs/webapp.log
 # 数据源
 spring:
   datasource:
