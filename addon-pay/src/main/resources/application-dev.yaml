@@ -1,5 +1,0 @@
-debug: false
-# 日志
-logging:
-  pattern:
-    level: debug

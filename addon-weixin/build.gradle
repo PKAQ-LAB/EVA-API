@@ -2,11 +2,13 @@ apply from: '../publish.gradle'
 project.archivesBaseName = 'addon-weixin'
 
 ext{
-    weixin_cp = "3.5.0"
+    weixin = "3.5.0"
+    weixin_pay = "3.0.9"
 }
 
 dependencies {
     implementation project(":eva-core")
 
-    api "com.github.binarywang:weixin-java-mp:${weixin_cp}"
+    // 微信公众号
+    api "com.github.binarywang:weixin-java-mp:${weixin}"
 }

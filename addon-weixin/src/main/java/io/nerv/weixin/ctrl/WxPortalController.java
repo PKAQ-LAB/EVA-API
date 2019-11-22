@@ -1,5 +1,6 @@
 package io.nerv.weixin.ctrl;
 
+import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.mp.api.WxMpMessageRouter;
@@ -10,11 +11,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
+@Api("微信接口配置信息回调接口")
 @AllArgsConstructor
 @RestController
 @RequestMapping("/wx/portal/{appId}")
 public class WxPortalController {
-    private final WxMpService wxService;
+    private final WxMpService wxMpService;
 
     private final WxMpMessageRouter messageRouter;
 
@@ -31,11 +33,11 @@ public class WxPortalController {
             throw new IllegalArgumentException("请求参数非法，请核实!");
         }
 
-        if (!this.wxService.switchover(appId)) {
+        if (!this.wxMpService.switchover(appId)) {
             throw new IllegalArgumentException(String.format("未找到对应appId=[%s]的配置，请核实！", appId));
         }
 
-        if (wxService.checkSignature(timestamp, nonce, signature)) {
+        if (wxMpService.checkSignature(timestamp, nonce, signature)) {
             return echostr;
         }
 
@@ -55,11 +57,11 @@ public class WxPortalController {
                 + " timestamp=[{}], nonce=[{}], requestBody=[\n{}\n] ",
             openid, signature, encType, msgSignature, timestamp, nonce, requestBody);
 
-        if (!this.wxService.switchover(appId)) {
+        if (!this.wxMpService.switchover(appId)) {
             throw new IllegalArgumentException(String.format("未找到对应appId=[%s]的配置，请核实！", appId));
         }
 
-        if (!wxService.checkSignature(timestamp, nonce, signature)) {
+        if (!wxMpService.checkSignature(timestamp, nonce, signature)) {
             throw new IllegalArgumentException("非法请求，可能属于伪造的请求！");
         }
 
@@ -75,7 +77,7 @@ public class WxPortalController {
             out = outMessage.toXml();
         } else if ("aes".equalsIgnoreCase(encType)) {
             // aes加密的消息
-            WxMpXmlMessage inMessage = WxMpXmlMessage.fromEncryptedXml(requestBody, wxService.getWxMpConfigStorage(),
+            WxMpXmlMessage inMessage = WxMpXmlMessage.fromEncryptedXml(requestBody, wxMpService.getWxMpConfigStorage(),
                 timestamp, nonce, msgSignature);
             log.debug("\n消息解密后内容为：\n{} ", inMessage.toString());
             WxMpXmlOutMessage outMessage = this.route(inMessage);
@@ -83,7 +85,7 @@ public class WxPortalController {
                 return "";
             }
 
-            out = outMessage.toEncryptedXml(wxService.getWxMpConfigStorage());
+            out = outMessage.toEncryptedXml(wxMpService.getWxMpConfigStorage());
         }
 
         log.debug("\n组装回复信息：{}", out);
