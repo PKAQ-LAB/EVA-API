@@ -28,7 +28,7 @@ dependencies {
             "com.baomidou:mybatis-plus-boot-starter:${mybatis_plus_starter}",
 			// swagger
 			"io.springfox:springfox-swagger2:${swagger}",
-			"com.github.xiaoymin:swagger-bootstrap-ui:${swagger_ui}"
+			"com.github.xiaoymin:knife4j-spring-boot-starter:${swagger_ui}"
             
    testImplementation "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
 }

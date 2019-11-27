@@ -11,4 +11,6 @@ dependencies {
 
     // 微信公众号
     api "com.github.binarywang:weixin-java-mp:${weixin}"
+    // 微信支付
+    api "com.github.binarywang:weixin-java-pay:${weixin}"
 }
