@@ -41,6 +41,10 @@ public enum BizCodeEnum {
     FILENAME_ERROR("上传名称错误",4307),
     FILESAVE_ERROR("文件保存失败",4308),
     FILETYPE_NOT_SUPPORTED("不支持的文件格式",4309),
+    /** 三方调用 **/
+    /** 微信 **/
+    WEIXIN_JSTICKET_ERROR("获取jsapi_ticket失败", 4401),
+
 
     /** 权限相关 **/
     PERMISSION_DENY ("权限不足", 4200);
