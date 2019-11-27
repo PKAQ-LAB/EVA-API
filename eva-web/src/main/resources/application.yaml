@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: dev
+    active: prod
   # flyway配置 对于非空数据库 需要开启此项避免报错
   flyway:
     baseline-on-migrate: true
@@ -51,12 +51,26 @@ server:
   port: 9009
 # 微信配置
 wechat:
+  pay:
+    appId: wxefdd141dc453eec5
+    mchId: 1561278171
+    mchKey: c180aaadf5ab10fb3a733f43f3ffc4b3
+    # p12证书的位置，可以指定绝对路径，也可以指定类路径（以classpath:开头）
+    keyPath: classpath:cert/apiclient_cert.p12
   mp:
     configs:
-      - appId: wxfd7f50aa599242f8
-        secret : dd24c23ff8e61fa261307f47d9962dc5
-        token: nerv
-        aesKey: DHFzG3nOljaZ6DZiaHOFzizWzVL1XvlGISKTCtvbS1T
+#      - appId: wxefdd141dc453eec5
+#        secret : b924bc4582c280826fce5575b0b93389
+#        token: relax
+#        aesKey: DHFzG3nOljaZ6DZiaHOFzizWzVL1XvlGISKTCtvbS1T
+#      - appId: wxfd7f50aa599242f8
+#        secret: dd24c23ff8e61fa261307f47d9962dc5
+#        token: nerv
+#        aesKey: DHFzG3nOljaZ6DZiaHOFzizWzVL1XvlGISKTCtvbS1T
+      - appId: wx12b27a68cc6951da
+        secret: 5581e5364618a666ffbbb36dfd56d3fe
+#        token: nerv
+#        aesKey: DHFzG3nOljaZ6DZiaHOFzizWzVL1XvlGISKTCtvbS1T
 # 业务日志
 eva:
   # 数据权限
@@ -86,6 +100,6 @@ eva:
     threshold: 86400000
   security:
     # 无需鉴权路径(无条件访问)
-    anonymous: /auth/login,/auth/logout,/wx/portal/**
+    anonymous: /auth/login,/auth/logout,/wx/portal/**,/wx/redirect/**,/wx/pay/**
     # 无需资源鉴权的路径
-    permit: /auth/**,/wx/portal
+    permit: /auth/**,/wx/portal,/wx/redirect,/wx/pay

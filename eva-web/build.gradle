@@ -19,8 +19,9 @@ dependencies {
    implementation project(":eva-core"),
 				  project(":eva-sys"),
                   project(":eva-jxc"),
-                  project(":addon-cache"),
                   project(":addon-weixin"),
+                  project(":addon-pay"),
+                  project(":addon-cache"),
 				  "org.springframework.boot:spring-boot-devtools"
 
    testImplementation "org.springframework.boot:spring-boot-starter-test"
