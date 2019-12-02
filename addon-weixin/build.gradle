@@ -2,8 +2,7 @@ apply from: '../publish.gradle'
 project.archivesBaseName = 'addon-weixin'
 
 ext{
-    weixin = "3.5.0"
-    weixin_pay = "3.0.9"
+    weixin = "3.6.0"
 }
 
 dependencies {
