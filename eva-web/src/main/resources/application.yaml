@@ -43,7 +43,7 @@ mybatis-plus:
 # 配置加密
 jasypt:
   encryptor:
-    password: eva
+    password: ::eva
 # server配置
 server:
   servlet:

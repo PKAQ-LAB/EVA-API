@@ -4,9 +4,6 @@ import io.nerv.server.undertow.GracefulShutdownUndertowWrapper;
 import io.nerv.web.sys.dict.cache.DictHelperProvider;
 import io.undertow.UndertowOptions;
 import lombok.extern.slf4j.Slf4j;
-import me.chanjar.weixin.common.bean.WxJsapiSignature;
-import me.chanjar.weixin.common.error.WxErrorException;
-import me.chanjar.weixin.mp.api.WxMpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -29,32 +26,18 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 public class WebBooter implements CommandLineRunner {
 
     @Autowired
-    private WxMpService wxMpService;
-
-    @Autowired
     private DictHelperProvider dictHelperProvider;
 
     @Autowired
     private GracefulShutdownUndertowWrapper gracefulShutdownUndertowWrapper;
 
     @Override
-    public void run(String... args) throws WxErrorException {
+    public void run(String... args) {
         log.info(" ---- 字典初始化 开始 ---- ");
         this.dictHelperProvider.init();
-        String tk = wxMpService.getAccessToken();
-        String jstk = wxMpService.getJsapiTicket();
-        WxJsapiSignature sign = wxMpService.createJsapiSignature("http://paytest.relaxgroup.cn");
-
-        System.out.println("tk : " + tk);
-        System.out.println("JSTicket : " + jstk);
-        System.out.println("sign  : " + sign.toString());
-
-        String rurl = "http://paytest.relaxgroup.cn/api/wx/pay/getJSSDKPayInfo";
-        System.out.println(wxMpService.oauth2buildAuthorizationUrl(rurl, "snsapi_userinfo", "STATE"));
-
-
         log.info(" ---- 字典初始化 结束 ---- ");
     }
+
 
     public static void main(String[] args) {
         SpringApplication.run(WebBooter.class, args);

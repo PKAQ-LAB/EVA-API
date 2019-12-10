@@ -44,7 +44,7 @@ spring:
 ```
 # 法二
 下载jasypt压缩包 解压后执行
-encrypt input=root123 password=::Lazy@8 algorithm=PBEWITHMD5ANDDES
+encrypt input=jxc password=::eva algorithm=PBEWITHHMACSHA512ANDAES_256
 
 
 > 参考: https://github.com/ulisesbocchio/jasypt-spring-boot
