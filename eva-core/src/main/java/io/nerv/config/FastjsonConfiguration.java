@@ -10,7 +10,6 @@ import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.HttpMessageConverter;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -23,10 +22,10 @@ import java.util.List;
  */
 @SuppressWarnings("Duplicates")
 @Configuration
-@ConditionalOnMissingBean
 public class FastjsonConfiguration {
 
     @Bean
+    @ConditionalOnMissingBean
     public HttpMessageConverters fastJsonHttpMessageConverters() {
         //定义一个转换消息的对象
         FastJsonHttpMessageConverter fastConverter = new FastJsonHttpMessageConverter();

@@ -1,0 +1,24 @@
+plugins {
+    id 'org.springframework.boot' version '2.2.1.RELEASE'
+}
+apply plugin: 'io.spring.dependency-management'
+
+jar {
+    enabled = true
+}
+
+bootJar {
+    mainClassName = 'io.nerv.AdminBooter'
+}
+
+description = """jxc"""
+// 依赖配置
+dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-web"){
+        exclude module: 'spring-boot-starter-tomcat'
+    }
+
+    implementation "org.springframework.boot:spring-boot-starter-undertow",
+                   "de.codecentric:spring-boot-admin-starter-server:${boot_admin}"
+
+}
