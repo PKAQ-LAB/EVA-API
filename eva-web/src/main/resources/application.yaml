@@ -100,6 +100,6 @@ eva:
     threshold: 86400000
   security:
     # 无需鉴权路径(无条件访问)
-    anonymous: /auth/login,/auth/logout,/wx/portal/**,/wx/redirect/**,/wx/pay/**
+    anonymous: /auth/login,/auth/logout,/wx/**, /doc/**
     # 无需资源鉴权的路径
-    permit: /auth/**,/wx/portal,/wx/redirect,/wx/pay
+    permit: /auth/**,/wx/**,/doc/**

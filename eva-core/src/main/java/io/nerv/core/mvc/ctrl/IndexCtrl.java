@@ -14,7 +14,7 @@ import java.io.IOException;
  */
 @Controller
 public class IndexCtrl {
-    @RequestMapping({"/",""})
+    @RequestMapping({"/doc"})
     @ApiIgnore
     public void index(HttpServletResponse response) throws IOException {
         response.sendRedirect("doc.html");

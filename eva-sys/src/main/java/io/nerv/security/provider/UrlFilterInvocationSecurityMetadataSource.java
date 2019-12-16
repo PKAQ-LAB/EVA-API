@@ -1,11 +1,13 @@
 package io.nerv.security.provider;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import io.nerv.core.util.SecurityHelper;
 import io.nerv.web.sys.role.service.RoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.FilterInvocation;
@@ -26,10 +28,6 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
 
     @Autowired
     private SecurityHelper securityHelper;
-    /**
-     * 资源权限
-     */
-    private volatile ConcurrentHashMap<String, Collection<ConfigAttribute>> urlPermMap = null;
     /**
      * 资源权限 角色，资源路径
      */
@@ -76,23 +74,26 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
         // 获取请求地址
         String requestUrl = ((FilterInvocation) o).getRequestUrl();
         log.info("请求URL >> " + requestUrl);
-        log.info("当前权限：" + securityHelper.getRoleNames().toString());
+        log.info("当前权限：" + securityHelper.getAuthentication());
 
-        ConfigAttribute securityConfig = new SecurityConfig("/auth/fetch");
-        set.add(securityConfig);
+//        Arrays.stream(permit).forEach(item -> {
+//            ConfigAttribute securityConfig = new SecurityConfig(item);
+//            set.add(securityConfig);
+//        });
 
-        Arrays.stream(securityHelper.getRoleNames()).forEach(item -> {
-            if (null != rolePermMap.get(item)){
-                set.addAll(rolePermMap.get(item));
-            }
-        });
-
+        if (null != securityHelper.getAuthentication()){
+            Arrays.stream(securityHelper.getRoleNames()).forEach(item -> {
+                if (null != rolePermMap.get(item)){
+                    set.addAll(rolePermMap.get(item));
+                }
+            });
+        }
 //      未配置过权限的页面都不需要鉴权，jwtauthfilter已经进行了登录鉴权
 //      该过滤器是过滤链中的最后一个，该处判断返回ROLE_USER会使 premitall 无效
 //      如需配置非授权接口均不可访问需修改此处
-//        if (securityHelper.isAdmin()){
-//            return null;
-//        }
+        if (CollectionUtil.isEmpty(set)){
+            return null;
+        }
         return set;
     }
 

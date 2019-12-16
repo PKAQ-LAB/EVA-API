@@ -3,7 +3,7 @@ project.archivesBaseName = 'addon-generator'
 
 ext{
     velocity = "2.1"
-    mybatis_plus_generator = "3.2.0"
+    mybatis_plus_generator = "3.3.0"
 }
 jar {
 	enabled = true
