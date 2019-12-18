@@ -28,6 +28,9 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
 
     @Autowired
     private SecurityHelper securityHelper;
+
+    @Value("${eva.datapermission.enable}")
+    private boolean datapermissionEnable;
     /**
      * 资源权限 角色，资源路径
      */
@@ -81,7 +84,7 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
 //            set.add(securityConfig);
 //        });
 
-        if (null != securityHelper.getAuthentication()){
+        if (datapermissionEnable && null != securityHelper.getAuthentication()){
             Arrays.stream(securityHelper.getRoleNames()).forEach(item -> {
                 if (null != rolePermMap.get(item)){
                     set.addAll(rolePermMap.get(item));

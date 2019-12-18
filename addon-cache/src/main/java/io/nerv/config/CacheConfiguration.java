@@ -80,6 +80,6 @@ public class CacheConfiguration extends CachingConfigurerSupport {
     @Bean
     @Conditional(DefaultCacheCondition.class)
     public Cache mapCacheHelper(){
-        return new FIFOCache(cacheConfig.getCapacity(), cacheConfig.getTimeout());
+        return new FIFOCache(cacheConfig.getCapacity(), cacheConfig.getNorepeatTimeout());
     }
 }
