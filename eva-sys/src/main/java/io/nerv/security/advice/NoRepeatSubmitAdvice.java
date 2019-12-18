@@ -1,16 +1,14 @@
 package io.nerv.security.advice;
 
 import cn.hutool.cache.Cache;
-import cn.hutool.core.net.NetUtil;
 import cn.hutool.crypto.SecureUtil;
-import io.nerv.security.jwt.JwtUtil;
+import io.nerv.config.CacheConfig;
 import io.nerv.security.util.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -28,10 +26,10 @@ public class NoRepeatSubmitAdvice {
     private Cache<String, Integer> cache;
 
     @Autowired
-    private TokenUtil tokenUtil;
+    private CacheConfig cacheConfig;
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private TokenUtil tokenUtil;
 
     @Around("@annotation(io.nerv.core.annotation.NoRepeatSubmit)")
     public Object arround(ProceedingJoinPoint pjp) {
@@ -44,7 +42,7 @@ public class NoRepeatSubmitAdvice {
 
             if (cache.get(key) == null) {// 如果缓存中有这个url视为重复提交
                 Object o = pjp.proceed();
-                cache.put(key, 0);
+                cache.put(key, 0, cacheConfig.getNorepeatTimeout());
                 return o;
             } else {
                 log.error("重复提交");

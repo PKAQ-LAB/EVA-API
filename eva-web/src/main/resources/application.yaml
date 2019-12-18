@@ -81,7 +81,7 @@ eva:
     exclude-tables: sys_module_resources,sys_role_user
   # 缓存配置
   cache:
-    timeout: 500
+    norepeat-timeout: 500
     type: redis
   # 错误日志
   errorlog:
