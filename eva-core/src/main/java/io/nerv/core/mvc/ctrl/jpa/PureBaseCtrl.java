@@ -1,5 +1,6 @@
 package io.nerv.core.mvc.ctrl.jpa;
 
+import io.nerv.core.enums.BizCode;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.service.jpa.StdBaseService;
 import io.nerv.core.mvc.util.Response;
@@ -61,15 +62,7 @@ public abstract class PureBaseCtrl<T extends StdBaseService> {
      * @param failCode
      * @return
      */
-    protected Response failure(int failCode){
-        return new Response().failure(failCode);
-    }
-    /**
-     * 返回失败结果
-     * @param failCode
-     * @return
-     */
-    protected Response failure(int failCode, String msg){
+    protected Response failure(String failCode, String msg){
         return new Response().failure(failCode, msg);
     }
 
@@ -78,4 +71,9 @@ public abstract class PureBaseCtrl<T extends StdBaseService> {
      * @return
      */
     protected Response failure() { return new Response().failure(BizCodeEnum.SERVER_ERROR);}
+    /**
+     * 返回失败结果
+     * @return
+     */
+    protected Response failure(BizCode bizCode) { return new Response().failure(bizCode);}
 }

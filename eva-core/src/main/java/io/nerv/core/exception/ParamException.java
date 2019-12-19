@@ -1,5 +1,6 @@
 package io.nerv.core.exception;
 
+import io.nerv.core.enums.BizCode;
 import io.nerv.core.enums.BizCodeEnum;
 import lombok.Getter;
 
@@ -22,7 +23,7 @@ public class ParamException extends RuntimeException{
         this.msg = msg;
     }
 
-    public ParamException(BizCodeEnum bizCodeEnum) {
+    public ParamException(BizCode bizCodeEnum) {
         super();
         this.msg = bizCodeEnum.getName();
     }

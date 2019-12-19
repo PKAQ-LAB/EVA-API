@@ -3,6 +3,7 @@ package io.nerv.security.entrypoint;
 import cn.hutool.extra.servlet.ServletUtil;
 import com.alibaba.fastjson.JSON;
 import io.nerv.core.constant.TokenConst;
+import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.properties.EvaConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,6 @@ public class UrlLogoutSuccessHandler implements LogoutSuccessHandler {
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
         httpServletResponse.setStatus(HttpServletResponse.SC_OK);
 
-        httpServletResponse.getWriter().write(JSON.toJSONString(new Response().failure(401, "你已经退出登录")));
+        httpServletResponse.getWriter().write(JSON.toJSONString(new Response().failure(BizCodeEnum.LOGINOUT_SUCCESS)));
     }
 }

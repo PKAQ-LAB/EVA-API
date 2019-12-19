@@ -8,6 +8,7 @@ import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.github.binarywang.wxpay.util.SignUtils;
 import io.nerv.config.WxpayConfig;
+import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.util.IpUtil;
 import io.swagger.annotations.Api;
@@ -95,7 +96,7 @@ public class WxPayController {
             response = new Response().success("支付失败");
           }
         } else {
-          response = new Response().failure(0000,"验签失败");
+          response = new Response().failure(BizCodeEnum.FILETYPE_NOT_SUPPORTED);
           this.log.error("out_trade_no: " + kvm.get("out_trade_no")
                   + " check signature FAIL");
         }

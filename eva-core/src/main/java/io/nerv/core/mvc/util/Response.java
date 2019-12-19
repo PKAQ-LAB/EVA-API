@@ -1,6 +1,7 @@
 package io.nerv.core.mvc.util;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import io.nerv.core.enums.BizCode;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.exception.ReflectException;
 import io.nerv.core.util.ReflectHelper;
@@ -16,7 +17,7 @@ import java.util.Map;
 @Slf4j
 @Accessors(chain = true)
 public class Response{
-    private int code;
+    private String code;
     private boolean success;
     private String message;
     private Object data;
@@ -71,7 +72,7 @@ public class Response{
      * @param data
      * @return
      */
-    public Response success(Object data, String msg, int code) {
+    public Response success(Object data, String msg, String code) {
         this.data = data;
         this.success = true;
         this.message = msg;
@@ -81,24 +82,11 @@ public class Response{
 
 
     /**
-     * 失败响应,根据status设置statusText
-     * @param code
-     * @return
-     */
-    public Response failure(int code) {
-        this.success = false;
-        this.code = code;
-        this.message = BizCodeEnum.getName(code);
-
-        return this;
-    }
-
-    /**
      * 失败响应，自定义响应码和消息
      * @param code
      * @return
      */
-    public Response failure(int code, String message) {
+    public Response failure(String code, String message) {
         this.success = false;
         this.code = code;
         this.message = message;
@@ -111,7 +99,7 @@ public class Response{
      * @param errorCodeEnum
      * @return
      */
-    public Response failure(BizCodeEnum errorCodeEnum) {
+    public Response failure(BizCode errorCodeEnum) {
         this.success = false;
 
         this.code = errorCodeEnum.getIndex();
@@ -127,7 +115,7 @@ public class Response{
      * @param data
      * @return
      */
-    public Response failure(int code, String message, Object data) {
+    public Response failure(String code, String message, Object data) {
         this.data = data;
         this.message = message;
         this.success = false;

@@ -1,6 +1,5 @@
 package io.nerv.core.advice;
 
-import io.nerv.core.bizlog.annotation.BizLog;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.exception.BizException;
 import io.nerv.core.exception.ParamException;
@@ -14,7 +13,9 @@ import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -44,7 +45,7 @@ public class ExceptionAdvice {
         for (ConstraintViolation<?> item : violations) {
             message.append(item.getMessage());
         }
-        return new Response().failure(400, message.toString());
+        return new Response().failure(BizCodeEnum.PARAM_TYPEERROR.getIndex(), message.toString());
     }
 
     /**
@@ -55,7 +56,7 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Response handleMethodParamCheckException(MethodArgumentNotValidException e){
-        return new Response().failure(400,  e.getBindingResult().getFieldError().getDefaultMessage());
+        return new Response().failure(BizCodeEnum.PARAM_TYPEERROR.getIndex(),  e.getBindingResult().getFieldError().getDefaultMessage());
     }
     /**
      * 400 - 捕获自定义参数异常
@@ -65,7 +66,7 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ParamException.class)
     public Response handleException(ParamException e) {
-        return new Response().failure(400, e.getMsg());
+        return new Response().failure(BizCodeEnum.PARAM_ERROR.getIndex(), e.getMsg());
     }
     /**
      * 400异常.- 参数错误
@@ -76,7 +77,7 @@ public class ExceptionAdvice {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public Response handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         log.error("参数解析失败："+e.getMessage());
-        return new Response().failure(400);
+        return new Response().failure(BizCodeEnum.PARAM_TYPEERROR);
     }
     /**
      *  405 - Method Not Allowed.
@@ -87,7 +88,7 @@ public class ExceptionAdvice {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public Response handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
         log.warn("不支持当前请求方法:"+e.getMessage());
-        return new Response().failure(405);
+        return new Response().failure(BizCodeEnum.REQUEST_METHOD_ERROR);
     }
     /**
      *  415 - Unsupported Media Type.
@@ -98,7 +99,7 @@ public class ExceptionAdvice {
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     public Response handleHttpMediaTypeNotSupportedException(Exception e) {
         log.warn("不支持当前媒体类型:"+e.getMessage());
-        return new Response().failure(415);
+        return new Response().failure(BizCodeEnum.REQUEST_MEDIA_ERROR);
     }
     /**
      * 参数类型错误
@@ -109,7 +110,7 @@ public class ExceptionAdvice {
     @ExceptionHandler({IllegalArgumentException.class, MissingServletRequestParameterException.class})
     public Response handleIllegalArgumentException(Exception e) {
         log.warn("参数类型错误：不支持当前请求的参数类型:"+e.getMessage());
-        return new Response().failure(400);
+        return new Response().failure(BizCodeEnum.PARAM_TYPEERROR);
     }
     /**
      *   400 - spring参数绑定校验错误
@@ -125,7 +126,7 @@ public class ExceptionAdvice {
         e.getAllErrors().forEach(
                 x -> errorMsg.append(x.getDefaultMessage()).append(",")
         );
-        return new Response().failure(500, errorMsg.toString());
+        return new Response().failure(BizCodeEnum.SERVER_ERROR.getIndex(), errorMsg.toString());
     }
 
     /**
@@ -165,6 +166,6 @@ public class ExceptionAdvice {
     public Response reflectException(ReflectException e) {
         log.error("反射异常:"+e.getMessage());
         e.printStackTrace();
-        return new Response().failure(500);
+        return new Response().failure(BizCodeEnum.SERVER_ERROR);
     }
 }

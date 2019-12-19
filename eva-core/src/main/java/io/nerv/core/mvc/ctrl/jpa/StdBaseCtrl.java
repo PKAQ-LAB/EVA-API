@@ -1,6 +1,7 @@
 package io.nerv.core.mvc.ctrl.jpa;
 
 import cn.hutool.core.collection.CollectionUtil;
+import io.nerv.core.enums.BizCode;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.enums.ResponseEnumm;
 import io.nerv.core.exception.ParamException;
@@ -17,8 +18,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
-import java.util.List;
 
 /**
  * JPA Controller 基类
@@ -104,18 +103,22 @@ public abstract class StdBaseCtrl<T extends StdBaseService, D extends StdBaseDom
     protected Response success(Object data, String msg){
         return new Response().success(data, msg);
     }
-    /**
-     * 返回失败结果
-     * @param failCode
-     * @return
-     */
-    protected Response failure(int failCode){
-        return new Response().failure(failCode);
-    }
 
     /**
      * 返回失败结果
      * @return
      */
     protected Response failure() { return new Response().failure(BizCodeEnum.SERVER_ERROR);}
+
+    /**
+     * 返回失败结果
+     * @return
+     */
+    protected Response failure(BizCode bizCode) { return new Response().failure(bizCode);}
+
+    /**
+     * 返回失败结果
+     * @return
+     */
+    protected Response failure(String code, String msg) { return new Response().failure(code, msg);}
 }

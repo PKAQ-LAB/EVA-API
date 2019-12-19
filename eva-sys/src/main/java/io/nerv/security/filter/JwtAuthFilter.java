@@ -74,7 +74,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 }
             } catch (OathException e) {
                 logger.warn("鉴权失败 Token已过期");
-                response.sendError(BizCodeEnum.LOGIN_EXPIRED.getIndex(), "您的登录已过期, 请重新登录.");
+                response.sendError(Integer.valueOf(BizCodeEnum.LOGIN_EXPIRED.getIndex()), "您的登录已过期, 请重新登录.");
                 return;
             }
         } else {

@@ -1,6 +1,6 @@
 package io.nerv.core.exception;
 
-import io.nerv.core.enums.BizCodeEnum;
+import io.nerv.core.enums.BizCode;
 import lombok.Getter;
 
 /**
@@ -9,27 +9,27 @@ import lombok.Getter;
 @Getter
 public class BizException extends RuntimeException{
     // 错误码
-    private int code;
+    private String code;
     // 消息内容
     private String msg;
     // 业务代码
-    private BizCodeEnum bizCodeEnum;
+    private BizCode bizCode;
 
     public BizException(String msg){
         super(msg);
         this.msg=msg;
     }
 
-    public BizException(int code, String msg){
+    public BizException(String code, String msg){
         super(msg);
         this.code = code;
         this.msg = msg;
     }
 
-    public BizException(BizCodeEnum resourceUsed) {
-        super(resourceUsed.getName());
-        this.code = resourceUsed.getIndex();
-        this.msg = resourceUsed.getName();
-        this.bizCodeEnum = resourceUsed;
+    public BizException(BizCode bizCode) {
+        super(bizCode.getName());
+        this.code = bizCode.getIndex();
+        this.msg = bizCode.getName();
+        this.bizCode = bizCode;
     }
 }
