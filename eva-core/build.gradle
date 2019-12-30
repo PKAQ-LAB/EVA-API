@@ -20,6 +20,8 @@ dependencies {
             // AOP
             "org.springframework.boot:spring-boot-starter-aop:${springBootVersion}",
 			"org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}",
+			//actuator监控
+			"org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}",
             // json
             "com.alibaba:fastjson:${fastjson}",
 			// hutool
