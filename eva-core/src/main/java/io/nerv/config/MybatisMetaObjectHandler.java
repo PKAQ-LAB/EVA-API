@@ -22,16 +22,17 @@ public class MybatisMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {
         log.debug("start insert fill ....");
-        this.setInsertFieldValByName("createBy", securityHelper.getJwtUserId(), metaObject);
-        this.setInsertFieldValByName("modifyBy", securityHelper.getJwtUserId(), metaObject);
-        this.setInsertFieldValByName("gmtCreate", LocalDateTime.now(), metaObject);
-        this.setInsertFieldValByName("gmtModify", LocalDateTime.now(), metaObject);
+        this.strictInsertFill(metaObject,"createBy", String.class ,securityHelper.getJwtUserId());
+        this.strictInsertFill(metaObject,"modifyBy", String.class ,securityHelper.getJwtUserId());
+        this.strictInsertFill(metaObject,"gmtCreate", LocalDateTime.class ,LocalDateTime.now());
+        this.strictInsertFill(metaObject,"gmtModify", LocalDateTime.class ,LocalDateTime.now());
+
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
         log.debug("start update fill ....");
-        this.setUpdateFieldValByName("gmtModify", LocalDateTime.now(), metaObject);
-        this.setUpdateFieldValByName("modifyBy", securityHelper.getJwtUserId(), metaObject);
+        this.strictUpdateFill(metaObject,"gmtCreate", LocalDateTime.class ,LocalDateTime.now());
+        this.strictUpdateFill(metaObject,"gmtModify", LocalDateTime.class ,LocalDateTime.now());
     }
 }

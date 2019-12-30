@@ -3,6 +3,7 @@ package io.nerv.web.jxc.base.category.service;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.service.mybatis.StdBaseService;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.util.tree.TreeHelper;
@@ -47,7 +48,7 @@ public class CategoryService extends StdBaseService<CategoryMapper, CategoryEnti
             List<Object> list = CollectionUtil.getFieldValues(leafList, "parentName");
             // 拼接名称
             String name = CollectionUtil.join(list, ",");
-            response = response.failure(501, StrUtil.format("[{}] 存在子节点，无法删除。",name), null);
+            response = response.failure(BizCodeEnum.CHILD_EXIST.getIndex(), StrUtil.format("[{}] 存在子节点，无法删除。",name), null);
         } else {
             this.mapper.deleteBatchIds(ids);
             response = response.success(this.mapper.listCategory(null, null));

@@ -71,7 +71,6 @@ public class SecurityHelper {
         try{
             userId = this.getJwtUser().getId();
         }catch (Exception e){
-            e.printStackTrace();
             log.error("获取用户ID错误： " + e.getMessage());
         } finally {
             return userId;

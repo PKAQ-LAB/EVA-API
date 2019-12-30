@@ -20,6 +20,11 @@ spring:
   # 国际化配置
   messages:
     basename: i18n/i18n
+management:
+  endpoints:
+    web:
+      exposure:
+        include: metrics,httptrace
 # mybatis
 mybatis-plus:
   mapper-locations: classpath*:/mapper/*.xml
@@ -100,6 +105,6 @@ eva:
     threshold: 86400000
   security:
     # 无需鉴权路径(无条件访问)
-    anonymous: /auth/login,/auth/logout,/wx/**, /doc/**
+    anonymous: /auth/login,/auth/logout,/wx/**,/doc/**,/actuator/**
     # 无需资源鉴权的路径
-    permit: /auth/**,/wx/**,/doc/**
+    permit: /auth/**,/wx/**,/doc/**,/actuator/**
