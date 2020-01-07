@@ -3,6 +3,7 @@ debug: true
 logging:
   pattern:
     level: debug
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%thread]){faint} %clr(%-40.40logger{39}){cyan} %L %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
   # 日志文件配置 file 和 path只需配置一个 不可同时配置 ， 同时配置只生效file
   file:
     name: e:/applogs/webapp.log
