@@ -1,2 +1,7 @@
 server:
   port: 19001
+spring:
+  security:
+    user:
+      name: "eva"
+      password: "7u8i9o0p"

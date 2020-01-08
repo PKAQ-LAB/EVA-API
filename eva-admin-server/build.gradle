@@ -21,4 +21,5 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-undertow",
                    "de.codecentric:spring-boot-admin-starter-server:${boot_admin}"
 
+    implementation "org.springframework.boot:spring-boot-starter-security:${springBootVersion}"
 }

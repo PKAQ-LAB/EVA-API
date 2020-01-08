@@ -9,6 +9,14 @@ logging:
     name: e:/applogs/webapp.log
 # 数据源
 spring:
+  boot:
+    admin:
+      client:
+        url: http://192.168.10.166:19001/
+        username: eva
+        password: 7u8i9o0p
+        instance:
+          prefer-ip: true
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     url: jdbc:p6spy:mysql://192.168.10.166:12306/jxc?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
@@ -46,3 +54,13 @@ eva:
     allowSuffixName: jpg,png,jpeg
   cookie:
     maxAge: 3600
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: ALWAYS
+  server:
+    address: 192.168.10.127

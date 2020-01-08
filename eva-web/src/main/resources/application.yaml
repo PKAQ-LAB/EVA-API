@@ -81,7 +81,7 @@ eva:
   # 数据权限
   datapermission:
   # 是否开启数据权限控制
-    enable: true
+    enable: false
   # 需要排除的表
     exclude-tables: sys_module_resources,sys_role_user
   # 缓存配置
