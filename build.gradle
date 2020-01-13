@@ -1,24 +1,24 @@
 plugins {
-   id "name.remal.check-dependency-updates" version "1.0.160"
+   id "name.remal.check-dependency-updates" version "1.0.162"
    id "com.jfrog.bintray" version "1.8.4"
 }
 
 ext {
     springBootVersion = '2.2.2.RELEASE'
-    mysql = "8.0.18"
+    mysql = "8.0.19"
     fastjson = "1.2.62"
     mybatis_plus_starter = "3.3.0"
     lombok = "1.18.10"
     swagger = "2.9.2"
-	swagger_ui = "2.0.0"
-    hutool = "5.0.7"
+	swagger_ui = "2.0.1"
+    hutool = "5.1.1"
     jaxb_api = "2.3.1"
     jjwt = "0.9.1"
     auth0 = "3.8.3"
-    jasypt = "3.0.0"
-    p6spy = "3.8.6"
-    flyway = "6.1.1"
-    boot_admin = "2.2.0"
+    jasypt = "3.0.2"
+    p6spy = "3.8.7"
+    flyway = "6.1.4"
+    boot_admin = "2.2.1"
 }
 
 allprojects {
