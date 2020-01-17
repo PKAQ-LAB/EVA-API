@@ -33,6 +33,9 @@ public class EvaConfig {
     /** 数据权限配置 **/
     private DataPermission dataPermission;
 
+    /** 资源权限配置 **/
+    private ResourcePermission resourcePermission;
+
     public BizLog getBizlog() {
         return null == this.bizlog? new BizLog() : bizlog;
     }

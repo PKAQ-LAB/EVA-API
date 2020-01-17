@@ -1,6 +1,5 @@
 package io.nerv.web.jxc.purchasing.order.ctrl;
 
-import io.nerv.core.constant.PageConstant;
 import io.nerv.core.mvc.ctrl.jpa.StdBaseCtrl;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.web.jxc.purchasing.order.domain.PurchasingOrder;

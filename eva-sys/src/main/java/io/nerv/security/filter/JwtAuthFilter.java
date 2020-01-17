@@ -2,10 +2,10 @@ package io.nerv.security.filter;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.ServletUtil;
-import io.nerv.core.constant.TokenConst;
+import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.security.exception.OathException;
 import io.nerv.properties.EvaConfig;
+import io.nerv.security.exception.OathException;
 import io.nerv.security.jwt.JwtUtil;
 import io.nerv.security.util.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,8 +50,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         var authToken = tokenUtil.getToken(request);
 
-        if(null != ServletUtil.getCookie(request, TokenConst.TOKEN_KEY)){
-            authToken = ServletUtil.getCookie(request, TokenConst.TOKEN_KEY).getValue();
+        if(null != ServletUtil.getCookie(request, CommonConstant.TOKEN_KEY)){
+            authToken = ServletUtil.getCookie(request, CommonConstant.TOKEN_KEY).getValue();
         }
 
         if (StrUtil.isNotBlank(authToken)) {
@@ -64,9 +64,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 // token 即将过期 续命
                 if (jwtUtil.isTokenExpiring(authToken)){
                     // reponse请求头返回刷新后的token
-                    response.setHeader(TokenConst.TOKEN_KEY,jwtUtil.refreshToken(authToken));
+                    response.setHeader(CommonConstant.TOKEN_KEY,jwtUtil.refreshToken(authToken));
                     // 后台设置前台cookie值
-                    ServletUtil.addCookie(response, TokenConst.TOKEN_KEY,
+                    ServletUtil.addCookie(response, CommonConstant.TOKEN_KEY,
                                                     jwtUtil.refreshToken(authToken),
                                                     evaConfig.getCookie().getMaxAge(),
                                                 "/",

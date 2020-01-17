@@ -2,12 +2,15 @@ package io.nerv.security.provider;
 
 import cn.hutool.core.util.StrUtil;
 import io.nerv.core.enums.BizCodeEnum;
+import io.nerv.properties.EvaConfig;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.stereotype.Component;
@@ -21,6 +24,9 @@ public class UrlAccessDecisionManager implements AccessDecisionManager {
 
     @Value("${eva.security.permit}")
     private String[] permit;
+
+    @Autowired
+    private EvaConfig evaConfig;
 
     // configAttributes 为MyInvocationSecurityMetadataSource的getAttributes(Object object)这个方法返回的结果，
     // authentication 是释循环添加到 GrantedAuthority 对象中的权限信息集合.
@@ -44,15 +50,45 @@ public class UrlAccessDecisionManager implements AccessDecisionManager {
                     StrUtil.equals(requestUrl,permitUrl)) return;
         }
 
-        for (ConfigAttribute configAttribute : collection) {
-            // 当前请求需要的权限
-            String url = configAttribute.getAttribute();
+        if(evaConfig.getResourcePermission().isEnable()) {
+            if (evaConfig.getResourcePermission().isStrict()) {
+                /**
+                 * 严格模式, 判断 登录角色 请求的资源 是否与 资源需要的角色 一致
+                 * 一致 return 放行
+                 * 不一致 抛出权限不足异常
+                 */
+                for (ConfigAttribute configAttribute : collection) {
+                    // 当前请求需要的权限
+                    String url = configAttribute.getAttribute();
 
-            var urlMatcher = new AntPathRequestMatcher(url);
+                    var urlMatcher = new AntPathRequestMatcher(url);
 
-            if (urlMatcher.matches(request) ||
-                StrUtil.equals(requestUrl,url)) return;
+                    if (urlMatcher.matches(request) ||
+                            StrUtil.equals(requestUrl, url)) return;
+                }
+                // en for
+            } else {
+                /**
+                 * 简单模式 , 判断 登录角色 是否 所请求资源 的授权列表里
+                 * 存在 放行
+                 * 不存在 返回权限不足
+                 */
+                Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+
+                for (ConfigAttribute configAttribute : collection) {
+
+                    String role = configAttribute.getAttribute();
+
+                    for (GrantedAuthority grantedAuthority: authorities){
+                        if (grantedAuthority.getAuthority().equals(role)){
+                            return;
+                        }
+                    }
+                }
+                // end for
+            }
         }
+
         throw new AccessDeniedException(BizCodeEnum.PERMISSION_DENY.getName());
     }
 

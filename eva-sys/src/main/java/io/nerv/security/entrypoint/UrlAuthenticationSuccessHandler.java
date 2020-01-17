@@ -7,7 +7,7 @@ import cn.hutool.extra.servlet.ServletUtil;
 import com.alibaba.fastjson.JSON;
 import io.nerv.core.bizlog.base.BizLogEntity;
 import io.nerv.core.bizlog.base.BizLogSupporter;
-import io.nerv.core.constant.TokenConst;
+import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.security.domain.JwtUserDetail;
@@ -57,7 +57,7 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         String token = jwtUtil.build(evaConfig.getJwt().getTtl(), user.getAccount());
 
         ServletUtil.addCookie(httpServletResponse,
-                TokenConst.TOKEN_KEY,
+                CommonConstant.TOKEN_KEY,
                 token,
                 evaConfig.getCookie().getMaxAge(),
                 "/",
@@ -65,7 +65,7 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
 
 
         ServletUtil.addCookie(httpServletResponse,
-                TokenConst.USER_KEY,
+                CommonConstant.USER_KEY,
                 URLEncoder.encode(JSON.toJSONString(user), CharsetUtil.UTF_8),
                 evaConfig.getCookie().getMaxAge(),
                 "/",

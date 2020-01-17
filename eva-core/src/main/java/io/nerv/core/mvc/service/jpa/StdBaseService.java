@@ -1,6 +1,6 @@
 package io.nerv.core.mvc.service.jpa;
 
-import io.nerv.core.constant.PageConstant;
+import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.mvc.entity.jpa.StdBaseDomain;
 import io.nerv.core.mvc.vo.PageVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,7 +85,7 @@ public abstract class StdBaseService<R extends JpaRepository, D extends StdBaseD
      */
     public PageVo<D> listPage(D domain, Integer page, Integer size) {
         page = page == null? 0: page - 1;
-        size = size == null? PageConstant.PAGE_SIZE: size;
+        size = size == null? CommonConstant.PAGE_SIZE: size;
 
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "gmtModify");
 
@@ -111,7 +111,7 @@ public abstract class StdBaseService<R extends JpaRepository, D extends StdBaseD
     public PageVo<D> listPage(D domain, Integer page) {
         page = page == null? 0: page - 1;
 
-        Pageable pageable = PageRequest.of(page, PageConstant.PAGE_SIZE, Sort.Direction.ASC, "gmtModify");
+        Pageable pageable = PageRequest.of(page, CommonConstant.PAGE_SIZE, Sort.Direction.ASC, "gmtModify");
         Page<D> result =  this.repository.findAll(Example.of(domain), pageable);
 
         return new PageVo<D>().setCurrent(result.getNumber() + 1)

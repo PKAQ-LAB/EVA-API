@@ -1,7 +1,7 @@
 package io.nerv.web.jxc.purchasing.order.ctrl;
 
 import cn.hutool.core.collection.CollectionUtil;
-import io.nerv.core.constant.PageConstant;
+import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.enums.ResponseEnumm;
 import io.nerv.core.exception.ParamException;
 import io.nerv.core.mvc.ctrl.jpa.StdBaseCtrl;
@@ -42,7 +42,7 @@ public class PurchasingOrderCtrl extends StdBaseCtrl<PurchasingServices, Purchas
                          Integer pageNo,
                          Integer pageSize){
         pageNo = pageNo == null? 0: pageNo - 1;
-        pageSize = pageSize == null? PageConstant.PAGE_SIZE: pageSize;
+        pageSize = pageSize == null? CommonConstant.PAGE_SIZE: pageSize;
         return this.success(this.service.listAll(domain, pageNo, pageSize));
     }
 

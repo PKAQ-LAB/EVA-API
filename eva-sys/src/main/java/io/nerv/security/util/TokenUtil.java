@@ -2,7 +2,7 @@ package io.nerv.security.util;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.ServletUtil;
-import io.nerv.core.constant.TokenConst;
+import io.nerv.core.constant.CommonConstant;
 import io.nerv.properties.EvaConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,8 +24,8 @@ public class TokenUtil {
 
         var authHeader = request.getHeader(evaConfig.getJwt().getHeader());
 
-        if(null != ServletUtil.getCookie(request, TokenConst.TOKEN_KEY)){
-            authToken = ServletUtil.getCookie(request, TokenConst.TOKEN_KEY).getValue();
+        if(null != ServletUtil.getCookie(request, CommonConstant.TOKEN_KEY)){
+            authToken = ServletUtil.getCookie(request, CommonConstant.TOKEN_KEY).getValue();
         } else  if (StrUtil.isNotBlank(authHeader) && authHeader.startsWith(evaConfig.getJwt().getTokenHead())) {
             authToken = authHeader.substring(evaConfig.getJwt().getTokenHead().length());
         }

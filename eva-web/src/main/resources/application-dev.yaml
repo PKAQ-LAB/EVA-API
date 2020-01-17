@@ -7,16 +7,17 @@ logging:
   # 日志文件配置 file 和 path只需配置一个 不可同时配置 ， 同时配置只生效file
   file:
     name: e:/applogs/webapp.log
-# 数据源
+#  监控
 spring:
-  boot:
-    admin:
-      client:
-        url: http://192.168.10.166:19001/
-        username: eva
-        password: 7u8i9o0p
-        instance:
-          prefer-ip: true
+#  boot:
+#    admin:
+#      client:
+#        url: http://192.168.10.166:19001/
+#        username: eva
+#        password: 7u8i9o0p
+#        instance:
+#          prefer-ip: true
+  # 数据源
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     url: jdbc:p6spy:mysql://192.168.10.166:12306/jxc?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
@@ -54,13 +55,14 @@ eva:
     allowSuffixName: jpg,png,jpeg
   cookie:
     maxAge: 3600
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'
-  endpoint:
-    health:
-      show-details: ALWAYS
-  server:
-    address: 192.168.10.127
+#    监控配置
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: '*'
+#  endpoint:
+#    health:
+#      show-details: ALWAYS
+#  server:
+#    address: 192.168.10.127

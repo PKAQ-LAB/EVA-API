@@ -20,11 +20,6 @@ spring:
   # 国际化配置
   messages:
     basename: i18n/i18n
-management:
-  endpoints:
-    web:
-      exposure:
-        include: metrics,httptrace
 # mybatis
 mybatis-plus:
   mapper-locations: classpath*:/mapper/*.xml
@@ -78,6 +73,10 @@ wechat:
 #        aesKey: DHFzG3nOljaZ6DZiaHOFzizWzVL1XvlGISKTCtvbS1T
 # 业务日志
 eva:
+  # 资源权限
+  resource-permission:
+    enable: true
+    strict: false
   # 数据权限
   datapermission:
   # 是否开启数据权限控制

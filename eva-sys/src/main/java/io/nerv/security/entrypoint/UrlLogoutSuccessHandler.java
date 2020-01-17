@@ -2,7 +2,7 @@ package io.nerv.security.entrypoint;
 
 import cn.hutool.extra.servlet.ServletUtil;
 import com.alibaba.fastjson.JSON;
-import io.nerv.core.constant.TokenConst;
+import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.properties.EvaConfig;
@@ -12,7 +12,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -33,7 +32,7 @@ public class UrlLogoutSuccessHandler implements LogoutSuccessHandler {
         // 获取用户jwt
         // 清空redis中的jwt 刷新用户secret
         ServletUtil.addCookie(httpServletResponse,
-                TokenConst.TOKEN_KEY,
+                CommonConstant.TOKEN_KEY,
                 null,
                 0,
                 "/",
@@ -41,7 +40,7 @@ public class UrlLogoutSuccessHandler implements LogoutSuccessHandler {
 
 
         ServletUtil.addCookie(httpServletResponse,
-                TokenConst.USER_KEY,
+                CommonConstant.USER_KEY,
                 null,
                 0,
                 "/",
