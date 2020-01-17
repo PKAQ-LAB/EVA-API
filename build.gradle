@@ -4,7 +4,7 @@ plugins {
 }
 
 ext {
-    springBootVersion = '2.2.2.RELEASE'
+    springBootVersion = '2.2.3.RELEASE'
     mysql = "8.0.19"
     fastjson = "1.2.62"
     mybatis_plus_starter = "3.3.0"
