@@ -29,6 +29,4 @@ dependencies {
 			// swagger
 			"io.springfox:springfox-swagger2:${swagger}",
 			"com.github.xiaoymin:knife4j-spring-boot-starter:${swagger_ui}"
-            
-   testImplementation "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
 }

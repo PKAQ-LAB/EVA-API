@@ -2,6 +2,7 @@ package io.nerv.user.ctrl;
 
 import org.junit.Test;
 import io.nerv.BaseTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -30,9 +31,10 @@ public class UserCtrlTest extends BaseTest{
     }
 
     @Test
+    @WithMockUser(username="admin",roles={"ADMIN"})
     public void listUser() {
         try {
-            mockMvc.perform(get("/account/list?account=admin"))
+            mockMvc.perform(get("/account/list"))
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andExpect(jsonPath("success").value(true))
                     .andExpect(jsonPath("data").exists())

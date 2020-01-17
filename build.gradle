@@ -24,7 +24,7 @@ ext {
 allprojects {
     apply plugin: "name.remal.check-dependency-updates"
     group = 'io.nerv'
-    version = '2.0.8.beta'
+    version = '2.0.9.beta'
 }
 
 subprojects {
@@ -46,7 +46,7 @@ subprojects {
 
     repositories {
         mavenLocal()
-		maven { url"http://maven.springframework.org"}
+		maven { url"https://maven.springframework.org"}
         maven { url"https://repo.spring.io/libs-release" }
 		maven { url"https://mirrors.huaweicloud.com" }
         jcenter()
@@ -56,6 +56,9 @@ subprojects {
     dependencies {
        implementation "org.projectlombok:lombok:${lombok}"
 	   annotationProcessor "org.projectlombok:lombok:${lombok}"
+
+       testImplementation "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
+       testImplementation "org.springframework.security:spring-security-test:5.2.1.RELEASE"
      }
 }
 
