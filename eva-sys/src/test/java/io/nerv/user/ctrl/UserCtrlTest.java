@@ -34,7 +34,7 @@ public class UserCtrlTest extends BaseTest{
     @WithMockUser(username="admin",roles={"ADMIN"})
     public void listUser() {
         try {
-            mockMvc.perform(get("/account/list"))
+            mockMvc.perform(get("/sys/account/list"))
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andExpect(jsonPath("success").value(true))
                     .andExpect(jsonPath("data").exists())

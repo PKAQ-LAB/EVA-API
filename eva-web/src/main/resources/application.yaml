@@ -86,7 +86,7 @@ eva:
   # 缓存配置
   cache:
     norepeat-timeout: 500
-    type: redis
+    type: map
   # 错误日志
   errorlog:
     enabled: true

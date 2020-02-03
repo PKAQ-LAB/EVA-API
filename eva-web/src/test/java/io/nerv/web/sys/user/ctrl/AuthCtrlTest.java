@@ -1,21 +1,24 @@
 package io.nerv.web.sys.user.ctrl;
 
-import org.junit.Test;
+import com.alibaba.fastjson.JSON;
 import io.nerv.BaseTest;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.Test;
+import org.springframework.test.web.servlet.MvcResult;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
+@Slf4j
 public class AuthCtrlTest extends BaseTest {
     @Test
     public void testLogin(){
         try {
             String json = "{account: 'admin', password: '0192023a7bbd73250516f069df18b500'}";
-            this.mockMvc.perform(post("/auth/login")
-                    .content(json))
-                    .andExpect(MockMvcResultMatchers.status().isOk())
-                    .andExpect(jsonPath("success").value(true));
+            MvcResult re = this.mockMvc.perform(post("/auth/login")
+                    .content(json)).andReturn();
+
+            System.out.println("------------------------>");
+            System.out.println(JSON.toJSONString(re.getResponse()));
         } catch (Exception e) {
             e.printStackTrace();
         }

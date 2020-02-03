@@ -4,9 +4,12 @@ import io.undertow.Undertow;
 import io.undertow.server.ConnectorStatistics;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.web.embedded.undertow.UndertowServletWebServer;
 import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +22,8 @@ import java.util.List;
  *
  * 优雅关闭 Spring Boot undertow
  */
-@Component
+@Configuration
+@ConditionalOnProperty(prefix = "spring.profiles", name = "active", havingValue = "prod")
 @Slf4j
 public class GracefulShutdownUndertow implements ApplicationListener<ContextClosedEvent> {
 
