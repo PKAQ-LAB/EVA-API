@@ -2,8 +2,8 @@ apply from: '../publish.gradle'
 project.archivesBaseName = 'addon-generator'
 
 ext{
-    velocity = "2.1"
-    mybatis_plus_generator = "3.3.0"
+    velocity = "2.2"
+    mybatis_plus_generator = "3.3.1"
 }
 jar {
 	enabled = true
