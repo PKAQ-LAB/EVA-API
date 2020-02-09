@@ -18,9 +18,9 @@ yarn start
 + EVA   
     |-web : 前台UI   
     |-mobile : 手机端工程  
-    |-api-web : 单体工程整合层,可将任意api-*工程接入统一发布   
+    |-eva-web : 单体工程整合层,可将任意eva-*工程接入统一发布   
     ------- 服务包 -------
-    |-api-core : 核心包-框架核心    
+    |-eva-core : 核心包-框架核心    
         |-src/main/resources   
             |-db/migration : flyway脚本   
             |-spy.properties : p6spy脚本   
@@ -28,11 +28,16 @@ yarn start
             |-i18n : 国际化文件  
             |-logback : 日志配置
             |-mybatis-config : myabtis配置   
-    |-api-sys : 基础管理 + 鉴权   
-    |-api-jxc : 进销存业务管理   
+    |-eva-sys : 基础管理 + 鉴权   
+    |-eva-jxc : 进销存业务管理   
     ------- 可选增强包 -------
-    |-addon-mongo nosql  
-    |-addon-pay 支付   
+    |-addon-weixin 微信接入  
+    |-addon-pay 支付接入
+    |-addon-cache 缓存   
+    ------- 独立项目包 -------           
+    |-nerv-admin-server spring boot admin server端  
+    |-nerv-generator 代码生成器
+    |-nerv-license 证书生成/验证   
     |-docs : 文档相关   
         |-db : pdm   
         |-doc : 开发文档   
@@ -52,3 +57,4 @@ yarn start
  - ORM: Mybatis, Mybatis-plus
 
  ![](snapshot.png)
+ 
