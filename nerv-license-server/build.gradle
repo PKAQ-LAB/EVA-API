@@ -1,0 +1,25 @@
+plugins {
+    id 'org.springframework.boot' version '2.2.4.RELEASE'
+}
+apply plugin: 'io.spring.dependency-management'
+
+jar {
+    enabled = true
+}
+
+bootJar {
+    mainClassName = 'io.nerv.LicenseBooter'
+}
+
+description = """license"""
+
+// 依赖配置
+dependencies {
+    // 使用undertow替代tomcat
+    implementation("org.springframework.boot:spring-boot-starter-web:${springBootVersion}"){
+        exclude module: 'spring-boot-starter-tomcat'
+    }
+    implementation  "cn.hutool:hutool-all:${hutool}",
+                    "de.schlichtherle.truelicense:truelicense-core:1.33"
+
+}
