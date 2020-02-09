@@ -36,6 +36,9 @@ public class EvaConfig {
     /** 资源权限配置 **/
     private ResourcePermission resourcePermission;
 
+    /** 是否启用license 授权机制 **/
+    private License license;
+
     public BizLog getBizlog() {
         return null == this.bizlog? new BizLog() : bizlog;
     }
@@ -54,5 +57,17 @@ public class EvaConfig {
 
     public Cookie getCookie() {
         return null == this.cookie? new Cookie() : cookie;
+    }
+
+    public DataPermission getDataPermission() {
+        return null == this.dataPermission? new DataPermission() : dataPermission;
+    }
+
+    public ResourcePermission getResourcePermission() {
+        return null == resourcePermission? new ResourcePermission() : resourcePermission;
+    }
+
+    public License getLicense() {
+        return null == license? new License() : license;
     }
 }

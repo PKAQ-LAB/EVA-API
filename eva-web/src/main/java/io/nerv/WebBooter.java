@@ -1,5 +1,7 @@
 package io.nerv;
 
+import io.nerv.core.license.LicenseVerify;
+import io.nerv.properties.EvaConfig;
 import io.nerv.server.undertow.GracefulShutdownUndertowWrapper;
 import io.nerv.web.sys.dict.cache.DictHelperProvider;
 import io.undertow.UndertowOptions;
@@ -29,13 +31,28 @@ public class WebBooter implements CommandLineRunner {
     @Autowired
     private DictHelperProvider dictHelperProvider;
 
+    @Autowired
+    private LicenseVerify licenseVerify;
+
+    @Autowired
+    private EvaConfig evaConfig;
+
     @Override
     public void run(String... args) {
         log.info(" ---- 字典初始化 开始 ---- ");
         this.dictHelperProvider.init();
         log.info(" ---- 字典初始化 结束 ---- ");
-    }
+        if (evaConfig.getLicense().isEnable()){
+            // 安装license
+            licenseVerify.install();
 
+            // 验证license
+            if (!licenseVerify.vertify()) {
+                log.error("授权验证未通过, 请更新授权文件");
+                Runtime.getRuntime().halt(1);
+            }
+        }
+    }
 
     public static void main(String[] args) {
         SpringApplication.run(WebBooter.class, args);

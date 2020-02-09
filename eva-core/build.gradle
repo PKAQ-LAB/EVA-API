@@ -7,6 +7,7 @@ dependencies {
 					"org.flywaydb:flyway-core:${flyway}",
 					"mysql:mysql-connector-java:${mysql}",
 					"javax.xml.bind:jaxb-api:${jaxb_api}",
+			 		"de.schlichtherle.truelicense:truelicense-core:${truelicense}",
 					"com.github.ulisesbocchio:jasypt-spring-boot-starter:${jasypt}"
 
 	api "org.springframework.boot:spring-boot-starter-security:${springBootVersion}"

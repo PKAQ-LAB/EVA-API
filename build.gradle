@@ -19,6 +19,7 @@ ext {
     p6spy = "3.8.7"
     flyway = "6.2.2"
     boot_admin = "2.2.2"
+    truelicense = "1.33"
 }
 
 allprojects {

@@ -29,7 +29,7 @@ publishing {
 
 			pom {
                 name = artifactId
-                description = POM_DESCRIPTION
+                description = project.description
                 url = POM_URL
                 licenses {
                     license {
@@ -95,7 +95,7 @@ publishing {
 				name = project.archivesBaseName
 			}
 			userOrg = 'nerv'
-            desc = 'eva core lib'
+            desc = project.description
 			
             websiteUrl = 'https://pkaq.org'
             issueTrackerUrl = 'https://pkaq.org'
