@@ -108,7 +108,7 @@ eva:
     # 无需资源鉴权的路径
     permit: /auth/**,/wx/**,/doc/**,/actuator/**
   license:
-    enable: true
+    enable: false
     # 公钥别名
     alias: publiccert
     # 该密码是访问密钥库的密码 — 使用 keytool 生成密钥对时设置，使用者知道该密码

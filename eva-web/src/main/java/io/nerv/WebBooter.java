@@ -29,13 +29,16 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 public class WebBooter implements CommandLineRunner {
 
     @Autowired
-    private DictHelperProvider dictHelperProvider;
+    private EvaConfig evaConfig;
 
-    @Autowired
+    @Autowired(required = false)
     private LicenseVerify licenseVerify;
 
     @Autowired
-    private EvaConfig evaConfig;
+    private DictHelperProvider dictHelperProvider;
+
+    @Autowired(required = false)
+    private GracefulShutdownUndertowWrapper gracefulShutdownUndertowWrapper;
 
     @Override
     public void run(String... args) {
@@ -44,7 +47,7 @@ public class WebBooter implements CommandLineRunner {
         log.info(" ---- 字典初始化 结束 ---- ");
         if (evaConfig.getLicense().isEnable()){
             // 安装license
-            licenseVerify.install();
+            licenseVerify.init();
 
             // 验证license
             if (!licenseVerify.vertify()) {
@@ -63,7 +66,7 @@ public class WebBooter implements CommandLineRunner {
      */
     @Bean
     @ConditionalOnProperty(prefix = "spring.profiles", name = "active", havingValue = "prod")
-    public UndertowServletWebServerFactory servletWebServerFactory(GracefulShutdownUndertowWrapper gracefulShutdownUndertowWrapper) {
+    public UndertowServletWebServerFactory servletWebServerFactory() {
         UndertowServletWebServerFactory factory = new UndertowServletWebServerFactory();
         factory.addDeploymentInfoCustomizers(deploymentInfo -> deploymentInfo.addOuterHandlerChainWrapper(gracefulShutdownUndertowWrapper));
         factory.addBuilderCustomizers(builder -> builder.setServerOption(UndertowOptions.ENABLE_STATISTICS, true));

@@ -1,5 +1,8 @@
 package io.nerv.core.license;
 
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.resource.ClassPathResource;
+import cn.hutool.core.io.resource.Resource;
 import cn.hutool.core.net.NetUtil;
 import de.schlichtherle.license.LicenseContent;
 import de.schlichtherle.license.LicenseContentException;
@@ -25,7 +28,21 @@ public class LicenseVerify {
 
     @Autowired
     private LicenseManager licenseManager;
+    /**
+     * 初始化安装证书证书
+     */
+    public void init() {
+        try {
+            System.out.println(new File(evaConfig.getLicense().getLicense()).getAbsolutePath());
+            ClassPathResource classPathResource = new ClassPathResource(evaConfig.getLicense().getLicense());
 
+            licenseManager.install(classPathResource.getFile());
+            log.info("安装证书成功!");
+        } catch (Exception e) {
+            log.error("授权已过期, 安装证书失败!", e);
+            Runtime.getRuntime().halt(1);
+        }
+    }
     /**
      * 安装证书证书
      */
@@ -37,7 +54,6 @@ public class LicenseVerify {
             log.error("授权已过期, 安装证书失败!", e);
             Runtime.getRuntime().halt(1);
         }
-
     }
     /**
      * 验证证书的合法性
