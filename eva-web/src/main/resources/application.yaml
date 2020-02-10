@@ -48,7 +48,7 @@ jasypt:
 server:
   servlet:
     context-path: /api
-  port: 9009
+  port: 9016
 # 微信配置
 wechat:
   pay:
