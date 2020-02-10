@@ -29,11 +29,11 @@ public class LicenseBooter implements CommandLineRunner {
         log.info(" ---- License Application Started ---- ");
         licenseGenerator.create();
         log.info(" ---- License Application Generated ---- ");
-        licenseVerify.install();
-        if (!licenseVerify.vertify()) {
-            log.error("授权已过期, 请更新授权文件");
-            Runtime.getRuntime().halt(1);
-        }
+//        licenseVerify.install();
+//        if (!licenseVerify.vertify()) {
+//            log.error("授权已过期, 请更新授权文件");
+//            Runtime.getRuntime().halt(1);
+//        }
     }
 
 

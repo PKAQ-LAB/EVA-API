@@ -36,9 +36,9 @@ eva:
     # 有效开始日期
     notBefore: 2020-02-09 00:00:00
     # 有效截止日期
-    notAfter: 2020-02-09 23:16:00
+    notAfter: 2029-02-09 23:16:00
     # ip 地址
-    ipAddress: 192.168.0.108
+    ipAddress: 192.168.0.107
     # mac 地址
     macAddress: 70-C9-4E-E6-6D-D1
     # 使用者类型，用户(user)、电脑(computer)、其他（else）

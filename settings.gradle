@@ -8,5 +8,5 @@ include 'addon-pay'
 include 'addon-cache'
 include 'addon-weixin'
 include 'nerv-admin-server'
-include 'nerv-license-server'
+include 'nerv-license'
 
