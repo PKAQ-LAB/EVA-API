@@ -48,11 +48,13 @@ spring:
       ddl-auto: none
     database-platform: org.hibernate.dialect.MySQL5Dialect
 eva:
-  # 图片上传
+  # 文件上传
   upload:
+    type: dfs
     tempPath: E://evapic/temp
     storagePath: E://evapic/storage
     allowSuffixName: jpg,png,jpeg
+    serverUrl: http://59.56.168.16:18109/ga/upload
   cookie:
     maxAge: 3600
 #    监控配置

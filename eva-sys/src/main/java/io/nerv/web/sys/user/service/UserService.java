@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.nerv.core.mvc.entity.mybatis.BaseTreeEntity;
 import io.nerv.core.mvc.service.mybatis.StdBaseService;
-import io.nerv.core.upload.util.NgImageUploadUtil;
+import io.nerv.core.upload.util.NgFileUploadUtil;
 import io.nerv.core.util.tree.TreeHelper;
 import io.nerv.security.exception.OathException;
 import io.nerv.web.sys.dict.cache.DictHelperProvider;
@@ -45,7 +45,7 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
     private RoleUserMapper roleUserMapper;
 
     @Autowired
-    private NgImageUploadUtil imageUploadUtil;
+    private NgFileUploadUtil imageUploadUtil;
 
     @Autowired
     private ModuleMapper moduleMapper;
