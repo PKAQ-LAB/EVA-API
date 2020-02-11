@@ -1,17 +1,12 @@
 package io.nerv.config;
 
-import cn.hutool.cache.Cache;
-import cn.hutool.cache.impl.FIFOCache;
 import com.alibaba.fastjson.support.spring.FastJsonRedisSerializer;
-import io.nerv.cache.condition.DefaultCacheCondition;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
@@ -26,10 +21,6 @@ import java.time.Duration;
 @Configuration
 @EnableConfigurationProperties(CacheConfig.class)
 public class CacheConfiguration extends CachingConfigurerSupport {
-
-    @Autowired
-    private CacheConfig cacheConfig;
-
     /*
      * 定义缓存数据 key 生成策略的bean 包名+类名+方法名+所有参数
      */
@@ -71,15 +62,5 @@ public class CacheConfiguration extends CachingConfigurerSupport {
 
         return RedisCacheManager.builder(RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory))
                                 .cacheDefaults(redisCacheConfiguration).build();
-    }
-
-    /**
-     * Map 缓存
-     * @return
-     */
-    @Bean
-    @Conditional(DefaultCacheCondition.class)
-    public Cache mapCacheHelper(){
-        return new FIFOCache(cacheConfig.getCapacity(), cacheConfig.getNorepeatTimeout());
     }
 }
