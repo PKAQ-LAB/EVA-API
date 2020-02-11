@@ -3,18 +3,19 @@ package io.nerv.core.upload.util;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
  * 图片上传接口
  */
-public interface ImageUploadProvider {
+public interface FileUploadProvider {
     /**
      * 上传
      * @param image
      * @return
      */
-    String upload(MultipartFile image);
+    String upload(MultipartFile image) throws IOException;
 
     /**
      * 存储

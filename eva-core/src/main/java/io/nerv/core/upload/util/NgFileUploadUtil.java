@@ -4,26 +4,26 @@ import cn.hutool.core.img.ImgUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
-import cn.hutool.http.HttpUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import io.nerv.core.exception.ImageUploadException;
+import io.nerv.core.upload.condition.DefaultNgCondition;
 import io.nerv.properties.EvaConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
- * 文件上传工具类 - 使用fastdfs
+ * 文件上传工具类
  */
 @Slf4j
 @Component
-public class DfsImageUploadUtil implements ImageUploadProvider {
+@Conditional(DefaultNgCondition.class)
+public class NgFileUploadUtil implements FileUploadProvider {
 
     private Snowflake snowflake = IdUtil.createSnowflake(SNOW, FLAKE);
 
@@ -79,26 +79,23 @@ public class DfsImageUploadUtil implements ImageUploadProvider {
         return newFileName;
     }
 
-
     /**
      * 将图片从缓存目录移动到storage目录
      * @param filenames
      * @return
      */
+    @Override
     public List<String> storage(String... filenames){
-
         String tempPath = evaConfig.getUpload().getTempPath();
-
-        List results = new ArrayList(filenames.length);
 
         for (String filename : filenames) {
             File sourceFile = new File(tempPath, filename);
             if (!sourceFile.exists()) continue;
-
-            results.add(this.transfer(sourceFile));
+            File distFile = new File(evaConfig.getUpload().getStoragePath(), filename);
+            FileUtil.move(sourceFile, distFile, true);
         }
 
-        return results;
+        return null;
     }
 
     /**
@@ -159,25 +156,6 @@ public class DfsImageUploadUtil implements ImageUploadProvider {
         if (sourceThumbnailFile.exists()) {
             sourceThumbnailFile.delete();
         };
-    }
-
-    /**
-     * 传输到go-fastdfs
-     * @return
-     */
-    public String transfer(File file){
-        //声明参数集合
-        HashMap<String, Object> paramMap = new HashMap<>();
-        //文件
-        paramMap.put("file", file);
-        //输出
-        paramMap.put("output","json");
-        //自定义路径
-        paramMap.put("path","image");
-        //场景
-        paramMap.put("scene","image");
-        //上传
-        return HttpUtil.post(evaConfig.getUpload().getServerUrl(), paramMap);
     }
 
 }

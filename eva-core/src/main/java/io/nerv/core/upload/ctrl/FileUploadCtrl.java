@@ -25,7 +25,7 @@ import java.io.File;
 @Slf4j
 @RestController
 @RequestMapping("/upload")
-public class ImageUploadCtrl {
+public class FileUploadCtrl {
 
     @Autowired
     private EvaConfig evaConfig;

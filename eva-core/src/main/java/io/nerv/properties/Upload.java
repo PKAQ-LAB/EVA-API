@@ -17,7 +17,7 @@ public class Upload {
     // 后缀名集
     private String allowSuffixName;
 
-    // 服务器地址
+    // DFS服务器地址
     private String serverUrl;
 
 }
