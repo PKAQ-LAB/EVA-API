@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
  */
 @Data
 public abstract class StdBaseEntity implements Entity, Serializable {
-    @TableId(type = IdType.ID_WORKER_STR)
+    @TableId(type = IdType.ASSIGN_UUID)
     private String id;
 
     @ApiModelProperty("创建人")

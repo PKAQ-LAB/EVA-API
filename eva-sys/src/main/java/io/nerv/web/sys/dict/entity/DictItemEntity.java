@@ -18,7 +18,7 @@ import javax.validation.constraints.NotBlank;
 @Alias("dictItem")
 @TableName("sys_dict_item")
 public class DictItemEntity {
-    @TableId(type = IdType.ID_WORKER_STR)
+    @TableId(type = IdType.ASSIGN_UUID)
     private String id;
 
     @NotBlank(message = "主表ID不允许为空")

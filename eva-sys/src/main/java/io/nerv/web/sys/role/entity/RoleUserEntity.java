@@ -22,7 +22,7 @@ import javax.validation.constraints.NotNull;
 @EqualsAndHashCode()
 @ApiModel("角色用户关系")
 public class RoleUserEntity{
-    @TableId(type = IdType.ID_WORKER_STR)
+    @TableId(type = IdType.ASSIGN_UUID)
     private String id;
 
     @NotBlank

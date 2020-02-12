@@ -18,7 +18,7 @@ import org.apache.ibatis.type.Alias;
 @TableName("sys_role_configuration")
 @ApiModel("角色参数权限")
 public class RoleConfigEntity {
-    @TableId(type = IdType.ID_WORKER_STR)
+    @TableId(type = IdType.ASSIGN_UUID)
     private String id;
 
     @ApiModelProperty("角色ID")

@@ -15,7 +15,7 @@ import org.apache.ibatis.type.Alias;
 @TableName("log_error")
 @Accessors(chain = true)
 public class ErrorlogEntity {
-    @TableId(type = IdType.ID_WORKER_STR)
+    @TableId(type = IdType.ASSIGN_UUID)
     private String id;
     /** 操作人 **/
     private String requestTime;

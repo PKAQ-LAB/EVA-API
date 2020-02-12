@@ -21,7 +21,7 @@ import java.io.Serializable;
 @TableName("sys_role_module")
 @ApiModel("角色模块关系")
 public class RoleModuleEntity{
-    @TableId(type = IdType.ID_WORKER_STR)
+    @TableId(type = IdType.ASSIGN_UUID)
     private String id;
 
     @ApiModelProperty("角色ID")

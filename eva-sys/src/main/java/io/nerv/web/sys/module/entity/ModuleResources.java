@@ -20,7 +20,7 @@ import org.apache.ibatis.type.Alias;
 public class ModuleResources implements Entity {
     private static final long serialVersionUID = 1L;
 
-    @TableId(type = IdType.ID_WORKER_STR)
+    @TableId(type = IdType.ASSIGN_UUID)
     private String id;
 
     @ApiModelProperty("模块id")
