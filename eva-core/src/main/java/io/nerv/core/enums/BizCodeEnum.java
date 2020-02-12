@@ -58,7 +58,8 @@ public enum BizCodeEnum implements BizCode {
     ORG_CODE_EXIST("组织(部门)编码已经存在", "4310"),
 
     /** 上传相关 430x ~ 432x **/
-    FILENAME_ERROR("上传名称错误", "4307"),
+    FILEIO_ERROR("文件读取时发生错误", "4306"),
+    FILENAME_ERROR("文件名称错误", "4307"),
     FILESAVE_ERROR("文件保存失败", "4308"),
     FILETYPE_NOT_SUPPORTED("不支持的文件格式", "4309"),
 

@@ -4,7 +4,9 @@ import cn.hutool.core.img.ImgUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.exception.ImageUploadException;
 import io.nerv.core.upload.condition.DefaultNgCondition;
 import io.nerv.properties.EvaConfig;
@@ -50,12 +52,12 @@ public class NgFileUploadUtil implements FileUploadProvider {
         // 新图片名
         String newFileName = "";
 
-        if (StringUtils.isNotEmpty(fileName)){
+        if (StrUtil.isNotBlank(fileName)){
             suffixName = fileName.substring(fileName.lastIndexOf(".") + 1);
             newFileName = snowflake.nextIdStr() + "." + suffixName;
         } else {
-            log.error("文件名错误：");
-            throw new ImageUploadException("文件名错误");
+            log.error(BizCodeEnum.FILEIO_ERROR.getName());
+            throw new ImageUploadException(BizCodeEnum.FILENAME_ERROR);
         }
         // 判断上传图片是否符合格式
         if (evaConfig.getUpload().getAllowSuffixName().contains(suffixName)){
@@ -68,12 +70,12 @@ public class NgFileUploadUtil implements FileUploadProvider {
             try {
                 FileUtil.touch(new File(tempFileFolder, newFileName));
             } catch (Exception e) {
-                log.error("图片保存错误："+e.getMessage());
-                throw new ImageUploadException("图片保存错误");
+                log.error(BizCodeEnum.FILEIO_ERROR.getName());
+                throw new ImageUploadException(BizCodeEnum.FILESAVE_ERROR.getName());
             }
         } else {
-            log.error("上传格式错误：");
-            throw new ImageUploadException("上传格式错误");
+            log.error(BizCodeEnum.FILETYPE_NOT_SUPPORTED.getName());
+            throw new ImageUploadException(BizCodeEnum.FILETYPE_NOT_SUPPORTED);
         }
 
         return newFileName;

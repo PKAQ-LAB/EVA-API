@@ -1,5 +1,6 @@
 package io.nerv.core.exception;
 
+import io.nerv.core.enums.BizCodeEnum;
 import lombok.Getter;
 
 /**
@@ -12,5 +13,10 @@ public class ImageUploadException extends RuntimeException{
     public ImageUploadException(String msg) {
         super();
         this.msg = msg;
+    }
+
+    public ImageUploadException(BizCodeEnum bizCodeEnum) {
+        super();
+        this.msg = bizCodeEnum.getName();
     }
 }

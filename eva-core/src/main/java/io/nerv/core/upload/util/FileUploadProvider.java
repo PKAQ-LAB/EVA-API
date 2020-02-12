@@ -15,7 +15,7 @@ public interface FileUploadProvider {
      * @param image
      * @return
      */
-    String upload(MultipartFile image) throws IOException;
+    String upload(MultipartFile image);
 
     /**
      * 存储

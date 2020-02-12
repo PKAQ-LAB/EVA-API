@@ -7,6 +7,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.exception.ImageUploadException;
 import io.nerv.core.upload.condition.FastDfsCondition;
 import io.nerv.properties.EvaConfig;
@@ -51,7 +52,7 @@ public class DfsFileUploadUtil implements FileUploadProvider {
      * @return
      */
     @Override
-    public String upload(MultipartFile file) throws IOException {
+    public String upload(MultipartFile file){
         // 上传文件名
         String fileName = file.getOriginalFilename();
         // 后缀名
@@ -65,12 +66,18 @@ public class DfsFileUploadUtil implements FileUploadProvider {
             suffixName = fileName.substring(fileName.lastIndexOf(".") + 1);
             newFileName = snowflake.nextIdStr() + "." + suffixName;
         } else {
-            log.error("文件名错误：");
-            throw new ImageUploadException("文件名错误");
+            log.error(BizCodeEnum.FILEIO_ERROR.getName());
+            throw new ImageUploadException(BizCodeEnum.FILENAME_ERROR);
         }
         // 判断上传文件是否符合格式
         if (evaConfig.getUpload().getAllowSuffixName().contains(suffixName)){
-            InputStreamResource isr = new InputStreamResource(file.getInputStream(), newFileName);
+            InputStreamResource isr = null;
+            try {
+                isr = new InputStreamResource(file.getInputStream(), newFileName);
+            } catch (IOException e) {
+                log.error(e.getMessage(), e);
+                throw new ImageUploadException(BizCodeEnum.FILEIO_ERROR);
+            }
 
             Map<String, Object> paramMap = new HashMap<>(3);
             //文件
@@ -86,8 +93,8 @@ public class DfsFileUploadUtil implements FileUploadProvider {
 
             file_path = jsonObject.getString("path");
         } else {
-            log.error("上传格式错误：");
-            throw new ImageUploadException("上传格式错误");
+            log.error(BizCodeEnum.FILETYPE_NOT_SUPPORTED.getName());
+            throw new ImageUploadException(BizCodeEnum.FILETYPE_NOT_SUPPORTED);
         }
 
         return file_path;
