@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.nerv.core.mvc.entity.mybatis.BaseTreeEntity;
 import io.nerv.core.mvc.service.mybatis.StdBaseService;
+import io.nerv.core.upload.util.FileUploadProvider;
 import io.nerv.core.upload.util.NgFileUploadUtil;
 import io.nerv.core.util.tree.TreeHelper;
 import io.nerv.security.exception.OathException;
@@ -20,6 +21,7 @@ import io.nerv.web.sys.role.mapper.RoleUserMapper;
 import io.nerv.web.sys.user.entity.UserEntity;
 import io.nerv.web.sys.user.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -45,7 +47,7 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
     private RoleUserMapper roleUserMapper;
 
     @Autowired
-    private NgFileUploadUtil imageUploadUtil;
+    private FileUploadProvider fileUploadProvider;
 
     @Autowired
     private ModuleMapper moduleMapper;
@@ -130,13 +132,13 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
             UserEntity oldUser = this.mapper.selectById(userId);
             String avatar = oldUser.getAvatar();
             if (StrUtil.isNotBlank(avatar) && !avatar.equals(user.getAvatar())){
-                imageUploadUtil.delFromStorage(avatar);
+                fileUploadProvider.delFromStorage(avatar);
             }
         }
 
         // 保存新的头像文件
         if (StrUtil.isNotBlank(user.getAvatar())){
-            imageUploadUtil.storageWithThumbnail(0.3f, user.getAvatar());
+            fileUploadProvider.storageWithThumbnail(0.3f, user.getAvatar());
         }
         // 保存权限
         this.saveRoles(user);
