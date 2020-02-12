@@ -7,6 +7,8 @@ import lombok.Data;
  */
 @Data
 public class Upload {
+    // 使用的存储类型
+    private String type;
 
     // 上传存储临时路径
     private String tempPath;
