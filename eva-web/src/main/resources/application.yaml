@@ -106,7 +106,7 @@ eva:
   # 业务日志
   bizlog:
     enabled: true
-    impl: MybatisSupxporter
+    impl: MybatisSupporter
   # JWT配置
   jwt:
     header: Authorization
