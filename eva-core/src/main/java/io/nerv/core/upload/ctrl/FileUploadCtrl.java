@@ -21,7 +21,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * 图片上传Ctrl
+ * 文件上传Ctrl
  *
 */
 @Slf4j
@@ -37,7 +37,7 @@ public class FileUploadCtrl {
 
     private Snowflake snowflake = IdUtil.createSnowflake(1, 1);
 
-    @PostMapping("/image")
+    @PostMapping("/file")
     public Response uploadImage(MultipartFile file) throws IOException {
         String filePath = fileUploadProvider.upload(file);
 

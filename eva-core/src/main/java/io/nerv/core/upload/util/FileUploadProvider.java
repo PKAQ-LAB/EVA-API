@@ -51,4 +51,9 @@ public interface FileUploadProvider {
      * @param fileName
      */
     void delFromStorage(String fileName);
+
+    /**
+     * 缓存清除
+     */
+    void tempClean();
 }

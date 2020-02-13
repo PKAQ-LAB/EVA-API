@@ -71,11 +71,24 @@ wechat:
         secret: 5581e5364618a666ffbbb36dfd56d3fe
 #        token: nerv
 #        aesKey: DHFzG3nOljaZ6DZiaHOFzizWzVL1XvlGISKTCtvbS1T
-# 业务日志
 eva:
+  # 访问权限
+  security:
+    # 无需鉴权路径(无条件访问)
+    anonymous: /auth/login,/auth/logout,/wx/**,/doc/**,/actuator/**
+    # 无需资源鉴权的路径
+    permit: /auth/**,/wx/**,/doc/**,/actuator/**
   # 资源权限
   resource-permission:
+    # 是否启用
     enable: true
+    # 是否采用严格鉴权模式
+    #    严格模式, 判断 登录角色 请求的资源 是否与 资源需要的角色 一致
+    #    * 一致 return 放行
+    #    * 不一致 抛出权限不足异常
+    #    简单模式 , 判断 登录角色 访问的资源 是否 需要鉴权(在的授权列表里)
+    #    * 存在 放行
+    #    * 不存在 返回权限不足
     strict: false
   # 数据权限
   datapermission:
@@ -93,7 +106,7 @@ eva:
   # 业务日志
   bizlog:
     enabled: true
-    impl: MybatisSupporter
+    impl: MybatisSupxporter
   # JWT配置
   jwt:
     header: Authorization
@@ -102,11 +115,6 @@ eva:
     secert: aHR0cDovL3BrYXEub3Jn
     ttl: 2592000000
     threshold: 86400000
-  security:
-    # 无需鉴权路径(无条件访问)
-    anonymous: /auth/login,/auth/logout,/wx/**,/doc/**,/actuator/**
-    # 无需资源鉴权的路径
-    permit: /auth/**,/wx/**,/doc/**,/actuator/**
   license:
     enable: false
     # 公钥别名

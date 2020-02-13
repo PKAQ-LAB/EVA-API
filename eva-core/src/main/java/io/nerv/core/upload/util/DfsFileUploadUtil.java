@@ -1,5 +1,9 @@
 package io.nerv.core.upload.util;
 
+import cn.hutool.cache.Cache;
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.resource.InputStreamResource;
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
@@ -19,9 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 文件上传工具类 - 使用fastdfs
@@ -38,6 +40,11 @@ public class DfsFileUploadUtil implements FileUploadProvider {
 
     // 上传接口
     private final static String UPLOAD_API = "/upload";
+
+    private final static String CACHE_PREFIX = "PIC_TMP_";
+
+    @Autowired
+    private Cache<String, List<String>> cache;
 
     @Autowired
     private EvaConfig evaConfig;
@@ -97,6 +104,9 @@ public class DfsFileUploadUtil implements FileUploadProvider {
             throw new ImageUploadException(BizCodeEnum.FILETYPE_NOT_SUPPORTED);
         }
 
+        // 放入缓存
+        this.cachePut(newFileName);
+
         return file_path;
     }
 
@@ -150,4 +160,36 @@ public class DfsFileUploadUtil implements FileUploadProvider {
         return HttpUtil.post(evaConfig.getUpload().getServerUrl() + this.UPLOAD_API, map);
     }
 
+    /**
+     * 清除当前时间-2小时前的缓存图片
+     */
+    @Override
+    public void tempClean() {
+        String k = CACHE_PREFIX + DateUtil.format(DateUtil.offsetHour(new Date(), -2), "HH") ;
+        List<String> tmpFileList = this.cache.get(k);
+
+        if (CollUtil.isEmpty(tmpFileList)) return;
+
+        tmpFileList.stream().forEach(item -> {
+            HttpUtil.post(evaConfig.getUpload().getServerUrl() + this.DELETE_API, item);
+        });
+
+        // 删除完毕 从缓存中移除此key
+        this.cache.remove(k);
+    }
+    /**
+     * 将上传的图片写入缓存 根据清理机制同时会存在3个缓存
+     * 即 当前时间-2 当前时间-1 当前时间
+     * 清除时 会清除当前时间 - 2 的缓存
+     * @param v
+     */
+    private void cachePut(String v){
+        String k = CACHE_PREFIX + DateUtil.format(new Date(), "HH") ;
+        List<String> tmpFileList = this.cache.get(k);
+        if (null == tmpFileList){
+            tmpFileList = new ArrayList<>();
+            this.cache.put(k, tmpFileList);
+        }
+        tmpFileList.add(v);
+    }
 }

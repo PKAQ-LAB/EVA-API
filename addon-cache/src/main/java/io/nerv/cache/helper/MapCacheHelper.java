@@ -16,6 +16,7 @@ public class MapCacheHelper extends FIFOCache {
 
     @Autowired
     public MapCacheHelper(CacheConfig cacheConfig) {
-       super(cacheConfig.getCapacity(), cacheConfig.getNorepeatTimeout());
+       super(cacheConfig.getCapacity());
     }
+
 }

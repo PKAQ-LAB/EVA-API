@@ -20,6 +20,6 @@ public class CacheConfig {
 
     /**  有效时长 默认3秒 **/
     /** <code>0</code> 表示没有设置，单位毫秒 **/
-    private long norepeatTimeout = 1000 * 3;
+    private long norepeatTimeout = 500;
 
 }
