@@ -14,7 +14,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "eva")
 @EnableConfigurationProperties(EvaConfig.class)
-public class EvaConfig {
+public class
+EvaConfig {
     /**业务日志配置 **/
     private BizLog bizlog;
 
@@ -29,6 +30,9 @@ public class EvaConfig {
 
     /** cookie 配置 **/
     private Cookie cookie;
+
+    /** 访问鉴权配置 **/
+    private Security security;
 
     /** 数据权限配置 **/
     private DataPermission dataPermission;

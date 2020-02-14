@@ -1,8 +1,6 @@
 package io.nerv.core.license;
 
-import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.resource.ClassPathResource;
-import cn.hutool.core.io.resource.Resource;
 import cn.hutool.core.net.NetUtil;
 import de.schlichtherle.license.LicenseContent;
 import de.schlichtherle.license.LicenseContentException;

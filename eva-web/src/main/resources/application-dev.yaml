@@ -37,7 +37,7 @@ spring:
       additional-paths: src/main/java
 # redis 配置
   redis:
-    host: 192.168.10.166
+    host: 59.56.168.16
     port: 6379
     password: 8i9o0p
     timeout: 10000

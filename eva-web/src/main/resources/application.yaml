@@ -77,7 +77,7 @@ eva:
     # 无需鉴权路径(无条件访问)
     anonymous: /auth/login,/auth/logout,/wx/**,/doc/**,/actuator/**
     # 无需资源鉴权的路径
-    permit: /auth/**,/wx/**,/doc/**,/actuator/**
+    permit: /auth/**,/wx/**,/doc/**,/actuator/**,/license/**
   # 资源权限
   resource-permission:
     # 是否启用
@@ -99,7 +99,7 @@ eva:
   # 缓存配置
   cache:
     norepeat-timeout: 500
-    type: map
+    type: redis
   # 错误日志
   errorlog:
     enabled: true
