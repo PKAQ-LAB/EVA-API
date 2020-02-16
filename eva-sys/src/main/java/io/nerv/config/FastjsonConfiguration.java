@@ -8,7 +8,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import io.nerv.core.annotation.Code;
-import io.nerv.web.sys.dict.cache.DictHelperProvider;
+import io.nerv.web.sys.dict.cache.DictCacheHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.context.annotation.Bean;
@@ -28,7 +28,7 @@ import java.util.List;
 public class FastjsonConfiguration {
 
     @Autowired
-    DictHelperProvider dictHelper;
+    DictCacheHelper dictCacheHelper;
 
     @Bean
     public HttpMessageConverters fastJsonHttpMessageConverters() {
@@ -59,7 +59,7 @@ public class FastjsonConfiguration {
             //根据注解判断该属性值是否需要转换
             Code codeFilter = context.getAnnation(Code.class);
             if (codeFilter != null) {
-                String dictValue = dictHelper.get(StrUtil.isBlank(codeFilter.value()) ? name : codeFilter.value(), value.toString());
+                String dictValue = dictCacheHelper.get(StrUtil.isBlank(codeFilter.value()) ? name : codeFilter.value(), value.toString());
                 value = StrUtil.isNotBlank(dictValue) ? dictValue : value;
             }
             return value;

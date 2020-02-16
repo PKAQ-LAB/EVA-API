@@ -11,7 +11,7 @@ import io.nerv.core.mvc.service.mybatis.StdBaseService;
 import io.nerv.core.upload.util.FileUploadProvider;
 import io.nerv.core.util.tree.TreeHelper;
 import io.nerv.security.exception.OathException;
-import io.nerv.web.sys.dict.cache.DictHelperProvider;
+import io.nerv.web.sys.dict.cache.DictCacheHelper;
 import io.nerv.web.sys.module.entity.ModuleEntity;
 import io.nerv.web.sys.module.mapper.ModuleMapper;
 import io.nerv.web.sys.organization.mapper.OrganizationMapper;
@@ -51,7 +51,7 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
     private ModuleMapper moduleMapper;
 
     @Autowired
-    private DictHelperProvider dictHelperProvider;
+    private DictCacheHelper dictCacheHelper;
     /**
      * 查询用户列表
      * @param userEntity
@@ -189,7 +189,7 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
             throw new OathException("用户权限不足，请联系管理员");
         }
 
-        return Map.of("user", userEntity, "menus", treeModule, "dict", dictHelperProvider.getAll());
+        return Map.of("user", userEntity, "menus", treeModule, "dict", dictCacheHelper.getAll());
     }
 
     /**

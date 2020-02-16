@@ -98,8 +98,30 @@ eva:
     exclude-tables: sys_module_resources,sys_role_user
   # 缓存配置
   cache:
-    norepeat-timeout: 500
+#    type: caffeine
+#    config:
+#      - name: uploadfiles
+#        spec: initialCapacity=100,expireAfterAccess=1d
+#      - name: repeatsubmit
+#        spec: initialCapacity=10,expireAfterAccess=1s
+#      - name: dictdata
+#        spec: initialCapacity=100
+#      - name: bizdata
+#        spec: initialCapacity=100,expireAfterAccess=1h
     type: redis
+    config:
+      - name: uploadfiles
+        initialCapacity: 100
+        secondsToExpire: 86400000
+      - name: repeatsubmit
+        initialCapacity: 100
+        secondsToExpire: 500
+      - name: dictdata
+        initialCapacity: 100
+        secondsToExpire: -1
+      - name: bizdata
+        initialCapacity: 100
+        secondsToExpire: 86400000
   # 错误日志
   errorlog:
     enabled: true

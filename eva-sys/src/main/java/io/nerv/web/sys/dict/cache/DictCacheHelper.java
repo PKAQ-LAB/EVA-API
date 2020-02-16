@@ -1,20 +1,22 @@
-package io.nerv.web.sys.dict.cache.helper;
+package io.nerv.web.sys.dict.cache;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import io.nerv.core.constant.CommonConstant;
 import io.nerv.util.RedisUtil;
-import io.nerv.web.sys.dict.cache.DictHelperProvider;
-import io.nerv.core.cache.RedisCacheCondition;
 import io.nerv.web.sys.dict.service.DictService;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Conditional;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.caffeine.CaffeineCache;
+import org.springframework.data.redis.cache.RedisCache;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Type;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 初始化字典信息
@@ -23,25 +25,31 @@ import java.util.Set;
  */
 @Data
 @Component
-@Conditional(RedisCacheCondition.class)
-public class DictRedisHelper implements DictHelperProvider {
+public class DictCacheHelper {
+
+    private Cache cache;
+
     @Autowired
     private DictService dictService;
 
     @Autowired
     private RedisUtil redisUtil;
 
-    private final static String DICT_CACHE_KEY="eva_dict:";
-
     final static Type type = new TypeReference<LinkedHashMap<String, String>>() {}.getType();
+
+    @Autowired
+    public DictCacheHelper(CacheManager cacheManager) {
+        this.cache = cacheManager.getCache(CommonConstant.CACHE_DICTDATA);
+    }
+
     /**
      * 初始化字典数据
      */
-    @Override
+   
     public void init() {
         var dictMap = dictService.initDictCache();
         dictMap.forEach((k, v) ->
-            redisUtil.set(DICT_CACHE_KEY+k, JSON.toJSONString(v))
+            this.cachePut(k, v)
         );
     }
 
@@ -49,96 +57,114 @@ public class DictRedisHelper implements DictHelperProvider {
      * 根据传入的内容重新初始化字典
      * @param dictMap
      */
-    @Override
+   
     public void init(Map<String, LinkedHashMap<String, String>> dictMap) {
-        redisUtil.set(DICT_CACHE_KEY, JSON.toJSONString(dictMap));
+        dictMap.forEach((k, v) ->
+            this.cachePut(k, v)
+        );
     }
 
-    @Override
-    public Map<String, ?> getAll() {
-        Set<Object> keys = redisUtil.keys(DICT_CACHE_KEY+"*");
-        Map<String, Object> map = new LinkedHashMap<>(keys.size());
+   
+    public Map<?, ?> getAll() {
+        if (this.cache instanceof CaffeineCache){
+            CaffeineCache caffeineCache = (CaffeineCache)this.cache;
+            return caffeineCache.getNativeCache().asMap();
+        }
 
-        keys.stream().forEach( item -> {
-            String dictKey = item+"";
-            dictKey = dictKey.substring(this.DICT_CACHE_KEY.length());
-            map.put(dictKey, JSON.parse(redisUtil.get(item+"")));
-        });
+        if (this.cache instanceof RedisCache){
+            return redisUtil.getPureAll(CommonConstant.CACHE_DICTDATA);
+        }
 
-        return map;
+        return null;
     }
 
     /**
-     * 根据key查找值
+     * 根据code查找值
      * @param code
      * @return
      */
-    @Override
+   
     public LinkedHashMap<String, String> get(String code){
-        return JSON.parseObject(redisUtil.get(DICT_CACHE_KEY+code), type);
+        Cache.ValueWrapper jsonStr = this.cache.get(code);
+        return null != jsonStr? JSON.parseObject((String) jsonStr.get(), type): null;
     }
 
-    @Override
+    /**
+     * 获取字典项值
+     * @param code
+     * @param key
+     * @return
+     */
+   
     public String get(String code, String key) {
         String value = null;
-        Map<String, String> itemMap = JSON.parseObject(redisUtil.get(DICT_CACHE_KEY+code), type);
+        LinkedHashMap<String, String> itemMap = this.get(code);
         if (null != itemMap){
             value = itemMap.get(key);
         }
         return value;
     }
 
-    @Override
+   
     public void remove(String code) {
-        this.redisUtil.remove(DICT_CACHE_KEY+code);
+        this.cache.evict(code);
     }
 
-    @Override
+   
     public void remove(String code, String key) {
-        Map<String, String> itemMap = JSON.parseObject(this.redisUtil.get(DICT_CACHE_KEY+code), type);
+        Map<String, String> itemMap = this.get(code);
         if (null != itemMap){
             itemMap.remove(key);
         }
     }
 
-    @Override
+   
     public void removeAll() {
-       this.redisUtil.remove(DICT_CACHE_KEY+"*");
+        this.cache.clear();
     }
 
-    @Override
+   
     public void update(String code, String key, String value) {
-        Map<String, String> itemMap =  JSON.parseObject(this.redisUtil.get(DICT_CACHE_KEY+code), type);
+        Map<String, String> itemMap = this.get(code);
         if (null != itemMap){
             itemMap.put(key, value);
-            this.redisUtil.set(DICT_CACHE_KEY+code, JSON.toJSONString(itemMap));
+            this.cachePut(code, itemMap);
         }
     }
 
-    @Override
+   
     public void update(String code, LinkedHashMap<String, String> item) {
-        this.redisUtil.set(DICT_CACHE_KEY+code, JSON.toJSONString(item));
+        this.cachePut(code, item);
     }
 
-    @Override
+   
     public void add(String code, LinkedHashMap<String, String> item) {
-        this.redisUtil.set(DICT_CACHE_KEY+code, JSON.toJSONString(item));
+        this.cachePut(code, item);
     }
 
-    @Override
+   
     public void add(String code, String key, String value) {
         this.update(code, key, value);
     }
 
-    @Override
+   
     public void reload() {
         this.removeAll();
         this.init();
     }
 
-    @Override
+   
     public void reload(Map<String, LinkedHashMap<String, String>> dictMap) {
         this.removeAll();
         this.init(dictMap);
+    }
+
+    /**
+     * 写入缓存
+     * @param k
+     * @param object
+     */
+    private void cachePut(String k, Object object){
+        this.cache.put(k, JSON.toJSONString(object));
     }
 }

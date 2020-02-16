@@ -28,6 +28,7 @@ public enum BizCodeEnum implements BizCode {
     PARAM_LENGTH("参数长度错误", "4003"),
     SERVER_ERROR("服务器发生错误,请联系管理员.", "4004"),
     REQUEST_METHOD_ERROR("服务器不支持当前请求的方法.", "4005"),
+    REQUEST_TOO_MORE("当前请求过于频繁，请稍后再试.", "4006"),
     REQUEST_MEDIA_ERROR("服务器不支持当前请求的类型.", "4015"),
 
     /** 用户相关 410x **/

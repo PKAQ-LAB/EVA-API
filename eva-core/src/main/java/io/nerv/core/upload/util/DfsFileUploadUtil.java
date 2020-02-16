@@ -1,6 +1,5 @@
 package io.nerv.core.upload.util;
 
-import cn.hutool.cache.Cache;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
@@ -11,12 +10,15 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.exception.ImageUploadException;
 import io.nerv.core.upload.condition.FastDfsCondition;
 import io.nerv.properties.EvaConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,10 +43,8 @@ public class DfsFileUploadUtil implements FileUploadProvider {
     // 上传接口
     private final static String UPLOAD_API = "/upload";
 
-    private final static String CACHE_PREFIX = "PIC_TMP_";
-
     @Autowired
-    private Cache<String, List<String>> cache;
+    private CacheManager cacheManager;
 
     @Autowired
     private EvaConfig evaConfig;
@@ -165,17 +165,21 @@ public class DfsFileUploadUtil implements FileUploadProvider {
      */
     @Override
     public void tempClean() {
-        String k = CACHE_PREFIX + DateUtil.format(DateUtil.offsetHour(new Date(), -2), "HH") ;
-        List<String> tmpFileList = this.cache.get(k);
+        Cache cache = cacheManager.getCache(CommonConstant.CACHE_UPLOADFILES);
 
-        if (CollUtil.isEmpty(tmpFileList)) return;
+        String k = CommonConstant.FILE_CACHE_PREFIX + DateUtil.format(DateUtil.offsetHour(new Date(), -2), "HH") ;
+        var cacheWrapper = cache.get(k);
+
+        List<String> tmpFileList = null == cacheWrapper? null : (List<String>) cacheWrapper.get();
+
+        if (null == cacheWrapper || CollUtil.isEmpty(tmpFileList)) return;
 
         tmpFileList.stream().forEach(item -> {
             HttpUtil.post(evaConfig.getUpload().getServerUrl() + this.DELETE_API, item);
         });
 
         // 删除完毕 从缓存中移除此key
-        this.cache.remove(k);
+        cache.evict(k);
     }
     /**
      * 将上传的图片写入缓存 根据清理机制同时会存在3个缓存
@@ -184,11 +188,13 @@ public class DfsFileUploadUtil implements FileUploadProvider {
      * @param v
      */
     private void cachePut(String v){
-        String k = CACHE_PREFIX + DateUtil.format(new Date(), "HH") ;
-        List<String> tmpFileList = this.cache.get(k);
+        Cache cache = cacheManager.getCache(CommonConstant.CACHE_UPLOADFILES);
+
+        String k = CommonConstant.FILE_CACHE_PREFIX + DateUtil.format(new Date(), "HH") ;
+        List<String> tmpFileList = (List<String>) cache.get(k).get();
         if (null == tmpFileList){
             tmpFileList = new ArrayList<>();
-            this.cache.put(k, tmpFileList);
+            cache.put(k, tmpFileList);
         }
         tmpFileList.add(v);
     }

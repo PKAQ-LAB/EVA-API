@@ -2,7 +2,9 @@ apply from: '../publish.gradle'
 project.archivesBaseName = 'addon-cache'
 
 dependencies {
-    implementation "org.springframework.boot:spring-boot-starter-data-redis:${springBootVersion}",
-                   "cn.hutool:hutool-cache:${hutool}",
-                   "com.alibaba:fastjson:${fastjson}"
+    implementation "com.alibaba:fastjson:${fastjson}"
+
+    api "com.github.ben-manes.caffeine:caffeine:${caffeine}",
+        "org.springframework.boot:spring-boot-starter-data-redis:${springBootVersion}",
+        "org.springframework.boot:spring-boot-starter-cache:${springBootVersion}"
 }

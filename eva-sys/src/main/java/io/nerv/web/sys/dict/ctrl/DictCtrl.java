@@ -3,8 +3,8 @@ package io.nerv.web.sys.dict.ctrl;
 import cn.hutool.core.util.StrUtil;
 import io.nerv.core.mvc.ctrl.mybatis.PureBaseCtrl;
 import io.nerv.core.mvc.util.Response;
+import io.nerv.web.sys.dict.cache.DictCacheHelper;
 import io.nerv.web.sys.dict.entity.DictEntity;
-import io.nerv.web.sys.dict.cache.DictHelperProvider;
 import io.nerv.web.sys.dict.service.DictService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,13 +31,13 @@ import javax.validation.Valid;
 @RequestMapping("/sys/dictionary")
 public class DictCtrl extends PureBaseCtrl<DictService> {
     @Autowired
-    private DictHelperProvider dictHelper;
+    private DictCacheHelper dictCacheHelper;
 
     @GetMapping({"/query/{code}"})
     @ApiOperation(value = "根据 code 从缓存中获取字典项",response = Response.class)
     public Response query(@ApiParam(name = "code", value = "字典分类ID")
                           @PathVariable(name = "code", required = false) String code){
-        return this.success(dictHelper.get(code));
+        return this.success(dictCacheHelper.get(code));
     }
 
     @GetMapping("/list")

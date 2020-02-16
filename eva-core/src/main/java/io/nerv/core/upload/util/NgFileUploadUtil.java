@@ -1,6 +1,5 @@
 package io.nerv.core.upload.util;
 
-import cn.hutool.cache.Cache;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.img.ImgUtil;
@@ -8,12 +7,15 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
+import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.exception.ImageUploadException;
 import io.nerv.core.upload.condition.DefaultNgCondition;
 import io.nerv.properties.EvaConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,17 +37,15 @@ public class NgFileUploadUtil implements FileUploadProvider {
 
     private final static String THUMBNAIL_NAME = "thumbnail_";
 
-    private final static String CACHE_PREFIX = "PIC_TMP_";
-
     private final static long SNOW = 16;
 
     private final static long FLAKE = 18;
 
     @Autowired
-    private EvaConfig evaConfig;
+    private CacheManager cacheManager;
 
     @Autowired
-    private Cache<String, List<String>> cache;
+    private EvaConfig evaConfig;
 
     /**
      * 文件上传 默认上传到配置的tmp目录
@@ -177,8 +177,10 @@ public class NgFileUploadUtil implements FileUploadProvider {
      */
     @Override
     public void tempClean() {
-        String k = CACHE_PREFIX + DateUtil.format(DateUtil.offsetHour(new Date(), -2), "HH") ;
-        List<String> tmpFileList = this.cache.get(k);
+        Cache cache = cacheManager.getCache(CommonConstant.CACHE_UPLOADFILES);
+
+        String k = CommonConstant.FILE_CACHE_PREFIX + DateUtil.format(DateUtil.offsetHour(new Date(), -2), "HH") ;
+        List<String> tmpFileList = (List<String>) cache.get(k).get();
 
         File tempFileFolder = new File(evaConfig.getUpload().getTempPath());
 
@@ -191,7 +193,7 @@ public class NgFileUploadUtil implements FileUploadProvider {
         });
 
         // 删除完毕 从缓存中移除此key
-        this.cache.remove(k);
+        cache.evict(k);
     }
 
     /**
@@ -201,11 +203,13 @@ public class NgFileUploadUtil implements FileUploadProvider {
      * @param v
      */
     private void cachePut(String v){
-        String k = CACHE_PREFIX + DateUtil.format(new Date(), "HH") ;
-        List<String> tmpFileList = this.cache.get(k);
+        Cache cache = cacheManager.getCache(CommonConstant.CACHE_UPLOADFILES);
+
+        String k = CommonConstant.FILE_CACHE_PREFIX + DateUtil.format(new Date(), "HH") ;
+        List<String> tmpFileList = (List<String>) cache.get(k).get();
         if (null == tmpFileList){
             tmpFileList = new ArrayList<>();
-            this.cache.put(k, tmpFileList);
+            cache.put(k, tmpFileList);
         }
         tmpFileList.add(v);
     }

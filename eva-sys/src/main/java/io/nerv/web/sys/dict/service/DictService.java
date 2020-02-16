@@ -6,10 +6,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import io.nerv.core.exception.ParamException;
 import io.nerv.core.mvc.service.mybatis.StdBaseService;
+import io.nerv.web.sys.dict.cache.DictCacheHelper;
 import io.nerv.web.sys.dict.entity.DictEntity;
 import io.nerv.web.sys.dict.entity.DictItemEntity;
 import io.nerv.web.sys.dict.entity.DictViewEntity;
-import io.nerv.web.sys.dict.cache.DictHelperProvider;
 import io.nerv.web.sys.dict.mapper.DictItemMapper;
 import io.nerv.web.sys.dict.mapper.DictMapper;
 import io.nerv.web.sys.dict.mapper.DictViewMapper;
@@ -28,7 +28,7 @@ import java.util.Map;
 @Service
 public class DictService extends StdBaseService<DictMapper, DictEntity> {
     @Autowired
-    private DictHelperProvider dictHelper;
+    private DictCacheHelper dictCacheHelper;
 
     @Autowired
     private DictViewMapper dictViewMapper;
@@ -95,7 +95,7 @@ public class DictService extends StdBaseService<DictMapper, DictEntity> {
         //删掉字典之后，移除字典缓存中的相关字典
         DictEntity dictEntity=this.mapper.getDict(id);
         if(dictEntity != null) {
-            dictHelper.remove(dictEntity.getCode());
+            dictCacheHelper.remove(dictEntity.getCode());
         }
     }
 
@@ -148,8 +148,8 @@ public class DictService extends StdBaseService<DictMapper, DictEntity> {
 
                 //修改了字典的code则把原来的删掉加上最新的
                 if(!code.equals(dictEntity.getCode())){
-                    dictHelper.add(dictEntity.getCode(), dictHelper.get(code));
-                    dictHelper.remove(code);
+                    dictCacheHelper.add(dictEntity.getCode(), dictCacheHelper.get(code));
+                    dictCacheHelper.remove(code);
                 }
             } else {
                 throw new ParamException("编码已存在");

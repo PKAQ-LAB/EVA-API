@@ -3,7 +3,7 @@ package io.nerv;
 import io.nerv.core.license.LicenseVerify;
 import io.nerv.properties.EvaConfig;
 import io.nerv.server.undertow.GracefulShutdownUndertowWrapper;
-import io.nerv.web.sys.dict.cache.DictHelperProvider;
+import io.nerv.web.sys.dict.cache.DictCacheHelper;
 import io.undertow.UndertowOptions;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,7 @@ public class WebBooter implements CommandLineRunner {
     private LicenseVerify licenseVerify;
 
     @Autowired
-    private DictHelperProvider dictHelperProvider;
+    private DictCacheHelper dictCacheHelper;
 
     @Autowired(required = false)
     private GracefulShutdownUndertowWrapper gracefulShutdownUndertowWrapper;
@@ -43,7 +43,8 @@ public class WebBooter implements CommandLineRunner {
     @Override
     public void run(String... args) {
         log.info(" ---- 字典初始化 开始 ---- ");
-        this.dictHelperProvider.init();
+        this.dictCacheHelper.init();
+        this.dictCacheHelper.getAll();
         log.info(" ---- 字典初始化 结束 ---- ");
         if (evaConfig.getLicense().isEnable()){
             // 安装license
