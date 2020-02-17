@@ -110,15 +110,21 @@ eva:
 #        spec: initialCapacity=100,expireAfterAccess=1h
     type: redis
     config:
+        # 缓存名称 - 文件上传缓存
       - name: uploadfiles
+        # 初始大小
         initialCapacity: 100
+        # 过期时间(毫秒)
         secondsToExpire: 86400000
+        # 重复提交缓存
       - name: repeatsubmit
         initialCapacity: 100
         secondsToExpire: 500
+        # 字典缓存
       - name: dictdata
         initialCapacity: 100
         secondsToExpire: -1
+        # 业务数据缓存
       - name: bizdata
         initialCapacity: 100
         secondsToExpire: 86400000
