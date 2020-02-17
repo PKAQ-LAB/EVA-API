@@ -4,6 +4,6 @@
   <resultMap id="BaseResultMap" type="dictItem" extends="common.resultMap"/>
   <!--根据mainId查询数据-->
   <select id="listItemByMainId" resultType="dictItem">
-    select * from sys_dict_item where main_id=#{mainId} order by ordersa
+    select * from sys_dict_item where main_id=#{mainId} order by orders
   </select>
 </mapper>
