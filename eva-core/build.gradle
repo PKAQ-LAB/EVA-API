@@ -17,6 +17,11 @@ dependencies {
 		exclude module: 'spring-boot-starter-tomcat'
 	}
 
+	// 缓存
+	api "com.github.ben-manes.caffeine:caffeine:${caffeine}",
+			"org.springframework.boot:spring-boot-starter-data-redis:${springBootVersion}",
+			"org.springframework.boot:spring-boot-starter-cache:${springBootVersion}"
+
 	api		"org.springframework.boot:spring-boot-starter-undertow:${springBootVersion}",
             // AOP
             "org.springframework.boot:spring-boot-starter-aop:${springBootVersion}",

@@ -1,4 +1,4 @@
-package io.nerv.cache.condition;
+package io.nerv.core.cache.condition;
 
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;

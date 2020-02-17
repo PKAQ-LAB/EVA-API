@@ -1,8 +1,9 @@
-package io.nerv.config;
+package io.nerv.core.cache.config;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
-import io.nerv.cache.condition.DefaultCacheCondition;
-import io.nerv.properties.CacheConfig;
+import io.nerv.core.cache.condition.DefaultCacheCondition;
+import io.nerv.properties.Cache;
+import io.nerv.properties.EvaConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -20,11 +21,11 @@ import java.util.stream.Collectors;
 @Slf4j
 @Configuration
 @Conditional(DefaultCacheCondition.class)
-@EnableConfigurationProperties(CacheConfig.class)
+@EnableConfigurationProperties(Cache.class)
 public class CaffeineConfiguration {
 
     @Autowired
-    private CacheConfig cacheConfig;
+    private EvaConfig evaConfig;
     /**
      *     * 配置缓存管理器
      *     *
@@ -42,7 +43,7 @@ public class CaffeineConfiguration {
                 .maximumSize(1000)
                 .build());
 
-        List<CaffeineCache> caches = cacheConfig.getConfig().stream().map(item ->
+        List<CaffeineCache> caches = evaConfig.getCache().getConfig().stream().map(item ->
             buildCache(item.getName(), item.getSpec())
         ).collect(Collectors.toList());
 

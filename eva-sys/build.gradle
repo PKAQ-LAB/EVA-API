@@ -4,7 +4,6 @@ project.description='sys jar with authority and system management'
 
 dependencies {
     implementation	project(":eva-core"),
-                    project(":addon-cache"),
                     "com.auth0:java-jwt:${auth0}",
                     "io.jsonwebtoken:jjwt:${jjwt}"
 }

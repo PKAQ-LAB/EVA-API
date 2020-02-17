@@ -1,4 +1,4 @@
-package io.nerv.util;
+package io.nerv.core.util;
 
 import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Autowired;

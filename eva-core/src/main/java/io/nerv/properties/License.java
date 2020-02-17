@@ -2,8 +2,6 @@ package io.nerv.properties;
 
 import lombok.Data;
 
-import java.util.List;
-
 /**
  * license 配置
  *

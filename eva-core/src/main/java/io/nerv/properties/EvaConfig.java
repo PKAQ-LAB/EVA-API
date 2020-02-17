@@ -43,6 +43,9 @@ EvaConfig {
     /** 是否启用license 授权机制 **/
     private License license;
 
+    /** 缓存配置 **/
+    private Cache cache;
+
     public BizLog getBizlog() {
         return null == this.bizlog? new BizLog() : bizlog;
     }
@@ -73,5 +76,9 @@ EvaConfig {
 
     public License getLicense() {
         return null == license? new License() : license;
+    }
+
+    public Cache getCache() {
+        return null == cache? new Cache() : cache;
     }
 }

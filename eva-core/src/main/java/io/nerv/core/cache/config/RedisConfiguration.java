@@ -1,8 +1,9 @@
-package io.nerv.config;
+package io.nerv.core.cache.config;
 
 import com.alibaba.fastjson.support.spring.FastJsonRedisSerializer;
-import io.nerv.cache.condition.RedisCacheCondition;
-import io.nerv.properties.CacheConfig;
+import io.nerv.core.cache.condition.RedisCacheCondition;
+import io.nerv.properties.Cache;
+import io.nerv.properties.EvaConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -25,10 +26,9 @@ import java.util.Map;
 @Slf4j
 @Configuration
 @Conditional(RedisCacheCondition.class)
-@EnableConfigurationProperties(CacheConfig.class)
 public class RedisConfiguration {
     @Autowired
-    private CacheConfig cacheConfig;
+    private EvaConfig evaConfig;
 
     /**
      * @Description: 防止redis入库序列化乱码的问题
@@ -54,9 +54,9 @@ public class RedisConfiguration {
         log.debug("初始化 redis 緩存 --- --- --- -->");
         RedisCacheConfiguration defaultCache = buildCache(60*30l);
 
-        Map<String, RedisCacheConfiguration> cacheMap = new HashMap(cacheConfig.getConfig().size());
+        Map<String, RedisCacheConfiguration> cacheMap = new HashMap(evaConfig.getCache().getConfig().size());
 
-        cacheConfig.getConfig().stream().forEach(item -> {
+        evaConfig.getCache().getConfig().stream().forEach(item -> {
             cacheMap.put(item.getName(), buildCache(item.getSecondsToExpire()));
         });
 
