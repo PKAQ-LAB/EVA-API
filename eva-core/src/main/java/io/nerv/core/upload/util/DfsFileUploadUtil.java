@@ -191,10 +191,13 @@ public class DfsFileUploadUtil implements FileUploadProvider {
         Cache cache = cacheManager.getCache(CommonConstant.CACHE_UPLOADFILES);
 
         String k = CommonConstant.FILE_CACHE_PREFIX + DateUtil.format(new Date(), "HH") ;
-        List<String> tmpFileList = (List<String>) cache.get(k).get();
-        if (null == tmpFileList){
-            tmpFileList = new ArrayList<>();
+        Cache.ValueWrapper valueWrapper = cache.get(k);
+
+        List<String> tmpFileList = new ArrayList<>();
+        if (null == valueWrapper){
             cache.put(k, tmpFileList);
+        } else {
+            tmpFileList = (List<String>) valueWrapper.get();
         }
         tmpFileList.add(v);
     }
