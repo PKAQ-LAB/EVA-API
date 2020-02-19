@@ -2,6 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="io.nerv.web.sys.organization.mapper.OrganizationMapper">
   <resultMap id="BaseResultMap" type="organization" extends="common.resultMap">
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="CODE" jdbcType="VARCHAR" property="code" />
+    <result column="PARENT_ID" jdbcType="VARCHAR" property="parentId" />
+    <result column="PARENT_NAME" jdbcType="VARCHAR" property="parentName" />
+    <result column="PATH" jdbcType="VARCHAR" property="path" />
+    <result column="PATH_NAME" jdbcType="VARCHAR" property="pathName" />
+    <result column="ISLEAF" jdbcType="TINYINT" property="isleaf" />
+    <result column="ORDERS" jdbcType="INTEGER" property="orders" />
+    <result column="STATUS" jdbcType="VARCHAR" property="status" />
     <collection property="children"  column="{id=id}" select="listChildren" />
   </resultMap>
   <!--根据条件查询菜单数据-->
