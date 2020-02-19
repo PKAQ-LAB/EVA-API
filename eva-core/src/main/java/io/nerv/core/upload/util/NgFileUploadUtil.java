@@ -177,12 +177,17 @@ public class NgFileUploadUtil implements FileUploadProvider {
      */
     @Override
     public void tempClean() {
+        File tempFileFolder = new File(evaConfig.getUpload().getTempPath());
+
         Cache cache = cacheManager.getCache(CommonConstant.CACHE_UPLOADFILES);
 
         String k = CommonConstant.FILE_CACHE_PREFIX + DateUtil.format(DateUtil.offsetHour(new Date(), -2), "HH") ;
-        List<String> tmpFileList = (List<String>) cache.get(k).get();
+        List<String> tmpFileList = new ArrayList<>();
 
-        File tempFileFolder = new File(evaConfig.getUpload().getTempPath());
+        Cache.ValueWrapper valueWrapper = cache.get(k);
+        if (null != valueWrapper){
+            tmpFileList = (List<String>) valueWrapper.get();
+        }
 
         if (CollUtil.isEmpty(tmpFileList)) return;
 
@@ -206,7 +211,17 @@ public class NgFileUploadUtil implements FileUploadProvider {
         Cache cache = cacheManager.getCache(CommonConstant.CACHE_UPLOADFILES);
 
         String k = CommonConstant.FILE_CACHE_PREFIX + DateUtil.format(new Date(), "HH") ;
-        List<String> tmpFileList = (List<String>) cache.get(k).get();
+
+        Cache.ValueWrapper valueWrapper = cache.get(k);
+
+        List<String> tmpFileList = null;
+
+        if (null == valueWrapper){
+            tmpFileList = new ArrayList<>();
+        } else {
+            tmpFileList = (List<String>) valueWrapper.get();
+        }
+
         if (null == tmpFileList){
             tmpFileList = new ArrayList<>();
             cache.put(k, tmpFileList);
