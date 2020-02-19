@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.nerv.core.mvc.entity.mybatis.BaseTreeEntity;
 import io.nerv.core.mvc.service.mybatis.StdBaseService;
 import io.nerv.core.upload.util.FileUploadProvider;
+import io.nerv.core.util.SecurityHelper;
 import io.nerv.core.util.tree.TreeHelper;
 import io.nerv.security.exception.OathException;
 import io.nerv.web.sys.dict.cache.DictCacheHelper;
@@ -19,6 +20,7 @@ import io.nerv.web.sys.role.entity.RoleUserEntity;
 import io.nerv.web.sys.role.mapper.RoleUserMapper;
 import io.nerv.web.sys.user.entity.UserEntity;
 import io.nerv.web.sys.user.mapper.UserMapper;
+import io.nerv.web.sys.user.vo.PasswordVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -52,6 +54,27 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
 
     @Autowired
     private DictCacheHelper dictCacheHelper;
+
+    @Autowired
+    private SecurityHelper securityHelper;
+
+    /**
+     * 修改密码
+     * @param passwordVO
+     * @return
+     */
+    public boolean repwd(PasswordVO passwordVO){
+        String userid = this.securityHelper.getJwtUserId();
+        UserEntity userEntity = this.mapper.selectById(userid);
+        if (passwordEncoder.matches(passwordVO.getOriginpassword(), userEntity.getPassword())){
+            userEntity.setPassword(passwordEncoder.encode(passwordVO.getNewpassword()));
+            this.mapper.updateById(userEntity);
+            return true;
+        }
+        return false;
+    }
+
+
     /**
      * 查询用户列表
      * @param userEntity

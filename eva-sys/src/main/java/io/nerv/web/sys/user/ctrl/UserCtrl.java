@@ -8,7 +8,7 @@ import io.nerv.core.mvc.util.Response;
 import io.nerv.core.mvc.util.SingleArray;
 import io.nerv.web.sys.user.entity.UserEntity;
 import io.nerv.web.sys.user.service.UserService;
-import io.nerv.web.sys.user.vo.UserCenterVO;
+import io.nerv.web.sys.user.vo.PasswordVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -31,6 +31,13 @@ public class UserCtrl extends PureBaseCtrl<UserService> {
                                 @RequestBody UserEntity user){
         boolean exist = this.service.checkUnique(user);
         return exist? failure(BizCodeEnum.ACCOUNT_ALREADY_EXIST): success();
+    }
+
+    @PostMapping("repwd")
+    @ApiOperation(value = "重新设置密码",response = Response.class)
+    public Response repwd(@ApiParam(name ="formdata", value = "用户对象")
+                          @RequestBody PasswordVO passwordVO){
+        return this.service.repwd(passwordVO)? success("", BizCodeEnum.OPERATE_SUCCESS): failure(BizCodeEnum.BAD_ORG_PASSWORD);
     }
 
     @PostMapping("/del")

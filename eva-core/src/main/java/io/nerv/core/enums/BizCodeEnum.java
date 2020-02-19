@@ -56,6 +56,7 @@ public enum BizCodeEnum implements BizCode {
     RESOURCE_USED("资源已经被引用，无法删除。", "4304"),
     PARENT_NOT_AVAILABLE("父节点为禁用状态，无法启用。", "4305"),
     MODULE_RESOURCE_USED("模块下存在已经被引用的资源，无法删除。", "4306"),
+    BAD_ORG_PASSWORD("原始密码校验失败", "4307"),
     ORG_CODE_EXIST("组织(部门)编码已经存在", "4310"),
 
     /** 上传相关 430x ~ 432x **/
