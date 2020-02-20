@@ -50,7 +50,7 @@ spring:
 eva:
   # 文件上传
   upload:
-    type: dfs
+    type: ng
     tempPath: E://evapic/temp
     storagePath: E://evapic/storage
     allowSuffixName: jpg,png,jpeg

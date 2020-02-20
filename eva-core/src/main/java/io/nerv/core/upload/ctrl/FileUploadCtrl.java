@@ -27,15 +27,11 @@ public class FileUploadCtrl {
     @Autowired
     private FileUploadProvider fileUploadProvider;
 
-
     @PostMapping("/file")
     @ApiOperation(value = "文件上传",response = Response.class)
     public Response upload(MultipartFile file) {
         String filePath = fileUploadProvider.upload(file);
-
-        Response response = new Response();
-
-        return response.success(MapUtil.of("pname", filePath));
+        return new Response().success(MapUtil.of("pname", filePath));
     }
 
 

@@ -2,8 +2,10 @@ package io.nerv.security.filter;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.ServletUtil;
+import com.alibaba.fastjson.JSON;
 import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.enums.BizCodeEnum;
+import io.nerv.core.mvc.util.Response;
 import io.nerv.properties.EvaConfig;
 import io.nerv.security.exception.OathException;
 import io.nerv.security.jwt.JwtUtil;
@@ -24,6 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -74,7 +77,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 }
             } catch (OathException e) {
                 logger.warn("鉴权失败 Token已过期");
-                response.sendError(Integer.valueOf(BizCodeEnum.LOGIN_EXPIRED.getIndex()), "您的登录已过期, 请重新登录.");
+                try(PrintWriter printWriter = response.getWriter()){
+                    printWriter.write(JSON.toJSONString(
+                            new Response()
+                                    .failure(BizCodeEnum.LOGIN_EXPIRED)
+                            )
+                    );
+                    printWriter.flush();
+                }
                 return;
             }
         } else {

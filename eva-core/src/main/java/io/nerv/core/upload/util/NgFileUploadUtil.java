@@ -47,15 +47,16 @@ public class NgFileUploadUtil implements FileUploadProvider {
     @Autowired
     private EvaConfig evaConfig;
 
+
     /**
      * 文件上传 默认上传到配置的tmp目录
-     * @param image
+     * @param file
      * @return
      */
     @Override
-    public String upload(MultipartFile image){
+    public String upload(MultipartFile file){
         // 上传图片名
-        String fileName = image.getOriginalFilename();
+        String fileName = file.getOriginalFilename();
         // 后缀名
         String suffixName = "";
         // 新图片名
@@ -68,16 +69,22 @@ public class NgFileUploadUtil implements FileUploadProvider {
             log.error(BizCodeEnum.FILEIO_ERROR.getName());
             throw new FileUploadException(BizCodeEnum.FILENAME_ERROR);
         }
-        // 判断上传图片是否符合格式
-        if (evaConfig.getUpload().getAllowSuffixName().contains(suffixName)){
-            // 创建临时文件夹
-            File tempFileFolder = new File(evaConfig.getUpload().getTempPath());
-            if (!tempFileFolder.exists() && !tempFileFolder.isDirectory()){
-                tempFileFolder.mkdir();
+        // 判断上传文件是否符合格式
+        if (evaConfig.getUpload().getAllowSuffixName().toLowerCase().contains(suffixName)){
+            String destPath = evaConfig.getUpload().getTempPath();
+            if (StrUtil.isNotBlank(destPath) && !destPath.endsWith("/")){
+                destPath += "/";
             }
-            // 存储图片
+
+            // 创建临时文件夹
+            File tempFile = new File(destPath + newFileName);
+
+            if (!tempFile.getParentFile().exists()){
+                tempFile.getParentFile().mkdir();
+            }
+            // 存储文件
             try {
-                FileUtil.touch(new File(tempFileFolder, newFileName));
+                file.transferTo(tempFile);
             } catch (Exception e) {
                 log.error(BizCodeEnum.FILEIO_ERROR.getName());
                 throw new FileUploadException(BizCodeEnum.FILESAVE_ERROR.getName());
