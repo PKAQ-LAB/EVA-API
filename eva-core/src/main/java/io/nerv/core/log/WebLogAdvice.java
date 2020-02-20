@@ -60,6 +60,9 @@ public class WebLogAdvice {
             // 记录下请求内容
             log.info("---------------------------start---------------------------");
             log.info("URL : " + request.getRequestURL().toString());
+            log.info("Header: " + request.getHeaderNames());
+            log.info("Device: " + request.getHeader("device"));
+            log.info("Version: " + request.getHeader("version"));
             log.info("HTTP_METHOD : " + request.getMethod());
             log.info("IP : " + request.getRemoteAddr());
             log.info("CLASS_METHOD : " + joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName());
@@ -76,6 +79,11 @@ public class WebLogAdvice {
         log.info("SPEND TIME : " + (System.currentTimeMillis() - startTime.get()));
     }
 
+    /**
+     * 记录异常日志
+     * @param joinPoint
+     * @param ex
+     */
     @AfterThrowing(pointcut = "webLog()", throwing="ex")
     public void doWhenThrowing(JoinPoint joinPoint,Throwable ex){
         String jsontStack = ExceptionUtil.stacktraceToString(ex);

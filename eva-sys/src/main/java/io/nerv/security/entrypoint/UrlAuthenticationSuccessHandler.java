@@ -75,9 +75,14 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         map.put("user", user);
         map.put("token", token);
 
+        String device = request.getHeader("device");
+        String version = request.getHeader("version");
+
         BizLogEntity bizLogEntity = new BizLogEntity();
         bizLogEntity.setDescription(user.getAccount() + " 登录了系统")
                 .setOperateDatetime(DateUtil.now())
+                .setDevice(device)
+                .setVersion(version)
                 .setOperator(user.getAccount())
                 .setOperateType("login");
 
