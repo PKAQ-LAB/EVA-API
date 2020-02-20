@@ -28,4 +28,8 @@ public class BizLogEntity {
     private String params;
     /** 返回结果 **/
     private String response;
+    /** 设备类型 **/
+    private String device;
+    /** 应用版本 **/
+    private String version;
 }
