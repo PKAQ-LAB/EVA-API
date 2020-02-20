@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Configuration
 @Conditional(DefaultCacheCondition.class)
-@EnableConfigurationProperties(Cache.class)
 public class CaffeineConfiguration {
 
     @Autowired
