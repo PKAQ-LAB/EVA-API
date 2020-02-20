@@ -7,15 +7,15 @@ import lombok.Getter;
  * 图片上传异常
  */
 @Getter
-public class ImageUploadException extends RuntimeException{
+public class FileUploadException extends RuntimeException{
     private String msg;
 
-    public ImageUploadException(String msg) {
+    public FileUploadException(String msg) {
         super();
         this.msg = msg;
     }
 
-    public ImageUploadException(BizCodeEnum bizCodeEnum) {
+    public FileUploadException(BizCodeEnum bizCodeEnum) {
         super();
         this.msg = bizCodeEnum.getName();
     }

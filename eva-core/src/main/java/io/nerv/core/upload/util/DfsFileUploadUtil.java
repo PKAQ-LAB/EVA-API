@@ -2,7 +2,6 @@ package io.nerv.core.upload.util;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.resource.InputStreamResource;
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
@@ -12,7 +11,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.core.exception.ImageUploadException;
+import io.nerv.core.exception.FileUploadException;
 import io.nerv.core.upload.condition.FastDfsCondition;
 import io.nerv.properties.EvaConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -74,7 +73,7 @@ public class DfsFileUploadUtil implements FileUploadProvider {
             newFileName = snowflake.nextIdStr() + "." + suffixName;
         } else {
             log.error(BizCodeEnum.FILEIO_ERROR.getName());
-            throw new ImageUploadException(BizCodeEnum.FILENAME_ERROR);
+            throw new FileUploadException(BizCodeEnum.FILENAME_ERROR);
         }
         // 判断上传文件是否符合格式
         if (evaConfig.getUpload().getAllowSuffixName().contains(suffixName)){
@@ -83,7 +82,7 @@ public class DfsFileUploadUtil implements FileUploadProvider {
                 isr = new InputStreamResource(file.getInputStream(), newFileName);
             } catch (IOException e) {
                 log.error(e.getMessage(), e);
-                throw new ImageUploadException(BizCodeEnum.FILEIO_ERROR);
+                throw new FileUploadException(BizCodeEnum.FILEIO_ERROR);
             }
 
             Map<String, Object> paramMap = new HashMap<>(3);
@@ -101,7 +100,7 @@ public class DfsFileUploadUtil implements FileUploadProvider {
             file_path = jsonObject.getString("path");
         } else {
             log.error(BizCodeEnum.FILETYPE_NOT_SUPPORTED.getName());
-            throw new ImageUploadException(BizCodeEnum.FILETYPE_NOT_SUPPORTED);
+            throw new FileUploadException(BizCodeEnum.FILETYPE_NOT_SUPPORTED);
         }
 
         // 放入缓存
