@@ -364,8 +364,8 @@ CREATE TABLE `sys_user_info`  (
 -- ----------------------------
 -- Records of sys_user_info
 -- ----------------------------
-INSERT INTO `sys_user_info` VALUES ('1190104332380127233', NULL, 'scott', '{bcrypt}$2a$10$hxJDzKrEBPaYfpYne/.07OEjoK8s5vYv9HpC6Si73UzFj6Pg5om/6', NULL, '', '操作员', NULL, NULL, NULL, NULL, NULL, '0000', '2019-11-01 11:12:39', '2019-11-06 17:31:04', '9199482d76b443ef9f13fefddcf0046c', '9199482d76b443ef9f13fefddcf0046c', '6', NULL, NULL, NULL, '0000', '加达里');
-INSERT INTO `sys_user_info` VALUES ('9199482d76b443ef9f13fefddcf0046c', 'admin', 'admin', '{bcrypt}$2a$10$Nv1jaTk1xeCA7Mmzn9jcBeaOP5DjW5X9DW.9bu02Hs6/cOdbyMIF.', 'i4z62k6qcaxspaqa', '', '超级管理员', '133', NULL, NULL, NULL, NULL, '9999', NULL, '2019-10-09 20:20:04', NULL, NULL, '1', NULL, 'pkaq@msn.com', 'AAACCC', '0000', '统合部');
+INSERT INTO `sys_user_info` VALUES ('1190104332380127233', NULL, 'scott', '{bcrypt}$2a$10$hxJDzKrEBPaYfpYne/.07OEjoK8s5vYv9HpC6Si73UzFj6Pg5om/6', NULL, '', '操作员',  NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0000', '2019-11-01 11:12:39', '2019-11-06 17:31:04', '9199482d76b443ef9f13fefddcf0046c', '9199482d76b443ef9f13fefddcf0046c', '6','加达里', NULL, '0000', '');
+INSERT INTO `sys_user_info` VALUES ('9199482d76b443ef9f13fefddcf0046c', 'admin', 'admin', '{bcrypt}$2a$10$Nv1jaTk1xeCA7Mmzn9jcBeaOP5DjW5X9DW.9bu02Hs6/cOdbyMIF.', 'i4z62k6qcaxspaqa', '', '超级管理员', NULL, 'pkaq@msn.com', '133', NULL, NULL, NULL, NULL, '9999', NULL, '2019-10-09 20:20:04', NULL, NULL, '1','统合部', 'AAACCC', '0000', '');
 
 -- ----------------------------
 -- View structure for v_dict
