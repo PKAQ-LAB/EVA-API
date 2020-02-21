@@ -5,7 +5,7 @@
  Source Server Type    : MySQL
  Source Server Version : 80015
  Source Host           : 192.168.10.166:12306
- Source Schema         : jxc
+ Source Schema         : eva
 
  Target Server Type    : MySQL
  Target Server Version : 80015
