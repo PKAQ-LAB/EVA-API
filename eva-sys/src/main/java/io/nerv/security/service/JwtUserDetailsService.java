@@ -31,6 +31,8 @@ public class JwtUserDetailsService implements UserDetailsService {
 
         UserEntity user = new UserEntity();
         user.setAccount(account);
+        user.setTel(account);
+        user.setEmail(account);
 
         user = userMapper.getUserWithRole(user);
 

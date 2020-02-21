@@ -81,6 +81,9 @@ public class UserEntity extends StdBaseEntity {
     @ApiModelProperty("是否锁定")
     private String locked;
 
+    @ApiModelProperty("微信id")
+    private String weixin_id;
+
     @ApiModelProperty("用户拥有的角色")
     @TableField(exist = false)
     private List<RoleEntity> roles = new ArrayList<>();
