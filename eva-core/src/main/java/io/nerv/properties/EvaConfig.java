@@ -16,6 +16,8 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(EvaConfig.class)
 public class
 EvaConfig {
+    /**是否启用重复提交判断 **/
+    private boolean norepeatCheck;
     /**业务日志配置 **/
     private BizLog bizlog;
 

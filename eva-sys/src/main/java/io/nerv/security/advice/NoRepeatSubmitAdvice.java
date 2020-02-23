@@ -10,6 +10,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
@@ -24,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 @Aspect
 @Component
 @Slf4j
+@ConditionalOnProperty(prefix = "eva", name = "norepeat-check", havingValue = "true")
 public class NoRepeatSubmitAdvice {
 
     @Autowired
@@ -39,8 +41,9 @@ public class NoRepeatSubmitAdvice {
         try {
             ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             HttpServletRequest request = attributes.getRequest();
-
-            var key = tokenUtil.getToken(request) + "-" + request.getServletPath();
+            // 请求类型
+            String method = request.getMethod();
+            var key = method + ":" + tokenUtil.getToken(request) + "-" + request.getServletPath();
             key = SecureUtil.md5(key);
 
             // 如果缓存中有这个url视为重复提交

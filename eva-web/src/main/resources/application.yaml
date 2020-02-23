@@ -72,6 +72,7 @@ wechat:
 #        token: nerv
 #        aesKey: DHFzG3nOljaZ6DZiaHOFzizWzVL1XvlGISKTCtvbS1T
 eva:
+  norepeat-check: false
   # 访问权限
   security:
     # 无需鉴权路径(无条件访问)
