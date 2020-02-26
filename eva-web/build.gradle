@@ -18,7 +18,6 @@ compileJava.dependsOn(processResources)
 dependencies {
    implementation project(":eva-core"),
 				  project(":eva-sys"),
-                  project(":eva-jxc"),
                   project(":addon-weixin"),
                   project(":addon-pay"),
                   "de.codecentric:spring-boot-admin-starter-client:${boot_admin}",

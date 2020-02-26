@@ -1,4 +1,4 @@
-package io.nerv.security.util;
+package io.nerv.core.token.util;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.ServletUtil;

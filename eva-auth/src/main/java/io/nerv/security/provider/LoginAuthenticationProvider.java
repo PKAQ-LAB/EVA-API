@@ -2,7 +2,7 @@ package io.nerv.security.provider;
 
 import cn.hutool.core.util.StrUtil;
 import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.security.exception.OathException;
+import io.nerv.core.exception.OathException;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;

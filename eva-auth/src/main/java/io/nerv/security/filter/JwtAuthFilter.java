@@ -5,11 +5,11 @@ import cn.hutool.extra.servlet.ServletUtil;
 import com.alibaba.fastjson.JSON;
 import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.enums.BizCodeEnum;
+import io.nerv.core.exception.OathException;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.properties.EvaConfig;
-import io.nerv.security.exception.OathException;
-import io.nerv.security.jwt.JwtUtil;
-import io.nerv.security.util.TokenUtil;
+import io.nerv.core.token.jwt.JwtUtil;
+import io.nerv.core.token.util.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -97,7 +97,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             logger.info("checking authentication ：" + uid);
 
             if (StrUtil.isNotBlank(uid) && SecurityContextHolder.getContext().getAuthentication() == null) {
-                logger.debug("security context was null, so authorizing user");
+                logger.debug("io.nerv.security context was null, so authorizing user");
 
                 // 从redis中 根据用户id获取用户权限列表
                 UserDetails userDetails;
@@ -114,7 +114,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                         userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                logger.info("authenticated user " + uid + ", setting security context");
+                logger.info("authenticated user " + uid + ", setting io.nerv.security context");
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }

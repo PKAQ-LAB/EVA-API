@@ -2,7 +2,7 @@ package io.nerv;
 
 import io.nerv.security.exception.OathException;
 import io.nerv.properties.Jwt;
-import io.nerv.security.jwt.JwtUtil;
+import io.nerv.core.token.jwt.JwtUtil;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

@@ -38,6 +38,7 @@ public enum BizCodeEnum implements BizCode {
     ACCOUNT_LOCKED("用户已经被锁定", "4103"),
     LOGIN_ERROR("登录遇到未知错误", "4104"),
     LOGIN_EXPIRED("您的登录已失效,请重新登录", "4105"),
+    PERMISSION_EXPIRED("用户权限不足，请联系管理员", "4106"),
     ACCOUNT_ALREADY_EXIST("账号名已存在", "4110"),
 
     /** 权限相关 420x **/

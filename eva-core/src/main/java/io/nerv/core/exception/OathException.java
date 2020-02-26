@@ -1,7 +1,6 @@
-package io.nerv.security.exception;
+package io.nerv.core.exception;
 
 import io.nerv.core.enums.BizCode;
-import io.nerv.core.enums.BizCodeEnum;
 import org.springframework.security.core.AuthenticationException;
 
 /**

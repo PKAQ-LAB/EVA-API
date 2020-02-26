@@ -3,7 +3,5 @@ project.archivesBaseName = 'eva-sys'
 project.description='sys jar with authority and system management'
 
 dependencies {
-    implementation	project(":eva-core"),
-                    "com.auth0:java-jwt:${auth0}",
-                    "io.jsonwebtoken:jjwt:${jjwt}"
+    implementation	project(":eva-core")
 }

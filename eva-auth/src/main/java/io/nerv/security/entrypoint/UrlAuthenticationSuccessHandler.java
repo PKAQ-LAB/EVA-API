@@ -12,7 +12,7 @@ import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.security.domain.JwtUserDetail;
 import io.nerv.properties.EvaConfig;
-import io.nerv.security.jwt.JwtUtil;
+import io.nerv.core.token.jwt.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;

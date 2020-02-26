@@ -35,4 +35,7 @@ dependencies {
 			// swagger
 			"io.springfox:springfox-swagger2:${swagger}",
 			"com.github.xiaoymin:knife4j-spring-boot-starter:${swagger_ui}"
+	//jwt
+	api		"com.auth0:java-jwt:${auth0}",
+			"io.jsonwebtoken:jjwt:${jjwt}"
 }

@@ -1,8 +1,8 @@
 package io.nerv.security.service;
 
 import io.nerv.core.enums.BizCodeEnum;
+import io.nerv.core.exception.OathException;
 import io.nerv.security.domain.JwtUserFactory;
-import io.nerv.security.exception.OathException;
 import io.nerv.web.sys.user.entity.UserEntity;
 import io.nerv.web.sys.user.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;

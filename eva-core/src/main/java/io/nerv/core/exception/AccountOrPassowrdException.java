@@ -1,4 +1,4 @@
-package io.nerv.security.exception;
+package io.nerv.core.exception;
 
 import org.springframework.security.core.AuthenticationException;
 

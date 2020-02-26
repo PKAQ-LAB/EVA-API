@@ -2,30 +2,19 @@ package io.nerv.config;
 
 import cn.hutool.core.collection.CollUtil;
 import io.nerv.properties.EvaConfig;
-import io.nerv.security.entrypoint.*;
-import io.nerv.security.filter.JwtAuthFilter;
-import io.nerv.security.provider.JwtUsernamePasswordAuthenticationFilter;
-import io.nerv.security.provider.LoginAuthenticationProvider;
-import io.nerv.security.provider.UrlFilterSecurityInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -39,70 +28,17 @@ import java.util.Arrays;
  * 2.启用EnableConfigurationProperties以使ConfigurationProperties生效
  */
 @Configuration
+@Primary
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Value("${spring.profiles.active}")
-    private String activeProfile;
-
-    @Value("${eva.security.anonymous}")
-    private String[] anonymous;
-
     @Autowired
     private EvaConfig evaConfig;
-
-    @Autowired
-    private LoginAuthenticationProvider loginAuthenticationProvider;
-
-    @Autowired
-    private UrlAuthenticationSuccessHandler urlAuthenticationSuccessHandler;
-
-    @Autowired
-    private UrlAuthenticationFailureHandler urlAuthenticationFailureHandler;
-
-    @Autowired
-    private UrlLogoutSuccessHandler urlLogoutSuccessHandler;
-
-    @Autowired
-    private UrlAccessDeniedHandler urlAccessDeniedHandler;
-
-    @Autowired
-    private UnauthorizedHandler unauthorizedHandler;
-
-    @Autowired
-    private UrlFilterSecurityInterceptor urlFilterSecurityInterceptor;
-
-    /** Spring会自动寻找同样类型的具体类注入，这里就是JwtUserDetailsServiceImpl了**/
-    @Autowired
-    @Qualifier("jwtUserDetailsService")
-    private UserDetailsService userDetailsService;
-
-    @Autowired
-    private JwtAuthFilter jwtAuthFilter;
 
     @Bean
     public static PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
-
-    @Override
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(loginAuthenticationProvider)
-            // 设置UserDetailsService
-            .userDetailsService(this.userDetailsService)
-            // 使用BCrypt进行密码的hash
-            .passwordEncoder(passwordEncoder());
-        // 默认超级用户
-        auth.inMemoryAuthentication()
-                .withUser("toor")
-                .password(new BCryptPasswordEncoder().encode("nerv_toor_eva"))
-                .roles("ADMIN");
-    }
-
-    @Bean
-    public JwtAuthFilter authenticationTokenFilterBean() {
-        return new JwtAuthFilter();
     }
 
     @Bean
@@ -148,23 +84,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
             .authorizeRequests()
             // 对于获取token的rest api要允许匿名访问
-            .antMatchers(anonymous).permitAll()
-            // 除上面外的所有请求全部需要鉴权认证
-            .anyRequest().authenticated();
-
-            httpSecurity.logout().logoutUrl("/auth/logout").logoutSuccessHandler(urlLogoutSuccessHandler);
-
-            httpSecurity.exceptionHandling()
-                        .authenticationEntryPoint(unauthorizedHandler)
-                        .accessDeniedHandler(urlAccessDeniedHandler)
-                        .and()
-                        .addFilterAt(urlFilterSecurityInterceptor, FilterSecurityInterceptor.class)
-                        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                        .addFilterBefore(new JwtUsernamePasswordAuthenticationFilter("/auth/login",
-                                                                                          authenticationManager(),
-                                                                                          urlAuthenticationSuccessHandler,
-                                                                                          urlAuthenticationFailureHandler),
-                                         UsernamePasswordAuthenticationFilter.class);
+            .anyRequest().permitAll();
 
             // disable page caching
             httpSecurity
@@ -199,7 +119,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     "/swagger-resources/**",
                     "/*/api-docs"
             );
-
     }
 
 }

@@ -6,12 +6,13 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.nerv.core.enums.BizCodeEnum;
+import io.nerv.core.exception.OathException;
 import io.nerv.core.mvc.entity.mybatis.BaseTreeEntity;
 import io.nerv.core.mvc.service.mybatis.StdBaseService;
 import io.nerv.core.upload.util.FileUploadProvider;
 import io.nerv.core.util.SecurityHelper;
 import io.nerv.core.util.tree.TreeHelper;
-import io.nerv.security.exception.OathException;
 import io.nerv.web.sys.dict.cache.DictCacheHelper;
 import io.nerv.web.sys.module.entity.ModuleEntity;
 import io.nerv.web.sys.module.mapper.ModuleMapper;
@@ -202,14 +203,14 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
         userEntity = this.mapper.getUserWithRole(userEntity);
 
         if (null == userEntity){
-            throw new OathException("查询不到该用户");
+            throw new OathException(BizCodeEnum.ACCOUNT_NOT_EXIST);
         }
 
         List<ModuleEntity> moduleEntity = this.moduleMapper.getRoleModuleByUserId(userEntity.getId());
         List<BaseTreeEntity> treeModule = new TreeHelper().bulid(moduleEntity);
 
         if (CollUtil.isEmpty(userEntity.getRoles()) || CollUtil.isEmpty(treeModule)){
-            throw new OathException("用户权限不足，请联系管理员");
+            throw new OathException(BizCodeEnum.PERMISSION_EXPIRED);
         }
 
         return Map.of("user", userEntity, "menus", treeModule, "dict", dictCacheHelper.getAll());

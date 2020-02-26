@@ -1,15 +1,14 @@
-package io.nerv.security.jwt;
+package io.nerv.core.token.jwt;
 
 import cn.hutool.core.codec.Base64;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.impl.DefaultClock;
+import io.nerv.core.exception.OathException;
 import io.nerv.properties.EvaConfig;
 import io.nerv.properties.Jwt;
-import io.nerv.security.exception.OathException;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -83,7 +82,7 @@ public class JwtUtil {
                 .parseClaimsJws(token)
                 .getBody();
         }catch (ExpiredJwtException e){
-            log.error("token已过期");
+            log.error("token已过期", e);
             throw new OathException("Token 已过期");
         }finally {
             return claims;
@@ -130,6 +129,7 @@ public class JwtUtil {
         Claims claims = this.getClaimsFromToken(jwtToken);
 
         if (null == claims || "-".equals(claims.getSubject())) {
+            log.error("登录已失效");
             throw new OathException("登录已失效");
         } else {
             ret = true;
