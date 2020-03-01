@@ -21,6 +21,62 @@ ext {
     boot_admin = "2.2.2"
     truelicense = "1.33"
     caffeine = "2.8.1"
+    weixin = "3.7.0"
+    securityTest = "5.2.2.RELEASE"
+    alipay = "4.9.28.ALL"
+    zxing = "3.4.0"
+    velocity = "2.2"
+
+    lib = ["p6spy" : "p6spy:p6spy:${p6spy}",
+           "flyway" : "org.flywaydb:flyway-core:${flyway}",
+           "mysql" : "mysql:mysql-connector-java:${mysql}",
+           "jaxb_api" : "javax.xml.bind:jaxb-api:${jaxb_api}",
+           "truelicense" : "de.schlichtherle.truelicense:truelicense-core:${truelicense}",
+           "jasypt" : "com.github.ulisesbocchio:jasypt-spring-boot-starter:${jasypt}",
+            // lombok
+           "lombok" : "org.projectlombok:lombok:${lombok}",
+            // cache
+           "caffeine" : "com.github.ben-manes.caffeine:caffeine:${caffeine}",
+           "redis" : "org.springframework.boot:spring-boot-starter-data-redis:${springBootVersion}",
+           "cache" : "org.springframework.boot:spring-boot-starter-cache:${springBootVersion}",
+           // AOP
+           "aop" : "org.springframework.boot:spring-boot-starter-aop:${springBootVersion}",
+           // security
+           "security" : "org.springframework.boot:spring-boot-starter-security:${springBootVersion}",
+           // web
+           "web" : "org.springframework.boot:spring-boot-starter-web:${springBootVersion}",
+           "undertow" : "org.springframework.boot:spring-boot-starter-undertow:${springBootVersion}",
+            // test
+           "test" : "org.springframework.boot:spring-boot-starter-test:${springBootVersion}",
+           "securityTest" : "org.springframework.security:spring-security-test:${securityTest}",
+            // jpa
+           "jpa" : "org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}",
+           // json
+           "fastjson" : "com.alibaba:fastjson:${fastjson}",
+           // hutool
+           "hutool" : "cn.hutool:hutool-all:${hutool}",
+           // mybatis
+           "mybatisPlus" : "com.baomidou:mybatis-plus-boot-starter:${mybatis_plus_starter}",
+           // swagger
+           "swagger" : "io.springfox:springfox-swagger2:${swagger}",
+           "knife4j" : "com.github.xiaoymin:knife4j-spring-boot-starter:${swagger_ui}",
+            // jwt
+           "auth0" : "com.auth0:java-jwt:${auth0}",
+           "jjwt" : "io.jsonwebtoken:jjwt:${jjwt}",
+            // wxjava
+           "wxmp" : "com.github.binarywang:weixin-java-mp:${weixin}",
+           "wxpay" : "com.github.binarywang:weixin-java-pay:${weixin}",
+            // ali
+           "alipay" : "com.alipay.sdk:alipay-sdk-java:${alipay}",
+           "zxing" : "com.google.zxing:core:${zxing}",
+            // bootAdmin
+           "bootAdminServer" : "de.codecentric:spring-boot-admin-starter-server:${boot_admin}",
+           "bootAdmin" : "de.codecentric:spring-boot-admin-starter-client:${boot_admin}",
+           "devTools" : "org.springframework.boot:spring-boot-devtools",
+            // generator
+           "velocity" : "org.apache.velocity:velocity-engine-core:${velocity}",
+           "mybatis_plus_generator" : "com.baomidou:mybatis-plus-generator:${mybatis_plus_starter}"
+    ]
 }
 
 allprojects {
@@ -56,11 +112,11 @@ subprojects {
     }
 
     dependencies {
-       implementation "org.projectlombok:lombok:${lombok}"
-	   annotationProcessor "org.projectlombok:lombok:${lombok}"
+       implementation "${lib.lombok}"
+	   annotationProcessor "${lib.lombok}"
 
-       testImplementation "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
-       testImplementation "org.springframework.security:spring-security-test:5.2.2.RELEASE"
+       testImplementation "${lib.test}",
+                          "${lib.securityTest}"
      }
 }
 

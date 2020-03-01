@@ -1,15 +1,9 @@
 apply from: '../publish.gradle'
 project.archivesBaseName = 'addon-pay'
 
-ext{
-    alipay = "4.9.28.ALL"
-    zxing = "3.4.0"
-    weixin = "3.5.0"
-}
-
 dependencies {
     implementation	project(":eva-core"),
                     // 阿里支付
-                    "com.alipay.sdk:alipay-sdk-java:${alipay}",
-					"com.google.zxing:core:${zxing}"
+                    "${lib.alipay}",
+					"${lib.zxing}"
 }

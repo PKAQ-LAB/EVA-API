@@ -20,6 +20,6 @@ dependencies {
 				  project(":eva-sys"),
                   project(":addon-weixin"),
                   project(":addon-pay"),
-                  "de.codecentric:spring-boot-admin-starter-client:${boot_admin}",
-				  "org.springframework.boot:spring-boot-devtools"
+                  "${lib.bootAdmin}",
+		   		  "${lib.devTools}"
 }

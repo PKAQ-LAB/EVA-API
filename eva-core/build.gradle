@@ -3,39 +3,30 @@ project.archivesBaseName = 'eva-core'
 
 // 依赖配置
 dependencies {
-	implementation 	"p6spy:p6spy:${p6spy}",
-					"org.flywaydb:flyway-core:${flyway}",
-					"mysql:mysql-connector-java:${mysql}",
-					"javax.xml.bind:jaxb-api:${jaxb_api}",
-			 		"de.schlichtherle.truelicense:truelicense-core:${truelicense}",
-					"com.github.ulisesbocchio:jasypt-spring-boot-starter:${jasypt}"
+	implementation 	"${lib.p6spy}",
+					"${lib.flyway}",
+					"${lib.mysql}",
+					"${lib.jaxb_api}",
+			 		"${lib.truelicense}",
+					"${lib.jasypt}"
 
-	api "org.springframework.boot:spring-boot-starter-security:${springBootVersion}"
-
-	// 使用undertow替代tomcat
-    api("org.springframework.boot:spring-boot-starter-web:${springBootVersion}"){
+	api("${lib.web}"){
 		exclude module: 'spring-boot-starter-tomcat'
 	}
 
-	// 缓存
-	api "com.github.ben-manes.caffeine:caffeine:${caffeine}",
-			"org.springframework.boot:spring-boot-starter-data-redis:${springBootVersion}",
-			"org.springframework.boot:spring-boot-starter-cache:${springBootVersion}"
-
-	api		"org.springframework.boot:spring-boot-starter-undertow:${springBootVersion}",
-            // AOP
-            "org.springframework.boot:spring-boot-starter-aop:${springBootVersion}",
-			"org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}",
-            // json
-            "com.alibaba:fastjson:${fastjson}",
-			// hutool
-            "cn.hutool:hutool-all:${hutool}",
-            // mybatis
-            "com.baomidou:mybatis-plus-boot-starter:${mybatis_plus_starter}",
-			// swagger
-			"io.springfox:springfox-swagger2:${swagger}",
-			"com.github.xiaoymin:knife4j-spring-boot-starter:${swagger_ui}"
-	//jwt
-	api		"com.auth0:java-jwt:${auth0}",
-			"io.jsonwebtoken:jjwt:${jjwt}"
+	api "${lib.security}",
+		"${lib.aop}",
+		"${lib.undertow}",
+		"${lib.jpa}",
+		"${lib.fastjson}",
+		"${lib.hutool}",
+		"${lib.mybatisPlus}",
+		"${lib.swagger}",
+		"${lib.knife4j}",
+		"${lib.caffeine}",
+		"${lib.redis}",
+		"${lib.cache}",
+		"${lib.auth0}",
+		"${lib.jjwt}"
 }
+

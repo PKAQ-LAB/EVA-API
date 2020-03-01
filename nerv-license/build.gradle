@@ -16,10 +16,10 @@ description = """license"""
 // 依赖配置
 dependencies {
     // 使用undertow替代tomcat
-    implementation("org.springframework.boot:spring-boot-starter-web:${springBootVersion}"){
+    implementation("${lib.web}"){
         exclude module: 'spring-boot-starter-tomcat'
     }
-    implementation  "cn.hutool:hutool-all:${hutool}",
-                    "de.schlichtherle.truelicense:truelicense-core:1.33"
+    implementation  "${lib.hutool}",
+                    "${lib.truelicense}"
 
 }

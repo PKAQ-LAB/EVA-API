@@ -1,9 +1,5 @@
 project.archivesBaseName = 'addon-generator'
 
-ext{
-    velocity = "2.2"
-    mybatis_plus_generator = "3.3.1"
-}
 jar {
 	enabled = true
 }
@@ -12,6 +8,6 @@ description = """generator"""
 // 依赖配置
 dependencies {
 	implementation  project(":eva-core"),
-					"org.apache.velocity:velocity-engine-core:${velocity}",
-					"com.baomidou:mybatis-plus-generator:${mybatis_plus_generator}"
+					"${lib.velocity}",
+					"${lib.mybatis_plus_generator}"
 }

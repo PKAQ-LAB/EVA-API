@@ -14,12 +14,12 @@ bootJar {
 description = """jxc"""
 // 依赖配置
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-web"){
+    implementation("${lib.web}"){
         exclude module: 'spring-boot-starter-tomcat'
     }
 
-    implementation "org.springframework.boot:spring-boot-starter-undertow",
-                   "de.codecentric:spring-boot-admin-starter-server:${boot_admin}"
+    implementation "${lib.undertow}",
+                   "${lib.bootAdminServer}"
 
-    implementation "org.springframework.boot:spring-boot-starter-security:${springBootVersion}"
+    implementation "${lib.security}"
 }
