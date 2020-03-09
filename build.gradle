@@ -10,7 +10,7 @@ ext {
     mybatis_plus_starter = "3.3.1"
     lombok = "1.18.12"
     swagger = "2.9.2"
-	swagger_ui = "2.0.1"
+	knife4j = "2.0.2"
     hutool = "5.2.0"
     jaxb_api = "2.3.1"
     jjwt = "0.9.1"
@@ -59,7 +59,7 @@ ext {
            "mybatisPlus" : "com.baomidou:mybatis-plus-boot-starter:${mybatis_plus_starter}",
            // swagger
            "swagger" : "io.springfox:springfox-swagger2:${swagger}",
-           "knife4j" : "com.github.xiaoymin:knife4j-spring-boot-starter:${swagger_ui}",
+           "knife4j" : "com.github.xiaoymin:knife4j-spring-boot-starter:${knife4j}",
             // jwt
            "auth0" : "com.auth0:java-jwt:${auth0}",
            "jjwt" : "io.jsonwebtoken:jjwt:${jjwt}",
