@@ -40,7 +40,6 @@ import java.util.Arrays;
  * 2.启用EnableConfigurationProperties以使ConfigurationProperties生效
  */
 @Configuration
-@ConditionalOnMissingBean
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {

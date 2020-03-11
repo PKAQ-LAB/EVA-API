@@ -112,8 +112,8 @@ public class JwtUtil {
 
         // 设置过期时间,为0则永不过期
         if (ttlMillis > 0) {
-            long expMillis = nowMillis + ttlMillis;
-            Date exp = new Date(expMillis);
+            long expMillis = nowMillis + (ttlMillis * 1000);
+            Date exp =  new Date(expMillis);
             // 失效时间
             jwt.setExpiration(exp).setNotBefore(new Date(System.currentTimeMillis()));
         }

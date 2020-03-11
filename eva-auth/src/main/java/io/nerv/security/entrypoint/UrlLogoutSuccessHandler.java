@@ -5,8 +5,12 @@ import com.alibaba.fastjson.JSON;
 import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.util.Response;
+import io.nerv.core.token.util.TokenUtil;
+import io.nerv.core.util.SecurityHelper;
 import io.nerv.properties.EvaConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
@@ -25,12 +29,24 @@ public class UrlLogoutSuccessHandler implements LogoutSuccessHandler {
     @Autowired
     private EvaConfig evaConfig;
 
+    @Autowired
+    private TokenUtil TokenUtil;
+
+    private Cache tokenCache;
+
+    public UrlLogoutSuccessHandler(CacheManager cacheManager) {
+        // 获取存放token的cache
+        this.tokenCache = cacheManager.getCache(CommonConstant.CACHE_TOKEN);
+    }
+
     @Override
     public void onLogoutSuccess(HttpServletRequest httpServletRequest,
                                 HttpServletResponse httpServletResponse,
                                 Authentication authentication) throws IOException {
-        // 获取用户jwt
-        // 清空redis中的jwt 刷新用户secret
+        // 清空redis/caffeine中的token 刷新用户secret
+        this.tokenCache.evict(TokenUtil.getToken(httpServletRequest));
+
+        // 清除cookie
         ServletUtil.addCookie(httpServletResponse,
                 CommonConstant.TOKEN_KEY,
                 null,

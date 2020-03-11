@@ -14,6 +14,8 @@ import io.nerv.core.security.domain.JwtUserDetail;
 import io.nerv.properties.EvaConfig;
 import io.nerv.core.token.jwt.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -42,6 +44,12 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
     @Autowired
     private BizLogSupporter bizLogSupporter;
 
+    private Cache tokenCache;
+
+    public UrlAuthenticationSuccessHandler(CacheManager cacheManager) {
+        this.tokenCache = cacheManager.getCache(CommonConstant.CACHE_TOKEN);
+    }
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse httpServletResponse,
@@ -55,6 +63,8 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         JwtUserDetail user = (JwtUserDetail) authentication.getPrincipal();
         // 签发token
         String token = jwtUtil.build(evaConfig.getJwt().getTtl(), user.getAccount());
+        // token放入缓存
+        tokenCache.put(token, user.getAccount());
 
         ServletUtil.addCookie(httpServletResponse,
                 CommonConstant.TOKEN_KEY,

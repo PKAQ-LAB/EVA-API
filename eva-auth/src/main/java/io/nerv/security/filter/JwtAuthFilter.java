@@ -4,14 +4,18 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.ServletUtil;
 import com.alibaba.fastjson.JSON;
 import io.nerv.core.constant.CommonConstant;
+import io.nerv.core.enums.BizCode;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.exception.OathException;
 import io.nerv.core.mvc.util.Response;
+import io.nerv.core.util.SecurityHelper;
 import io.nerv.properties.EvaConfig;
 import io.nerv.core.token.jwt.JwtUtil;
 import io.nerv.core.token.util.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -43,6 +47,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Autowired
     private TokenUtil tokenUtil;
 
+    private Cache tokenCache;
+
+    @Autowired
+    private SecurityHelper securityHelper;
+
+    public JwtAuthFilter(CacheManager cacheManager) {
+        this.tokenCache = cacheManager.getCache(CommonConstant.CACHE_TOKEN);
+    }
+
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
@@ -50,6 +63,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             FilterChain chain) throws ServletException, IOException {
 
         var isvalid = false;
+        var inCache = false;
 
         var authToken = tokenUtil.getToken(request);
 
@@ -64,19 +78,32 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             try {
                 // 验证token 是否合法
                 isvalid = jwtUtil.valid(authToken);
+                // 验证缓存中是否存在该token
+                Cache.ValueWrapper valueWrapper = tokenCache.get(authToken);
+                if (null != valueWrapper && null != valueWrapper.get()) {
+                    inCache = true;
+                } else {
+                    logger.warn("鉴权失败 缓存中无法找到对应token");
+                    throw new OathException(BizCodeEnum.LOGIN_EXPIRED);
+                }
+
                 // token 即将过期 续命
                 if (jwtUtil.isTokenExpiring(authToken)){
+                    String newToken = jwtUtil.refreshToken(authToken);
+                    // 刷新缓存中的
+                    tokenCache.put(newToken, securityHelper.getJwtUser().getAccount());
+
                     // reponse请求头返回刷新后的token
-                    response.setHeader(CommonConstant.TOKEN_KEY,jwtUtil.refreshToken(authToken));
+                    response.setHeader(CommonConstant.TOKEN_KEY, newToken);
                     // 后台设置前台cookie值
                     ServletUtil.addCookie(response, CommonConstant.TOKEN_KEY,
-                                                    jwtUtil.refreshToken(authToken),
+                                                    newToken,
                                                     evaConfig.getCookie().getMaxAge(),
                                                 "/",
                                                     evaConfig.getCookie().getDomain());
                 }
             } catch (OathException e) {
-                logger.warn("鉴权失败 Token已过期");
+                logger.warn("鉴权失败 Token已过期", e);
                 try(PrintWriter printWriter = response.getWriter()){
                     printWriter.write(JSON.toJSONString(
                             new Response()
@@ -91,7 +118,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             logger.warn("couldn't find bearer string, will ignore the header");
         }
 
-        if (isvalid) {
+        if (isvalid && inCache) {
             String uid = jwtUtil.getUid(authToken);
 
             logger.info("checking authentication ：" + uid);

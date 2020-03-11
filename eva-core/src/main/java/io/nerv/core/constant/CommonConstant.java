@@ -24,4 +24,7 @@ public interface CommonConstant {
     String CACHE_BIZDATA = "bizdata";
     //字典数据
     String CACHE_DICTDATA = "dictdata";
+    // token缓存
+    String CACHE_TOKEN = "token";
+
 }
