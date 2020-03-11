@@ -19,7 +19,6 @@ import java.util.Optional;
  * Datetime: 2018/3/13 22:16
  * @author S.PKAQ
  */
-@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 public abstract class StdBaseService<R extends JpaRepository, D extends StdBaseDomain> {
     @Autowired
     public R repository;
@@ -73,6 +72,7 @@ public abstract class StdBaseService<R extends JpaRepository, D extends StdBaseD
      * 合并保存,如果不存在id执行插入,存在ID执行更新
      * @param domain 实体类对象
      */
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void merge(D domain){
         this.repository.save(domain);
     }
@@ -124,6 +124,7 @@ public abstract class StdBaseService<R extends JpaRepository, D extends StdBaseD
      * @param domains
      * @return
      */
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void delete(List<D> domains){
         this.repository.deleteInBatch(domains);
     }

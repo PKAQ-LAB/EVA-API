@@ -20,7 +20,6 @@ import java.util.List;
  * Datetime: 2018/3/13 22:16
  * @author S.PKAQ
  */
-@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 public abstract class StdBaseService<M extends BaseMapper<T>, T extends StdBaseEntity> {
     @Autowired
     public M mapper;
@@ -32,7 +31,6 @@ public abstract class StdBaseService<M extends BaseMapper<T>, T extends StdBaseE
     public T getById(String id){
         return this.mapper.selectById(id);
     }
-
     /**
      * 查询符合条件得记录条数
      * @param entity
@@ -42,7 +40,6 @@ public abstract class StdBaseService<M extends BaseMapper<T>, T extends StdBaseE
         Wrapper<T> wrapper = new QueryWrapper<>(entity);
         return this.mapper.selectCount(wrapper);
     }
-
     /**
      * 根据条件获取一条记录
      * @param entity
@@ -56,6 +53,7 @@ public abstract class StdBaseService<M extends BaseMapper<T>, T extends StdBaseE
      * 合并保存,如果不存在id执行插入,存在ID执行更新
      * @param entity 实体类对象
      */
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void merge(T entity){
         if (entity.getId() == null){
             this.mapper.insert(entity);
@@ -69,6 +67,7 @@ public abstract class StdBaseService<M extends BaseMapper<T>, T extends StdBaseE
      * @param entity
      * @param wrapper
      */
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void merge(T entity, Wrapper<T> wrapper){
         if (entity.getId() == null){
             this.mapper.insert(entity);
@@ -129,6 +128,7 @@ public abstract class StdBaseService<M extends BaseMapper<T>, T extends StdBaseE
      * @param param
      * @return
      */
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void delete(ArrayList<String> param){
         this.mapper.deleteBatchIds(param);
     }

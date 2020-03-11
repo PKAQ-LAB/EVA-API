@@ -20,7 +20,6 @@ import java.util.List;
  * Datetime: 2018/3/13 22:16
  * @author S.PKAQ
  */
-@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 public abstract class ActiveBaseService<M extends BaseMapper<T>, T extends Model> {
     @Autowired
     protected M mapper;
@@ -54,6 +53,7 @@ public abstract class ActiveBaseService<M extends BaseMapper<T>, T extends Model
      * 合并保存,如果不存在id执行插入,存在ID执行更新
      * @param entity 实体类对象
      */
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void merge(T entity){
         entity.insertOrUpdate();
     }
@@ -113,6 +113,7 @@ public abstract class ActiveBaseService<M extends BaseMapper<T>, T extends Model
      * 通用删除
      * @param param
      */
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void delete(ArrayList<String> param){
         this.mapper.deleteBatchIds(param);
     }
