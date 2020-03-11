@@ -50,13 +50,13 @@ spring:
 eva:
   # 文件上传
   upload:
+    # ng or dfs
     type: ng
     tempPath: E://evapic/temp
     storagePath: E://evapic/storage
     allowSuffixName: jpg,png,jpeg
+    # dfs 地址
     serverUrl: http://118.31.166.146:18109/ga
-  cookie:
-    maxAge: 3600
 #    监控配置
 #management:
 #  endpoints:

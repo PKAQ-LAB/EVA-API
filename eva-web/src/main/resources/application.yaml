@@ -73,6 +73,18 @@ wechat:
 #        aesKey: DHFzG3nOljaZ6DZiaHOFzizWzVL1XvlGISKTCtvbS1T
 eva:
   norepeat-check: false
+  # 该配置必须在jwt配置前 30天有效
+  cookie:
+    maxAge: &maxAge 2592000
+  # JWT配置
+  jwt:
+    header: Authorization
+    token-head: Bearer
+    sign: PKAQ
+    secert: aHR0cDovL3BrYXEub3Jn
+    ttl: *maxAge
+    # 过期阈值 默认6小时
+    threshold: 21600000
   # 访问权限
   security:
     # 无需鉴权路径(无条件访问)
@@ -102,13 +114,15 @@ eva:
     type: caffeine
     config:
       - name: uploadfiles
-        spec: initialCapacity=100,expireAfterAccess=1d
+        spec: initialCapacity=100,expireAfter=1d
       - name: repeatsubmit
         spec: initialCapacity=10,expireAfterAccess=1s
       - name: dictdata
         spec: initialCapacity=100
       - name: bizdata
         spec: initialCapacity=100,expireAfterAccess=1h
+      - name: token
+        spec: initialCapacity=100,expireAfterWrite=2592000s
 #    type: redis
 #    config:
 #        # 缓存名称 - 文件上传缓存
@@ -136,14 +150,6 @@ eva:
   bizlog:
     enabled: true
     impl: MybatisSupporter
-  # JWT配置
-  jwt:
-    header: Authorization
-    token-head: Bearer
-    sign: PKAQ
-    secert: aHR0cDovL3BrYXEub3Jn
-    ttl: 2592000000
-    threshold: 86400000
   license:
     enable: false
     # 公钥别名
