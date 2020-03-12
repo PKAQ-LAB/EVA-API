@@ -47,21 +47,20 @@ public class WebBooter implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        ngFileUploadUtil.storage("1230492948855324672.jpg");
-//        log.info(" ---- 字典初始化 开始 ---- ");
-//        this.dictCacheHelper.init();
-//        this.dictCacheHelper.getAll();
-//        log.info(" ---- 字典初始化 结束 ---- ");
-//        if (evaConfig.getLicense().isEnable()){
-//            // 安装license
-//            licenseVerify.init();
-//
-//            // 验证license
-//            if (!licenseVerify.vertify()) {
-//                log.error("授权验证未通过, 请更新授权文件");
-//                Runtime.getRuntime().halt(1);
-//            }
-//        }
+        log.info(" ---- 字典初始化 开始 ---- ");
+        this.dictCacheHelper.init();
+        this.dictCacheHelper.getAll();
+        log.info(" ---- 字典初始化 结束 ---- ");
+        if (evaConfig.getLicense().isEnable()){
+            // 安装license
+            licenseVerify.init();
+
+            // 验证license
+            if (!licenseVerify.vertify()) {
+                log.error("授权验证未通过, 请更新授权文件");
+                Runtime.getRuntime().halt(1);
+            }
+        }
     }
 
     public static void main(String[] args) {

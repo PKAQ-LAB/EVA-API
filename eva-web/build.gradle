@@ -17,7 +17,7 @@ compileJava.dependsOn(processResources)
 
 dependencies {
    implementation project(":eva-core"),
-				  project(":eva-sys"),
+				  project(":eva-auth"),
                   project(":addon-weixin"),
                   project(":addon-pay"),
                   "${lib.bootAdmin}",

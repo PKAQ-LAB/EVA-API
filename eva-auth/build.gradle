@@ -3,6 +3,6 @@ project.archivesBaseName = 'eva-auth'
 project.description='authority jar with system management'
 
 dependencies {
-    implementation	project(":eva-core"),
-                    project(":eva-sys")
+    implementation	project(":eva-core")
+    api             project(":eva-sys")
 }

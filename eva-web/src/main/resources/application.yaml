@@ -114,7 +114,7 @@ eva:
     type: caffeine
     config:
       - name: uploadfiles
-        spec: initialCapacity=100,expireAfter=1d
+        spec: initialCapacity=100,expireAfterWrite=1d
       - name: repeatsubmit
         spec: initialCapacity=10,expireAfterAccess=1s
       - name: dictdata
