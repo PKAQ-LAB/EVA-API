@@ -58,7 +58,7 @@ public class DfsFileUploadUtil implements FileUploadProvider {
      * @return
      */
     @Override
-    public String upload(MultipartFile file){
+    public String upload(MultipartFile file, String path){
         // 上传文件名
         String fileName = file.getOriginalFilename();
         // 后缀名
@@ -92,8 +92,11 @@ public class DfsFileUploadUtil implements FileUploadProvider {
             paramMap.put("output","json");
             //自定义路径
 //            String curDate = DateUtil.format(new Date(), DatePattern.PURE_DATE_FORMAT);
-//            paramMap.put("path","tmp/"+curDate);
-            paramMap.put("path", suffixName);
+            if (StrUtil.isNotBlank(path)){
+                paramMap.put("path", path);
+            } else {
+                paramMap.put("path", suffixName);
+            }
 
             JSONObject jsonObject = JSON.parseObject(this.transfer(paramMap));
 

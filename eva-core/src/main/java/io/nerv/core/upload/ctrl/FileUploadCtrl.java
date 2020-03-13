@@ -29,8 +29,8 @@ public class FileUploadCtrl {
 
     @PostMapping("/file")
     @ApiOperation(value = "文件上传",response = Response.class)
-    public Response upload(MultipartFile file) {
-        String filePath = fileUploadProvider.upload(file);
+    public Response upload(MultipartFile file, String path) {
+        String filePath = fileUploadProvider.upload(file, path);
         return new Response().success(MapUtil.of("pname", filePath));
     }
 

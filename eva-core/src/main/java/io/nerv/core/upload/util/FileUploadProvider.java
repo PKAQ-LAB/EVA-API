@@ -7,15 +7,15 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * 图片上传接口
+ * 文件上传接口
  */
 public interface FileUploadProvider {
     /**
      * 上传
-     * @param image
+     * @param file
      * @return
      */
-    String upload(MultipartFile image);
+    String upload(MultipartFile file, String path);
 
     /**
      * 存储
