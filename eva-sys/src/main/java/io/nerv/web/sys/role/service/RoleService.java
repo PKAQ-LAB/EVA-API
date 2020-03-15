@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.nerv.core.enums.LockEnumm;
 import io.nerv.core.mvc.service.mybatis.StdBaseService;
+import io.nerv.core.mvc.util.EvaPage;
 import io.nerv.core.util.SecurityHelper;
 import io.nerv.web.sys.module.entity.ModuleEntity;
 import io.nerv.web.sys.module.mapper.ModuleMapper;
@@ -67,7 +68,7 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
      * @param roleEntity
      * @return
      */
-    public IPage<RoleEntity> listRole(RoleEntity roleEntity, Integer page, Integer pageSize) {
+    public EvaPage<RoleEntity> listRole(RoleEntity roleEntity, Integer page, Integer pageSize) {
 
         page = null != page ? page : 1;
         pageSize = null != pageSize? pageSize: 10;
@@ -75,7 +76,7 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
         QueryWrapper<RoleEntity> wrapper = new QueryWrapper<>(roleEntity);
 
         // 分页条件
-        Page pagination = new Page();
+        EvaPage pagination = new EvaPage();
         pagination.setCurrent(page);
         pagination.setSize(pageSize);
 
