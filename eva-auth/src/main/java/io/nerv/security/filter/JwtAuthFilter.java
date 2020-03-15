@@ -84,6 +84,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     inCache = true;
                 } else {
                     logger.warn("鉴权失败 缓存中无法找到对应token");
+                    // 清除cookie
+                    ServletUtil.addCookie(response,
+                            CommonConstant.TOKEN_KEY,
+                            null,
+                            0,
+                            "/",
+                            evaConfig.getCookie().getDomain());
+
                     throw new OathException(BizCodeEnum.LOGIN_EXPIRED);
                 }
 
@@ -104,6 +112,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 }
             } catch (OathException e) {
                 logger.warn("鉴权失败 Token已过期", e);
+
+                // 清除cookie
+                ServletUtil.addCookie(response,
+                        CommonConstant.TOKEN_KEY,
+                        null,
+                        0,
+                        "/",
+                        evaConfig.getCookie().getDomain());
+
                 try(PrintWriter printWriter = response.getWriter()){
                     printWriter.write(JSON.toJSONString(
                             new Response()
