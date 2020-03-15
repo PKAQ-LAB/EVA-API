@@ -54,7 +54,7 @@ public class NgFileUploadUtil implements FileUploadProvider {
      * @return
      */
     @Override
-    public String upload(MultipartFile file){
+    public String upload(MultipartFile file, String path){
         // 上传图片名
         String fileName = file.getOriginalFilename();
         // 后缀名
