@@ -73,7 +73,7 @@ public class UserCtrl extends PureBaseCtrl<UserService> {
     @ApiOperation(value = "列表查询",response = Response.class)
     public Response list(@ApiParam(name ="condition", value = "用户对象")
                                    UserEntity entity, Integer pageNo, Integer pageSize){
-        return this.success(this.service.listPage(entity, pageNo, pageSize));
+        return success(this.service.listUser(entity, pageNo, pageSize));
     }
 
     @GetMapping("/get/{id}")

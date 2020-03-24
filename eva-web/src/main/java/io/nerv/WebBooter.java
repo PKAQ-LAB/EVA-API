@@ -1,7 +1,6 @@
 package io.nerv;
 
 import io.nerv.core.license.LicenseVerify;
-import io.nerv.core.upload.util.NgFileUploadUtil;
 import io.nerv.properties.EvaConfig;
 import io.nerv.server.undertow.GracefulShutdownUndertowWrapper;
 import io.nerv.web.sys.dict.cache.DictCacheHelper;
@@ -40,10 +39,6 @@ public class WebBooter implements CommandLineRunner {
 
     @Autowired(required = false)
     private GracefulShutdownUndertowWrapper gracefulShutdownUndertowWrapper;
-
-
-    @Autowired
-    private NgFileUploadUtil ngFileUploadUtil;
 
     @Override
     public void run(String... args) {

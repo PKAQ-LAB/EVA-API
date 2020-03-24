@@ -74,18 +74,18 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
         }
         return false;
     }
-
-
     /**
      * 查询用户列表
      * @param userEntity
      * @return
      */
-    public IPage<UserEntity> listUser(UserEntity userEntity, Integer page) {
+    public IPage<UserEntity> listUser(UserEntity userEntity, Integer page, Integer size) {
         page = null != page ? page : 1;
+        size = null != size ? size : 10;
 
         Page pagination = new Page();
         pagination.setCurrent(page);
+        pagination.setSize(size);
 
         return this.mapper.getUerWithRoleId(pagination, userEntity);
     }

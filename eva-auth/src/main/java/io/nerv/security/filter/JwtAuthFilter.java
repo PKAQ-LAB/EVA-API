@@ -8,6 +8,7 @@ import io.nerv.core.enums.BizCode;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.exception.OathException;
 import io.nerv.core.mvc.util.Response;
+import io.nerv.core.util.RequestUtil;
 import io.nerv.core.util.SecurityHelper;
 import io.nerv.properties.EvaConfig;
 import io.nerv.core.token.jwt.JwtUtil;
@@ -37,6 +38,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Autowired
     @Qualifier("jwtUserDetailsService")
     private UserDetailsService userDetailsService;
+
+    @Autowired
+    private RequestUtil requestUtil;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -72,6 +76,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         if (StrUtil.isNotBlank(authToken)) {
+            String userAccount = jwtUtil.getUid(authToken);
+            String cacheKey = String.format("%s::%s", userAccount, requestUtil.formatDeivceAndVersion(request, "%s::%s"));
             /**
              * token即将过期 刷新
              */
@@ -79,8 +85,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 // 验证token 是否合法
                 isvalid = jwtUtil.valid(authToken);
                 // 验证缓存中是否存在该token
-                Cache.ValueWrapper valueWrapper = tokenCache.get(authToken);
-                if (null != valueWrapper && null != valueWrapper.get()) {
+                Cache.ValueWrapper valueWrapper = tokenCache.get(cacheKey);
+                if (null != valueWrapper && null != valueWrapper.get() && authToken.equals(valueWrapper.get())) {
                     inCache = true;
                 } else {
                     logger.warn("鉴权失败 缓存中无法找到对应token");
@@ -99,7 +105,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 if (jwtUtil.isTokenExpiring(authToken)){
                     String newToken = jwtUtil.refreshToken(authToken);
                     // 刷新缓存中的
-                    tokenCache.put(newToken, securityHelper.getJwtUser().getAccount());
+                    // token放入缓存
+                    tokenCache.put(cacheKey, newToken);
 
                     // reponse请求头返回刷新后的token
                     response.setHeader(CommonConstant.TOKEN_KEY, newToken);

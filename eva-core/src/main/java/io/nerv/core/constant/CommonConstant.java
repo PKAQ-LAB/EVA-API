@@ -27,4 +27,10 @@ public interface CommonConstant {
     // token缓存
     String CACHE_TOKEN = "token";
 
+    //业务用
+    String UNKNOWN = "unknown";
+    // 请求来源设备类型
+    String DEVICE = "device";
+    // 请求来源版本号
+    String VERSION = "version";
 }

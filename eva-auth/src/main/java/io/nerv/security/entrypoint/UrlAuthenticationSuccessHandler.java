@@ -11,8 +11,9 @@ import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.security.domain.JwtUserDetail;
-import io.nerv.properties.EvaConfig;
 import io.nerv.core.token.jwt.JwtUtil;
+import io.nerv.core.util.RequestUtil;
+import io.nerv.properties.EvaConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -44,6 +45,9 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
     @Autowired
     private BizLogSupporter bizLogSupporter;
 
+    @Autowired
+    private RequestUtil requestUtil;
+
     private Cache tokenCache;
 
     public UrlAuthenticationSuccessHandler(CacheManager cacheManager) {
@@ -63,8 +67,11 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         JwtUserDetail user = (JwtUserDetail) authentication.getPrincipal();
         // 签发token
         String token = jwtUtil.build(evaConfig.getJwt().getTtl(), user.getAccount());
+
+
+        String cacheKey = String.format("%s::%s", user.getAccount(), requestUtil.formatDeivceAndVersion(request, "%s::%s"));
         // token放入缓存
-        tokenCache.put(token, user.getAccount());
+        tokenCache.put(cacheKey, token);
 
         ServletUtil.addCookie(httpServletResponse,
                 CommonConstant.TOKEN_KEY,
@@ -85,14 +92,11 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         map.put("user", user);
         map.put("token", token);
 
-        String device = request.getHeader("device");
-        String version = request.getHeader("version");
-
         BizLogEntity bizLogEntity = new BizLogEntity();
         bizLogEntity.setDescription(user.getAccount() + " 登录了系统")
                 .setOperateDatetime(DateUtil.now())
-                .setDevice(device)
-                .setVersion(version)
+                .setDevice(requestUtil.getDeivce(request))
+                .setVersion(requestUtil.getVersion(request))
                 .setOperator(user.getAccount())
                 .setOperateType("login");
 

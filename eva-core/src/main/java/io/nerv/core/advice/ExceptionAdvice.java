@@ -2,6 +2,7 @@ package io.nerv.core.advice;
 
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.exception.BizException;
+import io.nerv.core.exception.OathException;
 import io.nerv.core.exception.ParamException;
 import io.nerv.core.exception.ReflectException;
 import io.nerv.core.mvc.util.Response;
@@ -137,6 +138,20 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.OK)
     @ExceptionHandler(BizException.class)
     public Response handleBindException(BizException e) {
+        log.error("业务异常:"+e.getMessage());
+        e.printStackTrace();
+        return new Response().failure(e.getCode(), e.getMessage());
+    }
+
+
+    /**
+     * 鉴权异常
+     * @param e 异常类型
+     * @return Response
+     */
+    @ResponseStatus(HttpStatus.OK)
+    @ExceptionHandler(OathException.class)
+    public Response handleBindException(OathException e) {
         log.error("业务异常:"+e.getMessage());
         e.printStackTrace();
         return new Response().failure(e.getCode(), e.getMessage());
