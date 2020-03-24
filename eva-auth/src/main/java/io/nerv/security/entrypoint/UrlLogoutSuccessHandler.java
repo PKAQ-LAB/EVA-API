@@ -6,12 +6,9 @@ import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.token.util.TokenUtil;
-import io.nerv.core.util.RequestUtil;
 import io.nerv.core.util.SecurityHelper;
 import io.nerv.properties.EvaConfig;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
@@ -43,7 +40,7 @@ public class UrlLogoutSuccessHandler implements LogoutSuccessHandler {
 
 
         // 清空redis/caffeine中的token 刷新用户secret
-        this.tokenUtil.removeToken(tokenUtil.getTokenKey(httpServletRequest, securityHelper.getJwtUser().getAccount()));
+        this.tokenUtil.removeToken(securityHelper.getJwtUser().getAccount());
 
         // 清除cookie
         ServletUtil.addCookie(httpServletResponse,

@@ -4,11 +4,14 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.ServletUtil;
 import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.token.jwt.JwtUtil;
+import io.nerv.core.util.RedisUtil;
 import io.nerv.core.util.RequestUtil;
 import io.nerv.properties.EvaConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.caffeine.CaffeineCache;
+import org.springframework.data.redis.cache.RedisCache;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +28,9 @@ public class TokenUtil {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private RedisUtil redisUtil;
 
     private Cache tokenCache;
 
@@ -47,26 +53,30 @@ public class TokenUtil {
         this.tokenCache.put(key, value);
     }
 
+
+    /***
+     * 获取所有的token
+     * @return
+     */
+    public Map<?, ?> getAllToken(){
+        if (this.tokenCache instanceof CaffeineCache){
+            CaffeineCache caffeineCache = (CaffeineCache)this.tokenCache;
+            return caffeineCache.getNativeCache().asMap();
+        }
+
+        if (this.tokenCache instanceof RedisCache){
+            return redisUtil.getPureAll(CommonConstant.CACHE_TOKEN);
+        }
+        return null;
+    }
     /**
      * 获取token缓存
-     * @param request
      * @param uid
      * @return
      */
-    public Cache.ValueWrapper getToken(HttpServletRequest request, String uid){
-        return this.tokenCache.get(this.getTokenKey(request, uid));
+    public Cache.ValueWrapper getToken(String uid){
+        return this.tokenCache.get(uid);
     }
-
-    /**
-     * 生成token的key
-     * @param request
-     * @param uid
-     * @return
-     */
-    public String getTokenKey(HttpServletRequest request, String uid){
-        return String.format("%s::%s", uid, requestUtil.formatDeivceAndVersion(request, "%s::%s"));
-    }
-
     /**
      * 从缓存中清除token
      * @param key

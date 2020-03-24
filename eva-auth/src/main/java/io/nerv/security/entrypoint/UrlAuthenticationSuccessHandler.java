@@ -65,7 +65,7 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         String token = jwtUtil.build(evaConfig.getJwt().getTtl(), user.getAccount());
 
         // token放入缓存
-        tokenUtil.saveToken(tokenUtil.getTokenKey(request, user.getAccount()), tokenUtil.buildCacheValue(request, user.getAccount(), token));
+        tokenUtil.saveToken(user.getAccount(), tokenUtil.buildCacheValue(request, user.getAccount(), token));
 
         ServletUtil.addCookie(httpServletResponse,
                 CommonConstant.TOKEN_KEY,

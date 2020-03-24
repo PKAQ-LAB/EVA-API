@@ -70,13 +70,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 // 验证token 是否合法
                 isvalid = jwtUtil.valid(authToken);
                 // 验证缓存中是否存在该token
-                Cache.ValueWrapper valueWrapper = tokenUtil.getToken(request, uid);
+                Cache.ValueWrapper valueWrapper = tokenUtil.getToken(uid);
 
-                JSONObject jsonObject = JSON.parseObject(String.valueOf(valueWrapper.get()));
+                JSONObject jsonObject = null;
+                if (null != valueWrapper && null != valueWrapper.get()){
+                    jsonObject = JSON.parseObject(String.valueOf(valueWrapper.get()));
+                }
 
-                if (null != valueWrapper &&
-                    null != valueWrapper.get() &&
-                    null != jsonObject &&
+                if ( null != jsonObject &&
                     authToken.equals(jsonObject.getString(CommonConstant.CACHE_TOKEN))) {
                     inCache = true;
                 } else {
@@ -97,7 +98,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     String newToken = jwtUtil.refreshToken(authToken);
                     // 刷新缓存中的
                     // token放入缓存
-                    tokenUtil.saveToken(tokenUtil.getTokenKey(request, uid), tokenUtil.buildCacheValue(request, uid, newToken));
+                    tokenUtil.saveToken(uid, tokenUtil.buildCacheValue(request, uid, newToken));
 
                     // reponse请求头返回刷新后的token
                     response.setHeader(CommonConstant.TOKEN_KEY, newToken);
