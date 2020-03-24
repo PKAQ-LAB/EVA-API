@@ -38,6 +38,14 @@ public class RedisUtil {
     }
 
     /**
+     * @param key
+     * @return
+     */
+    public Object getObjectValue(String key){
+        return redisTemplate.opsForValue().get(key);
+    }
+
+    /**
      * 模糊查询
      * @param key
      * @return
@@ -75,7 +83,13 @@ public class RedisUtil {
         keys.stream().forEach( item -> {
             String k = item + "";
             k = k.substring(subIndex);
-            map.put(k, JSON.parse(this.get(item+"")));
+            Object value = this.getObjectValue(item + "");
+
+            if (null != value && value instanceof String){
+                map.put(k, JSON.parse(String.valueOf(value)));
+            } else {
+                map.put(k, value);
+            }
         });
 
         return map;
