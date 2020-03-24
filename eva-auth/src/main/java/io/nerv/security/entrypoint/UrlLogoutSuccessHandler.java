@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.util.Response;
+import io.nerv.core.token.util.TokenUtil;
 import io.nerv.core.util.RequestUtil;
 import io.nerv.core.util.SecurityHelper;
 import io.nerv.properties.EvaConfig;
@@ -30,28 +31,19 @@ public class UrlLogoutSuccessHandler implements LogoutSuccessHandler {
     private EvaConfig evaConfig;
 
     @Autowired
-    private RequestUtil requestUtil;
-
-    @Autowired
     private SecurityHelper securityHelper;
 
-    private Cache tokenCache;
-
-    public UrlLogoutSuccessHandler(CacheManager cacheManager) {
-        // 获取存放token的cache
-        this.tokenCache = cacheManager.getCache(CommonConstant.CACHE_TOKEN);
-    }
+    @Autowired
+    private TokenUtil tokenUtil;
 
     @Override
     public void onLogoutSuccess(HttpServletRequest httpServletRequest,
                                 HttpServletResponse httpServletResponse,
                                 Authentication authentication) throws IOException {
 
-        String cacheKey = String.format("%s::%s", securityHelper.getJwtUser().getAccount(), requestUtil.formatDeivceAndVersion(httpServletRequest, "%s::%s"));
-
 
         // 清空redis/caffeine中的token 刷新用户secret
-        this.tokenCache.evict(cacheKey);
+        this.tokenUtil.removeToken(tokenUtil.getTokenKey(httpServletRequest, securityHelper.getJwtUser().getAccount()));
 
         // 清除cookie
         ServletUtil.addCookie(httpServletResponse,

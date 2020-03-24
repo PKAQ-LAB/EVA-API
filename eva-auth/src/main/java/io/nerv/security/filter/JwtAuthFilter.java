@@ -3,20 +3,17 @@ package io.nerv.security.filter;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.ServletUtil;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import io.nerv.core.constant.CommonConstant;
-import io.nerv.core.enums.BizCode;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.exception.OathException;
 import io.nerv.core.mvc.util.Response;
-import io.nerv.core.util.RequestUtil;
-import io.nerv.core.util.SecurityHelper;
-import io.nerv.properties.EvaConfig;
 import io.nerv.core.token.jwt.JwtUtil;
 import io.nerv.core.token.util.TokenUtil;
+import io.nerv.properties.EvaConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -40,9 +37,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private UserDetailsService userDetailsService;
 
     @Autowired
-    private RequestUtil requestUtil;
-
-    @Autowired
     private JwtUtil jwtUtil;
 
     @Autowired
@@ -50,15 +44,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Autowired
     private TokenUtil tokenUtil;
-
-    private Cache tokenCache;
-
-    @Autowired
-    private SecurityHelper securityHelper;
-
-    public JwtAuthFilter(CacheManager cacheManager) {
-        this.tokenCache = cacheManager.getCache(CommonConstant.CACHE_TOKEN);
-    }
 
     @Override
     protected void doFilterInternal(
@@ -76,8 +61,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         if (StrUtil.isNotBlank(authToken)) {
-            String userAccount = jwtUtil.getUid(authToken);
-            String cacheKey = String.format("%s::%s", userAccount, requestUtil.formatDeivceAndVersion(request, "%s::%s"));
+            String uid = jwtUtil.getUid(authToken);
+
             /**
              * token即将过期 刷新
              */
@@ -85,8 +70,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 // 验证token 是否合法
                 isvalid = jwtUtil.valid(authToken);
                 // 验证缓存中是否存在该token
-                Cache.ValueWrapper valueWrapper = tokenCache.get(cacheKey);
-                if (null != valueWrapper && null != valueWrapper.get() && authToken.equals(valueWrapper.get())) {
+                Cache.ValueWrapper valueWrapper = tokenUtil.getToken(request, uid);
+
+                JSONObject jsonObject = JSON.parseObject(String.valueOf(valueWrapper.get()));
+
+                if (null != valueWrapper &&
+                    null != valueWrapper.get() &&
+                    null != jsonObject &&
+                    authToken.equals(jsonObject.getString(CommonConstant.CACHE_TOKEN))) {
                     inCache = true;
                 } else {
                     logger.warn("鉴权失败 缓存中无法找到对应token");
@@ -106,7 +97,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     String newToken = jwtUtil.refreshToken(authToken);
                     // 刷新缓存中的
                     // token放入缓存
-                    tokenCache.put(cacheKey, newToken);
+                    tokenUtil.saveToken(tokenUtil.getTokenKey(request, uid), tokenUtil.buildCacheValue(request, uid, newToken));
 
                     // reponse请求头返回刷新后的token
                     response.setHeader(CommonConstant.TOKEN_KEY, newToken);

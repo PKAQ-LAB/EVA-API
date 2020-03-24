@@ -88,6 +88,15 @@ public class JwtUtil {
             return claims;
         }
     }
+
+    /**
+     * 获取token的签发时间
+     * @param token
+     * @return
+     */
+    public Date getIssuedAt(String token){
+        return this.getClaimsFromToken(token).getIssuedAt();
+    }
     /**
      *
      * @param ttlMillis 有效时间

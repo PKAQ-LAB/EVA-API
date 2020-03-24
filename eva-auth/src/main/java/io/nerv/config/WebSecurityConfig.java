@@ -10,7 +10,6 @@ import io.nerv.security.provider.UrlFilterSecurityInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -99,9 +98,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    @Autowired
-    public JwtAuthFilter authenticationTokenFilterBean(CacheManager cacheManager) {
-        return new JwtAuthFilter(cacheManager);
+    public JwtAuthFilter authenticationTokenFilterBean() {
+        return new JwtAuthFilter();
     }
 
     @Bean

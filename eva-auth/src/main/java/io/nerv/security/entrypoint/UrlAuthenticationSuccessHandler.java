@@ -12,11 +12,10 @@ import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.security.domain.JwtUserDetail;
 import io.nerv.core.token.jwt.JwtUtil;
+import io.nerv.core.token.util.TokenUtil;
 import io.nerv.core.util.RequestUtil;
 import io.nerv.properties.EvaConfig;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -48,11 +47,8 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
     @Autowired
     private RequestUtil requestUtil;
 
-    private Cache tokenCache;
-
-    public UrlAuthenticationSuccessHandler(CacheManager cacheManager) {
-        this.tokenCache = cacheManager.getCache(CommonConstant.CACHE_TOKEN);
-    }
+    @Autowired
+    private TokenUtil tokenUtil;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
@@ -68,10 +64,8 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         // 签发token
         String token = jwtUtil.build(evaConfig.getJwt().getTtl(), user.getAccount());
 
-
-        String cacheKey = String.format("%s::%s", user.getAccount(), requestUtil.formatDeivceAndVersion(request, "%s::%s"));
         // token放入缓存
-        tokenCache.put(cacheKey, token);
+        tokenUtil.saveToken(tokenUtil.getTokenKey(request, user.getAccount()), tokenUtil.buildCacheValue(request, user.getAccount(), token));
 
         ServletUtil.addCookie(httpServletResponse,
                 CommonConstant.TOKEN_KEY,
