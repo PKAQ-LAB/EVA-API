@@ -40,10 +40,11 @@ public class TokenUtil {
 
     // 构造token缓存的value
     public Map<String, Object> buildCacheValue(HttpServletRequest request, String uid,  String token){
-        return Map.of("device", requestUtil.getDeivce(request),
-                      "version", requestUtil.getVersion(request),
+        return Map.of("device",   requestUtil.getDeivce(request),
+                      "version",  requestUtil.getVersion(request),
                       "issuedAt", jwtUtil.getIssuedAt(token),
-                      "loginTime", LocalDateTime.now(),
+                      "expireAt", jwtUtil.getExpirationDateFromToken(token),
+                      "loginTime",LocalDateTime.now(),
                       "account", uid,
                       "token", token);
     }
@@ -74,8 +75,9 @@ public class TokenUtil {
      * @param uid
      * @return
      */
-    public Cache.ValueWrapper getToken(String uid){
-        return this.tokenCache.get(uid);
+    public Object getToken(String uid){
+        var wrapper = this.tokenCache.get(uid);
+        return null == wrapper? null : wrapper.get();
     }
     /**
      * 从缓存中清除token

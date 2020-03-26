@@ -26,8 +26,8 @@ spring:
 #    GsyjJCmmNRiHRVGmXdy+QErynoqC/cOBlt5V9dPZ+c2g2XwPc5+BbKrSxWLsyCGG
     driver-class-name: com.p6spy.engine.spy.P6SpyDriver
   hikari:
-    minimum-idle: 3
-    maximum-pool-size: 10
+    minimum-idle: 10
+    maximum-pool-size: 50
     max-lifetime: 3000
     connection-test-query: select 1
   devtools:

@@ -95,7 +95,7 @@ public class JwtUtil {
      * @return
      */
     public Date getIssuedAt(String token){
-        return this.getClaimsFromToken(token).getIssuedAt();
+        return getClaimFromToken(token, Claims::getIssuedAt);
     }
     /**
      *

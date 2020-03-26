@@ -70,11 +70,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 // 验证token 是否合法
                 isvalid = jwtUtil.valid(authToken);
                 // 验证缓存中是否存在该token
-                Cache.ValueWrapper valueWrapper = tokenUtil.getToken(uid);
+                Object token = tokenUtil.getToken(uid);
 
                 JSONObject jsonObject = null;
-                if (null != valueWrapper && null != valueWrapper.get()){
-                    jsonObject = JSON.parseObject(String.valueOf(valueWrapper.get()));
+                if (null != token){
+                    jsonObject = JSON.parseObject(String.valueOf(token));
                 }
 
                 if ( null != jsonObject &&

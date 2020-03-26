@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -22,10 +23,18 @@ public class OnlineUserCtrl {
 
     @GetMapping("/list")
     @ApiOperation(value = "获取在线用户列表", response = Response.class)
-    public Response list(@ApiParam(name ="uid", value = "查询固定用户") String uid){
+    public Response list(@ApiParam(name ="uid", value = "查询固定用户") String account){
         Response response = new Response();
-        if (StrUtil.isNotBlank(uid)){
-            response.setData(List.of(this.tokenUtil.getToken(uid)));
+        if (StrUtil.isNotBlank(account)){
+            Object obj = this.tokenUtil.getToken(account);
+
+            List list = new ArrayList(1);
+
+            if (null != obj){
+                list.add(obj);
+            }
+
+            response.setData(list);
         } else {
             response.setData(this.tokenUtil.getAllToken().values());
         }
