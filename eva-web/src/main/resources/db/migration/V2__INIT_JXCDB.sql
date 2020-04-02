@@ -219,4 +219,40 @@ CREATE TABLE `jxc_stock`  (
   PRIMARY KEY (`ID`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
+/*==============================================================*/
+/* Table: JXC_SALES_SLIP                                        */
+/*==============================================================*/
+DROP TABLE IF EXISTS JXC_SALES_SLIP;
+CREATE TABLE JXC_SALES_SLIP
+(
+   ID                   VARCHAR(40) NOT NULL,
+   GOODS_ID             VARCHAR(40) COMMENT '商品ID',
+   GOODS_NAME           VARCHAR(120) COMMENT '商品名称',
+   ITEM_NO              VARCHAR(40) COMMENT '货号',
+   ORDER_CODE           VARCHAR(40) COMMENT '订单编号',
+   SHIP_PRICE           NUMERIC(14,4) COMMENT '快递价格',
+   SHIP_NUMBER          VARCHAR(40) COMMENT '快递单号',
+   SHIP_COMPANY         VARCHAR(6) COMMENT '快递公司',
+   NUMMER               NUMERIC(14,4) COMMENT '数量',
+   PRICE                NUMERIC(14,4) COMMENT '成交价',
+   TOTAL_COST           NUMERIC(14,4) COMMENT '总成交额',
+   COST_PRICE           NUMERIC(14,4) COMMENT '成本价',
+   TOTAL                NUMERIC(14,4) COMMENT '总成本',
+   PROFIT               NUMERIC(14,4) COMMENT '利润',
+   DEAL_TIME            DATE COMMENT '成交时间',
+   SOURCE_PLATFORM      VARCHAR(6) COMMENT '来源平台',
+   RECEIVER             VARCHAR(40) COMMENT '收货人',
+   RECEIVER_ADDR        VARCHAR(200) COMMENT '收货地址',
+   RECEIVER_PHONE       VARCHAR(13) COMMENT '收货人手机号',
+   SUPPLIER_NAME        VARCHAR(60) COMMENT '供应商',
+   SUPPLIER_NO          VARCHAR(40) COMMENT '供应商货号',
+   SUPPLIER_PHONE       VARCHAR(60) COMMENT '供应商联系方式',
+   CREATE_BY            VARCHAR(40) COMMENT '创建人',
+   GMT_CREATE           DATE COMMENT '创建时间',
+   MODIFY_BY            VARCHAR(40) COMMENT '修改人',
+   GMT_MODIFY           DATE COMMENT '修改时间',
+   PRIMARY KEY (ID)
+);
+
+
 SET FOREIGN_KEY_CHECKS = 1;
