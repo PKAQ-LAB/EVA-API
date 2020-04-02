@@ -1,7 +1,7 @@
 package io.nerv.web.jxc.purchasing.order.repository;
 
-import io.nerv.web.jxc.purchasing.order.domain.PurchasingOrder;
 import io.nerv.web.jxc.purchasing.order.vo.PurchasingVo;
+import io.nerv.web.jxc.purchasing.order.domain.PurchasingOrder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

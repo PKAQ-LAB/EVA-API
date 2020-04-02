@@ -26,8 +26,8 @@ public class SingleCodeGenerator {
     private final static String DBNAME = "jxc";
     private final static String URL = "jdbc:mysql://"+IP_PORT+"/"+DBNAME+"?useUnicode=true&characterEncoding=UTF-8";
     private final static String DRIVER = "com.mysql.cj.jdbc.Driver";
-    private final static String USER = "jxc";
-    private final static String PWD = "jxc";
+    private final static String USER = "eva";
+    private final static String PWD = "eva";
     /**
      * <p>
      * 读取控制台内容
