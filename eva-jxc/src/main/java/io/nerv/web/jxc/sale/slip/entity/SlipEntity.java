@@ -20,7 +20,7 @@ public class SlipEntity extends StdBaseEntity {
   @ApiModelProperty(value = "商品ID")
   private String  goodsId;
 
-  @ApiModelProperty(value = "入库单号")
+  @ApiModelProperty(value = "商品名称")
   private String  goodsName;
 
   @ApiModelProperty(value = "货号")
@@ -39,7 +39,7 @@ public class SlipEntity extends StdBaseEntity {
   private String  shipCompany;
 
   @ApiModelProperty(value = "下单数量")
-  private double  nummer;
+  private Double  nummer;
 
   @ApiModelProperty(value = "下单价格")
   private BigDecimal  price;
