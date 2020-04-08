@@ -76,9 +76,8 @@ CREATE TABLE `sys_dict`  (
 -- ----------------------------
 INSERT INTO `sys_dict` VALUES ('1', 'biz', '业务代码', '0', '业务代码', '1899-12-31 08:00:00', '1899-12-31 08:00:00', NULL, '', '9999');
 INSERT INTO `sys_dict` VALUES ('1174974634025496578', 'data_permission', '数据权限', '1', '数据权限类型', '2019-09-20 17:12:37', '2019-09-20 19:41:56', NULL, NULL, '9999');
-INSERT INTO `sys_dict` VALUES ('1187716348942970881', 'purchasing_type', '采购类型', '1', NULL, '2019-10-25 21:03:39', '2019-10-25 21:17:06', '9199482d76b443ef9f13fefddcf0046c', '9199482d76b443ef9f13fefddcf0046c', '1');
-INSERT INTO `sys_dict` VALUES ('1187908136467095553', 'goods_type', '货品类型', '1', NULL, '2019-10-26 09:45:45', '2019-10-31 13:12:06', '9199482d76b443ef9f13fefddcf0046c', '9199482d76b443ef9f13fefddcf0046c', '1');
-INSERT INTO `sys_dict` VALUES ('3', 'sys', '系统代码', '0', 'fdvdfv', '1899-12-31 08:00:00', '1899-12-31 08:00:00', NULL, NULL, '9999');
+INSERT INTO `sys_dict` VALUES ('3', 'sys', '系统代码', '0', '系统代码', '1899-12-31 08:00:00', '1899-12-31 08:00:00', NULL, NULL, '9999');
+INSERT INTO sys_dict  ( id, code, name, parent_id, create_by, gmt_create, modify_by, gmt_modify )  VALUES  ( '1247704849712906241', 'dict_type', '所属分类', '0001', '9199482d76b443ef9f13fefddcf0046c', '2020-04-08T09:56:32.070004400', '9199482d76b443ef9f13fefddcf0046c', '2020-04-08T09:56:32.070004400' );
 
 -- ----------------------------
 -- Table structure for sys_dict_item
@@ -101,10 +100,8 @@ INSERT INTO `sys_dict_item` VALUES ('1174974634117771265', '1174974634025496578'
 INSERT INTO `sys_dict_item` VALUES ('1174974634142937089', '1174974634025496578', '0002', '本部门及下属部门', 2);
 INSERT INTO `sys_dict_item` VALUES ('1174974634159714305', '1174974634025496578', '0003', '指定部门', 3);
 INSERT INTO `sys_dict_item` VALUES ('1174974634176491521', '1174974634025496578', '0005', '仅本人创建', 5);
-INSERT INTO `sys_dict_item` VALUES ('1187717107797413889', '1187716348942970881', '0001', '网络采购', NULL);
-INSERT INTO `sys_dict_item` VALUES ('1187719735684030466', '1187716348942970881', '0002', '市场采购', NULL);
-INSERT INTO `sys_dict_item` VALUES ('1187908136500649986', '1187908136467095553', '0001', '玩具', NULL);
-INSERT INTO `sys_dict_item` VALUES ('1187908136525815809', '1187908136467095553', '0002', '饰品', NULL);
+INSERT INTO sys_dict_item  ( id, main_id, key_name, key_value )  VALUES  ( '5ee97d5c83464aeaa08dc441c396f62b', '1247704849712906241', '0001', '系统代码' );
+INSERT INTO sys_dict_item  ( id, main_id, key_name, key_value )  VALUES  ( 'f6fb18fd71c665baf57e680bc5a28fec', '1247704849712906241', '0002', '业务代码' );
 
 -- ----------------------------
 -- Table structure for sys_module

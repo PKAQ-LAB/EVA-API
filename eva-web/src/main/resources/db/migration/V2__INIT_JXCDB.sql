@@ -18,6 +18,25 @@ SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
+-- 初始化字典
+-- ----------------------------
+INSERT INTO sys_dict  ( id, code, name, parent_id, create_by, gmt_create, modify_by, gmt_modify )  VALUES  ( '1247706210710028290', 'online_platform', '来源平台', '0', '9199482d76b443ef9f13fefddcf0046c', '2020-04-08T10:01:56.552938800', '9199482d76b443ef9f13fefddcf0046c', '2020-04-08T10:01:56.552938800' );
+INSERT INTO sys_dict_item  ( id, main_id, key_name, key_value )  VALUES  ( 'a65ac783e9b93d86fa862bc238e2c83e', '1247706210710028290', '0001', '拼多多' );
+INSERT INTO sys_dict_item  ( id, main_id, key_name, key_value )  VALUES  ( 'c370d1ba2e580a97d60741055170cab4', '1247706210710028290', '0002', '淘宝' );
+
+INSERT INTO sys_dict  ( id, code, name, parent_id, create_by, gmt_create, modify_by, gmt_modify )  VALUES  ( '1247707145754607617', 'ship_company', '快递公司', '1', '9199482d76b443ef9f13fefddcf0046c', '2020-04-08T10:05:39.483597', '9199482d76b443ef9f13fefddcf0046c', '2020-04-08T10:05:39.483597' );
+INSERT INTO sys_dict_item  ( id, main_id, key_name, key_value )  VALUES  ( '5e800ffc87bd97f11253931d03dd00a8', '1247707145754607617', '0001', '圆通快递' );
+INSERT INTO sys_dict_item  ( id, main_id, key_name, key_value )  VALUES  ( '147be54e535f46917fa4d90c3ffba613', '1247707145754607617', '0002', '中通快递' );
+INSERT INTO sys_dict_item  ( id, main_id, key_name, key_value )  VALUES  ( '708ae86549fbe78b483f7fd1ab28cd6b', '1247707145754607617', '0003', '京东快递' );
+INSERT INTO sys_dict_item  ( id, main_id, key_name, key_value )  VALUES  ( '60ed545f6803b47e161e67959a811504', '1247707145754607617', '0004', '顺丰快递' );
+
+INSERT INTO `sys_dict` VALUES ('1187716348942970881', 'purchasing_type', '采购类型', '1', NULL, '2019-10-25 21:03:39', '2019-10-25 21:17:06', '9199482d76b443ef9f13fefddcf0046c', '9199482d76b443ef9f13fefddcf0046c', '1');
+INSERT INTO `sys_dict` VALUES ('1187908136467095553', 'goods_type', '货品类型', '1', NULL, '2019-10-26 09:45:45', '2019-10-31 13:12:06', '9199482d76b443ef9f13fefddcf0046c', '9199482d76b443ef9f13fefddcf0046c', '1');
+INSERT INTO `sys_dict_item` VALUES ('1187717107797413889', '1187716348942970881', '0001', '网络采购', NULL);
+INSERT INTO `sys_dict_item` VALUES ('1187719735684030466', '1187716348942970881', '0002', '市场采购', NULL);
+INSERT INTO `sys_dict_item` VALUES ('1187908136500649986', '1187908136467095553', '0001', '玩具', NULL);
+INSERT INTO `sys_dict_item` VALUES ('1187908136525815809', '1187908136467095553', '0002', '饰品', NULL);
+-- ----------------------------
 -- Table structure for jxc_base_category
 -- ----------------------------
 DROP TABLE IF EXISTS `jxc_base_category`;
@@ -235,9 +254,9 @@ CREATE TABLE JXC_SALES_SLIP
    SHIP_COMPANY         VARCHAR(6) COMMENT '快递公司',
    NUMMER               NUMERIC(14,4) COMMENT '数量',
    PRICE                NUMERIC(14,4) COMMENT '成交价',
-   TOTAL_COST           NUMERIC(14,4) COMMENT '总成交额',
+   TOTAL_PRICE          NUMERIC(14,4) COMMENT '总成交额',
    COST_PRICE           NUMERIC(14,4) COMMENT '成本价',
-   TOTAL                NUMERIC(14,4) COMMENT '总成本',
+   TOTAL_COST           NUMERIC(14,4) COMMENT '总成本',
    PROFIT               NUMERIC(14,4) COMMENT '利润',
    DEAL_TIME            DATE COMMENT '成交时间',
    SOURCE_PLATFORM      VARCHAR(6) COMMENT '来源平台',
@@ -247,6 +266,7 @@ CREATE TABLE JXC_SALES_SLIP
    SUPPLIER_NAME        VARCHAR(60) COMMENT '供应商',
    SUPPLIER_NO          VARCHAR(40) COMMENT '供应商货号',
    SUPPLIER_PHONE       VARCHAR(60) COMMENT '供应商联系方式',
+   REMARK               VARCHAR(300) COMMENT '备注',
    CREATE_BY            VARCHAR(40) COMMENT '创建人',
    GMT_CREATE           DATE COMMENT '创建时间',
    MODIFY_BY            VARCHAR(40) COMMENT '修改人',
