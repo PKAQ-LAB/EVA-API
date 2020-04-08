@@ -1,5 +1,7 @@
 package io.nerv.web.jxc.sale.slip.entity;
 
+import com.baomidou.mybatisplus.annotation.SqlCondition;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.nerv.core.mvc.entity.mybatis.StdBaseEntity;
 import io.swagger.annotations.ApiModel;
@@ -7,6 +9,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 
@@ -21,6 +24,7 @@ public class SlipEntity extends StdBaseEntity {
   private String  goodsId;
 
   @ApiModelProperty(value = "商品名称")
+  @TableField(condition = SqlCondition.LIKE)
   private String  goodsName;
 
   @ApiModelProperty(value = "货号")
@@ -29,14 +33,12 @@ public class SlipEntity extends StdBaseEntity {
   @ApiModelProperty(value = "订单号")
   private String  orderCode;
 
-  @ApiModelProperty(value = "快递费用")
-  private BigDecimal  shipPrice;
+  @ApiModelProperty(value = "来源平台")
+  private String  sourcePlatform;
 
-  @ApiModelProperty(value = "快递单号")
-  private String  shipNumber;
-
-  @ApiModelProperty(value = "快递公司")
-  private String  shipCompany;
+  @ApiModelProperty(value = "下单时间")
+  @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+  private String  dealTime;
 
   @ApiModelProperty(value = "下单数量")
   private Double  nummer;
@@ -45,7 +47,7 @@ public class SlipEntity extends StdBaseEntity {
   private BigDecimal  price;
 
   @ApiModelProperty(value = "总成交额")
-  private BigDecimal  totalPrice;
+  private BigDecimal totalPrice;
 
   @ApiModelProperty(value = "成本价")
   private BigDecimal costPrice;
@@ -56,12 +58,6 @@ public class SlipEntity extends StdBaseEntity {
   @ApiModelProperty(value = "利润")
   private String  profit;
 
-  @ApiModelProperty(value = "下单时间")
-  private String  dealTime;
-
-  @ApiModelProperty(value = "来源平台")
-  private String  sourcePlatform;
-
   @ApiModelProperty(value = "收货人")
   private String  receiver;
 
@@ -70,6 +66,15 @@ public class SlipEntity extends StdBaseEntity {
 
   @ApiModelProperty(value = "收货人手机")
   private String  receiverPhone;
+
+  @ApiModelProperty(value = "快递费用")
+  private BigDecimal  shipPrice;
+
+  @ApiModelProperty(value = "快递单号")
+  private String  shipNumber;
+
+  @ApiModelProperty(value = "快递公司")
+  private String  shipCompany;
 
   @ApiModelProperty(value = "供应商姓名")
   private String  supplierName;
