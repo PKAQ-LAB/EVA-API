@@ -16,7 +16,12 @@
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
-
+-- ----------------------------
+-- 初始化菜单及权限
+-- ----------------------------
+INSERT INTO sys_module  ( id, name, icon, orders, status, parent_id, parent_name, path, path_id, path_name, isleaf, create_by, gmt_create, modify_by, gmt_modify )  VALUES  ( '1248081570614149122', '线上销售单', 'snippets', 2, '0000', '1187919802302926850', '进销存', '/pdos/sale/slip', '1187919802302926850', '进销存/线上销售单', true, '9199482d76b443ef9f13fefddcf0046c', null, '9199482d76b443ef9f13fefddcf0046c', null );
+INSERT INTO sys_module_resources  ( id, module_id, resource_desc, resource_url, resource_type )  VALUES  ( '1248081570945499138', '1248081570614149122', '全部资源', '/**', '9999' );
+INSERT INTO sys_role_module  ( id, role_id, module_id, resource_id )  VALUES  ( '1248083168849494018', '1', '1248081570614149122', '1248081570945499138' );
 -- ----------------------------
 -- 初始化字典
 -- ----------------------------

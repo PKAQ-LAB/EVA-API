@@ -37,7 +37,7 @@ spring:
       additional-paths: src/main/java
 # redis 配置
   redis:
-    host: xilai.my.to
+    host: 172.17.0.7
     port: 6379
     password: 7u8i9o0p
     timeout: 10000
@@ -52,8 +52,8 @@ eva:
   upload:
     # ng or dfs
     type: dfs
-    tempPath: E://evapic/temp
-    storagePath: E://evapic/storage
+    tempPath: /opt/data/caddy/www/pic
+    storagePath: /opt/data/caddy/www/pic
     allowSuffixName: jpg,png,jpeg
     # dfs 地址
     serverUrl: http://118.31.166.146:18109/ga
