@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @Datetime: 2018/3/26 22:54
  */
 @RestController
-@RequestMapping("/sale")
+@RequestMapping("/pdos/sale/slip")
 @Api( tags = "线上销售单")
 public class SlipCtrl extends StdBaseCtrl<SlipService, SlipEntity> {
 

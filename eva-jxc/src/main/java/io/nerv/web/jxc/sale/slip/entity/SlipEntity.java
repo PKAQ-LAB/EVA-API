@@ -56,7 +56,7 @@ public class SlipEntity extends StdBaseEntity {
   private BigDecimal totalCost;
 
   @ApiModelProperty(value = "利润")
-  private String  profit;
+  private BigDecimal  profit;
 
   @ApiModelProperty(value = "收货人")
   private String  receiver;
