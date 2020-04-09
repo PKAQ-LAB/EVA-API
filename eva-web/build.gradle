@@ -1,3 +1,5 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 plugins {
      id 'org.springframework.boot' version '2.2.6.RELEASE'
  }
@@ -14,6 +16,15 @@ bootJar {
 description = """web"""
 
 compileJava.dependsOn(processResources)
+
+processResources {
+	println "==> Load configuration for $profile"
+
+	from(sourceSets.main.resources.srcDirs) {
+		filter(ReplaceTokens, tokens: [profile: profile])
+	}
+
+}
 
 dependencies {
    implementation project(":eva-core"),
