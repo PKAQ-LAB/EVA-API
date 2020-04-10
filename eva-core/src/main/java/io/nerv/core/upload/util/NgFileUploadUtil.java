@@ -63,7 +63,7 @@ public class NgFileUploadUtil implements FileUploadProvider {
         String newFileName = "";
 
         if (StrUtil.isNotBlank(fileName)){
-            suffixName = fileName.substring(fileName.lastIndexOf(".") + 1);
+            suffixName = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
             newFileName = snowflake.nextIdStr() + "." + suffixName;
         } else {
             log.error(BizCodeEnum.FILEIO_ERROR.getName());

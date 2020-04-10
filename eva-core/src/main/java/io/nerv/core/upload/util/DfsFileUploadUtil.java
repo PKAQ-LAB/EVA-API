@@ -69,14 +69,14 @@ public class DfsFileUploadUtil implements FileUploadProvider {
         String file_path = "";
 
         if (StrUtil.isNotEmpty(fileName)){
-            suffixName = fileName.substring(fileName.lastIndexOf(".") + 1);
+            suffixName = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
             newFileName = snowflake.nextIdStr() + "." + suffixName;
         } else {
             log.error(BizCodeEnum.FILEIO_ERROR.getName());
             throw new FileUploadException(BizCodeEnum.FILENAME_ERROR);
         }
         // 判断上传文件是否符合格式
-        if (evaConfig.getUpload().getAllowSuffixName().contains(suffixName)){
+        if (evaConfig.getUpload().getAllowSuffixName().toUpperCase().contains(suffixName)){
             InputStreamResource isr = null;
             try {
                 isr = new InputStreamResource(file.getInputStream(), newFileName);
