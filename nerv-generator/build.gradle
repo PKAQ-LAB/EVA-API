@@ -1,5 +1,7 @@
 project.archivesBaseName = 'addon-generator'
 
+bintrayUpload.enabled = false
+
 jar {
 	enabled = true
 }

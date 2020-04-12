@@ -3,6 +3,8 @@ plugins {
 }
 apply plugin: 'io.spring.dependency-management'
 
+bintrayUpload.enabled = false
+
 jar {
     enabled = true
 }
