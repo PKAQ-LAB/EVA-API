@@ -1,32 +1,27 @@
 package io.nerv.web.jxc.base.category.ctrl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import io.nerv.core.exception.ParamException;
 import io.nerv.core.mvc.ctrl.mybatis.PureBaseCtrl;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.mvc.util.SingleArray;
 import io.nerv.web.jxc.base.category.entity.CategoryEntity;
+import io.nerv.web.jxc.base.category.service.CategoryService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import io.nerv.core.exception.ParamException;
-import io.nerv.web.jxc.base.category.service.CategoryService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 分类管理controller
  * @author: S.PKAQ
  * @Datetime: 2018/3/28 19:20
  */
-@Api( description = "分类管理")
+@Api( tags = "分类管理")
 @RestController
-@RequestMapping("jxc/category")
+@RequestMapping("/pdos/category")
 public class CategoryCtrl extends PureBaseCtrl<CategoryService> {
-    @GetMapping("list")
+    @GetMapping("/list")
     @ApiOperation(value = "根据实体类属性获取相应的分类树 ", response = Response.class)
     public Response list(@ApiParam(name = "condition", value= "分类A") String condition){
         return success(this.service.listCategory(condition, null));
