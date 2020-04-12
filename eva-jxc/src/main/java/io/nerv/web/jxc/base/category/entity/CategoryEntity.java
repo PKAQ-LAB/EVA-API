@@ -1,6 +1,5 @@
 package io.nerv.web.jxc.base.category.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.nerv.core.mvc.entity.mybatis.BaseTreeEntity;
 import io.swagger.annotations.ApiModel;
@@ -22,19 +21,15 @@ import org.apache.ibatis.type.Alias;
 public class CategoryEntity extends BaseTreeEntity {
 
     /** 分类编码 */
-    @TableField("CODE")
     private String code;
 
     /** 分类名称 */
-    @TableField("NAME")
     private String name;
 
     /** 排序 */
-    @TableField("ORDERS")
     private Integer orders;
 
     /**  状态 */
-    @TableField("STATUS")
     private String status;
 
 }

@@ -51,7 +51,7 @@ public class CategoryService extends StdBaseService<CategoryMapper, CategoryEnti
             response = response.failure(BizCodeEnum.CHILD_EXIST.getIndex(), StrUtil.format("[{}] 存在子节点，无法删除。",name), null);
         } else {
             this.mapper.deleteBatchIds(ids);
-            response = response.success(this.mapper.listCategory(null, null));
+            response = response.success(this.mapper.listCategory(null, null), BizCodeEnum.OPERATE_SUCCESS.getName());
         }
 
         return response;

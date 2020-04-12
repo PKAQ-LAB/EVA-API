@@ -35,7 +35,7 @@
                 </if>
             </if>
         </where>
-        order by orders asc
+        order by orders, gmt_Create asc
     </select>
     <!-- 根据parentId查询子节点数据-->
     <select id="listChildren" resultMap="BaseResultMap">
