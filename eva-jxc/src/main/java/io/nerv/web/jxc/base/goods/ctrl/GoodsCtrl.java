@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author: S.PKAQ
  * @Datetime: 2018/4/4 8:00
  */
-@Api( description = "商品管理",tags = "进销存")
+@Api(tags = "进销存")
 @RestController
 @RequestMapping("jxc/goods")
 public class GoodsCtrl extends StdBaseCtrl<GoodsService, GoodsEntity> {

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Api( tags = "分类管理")
 @RestController
-@RequestMapping("/pdos/category")
+@RequestMapping("/pdos/base/category")
 public class CategoryCtrl extends PureBaseCtrl<CategoryService> {
     @GetMapping("/list")
     @ApiOperation(value = "根据实体类属性获取相应的分类树 ", response = Response.class)

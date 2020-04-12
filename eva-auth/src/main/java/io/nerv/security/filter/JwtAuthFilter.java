@@ -54,7 +54,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         var isvalid = false;
         var inCache = false;
 
-        var authToken = tokenUtil.getToken(request);
+        String authToken;
+        try{
+            authToken = tokenUtil.getToken(request);
+        } catch (Exception e){
+            authToken = null;
+            logger.warn(e);
+        }
+
 
         if(null != ServletUtil.getCookie(request, CommonConstant.TOKEN_KEY)){
             authToken = ServletUtil.getCookie(request, CommonConstant.TOKEN_KEY).getValue();

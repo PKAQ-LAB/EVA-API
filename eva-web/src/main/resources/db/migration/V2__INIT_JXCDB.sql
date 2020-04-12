@@ -23,22 +23,26 @@ INSERT INTO sys_module  ( id, name, icon, orders, status, parent_id, parent_name
 INSERT INTO sys_module_resources  ( id, module_id, resource_desc, resource_url, resource_type )  VALUES  ( '1248081570945499138', '1248081570614149122', '全部资源', '/**', '9999' );
 INSERT INTO sys_role_module  ( id, role_id, module_id, resource_id )  VALUES  ( '1248083168849494018', '1', '1248081570614149122', '1248081570945499138' );
 
-INSERT INTO sys_module  ( id, name, icon, orders, status, parent_id, parent_name, path, path_id, path_name, isleaf, create_by, gmt_create, modify_by, gmt_modify )  VALUES  ( '1249176398601330690', '基础管理', 'lock', 3, '0000', '1187919802302926850', '进销存', '/pdos/base', '1187919802302926850', '进销存/基础管理', true, '9199482d76b443ef9f13fefddcf0046c', null, '9199482d76b443ef9f13fefddcf0046c', null )
-INSERT INTO sys_module_resources  ( id, module_id, resource_desc, resource_url, resource_type )  VALUES  ( '1249176400157417474', '1249176398601330690', '全部资源', '/**', '9999' )
-INSERT INTO sys_role_module  ( id, role_id, module_id, resource_id )  VALUES  ( '1249177176938323969', '1', '1187936839427391490', '1187936839473528833' )
+INSERT INTO sys_module  ( id, name, icon, orders, status, parent_id, parent_name, path, path_id, path_name, isleaf, create_by, gmt_create, modify_by, gmt_modify )  VALUES  ( '1249176398601330690', '基础管理', 'lock', 3, '0000', '1187919802302926850', '进销存', '/pdos/base', '1187919802302926850', '进销存/基础管理', true, '9199482d76b443ef9f13fefddcf0046c', null, '9199482d76b443ef9f13fefddcf0046c', null );
+INSERT INTO sys_module_resources  ( id, module_id, resource_desc, resource_url, resource_type )  VALUES  ( '1249176400157417474', '1249176398601330690', '全部资源', '/**', '9999' );
+INSERT INTO sys_role_module  ( id, role_id, module_id, resource_id )  VALUES  ( '1249177176938323969', '1', '1187936839427391490', '1187936839473528833' );
 
-INSERT INTO sys_module  ( id, name, icon, orders, status, parent_id, parent_name, path, path_id, path_name, isleaf, create_by, gmt_create, modify_by, gmt_modify )  VALUES  ( '1249178962021523457', '商品类目', 'bars', 1, '0000', '1249176398601330690', '基础管理', '/pdos/base/category', '1187919802302926850,1249176398601330690', '基础管理/商品类目', true, '9199482d76b443ef9f13fefddcf0046c', null, '9199482d76b443ef9f13fefddcf0046c', null )
-INSERT INTO sys_module_resources  ( id, module_id, resource_desc, resource_url, resource_type )  VALUES  ( '1249178963804102658', '1249178962021523457', '全部资源', '/**', '9999' )
-INSERT INTO sys_role_module  ( id, role_id, module_id, resource_id )  VALUES  ( '1249179294533361666', '1', '1249178962021523457', '1249178963804102658' )
+INSERT INTO sys_module  ( id, name, icon, orders, status, parent_id, parent_name, path, path_id, path_name, isleaf, create_by, gmt_create, modify_by, gmt_modify )  VALUES  ( '1249178962021523457', '商品类目', 'bars', 1, '0000', '1249176398601330690', '基础管理', '/pdos/base/category', '1187919802302926850,1249176398601330690', '基础管理/商品类目', true, '9199482d76b443ef9f13fefddcf0046c', null, '9199482d76b443ef9f13fefddcf0046c', null );
+INSERT INTO sys_module_resources  ( id, module_id, resource_desc, resource_url, resource_type )  VALUES  ( '1249178963804102658', '1249178962021523457', '全部资源', '/**', '9999' );
+INSERT INTO sys_role_module  ( id, role_id, module_id, resource_id )  VALUES  ( '1249179294533361666', '1', '1249178962021523457', '1249178963804102658' );
+
+INSERT INTO sys_module  ( id, name, icon, orders, status, parent_id, parent_name, path, path_id, path_name, isleaf, create_by, gmt_create, modify_by, gmt_modify )  VALUES  ( '18101', '供应商管理', 'bars', 1, '0000', '1249176398601330690', '基础管理', '/pdos/base/supplier', '1187919802302926850,1249176398601330690', '基础管理/商品管理', true, '9199482d76b443ef9f13fefddcf0046c', null, '9199482d76b443ef9f13fefddcf0046c', null );
+INSERT INTO sys_module_resources  ( id, module_id, resource_desc, resource_url, resource_type )  VALUES  ( '28201', '18101', '全部资源', '/**', '9999' );
+INSERT INTO sys_role_module  ( id, role_id, module_id, resource_id )  VALUES  ( '38301', '1', '18101', '28201' );
 -- ----------------------------
 -- 初始化字典
 -- ----------------------------
-INSERT INTO sys_dict  ( id, code, name, parent_id, create_by, gmt_create, modify_by, gmt_modify )  VALUES  ( '1247706210710028290', 'online_platform', '来源平台', '1', '9199482d76b443ef9f13fefddcf0046c', '2020-04-08T10:01:56.552938800', '9199482d76b443ef9f13fefddcf0046c', '2020-04-08T10:01:56.552938800' );
+INSERT INTO sys_dict  ( id, code, name, parent_id, create_by, gmt_create, modify_by, gmt_modify )  VALUES  ( '1247706210710028290', 'online_platform', '来源平台', '1', '9199482d76b443ef9f13fefddcf0046c', null, '9199482d76b443ef9f13fefddcf0046c', null );
 INSERT INTO sys_dict_item  ( id, main_id, key_name, key_value )  VALUES  ( 'a65ac783e9b93d86fa862bc238e2c83e', '1247706210710028290', '0001', '拼多多' );
 INSERT INTO sys_dict_item  ( id, main_id, key_name, key_value )  VALUES  ( 'c370d1ba2e580a97d60741055170cab4', '1247706210710028290', '0002', '淘宝' );
 INSERT INTO sys_dict_item  ( id, main_id, key_name, key_value )  VALUES  ( 'c370d1ba2e580a97d60741055170cac6', '1247706210710028290', '0003', '闲鱼' );
 
-INSERT INTO sys_dict  ( id, code, name, parent_id, create_by, gmt_create, modify_by, gmt_modify )  VALUES  ( '1247707145754607617', 'ship_company', '快递公司', '1', '9199482d76b443ef9f13fefddcf0046c', '2020-04-08T10:05:39.483597', '9199482d76b443ef9f13fefddcf0046c', '2020-04-08T10:05:39.483597' );
+INSERT INTO sys_dict  ( id, code, name, parent_id, create_by, gmt_create, modify_by, gmt_modify )  VALUES  ( '1247707145754607617', 'ship_company', '快递公司', '1', '9199482d76b443ef9f13fefddcf0046c', null, '9199482d76b443ef9f13fefddcf0046c', null );
 INSERT INTO sys_dict_item  ( id, main_id, key_name, key_value )  VALUES  ( '5e800ffc87bd97f11253931d03dd00a8', '1247707145754607617', '0001', '圆通快递' );
 INSERT INTO sys_dict_item  ( id, main_id, key_name, key_value )  VALUES  ( '147be54e535f46917fa4d90c3ffba613', '1247707145754607617', '0002', '中通快递' );
 INSERT INTO sys_dict_item  ( id, main_id, key_name, key_value )  VALUES  ( '708ae86549fbe78b483f7fd1ab28cd6b', '1247707145754607617', '0003', '京东快递' );
@@ -51,6 +55,10 @@ INSERT INTO `sys_dict_item` VALUES ('1187717107797413889', '1187716348942970881'
 INSERT INTO `sys_dict_item` VALUES ('1187719735684030466', '1187716348942970881', '0002', '市场采购', NULL);
 INSERT INTO `sys_dict_item` VALUES ('1187908136500649986', '1187908136467095553', '0001', '玩具', NULL);
 INSERT INTO `sys_dict_item` VALUES ('1187908136525815809', '1187908136467095553', '0002', '饰品', NULL);
+
+INSERT INTO sys_dict  ( id, code, name, parent_id, create_by, gmt_create, modify_by, gmt_modify )  VALUES  ( '1247706210710028291', 'supplier_type', '供应商类型', '1', '9199482d76b443ef9f13fefddcf0046c', null, '9199482d76b443ef9f13fefddcf0046c', null );
+INSERT INTO sys_dict_item  ( id, main_id, key_name, key_value )  VALUES  ( '12477062107100282911', '1247706210710028291', '0001', '厂家' );
+INSERT INTO sys_dict_item  ( id, main_id, key_name, key_value )  VALUES  ( '12477062107100282912', '1247706210710028291', '0002', '经销商' );
 -- ----------------------------
 -- Table structure for jxc_base_category
 -- ----------------------------
@@ -113,8 +121,8 @@ CREATE TABLE `jxc_base_suppliiers`  (
   `REMARK` varchar(400) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
   `GMT_CREATE` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   `GMT_MODIFY` datetime(0) NULL DEFAULT NULL COMMENT '修改时间',
-  `CREATE_BY` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '创建人',
-  `MODIFY_BY` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '修改人',
+  `CREATE_BY` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '创建人',
+  `MODIFY_BY` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '修改人',
   PRIMARY KEY (`ID`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
