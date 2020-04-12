@@ -62,6 +62,14 @@ public abstract class StdBaseCtrl<T extends StdBaseService, E extends StdBaseEnt
         return this.success(this.service.listPage(entity, pageNo, pageSize));
     }
 
+    @GetMapping("listAll")
+    @ApiOperation(value = "列表查询 无分页",response = Response.class)
+    @NoRepeatSubmit
+    public Response listAll(@ApiParam(name ="condition", value = "模型对象")
+                                 E entity, Integer pageNo, Integer pageSize){
+        return this.success(this.service.list(entity));
+    }
+
     @GetMapping("/get/{id}")
     @ApiOperation(value = "根据ID获得记录信息", response = Response.class)
     @NoRepeatSubmit
