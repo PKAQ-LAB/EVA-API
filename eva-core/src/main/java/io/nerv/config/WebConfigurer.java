@@ -34,6 +34,7 @@ public class WebConfigurer implements WebMvcConfigurer {
                 .excludePathPatterns(evaConfig.getSecurity().getPermit());
     }
 
+    // 解决乱码问题 StringHttpMessageConverter默认编码为ISO-8859-1
     @Bean
     public HttpMessageConverter<String> responseBodyConverter() {
         return new StringHttpMessageConverter(Charset.forName("UTF-8"));

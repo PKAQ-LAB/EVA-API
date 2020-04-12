@@ -71,6 +71,6 @@ public class WxAuthController {
         } catch (WxErrorException e) {
             e.printStackTrace();
         }
-        return new Response().success(wxMpUser, null);
+        return new Response().success(wxMpUser);
     }
 }

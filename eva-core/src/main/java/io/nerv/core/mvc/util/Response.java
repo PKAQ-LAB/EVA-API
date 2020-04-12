@@ -72,6 +72,20 @@ public class Response{
      * @param data
      * @return
      */
+    public Response success(Object data, BizCode msg) {
+        this.data = data;
+        this.success = true;
+        this.message = msg.getName();
+        this.code = msg.getIndex();
+
+        return this;
+    }
+
+    /**
+     * 响应成功
+     * @param data
+     * @return
+     */
     public Response success(Object data, String msg, String code) {
         this.data = data;
         this.success = true;
