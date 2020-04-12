@@ -13,7 +13,7 @@ import io.nerv.core.token.util.TokenUtil;
 import io.nerv.properties.EvaConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cache.Cache;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -121,10 +121,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                         evaConfig.getCookie().getDomain());
 
                 try(PrintWriter printWriter = response.getWriter()){
+                    response.setCharacterEncoding("UTF-8");
+                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
                     printWriter.write(JSON.toJSONString(
-                            new Response()
-                                    .failure(BizCodeEnum.LOGIN_EXPIRED)
-                            )
+                            new Response().failure(BizCodeEnum.LOGIN_EXPIRED))
                     );
                     printWriter.flush();
                 }

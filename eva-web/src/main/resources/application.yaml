@@ -7,10 +7,13 @@ spring:
     locations: classpath:/db/migration
     check-location: false
     baseline-version: 0
+    enabled: false
   # 编码
   http:
     encoding:
       charset: UTF-8
+      force: true
+      enabled: true
   servlet:
   # 文件上传配置
     multipart:
