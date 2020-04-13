@@ -46,13 +46,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private TokenUtil tokenUtil;
 
     @Override
-    protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain chain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request,HttpServletResponse response,FilterChain chain) throws ServletException, IOException {
 
         var isvalid = false;
         var inCache = false;
+        var cacheToken = evaConfig.getJwt().isPersistence();
 
         String authToken;
         try{
@@ -61,7 +59,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             authToken = null;
             logger.warn(e);
         }
-
 
         if(null != ServletUtil.getCookie(request, CommonConstant.TOKEN_KEY)){
             authToken = ServletUtil.getCookie(request, CommonConstant.TOKEN_KEY).getValue();
@@ -77,27 +74,23 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 // 验证token 是否合法
                 isvalid = jwtUtil.valid(authToken);
                 // 验证缓存中是否存在该token
-                Object token = tokenUtil.getToken(uid);
+                if (cacheToken){
+                    Object token = tokenUtil.getToken(uid);
 
-                JSONObject jsonObject = null;
-                if (null != token){
-                    jsonObject = JSON.parseObject(String.valueOf(token));
-                }
+                    JSONObject jsonObject = null;
+                    if (null != token){
+                        jsonObject = JSON.parseObject(String.valueOf(token));
+                    }
 
-                if ( null != jsonObject &&
-                    authToken.equals(jsonObject.getString(CommonConstant.CACHE_TOKEN))) {
-                    inCache = true;
-                } else {
-                    logger.warn("鉴权失败 缓存中无法找到对应token");
-                    // 清除cookie
-                    ServletUtil.addCookie(response,
-                            CommonConstant.TOKEN_KEY,
-                            null,
-                            0,
-                            "/",
-                            evaConfig.getCookie().getDomain());
+                    if ( null != jsonObject && authToken.equals(jsonObject.getString(CommonConstant.CACHE_TOKEN))) {
+                        inCache = true;
+                    } else {
+                        logger.warn("鉴权失败 缓存中无法找到对应token");
+                        // 清除cookie
+                        this.clearCookie(response);
 
-                    throw new OathException(BizCodeEnum.LOGIN_EXPIRED);
+                        throw new OathException(BizCodeEnum.LOGIN_EXPIRED);
+                    }
                 }
 
                 // token 即将过期 续命
@@ -105,7 +98,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     String newToken = jwtUtil.refreshToken(authToken);
                     // 刷新缓存中的
                     // token放入缓存
-                    tokenUtil.saveToken(uid, tokenUtil.buildCacheValue(request, uid, newToken));
+                    if (cacheToken) {
+                        tokenUtil.saveToken(uid, tokenUtil.buildCacheValue(request, uid, newToken));
+                    }
 
                     // reponse请求头返回刷新后的token
                     response.setHeader(CommonConstant.TOKEN_KEY, newToken);
@@ -120,12 +115,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 logger.warn("鉴权失败 Token已过期", e);
 
                 // 清除cookie
-                ServletUtil.addCookie(response,
-                        CommonConstant.TOKEN_KEY,
-                        null,
-                        0,
-                        "/",
-                        evaConfig.getCookie().getDomain());
+               this.clearCookie(response);
 
                 try(PrintWriter printWriter = response.getWriter()){
                     response.setCharacterEncoding("UTF-8");
@@ -142,7 +132,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             logger.warn("couldn't find bearer string, will ignore the header");
         }
 
-        if (isvalid && inCache) {
+        if (isvalid && (inCache || !cacheToken)) {
             String uid = jwtUtil.getUid(authToken);
 
             logger.info("checking authentication ：" + uid);
@@ -171,5 +161,18 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             }
         }
         chain.doFilter(request, response);
+    }
+
+    /**
+     * 清除cookie
+     * @param response
+     */
+    public void clearCookie(HttpServletResponse response){
+        ServletUtil.addCookie(response,
+                CommonConstant.TOKEN_KEY,
+                null,
+                0,
+                "/",
+                evaConfig.getCookie().getDomain());
     }
 }

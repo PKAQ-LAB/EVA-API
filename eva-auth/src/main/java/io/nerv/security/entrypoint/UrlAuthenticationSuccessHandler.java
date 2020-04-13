@@ -54,6 +54,7 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse httpServletResponse,
                                         Authentication authentication) throws IOException {
+        var cacheToken = evaConfig.getJwt().isPersistence();
 
         httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -65,7 +66,9 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         String token = jwtUtil.build(evaConfig.getJwt().getTtl(), user.getAccount());
 
         // token放入缓存
-        tokenUtil.saveToken(user.getAccount(), tokenUtil.buildCacheValue(request, user.getAccount(), token));
+        if (cacheToken) {
+            tokenUtil.saveToken(user.getAccount(), tokenUtil.buildCacheValue(request, user.getAccount(), token));
+        }
 
         ServletUtil.addCookie(httpServletResponse,
                 CommonConstant.TOKEN_KEY,
@@ -73,7 +76,6 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
                 evaConfig.getCookie().getMaxAge(),
                 "/",
                 evaConfig.getCookie().getDomain());
-
 
         ServletUtil.addCookie(httpServletResponse,
                 CommonConstant.USER_KEY,
@@ -95,7 +97,6 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
                 .setOperateType("login");
 
         bizLogSupporter.save(bizLogEntity);
-
 
         try(PrintWriter printWriter = httpServletResponse.getWriter()){
             printWriter.write(JSON.toJSONString(

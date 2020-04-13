@@ -79,6 +79,7 @@ public class TokenUtil {
         var wrapper = this.tokenCache.get(uid);
         return null == wrapper? null : wrapper.get();
     }
+
     /**
      * 从缓存中清除token
      * @param key

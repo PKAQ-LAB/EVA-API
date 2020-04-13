@@ -20,31 +20,22 @@ EvaConfig {
     private boolean norepeatCheck;
     /**业务日志配置 **/
     private BizLog bizlog;
-
     /**业务日志配置 **/
     private ErrorLog errorLog;
-
     /** 文件上传配置 **/
     private Upload upload;
-
     /** jwt配置 **/
     private Jwt jwt;
-
     /** cookie 配置 **/
     private Cookie cookie;
-
     /** 访问鉴权配置 **/
     private Security security;
-
     /** 数据权限配置 **/
     private DataPermission dataPermission;
-
     /** 资源权限配置 **/
     private ResourcePermission resourcePermission;
-
     /** 是否启用license 授权机制 **/
     private License license;
-
     /** 缓存配置 **/
     private Cache cache;
 

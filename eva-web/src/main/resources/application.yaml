@@ -81,6 +81,8 @@ eva:
     maxAge: &maxAge 2592000
   # JWT配置
   jwt:
+    # 是否持久化token
+    persistence: false
     header: Authorization
     token-head: Bearer
     sign: PKAQ

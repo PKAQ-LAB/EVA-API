@@ -38,9 +38,11 @@ public class UrlLogoutSuccessHandler implements LogoutSuccessHandler {
                                 HttpServletResponse httpServletResponse,
                                 Authentication authentication) throws IOException {
 
-
+        var cacheToken = evaConfig.getJwt().isPersistence();
         // 清空redis/caffeine中的token 刷新用户secret
-        this.tokenUtil.removeToken(securityHelper.getJwtUser().getAccount());
+        if (cacheToken) {
+            this.tokenUtil.removeToken(securityHelper.getJwtUser().getAccount());
+        }
 
         // 清除cookie
         ServletUtil.addCookie(httpServletResponse,

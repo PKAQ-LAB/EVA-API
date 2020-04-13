@@ -15,25 +15,20 @@ public class Jwt {
     //private int rescode_reftoken_msg = 1006;
     ////刷新TOKEN
     //private int rescode_reftoken = 1007;
-
+    /** 是否持久化 **/
+    private boolean persistence;
     /**  token header参数名 **/
     private String header = "Authorization";
-
     /**  token 前缀 **/
     private String tokenHead = "Bearer";
-
     /**  签发人 **/
     private String sign = "PKAQ";
-
     /** 密匙 **/
     private String secert = "aHR0cDovL3BrYXEub3Jn";
-
     /** token有效时间 **/
     private long ttl = 30 * 24 * 60 * 60 * 1000;
-
     /** 续期时间 **/
     private long threshold = 60 * 60 * 24 * 1000;
-
     /** 可信任域 **/
     private List<String> creditUrl;
 
