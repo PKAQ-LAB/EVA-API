@@ -32,8 +32,8 @@ dependencies {
    implementation project(":eva-core"),
 				  project(":eva-auth"),
 		   		  project(":eva-jxc"),
-                  project(":addon-weixin"),
-                  project(":addon-pay"),
+                 // project(":addon-weixin"),
+                 // project(":addon-pay"),
                   "${lib.bootAdmin}",
 		   		  "${lib.devTools}"
 }

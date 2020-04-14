@@ -31,9 +31,13 @@ INSERT INTO sys_module  ( id, name, icon, orders, status, parent_id, parent_name
 INSERT INTO sys_module_resources  ( id, module_id, resource_desc, resource_url, resource_type )  VALUES  ( '1249178963804102658', '1249178962021523457', '全部资源', '/**', '9999' );
 INSERT INTO sys_role_module  ( id, role_id, module_id, resource_id )  VALUES  ( '1249179294533361666', '1', '1249178962021523457', '1249178963804102658' );
 
-INSERT INTO sys_module  ( id, name, icon, orders, status, parent_id, parent_name, path, path_id, path_name, isleaf, create_by, gmt_create, modify_by, gmt_modify )  VALUES  ( '18101', '供应商管理', 'bars', 1, '0000', '1249176398601330690', '基础管理', '/pdos/base/supplier', '1187919802302926850,1249176398601330690', '基础管理/商品管理', true, '9199482d76b443ef9f13fefddcf0046c', null, '9199482d76b443ef9f13fefddcf0046c', null );
+INSERT INTO sys_module  ( id, name, icon, orders, status, parent_id, parent_name, path, path_id, path_name, isleaf, create_by, gmt_create, modify_by, gmt_modify )  VALUES  ( '18101', '供应商管理', 'bars', 1, '0000', '1249176398601330690', '基础管理', '/pdos/base/supplier', '1187919802302926850,1249176398601330690', '基础管理/供应商管理', true, '9199482d76b443ef9f13fefddcf0046c', null, '9199482d76b443ef9f13fefddcf0046c', null );
 INSERT INTO sys_module_resources  ( id, module_id, resource_desc, resource_url, resource_type )  VALUES  ( '28201', '18101', '全部资源', '/**', '9999' );
 INSERT INTO sys_role_module  ( id, role_id, module_id, resource_id )  VALUES  ( '38301', '1', '18101', '28201' );
+
+INSERT INTO sys_module  ( id, name, icon, orders, status, parent_id, parent_name, path, path_id, path_name, isleaf, create_by, gmt_create, modify_by, gmt_modify )  VALUES  ( '18102', '产品管理', 'bars', 1, '0000', '1249176398601330690', '基础管理', '/pdos/base/goods', '1187919802302926850,1249176398601330690', '基础管理/产品管理', true, '9199482d76b443ef9f13fefddcf0046c', null, '9199482d76b443ef9f13fefddcf0046c', null );
+INSERT INTO sys_module_resources  ( id, module_id, resource_desc, resource_url, resource_type )  VALUES  ( '28202', '18102', '全部资源', '/**', '9999' );
+INSERT INTO sys_role_module  ( id, role_id, module_id, resource_id )  VALUES  ( '38302', '1', '18102', '28202' );
 -- ----------------------------
 -- 初始化字典
 -- ----------------------------
@@ -47,12 +51,13 @@ INSERT INTO sys_dict_item  ( id, main_id, key_name, key_value )  VALUES  ( '5e80
 INSERT INTO sys_dict_item  ( id, main_id, key_name, key_value )  VALUES  ( '147be54e535f46917fa4d90c3ffba613', '1247707145754607617', '0002', '中通快递' );
 INSERT INTO sys_dict_item  ( id, main_id, key_name, key_value )  VALUES  ( '708ae86549fbe78b483f7fd1ab28cd6b', '1247707145754607617', '0003', '京东快递' );
 INSERT INTO sys_dict_item  ( id, main_id, key_name, key_value )  VALUES  ( '60ed545f6803b47e161e67959a811504', '1247707145754607617', '0004', '顺丰快递' );
-INSERT INTO sys_dict_item  ( id, main_id, key_name, key_value )  VALUES  ( '60ed545f6803b47e161e67959a811516', '1247707145754607617', '0004', '百世快递' );
+INSERT INTO sys_dict_item  ( id, main_id, key_name, key_value )  VALUES  ( '60ed545f6803b47e161e67959a811516', '1247707145754607617', '0005', '百世快递' );
 
 INSERT INTO `sys_dict` VALUES ('1187716348942970881', 'purchasing_type', '采购类型', '1', NULL, '2019-10-25 21:03:39', '2019-10-25 21:17:06', '9199482d76b443ef9f13fefddcf0046c', '9199482d76b443ef9f13fefddcf0046c', '1');
-INSERT INTO `sys_dict` VALUES ('1187908136467095553', 'goods_type', '货品类型', '1', NULL, '2019-10-26 09:45:45', '2019-10-31 13:12:06', '9199482d76b443ef9f13fefddcf0046c', '9199482d76b443ef9f13fefddcf0046c', '1');
 INSERT INTO `sys_dict_item` VALUES ('1187717107797413889', '1187716348942970881', '0001', '网络采购', NULL);
 INSERT INTO `sys_dict_item` VALUES ('1187719735684030466', '1187716348942970881', '0002', '市场采购', NULL);
+
+INSERT INTO `sys_dict` VALUES ('1187908136467095553', 'goods_type', '货品类型', '1', NULL, '2019-10-26 09:45:45', '2019-10-31 13:12:06', '9199482d76b443ef9f13fefddcf0046c', '9199482d76b443ef9f13fefddcf0046c', '1');
 INSERT INTO `sys_dict_item` VALUES ('1187908136500649986', '1187908136467095553', '0001', '玩具', NULL);
 INSERT INTO `sys_dict_item` VALUES ('1187908136525815809', '1187908136467095553', '0002', '饰品', NULL);
 
@@ -83,26 +88,30 @@ CREATE TABLE `jxc_base_category`  (
   PRIMARY KEY (`ID`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
--- ----------------------------
--- Table structure for jxc_base_goods
--- ----------------------------
-DROP TABLE IF EXISTS `jxc_base_goods`;
-CREATE TABLE `jxc_base_goods`  (
-  `ID` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'ID',
-  `NAME` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '品名',
-  `CATEGORY` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '品类',
-  `MODEL` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '产品型号',
-  `BARCODE` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '条码',
-  `UNIT` varchar(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '规格单位',
-  `MNEMONIC` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '助记码（拼音）',
-  `BOXUNIT` int(11) NULL DEFAULT NULL COMMENT '装箱规格',
-  `REMARK` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
-  `CREATE_BY` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `GMT_CREATE` date NULL DEFAULT NULL,
-  `MODIFY_BY` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `GMT_MODIFY` date NULL DEFAULT NULL,
-  PRIMARY KEY (`ID`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci;
+
+/*==============================================================*/
+/* Table: JXC_BASE_GOODS                                        */
+/*==============================================================*/
+DROP TABLE IF EXISTS JXC_BASE_GOODS;
+CREATE TABLE JXC_BASE_GOODS
+(
+   ID                   VARCHAR(40) NOT NULL COMMENT 'ID',
+   NAME                 VARCHAR(40) COMMENT '品名',
+   MNEMONIC             VARCHAR(12) COMMENT '助记码（拼音）',
+   CATEGORY             VARCHAR(40) COMMENT '品类',
+   AVATAR               VARCHAR(300) COMMENT '图片',
+   ITEM_NO              VARCHAR(20) COMMENT '货号',
+   BARCODE              VARCHAR(60) COMMENT '条码',
+   UNIT                 VARCHAR(4) COMMENT '规格单位',
+   BOXUNIT              INT COMMENT '装箱规格',
+   FACTORY              VARCHAR(40) COMMENT '生产厂家',
+   REMARK               VARCHAR(300) COMMENT '备注',
+   CREATE_BY            VARCHAR(40),
+   GMT_CREATE           DATE,
+   MODIFY_BY            VARCHAR(40),
+   GMT_MODIFY           DATE,
+   PRIMARY KEY (ID)
+);
 
 -- ----------------------------
 -- Table structure for jxc_base_suppliiers
