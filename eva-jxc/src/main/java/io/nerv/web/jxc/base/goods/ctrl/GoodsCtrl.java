@@ -1,26 +1,26 @@
 package io.nerv.web.jxc.base.goods.ctrl;
 
+import io.nerv.core.mvc.ctrl.mybatis.HookStdBaseCtrl;
+import io.nerv.core.mvc.ctrl.mybatis.StdBaseCtrl;
+import io.nerv.core.mvc.util.Response;
 import io.nerv.web.jxc.base.goods.entity.GoodsEntity;
 import io.nerv.web.jxc.base.goods.service.GoodsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import io.nerv.core.mvc.ctrl.mybatis.StdBaseCtrl;
-import io.nerv.core.mvc.util.Response;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 采购入库单
+ * 产品管理
  * @author: S.PKAQ
- * @Datetime: 2018/4/4 8:00
  */
-@Api(tags = "进销存")
+@Api(tags = "产品管理")
 @RestController
-@RequestMapping("jxc/goods")
-public class GoodsCtrl extends StdBaseCtrl<GoodsService, GoodsEntity> {
+@RequestMapping("/pdos/base/goods")
+public class GoodsCtrl extends HookStdBaseCtrl<GoodsService, GoodsEntity> {
 
     @PostMapping("checkUnique")
     @ApiOperation(value = "校验barcode唯一性",response = Response.class)
