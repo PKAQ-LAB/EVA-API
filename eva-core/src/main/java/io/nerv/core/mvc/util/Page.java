@@ -13,14 +13,14 @@ import java.util.function.Predicate;
  * 自定义分页模型
  * @author PKAQ
  */
-public class EvaPage<T> implements IPage<T> {
+public class Page<T> implements IPage<T> {
 
     private static final long serialVersionUID = 8545996863226528798L;
 
     /**
      * 查询数据列表
      */
-    private List<T> data = Collections.emptyList();
+    private List<T> list = Collections.emptyList();
 
     /**
      * 总数
@@ -54,7 +54,7 @@ public class EvaPage<T> implements IPage<T> {
      */
     private boolean hitCount = false;
 
-    public EvaPage() {
+    public Page() {
 
     }
 
@@ -64,19 +64,19 @@ public class EvaPage<T> implements IPage<T> {
      * @param current 当前页
      * @param size    每页显示条数
      */
-    public EvaPage(long current, long size) {
+    public Page(long current, long size) {
         this(current, size, 0);
     }
 
-    public EvaPage(long current, long size, long total) {
+    public Page(long current, long size, long total) {
         this(current, size, total, true);
     }
 
-    public EvaPage(long current, long size, boolean isSearchCount) {
+    public Page(long current, long size, boolean isSearchCount) {
         this(current, size, 0, isSearchCount);
     }
 
-    public EvaPage(long current, long size, long total, boolean isSearchCount) {
+    public Page(long current, long size, long total, boolean isSearchCount) {
         if (current > 1) {
             this.current = current;
         }
@@ -108,13 +108,13 @@ public class EvaPage<T> implements IPage<T> {
         return null;
     }
 
-    public List<T> getData() {
-        return this.data;
+    public List<T> getList() {
+        return this.list;
     }
 
     @Override
-    public EvaPage<T> setRecords(List<T> data) {
-        this.data = data;
+    public Page<T> setRecords(List<T> data) {
+        this.list = data;
         return this;
     }
 
@@ -124,7 +124,7 @@ public class EvaPage<T> implements IPage<T> {
     }
 
     @Override
-    public EvaPage<T> setTotal(long total) {
+    public Page<T> setTotal(long total) {
         this.total = total;
         return this;
     }
@@ -135,7 +135,7 @@ public class EvaPage<T> implements IPage<T> {
     }
 
     @Override
-    public EvaPage<T> setSize(long size) {
+    public Page<T> setSize(long size) {
         this.size = size;
         return this;
     }
@@ -146,7 +146,7 @@ public class EvaPage<T> implements IPage<T> {
     }
 
     @Override
-    public EvaPage<T> setCurrent(long current) {
+    public Page<T> setCurrent(long current) {
         this.current = current;
         return this;
     }
@@ -181,23 +181,23 @@ public class EvaPage<T> implements IPage<T> {
     }
 
     /**
-     * 添加新的排序条件，构造条件可以使用工厂：{@link OrderItem#build(String, boolean)}
+     * 添加新的排序条件，构造条件可以使用工厂：{@link OrderItem#(String, boolean)}
      *
      * @param items 条件
      * @return 返回分页参数本身
      */
-    public EvaPage<T> addOrder(OrderItem... items) {
+    public Page<T> addOrder(OrderItem... items) {
         orders.addAll(Arrays.asList(items));
         return this;
     }
 
     /**
-     * 添加新的排序条件，构造条件可以使用工厂：{@link OrderItem#build(String, boolean)}
+     * 添加新的排序条件，构造条件可以使用工厂：{@link OrderItem#(String, boolean)}
      *
      * @param items 条件
      * @return 返回分页参数本身
      */
-    public EvaPage<T> addOrder(List<OrderItem> items) {
+    public Page<T> addOrder(List<OrderItem> items) {
         orders.addAll(items);
         return this;
     }
@@ -228,12 +228,12 @@ public class EvaPage<T> implements IPage<T> {
         return isSearchCount;
     }
 
-    public EvaPage<T> setSearchCount(boolean isSearchCount) {
+    public Page<T> setSearchCount(boolean isSearchCount) {
         this.isSearchCount = isSearchCount;
         return this;
     }
 
-    public EvaPage<T> setOptimizeCountSql(boolean optimizeCountSql) {
+    public Page<T> setOptimizeCountSql(boolean optimizeCountSql) {
         this.optimizeCountSql = optimizeCountSql;
         return this;
     }
