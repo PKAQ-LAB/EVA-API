@@ -1,6 +1,6 @@
 plugins {
-   id "name.remal.check-dependency-updates" version "1.0.178"
-   id "com.jfrog.bintray" version "1.8.4"
+   id "name.remal.check-dependency-updates" version "1.0.183"
+   id "com.jfrog.bintray" version "1.8.5"
 }
 
 bintrayUpload.enabled = false
@@ -25,7 +25,7 @@ ext {
     caffeine = "2.8.1"
     weixin = "3.7.0"
     securityTest = "5.3.1.RELEASE"
-    alipay = "4.9.79.ALL"
+    alipay = "4.9.124.ALL"
     zxing = "3.4.0"
     velocity = "2.2"
 
