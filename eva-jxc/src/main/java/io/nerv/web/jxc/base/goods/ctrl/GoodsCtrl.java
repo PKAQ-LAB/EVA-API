@@ -1,6 +1,5 @@
 package io.nerv.web.jxc.base.goods.ctrl;
 
-import io.nerv.core.mvc.ctrl.mybatis.HookStdBaseCtrl;
 import io.nerv.core.mvc.ctrl.mybatis.StdBaseCtrl;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.web.jxc.base.goods.entity.GoodsEntity;
@@ -20,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(tags = "产品管理")
 @RestController
 @RequestMapping("/pdos/base/goods")
-public class GoodsCtrl extends HookStdBaseCtrl<GoodsService, GoodsEntity> {
+public class GoodsCtrl extends StdBaseCtrl<GoodsService, GoodsEntity> {
 
     @PostMapping("checkUnique")
     @ApiOperation(value = "校验barcode唯一性",response = Response.class)
