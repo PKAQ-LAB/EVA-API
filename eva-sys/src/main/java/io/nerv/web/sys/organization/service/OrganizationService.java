@@ -47,7 +47,7 @@ public class OrganizationService extends StdBaseService<OrganizationMapper, Orga
             response = new Response().failure(BizCodeEnum.CHILD_EXIST.getIndex(), StrUtil.format("[{}] 存在子节点，无法删除。",name), null);
          } else {
             this.mapper.deleteBatchIds(ids);
-            response = new Response().success(this.mapper.listOrg(null));
+            response = new Response().success();
         }
 
         return response;

@@ -79,7 +79,7 @@ public class OrganizationEntity extends StdBaseEntity {
     private String title;
 
     public String getKey() {
-        return this.getId()+ RandomUtil.randomString(5);
+        return this.getId();
     }
 
     public String getTitle() {

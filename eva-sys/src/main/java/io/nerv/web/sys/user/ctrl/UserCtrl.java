@@ -49,7 +49,7 @@ public class UserCtrl extends PureBaseCtrl<UserService> {
             throw new ParamException(locale("param_id_notnull"));
         }
         this.service.delete(ids.getParam());
-        return success(this.service.listPage(null, 1));
+        return success(null, BizCodeEnum.OPERATE_SUCCESS);
     }
 
     @PostMapping("/edit")
@@ -57,7 +57,7 @@ public class UserCtrl extends PureBaseCtrl<UserService> {
     public Response save(@ApiParam(name ="formdata", value = "用户对象")
                          @RequestBody UserEntity entity){
 
-        return success(this.service.saveUser(entity));
+        return success(null, BizCodeEnum.OPERATE_SUCCESS);
     }
 
     @PostMapping("/grant")

@@ -70,7 +70,7 @@ public class OrgCtrl extends PureBaseCtrl<OrganizationService> {
     public Response editOrg(@ApiParam(name ="organization", value = "组织信息")
                             @RequestBody OrganizationEntity organization){
         this.service.editOrg(organization);
-        return success(this.service.listOrg(null));
+        return success();
     }
 
     @PostMapping("/sort")
@@ -78,7 +78,7 @@ public class OrgCtrl extends PureBaseCtrl<OrganizationService> {
     public Response sortOrg(@ApiParam(name = "organization", value = "{id,orders}")
                             @RequestBody OrganizationEntity[] switchObj){
         this.service.sortOrg(switchObj);
-        return success(this.service.listOrg(null), BizCodeEnum.OPERATE_SUCCESS);
+        return success();
     }
 
     @PostMapping("/switchStatus")
@@ -86,6 +86,6 @@ public class OrgCtrl extends PureBaseCtrl<OrganizationService> {
     public Response switchStatus(@ApiParam(name = "id", value = "组织Id")
                                  @RequestBody OrganizationEntity organization){
         this.service.switchStatus(organization);
-        return success(this.service.listOrg(null));
+        return success();
     }
 }

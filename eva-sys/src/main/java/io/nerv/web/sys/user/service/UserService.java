@@ -5,11 +5,11 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.exception.OathException;
 import io.nerv.core.mvc.entity.mybatis.BaseTreeEntity;
 import io.nerv.core.mvc.service.mybatis.StdBaseService;
+import io.nerv.core.mvc.util.Page;
 import io.nerv.core.upload.util.FileUploadProvider;
 import io.nerv.core.util.SecurityHelper;
 import io.nerv.core.util.tree.TreeHelper;
@@ -129,7 +129,7 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
      * @param user 用户对象
      * @return 用户列表
      */
-    public IPage<UserEntity> saveUser(UserEntity user) {
+    public void saveUser(UserEntity user) {
         // 用户资料发生修改后 重新生成密码
         // 这里传递过来的密码是进行md5加密后的
         String pwd = user.getPassword();
@@ -171,7 +171,6 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
             this.mapper.updateById(user);
         }
         this.merge(user);
-        return this.listPage(null, 1);
     }
 
     /**

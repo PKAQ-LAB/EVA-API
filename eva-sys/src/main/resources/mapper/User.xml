@@ -49,7 +49,7 @@
       ON su.id = sru.USER_ID
     <where>
       <if test="null != user.deptId and user.deptId != ''">
-        su.deptId = #{user.deptId,jdbcType=VARCHAR}
+        su.dept_Id = #{user.deptId,jdbcType=VARCHAR}
       </if>
       <if test="null != user.account and user.account != ''">
         and su.account = #{user.account,jdbcType=VARCHAR}
