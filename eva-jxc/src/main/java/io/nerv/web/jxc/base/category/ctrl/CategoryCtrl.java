@@ -1,6 +1,7 @@
 package io.nerv.web.jxc.base.category.ctrl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import io.nerv.config.PdosEnum;
 import io.nerv.core.exception.ParamException;
 import io.nerv.core.mvc.ctrl.mybatis.PureBaseCtrl;
 import io.nerv.core.mvc.util.Response;
@@ -32,7 +33,7 @@ public class CategoryCtrl extends PureBaseCtrl<CategoryService> {
     public Response checkUnique(@ApiParam(name ="category", value = "要进行校验的参数")
                                 @RequestBody CategoryEntity category){
         boolean exist = this.service.checkUnique(category);
-        return exist? failure(): success();
+        return exist? failure(PdosEnum.CATEGORY_CODE_DUPLICATE): success();
     }
 
     @PostMapping("edit")

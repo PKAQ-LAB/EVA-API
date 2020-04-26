@@ -1,11 +1,11 @@
 package io.nerv.log.biz.ctrl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.nerv.core.bizlog.condition.MybatisSupporterCondition;
 import io.nerv.core.bizlog.supporter.mybatis.entity.MybatisBizLogEntity;
 import io.nerv.core.bizlog.supporter.mybatis.mapper.MybatisSupporterMapper;
 import io.nerv.core.mvc.util.DateRangeVo;
+import io.nerv.core.mvc.util.Page;
 import io.nerv.core.mvc.util.Response;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

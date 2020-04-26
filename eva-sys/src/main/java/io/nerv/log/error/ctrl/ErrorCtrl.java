@@ -1,10 +1,10 @@
 package io.nerv.log.error.ctrl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.nerv.core.exception.entity.ErrorlogEntity;
 import io.nerv.core.exception.mapper.ErrorlogMapper;
 import io.nerv.core.mvc.util.DateRangeVo;
+import io.nerv.core.mvc.util.Page;
 import io.nerv.core.mvc.util.Response;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

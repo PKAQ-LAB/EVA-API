@@ -94,7 +94,8 @@ public class RoleCtrl extends PureBaseCtrl<RoleService> {
     @ApiOperation(value = "新增/编辑角色信息", response = Response.class)
     public Response saveRole(@ApiParam(name ="role", value = "角色信息")
                              @RequestBody RoleEntity role){
-        return success(this.service.saveRole(role));
+        this.service.saveRole(role);
+        return success();
     }
 
     @PostMapping("/del")
@@ -106,7 +107,7 @@ public class RoleCtrl extends PureBaseCtrl<RoleService> {
             throw new ParamException(locale("param_id_notnull"));
         }
         this.service.deleteRole(ids.getParam());
-        return success(this.service.listRole(new RoleEntity(), 1, 10));
+        return success();
     }
 
     @PostMapping("/lock")

@@ -7,9 +7,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.nerv.core.enums.LockEnumm;
 import io.nerv.core.mvc.service.mybatis.StdBaseService;
+import io.nerv.core.mvc.util.Page;
 import io.nerv.core.util.SecurityHelper;
 import io.nerv.web.sys.module.entity.ModuleEntity;
 import io.nerv.web.sys.module.mapper.ModuleMapper;
@@ -102,7 +102,6 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
         this.roleModuleMapper.delete(queryWrapper);
         // 删除角色相关的 授权参数
         this.roleConfigMapper.delete(queryWrapper);
-
         //删除角色
         this.mapper.deleteBatchIds(ids);
     }
@@ -135,7 +134,7 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
      * @param role 角色对象
      * @return 角色列表
      */
-    public IPage<RoleEntity> saveRole(RoleEntity role) {
+    public void saveRole(RoleEntity role) {
         // 添加 ROLE_ 前缀 并转大写
         if(!role.getCode().startsWith(AUTH_PREFIX)){
             role.setCode((AUTH_PREFIX+role.getCode()).toUpperCase());
@@ -148,7 +147,6 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
         role.setModifyBy(securityHelper.getJwtUserId());
 
         this.merge(role);
-        return this.listRole(null, 1, 10);
     }
 
     /**

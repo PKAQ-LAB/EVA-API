@@ -43,7 +43,7 @@ public class ModuleCtrl extends PureBaseCtrl<ModuleService> {
         //如果Response不为空，则表示该节点下有子节点，返回错误给前台
         this.service.deleteModule(ids.getParam());
 
-        return this.success(this.service.listModule(null), BizCodeEnum.OPERATE_SUCCESS);
+        return this.success();
     }
 
     @PostMapping("/edit")
@@ -51,7 +51,7 @@ public class ModuleCtrl extends PureBaseCtrl<ModuleService> {
     public Response save(@ApiParam(name ="formdata", value = "模块对象")
                          @RequestBody ModuleEntity entity){
         this.service.editModule(entity);
-        return this.success(this.service.listModuleByAttr(null));
+        return this.success();
     }
 
     @GetMapping("/get/{id}")
@@ -72,7 +72,7 @@ public class ModuleCtrl extends PureBaseCtrl<ModuleService> {
     public Response sortModule(@ApiParam(name = "module", value = "{id,orders}")
                                @RequestBody ModuleEntity[] switchObj){
         this.service.sortModule(switchObj);
-        return success(this.service.listModule(null), BizCodeEnum.OPERATE_SUCCESS);
+        return success();
     }
 
     @PostMapping("/switchStatus")
@@ -80,6 +80,6 @@ public class ModuleCtrl extends PureBaseCtrl<ModuleService> {
     public Response switchStatus(@ApiParam(name = "id", value = "模块Id")
                                  @RequestBody ModuleEntity module){
         this.service.updateModule(module);
-        return success(this.service.listModule(null));
+        return success();
     }
 }
