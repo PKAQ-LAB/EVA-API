@@ -78,7 +78,7 @@ INSERT INTO `sys_dict` VALUES ('1', 'biz', '业务代码', '0', '业务代码', 
 INSERT INTO `sys_dict` VALUES ('1174974634025496578', 'data_permission', '数据权限', '1', '数据权限类型', '2019-09-20 17:12:37', '2019-09-20 19:41:56', NULL, NULL, '9999');
 INSERT INTO `sys_dict` VALUES ('3', 'sys', '系统代码', '0', '系统代码', '1899-12-31 08:00:00', '1899-12-31 08:00:00', NULL, NULL, '9999');
 INSERT INTO sys_dict  ( id, code, name, parent_id, create_by, gmt_create, modify_by, gmt_modify )  VALUES  ( '1247707145754607618', 'unit', '单位', '1', '9199482d76b443ef9f13fefddcf0046c', null, '9199482d76b443ef9f13fefddcf0046c', null );
-INSERT INTO sys_dict  ( id, code, name, parent_id, create_by, gmt_create, modify_by, gmt_modify )  VALUES  ( '1247704849712906241', 'dict_type', '所属分类', '0001', '9199482d76b443ef9f13fefddcf0046c', '2020-04-08T09:56:32.070004400', '9199482d76b443ef9f13fefddcf0046c', '2020-04-08T09:56:32.070004400' );
+INSERT INTO sys_dict  ( id, code, name, parent_id, create_by, gmt_create, modify_by, gmt_modify )  VALUES  ( '1247704849712906241', 'dict_type', '所属分类', '3', '9199482d76b443ef9f13fefddcf0046c', '2020-04-08T09:56:32.070004400', '9199482d76b443ef9f13fefddcf0046c', '2020-04-08T09:56:32.070004400' );
 
 -- ----------------------------
 -- Table structure for sys_dict_item
@@ -101,8 +101,8 @@ INSERT INTO `sys_dict_item` VALUES ('1174974634117771265', '1174974634025496578'
 INSERT INTO `sys_dict_item` VALUES ('1174974634142937089', '1174974634025496578', '0002', '本部门及下属部门', 2);
 INSERT INTO `sys_dict_item` VALUES ('1174974634159714305', '1174974634025496578', '0003', '指定部门', 3);
 INSERT INTO `sys_dict_item` VALUES ('1174974634176491521', '1174974634025496578', '0005', '仅本人创建', 5);
-INSERT INTO sys_dict_item  ( id, main_id, key_name, key_value )  VALUES  ( '5ee97d5c83464aeaa08dc441c396f62b', '1247704849712906241', '0001', '系统代码' );
-INSERT INTO sys_dict_item  ( id, main_id, key_name, key_value )  VALUES  ( 'f6fb18fd71c665baf57e680bc5a28fec', '1247704849712906241', '0002', '业务代码' );
+INSERT INTO sys_dict_item  ( id, main_id, key_name, key_value )  VALUES  ( '5ee97d5c83464aeaa08dc441c396f62b', '1247704849712906241', '3', '系统代码' );
+INSERT INTO sys_dict_item  ( id, main_id, key_name, key_value )  VALUES  ( 'f6fb18fd71c665baf57e680bc5a28fec', '1247704849712906241', '1', '业务代码' );
 INSERT INTO sys_dict_item  ( id, main_id, key_name, key_value )  VALUES  ( '5e800ffc87bd97f11253931d03dd00a9', '1247707145754607618', '0001', 'kg' );
 INSERT INTO sys_dict_item  ( id, main_id, key_name, key_value )  VALUES  ( '147be54e535f46917fa4d90c3ffba614', '1247707145754607618', '0002', 'g' );
 INSERT INTO sys_dict_item  ( id, main_id, key_name, key_value )  VALUES  ( '708ae86549fbe78b483f7fd1ab28cd6c', '1247707145754607618', '0003', '桶' );
