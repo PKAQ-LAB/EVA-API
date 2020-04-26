@@ -43,7 +43,7 @@ public class DictCtrl extends PureBaseCtrl<DictService> {
     @GetMapping("/list")
     @ApiOperation(value = "获取字典分类列表",response = Response.class)
     public Response listDict(){
-        return new Response().success(this.service.listDict());
+        return new Response().success();
     }
 
     @GetMapping({"/get/{id}", "/get/type/{code}"})
@@ -81,7 +81,7 @@ public class DictCtrl extends PureBaseCtrl<DictService> {
             throw new ParamException(locale("param_id_notnull"));
         }
         this.service.delDict(id);
-        return success(this.service.listDict());
+        return success();
     }
     @PostMapping("/edit")
     @ApiOperation(value = "新增/编辑字典分类",response = Response.class)
@@ -89,6 +89,6 @@ public class DictCtrl extends PureBaseCtrl<DictService> {
                              @RequestBody @Valid DictEntity dictEntity){
         this.service.edit(dictEntity);
 
-        return success(this.service.listDict());
+        return success();
     }
 }
