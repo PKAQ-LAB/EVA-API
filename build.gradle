@@ -1,5 +1,5 @@
 plugins {
-   id "name.remal.check-dependency-updates" version "1.0.183"
+   id "name.remal.check-dependency-updates" version "1.0.184"
    id "com.jfrog.bintray" version "1.8.5"
 }
 
@@ -84,7 +84,7 @@ ext {
 allprojects {
     apply plugin: "name.remal.check-dependency-updates"
     group = 'io.nerv'
-    version = '2.5.1'
+    version = '2.5.2'
 }
 
 subprojects {

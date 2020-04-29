@@ -42,7 +42,7 @@ public abstract class StdBaseCtrl<T extends StdBaseService, E extends StdBaseEnt
             throw new ParamException(locale("param_id_notnull"));
         }
         this.service.delete(ids.getParam());
-        return success(this.service.list(null), ResponseEnumm.DELETE_SUCCESS.getName());
+        return success(null, ResponseEnumm.DELETE_SUCCESS.getName());
     }
 
     @PostMapping("edit")
