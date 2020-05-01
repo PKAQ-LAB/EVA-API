@@ -43,7 +43,7 @@ public class DictCtrl extends PureBaseCtrl<DictService> {
     @GetMapping("/list")
     @ApiOperation(value = "获取字典分类列表",response = Response.class)
     public Response listDict(){
-        return new Response().success();
+        return this.success(this.service.listDict());
     }
 
     @GetMapping({"/get/{id}", "/get/type/{code}"})
@@ -60,7 +60,7 @@ public class DictCtrl extends PureBaseCtrl<DictService> {
         dictEntity.setId(id);
         dictEntity.setCode(code);
 
-        return success(this.service.getDict(dictEntity));
+        return this.success(this.service.getDict(dictEntity));
     }
 
     @PostMapping("/checkUnique")
@@ -68,7 +68,7 @@ public class DictCtrl extends PureBaseCtrl<DictService> {
     public Response checkUnique(@ApiParam(name ="dictEntity", value = "要进行校验的参数")
                                 @RequestBody DictEntity dictEntity){
         boolean exist = this.service.checkUnique(dictEntity);
-        return exist? failure(): success();
+        return exist? this.failure(): this.success();
     }
 
     @GetMapping("/del/{id}")
@@ -89,6 +89,6 @@ public class DictCtrl extends PureBaseCtrl<DictService> {
                              @RequestBody @Valid DictEntity dictEntity){
         this.service.edit(dictEntity);
 
-        return success();
+        return this.success();
     }
 }
