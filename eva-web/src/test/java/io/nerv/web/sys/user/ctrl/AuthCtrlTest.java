@@ -1,15 +1,19 @@
 package io.nerv.web.sys.user.ctrl;
 
-import com.alibaba.fastjson.JSON;
 import io.nerv.BaseTest;
+import io.nerv.core.util.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @Slf4j
 public class AuthCtrlTest extends BaseTest {
+    @Autowired
+    private JsonUtil jsonUtil;
+
     @Test
     public void testLogin(){
         try {
@@ -18,7 +22,7 @@ public class AuthCtrlTest extends BaseTest {
                     .content(json)).andReturn();
 
             System.out.println("------------------------>");
-            System.out.println(JSON.toJSONString(re.getResponse()));
+            System.out.println(jsonUtil.toJSONString(re.getResponse()));
         } catch (Exception e) {
             e.printStackTrace();
         }

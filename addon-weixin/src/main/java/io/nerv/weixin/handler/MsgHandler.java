@@ -1,6 +1,6 @@
 package io.nerv.weixin.handler;
 
-import com.alibaba.fastjson.JSON;
+import io.nerv.core.util.JsonUtil;
 import io.nerv.weixin.builder.TextBuilder;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
@@ -8,6 +8,7 @@ import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -19,6 +20,9 @@ import static me.chanjar.weixin.common.api.WxConsts.XmlMsgType;
  */
 @Component
 public class MsgHandler extends AbstractHandler {
+    @Autowired
+    private JsonUtil jsonUtil;
+
 
     @Override
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage,
@@ -43,7 +47,7 @@ public class MsgHandler extends AbstractHandler {
         }
 
         //TODO 组装回复消息
-        String content = "收到信息内容：" + JSON.toJSONString(wxMessage);
+        String content = "收到信息内容：" + jsonUtil.toJSONString(wxMessage);
 
         return new TextBuilder().build(content, wxMessage, weixinService);
 

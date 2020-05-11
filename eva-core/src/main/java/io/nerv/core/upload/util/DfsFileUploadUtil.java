@@ -7,12 +7,11 @@ import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.exception.FileUploadException;
 import io.nerv.core.upload.condition.FastDfsCondition;
+import io.nerv.core.util.JsonUtil;
 import io.nerv.properties.EvaConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +32,8 @@ import java.util.*;
 @Component
 @Conditional(FastDfsCondition.class)
 public class DfsFileUploadUtil implements FileUploadProvider {
+    @Autowired
+    private JsonUtil jsonUtil;
 
     private Snowflake snowflake = IdUtil.createSnowflake(SNOW, FLAKE);
 
@@ -98,9 +99,9 @@ public class DfsFileUploadUtil implements FileUploadProvider {
                 paramMap.put("path", suffixName);
             }
 
-            JSONObject jsonObject = JSON.parseObject(this.transfer(paramMap));
+            Map<String, String> jsonObject = jsonUtil.parseObject(this.transfer(paramMap), Map.class);
 
-            file_path = jsonObject.getString("path");
+            file_path = jsonObject.get("path");
         } else {
             log.error(BizCodeEnum.FILETYPE_NOT_SUPPORTED.getName());
             throw new FileUploadException(BizCodeEnum.FILETYPE_NOT_SUPPORTED);

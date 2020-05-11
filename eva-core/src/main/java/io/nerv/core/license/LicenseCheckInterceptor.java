@@ -1,8 +1,8 @@
 package io.nerv.core.license;
 
-import com.alibaba.fastjson.JSON;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.util.Response;
+import io.nerv.core.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
@@ -19,6 +19,9 @@ import java.io.PrintWriter;
 @Component
 @ConditionalOnProperty(prefix = "eva.license", name = "enable", havingValue = "true")
 public class LicenseCheckInterceptor extends HandlerInterceptorAdapter {
+    @Autowired
+    private JsonUtil jsonUtil;
+
     @Autowired
     private LicenseVerify licenseVerify;
 
@@ -37,7 +40,7 @@ public class LicenseCheckInterceptor extends HandlerInterceptorAdapter {
             response.setStatus(HttpServletResponse.SC_OK);
 
             try(PrintWriter printWriter = response.getWriter()){
-                printWriter.write(JSON.toJSONString(
+                printWriter.write(jsonUtil.toJSONString(
                         new Response()
                                 .failure(BizCodeEnum.LICENSE_LICENSEHASEXPIRED)));
                 printWriter.flush();

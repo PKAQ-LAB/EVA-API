@@ -1,8 +1,7 @@
 package io.nerv.web.sys.dict.cache;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
 import io.nerv.core.constant.CommonConstant;
+import io.nerv.core.util.JsonUtil;
 import io.nerv.core.util.RedisUtil;
 import io.nerv.web.sys.dict.service.DictService;
 import lombok.Data;
@@ -13,7 +12,6 @@ import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.data.redis.cache.RedisCache;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Type;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -26,6 +24,9 @@ import java.util.Map;
 @Component
 public class DictCacheHelper {
 
+    @Autowired
+    private JsonUtil jsonUtil;
+
     private Cache cache;
 
     @Autowired
@@ -33,8 +34,6 @@ public class DictCacheHelper {
 
     @Autowired
     private RedisUtil redisUtil;
-
-    final static Type type = new TypeReference<LinkedHashMap<String, String>>() {}.getType();
 
     @Autowired
     public DictCacheHelper(CacheManager cacheManager) {
@@ -85,7 +84,7 @@ public class DictCacheHelper {
    
     public LinkedHashMap<String, String> get(String code){
         Cache.ValueWrapper jsonStr = this.cache.get(code);
-        return null != jsonStr? JSON.parseObject((String) jsonStr.get(), type): null;
+        return null != jsonStr? jsonUtil.parseObject((String) jsonStr.get(), LinkedHashMap.class): null;
     }
 
     /**
@@ -164,6 +163,6 @@ public class DictCacheHelper {
      * @param object
      */
     private void cachePut(String k, Object object){
-        this.cache.put(k, JSON.toJSONString(object));
+        this.cache.put(k, jsonUtil.toJSONString(object));
     }
 }

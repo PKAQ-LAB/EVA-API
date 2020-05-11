@@ -1,10 +1,10 @@
 package io.nerv.web.sys.user.entity;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.SqlCondition;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.nerv.core.mvc.entity.mybatis.BaseTreeEntity;
 import io.nerv.web.sys.role.entity.RoleEntity;
 import io.swagger.annotations.ApiModel;
@@ -49,10 +49,10 @@ public class UserEntity extends StdBaseEntity {
     private String account;
 
     @ApiModelProperty("密码")
-    @JSONField(serialize=false)
+    @JsonIgnore
     private String password;
 
-    @JSONField(serialize=false)
+    @JsonIgnore
     @ApiModelProperty("盐")
     private String salt;
 

@@ -1,12 +1,10 @@
 package io.nerv.core.cache.config;
 
-import com.alibaba.fastjson.support.spring.FastJsonRedisSerializer;
 import io.nerv.core.cache.condition.RedisCacheCondition;
-import io.nerv.properties.Cache;
+import io.nerv.core.util.JsonUtil;
 import io.nerv.properties.EvaConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
@@ -16,6 +14,7 @@ import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.cache.RedisCacheWriter;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
@@ -27,6 +26,9 @@ import java.util.Map;
 @Configuration
 @Conditional(RedisCacheCondition.class)
 public class RedisConfiguration {
+    @Autowired
+    private JsonUtil jsonUtil;
+
     @Autowired
     private EvaConfig evaConfig;
 
@@ -43,7 +45,7 @@ public class RedisConfiguration {
         //key序列化
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         //value序列化
-        redisTemplate.setValueSerializer(new FastJsonRedisSerializer<>(Object.class));
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<Object>(Object.class));
 
         redisTemplate.afterPropertiesSet();
         return redisTemplate;
@@ -84,7 +86,7 @@ public class RedisConfiguration {
                 //设置key序列化器
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
                 //设置value序列化器
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer((new FastJsonRedisSerializer<>(Object.class))));
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer((new Jackson2JsonRedisSerializer(Object.class))));
 
         log.debug("自定义RedisCacheManager加载完成");
 

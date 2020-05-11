@@ -1,11 +1,12 @@
 package io.nerv.log.biz.pointcut;
 
 import cn.hutool.core.date.DateUtil;
-import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.nerv.core.bizlog.annotation.BizLog;
 import io.nerv.core.bizlog.base.BizLogEntity;
 import io.nerv.core.bizlog.base.BizLogSupporter;
 import io.nerv.core.bizlog.condition.BizlogSupporterCondition;
+import io.nerv.core.util.JsonUtil;
 import io.nerv.core.util.SecurityHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -26,6 +27,8 @@ import org.springframework.stereotype.Component;
 @Component
 @Conditional(BizlogSupporterCondition.class)
 public class BizLogAdvice {
+    @Autowired
+    private JsonUtil jsonUtil;
 
     @Autowired
     private BizLogSupporter bizLogSupporter;
@@ -45,7 +48,7 @@ public class BizLogAdvice {
 
         var className = joinPoint.getTarget().getClass().getName();
         var methodName = joinPoint.getSignature().getName();
-        var args = JSON.toJSONString(joinPoint.getArgs());
+        var args = jsonUtil.toJSONString(joinPoint.getArgs());
 //        var response = JSON.toJSONString(result);
 
         if (null != bizlog){

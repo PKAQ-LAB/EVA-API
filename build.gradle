@@ -1,14 +1,13 @@
 plugins {
-   id "name.remal.check-dependency-updates" version "1.0.184"
+   id "name.remal.check-dependency-updates" version "1.0.189"
    id "com.jfrog.bintray" version "1.8.5"
 }
 
 bintrayUpload.enabled = false
 
 ext {
-    springBootVersion = '2.2.6.RELEASE'
+    springBootVersion = '2.2.7.RELEASE'
     mysql = "8.0.20"
-    fastjson = "1.2.68"
     mybatis_plus_starter = "3.3.1"
     lombok = "1.18.12"
     swagger = "2.9.2"
@@ -24,7 +23,7 @@ ext {
     truelicense = "1.33"
     caffeine = "2.8.2"
     weixin = "3.7.0"
-    securityTest = "5.3.1.RELEASE"
+    securityTest = "5.3.2.RELEASE"
     alipay = "4.9.124.ALL"
     zxing = "3.4.0"
     velocity = "2.2"
@@ -53,8 +52,6 @@ ext {
            "securityTest" : "org.springframework.security:spring-security-test:${securityTest}",
             // jpa
            "jpa" : "org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}",
-           // json
-           "fastjson" : "com.alibaba:fastjson:${fastjson}",
            // hutool
            "hutool" : "cn.hutool:hutool-all:${hutool}",
            // mybatis

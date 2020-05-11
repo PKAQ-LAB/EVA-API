@@ -18,7 +18,6 @@ dependencies {
 		"${lib.aop}",
 		"${lib.undertow}",
 		"${lib.jpa}",
-		"${lib.fastjson}",
 		"${lib.hutool}",
 		"${lib.mybatisPlus}",
 		"${lib.swagger}",

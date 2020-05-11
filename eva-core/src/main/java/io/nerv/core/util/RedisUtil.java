@@ -1,6 +1,5 @@
 package io.nerv.core.util;
 
-import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
@@ -15,7 +14,9 @@ import java.util.concurrent.TimeUnit;
 */
 @Component
 public class RedisUtil {
-    
+    @Autowired
+    private JsonUtil jsonUtil;
+
     @Autowired
     private RedisTemplate<Object,Object> redisTemplate;
     
@@ -63,7 +64,7 @@ public class RedisUtil {
         Map<String, Object> map = new LinkedHashMap<>(keys.size());
 
         keys.stream().forEach( item -> {
-            map.put(item+"", JSON.parse(this.get(item+"")));
+            map.put(item+"", jsonUtil.parseObject(this.get(item+""), Map.class));
         });
 
         return map;
@@ -86,7 +87,7 @@ public class RedisUtil {
             Object value = this.getObjectValue(item + "");
 
             if (null != value && value instanceof String){
-                map.put(k, JSON.parse(String.valueOf(value)));
+                map.put(k, jsonUtil.parseObject(String.valueOf(value), Map.class));
             } else {
                 map.put(k, value);
             }

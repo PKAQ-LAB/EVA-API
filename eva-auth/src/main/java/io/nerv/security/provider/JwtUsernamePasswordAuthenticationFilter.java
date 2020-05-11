@@ -1,7 +1,7 @@
 package io.nerv.security.provider;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import io.nerv.core.util.JsonUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -20,9 +20,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class JwtUsernamePasswordAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
+
+    @Autowired
+    private JsonUtil jsonUtil;
 
     private AuthenticationManager authenticationManager;
     private AuthenticationSuccessHandler successHandler;
@@ -53,10 +57,10 @@ public class JwtUsernamePasswordAuthenticationFilter extends AbstractAuthenticat
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException {
 
         String params = request.getReader().lines().collect(Collectors.joining());
-        JSONObject param = JSON.parseObject(params);
+        Map<String, String> param = jsonUtil.parseObject(params, Map.class);
 
-        String username = param.getString("account");
-        String password = param.getString("password");
+        String username = param.get("account");
+        String password = param.get("password");
 
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password, authorities);

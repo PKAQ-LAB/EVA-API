@@ -1,8 +1,9 @@
 package io.nerv.security.entrypoint;
 
-import com.alibaba.fastjson.JSON;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.util.Response;
+import io.nerv.core.util.JsonUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
@@ -19,6 +20,8 @@ import java.io.PrintWriter;
  */
 @Component
 public class UrlAuthenticationFailureHandler implements AuthenticationFailureHandler {
+    @Autowired
+    private JsonUtil jsonUtil;
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest httpServletRequest,
@@ -36,7 +39,7 @@ public class UrlAuthenticationFailureHandler implements AuthenticationFailureHan
 
 
         try(PrintWriter printWriter = httpServletResponse.getWriter()){
-            printWriter.write(JSON.toJSONString(
+            printWriter.write(jsonUtil.toJSONString(
                     new Response()
                             .failure(BizCodeEnum.LOGIN_FAILED.getIndex(), msg)));
             printWriter.flush();

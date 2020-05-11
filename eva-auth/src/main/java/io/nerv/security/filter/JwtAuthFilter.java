@@ -2,14 +2,13 @@ package io.nerv.security.filter;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.ServletUtil;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.exception.OathException;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.token.jwt.JwtUtil;
 import io.nerv.core.token.util.TokenUtil;
+import io.nerv.core.util.JsonUtil;
 import io.nerv.properties.EvaConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Map;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -38,6 +38,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private JsonUtil jsonUtil;
 
     @Autowired
     private EvaConfig evaConfig;
@@ -77,12 +80,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 if (cacheToken){
                     Object token = tokenUtil.getToken(uid);
 
-                    JSONObject jsonObject = null;
+                    Map<String, Object> jsonObject = null;
                     if (null != token){
-                        jsonObject = JSON.parseObject(String.valueOf(token));
+                        jsonObject = jsonUtil.parseObject(String.valueOf(token), Map.class);
                     }
 
-                    if ( null != jsonObject && authToken.equals(jsonObject.getString(CommonConstant.CACHE_TOKEN))) {
+                    if ( null != jsonObject && authToken.equals(jsonObject.get(CommonConstant.CACHE_TOKEN))) {
                         inCache = true;
                     } else {
                         logger.warn("鉴权失败 缓存中无法找到对应token");
@@ -121,7 +124,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     response.setCharacterEncoding("UTF-8");
                     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-                    printWriter.write(JSON.toJSONString(
+                    printWriter.write(jsonUtil.toJSONString(
                             new Response().failure(BizCodeEnum.LOGIN_EXPIRED))
                     );
                     printWriter.flush();

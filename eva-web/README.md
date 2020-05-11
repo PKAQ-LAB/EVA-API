@@ -3,8 +3,6 @@
 - shiro
 - jwt
 - mybatis plus
-- druid
-- fastjson
 
 目录说明
 -web：web接口

@@ -4,7 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.ServletUtil;
-import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.nerv.core.bizlog.base.BizLogEntity;
 import io.nerv.core.bizlog.base.BizLogSupporter;
 import io.nerv.core.constant.CommonConstant;
@@ -50,6 +50,9 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
     @Autowired
     private TokenUtil tokenUtil;
 
+    @Autowired
+    private ObjectMapper mapper;
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse httpServletResponse,
@@ -79,7 +82,7 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
 
         ServletUtil.addCookie(httpServletResponse,
                 CommonConstant.USER_KEY,
-                URLEncoder.encode(JSON.toJSONString(user), CharsetUtil.UTF_8),
+                URLEncoder.encode(mapper.writeValueAsString(user), CharsetUtil.UTF_8),
                 evaConfig.getCookie().getMaxAge(),
                 "/",
                 evaConfig.getCookie().getDomain());
@@ -99,7 +102,7 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         bizLogSupporter.save(bizLogEntity);
 
         try(PrintWriter printWriter = httpServletResponse.getWriter()){
-            printWriter.write(JSON.toJSONString(
+            printWriter.write(mapper.writeValueAsString(
                     new Response()
                             .success(map, StrUtil.format( BizCodeEnum.LOGIN_SUCCESS_WELCOME.getName(), user.getName() ) )
                     )

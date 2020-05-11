@@ -1,6 +1,6 @@
 package io.nerv.core.security.domain;
 
-import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,7 +19,7 @@ public class JwtUserDetail implements UserDetails {
     /**用户账号**/
     private final String account;
     /**密码**/
-    @JSONField(serialize = false)
+    @JsonIgnore
     private final String password;
     /**用户是否已经锁定**/
     private boolean accountNonLocked;
