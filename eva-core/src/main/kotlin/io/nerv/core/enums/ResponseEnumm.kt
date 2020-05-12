@@ -1,14 +1,9 @@
-package io.nerv.core.enums;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+package io.nerv.core.enums
 
 /**
  * @author: S.PKAQ
  */
-@Getter
-@AllArgsConstructor
-public enum ResponseEnumm {
+enum class ResponseEnumm(var value: String)  : BizCode{
     /**
      * 可用
      */
@@ -17,11 +12,14 @@ public enum ResponseEnumm {
     EDIT_SUCCESS("编辑成功"),
     DELETE_SUCCESS("删除成功"),
     QUERY_SUCCESS("查询成功"),
-    NULL_MSG(null),
+    NULL_MSG(""),
     OPERATE_FAILED("操作失败");
 
-    /**
-     * 名称
-     */
-    private String name;
+    override fun getName(): String? {
+        return this.value
+    }
+
+    override fun getIndex(): String? {
+        return this.value
+    }
 }
