@@ -1,21 +1,18 @@
-package io.nerv.properties;
-
-import lombok.Data;
+package io.nerv.properties
 
 /**
  * 业务日志配置读取类
  * @author: S.PKAQ
  * @Datetime: 2018/9/27 21:06
  */
-@Data
-public class BizLog {
+class BizLog {
     /**
      * 是否启用
      */
-    private boolean  enabled = false;
+    var enabled = false
+
     /**
      * 实现类
      */
-    private String impl = "";
-
+    var impl = ""
 }

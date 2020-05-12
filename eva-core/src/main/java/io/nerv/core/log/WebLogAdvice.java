@@ -89,7 +89,7 @@ public class WebLogAdvice {
         String jsontStack = ExceptionUtil.stacktraceToString(ex);
         log.error(jsontStack);
 
-        if (!evaConfig.getErrorLog().isEnabled()) return;
+        if (!evaConfig.getErrorLog().getEnabled()) return;
 
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 

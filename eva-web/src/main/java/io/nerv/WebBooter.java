@@ -2,6 +2,7 @@ package io.nerv;
 
 import io.nerv.core.license.LicenseVerify;
 import io.nerv.properties.EvaConfig;
+import io.nerv.properties.License;
 import io.nerv.server.undertow.GracefulShutdownUndertowWrapper;
 import io.nerv.web.sys.dict.cache.DictCacheHelper;
 import io.undertow.UndertowOptions;
@@ -46,7 +47,7 @@ public class WebBooter implements CommandLineRunner {
         this.dictCacheHelper.init();
         this.dictCacheHelper.getAll();
         log.info(" ---- 字典初始化 结束 ---- ");
-        if (evaConfig.getLicense().isEnable()){
+        if (evaConfig.getLicense().getEnable()){
             // 安装license
             licenseVerify.init();
 

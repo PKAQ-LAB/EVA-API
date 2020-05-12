@@ -17,6 +17,6 @@ public class FileUploadException extends RuntimeException{
 
     public FileUploadException(BizCodeEnum bizCodeEnum) {
         super();
-        this.msg = bizCodeEnum.getName();
+        this.msg = bizCodeEnum.getCode();
     }
 }

@@ -50,8 +50,8 @@ public class UrlAccessDecisionManager implements AccessDecisionManager {
                     StrUtil.equals(requestUrl,permitUrl)) return;
         }
 
-        if(evaConfig.getResourcePermission().isEnable()) {
-            if (evaConfig.getResourcePermission().isStrict()) {
+        if(evaConfig.getResourcePermission().getEnable()) {
+            if (evaConfig.getResourcePermission().getStrict()) {
                 /**
                  * 严格模式, 判断 登录角色 请求的资源 是否与 资源需要的角色 一致
                  * 一致 return 放行

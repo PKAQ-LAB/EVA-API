@@ -57,7 +57,7 @@ public class PermissionInterceptor extends AbstractSqlParserHandler implements I
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
         //  判断是否启用了数据权限
-        if (null != evaConfig.getDataPermission() && !evaConfig.getDataPermission().isEnable()){
+        if (null != evaConfig.getDataPermission() && !evaConfig.getDataPermission().getEnable()){
             return invocation.proceed();
         }
 

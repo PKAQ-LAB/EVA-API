@@ -1,14 +1,6 @@
-package io.nerv.core.enums;
+package io.nerv.core.enums
 
-import lombok.Getter;
-
-/**
- * 状态码
- * 错误统一为 4xxx
- * @author PKAQ
- */
-@Getter
-public enum BizCodeEnum implements BizCode {
+enum class BizCodeEnum(var value: String, var code: String) : BizCode{
     /** 请求成功 000x **/
     OPERATE_SUCCESS("操作成功", "0000"),
     LOGIN_SUCCESS("登录成功，欢迎回来。", "0001"),
@@ -71,26 +63,12 @@ public enum BizCodeEnum implements BizCode {
     WEIXIN_JSTICKET_ERROR("获取jsapi_ticket失败", "4401"),
     WEIXIN_PAYSIGN_ERROR("支付回调验签失败", "4402");
 
-    /**
-     * 名称
-     */
-    private String name;
-    /**
-     * 索引
-     */
-    private String index;
-
-    BizCodeEnum(String name, String index) {
-        this.name = name;
-        this.index = index;
+    override fun getName(): String? {
+        return this.value
     }
 
-    public static String getName(String index) {
-        for (BizCodeEnum p : BizCodeEnum.values()) {
-            if ( index.equals(p.getIndex())) {
-                return p.name;
-            }
-        }
-        return "-";
+    override fun getIndex(): String? {
+        return this.code
     }
+
 }

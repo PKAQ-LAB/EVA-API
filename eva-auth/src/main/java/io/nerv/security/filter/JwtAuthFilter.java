@@ -53,7 +53,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         var isvalid = false;
         var inCache = false;
-        var cacheToken = evaConfig.getJwt().isPersistence();
+        var cacheToken = evaConfig.getJwt().getPersistence();
 
         String authToken;
         try{

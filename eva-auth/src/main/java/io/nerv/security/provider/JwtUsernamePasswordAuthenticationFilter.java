@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 
 public class JwtUsernamePasswordAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
-    @Autowired
     private JsonUtil jsonUtil;
 
     private AuthenticationManager authenticationManager;
@@ -36,11 +35,12 @@ public class JwtUsernamePasswordAuthenticationFilter extends AbstractAuthenticat
     public JwtUsernamePasswordAuthenticationFilter(String url,
                                                    AuthenticationManager authenticationManager,
                                                    AuthenticationSuccessHandler successHandler,
-                                                   AuthenticationFailureHandler failureHandler) {
+                                                   AuthenticationFailureHandler failureHandler, JsonUtil jsonUtil) {
         super(new AntPathRequestMatcher(url, "POST"));
         this.successHandler = successHandler;
         this.failureHandler = failureHandler;
         this.authenticationManager = authenticationManager;
+        this.jsonUtil = jsonUtil;
     }
     /**
      * 接收并解析用户登陆信息  /login,

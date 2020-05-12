@@ -40,7 +40,7 @@ public class UrlLogoutSuccessHandler implements LogoutSuccessHandler {
                                 HttpServletResponse httpServletResponse,
                                 Authentication authentication) throws IOException {
 
-        var cacheToken = evaConfig.getJwt().isPersistence();
+        var cacheToken = evaConfig.getJwt().getPersistence();
         // 清空redis/caffeine中的token 刷新用户secret
         if (cacheToken) {
             this.tokenUtil.removeToken(securityHelper.getJwtUser().getAccount());

@@ -1,6 +1,7 @@
 plugins {
    id "name.remal.check-dependency-updates" version "1.0.189"
    id "com.jfrog.bintray" version "1.8.5"
+   id "org.jetbrains.kotlin.jvm" version "1.3.72"
 }
 
 bintrayUpload.enabled = false
@@ -27,6 +28,7 @@ ext {
     alipay = "4.9.124.ALL"
     zxing = "3.4.0"
     velocity = "2.2"
+    kotlin = "1.3.72"
 
     lib = ["p6spy" : "p6spy:p6spy:${p6spy}",
            "flyway" : "org.flywaydb:flyway-core:${flyway}",
@@ -42,6 +44,7 @@ ext {
            "cache" : "org.springframework.boot:spring-boot-starter-cache:${springBootVersion}",
            // AOP
            "aop" : "org.springframework.boot:spring-boot-starter-aop:${springBootVersion}",
+           "configuration" : "org.springframework.boot:spring-boot-configuration-processor:${springBootVersion}",
            // security
            "security" : "org.springframework.boot:spring-boot-starter-security:${springBootVersion}",
            // web
@@ -74,21 +77,28 @@ ext {
            "devTools" : "org.springframework.boot:spring-boot-devtools",
             // generator
            "velocity" : "org.apache.velocity:velocity-engine-core:${velocity}",
-           "mybatis_plus_generator" : "com.baomidou:mybatis-plus-generator:${mybatis_plus_starter}"
+           "mybatis_plus_generator" : "com.baomidou:mybatis-plus-generator:${mybatis_plus_starter}",
+            // kotlin
+            "kotlin" : "org.jetbrains.kotlin:kotlin-stdlib:${kotlin}",
+            "kotlin_allopen" : "org.jetbrains.kotlin:kotlin-allopen:${kotlin}",
+            "kotlin_reflect" : "org.jetbrains.kotlin:kotlin-reflect:${kotlin}",
+            "kotlin_jdk8" : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlin}",
+            "kotlin_noarg" : "org.jetbrains.kotlin:kotlin-noarg:${kotlin}"
     ]
 }
 
 allprojects {
     apply plugin: "name.remal.check-dependency-updates"
+    apply plugin: 'org.jetbrains.kotlin.jvm'
     group = 'io.nerv'
-    version = '2.5.3'
+    version = '2.5.4'
 }
 
 subprojects {
     apply plugin: 'java-library'
 	apply plugin: 'maven-publish'
 	apply plugin: 'com.jfrog.bintray'
-    
+
 	sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
     
@@ -103,16 +113,29 @@ subprojects {
 
     repositories {
         mavenLocal()
+        maven { url"https://maven.aliyun.com/repository/public" }
+        maven { url"https://maven.aliyun.com/repository/spring" }
+        maven { url"https://maven.aliyun.com/repository/spring-plugin" }
+
 		maven { url"https://maven.springframework.org"}
         maven { url"https://repo.spring.io/libs-release" }
 		maven { url"https://mirrors.huaweicloud.com" }
+
         jcenter()
         mavenCentral()
     }
 
     dependencies {
-       implementation "${lib.lombok}"
-	   annotationProcessor "${lib.lombok}"
+       implementation "${lib.lombok}",
+                      "${lib.kotlin}",
+                      "${lib.kotlin_allopen}",
+                      "${lib.kotlin_noarg}",
+                      "${lib.kotlin_reflect}"
+//                      "${lib.kotlin_jre8}",
+
+
+	   annotationProcessor "${lib.lombok}",
+                           "${lib.configuration}"
 
        testImplementation "${lib.test}",
                           "${lib.securityTest}"

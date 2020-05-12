@@ -1,6 +1,7 @@
 package io.nerv.config;
 
 import cn.hutool.core.collection.CollUtil;
+import io.nerv.core.util.JsonUtil;
 import io.nerv.properties.EvaConfig;
 import io.nerv.security.entrypoint.*;
 import io.nerv.security.filter.JwtAuthFilter;
@@ -45,6 +46,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Value("${eva.security.anonymous}")
     private String[] anonymous;
+
+    @Autowired
+    private JsonUtil jsonUtil;
 
     @Autowired
     private EvaConfig evaConfig;
@@ -160,7 +164,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         .addFilterBefore(new JwtUsernamePasswordAuthenticationFilter("/auth/login",
                                                                                           authenticationManager(),
                                                                                           urlAuthenticationSuccessHandler,
-                                                                                          urlAuthenticationFailureHandler),
+                                                                                          urlAuthenticationFailureHandler,
+                                                                                          jsonUtil
+                                        ),
                                          UsernamePasswordAuthenticationFilter.class);
 
             // disable page caching

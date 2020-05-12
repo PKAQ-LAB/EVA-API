@@ -121,7 +121,7 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
         log.info("当前权限：" + securityHelper.getAuthentication());
 
         // 未开启资源权限 直接返回
-        if (!evaConfig.getResourcePermission().isEnable()){
+        if (!evaConfig.getResourcePermission().getEnable()){
             return null;
         }
 
@@ -130,7 +130,7 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
              *    严格鉴权模式 仅允许访问授权资源 未授权资源一律禁止访问
              *    根据用户角色获取所有可访问资源路径 置入 Collection<ConfigAttribute>
              */
-            if (evaConfig.getResourcePermission().isStrict()){
+            if (evaConfig.getResourcePermission().getStrict()){
                 Arrays.stream(securityHelper.getRoleNames()).forEach(item -> {
                     if (null != rolePermMap.get(item)){
                         set.addAll(rolePermMap.get(item));
@@ -178,10 +178,10 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
     @Override
     public void afterPropertiesSet() {
         // 加载权限和路径关系
-        if (evaConfig.getResourcePermission().isEnable()){
+        if (evaConfig.getResourcePermission().getEnable()){
             List<Map<String, String>> menusUrl = this.roleService.listRoleNamesWithPath();
 
-            if (evaConfig.getResourcePermission().isStrict()){
+            if (evaConfig.getResourcePermission().getStrict()){
                 loadResourceRoleUrlPermMap(menusUrl);
             } else {
                 loadResourceUrlRolePermMap(menusUrl);

@@ -1,6 +1,5 @@
 package io.nerv.weixin.ctrl;
 
-import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.weixin.exception.WeixinException;
 import io.swagger.annotations.Api;

@@ -57,7 +57,7 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse httpServletResponse,
                                         Authentication authentication) throws IOException {
-        var cacheToken = evaConfig.getJwt().isPersistence();
+        var cacheToken = evaConfig.getJwt().getPersistence();
 
         httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
