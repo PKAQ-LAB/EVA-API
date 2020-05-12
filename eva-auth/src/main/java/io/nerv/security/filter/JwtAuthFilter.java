@@ -4,7 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.ServletUtil;
 import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.core.exception.OathException;
+import io.nerv.exception.OathException;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.token.jwt.JwtUtil;
 import io.nerv.core.token.util.TokenUtil;

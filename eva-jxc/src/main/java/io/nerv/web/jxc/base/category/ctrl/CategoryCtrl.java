@@ -2,7 +2,7 @@ package io.nerv.web.jxc.base.category.ctrl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import io.nerv.config.PdosEnum;
-import io.nerv.core.exception.ParamException;
+import io.nerv.exception.ParamException;
 import io.nerv.core.mvc.ctrl.mybatis.PureBaseCtrl;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.mvc.util.SingleArray;

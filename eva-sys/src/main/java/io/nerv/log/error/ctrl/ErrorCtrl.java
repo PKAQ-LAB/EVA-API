@@ -1,8 +1,8 @@
 package io.nerv.log.error.ctrl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import io.nerv.core.exception.entity.ErrorlogEntity;
-import io.nerv.core.exception.mapper.ErrorlogMapper;
+import io.nerv.exception.entity.ErrorlogEntity;
+import io.nerv.exception.mapper.ErrorlogMapper;
 import io.nerv.core.mvc.util.DateRangeVo;
 import io.nerv.core.mvc.util.Page;
 import io.nerv.core.mvc.util.Response;

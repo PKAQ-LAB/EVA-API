@@ -1,6 +1,6 @@
 package io.nerv.web.sys.user.ctrl;
 
-import io.nerv.core.exception.OathException;
+import io.nerv.exception.OathException;
 import io.nerv.core.util.SecurityHelper;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.util.I18NHelper;

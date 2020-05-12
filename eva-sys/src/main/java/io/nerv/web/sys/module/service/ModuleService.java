@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.enums.LockEnumm;
-import io.nerv.core.exception.BizException;
+import io.nerv.exception.BizException;
 import io.nerv.core.mvc.service.mybatis.StdBaseService;
 import io.nerv.core.util.tree.TreeHelper;
 import io.nerv.web.sys.module.entity.ModuleEntity;

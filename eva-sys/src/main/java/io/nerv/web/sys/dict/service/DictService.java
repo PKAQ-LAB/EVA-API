@@ -4,7 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
-import io.nerv.core.exception.ParamException;
+import io.nerv.exception.ParamException;
 import io.nerv.core.mvc.service.mybatis.StdBaseService;
 import io.nerv.web.sys.dict.cache.DictCacheHelper;
 import io.nerv.web.sys.dict.entity.DictEntity;

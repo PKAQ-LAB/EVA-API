@@ -137,7 +137,7 @@ public class PermissionInterceptor extends AbstractSqlParserHandler implements I
         JwtUserDetail jwtUserDetail = securityHelper.getJwtUser();
 
         dataPermission.stream().forEach(item -> {
-            if (null == item.getDataPermissionType() || DataPermissionEnumm.ALL.getV().equals(item.getDataPermissionType())) return;
+            if (null == item.getDataPermissionType() || DataPermissionEnumm.ALL.getName().equals(item.getDataPermissionType())) return;
             switch (item.getDataPermissionType()){
                 // 仅本部门
                 case "0001":    var fchildSql = "select id from sys_user_info where dept_id = '"+jwtUserDetail.getDeptId()+"'";
