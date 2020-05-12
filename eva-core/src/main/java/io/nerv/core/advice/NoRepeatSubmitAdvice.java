@@ -3,7 +3,7 @@ package io.nerv.core.advice;
 import cn.hutool.crypto.SecureUtil;
 import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.core.exception.BizException;
+import io.nerv.exception.BizException;
 import io.nerv.core.token.util.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;

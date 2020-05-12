@@ -2,8 +2,8 @@ package io.nerv.core.log;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.exceptions.ExceptionUtil;
-import io.nerv.core.exception.entity.ErrorlogEntity;
-import io.nerv.core.exception.mapper.ErrorlogMapper;
+import io.nerv.exception.entity.ErrorlogEntity;
+import io.nerv.exception.mapper.ErrorlogMapper;
 import io.nerv.core.util.IpUtil;
 import io.nerv.properties.EvaConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -109,13 +109,13 @@ public class WebLogAdvice {
 
             ErrorlogEntity errorlogEntity = new ErrorlogEntity();
 
-            errorlogEntity.setRequestTime(DateUtil.now())
-                          .setClassName(className)
-                          .setMethod(methodName)
-                          .setParams(argStr)
-                          .setExDesc(jsontStack)
-                          .setIp(ip)
-                          .setSpendTime(String.valueOf(System.currentTimeMillis() - startTime.get()));
+            errorlogEntity.setRequestTime(DateUtil.now());
+            errorlogEntity.setClassName(className);
+            errorlogEntity.setMethod(methodName);
+            errorlogEntity.setParams(argStr);
+            errorlogEntity.setExDesc(jsontStack);
+            errorlogEntity.setIp(ip);
+            errorlogEntity.setSpendTime(String.valueOf(System.currentTimeMillis() - startTime.get()));
             this.errorlogMapper.insert(errorlogEntity);
         }
     }

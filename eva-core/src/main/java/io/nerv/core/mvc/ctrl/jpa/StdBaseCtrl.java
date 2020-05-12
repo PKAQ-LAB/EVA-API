@@ -4,7 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import io.nerv.core.enums.BizCode;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.enums.ResponseEnumm;
-import io.nerv.core.exception.ParamException;
+import io.nerv.exception.ParamException;
 import io.nerv.core.mvc.entity.jpa.StdBaseDomain;
 import io.nerv.core.mvc.service.jpa.StdBaseService;
 import io.nerv.core.mvc.util.Response;

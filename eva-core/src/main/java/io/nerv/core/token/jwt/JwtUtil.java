@@ -3,7 +3,7 @@ package io.nerv.core.token.jwt;
 import cn.hutool.core.codec.Base64;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.impl.DefaultClock;
-import io.nerv.core.exception.OathException;
+import io.nerv.exception.OathException;
 import io.nerv.properties.EvaConfig;
 import io.nerv.properties.Jwt;
 import lombok.Data;

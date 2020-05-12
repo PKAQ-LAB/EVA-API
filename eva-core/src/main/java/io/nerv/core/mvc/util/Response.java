@@ -3,7 +3,7 @@ package io.nerv.core.mvc.util;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.nerv.core.enums.BizCode;
 import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.core.exception.ReflectException;
+import io.nerv.exception.ReflectException;
 import io.nerv.core.util.ReflectHelper;
 import lombok.Data;
 import lombok.experimental.Accessors;

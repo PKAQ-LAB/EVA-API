@@ -9,7 +9,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.core.exception.FileUploadException;
+import io.nerv.exception.FileUploadException;
 import io.nerv.core.upload.condition.FastDfsCondition;
 import io.nerv.core.util.JsonUtil;
 import io.nerv.properties.EvaConfig;

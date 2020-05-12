@@ -12,7 +12,7 @@ import io.nerv.core.util.I18NHelper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.Getter;
-import io.nerv.core.exception.ParamException;
+import io.nerv.exception.ParamException;
 import io.nerv.core.mvc.entity.mybatis.StdBaseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -9,7 +9,7 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.core.exception.FileUploadException;
+import io.nerv.exception.FileUploadException;
 import io.nerv.core.upload.condition.DefaultNgCondition;
 import io.nerv.properties.EvaConfig;
 import lombok.extern.slf4j.Slf4j;
