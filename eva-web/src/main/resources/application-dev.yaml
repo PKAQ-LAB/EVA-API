@@ -20,7 +20,7 @@ spring:
   # 数据源
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:p6spy:mysql://118.31.166.146:12306/eva?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
+    url: jdbc:p6spy:mysql://118.31.166.146:12306/eva?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&autoReconnect=true&failOverReadOnly=false
     username: ENC(wGxhWEdTDAMKcQc6P8XBEwwoY22MTKN69z5voKxc8wiF6LoGCSEpj+/0pzuq93v4)
     password: ENC(wGxhWEdTDAMKcQc6P8XBEwwoY22MTKN69z5voKxc8wiF6LoGCSEpj+/0pzuq93v4)
 #    GsyjJCmmNRiHRVGmXdy+QErynoqC/cOBlt5V9dPZ+c2g2XwPc5+BbKrSxWLsyCGG
