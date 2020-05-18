@@ -6,20 +6,20 @@ plugins {
 bintrayUpload.enabled = false
 
 ext {
-    springBootVersion = '2.2.7.RELEASE'
+    springBootVersion = '2.3.0.RELEASE'
     mysql = "8.0.20"
     mybatis_plus_starter = "3.3.1"
     lombok = "1.18.12"
     swagger = "2.9.2"
 	knife4j = "2.0.2"
-    hutool = "5.3.4"
+    hutool = "5.3.5"
     jaxb_api = "2.3.1"
     jjwt = "0.9.1"
     auth0 = "3.10.3"
     jasypt = "3.0.2"
     p6spy = "3.9.0"
-    flyway = "6.4.1"
-    boot_admin = "2.2.2"
+    flyway = "6.4.2"
+    boot_admin = "2.2.3"
     truelicense = "1.33"
     caffeine = "2.8.2"
     weixin = "3.7.0"
@@ -34,7 +34,9 @@ ext {
            "jaxb_api" : "javax.xml.bind:jaxb-api:${jaxb_api}",
            "truelicense" : "de.schlichtherle.truelicense:truelicense-core:${truelicense}",
            "jasypt" : "com.github.ulisesbocchio:jasypt-spring-boot-starter:${jasypt}",
-            // lombok
+           "validation" : "org.springframework.boot:spring-boot-starter-validation:${springBootVersion}",
+
+           // lombok
            "lombok" : "org.projectlombok:lombok:${lombok}",
             // cache
            "caffeine" : "com.github.ben-manes.caffeine:caffeine:${caffeine}",
@@ -81,7 +83,7 @@ ext {
 allprojects {
     apply plugin: "name.remal.check-dependency-updates"
     group = 'io.nerv'
-    version = '2.5.3'
+    version = '2.5.5'
 }
 
 subprojects {
@@ -116,6 +118,7 @@ subprojects {
 
        testImplementation "${lib.test}",
                           "${lib.securityTest}"
+
      }
 }
 
