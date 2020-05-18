@@ -8,12 +8,6 @@ spring:
     check-location: false
     baseline-version: 0
     enabled: false
-  # 编码
-  http:
-    encoding:
-      charset: UTF-8
-      force: true
-      enabled: true
   servlet:
   # 文件上传配置
     multipart:
@@ -59,8 +53,15 @@ jasypt:
 # server配置
 server:
   servlet:
+    port: 9016
     context-path: /api
-  port: 9016
+    #  2.3.0 新支持, 优雅关机
+    shutdown: graceful
+    # 编码
+    encoding:
+      charset: utf-8
+      enabled: true
+      force: true
 # 微信配置
 wechat:
   pay:

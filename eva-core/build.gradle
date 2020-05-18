@@ -26,6 +26,7 @@ dependencies {
 		"${lib.redis}",
 		"${lib.cache}",
 		"${lib.auth0}",
-		"${lib.jjwt}"
+		"${lib.jjwt}",
+		"${lib.validation}"
 }
 

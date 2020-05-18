@@ -1,7 +1,7 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
-     id 'org.springframework.boot' version '2.2.6.RELEASE'
+     id 'org.springframework.boot' version '2.3.0.RELEASE'
  }
 apply plugin: 'io.spring.dependency-management'
 

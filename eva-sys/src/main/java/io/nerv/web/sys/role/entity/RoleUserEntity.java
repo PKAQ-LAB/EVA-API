@@ -1,4 +1,5 @@
 package io.nerv.web.sys.role.entity;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -9,7 +10,6 @@ import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 /**
  * 角色用户关系表
