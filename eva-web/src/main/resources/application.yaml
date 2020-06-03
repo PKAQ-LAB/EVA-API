@@ -53,7 +53,6 @@ jasypt:
 # server配置
 server:
   servlet:
-    port: 9016
     context-path: /api
     #  2.3.0 新支持, 优雅关机
     shutdown: graceful
@@ -62,6 +61,7 @@ server:
       charset: utf-8
       enabled: true
       force: true
+  port: 9016
 # 微信配置
 wechat:
   pay:
@@ -107,6 +107,7 @@ eva:
     # 无需资源鉴权的路径
     permit: /auth/**,/wx/**,/doc/**,/actuator/**,/license/**
   # 资源权限
+  /admin/login/token?username=admin&password=123456
   resource-permission:
     # 是否启用
     enable: false
