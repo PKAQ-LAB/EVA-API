@@ -85,7 +85,7 @@ public class NgFileUploadUtil implements FileUploadProvider {
             // 存储文件
             try {
                 file.transferTo(tempFile);
-                tempFile.setReadable(true,false);
+                tempFile.setReadable(true, false);
             } catch (Exception e) {
                 log.error(BizCodeEnum.FILEIO_ERROR.getName());
                 throw new FileUploadException(BizCodeEnum.FILESAVE_ERROR.getName());
@@ -115,7 +115,7 @@ public class NgFileUploadUtil implements FileUploadProvider {
             if (!sourceFile.exists()) continue;
             File distFile = new File(evaConfig.getUpload().getStoragePath(), filename);
             FileUtil.move(sourceFile, distFile, true);
-            distFile.setReadable(true,false);
+            distFile.setReadable(true, false);
         }
 
         return null;
@@ -137,8 +137,8 @@ public class NgFileUploadUtil implements FileUploadProvider {
             File distFileThumbnail = new File(evaConfig.getUpload().getStoragePath(), this.THUMBNAIL_NAME + filename);
             this.thumbnail(sourceFile, distFileThumbnail, scale);
             FileUtil.move(sourceFile, distFile, true);
-            distFile.setReadable(true,false);
-            distFileThumbnail.setReadable(true,false);
+            distFile.setReadable(true, false);
+            distFileThumbnail.setReadable(true, false);
         }
     }
 
