@@ -48,12 +48,12 @@ public class NoRepeatSubmitAdvice {
 
             // 如果缓存中有这个url视为重复提交
             if (cache.get(key) == null) {
-                Object o = pjp.proceed();
+
                 cache.put(key, 0);
-                return o;
             } else {
                 throw new BizException(BizCodeEnum.REQUEST_TOO_MORE);
             }
+            return pjp.proceed();
         } catch (Throwable e) {
             log.error("验证重复提交时出现未知异常!", e);
             throw new BizException(BizCodeEnum.REQUEST_TOO_MORE);
