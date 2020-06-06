@@ -7,7 +7,6 @@ import org.springframework.security.core.AuthenticationException
 /**
  * 自定义鉴权异常类
  */
-@Getter
 class OathException : AuthenticationException {
     // 错误码
     var code: String? = null

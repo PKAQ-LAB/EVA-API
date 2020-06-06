@@ -9,7 +9,6 @@ import lombok.Getter
  * Author: S.PKAQ
  * Datetime: 2018/3/6 14:50
  */
-@Getter
 class ParamException : RuntimeException {
     var msg: String?
 

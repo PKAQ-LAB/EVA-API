@@ -1,6 +1,5 @@
 package io.nerv.web.sys.organization.entity;
 
-import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.annotation.SqlCondition;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;

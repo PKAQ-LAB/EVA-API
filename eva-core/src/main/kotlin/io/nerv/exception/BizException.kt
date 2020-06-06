@@ -6,7 +6,6 @@ import lombok.Getter
 /**
  * 关于业务的异常
  */
-@Getter
 class BizException : RuntimeException {
     // 错误码
     var code: String? = null

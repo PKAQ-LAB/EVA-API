@@ -6,7 +6,6 @@ import lombok.Getter
 /**
  * 图片上传异常
  */
-@Getter
 class FileUploadException : RuntimeException {
     var msg: String
 
