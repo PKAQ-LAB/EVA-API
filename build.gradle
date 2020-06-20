@@ -1,5 +1,5 @@
 plugins {
-   id "name.remal.check-dependency-updates" version "1.0.192"
+   id "name.remal.check-dependency-updates" version "1.0.194"
    id "com.jfrog.bintray" version "1.8.5"
 }
 
@@ -12,7 +12,7 @@ ext {
     lombok = "1.18.12"
     swagger = "2.9.2"
 	knife4j = "2.0.3"
-    hutool = "5.3.7"
+    hutool = "5.3.8"
     jaxb_api = "2.3.1"
     jjwt = "0.9.1"
     auth0 = "3.10.3"
@@ -24,7 +24,7 @@ ext {
     caffeine = "2.8.4"
     weixin = "3.8.0"
     securityTest = "5.3.3.RELEASE"
-    alipay = "4.10.0.ALL"
+    alipay = "4.10.29.ALL"
     zxing = "3.4.0"
     velocity = "2.2"
 
