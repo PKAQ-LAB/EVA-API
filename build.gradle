@@ -1,59 +1,37 @@
 plugins {
-   id "name.remal.check-dependency-updates" version "1.0.194"
-   id "com.jfrog.bintray" version "1.8.5"
+   id "name.remal.check-dependency-updates" version "${cdu_ver}"
+   id "com.jfrog.bintray" version "${jfrog_ver}"
 }
 
 bintrayUpload.enabled = false
 
 ext {
-    springBootVersion = '2.3.1.RELEASE'
-    mysql = "8.0.20"
-    mybatis_plus_starter = "3.3.2"
-    lombok = "1.18.12"
-    swagger = "2.9.2"
-	knife4j = "2.0.3"
-    hutool = "5.3.8"
-    jaxb_api = "2.3.1"
-    jjwt = "0.9.1"
-    auth0 = "3.10.3"
-    jasypt = "3.0.3"
-    p6spy = "3.9.0"
-    flyway = "6.4.4"
-    boot_admin = "2.2.3"
-    truelicense = "1.33"
-    caffeine = "2.8.4"
-    weixin = "3.8.0"
-    securityTest = "5.3.3.RELEASE"
-    alipay = "4.10.29.ALL"
-    zxing = "3.4.0"
-    velocity = "2.2"
-
     lib = ["p6spy" : "p6spy:p6spy:${p6spy}",
            "flyway" : "org.flywaydb:flyway-core:${flyway}",
            "mysql" : "mysql:mysql-connector-java:${mysql}",
            "jaxb_api" : "javax.xml.bind:jaxb-api:${jaxb_api}",
            "truelicense" : "de.schlichtherle.truelicense:truelicense-core:${truelicense}",
            "jasypt" : "com.github.ulisesbocchio:jasypt-spring-boot-starter:${jasypt}",
-           "validation" : "org.springframework.boot:spring-boot-starter-validation:${springBootVersion}",
+           "validation" : "org.springframework.boot:spring-boot-starter-validation:${spring_boot_ver}",
 
            // lombok
            "lombok" : "org.projectlombok:lombok:${lombok}",
             // cache
            "caffeine" : "com.github.ben-manes.caffeine:caffeine:${caffeine}",
-           "redis" : "org.springframework.boot:spring-boot-starter-data-redis:${springBootVersion}",
-           "cache" : "org.springframework.boot:spring-boot-starter-cache:${springBootVersion}",
+           "redis" : "org.springframework.boot:spring-boot-starter-data-redis:${spring_boot_ver}",
+           "cache" : "org.springframework.boot:spring-boot-starter-cache:${spring_boot_ver}",
            // AOP
-           "aop" : "org.springframework.boot:spring-boot-starter-aop:${springBootVersion}",
+           "aop" : "org.springframework.boot:spring-boot-starter-aop:${spring_boot_ver}",
            // security
-           "security" : "org.springframework.boot:spring-boot-starter-security:${springBootVersion}",
+           "security" : "org.springframework.boot:spring-boot-starter-security:${spring_boot_ver}",
            // web
-           "web" : "org.springframework.boot:spring-boot-starter-web:${springBootVersion}",
-           "undertow" : "org.springframework.boot:spring-boot-starter-undertow:${springBootVersion}",
+           "web" : "org.springframework.boot:spring-boot-starter-web:${spring_boot_ver}",
+           "undertow" : "org.springframework.boot:spring-boot-starter-undertow:${spring_boot_ver}",
             // test
-           "test" : "org.springframework.boot:spring-boot-starter-test:${springBootVersion}",
+           "test" : "org.springframework.boot:spring-boot-starter-test:${spring_boot_ver}",
            "securityTest" : "org.springframework.security:spring-security-test:${securityTest}",
             // jpa
-           "jpa" : "org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}",
+           "jpa" : "org.springframework.boot:spring-boot-starter-data-jpa:${spring_boot_ver}",
            // hutool
            "hutool" : "cn.hutool:hutool-all:${hutool}",
            // mybatis
@@ -105,9 +83,13 @@ subprojects {
 
     repositories {
         mavenLocal()
+        maven { url"https://maven.aliyun.com/repository/central" }
+        maven { url"https://maven.aliyun.com/repository/jcenter" }
+        maven { url"https://mirrors.huaweicloud.com" }
+        maven { url"https://maven.aliyun.com/repository/spring" }
+        maven { url"https://maven.aliyun.com/repository/spring-plugin" }
 		maven { url"https://maven.springframework.org"}
         maven { url"https://repo.spring.io/libs-release" }
-		maven { url"https://mirrors.huaweicloud.com" }
         jcenter()
         mavenCentral()
     }
