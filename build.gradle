@@ -37,7 +37,6 @@ ext {
            // mybatis
            "mybatisPlus" : "com.baomidou:mybatis-plus-boot-starter:${mybatis_plus_starter}",
            // swagger
-           "swagger" : "io.springfox:springfox-swagger2:${swagger}",
            "knife4j" : "com.github.xiaoymin:knife4j-spring-boot-starter:${knife4j}",
             // jwt
            "auth0" : "com.auth0:java-jwt:${auth0}",
