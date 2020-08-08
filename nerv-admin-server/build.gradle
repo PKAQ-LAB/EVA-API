@@ -13,7 +13,7 @@ bootJar {
     mainClassName = 'io.nerv.AdminBooter'
 }
 
-description = """jxc"""
+description = """admin-server"""
 // 依赖配置
 dependencies {
     implementation("${lib.web}"){
