@@ -169,6 +169,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                                         ),
                                          UsernamePasswordAuthenticationFilter.class);
 
+//            @Secured( value={"ROLE_ANONYMOUS"})
+            httpSecurity.anonymous().authorities("ROLE_ANONYMOUS");
+
             // disable page caching
             httpSecurity
             .headers()
