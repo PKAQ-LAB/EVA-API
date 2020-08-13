@@ -120,7 +120,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 logger.warn("鉴权失败 Token已过期", e);
 
                 // 清除cookie
-               this.clearCookie(response);
+                // this.clearCookie(response);
 
                 try(PrintWriter printWriter = response.getWriter()){
                     response.setCharacterEncoding("UTF-8");

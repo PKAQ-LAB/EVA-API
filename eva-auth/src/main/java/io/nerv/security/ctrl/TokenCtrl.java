@@ -2,6 +2,8 @@ package io.nerv.security.ctrl;
 
 import cn.hutool.extra.servlet.ServletUtil;
 import io.nerv.core.constant.CommonConstant;
+import io.nerv.core.enums.BizCodeEnum;
+import io.nerv.core.exception.OathException;
 import io.nerv.core.mvc.util.Response;
 import io.nerv.core.token.jwt.JwtUtil;
 import io.nerv.core.token.util.TokenUtil;
@@ -38,6 +40,16 @@ public class TokenCtrl {
         // 是否持久化token
         var cacheToken = evaConfig.getJwt().isPersistence();
 
+        // 验证 refresh token 是否有效(合法/未过期)
+        var tokenStatus = jwtUtil.valid(refreshTk);
+
+        // refresh token 过期/无效, 重新登录
+        if (!tokenStatus) {
+            // 清除cookie
+            this.clearCookie(response);
+            throw new OathException(BizCodeEnum.LOGIN_EXPIRED);
+        }
+
         // 获取当前用户 account
         String cur_user = jwtUtil.getUid(refreshTk);
         // 签发新 access token
@@ -70,6 +82,34 @@ public class TokenCtrl {
                                               CommonConstant.REFRESH_TOKEN_KEY, new_bravo );
 
         return new Response().success(map);
+
+    }
+
+    /**
+     * 清除cookie
+     * @param response
+     */
+    public void clearCookie(HttpServletResponse response){
+        ServletUtil.addCookie(response,
+                CommonConstant.ACCESS_TOKEN_KEY,
+                null,
+                0,
+                "/",
+                evaConfig.getCookie().getDomain());
+
+        ServletUtil.addCookie(response,
+                CommonConstant.REFRESH_TOKEN_KEY,
+                null,
+                0,
+                "/",
+                evaConfig.getCookie().getDomain());
+
+        ServletUtil.addCookie(response,
+                CommonConstant.USER_KEY,
+                null,
+                0,
+                "/",
+                evaConfig.getCookie().getDomain());
 
     }
 }
