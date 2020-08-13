@@ -48,7 +48,14 @@ public class UrlLogoutSuccessHandler implements LogoutSuccessHandler {
 
         // 清除cookie
         ServletUtil.addCookie(httpServletResponse,
-                CommonConstant.TOKEN_KEY,
+                CommonConstant.ACCESS_TOKEN_KEY,
+                null,
+                0,
+                "/",
+                evaConfig.getCookie().getDomain());
+
+        ServletUtil.addCookie(httpServletResponse,
+                CommonConstant.REFRESH_TOKEN_KEY,
                 null,
                 0,
                 "/",

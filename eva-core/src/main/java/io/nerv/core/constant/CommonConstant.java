@@ -10,6 +10,11 @@ public interface CommonConstant {
 
     // 鉴权字符串常量
     String TOKEN_KEY = "auth_token";
+
+    String ACCESS_TOKEN_KEY = "tk_alpha";
+
+    String REFRESH_TOKEN_KEY = "tk_bravo";
+
     // 用户信息字符串常量
     String USER_KEY = "user_info";
     // 文件缓存前缀

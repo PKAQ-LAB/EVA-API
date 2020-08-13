@@ -98,6 +98,10 @@ eva:
     sign: PKAQ
     secert: aHR0cDovL3BrYXEub3Jn
     ttl: *maxAge
+    # 6 小时
+    alphaTtl: 21600000
+    # 30 天
+    bravoTtl: 2592000000
     # 过期阈值 默认6小时
     threshold: 21600000
   # 访问权限

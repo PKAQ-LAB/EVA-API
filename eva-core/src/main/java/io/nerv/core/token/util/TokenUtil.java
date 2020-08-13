@@ -88,17 +88,33 @@ public class TokenUtil {
         this.tokenCache.evict(key);
     }
     /**
-     * 获取token
+     * 获取access token
      * @param request
      * @return
      */
     public String getToken(HttpServletRequest request){
+        return this.getToken(request, CommonConstant.ACCESS_TOKEN_KEY);
+    }
+    /**
+     * 获取refresh token
+     * @param request
+     * @return
+     */
+    public String getRefreshToken(HttpServletRequest request){
+        return this.getToken(request, CommonConstant.REFRESH_TOKEN_KEY);
+    }
+    /**
+     * 获取token
+     * @param request
+     * @return
+     */
+    public String getToken(HttpServletRequest request, String tokenKey){
         String authToken = null;
 
         var authHeader = request.getHeader(evaConfig.getJwt().getHeader());
 
-        if(null != ServletUtil.getCookie(request, CommonConstant.TOKEN_KEY)){
-            authToken = ServletUtil.getCookie(request, CommonConstant.TOKEN_KEY).getValue();
+        if(null != ServletUtil.getCookie(request, CommonConstant.ACCESS_TOKEN_KEY)){
+            authToken = ServletUtil.getCookie(request, CommonConstant.ACCESS_TOKEN_KEY).getValue();
         } else  if (StrUtil.isNotBlank(authHeader) && authHeader.startsWith(evaConfig.getJwt().getTokenHead())) {
             authToken = authHeader.substring(evaConfig.getJwt().getTokenHead().length());
         }

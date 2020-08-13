@@ -11,10 +11,6 @@ import java.util.List;
  */
 @Data
 public class Jwt {
-    //刷新TOKEN(有返回数据)
-    //private int rescode_reftoken_msg = 1006;
-    ////刷新TOKEN
-    //private int rescode_reftoken = 1007;
     /** 是否持久化 **/
     private boolean persistence;
     /**  token header参数名 **/
@@ -27,8 +23,12 @@ public class Jwt {
     private String secert = "aHR0cDovL3BrYXEub3Jn";
     /** token有效时间 **/
     private long ttl = 30 * 24 * 60 * 60 * 1000;
-    /** 续期时间 **/
-    private long threshold = 60 * 60 * 24 * 1000;
+    /** access token有效时间,  6 小时 **/
+    private long alphaTtl =  6 * 60 * 60 * 1000;
+    /** refresh token有效时间, 30 天 **/
+    private long bravoTtl = 30 * 24 * 60 * 60 * 1000;
+    /** 续期时间 , 6 小时 **/
+    private long threshold = 60 * 60 * 6 * 1000;
     /** 可信任域 **/
     private List<String> creditUrl;
 
