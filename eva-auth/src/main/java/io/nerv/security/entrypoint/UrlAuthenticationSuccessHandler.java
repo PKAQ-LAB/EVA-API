@@ -65,17 +65,26 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
 
         //表单输入的用户名
         JwtUserDetail user = (JwtUserDetail) authentication.getPrincipal();
-        // 签发token
-        String token = jwtUtil.build(evaConfig.getJwt().getTtl(), user.getAccount());
+        // 签发 access_token -> ALPHA
+        String access_token = jwtUtil.build(evaConfig.getJwt().getAlphaTtl(), user.getAccount());
+        // 签发 refresh_token -> BRAVO
+        String refresh_token = jwtUtil.build(evaConfig.getJwt().getBravoTtl(), user.getAccount());
 
         // token放入缓存
         if (cacheToken) {
-            tokenUtil.saveToken(user.getAccount(), tokenUtil.buildCacheValue(request, user.getAccount(), token));
+            tokenUtil.saveToken(user.getAccount(), tokenUtil.buildCacheValue(request, user.getAccount(), access_token));
         }
 
         ServletUtil.addCookie(httpServletResponse,
-                CommonConstant.TOKEN_KEY,
-                token,
+                CommonConstant.ACCESS_TOKEN_KEY,
+                access_token,
+                evaConfig.getCookie().getMaxAge(),
+                "/",
+                evaConfig.getCookie().getDomain());
+
+        ServletUtil.addCookie(httpServletResponse,
+                CommonConstant.REFRESH_TOKEN_KEY,
+                refresh_token,
                 evaConfig.getCookie().getMaxAge(),
                 "/",
                 evaConfig.getCookie().getDomain());
@@ -89,7 +98,8 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
 
         Map<String, Object> map = new HashMap<>(2);
         map.put("user", user);
-        map.put("token", token);
+        map.put("tk_alpha", access_token);
+        map.put("tk_bravo", refresh_token);
 
         BizLogEntity bizLogEntity = new BizLogEntity();
         bizLogEntity.setDescription(user.getAccount() + " 登录了系统")
@@ -103,9 +113,9 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
 
         try(PrintWriter printWriter = httpServletResponse.getWriter()){
             printWriter.write(mapper.writeValueAsString(
-                    new Response()
-                            .success(map, StrUtil.format( BizCodeEnum.LOGIN_SUCCESS_WELCOME.getName(), user.getName() ) )
-                    )
+                new Response()
+                        .success(map, StrUtil.format( BizCodeEnum.LOGIN_SUCCESS_WELCOME.getName(), user.getName() ) )
+                )
             );
             printWriter.flush();
         }
