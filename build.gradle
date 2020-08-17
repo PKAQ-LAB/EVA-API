@@ -70,7 +70,7 @@ allprojects {
     apply plugin: "name.remal.check-dependency-updates"
     apply plugin: 'org.jetbrains.kotlin.jvm'
     group = 'io.nerv'
-    version = '2.5.5'
+    version = '2.5.6'
 }
 
 subprojects {
