@@ -28,6 +28,12 @@ class Jwt {
     /** token有效时间  */
     var ttl = 30 * 24 * 60 * 60 * 1000.toLong()
 
+    /** access token有效时间,  6 小时  */
+    var alphaTtl = 6 * 60 * 60 * 1000.toLong()
+
+    /** refresh token有效时间, 30 天  */
+    var bravoTtl = 30 * 24 * 60 * 60 * 1000.toLong()
+
     /** 续期时间  */
     var threshold = 60 * 60 * 24 * 1000.toLong()
 

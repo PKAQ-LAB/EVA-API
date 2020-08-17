@@ -29,17 +29,18 @@ class TokenUtil(cacheManager: CacheManager) {
 
     @Autowired
     private val redisUtil: RedisUtil? = null
+
     private val tokenCache: Cache
 
     // 构造token缓存的value
     fun buildCacheValue(request: HttpServletRequest, uid: String?, token: String): Map<String, Any?> {
-        return java.util.Map.of<String, Any?>("device", requestUtil!!.getDeivce(request),
-                "version", requestUtil.getVersion(request),
-                "issuedAt", jwtUtil!!.getIssuedAt(token),
-                "expireAt", jwtUtil.getExpirationDateFromToken(token),
-                "loginTime", LocalDateTime.now(),
-                "account", uid,
-                "token", token)
+        return mapOf(Pair("device", requestUtil!!.getDeivce(request)),
+               Pair("version", requestUtil.getVersion(request)),
+               Pair("issuedAt", jwtUtil!!.getIssuedAt(token)),
+               Pair("expireAt", jwtUtil.getExpirationDateFromToken(token)),
+               Pair("loginTime", LocalDateTime.now()),
+               Pair("account", uid),
+               Pair("token", token))
     }
 
     // 持久化 token
@@ -80,15 +81,33 @@ class TokenUtil(cacheManager: CacheManager) {
     }
 
     /**
-     * 获取token
+     * 获取access token
      * @param request
      * @return
      */
     fun getToken(request: HttpServletRequest): String? {
+        return this.getToken(request, CommonConstant.ACCESS_TOKEN_KEY)
+    }
+
+    /**
+     * 获取refresh token
+     * @param request
+     * @return
+     */
+    fun getRefreshToken(request: HttpServletRequest): String? {
+        return this.getToken(request, CommonConstant.REFRESH_TOKEN_KEY)
+    }
+
+    /**
+     * 获取token
+     * @param request
+     * @return
+     */
+    fun getToken(request: HttpServletRequest, tokenKey: String?): String? {
         var authToken: String? = null
         val authHeader = request.getHeader(evaConfig!!.jwt!!.header)
-        if (null != ServletUtil.getCookie(request, CommonConstant.TOKEN_KEY)) {
-            authToken = ServletUtil.getCookie(request, CommonConstant.TOKEN_KEY).value
+        if (null != ServletUtil.getCookie(request, CommonConstant.ACCESS_TOKEN_KEY)) {
+            authToken = ServletUtil.getCookie(request, CommonConstant.ACCESS_TOKEN_KEY).value
         } else if (StrUtil.isNotBlank(authHeader) && authHeader.startsWith(evaConfig.jwt!!.tokenHead)) {
             authToken = authHeader.substring(evaConfig.jwt!!.tokenHead.length)
         }

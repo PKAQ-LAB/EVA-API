@@ -4,13 +4,16 @@ package io.nerv.core.constant
  * 系统内置常量
  */
 interface CommonConstant {
-
     companion object {
         // 默认分页条数
         const val PAGE_SIZE = 10
 
         // 鉴权字符串常量
         const val TOKEN_KEY = "auth_token"
+
+        const val ACCESS_TOKEN_KEY = "tk_alpha"
+
+        const val REFRESH_TOKEN_KEY = "tk_bravo"
 
         // 用户信息字符串常量
         const val USER_KEY = "user_info"
@@ -42,5 +45,6 @@ interface CommonConstant {
 
         // 请求来源版本号
         const val VERSION = "version"
+
     }
 }
