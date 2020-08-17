@@ -23,7 +23,7 @@ ext {
            "cache" : "org.springframework.boot:spring-boot-starter-cache:${spring_boot_ver}",
            // AOP
            "aop" : "org.springframework.boot:spring-boot-starter-aop:${spring_boot_ver}",
-           "configuration" : "org.springframework.boot:spring-boot-configuration-processor:${springBootVersion}",
+           "configuration" : "org.springframework.boot:spring-boot-configuration-processor:${spring_boot_ver}",
            // security
            "security" : "org.springframework.boot:spring-boot-starter-security:${spring_boot_ver}",
            // web
