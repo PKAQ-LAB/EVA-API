@@ -15,7 +15,6 @@ import javax.persistence.*
 /**
  * JPA 实体类基类
  */
-@Data
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener::class)
 abstract class StdBaseDomain : Serializable {

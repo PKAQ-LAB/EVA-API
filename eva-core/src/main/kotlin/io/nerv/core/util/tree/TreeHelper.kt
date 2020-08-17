@@ -18,16 +18,16 @@ class TreeHelper {
     fun bulid(moduleEntitys: List<BaseTreeEntity>): List<BaseTreeEntity> {
         val trees: MutableList<BaseTreeEntity> = ArrayList()
         for (entity in moduleEntitys) {
-            val pid: String = entity.getParentId()
+            val pid: String? = entity.parentId;
             if (StrUtil.isBlank(pid) || "0" == pid) {
                 trees.add(entity)
             }
             for (it in moduleEntitys) {
-                if (entity.getId().equals(it.getParentId())) {
-                    if (entity.originChildren == null) {
-                        entity.setChildren(ArrayList<E>())
+                if (entity.id.equals(it.parentId)) {
+                    if (entity.getOriginChildren() == null) {
+                        entity.children = ArrayList()
                     }
-                    entity.originChildren.add(it)
+                    entity.getOriginChildren()?.add(it)
                 }
             }
         }

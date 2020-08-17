@@ -2,6 +2,7 @@ package io.nerv.core.util
 
 import io.nerv.core.security.domain.JwtUserDetail
 import lombok.extern.slf4j.Slf4j
+import org.slf4j.LoggerFactory
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletRequest
 @Slf4j
 @Component
 class SecurityHelper {
+    val log = LoggerFactory.getLogger(this.javaClass);
     /**
      * 判断是否是管理员
      * @return
@@ -21,9 +23,8 @@ class SecurityHelper {
     val isAdmin: Boolean
         get() = authentication
                 .authorities
-                .stream()
                 .map { obj: GrantedAuthority -> obj.authority }
-                .anyMatch { str: String -> str == "ROLE_ADMIN" }
+                .any() { str: String -> str == "ROLE_ADMIN" }
 
     /**
      * 获取当前用户的权限数组
@@ -32,9 +33,8 @@ class SecurityHelper {
     val roleNames: Array<String>
         get() = authentication
                 .authorities
-                .stream()
                 .map { obj: GrantedAuthority -> obj.authority }
-                .toArray { _Dummy_.__Array__() }
+                .toTypedArray()
 
     /**
      * 获取权限对象
@@ -70,7 +70,7 @@ class SecurityHelper {
             try {
                 userId = jwtUser.id
             } catch (e: Exception) {
-                SecurityHelper.log.error("获取用户ID错误： " + e.message)
+                log.error("获取用户ID错误： " + e.message)
             } finally {
                 return userId
             }
@@ -87,7 +87,7 @@ class SecurityHelper {
                 userName = jwtUser.account
             } catch (e: Exception) {
                 e.printStackTrace()
-                SecurityHelper.log.error("获取用户名错误： " + e.message)
+                log.error("获取用户名错误： " + e.message)
             } finally {
                 return userName
             }

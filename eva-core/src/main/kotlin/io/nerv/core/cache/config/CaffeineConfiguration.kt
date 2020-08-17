@@ -5,6 +5,7 @@ import io.nerv.core.cache.condition.DefaultCacheCondition
 import io.nerv.properties.Cache
 import io.nerv.properties.EvaConfig
 import lombok.extern.slf4j.Slf4j
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.CacheManager
 import org.springframework.cache.caffeine.CaffeineCache
@@ -15,10 +16,11 @@ import org.springframework.context.annotation.Configuration
 import java.util.concurrent.TimeUnit
 import java.util.stream.Collectors
 
-@Slf4j
 @Configuration
 @Conditional(DefaultCacheCondition::class)
 class CaffeineConfiguration {
+    val log = LoggerFactory.getLogger(this.javaClass)
+
     @Autowired
     private val evaConfig: EvaConfig? = null
 
@@ -29,7 +31,7 @@ class CaffeineConfiguration {
      */
     @Bean
     fun cacheManager(): CacheManager {
-        CaffeineConfiguration.log.debug("初始化 Caffeine 緩存 --- --- --- -->")
+        log.debug("初始化 Caffeine 緩存 --- --- --- -->")
         val defaultCache = CaffeineCache("default", Caffeine.newBuilder()
                 .expireAfterAccess(3, TimeUnit.HOURS) // 初始的缓存空间大小
                 .initialCapacity(100) // 缓存的最大条数

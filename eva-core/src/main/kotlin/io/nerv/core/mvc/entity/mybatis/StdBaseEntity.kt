@@ -15,29 +15,28 @@ import java.time.LocalDateTime
  * @author: S.PKAQ
  * @Datetime: 2018/3/13 22:48
  */
-@Data
 abstract class StdBaseEntity : Entity, Serializable {
     @TableId(type = IdType.ASSIGN_UUID)
-    private val id: String? = null
+    var id: String? = null
 
     @ApiModelProperty("创建人")
     @TableField(fill = FieldFill.INSERT)
-    private val createBy: String? = null
+    var createBy: String? = null
 
     @ApiModelProperty("创建时间")
     @TableField(fill = FieldFill.INSERT)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private val gmtCreate: LocalDateTime? = null
+    var gmtCreate: LocalDateTime? = null
 
     @ApiModelProperty("修改人")
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private val modifyBy: String? = null
+    var modifyBy: String? = null
 
     @ApiModelProperty("修改时间")
     @TableField(fill = FieldFill.INSERT_UPDATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private val gmtModify: LocalDateTime? = null
+    var gmtModify: LocalDateTime? = null
 
     @ApiModelProperty("备注")
-    private val remark: String? = null
+    var remark: String? = null
 }

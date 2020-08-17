@@ -5,7 +5,7 @@ package io.nerv.core.bizlog.base
  * @author: S.PKAQ
  * @Datetime: 2018/9/26 21:33
  */
-enum class BizLogEnum(override var name: String, var index: String) {
+enum class BizLogEnum(name: String, index: String) {
     /** 新增  */
     CREATE("增加", "C"),
 

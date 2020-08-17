@@ -1,6 +1,5 @@
 package io.nerv.core.bizlog.base
 
-import lombok.Data
 import lombok.experimental.Accessors
 
 /**
@@ -8,36 +7,35 @@ import lombok.experimental.Accessors
  * @author: S.PKAQ
  * @Datetime: 2018/9/26 21:28
  */
-@Data
 @Accessors(chain = true)
 open class BizLogEntity {
     /** 操作人  */
-    private val operator: String? = null
+    var operator: String? = null
 
     /** 操作类型  */
-    private val operateType: String? = null
+    var operateType: String? = null
 
     /** 操作时间  */
-    private val operateDatetime: String? = null
+    var operateDatetime: String? = null
 
     /** 操作描述  */
-    private val description: String? = null
+    var description: String? = null
 
     /** 类名  */
-    private val className: String? = null
+    var className: String? = null
 
     /** 方法名  */
-    private val method: String? = null
+    var method: String? = null
 
     /** 参数  */
-    private val params: String? = null
+    var params: String? = null
 
     /** 返回结果  */
-    private val response: String? = null
+    var response: String? = null
 
     /** 设备类型  */
-    private val device: String? = null
+    var device: String? = null
 
     /** 应用版本  */
-    private val version: String? = null
+    var version: String? = null
 }

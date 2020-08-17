@@ -11,6 +11,7 @@ import io.nerv.properties.EvaConfig
 import io.nerv.properties.Jwt
 import lombok.Data
 import lombok.extern.slf4j.Slf4j
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.util.*
@@ -23,13 +24,15 @@ import javax.crypto.spec.SecretKeySpec
  * @author: S.PKAQ
  * @Datetime: 2018/4/20 15:16
  */
-@Data
 @Component
-@Slf4j
 class JwtUtil {
+    val log = LoggerFactory.getLogger(this.javaClass)
+
     @Autowired
     private val evaConfig: EvaConfig? = null
+
     private val clock = DefaultClock.INSTANCE
+
     fun jwtConfig(): Jwt? {
         return evaConfig!!.jwt
     }
@@ -85,7 +88,7 @@ class JwtUtil {
                     .parseClaimsJws(token)
                     .body
         } catch (e: ExpiredJwtException) {
-            JwtUtil.log.error("token已过期", e)
+            log.error("token已过期", e)
             throw OathException("Token 已过期")
         } finally {
             return claims
@@ -137,7 +140,7 @@ class JwtUtil {
         val ret: Boolean
         val claims = getClaimsFromToken(jwtToken)
         ret = if (null == claims || "-" == claims.subject) {
-            JwtUtil.log.error("登录已失效")
+            log.error("登录已失效")
             throw OathException("登录已失效")
         } else {
             true

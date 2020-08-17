@@ -12,7 +12,6 @@ import java.time.LocalDateTime
 /**
  * Mybatis Plus 自动填充策略实现类
  */
-@Slf4j
 @Component
 class MybatisMetaObjectHandler : MetaObjectHandler {
     var log = LoggerFactory.getLogger(this.javaClass)

@@ -82,8 +82,8 @@ open class DfsFileUploadUtil : FileUploadProvider {
             } else {
                 paramMap["path"] = suffixName
             }
-            val jsonObject: Map<String, String> = jsonUtil!!.parseObject<Map<String, String>>(transfer(paramMap), MutableMap::class.java)
-            file_path = jsonObject["path"]!!
+            val jsonObject: Map<String, String>? = jsonUtil!!.parseObject<Map<String, String>>(transfer(paramMap), MutableMap::class.java)
+            file_path = jsonObject?.get("path")
         } else {
             log.error(BizCodeEnum.FILETYPE_NOT_SUPPORTED.getName())
             throw FileUploadException(BizCodeEnum.FILETYPE_NOT_SUPPORTED)

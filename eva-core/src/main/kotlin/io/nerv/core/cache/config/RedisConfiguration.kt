@@ -4,7 +4,7 @@ import io.nerv.core.cache.condition.RedisCacheCondition
 import io.nerv.core.util.JsonUtil
 import io.nerv.properties.Cache
 import io.nerv.properties.EvaConfig
-import lombok.extern.slf4j.Slf4j
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.CacheManager
 import org.springframework.context.annotation.Bean
@@ -21,10 +21,13 @@ import org.springframework.data.redis.serializer.StringRedisSerializer
 import java.time.Duration
 import java.util.*
 
-@Slf4j
+
 @Configuration
 @Conditional(RedisCacheCondition::class)
-class RedisConfiguration {
+open class RedisConfiguration {
+
+    val log = LoggerFactory.getLogger(this.javaClass)
+
     @Autowired
     private val jsonUtil: JsonUtil? = null
 
@@ -38,7 +41,7 @@ class RedisConfiguration {
      */
     @Bean
     fun redisTemplate(redisConnectionFactory: RedisConnectionFactory?): RedisTemplate<Any, Any> {
-        RedisConfiguration.log.debug("初始化 Redis 緩存 --- --- --- -->")
+        log.debug("初始化 Redis 緩存 --- --- --- -->")
         val redisTemplate = RedisTemplate<Any, Any>()
         redisTemplate.connectionFactory = redisConnectionFactory
         //key序列化
@@ -50,17 +53,19 @@ class RedisConfiguration {
     }
 
     @Bean
-    fun cacheManager(redisConnectionFactory: RedisConnectionFactory?): CacheManager {
-        RedisConfiguration.log.debug("初始化 redis 緩存 --- --- --- -->")
+    fun cacheManager(redisConnectionFactory: RedisConnectionFactory): CacheManager {
+        log.debug("初始化 redis 緩存 --- --- --- -->")
         val defaultCache = buildCache(60 * 30L)
-        val cacheMap: MutableMap<String?, RedisCacheConfiguration?> = HashMap<Any?, Any?>(evaConfig!!.cache!!.config!!.size)
-        evaConfig.cache!!.config!!.stream().forEach { item: Cache.CacheObject -> cacheMap[item.name] = buildCache(item.secondsToExpire.toLong()) }
+        val cacheMap: MutableMap<String?, RedisCacheConfiguration?> = mutableMapOf()
+        evaConfig!!.cache!!.config!!.stream().forEach { item: Cache.CacheObject -> cacheMap[item.name] = buildCache(item.secondsToExpire.toLong()) }
+
         return RedisCacheManager.builder(RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory))
                 .cacheDefaults(defaultCache)
                 .initialCacheNames(cacheMap.keys)
                 .withInitialCacheConfigurations(cacheMap)
                 .build()
     }
+
 
     /*
      * 要启用spring缓存支持,需创建一个 CacheManager的 bean，CacheManager 接口有很多实现，这里Redis 的集成，用
@@ -75,7 +80,7 @@ class RedisConfiguration {
                 .disableCachingNullValues() //设置key序列化器
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(StringRedisSerializer())) //设置value序列化器
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(Jackson2JsonRedisSerializer(Any::class.java)))
-        RedisConfiguration.log.debug("自定义RedisCacheManager加载完成")
+        log.debug("自定义RedisCacheManager加载完成")
         return redisCacheConfiguration
     }
 }

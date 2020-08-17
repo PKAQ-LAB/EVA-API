@@ -3,59 +3,53 @@ package io.nerv.core.mvc.entity.mybatis
 import cn.hutool.core.util.StrUtil
 import com.baomidou.mybatisplus.annotation.TableField
 import io.swagger.annotations.ApiModelProperty
-import lombok.Data
-import lombok.EqualsAndHashCode
 
 /**
  * 树形结构实体基类
  * @author: S.PKAQ
  * @Datetime: 2018/11/18 13:20
  */
-@Data
-@EqualsAndHashCode(callSuper = false)
-open class BaseTreeEntity : StdBaseEntity() {
+class BaseTreeEntity : StdBaseEntity() {
     @ApiModelProperty("上级节点id")
-    private val parentId: String? = null
+    var parentId: String? = null
 
     @ApiModelProperty("上级节点名称")
-    private val parentName: String? = null
+    var parentName: String? = null
 
     @ApiModelProperty("路径")
-    private val path: String? = null
+    var path: String? = null
 
     @ApiModelProperty("上级节点id路径")
-    private val pathId: String? = null
+    var pathId: String? = null
 
     @ApiModelProperty("上级节点名称路径")
-    private val pathName: String? = null
+    var pathName: String? = null
 
     @ApiModelProperty("是否叶子")
-    private val isleaf: Boolean? = null
+    var isleaf: Boolean? = null
 
     @TableField(exist = false)
     @ApiModelProperty("子节点")
-    val originChildren: List<BaseTreeEntity>? = null
+    var children: MutableList<BaseTreeEntity>? = null
+        get() =  if (children == null || this.children!!.size < 1) null else children
 
     @ApiModelProperty("key")
     @TableField(exist = false)
-    open val key: String?
-        get() = id
+    var key: String? = null
+        get() = this.id
 
     @ApiModelProperty("exact")
     @TableField(exist = false)
-    private val exact: Boolean? = null
+    var exact: Boolean? = null
+        get() = this.isleaf;
 
     @TableField(exist = false)
     @ApiModelProperty("国际化面包屑")
-    val locale: String?
+    var locale: String? = null
         get() = if (StrUtil.isNotBlank(path)) "menu" + path!!.replace("/".toRegex(), ".") else ""
 
-    fun getExact(): Boolean? {
-        return isleaf
-    }
-
-    fun getChildren(): List<BaseTreeEntity>? {
-        return if (originChildren == null || originChildren.size < 1) null else originChildren
+    fun getOriginChildren(): MutableList<BaseTreeEntity>? {
+        return this.children
     }
 
 }

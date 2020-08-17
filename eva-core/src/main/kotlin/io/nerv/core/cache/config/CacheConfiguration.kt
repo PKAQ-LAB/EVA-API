@@ -1,14 +1,14 @@
 package io.nerv.core.cache.config
 
-import lombok.extern.slf4j.Slf4j
+import org.slf4j.LoggerFactory
 import org.springframework.cache.annotation.CachingConfigurerSupport
 import org.springframework.cache.interceptor.KeyGenerator
 import org.springframework.context.annotation.Configuration
 import java.lang.reflect.Method
 
-@Slf4j
 @Configuration
-class CacheConfiguration : CachingConfigurerSupport() {
+open class CacheConfiguration : CachingConfigurerSupport() {
+    val log = LoggerFactory.getLogger(this.javaClass)
     /*
      * 定义缓存数据 key 生成策略的bean 包名+类名+方法名+所有参数
      */
@@ -24,7 +24,7 @@ class CacheConfiguration : CachingConfigurerSupport() {
             for (obj in objects) {
                 sb.append(obj.toString())
             }
-            CacheConfiguration.log.debug("调用缓存Key : $sb")
+            log.debug("调用缓存Key : $sb")
             sb.toString()
         }
     }

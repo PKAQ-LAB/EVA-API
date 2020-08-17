@@ -13,11 +13,9 @@ import org.apache.ibatis.type.Alias
  * @author: S.PKAQ
  * @Datetime: 2018/9/27 8:42
  */
-@Data
 @Alias("bizlog")
 @TableName("log_biz")
-@EqualsAndHashCode(callSuper = true)
 class MybatisBizLogEntity : BizLogEntity() {
     @TableId(type = IdType.ASSIGN_UUID)
-    private val id: String? = null
+    var id: String? = null
 }

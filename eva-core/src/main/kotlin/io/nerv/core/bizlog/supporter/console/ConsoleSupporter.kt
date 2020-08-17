@@ -3,7 +3,7 @@ package io.nerv.core.bizlog.supporter.console
 import io.nerv.core.bizlog.base.BizLogEntity
 import io.nerv.core.bizlog.base.BizLogSupporter
 import io.nerv.core.bizlog.condition.DefaultSupporterCondition
-import lombok.extern.slf4j.Slf4j
+import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Conditional
 import org.springframework.stereotype.Component
 import java.util.*
@@ -13,18 +13,22 @@ import java.util.*
  * @author: S.PKAQ
  * @Datetime: 2018/9/26 21:48
  */
-@Slf4j
 @Component
 @Conditional(DefaultSupporterCondition::class)
 class ConsoleSupporter : BizLogSupporter {
+
+    val logger = LoggerFactory.getLogger(this.javaClass)
+
     private var bizLogEntity: BizLogEntity? = null
 
     constructor() : super() {}
+
     constructor(bizLogEntity: BizLogEntity?) {
         this.bizLogEntity = bizLogEntity
     }
 
     override fun save(bizLogEntity: BizLogEntity?) {}
+
     override val log: List<BizLogEntity?>?
         get() = null
 
@@ -43,7 +47,8 @@ class ConsoleSupporter : BizLogSupporter {
     override fun cleanAll() {}
     override fun cleanBefore(dateTime: Date?) {}
     override fun cleanBetween(begin: Date?, end: Date?) {}
+
     override fun print() {
-        ConsoleSupporter.log.info("Biz log: " + bizLogEntity.getDescription())
+        logger.info("Biz log: " + bizLogEntity?.description)
     }
 }

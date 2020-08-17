@@ -1,5 +1,5 @@
 apply from: '../publish.gradle'
-project.archivesBaseName = 'eva-core'
+project.archivesBaseName = 'eva-core-kt'
 
 // 依赖配置
 dependencies {

@@ -8,6 +8,7 @@ import io.nerv.core.bizlog.condition.MybatisSupporterCondition
 import io.nerv.core.bizlog.supporter.mybatis.entity.MybatisBizLogEntity
 import io.nerv.core.bizlog.supporter.mybatis.mapper.MybatisSupporterMapper
 import lombok.extern.slf4j.Slf4j
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Conditional
 import org.springframework.stereotype.Component
@@ -18,11 +19,12 @@ import java.util.*
  * @author: S.PKAQ
  * @Datetime: 2018/9/27 8:38
  */
-@Slf4j
 @Component
 @Conditional(MybatisSupporterCondition::class)
 class MybatisSupporter : BizLogSupporter {
     private var bizLogEntity: BizLogEntity? = null
+
+    val logger = LoggerFactory.getLogger(this.javaClass)
 
     @Autowired
     private val mybatisSupporterMapper: MybatisSupporterMapper? = null
