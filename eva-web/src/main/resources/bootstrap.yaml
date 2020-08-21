@@ -1,0 +1,20 @@
+spring:
+  profiles:
+    active: @profile@
+  application:
+    # 注册到Nacos上的服务名称
+    name: eva-web
+  cloud:
+    nacos:
+      maxAge: &server_ip 47.104.217.77
+      discovery:
+        # 注册中心地址
+        server-addr: *server_ip
+      config:
+        server-addr: *server_ip
+        # 指定group
+        group: DEFAULT_GROUP
+        # 文件后缀，默认为properties
+        file-extension: yaml
+        # 自动刷新
+        refresh-enabled: true

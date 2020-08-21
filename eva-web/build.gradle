@@ -35,5 +35,7 @@ dependencies {
                  // project(":addon-weixin"),
                  // project(":addon-pay"),
                   "${lib.bootAdmin}",
-		   		  "${lib.devTools}"
+		   		  "${lib.devTools}",
+		   		  "${lib.nacos_config}",
+				  "${lib.nacos_client}"
 }

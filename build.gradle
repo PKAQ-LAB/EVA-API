@@ -13,7 +13,6 @@ ext {
            "truelicense" : "de.schlichtherle.truelicense:truelicense-core:${truelicense}",
            "jasypt" : "com.github.ulisesbocchio:jasypt-spring-boot-starter:${jasypt}",
            "validation" : "org.springframework.boot:spring-boot-starter-validation:${spring_boot_ver}",
-
            // lombok
            "lombok" : "org.projectlombok:lombok:${lombok}",
             // cache
@@ -53,9 +52,14 @@ ext {
            "devTools" : "org.springframework.boot:spring-boot-devtools",
             // generator
            "velocity" : "org.apache.velocity:velocity-engine-core:${velocity}",
-           "mybatis_plus_generator" : "com.baomidou:mybatis-plus-generator:${mybatis_plus_starter}"
+           "mybatis_plus_generator" : "com.baomidou:mybatis-plus-generator:${mybatis_plus_starter}",
+            // spring cloud
+            "cloud": "org.springframework.cloud:spring-cloud-dependencies:${cloud}",
+            "nacos_config":"com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-config:${nacos}",
+            "nacos_client":"com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery:${nacos}"
     ]
 }
+
 
 allprojects {
     apply plugin: "name.remal.check-dependency-updates"
