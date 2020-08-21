@@ -23,6 +23,8 @@ import io.nerv.web.sys.user.entity.UserEntity;
 import io.nerv.web.sys.user.mapper.UserMapper;
 import io.nerv.web.sys.user.vo.PasswordVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -58,6 +60,12 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
 
     @Autowired
     private SecurityHelper securityHelper;
+
+    @Bean
+    public static PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
 
     /**
      * 修改密码

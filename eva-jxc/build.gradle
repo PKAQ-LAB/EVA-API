@@ -1,20 +1,36 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 plugins {
-     id 'org.springframework.boot' version "${spring_boot_ver}"
+    id 'org.springframework.boot' version "${spring_boot_ver}"
 }
 apply plugin: 'io.spring.dependency-management'
 
 bintrayUpload.enabled = false
 
 jar {
-	enabled = true
+    enabled = true
 }
 
 bootJar {
-	mainClassName = 'io.nerv.JXCBooter'
+    mainClassName = 'io.nerv.JxcBooter'
 }
 
 description = """jxc"""
+
+compileJava.dependsOn(processResources)
+
+processResources {
+    println "==> Load configuration for $profile"
+
+    from(sourceSets.main.resources.srcDirs) {
+        filter(ReplaceTokens, tokens: [profile: profile])
+    }
+
+}
+
 // 依赖配置
 dependencies {
-    implementation project(":eva-core")
+    implementation project(":eva-core"),
+                   "${lib.nacos_config}",
+                   "${lib.nacos_client}"
 }

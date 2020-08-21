@@ -3,7 +3,7 @@ spring:
     active: @profile@
   application:
     # 注册到Nacos上的服务名称
-    name: eva-web
+    name: eva-sys
   cloud:
     nacos:
       maxAge: &server_ip 47.104.217.77
@@ -18,3 +18,5 @@ spring:
         file-extension: yaml
         # 自动刷新
         refresh-enabled: true
+        # 指定配置文件前缀
+        prefix: common
