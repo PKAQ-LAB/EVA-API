@@ -1,9 +1,6 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
-plugins {
-    id 'org.springframework.boot' version "${spring_boot_ver}"
-}
-apply plugin: 'io.spring.dependency-management'
+apply plugin: "org.springframework.boot"
 
 bintrayUpload.enabled = false
 
@@ -32,5 +29,6 @@ processResources {
 dependencies {
     implementation	project(":eva-core"),
                     "${lib.nacos_config}",
-                    "${lib.nacos_client}"
+                    "${lib.nacos_client}",
+                    "${lib.sentinel}"
 }

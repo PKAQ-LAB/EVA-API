@@ -1,36 +1,38 @@
 plugins {
    id "name.remal.check-dependency-updates" version "${cdu_ver}"
    id "com.jfrog.bintray" version "${jfrog_ver}"
+   id "io.spring.dependency-management" version "${spring_dep}"
+   id 'org.springframework.boot' version "${spring_boot_ver}"
 }
-
 bintrayUpload.enabled = false
 
 ext {
-    lib = ["p6spy" : "p6spy:p6spy:${p6spy}",
+    lib = [ "boot" : "org.springframework.boot:spring-boot-dependencies:${spring_boot_ver}",
+            "p6spy" : "p6spy:p6spy:${p6spy}",
            "flyway" : "org.flywaydb:flyway-core:${flyway}",
            "mysql" : "mysql:mysql-connector-java:${mysql}",
            "jaxb_api" : "javax.xml.bind:jaxb-api:${jaxb_api}",
            "truelicense" : "de.schlichtherle.truelicense:truelicense-core:${truelicense}",
            "jasypt" : "com.github.ulisesbocchio:jasypt-spring-boot-starter:${jasypt}",
-           "validation" : "org.springframework.boot:spring-boot-starter-validation:${spring_boot_ver}",
+           "validation" : "org.springframework.boot:spring-boot-starter-validation",
            // lombok
            "lombok" : "org.projectlombok:lombok:${lombok}",
             // cache
            "caffeine" : "com.github.ben-manes.caffeine:caffeine:${caffeine}",
-           "redis" : "org.springframework.boot:spring-boot-starter-data-redis:${spring_boot_ver}",
-           "cache" : "org.springframework.boot:spring-boot-starter-cache:${spring_boot_ver}",
+           "redis" : "org.springframework.boot:spring-boot-starter-data-redis",
+           "cache" : "org.springframework.boot:spring-boot-starter-cache",
            // AOP
-           "aop" : "org.springframework.boot:spring-boot-starter-aop:${spring_boot_ver}",
+           "aop" : "org.springframework.boot:spring-boot-starter-aop",
            // security
-           "security" : "org.springframework.boot:spring-boot-starter-security:${spring_boot_ver}",
+           "security" : "org.springframework.boot:spring-boot-starter-security",
            // web
-           "web" : "org.springframework.boot:spring-boot-starter-web:${spring_boot_ver}",
-           "undertow" : "org.springframework.boot:spring-boot-starter-undertow:${spring_boot_ver}",
+           "web" : "org.springframework.boot:spring-boot-starter-web",
+           "undertow" : "org.springframework.boot:spring-boot-starter-undertow",
             // test
-           "test" : "org.springframework.boot:spring-boot-starter-test:${spring_boot_ver}",
+           "test" : "org.springframework.boot:spring-boot-starter-test",
            "securityTest" : "org.springframework.security:spring-security-test:${securityTest}",
             // jpa
-           "jpa" : "org.springframework.boot:spring-boot-starter-data-jpa:${spring_boot_ver}",
+           "jpa" : "org.springframework.boot:spring-boot-starter-data-jpa",
            // hutool
            "hutool" : "cn.hutool:hutool-all:${hutool}",
            // mybatis
@@ -55,8 +57,10 @@ ext {
            "mybatis_plus_generator" : "com.baomidou:mybatis-plus-generator:${mybatis_plus_starter}",
             // spring cloud
             "cloud": "org.springframework.cloud:spring-cloud-dependencies:${cloud}",
-            "nacos_config":"com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-config:${nacos}",
-            "nacos_client":"com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery:${nacos}"
+            "alibaba":"com.alibaba.cloud:spring-cloud-alibaba-dependencies:${alibaba}",
+            "nacos_config":"com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-config",
+            "nacos_client":"com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery",
+            "sentinel":"com.alibaba.cloud:spring-cloud-starter-alibaba-sentinel"
     ]
 }
 
@@ -71,9 +75,19 @@ subprojects {
     apply plugin: 'java-library'
 	apply plugin: 'maven-publish'
 	apply plugin: 'com.jfrog.bintray'
-    
+    apply plugin: 'io.spring.dependency-management'
+
 	sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
+
+    dependencyManagement {
+        imports {
+            mavenBom "${lib.boot}"
+            // 解决cloud零散jar的版本问题
+            mavenBom "${lib.cloud}"
+            mavenBom "${lib.alibaba}"
+        }
+    }
     
     tasks.withType(JavaCompile) {
         options.encoding = "UTF-8"
@@ -98,11 +112,12 @@ subprojects {
     }
 
     dependencies {
-       implementation "${lib.lombok}"
-	   annotationProcessor "${lib.lombok}"
+        implementation "${lib.lombok}"
 
-       testImplementation "${lib.test}",
-                          "${lib.securityTest}"
+        annotationProcessor "${lib.lombok}"
+
+        testImplementation "${lib.test}",
+                           "${lib.securityTest}"
 
      }
 }

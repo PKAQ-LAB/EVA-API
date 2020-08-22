@@ -20,3 +20,8 @@ spring:
         refresh-enabled: true
         # 指定配置文件前缀
         prefix: common
+management:
+  endpoint:
+    web:
+      exposure:
+        include: '*'
