@@ -1,7 +1,5 @@
 apply plugin: "org.springframework.boot"
 
-bintrayUpload.enabled = false
-
 jar {
 	enabled = true
 }
@@ -13,5 +11,5 @@ bootJar {
 description = """jxc"""
 // 依赖配置
 dependencies {
-    implementation project(":eva-core")
+    implementation "${lib.eva_core}"
 }

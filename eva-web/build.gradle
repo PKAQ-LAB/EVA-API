@@ -2,8 +2,6 @@ import org.apache.tools.ant.filters.ReplaceTokens
 
 apply plugin: "org.springframework.boot"
 
-bintrayUpload.enabled = false
-
 jar {
 	enabled = true
 }
@@ -26,11 +24,9 @@ processResources {
 }
 
 dependencies {
-   implementation project(":eva-core"),
-				  project(":eva-auth"),
-		   		  project(":eva-jxc"),
-                 // project(":addon-weixin"),
-                 // project(":addon-pay"),
+   implementation "${lib.eva_core}",
+		   		  "${lib.eva_auth}",
                   "${lib.bootAdmin}",
-		   		  "${lib.devTools}"
+		   		  "${lib.devTools}",
+		   		  project(":eva-jxc")
 }
