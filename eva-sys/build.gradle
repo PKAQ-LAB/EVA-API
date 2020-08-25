@@ -2,8 +2,6 @@ import org.apache.tools.ant.filters.ReplaceTokens
 
 apply plugin: "org.springframework.boot"
 
-bintrayUpload.enabled = false
-
 jar {
     enabled = true
 }
@@ -27,7 +25,7 @@ processResources {
 
 
 dependencies {
-    implementation	project(":eva-core"),
+    implementation	"${lib.eva_core}",
                     "${lib.nacos_config}",
                     "${lib.nacos_client}",
                     "${lib.feign}",

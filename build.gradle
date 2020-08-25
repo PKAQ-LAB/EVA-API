@@ -1,60 +1,19 @@
 plugins {
    id "name.remal.check-dependency-updates" version "${cdu_ver}"
-   id "com.jfrog.bintray" version "${jfrog_ver}"
    id "io.spring.dependency-management" version "${spring_dep}"
    id 'org.springframework.boot' version "${spring_boot_ver}"
 }
-bintrayUpload.enabled = false
 
 ext {
-    lib = [ "boot" : "org.springframework.boot:spring-boot-dependencies:${spring_boot_ver}",
-            "p6spy" : "p6spy:p6spy:${p6spy}",
-           "flyway" : "org.flywaydb:flyway-core:${flyway}",
-           "mysql" : "mysql:mysql-connector-java:${mysql}",
-           "jaxb_api" : "javax.xml.bind:jaxb-api:${jaxb_api}",
-           "truelicense" : "de.schlichtherle.truelicense:truelicense-core:${truelicense}",
-           "jasypt" : "com.github.ulisesbocchio:jasypt-spring-boot-starter:${jasypt}",
-           "validation" : "org.springframework.boot:spring-boot-starter-validation",
-           // lombok
-           "lombok" : "org.projectlombok:lombok:${lombok}",
-            // cache
-           "caffeine" : "com.github.ben-manes.caffeine:caffeine:${caffeine}",
-           "redis" : "org.springframework.boot:spring-boot-starter-data-redis",
-           "cache" : "org.springframework.boot:spring-boot-starter-cache",
-           // AOP
-           "aop" : "org.springframework.boot:spring-boot-starter-aop",
-           // security
-           "security" : "org.springframework.boot:spring-boot-starter-security",
-           // web
-           "web" : "org.springframework.boot:spring-boot-starter-web",
-           "undertow" : "org.springframework.boot:spring-boot-starter-undertow",
+    lib = [ "eva_core": "io.nerv:eva-core:${eva}",
+            "eva_sys": "io.nerv:eva-sys:${eva}",
+            "eva_auth": "io.nerv:eva-auth:${eva}",
+            "boot" : "org.springframework.boot:spring-boot-dependencies:${spring_boot_ver}",
+            // lombok
+            "lombok" : "org.projectlombok:lombok:${lombok}",
             // test
-           "test" : "org.springframework.boot:spring-boot-starter-test",
-           "securityTest" : "org.springframework.security:spring-security-test:${securityTest}",
-            // jpa
-           "jpa" : "org.springframework.boot:spring-boot-starter-data-jpa",
-           // hutool
-           "hutool" : "cn.hutool:hutool-all:${hutool}",
-           // mybatis
-           "mybatisPlus" : "com.baomidou:mybatis-plus-boot-starter:${mybatis_plus_starter}",
-           // swagger
-           "knife4j" : "com.github.xiaoymin:knife4j-spring-boot-starter:${knife4j}",
-            // jwt
-           "auth0" : "com.auth0:java-jwt:${auth0}",
-           "jjwt" : "io.jsonwebtoken:jjwt:${jjwt}",
-            // wxjava
-           "wxmp" : "com.github.binarywang:weixin-java-mp:${weixin}",
-           "wxpay" : "com.github.binarywang:weixin-java-pay:${weixin}",
-            // ali
-           "alipay" : "com.alipay.sdk:alipay-sdk-java:${alipay}",
-           "zxing" : "com.google.zxing:core:${zxing}",
-            // bootAdmin
-           "bootAdminServer" : "de.codecentric:spring-boot-admin-starter-server:${boot_admin}",
-           "bootAdmin" : "de.codecentric:spring-boot-admin-starter-client:${boot_admin}",
-           "devTools" : "org.springframework.boot:spring-boot-devtools",
-            // generator
-           "velocity" : "org.apache.velocity:velocity-engine-core:${velocity}",
-           "mybatis_plus_generator" : "com.baomidou:mybatis-plus-generator:${mybatis_plus_starter}",
+            "test" : "org.springframework.boot:spring-boot-starter-test",
+            "securityTest" : "org.springframework.security:spring-security-test:${securityTest}",
             // spring cloud
             "cloud": "org.springframework.cloud:spring-cloud-dependencies:${cloud}",
             "alibaba":"com.alibaba.cloud:spring-cloud-alibaba-dependencies:${alibaba}",
@@ -76,8 +35,6 @@ allprojects {
 
 subprojects {
     apply plugin: 'java-library'
-	apply plugin: 'maven-publish'
-	apply plugin: 'com.jfrog.bintray'
     apply plugin: 'io.spring.dependency-management'
 
 	sourceCompatibility = JavaVersion.VERSION_11

@@ -1,9 +1,0 @@
-apply from: '../publish.gradle'
-project.archivesBaseName = 'addon-pay'
-
-dependencies {
-    implementation	project(":eva-core"),
-                    // 阿里支付
-                    "${lib.alipay}",
-					"${lib.zxing}"
-}

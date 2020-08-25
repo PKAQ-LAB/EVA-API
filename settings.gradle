@@ -1,12 +1,6 @@
 rootProject.name = 'eva'
 include 'eva-jxc'
-include 'eva-core'
 include 'eva-sys'
 include 'eva-auth'
-include 'addon-pay'
-include 'addon-weixin'
-include 'nerv-admin-server'
-include 'nerv-license'
-include 'nerv-generator'
 include 'eva-cloud-gateway'
 
