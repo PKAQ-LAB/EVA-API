@@ -12,3 +12,5 @@
 /wxapp/.history
 /wxapp/.temp
 /wxapp/node_modules
+/gradle/wrapper/*.jar
+/gradle/wrapper/*.properties
