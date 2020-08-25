@@ -1,4 +1,0 @@
-server:
-  servlet:
-    context-path: /api
-  port: 9015

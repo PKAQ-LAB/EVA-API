@@ -11,6 +11,7 @@ spring:
         # 注册中心地址
         server-addr: *server_ip
       config:
+        namespace: @profile@
         server-addr: *server_ip
         # 指定group
         group: DEFAULT_GROUP
@@ -18,5 +19,11 @@ spring:
         file-extension: yaml
         # 自动刷新
         refresh-enabled: true
-        # 指定配置文件前缀
-        prefix: common
+        # 共享的配置文件
+        shared-configs:
+          - dataId: common.yaml
+            group: DEFAULT_GROUP
+            refresh: true
+          - dataId: common-cloud.yaml
+            group: DEFAULT_GROUP
+            refresh: true

@@ -28,6 +28,8 @@ processResources {
 // 依赖配置
 dependencies {
     implementation project(":eva-core"),
+                   "${lib.feign}",
                    "${lib.nacos_config}",
-                   "${lib.nacos_client}"
+                   "${lib.nacos_client}",
+                   "${lib.feignHttp}"
 }

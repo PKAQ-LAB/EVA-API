@@ -60,7 +60,10 @@ ext {
             "alibaba":"com.alibaba.cloud:spring-cloud-alibaba-dependencies:${alibaba}",
             "nacos_config":"com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-config",
             "nacos_client":"com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery",
-            "sentinel":"com.alibaba.cloud:spring-cloud-starter-alibaba-sentinel"
+            "sentinel":"com.alibaba.cloud:spring-cloud-starter-alibaba-sentinel",
+            "feign":"org.springframework.cloud:spring-cloud-starter-openfeign",
+            "feignHttp": "io.github.openfeign:feign-httpclient",
+            "gateway": "org.springframework.cloud:spring-cloud-starter-gateway"
     ]
 }
 

@@ -1,0 +1,18 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+description = """eva-cloud-gateway"""
+
+compileJava.dependsOn(processResources)
+
+processResources {
+    println "==> Load configuration for $profile"
+
+    from(sourceSets.main.resources.srcDirs) {
+        filter(ReplaceTokens, tokens: [profile: profile])
+    }
+
+}
+
+dependencies {
+    implementation "${lib.gateway}",
+                   "${lib.sentinel}"
+}

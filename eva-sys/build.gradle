@@ -30,5 +30,7 @@ dependencies {
     implementation	project(":eva-core"),
                     "${lib.nacos_config}",
                     "${lib.nacos_client}",
-                    "${lib.sentinel}"
+                    "${lib.feign}",
+                    "${lib.sentinel}",
+                    "${lib.feignHttp}"
 }
