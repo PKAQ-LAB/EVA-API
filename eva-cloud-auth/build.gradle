@@ -1,0 +1,30 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+apply plugin: "org.springframework.boot"
+description = """eva-cloud-auth"""
+
+jar {
+    enabled = true
+}
+
+bootJar {
+    mainClassName = 'io.nerv.AuthBooter'
+}
+
+compileJava.dependsOn(processResources)
+
+processResources {
+    println "==> Load configuration for $profile"
+    filesMatching('**/*.yaml') {
+        filter(ReplaceTokens, tokens: [profile: profile])
+    }
+}
+
+dependencies {
+    implementation "${lib.eva_core}",
+                   "${lib.eva_sys}",
+                   "${lib.nacos_config}",
+                   "${lib.nacos_client}",
+                   "${lib.oauth2}",
+                   "${lib.security}",
+                   "${lib.jwt}"
+}

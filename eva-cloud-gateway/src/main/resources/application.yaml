@@ -1,0 +1,7 @@
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          #配置RSA的公钥访问地址
+          jwk-set-uri: 'http://localhost:9871/oauth/publicKey'
