@@ -33,7 +33,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private AuthUserService userService;
+    private AuthUserService authUserService;
 
     @Autowired
     private TokenStore tokenStore;
@@ -60,7 +60,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         // 指定认证管理器，随后注入一个到当前类使用即可
         endpoints.authenticationManager(authenticationManager)
                 //配置加载用户信息的服务
-                .userDetailsService(userService)
+                .userDetailsService(authUserService)
                 // 指定token的存储方法
                 .tokenStore(tokenStore)
                 .accessTokenConverter(jwtAccessTokenConverter)

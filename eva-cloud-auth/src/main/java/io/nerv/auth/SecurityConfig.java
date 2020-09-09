@@ -13,7 +13,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -69,8 +69,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      * @return
      */
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    public static PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     /**
@@ -130,32 +130,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/*/api-docs"
             );
 
-    }
-    /**
-     * 处理跨越问题
-     * @return
-     */
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(CollUtil.isEmpty(evaConfig.getJwt().getCreditUrl())? Arrays.asList("*"): evaConfig.getJwt().getCreditUrl());
-        configuration.setAllowCredentials(true);
-        configuration.setAllowedMethods(Arrays.asList("PUT", "DELETE", "GET", "POST", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setMaxAge(1800l);
-        configuration.setExposedHeaders(Arrays.asList("Access-Control-Allow-Headers",
-                "Access-Control-Allow-Methods",
-                "Access-Control-Expose-Headers",
-                "Access-Control-Allow-Origin",
-                "Access-Control-Max-Age",
-                "authorization",
-                "auth_token",
-                "xsrf-token",
-                "content-type",
-                "X-Frame-Options",
-                "Authorization"));
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
     }
 }

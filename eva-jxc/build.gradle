@@ -29,5 +29,6 @@ dependencies {
                    "${lib.feign}",
                    "${lib.nacos_config}",
                    "${lib.nacos_client}",
-                   "${lib.feignHttp}"
+                   "${lib.feignHttp}",
+                   "${lib.oauth2}"
 }

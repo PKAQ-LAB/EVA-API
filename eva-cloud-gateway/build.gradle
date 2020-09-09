@@ -14,5 +14,14 @@ processResources {
 
 dependencies {
     implementation "${lib.gateway}",
-                   "${lib.sentinel}"
+                   "${lib.sentinel}",
+                   "${lib.nacos_config}",
+                   "${lib.nacos_client}",
+                   "${lib.resource_server}",
+                   "${lib.eva_core}",
+                   "${lib.jwt}",
+                   "${lib.oauth2}",
+                   "${lib.oauth2_client}",
+                   "${lib.jose}",
+                   "${lib.hutool}"
 }

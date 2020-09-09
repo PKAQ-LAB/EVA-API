@@ -3,7 +3,7 @@ spring:
     active: @profile@
   application:
     # 注册到Nacos上的服务名称
-    name: eva-gateway
+    name: eva-cloud-gateway
   cloud:
     nacos:
       maxAge: &server_ip 47.104.217.77
@@ -19,7 +19,46 @@ spring:
         file-extension: yaml
         # 自动刷新
         refresh-enabled: true
+        # 共享的配置文件
+        shared-configs:
+            - dataId: common.yaml
+              group: DEFAULT_GROUP
+              refresh: true
+            - dataId: common-cloud.yaml
+              group: DEFAULT_GROUP
+              refresh: true
     gateway:
       discovery:
         locator:
           enabled: true
+      # 处理跨域问题
+      globalcors:
+        cors-configurations:
+          # 匹配所有请求
+          '[/**]':
+            # 支持所有域
+            allowCredentials: "*"
+            # 支持的跨域请求方法
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+#      路由配置
+#      routes:
+#        - id: eva-sys
+##          使用负载均衡, lb://服务名称
+#          uri: lb://eva-sys
+##          所有以 /api/sys 开头的请求都路由的上面的服务地址
+#          predicates:
+#            - Path=/api/sys/**
+##          将请求中的第一个路径去掉
+#          filters:
+#            - StripPrefix=1
+#             - name: RequestRateLimiter #请求数限流 名字不能随便写 ，使用默认的facatory
+#              args:
+#                key-resolver: "#{@ipKeyResolver}"
+##                每秒钟允许的并发请求数
+#                redis-rate-limiter.replenishRate: 5
+##                允许最大并发
+#                redis-rate-limiter.burstCapacity: 15

@@ -8,12 +8,13 @@ ext {
     lib = [ "eva_core": "io.nerv:eva-core:${eva}",
             "eva_sys": "io.nerv:eva-sys:${eva}",
             "eva_auth": "io.nerv:eva-auth:${eva}",
+            "hutool" : "cn.hutool:hutool-all:${hutool}",
             "boot" : "org.springframework.boot:spring-boot-dependencies:${spring_boot_ver}",
             // lombok
             "lombok" : "org.projectlombok:lombok:${lombok}",
             // test
             "test" : "org.springframework.boot:spring-boot-starter-test",
-            "securityTest" : "org.springframework.security:spring-security-test:${securityTest}",
+            "boot_web": "org.springframework.boot:spring-boot-starter-web",
             // spring cloud
             "cloud": "org.springframework.cloud:spring-cloud-dependencies:${cloud}",
             "alibaba":"com.alibaba.cloud:spring-cloud-alibaba-dependencies:${alibaba}",
@@ -22,10 +23,15 @@ ext {
             "sentinel":"com.alibaba.cloud:spring-cloud-starter-alibaba-sentinel",
             "feign":"org.springframework.cloud:spring-cloud-starter-openfeign",
             "feignHttp": "io.github.openfeign:feign-httpclient",
-            "gateway": "org.springframework.cloud:spring-cloud-starter-gateway"
+            "gateway": "org.springframework.cloud:spring-cloud-starter-gateway",
+            "security": "org.springframework.cloud:spring-cloud-starter-security",
+            "oauth2": "org.springframework.cloud:spring-cloud-starter-oauth2",
+            "oauth2_client": "org.springframework.security:spring-security-oauth2-client",
+            "resource_server": "org.springframework.security:spring-security-oauth2-resource-server",
+            "jose": "org.springframework.security:spring-security-oauth2-jose",
+            "jwt": "com.nimbusds:nimbus-jose-jwt:${jwt}"
     ]
 }
-
 
 allprojects {
     apply plugin: "name.remal.check-dependency-updates"
@@ -43,7 +49,6 @@ subprojects {
     dependencyManagement {
         imports {
             mavenBom "${lib.boot}"
-            // 解决cloud零散jar的版本问题
             mavenBom "${lib.cloud}"
             mavenBom "${lib.alibaba}"
         }
@@ -76,8 +81,7 @@ subprojects {
 
         annotationProcessor "${lib.lombok}"
 
-        testImplementation "${lib.test}",
-                           "${lib.securityTest}"
+        testImplementation "${lib.test}"
 
      }
 }
