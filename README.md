@@ -13,6 +13,12 @@ yarn start
 ```
 3.访问`http://localhost`
 
+
+api("${lib.web}"){
+		exclude module: 'spring-boot-starter-tomcat'
+	}
+"${lib.undertow}",
+
 ## 目录说明
 
 + EVA   

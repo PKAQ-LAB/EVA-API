@@ -7,7 +7,6 @@ dependencies {
 					"${lib.flyway}",
 					"${lib.mysql}",
 					"${lib.jaxb_api}",
-			 		"${lib.truelicense}",
 					"${lib.jasypt}"
 
 	api("${lib.web}"){
