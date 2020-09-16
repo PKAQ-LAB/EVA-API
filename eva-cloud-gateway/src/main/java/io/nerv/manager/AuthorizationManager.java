@@ -1,7 +1,8 @@
-package io.nerv.config;
+package io.nerv.manager;
 
 import cn.hutool.core.collection.ConcurrentHashSet;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.ReactiveAuthorizationManager;
 import org.springframework.security.core.Authentication;
@@ -23,7 +24,6 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
     private Set<String> permitAll = new ConcurrentHashSet<>();
     private static final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
-
     public AuthorizationManager (){
         permitAll.add("/");
         permitAll.add("/error");
@@ -43,16 +43,16 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
     @Override
     public Mono<AuthorizationDecision> check(Mono<Authentication> authenticationMono, AuthorizationContext authorizationContext) {
         ServerWebExchange exchange = authorizationContext.getExchange();
+        ServerHttpRequest request = exchange.getRequest();
+
         //请求资源
-        String requestPath = exchange.getRequest().getURI().getPath();
+        String requestPath = request.getURI().getPath();
         // 是否直接放行
         if (permitAll(requestPath)) {
             return Mono.just(new AuthorizationDecision(true));
         }
 
-        return authenticationMono.map(auth -> {
-            return new AuthorizationDecision(checkAuthorities(exchange, auth, requestPath));
-        }).defaultIfEmpty(new AuthorizationDecision(false));
+        return authenticationMono.map(auth -> new AuthorizationDecision(checkAuthorities(exchange, auth, requestPath))).defaultIfEmpty(new AuthorizationDecision(false));
 
     }
 

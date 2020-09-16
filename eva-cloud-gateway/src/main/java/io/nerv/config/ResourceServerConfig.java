@@ -1,23 +1,28 @@
 package io.nerv.config;
 
-import io.nerv.constant.AuthConstant;
-import io.nerv.handle.UrlAuthenticationDeniedHandler;
-import io.nerv.handle.UrlAuthenticationFailureHandler;
-import io.nerv.handle.UrlAuthenticationSuccessHandler;
+import io.nerv.handler.ResAccessDeniedHandler;
+import io.nerv.handler.ResAuthenticationEntryPoint;
+import io.nerv.handler.ResAuthenticationFailureHandler;
+import io.nerv.handler.ResAuthenticationSuccessHandler;
+import io.nerv.manager.AuthorizationManager;
+import io.nerv.manager.TokenAuthenticationConverter;
+import io.nerv.manager.TokenAuthenticationManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.autoconfigure.security.reactive.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.convert.converter.Converter;
-import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
-import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-import reactor.core.publisher.Mono;
+import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
+import org.springframework.web.server.WebFilter;
 
 /**
  * 资源服务器配置
@@ -30,63 +35,76 @@ public class ResourceServerConfig {
     private AuthConfig authConfig;
 
     @Autowired
+    private TokenStore tokenStore;
+
+    @Autowired
     private AuthorizationManager authorizationManager;
-
-    @Autowired
-    private UrlAuthenticationSuccessHandler urlAuthenticationSuccessHandler;
-
-    @Autowired
-    private UrlAuthenticationDeniedHandler urlAuthenticationDeniedHandler;
-
-    @Autowired
-    private UrlAuthenticationFailureHandler urlAuthenticationFailureHandler;
-
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
-        http.oauth2ResourceServer().jwt()
-                .jwtAuthenticationConverter(jwtAuthenticationConverter());
 
-        //自定义处理JWT请求头过期或签名错误的结果
-        //http.oauth2ResourceServer().authenticationEntryPoint(urlAuthenticationFailureHandler);
+        // 认证处理器
+        ReactiveAuthenticationManager tokenAuthenticationManager = new TokenAuthenticationManager(tokenStore);
+        ResAuthenticationEntryPoint resAuthenticationEntryPoint = new ResAuthenticationEntryPoint();
+        // 拒绝访问处理
+        ResAccessDeniedHandler resAccessDeniedHandler = new ResAccessDeniedHandler();
 
-        //对白名单路径，直接移除JWT请求头
-//        http.addFilterBefore(ignoreUrlsRemoveJwtFilter, SecurityWebFiltersOrder.AUTHENTICATION);
-        http.authorizeExchange()
-                // 白名单
-                .pathMatchers(authConfig.getAnonymous())
-                .permitAll()
-                //鉴权管理器配置
-                .anyExchange()
-                .access(authorizationManager)
+        //构建Bearer Token
+        //请求参数强制加上 Authorization BEARER token
+        http.addFilterAt((WebFilter) (exchange, chain) -> {
+            ServerHttpRequest request = exchange.getRequest();
+            String access_tk = request.getQueryParams().getFirst("access_token");
+
+            if( access_tk != null) {
+                exchange.getRequest().mutate().headers(httpHeaders ->
+                        httpHeaders.add(
+                                "Authorization",
+                                OAuth2AccessToken.BEARER_TYPE+" "+access_tk)
+                );
+            }
+            return chain.filter(exchange);
+        }, SecurityWebFiltersOrder.FIRST);
+
+        //身份认证
+        AuthenticationWebFilter authenticationWebFilter = new AuthenticationWebFilter(tokenAuthenticationManager);
+        //登陆验证失败
+        authenticationWebFilter.setAuthenticationFailureHandler(new ResAuthenticationFailureHandler());
+        //认证成功
+        authenticationWebFilter.setAuthenticationSuccessHandler(new ResAuthenticationSuccessHandler());
+
+        //token转换器
+        TokenAuthenticationConverter tokenAuthenticationConverter = new TokenAuthenticationConverter();
+        tokenAuthenticationConverter.setAllowUriQueryParameter(true);
+        authenticationWebFilter.setServerAuthenticationConverter(tokenAuthenticationConverter);
+
+        http.addFilterAt(authenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION);
+
+        ServerHttpSecurity.AuthorizeExchangeSpec authorizeExchange = http.authorizeExchange();
+
+        //无需进行权限过滤的请求路径
+        authorizeExchange.matchers(EndpointRequest.toAnyEndpoint()).permitAll();
+        //无需进行权限过滤的请求路径
+        authorizeExchange.pathMatchers(authConfig.getAnonymous()).permitAll();
+
+        //option 请求默认放行
+        authorizeExchange
+                .pathMatchers(HttpMethod.OPTIONS).permitAll()
+                // 应用api权限控制
+                .anyExchange().access(authorizationManager)
+                //token 有效性控制
                 .and()
-                .httpBasic()
-                .and()
-                .formLogin().loginPage("/auth/login")
-                //认证成功
-                .authenticationSuccessHandler(urlAuthenticationSuccessHandler)
-                .and()
-                //登陆验证失败
-                //.authenticationFailureHandler(authenticationFaillHandler)
-                //.and()
                 .exceptionHandling()
-                //处理未授权
-                .accessDeniedHandler(urlAuthenticationDeniedHandler)
-                //处理未认证
-//                .authenticationEntryPoint(urlAuthenticationFailureHandler)
+                .accessDeniedHandler(resAccessDeniedHandler)
+                .authenticationEntryPoint(resAuthenticationEntryPoint)
                 .and()
-                .csrf()
-                .disable();
+                .headers()
+                .frameOptions()
+                .disable()
+                .and()
+                .httpBasic().disable()
+                .csrf().disable();
         return http.build();
-    }
 
-    @Bean
-    public Converter<Jwt, ? extends Mono<? extends AbstractAuthenticationToken>> jwtAuthenticationConverter() {
-        JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        jwtGrantedAuthoritiesConverter.setAuthorityPrefix(AuthConstant.AUTHORITY_PREFIX);
-        jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName(AuthConstant.AUTHORITY_CLAIM_NAME);
-        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
-        return new ReactiveJwtAuthenticationConverterAdapter(jwtAuthenticationConverter);
+
     }
 }
