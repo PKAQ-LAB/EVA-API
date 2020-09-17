@@ -17,11 +17,10 @@ dependencies {
                    "${lib.sentinel}",
                    "${lib.nacos_config}",
                    "${lib.nacos_client}",
-                   "${lib.resource_server}",
                    "${lib.eva_core}",
                    "${lib.jwt}",
+                   "${lib.security}",
+                   "${lib.resource_server}",
                    "${lib.oauth2}",
-                   "${lib.oauth2_client}",
-                   "${lib.jose}",
                    "${lib.hutool}"
 }

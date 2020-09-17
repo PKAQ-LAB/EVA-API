@@ -14,11 +14,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
-import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
@@ -28,8 +26,6 @@ import org.springframework.web.server.WebFilter;
  * 资源服务器配置
  */
 @Configuration
-@EnableWebFluxSecurity
-@EnableResourceServer
 public class ResourceServerConfig {
     @Autowired
     private AuthConfig authConfig;
@@ -41,7 +37,7 @@ public class ResourceServerConfig {
     private AuthorizationManager authorizationManager;
 
     @Bean
-    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
+    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity serverHttpSecurity) {
 
         // 认证处理器
         ReactiveAuthenticationManager tokenAuthenticationManager = new TokenAuthenticationManager(tokenStore);
@@ -51,7 +47,7 @@ public class ResourceServerConfig {
 
         //构建Bearer Token
         //请求参数强制加上 Authorization BEARER token
-        http.addFilterAt((WebFilter) (exchange, chain) -> {
+        serverHttpSecurity.addFilterAt((WebFilter) (exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
             String access_tk = request.getQueryParams().getFirst("access_token");
 
@@ -77,9 +73,9 @@ public class ResourceServerConfig {
         tokenAuthenticationConverter.setAllowUriQueryParameter(true);
         authenticationWebFilter.setServerAuthenticationConverter(tokenAuthenticationConverter);
 
-        http.addFilterAt(authenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION);
+        serverHttpSecurity.addFilterAt(authenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION);
 
-        ServerHttpSecurity.AuthorizeExchangeSpec authorizeExchange = http.authorizeExchange();
+        ServerHttpSecurity.AuthorizeExchangeSpec authorizeExchange = serverHttpSecurity.authorizeExchange();
 
         //无需进行权限过滤的请求路径
         authorizeExchange.matchers(EndpointRequest.toAnyEndpoint()).permitAll();
@@ -103,8 +99,6 @@ public class ResourceServerConfig {
                 .and()
                 .httpBasic().disable()
                 .csrf().disable();
-        return http.build();
-
-
+        return serverHttpSecurity.build();
     }
 }
