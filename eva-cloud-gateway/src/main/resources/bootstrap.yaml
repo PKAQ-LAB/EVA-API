@@ -37,13 +37,14 @@ spring:
           # 匹配所有请求
           '[/**]':
             # 支持所有域
-            allowCredentials: "*"
+            allowedOrigins: "*"
             # 支持的跨域请求方法
             allowedMethods:
               - GET
               - POST
               - PUT
               - DELETE
+              - OPTIONS
 #      路由配置
 #      routes:
 #        - id: eva-sys

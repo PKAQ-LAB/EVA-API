@@ -17,10 +17,8 @@ dependencies {
                    "${lib.sentinel}",
                    "${lib.nacos_config}",
                    "${lib.nacos_client}",
-                   "${lib.eva_core}",
-                   "${lib.jwt}",
-                   "${lib.security}",
+                   "${lib.security_config}",
                    "${lib.resource_server}",
-                   "${lib.oauth2}",
+                   "${lib.jose}",
                    "${lib.hutool}"
 }
