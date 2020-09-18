@@ -20,5 +20,6 @@ dependencies {
                    "${lib.security_config}",
                    "${lib.resource_server}",
                    "${lib.jose}",
+                   "${lib.oauth2}",
                    "${lib.hutool}"
 }
