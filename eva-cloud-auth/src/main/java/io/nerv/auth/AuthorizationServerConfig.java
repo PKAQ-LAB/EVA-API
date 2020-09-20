@@ -94,9 +94,18 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 .authorizedGrantTypes("password", "refresh_token","password");
     }
 
+    /**
+     * 配置令牌端点安全约束
+     */
     @Override
-    public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
-        security.allowFormAuthenticationForClients();
+    public void configure(AuthorizationServerSecurityConfigurer security) {
+        security
+                // oauth/check_token公开
+                .checkTokenAccess("permitAll()")
+                // oauth/token_key 公开密钥
+                .tokenKeyAccess("permitAll()")
+                // 允许表单认证
+                .allowFormAuthenticationForClients();
     }
 
 }
