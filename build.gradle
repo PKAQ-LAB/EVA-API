@@ -25,6 +25,7 @@ ext {
             "feignHttp": "io.github.openfeign:feign-httpclient",
             "gateway": "org.springframework.cloud:spring-cloud-starter-gateway",
             "security": "org.springframework.cloud:spring-cloud-starter-security",
+            "security_config": "org.springframework.security:spring-security-config",
             "oauth2": "org.springframework.cloud:spring-cloud-starter-oauth2",
             "oauth2_client": "org.springframework.security:spring-security-oauth2-client",
             "resource_server": "org.springframework.security:spring-security-oauth2-resource-server",
@@ -65,6 +66,7 @@ subprojects {
 
     repositories {
         mavenLocal()
+        mavenCentral()
         maven { url"https://maven.aliyun.com/repository/central" }
         maven { url"https://maven.aliyun.com/repository/jcenter" }
         maven { url"https://mirrors.huaweicloud.com" }
@@ -72,8 +74,8 @@ subprojects {
         maven { url"https://maven.aliyun.com/repository/spring-plugin" }
 		maven { url"https://maven.springframework.org"}
         maven { url"https://repo.spring.io/libs-release" }
+
         jcenter()
-        mavenCentral()
     }
 
     dependencies {
