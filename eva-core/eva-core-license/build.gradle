@@ -1,0 +1,15 @@
+apply from: '../../publish.gradle'
+project.archivesBaseName = 'eva-core-license'
+project.description='eva license support'
+
+dependencies {
+
+    implementation("${lib.web}"){
+        exclude module: 'spring-boot-starter-tomcat'
+    }
+
+    implementation  project(":eva-core:eva-core-common"),
+                    "${lib.undertow}"
+
+    api             "${lib.truelicense}"
+}

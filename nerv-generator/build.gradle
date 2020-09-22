@@ -1,4 +1,4 @@
-project.archivesBaseName = 'addon-generator'
+project.archivesBaseName = 'extra-generator'
 
 bintrayUpload.enabled = false
 
@@ -9,7 +9,7 @@ jar {
 description = """generator"""
 // 依赖配置
 dependencies {
-	implementation  project(":eva-core"),
+	implementation  project(":eva-core:eva-core-common"),
 					"${lib.velocity}",
 					"${lib.mybatis_plus_generator}"
 }

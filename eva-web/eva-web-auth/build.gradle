@@ -1,0 +1,9 @@
+apply from: '../../publish.gradle'
+project.archivesBaseName = 'eva-web-auth'
+project.description='we jar with system management'
+
+dependencies {
+    implementation	project(":eva-web:eva-web-base"),
+                    project(":eva-web:eva-web-sys"),
+                    project(":eva-core:eva-core-security")
+}

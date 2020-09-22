@@ -1,7 +1,7 @@
 package io.nerv.web.jxc.purchasing.order.ctrl;
 
-import io.nerv.core.mvc.ctrl.jpa.StdBaseCtrl;
-import io.nerv.core.mvc.util.Response;
+import StdBaseCtrl;
+import Response;
 import PurchasingOrder;
 import PurchasingServices;
 import io.swagger.annotations.Api;

@@ -1,6 +1,6 @@
 package ${packageName}.domain;
 
-import io.nerv.core.mvc.entity.jpa.StdBaseDomain;
+import StdBaseDomain;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

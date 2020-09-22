@@ -1,0 +1,8 @@
+apply from: '../../publish.gradle'
+project.archivesBaseName = 'eva-core-data-jpa'
+project.description='eva jpa support'
+
+dependencies {
+    implementation     project(":eva-core:eva-core-common")
+    api                 "${lib.jpa}"
+}

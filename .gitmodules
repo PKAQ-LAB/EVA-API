@@ -1,8 +1,0 @@
-[submodule "mobile"]
-	path = mobile
-	url = git@github.com:pkaq/AVA.git
-	branch = master
-[submodule "web"]
-	path = web
-	url = http://192.168.10.166:10080/Baseline/EVA-Antd
-	branch = Adam

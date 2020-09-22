@@ -1,0 +1,16 @@
+apply from: '../../publish.gradle'
+project.archivesBaseName = 'eva-core-web'
+project.description='eva web support with all base modules'
+
+dependencies {
+    api("${lib.web}"){
+        exclude module: 'spring-boot-starter-tomcat'
+    }
+
+    api  project(":eva-core:eva-core-data-mybatis"),
+         project(":eva-core:eva-core-common"),
+         project(":eva-core:eva-core-cache"),
+         project(":eva-core:eva-core-log")
+
+    api "${lib.undertow}"
+}

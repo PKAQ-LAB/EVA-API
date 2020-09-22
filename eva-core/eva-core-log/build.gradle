@@ -1,0 +1,7 @@
+apply from: '../../publish.gradle'
+project.archivesBaseName = 'eva-core-log'
+project.description='eva log support'
+
+dependencies {
+    implementation  project(":eva-core:eva-core-common")
+}

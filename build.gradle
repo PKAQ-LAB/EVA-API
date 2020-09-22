@@ -17,7 +17,7 @@ ext {
            "truelicense" : "de.schlichtherle.truelicense:truelicense-core:${truelicense}",
            "jasypt" : "com.github.ulisesbocchio:jasypt-spring-boot-starter:${jasypt}",
            "validation" : "org.springframework.boot:spring-boot-starter-validation",
-
+           "json" : "org.springframework.boot:spring-boot-starter-json",
            // lombok
            "lombok" : "org.projectlombok:lombok:${lombok}",
             // cache
@@ -26,6 +26,7 @@ ext {
            "cache" : "org.springframework.boot:spring-boot-starter-cache",
            // AOP
            "aop" : "org.springframework.boot:spring-boot-starter-aop",
+           "jdbc" : "org.springframework.boot:spring-boot-starter-jdbc",
            // security
            "security" : "org.springframework.boot:spring-boot-starter-security",
            // web
@@ -45,6 +46,7 @@ ext {
             // jwt
            "auth0" : "com.auth0:java-jwt:${auth0}",
            "jjwt" : "io.jsonwebtoken:jjwt:${jjwt}",
+           "jwt": "com.nimbusds:nimbus-jose-jwt:${jwt}",
             // wxjava
            "wxmp" : "com.github.binarywang:weixin-java-mp:${weixin}",
            "wxpay" : "com.github.binarywang:weixin-java-pay:${weixin}",
@@ -63,8 +65,9 @@ ext {
 
 allprojects {
     apply plugin: "name.remal.check-dependency-updates"
+    apply plugin: "idea"
     group = 'io.nerv'
-    version = '2.5.7'
+    version = '2.6.0'
 }
 
 subprojects {

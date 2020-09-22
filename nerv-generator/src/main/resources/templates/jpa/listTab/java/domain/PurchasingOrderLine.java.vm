@@ -23,7 +23,7 @@ public class PurchasingOrderLine {
     private static final long serialVersionUID = 1L;
 
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "snowflake")
-    @GenericGenerator(name = "snowflake", strategy = "io.nerv.core.util.jpa.SnowflakeGenerator")
+    @GenericGenerator(name = "snowflake", strategy = "SnowflakeGenerator")
     @Id
     private String lineId;
 

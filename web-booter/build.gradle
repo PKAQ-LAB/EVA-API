@@ -1,0 +1,35 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+apply plugin: "org.springframework.boot"
+
+bintrayUpload.enabled = false
+
+jar {
+    enabled = true
+}
+
+bootJar {
+    mainClassName = 'io.nerv.WebBooter'
+}
+
+description = """web"""
+
+compileJava.dependsOn(processResources)
+
+processResources {
+    println "==> Load configuration for $profile"
+
+    from(sourceSets.main.resources.srcDirs) {
+        filter(ReplaceTokens, tokens: [profile: profile])
+    }
+
+}
+
+dependencies {
+    implementation project(":eva-web:eva-web-auth"),
+                   project(":eva-web:eva-web-base"),
+                   project(":eva-web:eva-web-sys"),
+                   project(":eva-core:eva-core-license"),
+                   "${lib.bootAdmin}",
+                   "${lib.devTools}"
+}

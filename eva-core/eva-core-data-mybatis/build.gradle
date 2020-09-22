@@ -1,0 +1,10 @@
+apply from: '../../publish.gradle'
+project.archivesBaseName = 'eva-core-data-mybatis'
+project.description='eva mybatis support'
+
+dependencies {
+    implementation  project(":eva-core:eva-core-common"),
+                    project(":eva-core:eva-core-log")
+
+    api             "${lib.mybatisPlus}"
+}

@@ -1,0 +1,17 @@
+apply from: '../../publish.gradle'
+project.archivesBaseName = 'extra-weixin'
+
+dependencies {
+    implementation("${lib.web}"){
+        exclude module: 'spring-boot-starter-tomcat'
+    }
+
+    implementation "${lib.undertow}"
+
+    implementation project(":eva-core:eva-core-common")
+
+        // 微信公众号
+    api "${lib.wxmp}",
+        // 微信支付
+        "${lib.wxpay}"
+}

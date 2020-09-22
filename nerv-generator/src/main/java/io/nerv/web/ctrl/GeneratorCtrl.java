@@ -1,6 +1,6 @@
 package io.nerv.web.ctrl;
 
-import io.nerv.core.mvc.util.Response;
+import io.nerv.core.mvc.vo.Response;
 import io.nerv.web.entity.GeneratorConfig;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
