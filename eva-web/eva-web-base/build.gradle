@@ -1,5 +1,5 @@
 apply from: '../../publish.gradle'
-project.archivesBaseName = 'eva-core-web'
+project.archivesBaseName = 'eva-web-base'
 project.description='eva web support with all base modules'
 
 dependencies {
