@@ -6,9 +6,10 @@ plugins {
 }
 
 ext {
-    lib = ["eva_core" : "io.nerv:eva-core:${eva}",
-           "eva_sys" : "io.nerv:eva-sys:${eva}",
-           "eva_auth" : "io.nerv:eva-auth:${eva}",
+    lib = ["eva_core" : "io.nerv:eva-web-base:${eva}",
+           "eva_sys" : "io.nerv:eva-web-sys:${eva}",
+           "eva_auth" : "io.nerv:eva-web-auth:${eva}",
+           "eva_license" : "io.nerv:eva-core-license:${eva}",
            "boot" : "org.springframework.boot:spring-boot-dependencies:${spring_boot_ver}",
            "lombok" : "org.projectlombok:lombok:${lombok}",
            "test" : "org.springframework.boot:spring-boot-starter-test",

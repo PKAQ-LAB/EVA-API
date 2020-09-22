@@ -25,7 +25,9 @@ processResources {
 
 dependencies {
    implementation "${lib.eva_core}",
+		   		  "${lib.eva_sys}",
 		   		  "${lib.eva_auth}",
+		   		  "${lib.eva_license}",
                   "${lib.bootAdmin}",
 		   		  "${lib.devTools}",
 		   		  project(":eva-jxc")

@@ -1,12 +1,12 @@
 package io.nerv.web.jxc.inventory.accbook.ctrl;
 
+import io.nerv.core.mvc.vo.Response;
 import io.nerv.web.jxc.inventory.accbook.entity.StockEntity;
 import io.nerv.web.jxc.inventory.accbook.service.StockService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.nerv.core.mvc.ctrl.mybatis.PureBaseCtrl;
-import io.nerv.core.mvc.util.Response;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
