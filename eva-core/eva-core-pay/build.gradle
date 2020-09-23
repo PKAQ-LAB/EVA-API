@@ -1,5 +1,5 @@
 apply from: '../../publish.gradle'
-project.archivesBaseName = 'extra-pay'
+project.archivesBaseName = 'eva-core-pay'
 
 dependencies {
     implementation("${lib.web}"){

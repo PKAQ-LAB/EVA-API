@@ -1,5 +1,5 @@
 apply from: '../../publish.gradle'
-project.archivesBaseName = 'extra-weixin'
+project.archivesBaseName = 'eva-core-weixin'
 
 dependencies {
     implementation("${lib.web}"){
