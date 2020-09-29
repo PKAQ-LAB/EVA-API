@@ -45,6 +45,12 @@ spring:
               - PUT
               - DELETE
               - OPTIONS
+      routes:
+        - id: eva-jxc
+          uri: lb://eva-jxc
+          predicates:
+            - Path=/jxc/**
+          #            - Header=Cookie,Set-Cookie
 #      路由配置
 #      routes:
 #        - id: eva-sys

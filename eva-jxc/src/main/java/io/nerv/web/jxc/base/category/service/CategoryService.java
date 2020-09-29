@@ -5,7 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.service.mybatis.StdBaseService;
-import io.nerv.core.mvc.util.Response;
+import io.nerv.core.mvc.vo.Response;
 import io.nerv.core.util.tree.TreeHelper;
 import io.nerv.web.jxc.base.category.entity.CategoryEntity;
 import io.nerv.web.jxc.base.category.mapper.CategoryMapper;

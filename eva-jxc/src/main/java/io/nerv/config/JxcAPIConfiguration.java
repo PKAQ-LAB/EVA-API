@@ -1,6 +1,7 @@
 package io.nerv.config;
 
 import cn.hutool.core.collection.CollUtil;
+import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j;
 import io.nerv.core.docs.SwaggerHelper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +14,7 @@ import springfox.documentation.service.ApiKey;
 import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
  * swagger配置类
@@ -22,8 +24,9 @@ import springfox.documentation.spring.web.plugins.Docket;
  */
 @Configuration
 @Profile("dev")
+@EnableSwagger2
+@EnableKnife4j
 public class JxcAPIConfiguration {
-    @Bean
     public Docket jxcApi() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .groupName("进销存管理")

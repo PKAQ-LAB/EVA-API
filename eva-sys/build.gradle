@@ -25,7 +25,7 @@ processResources {
 
 
 dependencies {
-    implementation	"${lib.eva_core}",
+    implementation	"${lib.eva_core_common}",
                     "${lib.nacos_config}",
                     "${lib.nacos_client}",
                     "${lib.feign}",

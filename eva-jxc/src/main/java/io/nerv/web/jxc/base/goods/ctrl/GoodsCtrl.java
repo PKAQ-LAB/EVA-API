@@ -1,7 +1,7 @@
 package io.nerv.web.jxc.base.goods.ctrl;
 
 import io.nerv.core.mvc.ctrl.mybatis.StdBaseCtrl;
-import io.nerv.core.mvc.util.Response;
+import io.nerv.core.mvc.vo.Response;
 import io.nerv.web.jxc.base.goods.entity.GoodsEntity;
 import io.nerv.web.jxc.base.goods.service.GoodsService;
 import io.swagger.annotations.Api;

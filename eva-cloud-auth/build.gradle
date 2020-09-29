@@ -20,8 +20,8 @@ processResources {
 }
 
 dependencies {
-    implementation "${lib.eva_core}",
-                   "${lib.eva_sys}",
+    implementation "${lib.eva_core_common}",
+                   "${lib.eva_web_sys}",
                    "${lib.nacos_config}",
                    "${lib.nacos_client}",
                    "${lib.oauth2}",

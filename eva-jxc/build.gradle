@@ -25,10 +25,9 @@ processResources {
 
 // 依赖配置
 dependencies {
-    implementation "${lib.eva_core}",
+    implementation "${lib.eva_web_base}",
                    "${lib.feign}",
                    "${lib.nacos_config}",
                    "${lib.nacos_client}",
-                   "${lib.feignHttp}",
-                   "${lib.oauth2}"
+                   "${lib.feignHttp}"
 }

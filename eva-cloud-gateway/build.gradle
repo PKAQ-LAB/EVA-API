@@ -14,6 +14,7 @@ processResources {
 
 dependencies {
     implementation "${lib.gateway}",
+                   "${lib.knife4j}",
                    "${lib.sentinel}",
                    "${lib.nacos_config}",
                    "${lib.nacos_client}",

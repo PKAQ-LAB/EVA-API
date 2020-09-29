@@ -2,6 +2,6 @@ project.archivesBaseName = 'eva-auth'
 project.description='authority jar with system management'
 
 dependencies {
-    implementation	"${lib.eva_core}"
-    api             "${lib.eva_sys}"
+    implementation	"${lib.eva_core_common}"
+    api             "${lib.eva_web_sys}"
 }
