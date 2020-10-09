@@ -12,7 +12,7 @@ dependencies {
     api "${lib.hutool}",
         "${lib.aop}",
         "${lib.jdbc}",
-        "${lib.knife4j}",
+        "${lib.knife4j_spring}",
         "${lib.jwt}",
         "${lib.json}",
         "${lib.validation}"

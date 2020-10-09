@@ -42,7 +42,8 @@ ext {
            // mybatis
            "mybatisPlus" : "com.baomidou:mybatis-plus-boot-starter:${mybatis_plus_starter}",
            // swagger
-           "knife4j" : "com.github.xiaoymin:knife4j-spring-boot-starter:${knife4j}",
+           "knife4j_spring" : "com.github.xiaoymin:knife4j-spring:${knife4j}",
+           "knife4j_ui" : "com.github.xiaoymin:knife4j-spring-ui:${knife4j}",
             // jwt
            "auth0" : "com.auth0:java-jwt:${auth0}",
            "jjwt" : "io.jsonwebtoken:jjwt:${jjwt}",
@@ -96,6 +97,8 @@ subprojects {
 
     repositories {
         mavenLocal()
+        jcenter()
+        mavenCentral()
         maven { url"https://maven.aliyun.com/repository/central" }
         maven { url"https://maven.aliyun.com/repository/jcenter" }
         maven { url"https://mirrors.huaweicloud.com" }
@@ -103,8 +106,7 @@ subprojects {
         maven { url"https://maven.aliyun.com/repository/spring-plugin" }
 		maven { url"https://maven.springframework.org"}
         maven { url"https://repo.spring.io/libs-release" }
-        jcenter()
-        mavenCentral()
+
     }
 
     dependencies {

@@ -30,6 +30,7 @@ dependencies {
                    project(":eva-web:eva-web-base"),
                    project(":eva-web:eva-web-sys"),
                    project(":eva-core:eva-core-license"),
+                   "${lib.knife4j_ui}",
                    "${lib.bootAdmin}",
                    "${lib.devTools}"
 }
