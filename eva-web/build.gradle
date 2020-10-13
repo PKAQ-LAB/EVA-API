@@ -3,11 +3,11 @@ import org.apache.tools.ant.filters.ReplaceTokens
 apply plugin: "org.springframework.boot"
 
 jar {
-	enabled = true
+    enabled = true
 }
 
 bootJar {
-	mainClassName = 'io.nerv.WebBooter'
+    mainClassName = 'io.nerv.WebBooter'
 }
 
 description = """web"""
@@ -15,20 +15,19 @@ description = """web"""
 compileJava.dependsOn(processResources)
 
 processResources {
-	println "==> Load configuration for $profile"
+    println "==> Load configuration for $profile"
 
-	from(sourceSets.main.resources.srcDirs) {
-		filter(ReplaceTokens, tokens: [profile: profile])
-	}
+    from(sourceSets.main.resources.srcDirs) {
+        filter(ReplaceTokens, tokens: [profile: profile])
+    }
 
 }
 
 dependencies {
-   implementation "${lib.eva_core}",
-		   		  "${lib.eva_sys}",
-		   		  "${lib.eva_auth}",
-		   		  "${lib.eva_license}",
-                  "${lib.bootAdmin}",
-		   		  "${lib.devTools}",
-		   		  project(":eva-jxc")
+    implementation "${lib.eva_auth}",
+                   "${lib.eva_sys}",
+                   "${lib.eva_core}",
+                   "${lib.knife4j_ui}",
+                   "${lib.bootAdmin}",
+                   "${lib.devTools}"
 }
