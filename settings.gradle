@@ -1,7 +1,6 @@
 rootProject.name = 'eva'
 include 'eva-jxc'
 include 'eva-sys'
-include 'eva-auth'
 include 'eva-cloud-gateway'
 include 'eva-cloud-auth'
 
