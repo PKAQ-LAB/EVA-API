@@ -23,7 +23,7 @@ import io.nerv.web.sys.user.entity.UserEntity;
 import io.nerv.web.sys.user.mapper.UserMapper;
 import io.nerv.web.sys.user.vo.PasswordVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ import java.util.Map;
 public class UserService extends StdBaseService<UserMapper, UserEntity> {
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
     private OrganizationMapper organizationMapper;

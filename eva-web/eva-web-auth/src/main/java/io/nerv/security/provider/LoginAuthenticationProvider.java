@@ -5,12 +5,12 @@ import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.exception.OathException;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -24,13 +24,14 @@ public class LoginAuthenticationProvider extends AbstractUserDetailsAuthenticati
 
     private UserDetailsService userDetailsService;
 
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    public LoginAuthenticationProvider(UserDetailsService jwtUserDetailsService, PasswordEncoder passwordEncoder) {
-        this.userDetailsService = jwtUserDetailsService;
+    public LoginAuthenticationProvider(UserDetailsService userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder, PasswordEncoder passwordEncoder) {
+        this.userDetailsService = userDetailsService;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.passwordEncoder = passwordEncoder;
-
         this.setHideUserNotFoundExceptions(false);
     }
 
@@ -77,7 +78,8 @@ public class LoginAuthenticationProvider extends AbstractUserDetailsAuthenticati
 
         String presentedPassword = authentication.getCredentials().toString();
 
-        boolean matches = this.getPasswordEncoder().matches(presentedPassword, userDetails.getPassword());
+
+        boolean matches =  this.bCryptPasswordEncoder.matches(presentedPassword, userDetails.getPassword());
 
         if (!matches) {
             throw new OathException(BizCodeEnum.ACCOUNT_OR_PWD_ERROR);

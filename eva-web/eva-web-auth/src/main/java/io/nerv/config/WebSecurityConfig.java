@@ -23,8 +23,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.writers.StaticHeadersWriter;
@@ -82,10 +80,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private JwtAuthFilter jwtAuthFilter;
 
-    @Bean
-    public static PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -93,7 +89,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             // 设置UserDetailsService
             .userDetailsService(this.userDetailsService)
             // 使用BCrypt进行密码的hash
-            .passwordEncoder(passwordEncoder());
+            .passwordEncoder(bCryptPasswordEncoder);
         // 默认超级用户
         auth.inMemoryAuthentication()
                 .withUser("toor")
