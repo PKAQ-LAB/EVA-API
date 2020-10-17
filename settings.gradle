@@ -1,4 +1,0 @@
-rootProject.name = 'eva'
-include 'eva-web'
-include 'eva-jxc'
-

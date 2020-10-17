@@ -1,0 +1,76 @@
+debug: true
+# 日志
+logging:
+  pattern:
+    level: WARN
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%thread]){faint} %clr(%-40.40logger{39}){cyan} %L %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
+  # 日志文件配置 file 和 path只需配置一个 不可同时配置 ， 同时配置只生效file
+  file:
+    name: e:/applogs/webapp.log
+  level:
+    org:
+      springframework:
+        boot:
+          autoconfigure:
+            logging: info
+#  监控
+spring:
+#  boot:
+#    admin:
+#      client:
+#        url: http://192.168.10.166:19001/
+#        username: eva
+#        password: 7u8i9o0p
+#        instance:
+#          prefer-ip: true
+  # 数据源
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:p6spy:mysql://xilai.my.to:12306/binhai_bi?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&autoReconnect=true&failOverReadOnly=false
+    username: ENC(5m0RD1tGZsPZqS0G7GGFG7zXMbv9Z86AN053Jhcz2wXQpYpLhRiUvnCjReWaMwxG)
+    password: ENC(5m0RD1tGZsPZqS0G7GGFG7zXMbv9Z86AN053Jhcz2wXQpYpLhRiUvnCjReWaMwxG)
+#    GsyjJCmmNRiHRVGmXdy+QErynoqC/cOBlt5V9dPZ+c2g2XwPc5+BbKrSxWLsyCGG
+    driver-class-name: com.p6spy.engine.spy.P6SpyDriver
+  hikari:
+    minimum-idle: 10
+    maximum-pool-size: 50
+    max-lifetime: 3000
+    connection-test-query: select 1
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      additional-paths: src/main/java
+# redis 配置
+  redis:
+    host: 118.31.166.146
+    port: 6379
+    password: 7u8i9o0p
+    timeout: 10000
+    database: 0
+# 校验表结构
+  jpa:
+    hibernate:
+      ddl-auto: none
+    database-platform: org.hibernate.dialect.MySQL5Dialect
+eva:
+  # 文件上传
+  upload:
+    # ng or dfs
+    type: dfs
+    tempPath: E://evapic/temp
+    storagePath: E://evapic/storage
+    allowSuffixName: jpg,png,jpeg
+    # dfs 地址
+    serverUrl: http://118.31.166.146:18109/ga
+#    监控配置
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: '*'
+#  endpoint:
+#    health:
+#      show-details: ALWAYS
+#  server:
+#    address: 192.168.10.127

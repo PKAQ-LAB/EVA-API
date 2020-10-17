@@ -1,15 +1,5 @@
-/*.iml
 /.gradle
 /.idea
-/*/*.iml
-/*/build
-/docs/db/*.pdb
-/*.log
-/*.lock
-/*/out
-
-/wxapp/yarn.lock
-/wxapp/.history
-/wxapp/.temp
-/wxapp/node_modules
+/build
 /gradle
+/spy.log
