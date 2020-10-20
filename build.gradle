@@ -27,6 +27,8 @@ bootJar {
     mainClassName = 'io.nerv.WebBooter'
 }
 
+compileJava.dependsOn(processResources)
+
 processResources {
 	println "==> Load configuration for $profile"
 
