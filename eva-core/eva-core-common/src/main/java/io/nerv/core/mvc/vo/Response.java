@@ -10,9 +10,15 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Accessors(chain = true)
 public class Response{
+
     private String code;
+
     private boolean success;
+
     private String message;
+
+    private String errorMessage;
+
     private Object data;
 
     public Response() {
@@ -96,7 +102,7 @@ public class Response{
     public Response failure(String code, String message) {
         this.success = false;
         this.code = code;
-        this.message = message;
+        this.errorMessage = message;
 
         return this;
     }
@@ -111,7 +117,7 @@ public class Response{
 
         this.code = errorCodeEnum.getIndex();
 
-        this.message = String.format("[%s] %s",
+        this.errorMessage = String.format("[%s] %s",
                                      errorCodeEnum.getIndex(), errorCodeEnum.getName());
 
         return this;
@@ -124,7 +130,7 @@ public class Response{
      */
     public Response failure(String code, String message, Object data) {
         this.data = data;
-        this.message = message;
+        this.errorMessage = message;
         this.success = false;
         this.code = code;
 
