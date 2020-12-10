@@ -1,5 +1,5 @@
 # 基于哪哥镜像
-FROM mcr.microsoft.com/java/jre:11u2-zulu-alpine
+FROM mcr.microsoft.com/java/jre:11u9-zulu-alpine
 # 作者
 MAINTAINER W.F#pkaq@msn.com
 # 映射/tmp到主机
