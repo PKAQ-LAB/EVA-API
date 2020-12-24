@@ -68,7 +68,7 @@ allprojects {
     apply plugin: "name.remal.check-dependency-updates"
     apply plugin: "idea"
     group = 'io.nerv'
-    version = '2.6.2'
+    version = '2.6.3'
 }
 
 subprojects {
