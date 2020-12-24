@@ -197,6 +197,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     "/**/*.css",
                     "/**/*.js",
                     "/webjars/**",
+                    "/ureport/**",
                     "/swagger-resources/**",
                     "/*/api-docs"
             );

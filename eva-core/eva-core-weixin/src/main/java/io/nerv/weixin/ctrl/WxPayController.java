@@ -1,9 +1,7 @@
 package io.nerv.weixin.ctrl;
 
-import cn.hutool.core.net.NetUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.XmlUtil;
-import cn.hutool.http.HttpUtil;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
 import com.github.binarywang.wxpay.constant.WxPayConstants;
 import com.github.binarywang.wxpay.exception.WxPayException;
@@ -14,12 +12,11 @@ import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.vo.Response;
 import io.nerv.util.IpUtil;
 import io.swagger.annotations.Api;
-import io.undertow.util.NetworkUtils;
 import lombok.extern.slf4j.Slf4j;
+import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
+import me.chanjar.weixin.common.bean.oauth2.WxOAuth2AccessToken;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
-import me.chanjar.weixin.mp.bean.result.WxMpOAuth2AccessToken;
-import me.chanjar.weixin.mp.bean.result.WxMpUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -52,13 +49,13 @@ public class WxPayController {
     Map<String, String> payInfo = null;
 
     // 获取openid
-    WxMpOAuth2AccessToken wxMpOAuth2AccessToken = this.wxMpService.oauth2getAccessToken(code);
-    WxMpUser wxMpUser = this.wxMpService.oauth2getUserInfo(wxMpOAuth2AccessToken, null);
+    WxOAuth2AccessToken wxMpOAuth2AccessToken = this.wxMpService.getOAuth2Service().getAccessToken(code);
+    WxOAuth2UserInfo wxMpUser = this.wxMpService.getOAuth2Service().getUserInfo(wxMpOAuth2AccessToken, null);
 
     String body = "IPHONE";
 
     WxPayUnifiedOrderRequest prepayInfo = WxPayUnifiedOrderRequest.newBuilder()
-            .openid(wxMpUser.getOpenId())
+            .openid(wxMpUser.getOpenid())
             .outTradeNo(IdUtil.getSnowflake(1, 1).nextIdStr())
             .totalFee(1)
             .body(body)
