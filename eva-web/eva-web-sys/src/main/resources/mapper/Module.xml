@@ -138,8 +138,15 @@
 
   <!-- 根据parentId查询子节点数据-->
   <select id="listOrder" resultType="Integer">
-    select  ifnull(max(orders),0)
-    from sys_module where
+    select
+      <if test="_databaseId='mysql'">
+        ifnull(max(orders),0)
+      </if>
+      <if test="_databaseId='oracle'">
+        nvl(max(orders),0)
+      </if>
+    from
+      sys_module where
     <choose>
       <when test='pid == null or pid == "0"'>
           parent_ID is null

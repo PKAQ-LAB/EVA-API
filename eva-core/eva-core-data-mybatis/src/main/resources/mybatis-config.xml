@@ -5,6 +5,10 @@
     <settings>
         <setting name="lazyLoadingEnabled" value="true"/>
     </settings>
+    <databaseIdProvider type="DB_VENDOR">
+        <property name="Oracle" value="oracle"/>
+        <property name="MySQL" value="mysql"/>
+    </databaseIdProvider>
     <typeAliases>
         <typeAlias alias="Integer" type="java.lang.Integer" />
         <typeAlias alias="Long" type="java.lang.Long" />
