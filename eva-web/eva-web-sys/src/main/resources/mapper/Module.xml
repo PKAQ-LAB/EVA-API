@@ -139,10 +139,10 @@
   <!-- 根据parentId查询子节点数据-->
   <select id="listOrder" resultType="Integer">
     select
-      <if test="_databaseId='mysql'">
+      <if test="_databaseId =='mysql'">
         ifnull(max(orders),0)
       </if>
-      <if test="_databaseId='oracle'">
+      <if test="_databaseId =='oracle'">
         nvl(max(orders),0)
       </if>
     from
