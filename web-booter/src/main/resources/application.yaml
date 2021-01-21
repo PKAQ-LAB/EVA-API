@@ -24,6 +24,7 @@ spring:
     time-zone: GMT+8
     default-property-inclusion: always
     serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
       #格式化输出
       indent_output: true
 # mybatis

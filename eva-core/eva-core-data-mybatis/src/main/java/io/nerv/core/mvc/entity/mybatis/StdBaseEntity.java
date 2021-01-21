@@ -4,6 +4,9 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -28,6 +31,8 @@ public abstract class StdBaseEntity implements Entity, Serializable {
     @ApiModelProperty("创建时间")
     @TableField(fill = FieldFill.INSERT)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern= "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime gmtCreate;
 
     @ApiModelProperty("修改人")
@@ -37,6 +42,8 @@ public abstract class StdBaseEntity implements Entity, Serializable {
     @ApiModelProperty("修改时间")
     @TableField(fill = FieldFill.INSERT_UPDATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat( pattern= "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime gmtModify;
 
     @ApiModelProperty("备注")

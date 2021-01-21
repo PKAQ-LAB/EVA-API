@@ -18,6 +18,7 @@ ext {
            "jasypt" : "com.github.ulisesbocchio:jasypt-spring-boot-starter:${jasypt}",
            "validation" : "org.springframework.boot:spring-boot-starter-validation",
            "json" : "org.springframework.boot:spring-boot-starter-json",
+            "jsr310" : "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jsr310}",
            // lombok
            "lombok" : "org.projectlombok:lombok:${lombok}",
             // cache
