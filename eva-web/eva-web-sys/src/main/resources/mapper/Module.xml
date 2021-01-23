@@ -42,7 +42,7 @@
         R.ID=RU.ROLE_ID
         and
         ru.USER_ID = #{userId}
-      order by orders asc
+      order by m.orders asc
   </select>
   <!--根据条件查询 拥有权限的 菜单数据-->
   <select id="listGrantedModule" resultMap="BaseResultMap">
