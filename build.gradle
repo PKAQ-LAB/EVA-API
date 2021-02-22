@@ -98,8 +98,7 @@ subprojects {
 
     repositories {
         mavenLocal()
-        jcenter()
-        mavenCentral()
+
         maven { url"https://maven.aliyun.com/repository/central" }
         maven { url"https://maven.aliyun.com/repository/jcenter" }
         maven { url"https://mirrors.huaweicloud.com" }
@@ -108,6 +107,8 @@ subprojects {
 		maven { url"https://maven.springframework.org"}
         maven { url"https://repo.spring.io/libs-release" }
 
+        jcenter()
+        mavenCentral()
     }
 
     dependencies {
