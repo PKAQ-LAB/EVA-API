@@ -1,7 +1,7 @@
 package io.nerv.user.ctrl;
 
-import org.junit.Test;
 import io.nerv.BaseTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 

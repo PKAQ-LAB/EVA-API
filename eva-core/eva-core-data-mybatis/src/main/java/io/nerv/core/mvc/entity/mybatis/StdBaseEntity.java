@@ -7,11 +7,11 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import io.nerv.core.mvc.entity.Entity;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
  * @Datetime: 2018/3/13 22:48
  */
 @Data
-public abstract class StdBaseEntity implements Entity, Serializable {
+public abstract class StdBaseEntity extends Entity {
     @TableId(type = IdType.ASSIGN_UUID)
     private String id;
 

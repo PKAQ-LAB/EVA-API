@@ -3,10 +3,11 @@ package io.nerv.web.sys.module.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.nerv.core.mvc.entity.mybatis.Entity;
+import io.nerv.core.mvc.entity.Entity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
 
 /**
@@ -17,7 +18,8 @@ import org.apache.ibatis.type.Alias;
 @Alias("moduleResource")
 @TableName("sys_module_resources")
 @ApiModel("模块资源管理")
-public class ModuleResources implements Entity {
+@EqualsAndHashCode(callSuper=false)
+public class ModuleResources extends Entity {
     private static final long serialVersionUID = 1L;
 
     @TableId(type = IdType.ASSIGN_UUID)
