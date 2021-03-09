@@ -151,11 +151,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
             httpSecurity.logout().logoutUrl("/auth/logout").logoutSuccessHandler(urlLogoutSuccessHandler);
 
+            if (this.evaConfig.getResourcePermission().isEnable()){
+                httpSecurity.addFilterAt(urlFilterSecurityInterceptor, FilterSecurityInterceptor.class);
+            }
+
             httpSecurity.exceptionHandling()
                         .authenticationEntryPoint(unauthorizedHandler)
                         .accessDeniedHandler(urlAccessDeniedHandler)
                         .and()
-                        .addFilterAt(urlFilterSecurityInterceptor, FilterSecurityInterceptor.class)
                         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                         .addFilterBefore(new JwtUsernamePasswordAuthenticationFilter("/auth/login",
                                                                                           authenticationManager(),

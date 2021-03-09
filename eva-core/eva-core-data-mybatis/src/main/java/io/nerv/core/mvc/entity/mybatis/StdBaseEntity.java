@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
  * @Datetime: 2018/3/13 22:48
  */
 @Data
-public abstract class StdBaseEntity extends Entity {
+public abstract class StdBaseEntity implements Entity {
     @TableId(type = IdType.ASSIGN_UUID)
     private String id;
 

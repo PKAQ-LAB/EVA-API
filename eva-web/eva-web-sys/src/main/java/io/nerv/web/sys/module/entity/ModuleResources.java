@@ -19,7 +19,7 @@ import org.apache.ibatis.type.Alias;
 @TableName("sys_module_resources")
 @ApiModel("模块资源管理")
 @EqualsAndHashCode(callSuper=false)
-public class ModuleResources extends Entity {
+public class ModuleResources implements Entity {
     private static final long serialVersionUID = 1L;
 
     @TableId(type = IdType.ASSIGN_UUID)

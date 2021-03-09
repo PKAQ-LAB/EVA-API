@@ -87,6 +87,8 @@ public class UrlAccessDecisionManager implements AccessDecisionManager {
                 }
                 // end for
             }
+        } else {
+            return;
         }
 
         throw new AccessDeniedException(BizCodeEnum.PERMISSION_DENY.getName());
