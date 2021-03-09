@@ -36,7 +36,7 @@ public class SysAPIConfiguration {
 
         return new Docket(DocumentationType.SWAGGER_2)
                 .groupName("系统管理")
-                .globalOperationParameters(SwaggerHelper.getHeadPars())
+                .globalRequestParameters(SwaggerHelper.getHeadPars())
                 .securitySchemes(CollUtil.toList(
                         new ApiKey("Authorization", "Authorization", "header")))
                 .apiInfo(apiInfo())
