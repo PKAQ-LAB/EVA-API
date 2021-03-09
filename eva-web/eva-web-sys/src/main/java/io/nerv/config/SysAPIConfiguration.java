@@ -25,12 +25,11 @@ import java.util.List;
 
 /**
  * swagger配置类
- * Datetime: 2016-11-25 11:44
  * @author PKAQ
  * @Profile()
  */
 @Configuration
-@Profile("dev")
+@Profile({"!prod"})
 public class SysAPIConfiguration {
     @Bean
     public Docket sysApi() {
