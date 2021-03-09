@@ -3,14 +3,18 @@ package io.nerv.web.sys.organization.ctrl;
 import cn.hutool.core.collection.CollectionUtil;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.exception.ParamException;
+import io.nerv.core.mvc.ctrl.Ctrl;
 import io.nerv.core.mvc.vo.Response;
 import io.nerv.core.mvc.vo.SingleArray;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import io.nerv.core.mvc.ctrl.mybatis.PureBaseCtrl;
 import io.nerv.web.sys.organization.entity.OrganizationEntity;
 import io.nerv.web.sys.organization.service.OrganizationService;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,7 +30,9 @@ import org.springframework.web.bind.annotation.RestController;
 @Api("组织管理")
 @RestController
 @RequestMapping("/sys/organization")
-public class OrgCtrl extends PureBaseCtrl<OrganizationService> {
+@RequiredArgsConstructor
+public class OrgCtrl extends Ctrl {
+    private final OrganizationService service;
 
     @PostMapping("/checkUnique")
     @ApiOperation(value = "校验code唯一性",response = Response.class)

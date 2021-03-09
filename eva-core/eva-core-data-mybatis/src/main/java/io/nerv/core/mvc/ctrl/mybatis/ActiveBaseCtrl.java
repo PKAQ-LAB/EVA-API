@@ -6,6 +6,7 @@ import io.nerv.core.enums.BizCode;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.enums.ResponseEnumm;
 import io.nerv.core.exception.ParamException;
+import io.nerv.core.mvc.ctrl.Ctrl;
 import io.nerv.core.mvc.service.mybatis.ActiveBaseService;
 import io.nerv.core.mvc.vo.Response;
 import io.nerv.core.mvc.vo.SingleArray;
@@ -25,11 +26,9 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author S.PKAQ
  */
 @Getter
-public abstract class ActiveBaseCtrl<T extends ActiveBaseService, E extends Model> {
+public abstract class ActiveBaseCtrl<T extends ActiveBaseService, E extends Model> extends Ctrl {
     @Autowired
     protected T service;
-    @Autowired
-    protected I18NHelper i18NHelper;
 
     @PostMapping("del")
     @ApiOperation(value = "根据ID删除/批量删除记录",response = Response.class)
@@ -64,45 +63,4 @@ public abstract class ActiveBaseCtrl<T extends ActiveBaseService, E extends Mode
                             @PathVariable("id") String id){
         return this.success(this.service.getById(id));
     }
-    /**
-     * 根据编码获取国际化字符串
-     * @param code
-     * @return
-     */
-    protected String locale(String code){
-        return this.i18NHelper.getMessage(code);
-    }
-    /**
-     * 操作成功
-     * @return
-     */
-    protected Response success(){
-        return new Response().success(null);
-    }
-    /**
-     * 返回成功结果
-     * @param data
-     * @return
-     */
-    protected Response success(Object data){
-        return new Response().success(data);
-    }
-    /**
-     * 返回成功结果
-     * @param data
-     * @return
-     */
-    protected Response success(Object data, String msg){
-        return new Response().success(data, msg);
-    }
-    /**
-     * 返回失败结果
-     * @return
-     */
-    protected Response failure() { return new Response().failure(BizCodeEnum.SERVER_ERROR);}
-    /**
-     * 返回失败结果
-     * @return
-     */
-    protected Response failure(BizCode bizCode) { return new Response().failure(bizCode);}
 }

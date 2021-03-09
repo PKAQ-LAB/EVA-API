@@ -265,7 +265,7 @@ public class RedisUtil {
      * @param hashKeys
      * @return 删除成功的 数量
      */
-    public Long delete(String key, String ...hashKeys){
+    public Long delete(String key, String... hashKeys){
         return redisTemplate.opsForHash().delete(key, hashKeys);
     }
 

@@ -4,7 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.exception.ParamException;
-import io.nerv.core.mvc.ctrl.mybatis.PureBaseCtrl;
+import io.nerv.core.mvc.ctrl.Ctrl;
 import io.nerv.core.mvc.vo.Response;
 import io.nerv.core.mvc.vo.SingleArray;
 import io.nerv.web.sys.role.entity.RoleEntity;
@@ -13,6 +13,7 @@ import io.nerv.web.sys.role.service.RoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -23,7 +24,9 @@ import org.springframework.web.bind.annotation.*;
 @Api( tags = "角色管理")
 @RestController
 @RequestMapping("/sys/role")
-public class RoleCtrl extends PureBaseCtrl<RoleService> {
+@RequiredArgsConstructor
+public class RoleCtrl extends Ctrl {
+    private final RoleService service;
 
     @PostMapping("/checkUnique")
     @ApiOperation(value = "校验角色编码唯一性",response = Response.class)

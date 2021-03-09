@@ -2,7 +2,7 @@ package io.nerv.web.sys.dict.ctrl;
 
 import cn.hutool.core.util.StrUtil;
 import io.nerv.core.exception.ParamException;
-import io.nerv.core.mvc.ctrl.mybatis.PureBaseCtrl;
+import io.nerv.core.mvc.ctrl.Ctrl;
 import io.nerv.core.mvc.vo.Response;
 import io.nerv.web.sys.dict.cache.DictCacheHelper;
 import io.nerv.web.sys.dict.entity.DictEntity;
@@ -10,13 +10,8 @@ import io.nerv.web.sys.dict.service.DictService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -28,9 +23,11 @@ import javax.validation.Valid;
 @Api("字典管理")
 @RestController
 @RequestMapping("/sys/dictionary")
-public class DictCtrl extends PureBaseCtrl<DictService> {
-    @Autowired
-    private DictCacheHelper dictCacheHelper;
+@RequiredArgsConstructor
+public class DictCtrl extends Ctrl {
+    private final DictService service;
+
+    private final DictCacheHelper dictCacheHelper;
 
     @GetMapping({"/query/{code}"})
     @ApiOperation(value = "根据 code 从缓存中获取字典项",response = Response.class)
