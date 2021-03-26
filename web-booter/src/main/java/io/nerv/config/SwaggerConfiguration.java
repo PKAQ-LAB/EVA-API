@@ -30,7 +30,7 @@ public class SwaggerConfiguration {
 
         return new Docket(DocumentationType.SWAGGER_2)
                 .groupName("默认分组")
-                .globalOperationParameters(SwaggerHelper.getHeadPars())
+                .globalRequestParameters(SwaggerHelper.getHeadPars())
                 .securitySchemes(CollUtil.toList(
                         new ApiKey("Authorization", "Authorization", "header")))
                 .apiInfo(apiInfo())
