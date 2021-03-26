@@ -80,8 +80,10 @@ public class ModuleService extends StdBaseService<ModuleMapper, ModuleEntity> {
     public void editModule(ModuleEntity module){
         String moduleId = module.getId();
 
-        ModuleEntity originModule = this.getById(moduleId);
-
+        ModuleEntity originModule = null;
+        if(StrUtil.isNotBlank(moduleId)){
+            originModule = this.getById(moduleId);
+        }
         // 获取上级节点
         String pid = module.getParentId();
         if(StrUtil.isNotBlank(moduleId)){

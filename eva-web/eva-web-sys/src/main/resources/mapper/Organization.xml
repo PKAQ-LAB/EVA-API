@@ -30,7 +30,12 @@
                      and status = #{organization.status}
                    </when>
                    <when test="organization.name != '' and null != organization.name">
-                     and name like concat('%',#{organization.name},',%')
+                       <if test="_databaseId == 'mysql'">
+                           ( name like concat('%',#{organization.name},',%'))
+                       </if>
+                       <if test="_databaseId == 'oracle'">
+                           ( name like '%' ||#{id}||'%' )
+                       </if>
                    </when>
                    <otherwise>
                     and (parent_ID = '0' or parent_ID is null)
@@ -61,7 +66,13 @@
   <update id="switchStatus">
       update sys_organization
         set status=#{status}
-      where (path like concat('%,',#{id},',%') or id = #{id, jdbcType=VARCHAR})
+      where
+          <if test="_databaseId == 'mysql'">
+              ( path like concat(#{id,jdbcType=VARCHAR},'%') or id = #{id} )
+          </if>
+          <if test="_databaseId == 'oracle'">
+              ( path like #{id}||'%' or id = #{id} )
+          </if>
         and  deleted = '0000'
   </update>
   <!--  刷新子节点名称-->
@@ -69,7 +80,12 @@
     update sys_organization
       set PARENT_NAME=#{name,jdbcType=VARCHAR}
     where
-        parent_id like  concat(#{id,jdbcType=VARCHAR},'%')
+      <if test="_databaseId == 'mysql'">
+          ( parent_id like concat(#{id,jdbcType=VARCHAR},'%') or id = #{id} )
+      </if>
+      <if test="_databaseId == 'oracle'">
+          ( parent_id like #{id}||'%' or id = #{id} )
+      </if>
         and
         deleted = '0000'
   </update>
@@ -79,7 +95,12 @@
         PATH_NAME=REPLACE(PATH_NAME,#{oldorgin.pathName,jdbcType=VARCHAR},#{neworgin.pathName,jdbcType=VARCHAR}),
         PATH=REPLACE(PATH,#{oldorgin.path,jdbcType=VARCHAR},#{neworgin.path,jdbcType=VARCHAR})
         where
-            path like concat('%',#{oldorgin.id,jdbcType=VARCHAR},'%')
+            <if test="_databaseId == 'mysql'">
+                ( path like concat('%',#{oldorgin.id,jdbcType=VARCHAR},'%') or id = #{id} )
+            </if>
+            <if test="_databaseId == 'oracle'">
+                ( path like '%'||#{oldorgin.id}||'%' or id = #{id} )
+            </if>
             and
             id != #{oldorgin.id,jdbcType=VARCHAR}
             and

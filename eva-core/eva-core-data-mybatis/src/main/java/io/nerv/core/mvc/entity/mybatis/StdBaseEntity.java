@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 @Data
 public abstract class StdBaseEntity implements Entity {
     @TableId(type = IdType.ASSIGN_UUID)
+    @TableField(jdbcType = JdbcType.VARCHAR)
     private String id;
 
     @ApiModelProperty("创建人")

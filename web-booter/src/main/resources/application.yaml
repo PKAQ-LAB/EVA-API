@@ -43,6 +43,7 @@ mybatis-plus:
       logic-delete-value: '0001' # 逻辑已删除值(默认为 1)
       logic-not-delete-value: '0000' # 逻辑未删除值(默认为 0)
       select-strategy: not_empty
+    banner: false
   configuration:
     map-underscore-to-camel-case: true
     cache-enabled: false
@@ -107,6 +108,7 @@ eva:
     threshold: 21600000
   # 访问权限
   security:
+    webstatic:
     # 无需鉴权路径(无条件访问)
     anonymous: /auth/login,/auth/logout,/wx/**,/doc/**,/actuator/**
     # 无需资源鉴权的路径

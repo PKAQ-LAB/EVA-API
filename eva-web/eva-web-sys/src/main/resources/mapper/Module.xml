@@ -63,7 +63,13 @@
           and (m.parent_Id = '0' or m.parent_Id is null)
         </when>
         <otherwise>
-          and m.name like concat('%',#{condition,jdbcType=VARCHAR},'%')
+          and m.name like
+          <if test="_databaseId == 'mysql'">
+            concat('%',#{condition,jdbcType=VARCHAR},'%')
+          </if>
+          <if test="_databaseId == 'oracle'">
+             '%' ||#{condition}||'%'
+          </if>
         </otherwise>
       </choose>
       <if test="null != module">
@@ -71,7 +77,13 @@
           and m.status = #{module.status,jdbcType=VARCHAR}
         </if>
         <if test="null != module.name and module.name != '' ">
-          and m.name like concat('%',#{module.name,jdbcType=VARCHAR},'%')
+          and m.name like
+          <if test="_databaseId =='mysql'">
+            concat('%',#{module.name,jdbcType=VARCHAR},'%')
+          </if>
+          <if test="_databaseId == 'oracle'">
+            '%'||#{module.name}||'%'
+          </if>
         </if>
       </if>
     </where>
@@ -104,7 +116,13 @@
           and status in(#{module.status,jdbcType=VARCHAR},'9999')
         </if>
         <if test="null != module.name and module.name != '' ">
-          and name like concat('%',#{module.name,jdbcType=VARCHAR},'%')
+          and name like
+          <if test="_databaseId == 'mysql'">
+            concat('%',#{module.name,jdbcType=VARCHAR},'%')
+          </if>
+          <if test="_databaseId == 'oracle'">
+            '%'||#{module.name}||'%'
+          </if>
         </if>
       </if>
     </where>
@@ -143,10 +161,10 @@
   <!-- 根据parentId查询子节点数据-->
   <select id="listOrder" resultType="Integer">
     select
-      <if test="_databaseId =='mysql'">
+    <if test="_databaseId == 'mysql'">
         ifnull(max(orders),0)
       </if>
-      <if test="_databaseId =='oracle'">
+    <if test="_databaseId == 'oracle'">
         nvl(max(orders),0)
       </if>
     from
@@ -182,7 +200,13 @@
   <update id="updateChildParentName">
     update sys_module
       set PARENT_NAME=#{name,jdbcType=VARCHAR}
-    where  parent_id like  concat(#{id,jdbcType=VARCHAR},'%');
+    where  parent_id like
+    <if test="_databaseId == 'mysql'">
+      concat(#{id,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="_databaseId == 'oracle'">
+      #{id}||'%'
+    </if>
   </update>
 
     <!--  刷新子节点的path_name  和 path -->
@@ -190,7 +214,14 @@
         update sys_module set
         PATH_NAME=REPLACE(PARENT_NAME,#{oldModule.name,jdbcType=VARCHAR},#{newModule.name,jdbcType=VARCHAR}),
         PATH=REPLACE(PATH,#{oldModule.path,jdbcType=VARCHAR},#{newModule.path,jdbcType=VARCHAR})
-      where path like concat('%',#{oldModule.path,jdbcType=VARCHAR},'%') and id != #{oldModule.id,jdbcType=VARCHAR}
+      where path like
+      <if test="_databaseId == 'mysql'">
+        concat('%',#{oldModule.path,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="_databaseId =='oracle'">
+        '%'||#{oldModule.path}||'%'
+      </if>
+      and id != #{oldModule.id,jdbcType=VARCHAR}
     </update>
 
 </mapper>

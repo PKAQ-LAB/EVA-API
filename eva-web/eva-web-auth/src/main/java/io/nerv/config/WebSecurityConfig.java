@@ -1,6 +1,7 @@
 package io.nerv.config;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ArrayUtil;
 import io.nerv.core.util.JsonUtil;
 import io.nerv.properties.EvaConfig;
 import io.nerv.security.entrypoint.*;
@@ -44,6 +45,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Value("${eva.security.anonymous}")
     private String[] anonymous;
+
+    @Value("${eva.security.webstatic}")
+    private String[] webstatic;
 
     @Autowired
     private EvaConfig evaConfig;
@@ -180,7 +184,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) {
-        web
+        var ws = web
             .ignoring()
             // allow anonymous resource requests
             .and()
@@ -204,6 +208,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     "/swagger-resources/**",
                     "/*/api-docs"
             );
+
+        if (ArrayUtil.isNotEmpty(webstatic)){
+            ws.antMatchers(webstatic);
+        }
     }
 
 }
