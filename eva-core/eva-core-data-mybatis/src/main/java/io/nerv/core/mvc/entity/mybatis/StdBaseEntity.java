@@ -10,6 +10,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import io.nerv.core.mvc.entity.Entity;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.ibatis.type.JdbcType;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
@@ -25,7 +26,7 @@ public abstract class StdBaseEntity implements Entity {
     private String id;
 
     @ApiModelProperty("创建人")
-    @TableField(fill = FieldFill.INSERT)
+    @TableField(fill = FieldFill.INSERT, jdbcType = JdbcType.VARCHAR)
     private String createBy;
 
     @ApiModelProperty("创建时间")
@@ -36,7 +37,7 @@ public abstract class StdBaseEntity implements Entity {
     private LocalDateTime gmtCreate;
 
     @ApiModelProperty("修改人")
-    @TableField(fill = FieldFill.INSERT_UPDATE)
+    @TableField(fill = FieldFill.INSERT_UPDATE, jdbcType = JdbcType.VARCHAR)
     private String modifyBy;
 
     @ApiModelProperty("修改时间")
