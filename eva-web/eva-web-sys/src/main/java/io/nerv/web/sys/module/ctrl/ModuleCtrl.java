@@ -83,7 +83,7 @@ public class ModuleCtrl extends Ctrl {
     @ApiOperation(value = "切换模块可用状态", response = Response.class)
     public Response switchStatus(@ApiParam(name = "id", value = "模块Id")
                                  @RequestBody ModuleEntity module){
-        this.service.updateModule(module);
+        this.service.disableChild(module);
         return success();
     }
 }

@@ -14,6 +14,8 @@
     <result column="ISLEAF" jdbcType="TINYINT" property="isleaf" />
     <result column="ORDERS" jdbcType="INTEGER" property="orders" />
     <result column="STATUS" jdbcType="VARCHAR" property="status" />
+    <result column="MODIFY_BY" jdbcType="VARCHAR" property="createBy" />
+    <result column="CREATE_BY" jdbcType="VARCHAR" property="modifyBy" />
     <collection property="children"  column="{id=id}" select="listChildren" />
     <collection property="resources" javaType="java.util.List" ofType="moduleResource">
       <id column="R_ID" property="id" jdbcType="VARCHAR" />
@@ -35,6 +37,8 @@
         SYS_ROLE_MODULE RM,
         SYS_ROLE_USER RU
       where
+        M.STATUS != '0001'
+        and
         R.ID=RM.ROLE_ID
         and
         M.ID=RM.MODULE_ID
@@ -160,7 +164,13 @@
   <!-- 根据id禁用节点-->
   <update id="disableChild">
     update sys_module set status = '0001'
-   where path_id like concat('%',#{id,jdbcType=VARCHAR},'%');
+            where path_id like
+            <if test="_databaseId == 'mysql'">
+              concat(#{id,jdbcType=VARCHAR},'%') or id = #{id}
+            </if>
+            <if test="_databaseId == 'oracle'">
+              #{id}||'%' or id = #{id}
+            </if>
   </update>
 
   <!-- 根据id查询数据-->
