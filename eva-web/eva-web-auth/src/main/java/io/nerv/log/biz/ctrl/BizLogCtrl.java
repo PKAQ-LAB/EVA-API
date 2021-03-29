@@ -1,5 +1,6 @@
 package io.nerv.log.biz.ctrl;
 
+import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.nerv.core.bizlog.condition.MybatisSupporterCondition;
@@ -64,8 +65,8 @@ public class BizLogCtrl {
         String dbType = databaseIdProvider.getDatabaseId(dataSource);
 
         if ("oracle".equalsIgnoreCase(dbType)){
-            wrapper.ge("OPERATE_DATETIME", DateUtil.format(begin, DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-            wrapper.le("OPERATE_DATETIME", DateUtil.format(end, DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+            wrapper.ge("OPERATE_DATETIME", DateUtil.format(begin, DatePattern.NORM_DATE_PATTERN));
+            wrapper.le("OPERATE_DATETIME", DateUtil.format(end, DatePattern.NORM_DATE_PATTERN));
         } else if ("mysql".equalsIgnoreCase(dbType)) {
             wrapper.ge("OPERATE_DATETIME", begin);
             wrapper.le("OPERATE_DATETIME", end);

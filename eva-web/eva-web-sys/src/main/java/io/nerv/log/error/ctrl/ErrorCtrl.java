@@ -1,5 +1,6 @@
 package io.nerv.log.error.ctrl;
 
+import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.nerv.core.bizlog.supporter.mybatis.mapper.MybatisSupporterMapper;
@@ -65,8 +66,8 @@ public class ErrorCtrl {
         String dbType = databaseIdProvider.getDatabaseId(dataSource);
 
         if ("oracle".equalsIgnoreCase(dbType)){
-            wrapper.ge("REQUEST_TIME", DateUtil.format(begin, DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-            wrapper.le("REQUEST_TIME", DateUtil.format(end, DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+            wrapper.ge("REQUEST_TIME", DateUtil.format(begin, DatePattern.NORM_DATE_PATTERN));
+            wrapper.le("REQUEST_TIME", DateUtil.format(end, DatePattern.NORM_DATE_PATTERN));
         } else if ("mysql".equalsIgnoreCase(dbType)) {
             wrapper.ge("REQUEST_TIME", begin);
             wrapper.le("REQUEST_TIME", end);
