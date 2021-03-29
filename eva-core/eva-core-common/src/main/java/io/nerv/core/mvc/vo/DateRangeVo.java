@@ -6,7 +6,7 @@ import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.util.Date;
 
 /**
  * 用于接收数组参数的虚拟对象
@@ -18,11 +18,11 @@ import java.time.LocalDate;
 public class DateRangeVo<T> implements Serializable {
     @ApiModelProperty("开始日期")
     @DateTimeFormat(pattern="yyyy-MM-dd")
-    private LocalDate begin;
+    private Date begin;
 
     @ApiModelProperty("结束日期")
     @DateTimeFormat(pattern="yyyy-MM-dd")
-    private LocalDate end;
+    private Date end;
 
     @ApiModelProperty("参数对象")
     private T obj;
