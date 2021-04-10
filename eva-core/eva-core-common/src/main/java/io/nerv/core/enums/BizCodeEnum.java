@@ -22,13 +22,14 @@ public enum BizCodeEnum implements BizCode {
     LICENSE_IPMAC_VERIFIED("IP、MAC地址验证通过", "0013"),
 
     /** 请求失败 400x **/
-    PARAM_ERROR("请求参数错误.", "4000"),
-    PARAM_LOST("请求参数丢失.", "4001"),
-    PARAM_TYPEERROR("参数类型错误 ", "4002"),
-    PARAM_LENGTH("参数长度错误", "4003"),
-    SERVER_ERROR("服务器发生错误,请联系管理员.", "4004"),
-    REQUEST_METHOD_ERROR("服务器不支持当前请求的方法.", "4005"),
-    REQUEST_TOO_MORE("当前请求过于频繁，请稍后再试.", "4006"),
+    TOKEN_NOT_VERIFY("Token校验异常","4000"),
+    PARAM_ERROR("请求参数错误.", "4006"),
+    PARAM_LOST("请求参数丢失.", "4007"),
+    PARAM_TYPEERROR("参数类型错误 ", "4008"),
+    PARAM_LENGTH("参数长度错误", "4009"),
+    SERVER_ERROR("服务器发生错误,请联系管理员.", "4010"),
+    REQUEST_METHOD_ERROR("服务器不支持当前请求的方法.", "4011"),
+    REQUEST_TOO_MORE("当前请求过于频繁，请稍后再试.", "4012"),
     REQUEST_MEDIA_ERROR("服务器不支持当前请求的类型.", "4015"),
 
     /** 用户相关 410x **/

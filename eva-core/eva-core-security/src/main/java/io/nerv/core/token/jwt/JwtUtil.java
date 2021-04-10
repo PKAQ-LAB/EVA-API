@@ -1,8 +1,11 @@
 package io.nerv.core.token.jwt;
 
-import cn.hutool.core.codec.Base64;
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.impl.DefaultClock;
+import com.nimbusds.jose.*;
+import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jose.crypto.MACVerifier;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
+import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.exception.OathException;
 import io.nerv.properties.EvaConfig;
 import io.nerv.properties.Jwt;
@@ -11,15 +14,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
 import java.util.Date;
-import java.util.function.Function;
 
 /**
  * JWT 工具类
  * @author: S.PKAQ
- * @Datetime: 2018/4/20 15:16
  */
 @Data
 @Component
@@ -28,30 +29,16 @@ public class JwtUtil {
     @Autowired
     private EvaConfig evaConfig;
 
-    private Clock clock = DefaultClock.INSTANCE;
-
     public Jwt jwtConfig(){
         return this.evaConfig.getJwt();
     }
 
     /**
-     * 生成加密K
+     * 生成密钥
      * @return
      */
-    private SecretKey generalKey() {
-        byte[] encodedKey = Base64.decode(evaConfig.getJwt().getSecert());
-        return new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
-    }
-    /**
-     * 获取claim
-     * @param token
-     * @param claimsResolver
-     * @param <T>
-     * @return
-     */
-    public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = getClaimsFromToken(token);
-        return claimsResolver.apply(claims);
+    private byte[] generalKey() {
+       return evaConfig.getJwt().getSecert().getBytes(StandardCharsets.UTF_8);
     }
     /**
      * 获取uid中的uid属性
@@ -61,7 +48,7 @@ public class JwtUtil {
     public String getUid(String token) {
         String uid = "";
         try {
-            final Claims claims = getClaimsFromToken(token);
+            final JWTClaimsSet claims = getClaimsFromToken(token);
             uid = claims.getSubject();
         } catch (Exception e) {
             e.printStackTrace();
@@ -73,60 +60,78 @@ public class JwtUtil {
      * @param token jwt
      * @return 属性值
      */
-    private Claims getClaimsFromToken(String token) {
-        SecretKey secretKey = generalKey();
-        Claims claims = null;
+    private JWTClaimsSet getClaimsFromToken(String token)  {
+        // 解析token，将token转换为JWSObject对象
+        JWSObject jwsObject = null;
+        JWTClaimsSet jwtClaimsSet = null;
         try {
-            claims = Jwts.parser()
-                .setSigningKey(secretKey)
-                .parseClaimsJws(token)
-                .getBody();
-        }catch (ExpiredJwtException e){
-            log.error("token已过期", e);
-            throw new OathException("Token 已过期");
-        }finally {
-            return claims;
+            jwsObject = JWSObject.parse(token);
+
+            // 创建一个JSON Web Signature (JWS) verifier.用于校验签名(即:校验token是否被篡改)
+            JWSVerifier jwsVerifier = new MACVerifier(this.generalKey());
+            // 如果校验到token被篡改(即:签名认证失败)，那么抛出异常
+            if(!jwsObject.verify(jwsVerifier)) {
+                throw new OathException(BizCodeEnum.TOKEN_NOT_VERIFY);
+            }
+            Payload payload = jwsObject.getPayload();
+            jwtClaimsSet = payload.toSignedJWT().getJWTClaimsSet();
+        } catch (ParseException | JOSEException e) {
+            e.printStackTrace();
         }
+
+        return jwtClaimsSet;
     }
 
-    /**
-     * 获取token的签发时间
-     * @param token
-     * @return
-     */
-    public Date getIssuedAt(String token){
-        return getClaimFromToken(token, Claims::getIssuedAt);
-    }
     /**
      *
      * @param ttlMillis 有效时间
      * @param uid   uid
      * @return jwt token
      */
-    public String build(long ttlMillis, String uid){
-        SecretKey secretKey = generalKey();
+    public String build(long ttlMillis, String uid)  {
+        /**
+         * 1.创建一个32-byte的密匙
+         */
+        MACSigner macSigner = null;
+        try {
+            macSigner = new MACSigner(this.generalKey());
+        } catch (KeyLengthException e) {
+            e.printStackTrace();
+        }
+        /**
+         * 2. 建立payload 载体
+         */
 
         long nowMillis = System.currentTimeMillis();
-        JwtBuilder jwt = Jwts.builder()
-                // JWT_ID
-                .setId(uid)
-                // 签名算法和密钥
-                .signWith(SignatureAlgorithm.HS256, secretKey)
-                // 签发时间
-                .setIssuedAt(new Date(nowMillis))
-                // 签发人
-                .setIssuer(this.jwtConfig().getSign())
-                // 主题
-                .setSubject(uid);
 
-        // 设置过期时间,为0则永不过期
-        if (ttlMillis > 0) {
-            long expMillis = nowMillis + (ttlMillis * 1000);
-            Date exp =  new Date(expMillis);
-            // 失效时间
-            jwt.setExpiration(exp).setNotBefore(new Date(System.currentTimeMillis()));
+        // 过期时间
+        long expMillis = nowMillis + (ttlMillis * 1000);
+        Date exp =  new Date(expMillis);
+
+        JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
+                .issueTime(new Date(nowMillis))
+                .issuer(this.jwtConfig().getSign())
+                .subject(uid)
+                .jwtID(uid)
+                .expirationTime(ttlMillis > 0 ? exp : null)
+                .notBeforeTime(new Date(nowMillis))
+                .build();
+
+        /**
+         * 3. 建立签名
+         */
+        SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claimsSet);
+        try {
+            signedJWT.sign(macSigner);
+        } catch (JOSEException e) {
+            e.printStackTrace();
         }
-        return jwt.compact();
+
+        /**
+         * 4. 生成token
+         */
+        String token = signedJWT.serialize();
+        return token;
     }
     /**
      * 验证token
@@ -134,16 +139,34 @@ public class JwtUtil {
      * @return 验证结果
      */
     public boolean valid(String jwtToken) throws OathException {
-        boolean ret;
-        Claims claims = this.getClaimsFromToken(jwtToken);
+        boolean ret = false;
+        // 解析token，将token转换为JWSObject对象
+        JWSObject jwsObject = null;
+        try {
+            jwsObject = JWSObject.parse(jwtToken);
 
-        if (null == claims || "-".equals(claims.getSubject())) {
-            log.error("登录已失效");
-            throw new OathException("登录已失效");
-        } else {
-            ret = true;
+            // 创建一个JSON Web Signature (JWS) verifier.用于校验签名(即:校验token是否被篡改)
+            JWSVerifier jwsVerifier = null;
+            jwsVerifier = new MACVerifier(this.generalKey());
+            // 如果校验到token被篡改(即:签名认证失败)，那么抛出异常
+            if(!jwsObject.verify(jwsVerifier)) {
+                throw new OathException(BizCodeEnum.TOKEN_NOT_VERIFY);
+            }
+
+            // 获取有效负载
+            Payload payload = jwsObject.getPayload();
+            JWTClaimsSet claimsSet = null;
+            claimsSet = payload.toSignedJWT().getJWTClaimsSet();
+
+            if (null == claimsSet || "-".equals(claimsSet.getSubject())){
+                log.error("登录已失效");
+                throw new OathException("登录已失效");
+            } else {
+                ret = true;
+            }
+        } catch (JOSEException | ParseException e) {
+            e.printStackTrace();
         }
-
         return ret;
     }
     /**
@@ -152,26 +175,8 @@ public class JwtUtil {
      * @return
      */
     public String refreshToken(String token) {
-        final Date createdDate = clock.now();
-        final Date expirationDate = calculateExpirationDate(createdDate);
-
-        final Claims claims = getClaimsFromToken(token);
-        claims.setIssuedAt(createdDate);
-        claims.setExpiration(expirationDate);
-
-        return Jwts.builder()
-                .setClaims(claims)
-                .signWith(SignatureAlgorithm.HS512, this.jwtConfig().getSecert())
-                .compact();
-    }
-    /**
-     * Token是否过期
-     * @param token
-     * @return
-     */
-    public Boolean isTokenExpired(String token) throws OathException {
-        final Date expiration = getExpirationDateFromToken(token);
-        return expiration.before(clock.now());
+        final String uid = this.getUid(token);
+        return this.build(this.jwtConfig().getThreshold(), uid);
     }
 
     /**
@@ -180,32 +185,34 @@ public class JwtUtil {
      * @return
      */
     public Boolean isTokenExpiring(String token) throws OathException {
-        Date expiration = getExpirationDateFromToken(token);
-        return (expiration.getTime() - clock.now().getTime()) < (this.jwtConfig().getThreshold());
+        Date expiration = null;
+        expiration = getClaimsFromToken(token).getExpirationTime();
+        return (expiration.getTime() - System.currentTimeMillis()) < (this.jwtConfig().getThreshold());
     }
     /**
      * 重新计算过期时间
-     * @param createdDate
      * @return
      */
-    private Date calculateExpirationDate(Date createdDate) {
-        return new Date(clock.now().getTime() + this.jwtConfig().getTtl());
+    private Date calculateExpirationDate() {
+        return new Date(System.currentTimeMillis() + this.jwtConfig().getTtl());
 
     }
+
     /**
-     * 从token中获取过期时间
+     * 获取签发时间
      * @param token
      * @return
      */
-    public Date getExpirationDateFromToken(String token) {
-        return getClaimFromToken(token, Claims::getExpiration);
+    public Date getIssuedAt(String token){
+        return this.getClaimsFromToken(token).getIssueTime();
     }
+
     /**
-     * 从tokne中获取签发时间
+     * 获取过期时间
      * @param token
      * @return
      */
-    public Date getIssuedAtDateFromToken(String token) {
-        return getClaimFromToken(token, Claims::getIssuedAt);
+    public Date getExpirationDateFromToken(String token){
+        return this.getClaimsFromToken(token).getExpirationTime();
     }
 }

@@ -45,8 +45,6 @@ ext {
            "knife4j_spring" : "com.github.xiaoymin:knife4j-spring:${knife4j}",
            "knife4j_ui" : "com.github.xiaoymin:knife4j-spring-ui:${knife4j}",
             // jwt
-           "auth0" : "com.auth0:java-jwt:${auth0}",
-           "jjwt" : "io.jsonwebtoken:jjwt:${jjwt}",
            "jwt": "com.nimbusds:nimbus-jose-jwt:${jwt}",
             // wxjava
            "wxmp" : "com.github.binarywang:weixin-java-mp:${weixin}",

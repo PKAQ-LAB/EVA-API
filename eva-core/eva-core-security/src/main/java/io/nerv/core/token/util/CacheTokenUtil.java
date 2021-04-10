@@ -3,7 +3,6 @@ package io.nerv.core.token.util;
 import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.token.jwt.JwtUtil;
 import io.nerv.core.util.RedisUtil;
-import io.nerv.properties.EvaConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -17,8 +16,6 @@ import java.util.Map;
 
 @Component
 public class CacheTokenUtil {
-    @Autowired
-    private EvaConfig evaConfig;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -81,4 +78,5 @@ public class CacheTokenUtil {
     public void removeToken(String key){
         this.tokenCache.evict(key);
     }
+
 }

@@ -12,8 +12,6 @@ dependencies {
 					   project(":eva-core:eva-core-common"),
 					   "${lib.undertow}"
 
-	api				   "${lib.security}",
-					   "${lib.auth0}",
-					   "${lib.jjwt}"
+	api				   "${lib.security}"
 
 }

@@ -98,7 +98,7 @@ eva:
     header: Authorization
     token-head: Bearer
     sign: PKAQ
-    secert: aHR0cDovL3BrYXEub3Jn
+    secert: 6MNSobBRCHGIO0fS6MNSobBRCHGIO0fS
     ttl: *maxAge
     # 6 小时
     alphaTtl: 21600000

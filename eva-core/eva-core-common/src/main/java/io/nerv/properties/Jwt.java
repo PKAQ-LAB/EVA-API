@@ -20,8 +20,8 @@ public class Jwt {
     /**  签发人 **/
     private String sign = "PKAQ";
     /** 密匙 **/
-    private String secert = "aHR0cDovL3BrYXEub3Jn";
-    /** token有效时间 **/
+    private String secert = "6MNSobBRCHGIO0fS6MNSobBRCHGIO0fS";
+    /** token 30天 有效时间 **/
     private long ttl = 30 * 24 * 60 * 60 * 1000;
     /** access token有效时间,  6 小时 **/
     private long alphaTtl =  6 * 60 * 60 * 1000;
