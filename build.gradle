@@ -2,7 +2,7 @@ plugins {
    id "com.jfrog.bintray" version "${jfrog_ver}"
    id "io.spring.dependency-management" version "${spring_dep}"
    id 'org.springframework.boot' version "${spring_boot_ver}"
-
+   id "name.remal.check-updates" version "1.3.0"
 }
 
 bintrayUpload.enabled = false
@@ -65,7 +65,7 @@ ext {
 allprojects {
     apply plugin: "idea"
     group = 'io.nerv'
-    version = '2.6.7.E'
+    version = '2.6.8
 }
 
 subprojects {
@@ -73,7 +73,8 @@ subprojects {
 	apply plugin: 'maven-publish'
 	apply plugin: 'com.jfrog.bintray'
     apply plugin: 'io.spring.dependency-management'
-    
+    apply plugin: "name.remal.check-updates"
+
 	sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
 
