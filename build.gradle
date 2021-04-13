@@ -65,7 +65,7 @@ ext {
 allprojects {
     apply plugin: "idea"
     group = 'io.nerv'
-    version = '2.6.8
+    version = '2.6.8'
 }
 
 subprojects {
