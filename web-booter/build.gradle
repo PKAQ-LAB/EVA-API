@@ -18,6 +18,7 @@ compileJava.dependsOn(processResources)
 
 processResources {
     println "==> Load configuration for $profile"
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
 
     from(sourceSets.main.resources.srcDirs) {
         filter(ReplaceTokens, tokens: [profile: profile])
