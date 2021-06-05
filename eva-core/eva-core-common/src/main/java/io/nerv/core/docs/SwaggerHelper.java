@@ -1,10 +1,7 @@
 package io.nerv.core.docs;
 
-import springfox.documentation.builders.ParameterBuilder;
 import springfox.documentation.builders.RequestParameterBuilder;
-import springfox.documentation.schema.ModelRef;
 import springfox.documentation.schema.ScalarType;
-import springfox.documentation.service.Parameter;
 import springfox.documentation.service.ParameterType;
 import springfox.documentation.service.RequestParameter;
 
