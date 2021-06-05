@@ -12,6 +12,9 @@ ext {
            "p6spy" : "p6spy:p6spy:${p6spy}",
            "flyway" : "org.flywaydb:flyway-core:${flyway}",
            "mysql" : "mysql:mysql-connector-java:${mysql}",
+           // oracle
+           "oracle" : "com.oracle.database.jdbc:ojdbc10:${oracle}",
+           "orai18n": "cn.easyproject:orai18n:${orai18n}",
            "jaxb_api" : "javax.xml.bind:jaxb-api:${jaxb_api}",
            "truelicense" : "de.schlichtherle.truelicense:truelicense-core:${truelicense}",
            "jasypt" : "com.github.ulisesbocchio:jasypt-spring-boot-starter:${jasypt}",
@@ -58,7 +61,7 @@ ext {
            "devTools" : "org.springframework.boot:spring-boot-devtools",
             // generator
            "velocity" : "org.apache.velocity:velocity-engine-core:${velocity}",
-           "mybatis_plus_generator" : "com.baomidou:mybatis-plus-generator:${mybatis_plus_starter}"
+           "mybatis_plus_generator" : "com.baomidou:mybatis-plus-generator:${mybatis_plus_generator}"
     ]
 }
 
@@ -95,7 +98,7 @@ subprojects {
 
     repositories {
         mavenLocal()
-
+//        allowInsecureProtocol = true
         maven { url"https://maven.aliyun.com/repository/central" }
         maven { url"https://maven.aliyun.com/repository/jcenter" }
         maven { url"https://mirrors.huaweicloud.com" }
@@ -104,11 +107,11 @@ subprojects {
 		maven { url"https://maven.springframework.org"}
         maven { url"https://repo.spring.io/libs-release" }
 
-        jcenter()
         mavenCentral()
     }
 
     dependencies {
+       implementation "org.yaml:snakeyaml:1.28"
        implementation "${lib.lombok}"
 	   annotationProcessor "${lib.lombok}"
 

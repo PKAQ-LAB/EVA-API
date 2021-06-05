@@ -4,7 +4,10 @@ project.description='eva mybatis support'
 
 dependencies {
     implementation  project(":eva-core:eva-core-common"),
-                    project(":eva-core:eva-core-log")
+                    project(":eva-core:eva-core-log"),
+                    // oracle
+                    "${lib.oracle}",
+                    "${lib.orai18n}"
 
     api             "${lib.mybatisPlus}"
 }
