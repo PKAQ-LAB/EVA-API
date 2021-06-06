@@ -73,6 +73,8 @@ public class ErrorCtrl {
             wrapper.le("REQUEST_TIME", end);
         }
 
+        wrapper.orderByDesc("REQUEST_TIME");
+
         Page pagination = new Page();
         pagination.setCurrent(pageNo == null? 1 : pageNo);
         pagination.setSize(pageCount == null? 10 : pageCount);
