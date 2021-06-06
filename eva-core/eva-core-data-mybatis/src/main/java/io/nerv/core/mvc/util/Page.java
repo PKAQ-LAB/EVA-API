@@ -220,13 +220,6 @@ public class Page<T> implements IPage<T> {
         return optimizeCountSql;
     }
 
-    @Override
-    public boolean isSearchCount() {
-        if (total < 0) {
-            return false;
-        }
-        return isSearchCount;
-    }
 
     public Page<T> setSearchCount(boolean isSearchCount) {
         this.isSearchCount = isSearchCount;
@@ -238,13 +231,4 @@ public class Page<T> implements IPage<T> {
         return this;
     }
 
-    @Override
-    public void hitCount(boolean hit) {
-        this.hitCount = hit;
-    }
-
-    @Override
-    public boolean isHitCount() {
-        return hitCount;
-    }
 }
