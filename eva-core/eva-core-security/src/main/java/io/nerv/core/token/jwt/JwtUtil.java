@@ -4,6 +4,7 @@ import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.PlainJWT;
 import com.nimbusds.jwt.SignedJWT;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.exception.OathException;
@@ -73,8 +74,7 @@ public class JwtUtil {
             if(!jwsObject.verify(jwsVerifier)) {
                 throw new OathException(BizCodeEnum.TOKEN_NOT_VERIFY);
             }
-            Payload payload = jwsObject.getPayload();
-            jwtClaimsSet = payload.toSignedJWT().getJWTClaimsSet();
+            jwtClaimsSet = JWTClaimsSet.parse(jwsObject.getPayload().toJSONObject());
         } catch (ParseException | JOSEException e) {
             e.printStackTrace();
         }
@@ -144,7 +144,6 @@ public class JwtUtil {
         JWSObject jwsObject = null;
         try {
             jwsObject = JWSObject.parse(jwtToken);
-
             // 创建一个JSON Web Signature (JWS) verifier.用于校验签名(即:校验token是否被篡改)
             JWSVerifier jwsVerifier = null;
             jwsVerifier = new MACVerifier(this.generalKey());
@@ -152,11 +151,8 @@ public class JwtUtil {
             if(!jwsObject.verify(jwsVerifier)) {
                 throw new OathException(BizCodeEnum.TOKEN_NOT_VERIFY);
             }
-
             // 获取有效负载
-            Payload payload = jwsObject.getPayload();
-            JWTClaimsSet claimsSet = null;
-            claimsSet = payload.toSignedJWT().getJWTClaimsSet();
+            JWTClaimsSet claimsSet = JWTClaimsSet.parse(jwsObject.getPayload().toJSONObject());
 
             if (null == claimsSet || "-".equals(claimsSet.getSubject())){
                 log.error("登录已失效");
