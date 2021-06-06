@@ -73,7 +73,7 @@ public class BizLogCtrl {
         }
 
         wrapper.orderByDesc("OPERATE_DATETIME");
-        
+
         Page pagination = new Page();
         pagination.setCurrent(pageNo == null? 1 : pageNo);
         pagination.setSize(size == null? 10 : size);

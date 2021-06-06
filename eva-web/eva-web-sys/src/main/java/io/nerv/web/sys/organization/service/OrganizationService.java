@@ -95,16 +95,18 @@ public class OrganizationService extends StdBaseService<OrganizationMapper, Orga
             }
         }
         //如果是新增且orders属性为空则设置orders属性
+        OrganizationEntity oldOrgin = null;
         if (StrUtil.isBlank(organization.getId()) ) {
             organization.setOrders(this.mapper.countPrantLeaf(pid));
+        } else {
+            oldOrgin = this.mapper.selectById(orgId);
         }
-        OrganizationEntity oldOrgin=this.mapper.selectById(orgId);
         this.merge(organization);
 
         //新增
-        if(oldOrgin == null) {
+        if(null == oldOrgin) {
             //设置path路径 把path路径加上自己本身
-            String path= StrUtil.isBlank(organization.getPath()) ? organization.getId() : organization.getPath() + "/" + organization.getId();
+            //String path= StrUtil.isBlank(organization.getPath()) ? organization.getId() : organization.getPath() + "/" + organization.getId();
             this.mapper.updateById(organization);
         } else {
             //刷新子节点相关数据

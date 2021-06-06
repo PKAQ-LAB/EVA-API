@@ -1,10 +1,10 @@
 package io.nerv.web.sys.organization.entity;
 
-import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.annotation.SqlCondition;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.nerv.core.mvc.entity.mybatis.StdBaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -13,6 +13,7 @@ import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
 
 import java.util.List;
+
 /**
  * 组织管理实体类
  * @author: S.PKAQ
@@ -24,6 +25,7 @@ import java.util.List;
 @TableName("sys_organization")
 @EqualsAndHashCode(callSuper = true)
 @ApiModel("组织管理")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class OrganizationEntity extends StdBaseEntity {
     private static final long serialVersionUID = 1L;
 
