@@ -23,24 +23,25 @@
            </if>
            <if test="null != organization">
                <choose>
-                   <when test="organization.parentId == '' or null == organization.parentId">
-                       and (parent_ID = '0' or parent_ID is null)
+                   <when test="organization.parentId == '' or organization.parentId == null">
+                        and (parent_ID = '0' or parent_ID is null)
                    </when>
-                   <when test="organization.status != '' and null != organization.status">
-                     and status = #{organization.status}
+                   <when test="organization.status != '' and != organization.status != null">
+                        and status = #{organization.status}
                    </when>
-                   <when test="organization.name != '' and null != organization.name">
+                   <when test="organization.name != '' and organization.name != null">
                        <if test="_databaseId == 'mysql'">
                            ( name like concat('%',#{organization.name},',%'))
                        </if>
                        <if test="_databaseId == 'oracle'">
-                           ( name like '%' ||#{id}||'%' )
+                           ( name like '%' ||#{organization.name}||'%' )
                        </if>
                    </when>
                    <otherwise>
                     and (parent_ID = '0' or parent_ID is null)
                    </otherwise>
                </choose>
+
            </if>
        </where>
        order by orders asc
@@ -96,10 +97,10 @@
         PATH=REPLACE(PATH,#{oldorgin.path,jdbcType=VARCHAR},#{neworgin.path,jdbcType=VARCHAR})
         where
             <if test="_databaseId == 'mysql'">
-                ( path like concat('%',#{oldorgin.id,jdbcType=VARCHAR},'%') or id = #{id} )
+                ( path like concat('%',#{oldorgin.id,jdbcType=VARCHAR},'%') or id = #{oldorgin.id} )
             </if>
             <if test="_databaseId == 'oracle'">
-                ( path like '%'||#{oldorgin.id}||'%' or id = #{id} )
+                ( path like '%'||#{oldorgin.id}||'%' or id = #{oldorgin.id} )
             </if>
             and
             id != #{oldorgin.id,jdbcType=VARCHAR}

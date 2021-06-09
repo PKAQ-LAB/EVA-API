@@ -16,7 +16,6 @@ import java.util.Map;
 /**
  * 角色管理模型类
  * @author: S.PKAQ
- * @Datetime: 2018/4/13 7:26
  */
 @Data
 @Alias("role")

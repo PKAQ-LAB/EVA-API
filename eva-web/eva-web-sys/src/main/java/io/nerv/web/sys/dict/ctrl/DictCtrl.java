@@ -18,7 +18,6 @@ import javax.validation.Valid;
 /**
  * 字典管理控制器
  * @author: S.PKAQ
- * @Datetime: 2018/3/15 0:11
  */
 @Api("字典管理")
 @RestController

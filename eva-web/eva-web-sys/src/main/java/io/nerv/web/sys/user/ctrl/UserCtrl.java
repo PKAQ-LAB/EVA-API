@@ -59,7 +59,7 @@ public class UserCtrl extends Ctrl {
     @ApiOperation(value = "新增/编辑记录",response = Response.class)
     public Response save(@ApiParam(name ="formdata", value = "用户对象")
                          @RequestBody UserEntity entity){
-
+        this.service.saveUser(entity);
         return success(null, BizCodeEnum.OPERATE_SUCCESS);
     }
 

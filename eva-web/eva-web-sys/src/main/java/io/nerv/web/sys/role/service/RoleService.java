@@ -26,7 +26,6 @@ import java.util.*;
 
 /**
  * @author: S.PKAQ
- * @Datetime: 2018/4/13 7:28
  */
 @Service
 public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {

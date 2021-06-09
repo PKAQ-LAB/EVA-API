@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 /**
  * 字典视图view
  * @author: S.PKAQ
- * @Datetime: 2019/3/15 15:14
  */
 @Mapper
 @Repository

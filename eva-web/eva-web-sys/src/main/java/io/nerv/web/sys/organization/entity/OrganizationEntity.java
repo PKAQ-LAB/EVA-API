@@ -17,7 +17,6 @@ import java.util.List;
 /**
  * 组织管理实体类
  * @author: S.PKAQ
- * Datetime: 2018/3/2 13:50
  */
 
 @Data
@@ -25,7 +24,6 @@ import java.util.List;
 @TableName("sys_organization")
 @EqualsAndHashCode(callSuper = true)
 @ApiModel("组织管理")
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class OrganizationEntity extends StdBaseEntity {
     private static final long serialVersionUID = 1L;
 

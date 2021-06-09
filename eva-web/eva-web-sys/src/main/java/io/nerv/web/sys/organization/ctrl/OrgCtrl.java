@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 组织管理
- * Datetime: 2018/2/9 10:55
  * @author PKAQ
  */
 @Api("组织管理")

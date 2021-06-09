@@ -8,7 +8,6 @@ import org.apache.ibatis.type.Alias;
 /**
  * 字典视图
  * @author: S.PKAQ
- * @Datetime: 2019/3/15 15:09
  */
 @Data
 @Alias("dictView")

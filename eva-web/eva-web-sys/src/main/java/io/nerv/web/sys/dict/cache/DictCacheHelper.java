@@ -18,7 +18,6 @@ import java.util.Map;
 /**
  * 初始化字典信息
  * @author: S.PKAQ
- * @Datetime: 2019/3/15 13:18
  */
 @Data
 @Component

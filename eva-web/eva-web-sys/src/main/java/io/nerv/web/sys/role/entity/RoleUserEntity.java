@@ -14,7 +14,6 @@ import javax.validation.constraints.NotBlank;
 /**
  * 角色用户关系表
  * @author: S.PKAQ
- * @Datetime: 2018/4/16 22:04
  */
 @Data
 @Alias("roleUser")

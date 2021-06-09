@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author: S.PKAQ
- * @Datetime: 2018/10/29 21:39
  */
 @RestController
 public class NoticeCtrl {

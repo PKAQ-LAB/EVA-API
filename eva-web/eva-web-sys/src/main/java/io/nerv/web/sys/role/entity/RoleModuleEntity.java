@@ -14,7 +14,6 @@ import java.io.Serializable;
 /**
  * 角色模块关系表
  * @author: S.PKAQ
- * @Datetime: 2018/4/16 22:04
  */
 @Data
 @Alias("roleModule")

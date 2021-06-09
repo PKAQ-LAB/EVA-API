@@ -11,7 +11,6 @@ import org.apache.ibatis.type.Alias;
 /**
  * 角色配置
  * @author: S.PKAQ
- * @Datetime: 2018/4/13 7:26
  */
 @Data
 @Alias("roleConfig")
