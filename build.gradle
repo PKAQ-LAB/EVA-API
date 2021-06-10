@@ -111,7 +111,7 @@ subprojects {
     }
 
     dependencies {
-       implementation "org.yaml:snakeyaml:1.28"
+       implementation "org.yaml:snakeyaml:1.29"
        implementation "${lib.lombok}"
 	   annotationProcessor "${lib.lombok}"
 
