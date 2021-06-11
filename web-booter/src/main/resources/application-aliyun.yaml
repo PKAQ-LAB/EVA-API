@@ -1,4 +1,3 @@
-
 debug: true
 # 日志
 logging:
@@ -21,11 +20,11 @@ spring:
   # 数据源
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:p6spy:mysql://118.31.166.146:12306/eva?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&autoReconnect=true&failOverReadOnly=false
-    username: ENC(wGxhWEdTDAMKcQc6P8XBEwwoY22MTKN69z5voKxc8wiF6LoGCSEpj+/0pzuq93v4)
-    password: ENC(wGxhWEdTDAMKcQc6P8XBEwwoY22MTKN69z5voKxc8wiF6LoGCSEpj+/0pzuq93v4)
+    username: BINHAI_BI
+    password: 7u8i9o0p
 #    GsyjJCmmNRiHRVGmXdy+QErynoqC/cOBlt5V9dPZ+c2g2XwPc5+BbKrSxWLsyCGG
     driver-class-name: com.p6spy.engine.spy.P6SpyDriver
+    url: jdbc:p6spy:oracle:thin:@47.104.217.77:15210:orcl
   hikari:
     minimum-idle: 10
     maximum-pool-size: 50
@@ -38,7 +37,7 @@ spring:
       additional-paths: src/main/java
 # redis 配置
   redis:
-    host: 172.17.0.7
+    host: xilai.my.to
     port: 6379
     password: 7u8i9o0p
     timeout: 10000
@@ -50,6 +49,10 @@ spring:
     database-platform: org.hibernate.dialect.MySQL5Dialect
   flyway:
     enabled: false
+  data:
+    redis:
+      repositories:
+        enabled: false
 eva:
   # 文件上传
   upload:
