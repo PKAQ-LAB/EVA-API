@@ -1,6 +1,7 @@
 package io.nerv.web.sys.user.ctrl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.exception.ParamException;
 import io.nerv.core.mvc.ctrl.Ctrl;
@@ -32,7 +33,7 @@ public class UserCtrl extends Ctrl {
     @ApiOperation(value = "校验账号唯一性",response = Response.class)
     public Response checkUnique(@ApiParam(name ="userEntity", value = "要进行校验的参数")
                                 @RequestBody UserEntity user){
-        boolean exist = this.service.checkUnique(user);
+        boolean exist = (null != user && StrUtil.isNotBlank(user.getAccount()))? this.service.checkUnique(user) : false;
         return exist? failure(BizCodeEnum.ACCOUNT_ALREADY_EXIST): success();
     }
 

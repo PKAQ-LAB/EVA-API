@@ -62,7 +62,7 @@ public class DictCtrl extends Ctrl {
     @ApiOperation(value = "校验code",response = Response.class)
     public Response checkUnique(@ApiParam(name ="dictEntity", value = "要进行校验的参数")
                                 @RequestBody DictEntity dictEntity){
-        boolean exist = this.service.checkUnique(dictEntity);
+        boolean exist = (null != dictEntity && StrUtil.isNotBlank(dictEntity.getCode()))? this.service.checkUnique(dictEntity) : false;
         return exist? this.failure(): this.success();
     }
 

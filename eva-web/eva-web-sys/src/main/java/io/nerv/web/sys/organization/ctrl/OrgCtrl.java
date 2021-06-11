@@ -1,6 +1,7 @@
 package io.nerv.web.sys.organization.ctrl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.exception.ParamException;
 import io.nerv.core.mvc.ctrl.Ctrl;
@@ -37,7 +38,7 @@ public class OrgCtrl extends Ctrl {
     @ApiOperation(value = "校验code唯一性",response = Response.class)
     public Response checkUnique(@ApiParam(name ="organization", value = "要进行校验的参数")
                                 @RequestBody OrganizationEntity organization){
-        boolean exist = this.service.checkUnique(organization);
+        boolean exist = (null != organization && StrUtil.isNotBlank(organization.getCode()))? this.service.checkUnique(organization) : false;
         return exist? failure(BizCodeEnum.ORG_CODE_EXIST): success();
     }
 

@@ -1,6 +1,7 @@
 package io.nerv.web.sys.module.ctrl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.exception.ParamException;
 import io.nerv.core.mvc.ctrl.Ctrl;
@@ -30,7 +31,9 @@ public class ModuleCtrl extends Ctrl {
     @ApiOperation(value = "校验path唯一性",response = Response.class)
     public Response checkUnique(@ApiParam(name ="moduleEntity", value = "要进行校验的参数")
                                 @RequestBody ModuleEntity module){
-        boolean exist = this.service.checkUnique(module);
+
+        boolean exist = (null != module && StrUtil.isNotBlank(module.getPath()))? this.service.checkUnique(module) : false;
+
         return exist? failure(BizCodeEnum.PATH_ALREADY_EXIST): success();
     }
 

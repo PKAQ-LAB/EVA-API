@@ -31,7 +31,7 @@ public class RoleCtrl extends Ctrl {
     @ApiOperation(value = "校验角色编码唯一性",response = Response.class)
     public Response checkUnique(@ApiParam(name ="roleEsaveModulentity", value = "要进行校验的参数")
                                 @RequestBody RoleEntity role){
-        boolean exist = this.service.checkUnique(role);
+        boolean exist = (null != role && StrUtil.isNotBlank(role.getCode()))? this.service.checkUnique(role) : false;
         return exist? failure(BizCodeEnum.ROLE_CODE_EXIST): success();
     }
 
