@@ -67,7 +67,7 @@ publishing {
         maven {
             name "local"
             url = LOCAL_ARTIFACTORY_CONTEXTURL
-
+            allowInsecureProtocol = true
             credentials {
                 username LOCAL_ARTIFACTORY_USER
                 password LOCAL_ARTIFACTORY_PASSWORD
