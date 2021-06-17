@@ -1,8 +1,7 @@
-package io.nerv.core.mvc.ctrl.jpa;
+package io.nerv.core.mvc.ctrl.pure;
 
 import io.nerv.core.enums.BizCode;
 import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.core.mvc.service.jpa.StdBaseService;
 import io.nerv.core.mvc.vo.Response;
 import io.nerv.core.util.I18NHelper;
 import lombok.Getter;
@@ -10,13 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Controller 基类- 无默认CRUD方法
- * Datetime: 2018/3/5 23:37
  * @author S.PKAQ
  */
 @Getter
-public abstract class PureBaseCtrl<T extends StdBaseService> {
-    @Autowired
-    protected T service;
+public abstract class PureBaseCtrl{
     @Autowired
     protected I18NHelper i18NHelper;
 

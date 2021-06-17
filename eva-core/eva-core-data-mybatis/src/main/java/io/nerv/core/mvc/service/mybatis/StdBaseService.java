@@ -17,7 +17,6 @@ import java.util.List;
  * service 基类
  * 抛出exception异常时 回滚事务
  * 定义一些公用的查询
- * Datetime: 2018/3/13 22:16
  * @author S.PKAQ
  */
 public abstract class StdBaseService<M extends BaseMapper<T>, T extends StdBaseEntity> {

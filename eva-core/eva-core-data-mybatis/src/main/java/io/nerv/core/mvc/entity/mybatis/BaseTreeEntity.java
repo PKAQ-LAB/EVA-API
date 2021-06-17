@@ -11,7 +11,6 @@ import java.util.List;
 /**
  * 树形结构实体基类
  * @author: S.PKAQ
- * @Datetime: 2018/11/18 13:20
  */
 @Data
 @EqualsAndHashCode(callSuper=false)

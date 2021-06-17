@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 /**
  * 实体类基类，用于存放公共属性
  * @author: S.PKAQ
- * @Datetime: 2018/3/13 22:48
  */
 @Data
 public abstract class StdBaseEntity implements Entity {

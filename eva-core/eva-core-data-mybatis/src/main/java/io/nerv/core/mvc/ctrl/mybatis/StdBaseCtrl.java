@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * Controller 基类
- * Datetime: 2018/3/5 23:37
  * @author S.PKAQ
  */
 @Getter
