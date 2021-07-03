@@ -26,9 +26,13 @@ public class SecuritySecureConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers( adminContextPath + "/login" ).permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .formLogin().loginPage( adminContextPath + "/login" ).successHandler( successHandler ).and()
+                .formLogin().loginPage( adminContextPath + "/login" ).successHandler( successHandler )
+                .and()
                 .logout().logoutUrl( adminContextPath + "/logout" ).and()
-                .httpBasic().and()
+                .httpBasic()
+                .and()
+                .headers().frameOptions().disable()
+                .and()
                 .csrf().disable();
         // @formatter:on
     }

@@ -1,12 +1,12 @@
-# »ùÓÚÄÄ¸ç¾µÏñ
+# åŸºäºå“ªå“¥é•œåƒ
 FROM mcr.microsoft.com/java/jre:11u9-zulu-alpine
-# ×÷Õß
+# ä½œè€…
 MAINTAINER W.F#pkaq@msn.com
-# Ó³Éä/tmpµ½Ö÷»ú
+# æ˜ å°„/tmpåˆ°ä¸»æœº
 VOLUME /tmp
-#½«´ò°üºÃµÄspring³ÌĞò¿½±´µ½ÈİÆ÷ÖĞµÄÖ¸¶¨Î»ÖÃ
+#å°†æ‰“åŒ…å¥½çš„springç¨‹åºæ‹·è´åˆ°å®¹å™¨ä¸­çš„æŒ‡å®šä½ç½®
 COPY *.jar /opt/app.jar
-#ÈİÆ÷¶ÔÍâ±©Â¶9006
+#å®¹å™¨å¯¹å¤–æš´éœ²9006
 EXPOSE 9006
-# ÈİÆ÷Æô¶¯ºóÖ´ĞĞµÄÃüÁî
+# å®¹å™¨å¯åŠ¨åæ‰§è¡Œçš„å‘½ä»¤
 ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/opt/app.jar"]

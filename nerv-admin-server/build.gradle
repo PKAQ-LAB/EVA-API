@@ -7,7 +7,7 @@ jar {
 }
 
 bootJar {
-    mainClassName = 'io.nerv.AdminBooter'
+    mainClass = 'io.nerv.AdminBooter'
 }
 
 description = """admin-server"""
