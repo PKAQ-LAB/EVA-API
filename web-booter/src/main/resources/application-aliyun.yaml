@@ -9,14 +9,14 @@ logging:
     name: e:/applogs/webapp.log
 #  监控
 spring:
-#  boot:
-#    admin:
-#      client:
-#        url: http://192.168.10.166:19001/
-#        username: eva
-#        password: 7u8i9o0p
-#        instance:
-#          prefer-ip: true
+  boot:
+    admin:
+      client:
+        url: http://47.104.217.77:10086/
+        username: eva
+        password: 7u8i9o0p
+        instance:
+          prefer-ip: true
   # 数据源
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
@@ -64,13 +64,13 @@ eva:
     # dfs 地址
     serverUrl: http://118.31.166.146:18109/ga
 #    监控配置
-#management:
-#  endpoints:
-#    web:
-#      exposure:
-#        include: '*'
-#  endpoint:
-#    health:
-#      show-details: ALWAYS
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: ALWAYS
 #  server:
-#    address: 192.168.10.127
+#    address: 47.104.217.77

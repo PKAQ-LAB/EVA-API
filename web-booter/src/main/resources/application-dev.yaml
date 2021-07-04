@@ -64,13 +64,14 @@ eva:
     # dfs 地址
     serverUrl: http://118.31.166.146:18109/ga
 #    监控配置
-#management:
-#  endpoints:
-#    web:
-#      exposure:
-#        include: '*'
-#  endpoint:
-#    health:
-#      show-details: ALWAYS
-#  server:
-#    address: 192.168.10.127
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: ALWAYS
+  server:
+    address: 47.104.217.77
+    port: 10086

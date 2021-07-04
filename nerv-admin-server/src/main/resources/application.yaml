@@ -1,5 +1,5 @@
 server:
-  port: 19001
+  port: 12305
 spring:
   security:
     user:

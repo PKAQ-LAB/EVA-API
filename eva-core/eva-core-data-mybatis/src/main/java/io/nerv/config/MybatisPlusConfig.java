@@ -23,7 +23,7 @@ public class MybatisPlusConfig {
     * @return
     */
    @Bean
-   public MybatisPlusInterceptor paginationInterceptor() {
+   public MybatisPlusInterceptor mybatisPlusInterceptor() {
       return new MybatisPlusInterceptor();
    }
     /**
