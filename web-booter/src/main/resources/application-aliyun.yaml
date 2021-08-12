@@ -37,7 +37,7 @@ spring:
       additional-paths: src/main/java
 # redis 配置
   redis:
-    host: xilai.my.to
+    host: 47.104.217.77
     port: 6379
     password: 7u8i9o0p
     timeout: 10000

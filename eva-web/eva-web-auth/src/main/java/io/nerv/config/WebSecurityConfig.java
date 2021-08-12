@@ -106,6 +106,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new JwtAuthFilter();
     }
 
+    /**
+     * 跨域配置
+     * @return
+     */
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
