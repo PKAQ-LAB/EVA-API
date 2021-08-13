@@ -1,3 +1,39 @@
+ext.'signing.keyId'='AE4240A5'
+ext.'signing.password'='sai18109'
+ext.'signing.secretKeyRingFile'='D:/keys/maven_publish_secret.gpg'
+ext.ARTIFACTORY_USER='mosvex'
+ext.ARTIFACTORY_PASSWORD='Shawn18109.!'
+ext.ARTIFACTORY_CONTEXTURL='https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
+ext.LOCAL_ARTIFACTORY_USER='wuf'
+ext.LOCAL_ARTIFACTORY_PASSWORD='AP73dxWRJFYVb1CG'
+ext.LOCAL_ARTIFACTORY_CONTEXTURL='http://xilai.my.to:10081/artifactory/local-repo'
+
+//#GAV
+ext.GROUP='org.pkaq'
+
+//#项目地址相关
+ext.POM_URL='http://pkaq.org'
+ext.POM_SCM_URL='http://xilai.my.to:10080/Baseline/EVA'
+ext.POM_SCM_CONNECTION='ssh://git@xilai.my.to:10022/Baseline/EVA.git'
+ext.POM_SCM_DEV_CONNECTION='ssh://git@xilai.my.to:10022/Baseline/EVA.git'
+
+//#项目相关信息
+ext.GIT_URL='http://xilai.my.to:10080/Baseline/EVA.git'
+ext.ISSUE_URL='http://xilai.my.to:10080/Baseline/EVA/issues'
+ext.POM_PACKAGING='jar'
+ext.POM_DESCRIPTION='Eva Library'
+
+//#开源协议
+ext.POM_LICENCE_NAME='The Apache Software License, Version 2.0'
+ext.POM_LICENCE_URL='http://www.apache.org/licenses/LICENSE-2.0.txt'
+ext.POM_LICENCE_DIST='repo'
+
+//#开发者信息
+ext.POM_DEVELOPER_ID='PKAQ'
+ext.POM_DEVELOPER_NAME='WuF'
+ext.POM_DEVELOPER_EMAIL='pkaq@msn.com'
+ext.POM_DEVELOPER_URL='http://pkaq.org'
+
 task sourcesJar(type: Jar) {
     from sourceSets.main.allJava
     archiveClassifier = 'sources'
