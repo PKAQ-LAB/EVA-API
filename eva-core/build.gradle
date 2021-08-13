@@ -1,1 +1,1 @@
-bintrayUpload.enabled = false
+project.tasks.publish.enabled = false

@@ -1,4 +1,6 @@
-apply from: '../../publish.gradle'
+if (project.file('../../publish.gradle').exists()) {
+    apply from: '../../publish.gradle'
+}
 project.archivesBaseName = 'eva-core-common'
 project.description='eva common class'
 

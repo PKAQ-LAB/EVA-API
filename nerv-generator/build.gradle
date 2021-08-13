@@ -1,6 +1,6 @@
 project.archivesBaseName = 'extra-generator'
 
-bintrayUpload.enabled = false
+project.tasks.publish.enabled = false
 
 jar {
 	enabled = true

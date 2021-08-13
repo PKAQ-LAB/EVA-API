@@ -10,6 +10,11 @@ task javadocJar(type: Jar) {
 
 
 javadoc {
+    options {
+        encoding "UTF-8"
+        charSet 'UTF-8'
+    }
+
     if(JavaVersion.current().isJava9Compatible()) {
         options.addBooleanOption('html5', true)
     }
@@ -19,6 +24,9 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
+            // groupId,artifactId,version，如果不定义，则会按照以上默认值执行
+            // groupId 必须于maven repo申请的group Id一致
+            groupId GROUP
 			
 			afterEvaluate {
 				artifactId project.archivesBaseName
@@ -31,12 +39,14 @@ publishing {
                 name = artifactId
                 description = project.description
                 url = POM_URL
+                // 许可证
                 licenses {
                     license {
                         name = POM_LICENCE_NAME
                         url = POM_LICENCE_URL
                     }
                 }
+                // 开发者信息
                 developers {
                     developer {
                         id = POM_DEVELOPER_ID
@@ -44,6 +54,7 @@ publishing {
                         email = POM_DEVELOPER_EMAIL
                     }
                 }
+                // 版本控制仓库地址
                 scm {
                     connection = POM_SCM_CONNECTION
                     developerConnection = POM_SCM_DEV_CONNECTION
@@ -52,17 +63,16 @@ publishing {
             }		        		
         }
     }
-	
+    // 定义发布到哪里
 	repositories {
-        // Jcenter
-//        maven {
-//           url = ARTIFACTORY_CONTEXTURL
-//
-//            credentials {
-//                username ARTIFACTORY_USER
-//                password ARTIFACTORY_PASSWORD
-//           }
-//        }
+        maven {
+           url = ARTIFACTORY_CONTEXTURL
+            // 这里就是之前在issues.sonatype.org注册的账号
+            credentials {
+                username ARTIFACTORY_USER
+                password ARTIFACTORY_PASSWORD
+           }
+        }
         // 本地私服
         maven {
             name "local"
@@ -76,34 +86,7 @@ publishing {
     }
 }
 
- bintray {
-        user = ARTIFACTORY_USER
-        key = ARTIFACTORY_PASSWORD
-		
-		println user
-		println key
-		
-        publications = ['mavenJava'] 
-        
-        dryRun = false 
-        publish = true 
-		override = true
-        pkg {
-			
-            repo = 'pub'
-			afterEvaluate {
-				name = project.archivesBaseName
-			}
-			userOrg = 'nerv'
-            desc = project.description
-			
-            websiteUrl = 'https://pkaq.org'
-            issueTrackerUrl = 'https://pkaq.org'
-            vcsUrl = 'https://pkaq.org'
-			
-            licenses = ['Apache-2.0']
-            labels = ['io.nerv', 'eva']
-            publicDownloadNumbers = true
-        }
-    }
-	
+signing {
+    sign publishing.publications.mavenJava
+//    sign configurations.archives
+}
