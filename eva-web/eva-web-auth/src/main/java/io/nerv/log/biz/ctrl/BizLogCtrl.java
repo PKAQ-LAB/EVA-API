@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @RestController

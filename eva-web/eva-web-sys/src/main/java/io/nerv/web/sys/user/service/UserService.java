@@ -2,6 +2,7 @@ package io.nerv.web.sys.user.service;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.crypto.digest.BCrypt;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
@@ -23,7 +24,6 @@ import io.nerv.web.sys.user.entity.UserEntity;
 import io.nerv.web.sys.user.mapper.UserMapper;
 import io.nerv.web.sys.user.vo.PasswordVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -37,9 +37,6 @@ import java.util.Map;
  */
 @Service
 public class UserService extends StdBaseService<UserMapper, UserEntity> {
-
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
     private OrganizationMapper organizationMapper;
@@ -67,8 +64,9 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
     public boolean repwd(PasswordVO passwordVO){
         String userid = this.securityHelper.getJwtUserId();
         UserEntity userEntity = this.mapper.selectById(userid);
-        if (passwordEncoder.matches(passwordVO.getOriginpassword(), userEntity.getPassword())){
-            userEntity.setPassword(passwordEncoder.encode(passwordVO.getNewpassword()));
+
+        if (BCrypt.checkpw(passwordVO.getOriginpassword(), userEntity.getPassword())){
+            userEntity.setPassword(BCrypt.hashpw(passwordVO.getNewpassword()));
             this.mapper.updateById(userEntity);
             return true;
         }
@@ -134,7 +132,7 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
         // 这里传递过来的密码是进行md5加密后的
         String pwd = user.getPassword();
         if (StrUtil.isNotBlank(pwd)){
-            pwd = passwordEncoder.encode(pwd);
+            pwd = BCrypt.hashpw(pwd);
             user.setPassword(pwd);
         }
         //设置部门名称
