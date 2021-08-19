@@ -2,6 +2,7 @@ if (project.file('../../publish.gradle').exists()) {
     apply from: '../../publish.gradle'
 }
 project.archivesBaseName = 'eva-core-pay'
+project.description='eva pay support'
 
 dependencies {
     implementation("${lib.web}"){
