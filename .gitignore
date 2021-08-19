@@ -26,3 +26,5 @@
 /eva-web/eva-web-auth/build
 /eva-web/eva-web-base/build
 /eva-web/eva-web-sys/build
+/eva-core/eva-core-sso/build
+/eva-web/eva-web-sso/build
