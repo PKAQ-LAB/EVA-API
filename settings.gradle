@@ -1,20 +1,24 @@
 rootProject.name = 'eva'
 include ':eva-web:eva-web-sys'
+include ':eva-web:eva-web-sso'
 include ':eva-web:eva-web-auth'
 include ':eva-web:eva-web-base'
-include ':eva-core:eva-core-pay'
-include ':eva-core:eva-core-weixin'
-include ':eva-core:eva-core-license'
+
 include ':eva-core:eva-core-common'
 include ':eva-core:eva-core-log'
 include ':eva-core:eva-core-cache'
 include ':eva-core:eva-core-data-jpa'
 include ':eva-core:eva-core-data-mybatis'
+include ':eva-core:eva-core-pay'
+include ':eva-core:eva-core-weixin'
+include ':eva-core:eva-core-license'
 include ':eva-core:eva-core-security'
-include 'eva-core:eva-core-sso'
+include ':eva-core:eva-core-sso'
 
 include 'nerv-admin-server'
 include 'nerv-license'
 include 'nerv-generator'
 include 'web-booter'
 include 'web-booter-sso'
+
+
