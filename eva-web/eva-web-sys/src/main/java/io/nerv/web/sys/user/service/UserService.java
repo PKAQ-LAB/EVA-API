@@ -184,7 +184,7 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
         if (StrUtil.isNotBlank(user.getId())){
             entityWrapper.ne("id", user.getId());
         }
-        int records = this.mapper.selectCount(entityWrapper);
+        long records = this.mapper.selectCount(entityWrapper);
         return records > 0;
     }
 

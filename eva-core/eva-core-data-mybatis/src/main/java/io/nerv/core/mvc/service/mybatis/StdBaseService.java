@@ -35,7 +35,7 @@ public abstract class StdBaseService<M extends BaseMapper<T>, T extends StdBaseE
      * @param entity
      * @return
      */
-    public Integer selectCount(T entity){
+    public Long selectCount(T entity){
         Wrapper<T> wrapper = new QueryWrapper<>(entity);
         return this.mapper.selectCount(wrapper);
     }

@@ -11,5 +11,6 @@ dependencies {
 
     implementation "${lib.undertow}"
 
-    implementation	project(":eva-web:eva-web-base")
+    implementation	project(":eva-web:eva-web-base"),
+                    project(":eva-core:eva-core-security")
 }

@@ -17,7 +17,6 @@ include ':eva-core:eva-core-sso'
 
 include 'nerv-admin-server'
 include 'nerv-license'
-include 'nerv-generator'
 include 'web-booter'
 include 'web-booter-sso'
 

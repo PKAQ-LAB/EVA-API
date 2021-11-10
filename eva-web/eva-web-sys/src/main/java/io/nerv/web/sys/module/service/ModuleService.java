@@ -287,7 +287,7 @@ public class ModuleService extends StdBaseService<ModuleMapper, ModuleEntity> {
             entityWrapper.eq("parent_id", module.getParentId());
         }
 
-        int records = this.mapper.selectCount(entityWrapper);
+        long records = this.mapper.selectCount(entityWrapper);
         return records > 0;
     }
 

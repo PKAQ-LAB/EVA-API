@@ -175,7 +175,7 @@ public class OrganizationService extends StdBaseService<OrganizationMapper, Orga
     public boolean checkUnique(OrganizationEntity organization) {
         QueryWrapper<OrganizationEntity> entityWrapper = new QueryWrapper<>();
         entityWrapper.eq("code", organization.getCode());
-        int records = this.mapper.selectCount(entityWrapper);
+        long records = this.mapper.selectCount(entityWrapper);
         return records > 0;
     }
 }

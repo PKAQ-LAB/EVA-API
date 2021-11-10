@@ -1,5 +1,7 @@
 # 基于哪哥镜像
-FROM mcr.microsoft.com/java/jre:11u9-zulu-alpine
+FROM mcr.microsoft.com/java/jre:17u1-zulu-alpine
+#FROM mcr.microsoft.com/java/jre-headless:17u1-zulu-alpine
+#FROM azul/zulu-openjdk-alpine:17
 # 作者
 MAINTAINER W.F#pkaq@msn.com
 # 映射/tmp到主机
