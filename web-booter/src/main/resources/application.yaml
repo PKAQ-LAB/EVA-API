@@ -41,7 +41,7 @@ mybatis-plus:
       table-underline: true
       logic-delete-value: '0001' # 逻辑已删除值(默认为 1)
       logic-not-delete-value: '0000' # 逻辑未删除值(默认为 0)
-      select-strategy: not_empty
+      where-strategy: not_empty
     banner: false
   configuration:
     map-underscore-to-camel-case: true

@@ -5,9 +5,8 @@ project.tasks.publish.enabled = false
 jar {
     enabled = true
 }
-
 bootJar {
-    mainClassName = 'io.nerv.LicenseBooter'
+    mainClass = 'io.nerv.LicenseBooter'
 }
 
 description = """license"""
