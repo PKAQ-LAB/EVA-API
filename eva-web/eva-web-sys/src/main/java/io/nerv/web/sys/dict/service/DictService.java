@@ -163,7 +163,7 @@ public class DictService extends StdBaseService<DictMapper, DictEntity> {
      * @return
      */
     public boolean checkUnique(DictEntity dictEntity) {
-        int records = this.mapper.selectCount(new QueryWrapper<>(dictEntity));
-        return records>0;
+        long records = this.mapper.selectCount(new QueryWrapper<>(dictEntity));
+        return records > 0;
     }
 }
