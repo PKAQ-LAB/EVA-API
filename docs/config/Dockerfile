@@ -1,5 +1,5 @@
 # 基于哪哥镜像
-FROM mcr.microsoft.com/java/jre:17u1-zulu-alpine
+FROM mcr.microsoft.com/java/jre:17-zulu-alpine
 #FROM mcr.microsoft.com/java/jre-headless:17u1-zulu-alpine
 #FROM azul/zulu-openjdk-alpine:17
 # 作者
