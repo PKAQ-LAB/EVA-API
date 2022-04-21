@@ -1,16 +1,14 @@
 plugins {
-   id "com.jfrog.bintray" version "${jfrog_ver}"
    id "io.spring.dependency-management" version "${spring_dep}"
    id 'org.springframework.boot' version "${spring_boot_ver}"
-   id "name.remal.check-updates" version "${cdu}"
 }
 
 ext {
     lib = ["boot" : "org.springframework.boot:spring-boot-dependencies:${spring_boot_ver}",
            "p6spy" : "p6spy:p6spy:${p6spy}",
            "flyway" : "org.flywaydb:flyway-core:${flyway}",
+           // database
            "mysql" : "mysql:mysql-connector-java:${mysql}",
-           // oracle
            "oracle" : "com.oracle.database.jdbc:ojdbc10:${oracle}",
            "orai18n": "cn.easyproject:orai18n:${orai18n}",
            "jaxb_api" : "javax.xml.bind:jaxb-api:${jaxb_api}",
@@ -76,7 +74,6 @@ subprojects {
     apply plugin: 'signing'
 
     apply plugin: 'io.spring.dependency-management'
-    apply plugin: "name.remal.check-updates"
 
 	sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
