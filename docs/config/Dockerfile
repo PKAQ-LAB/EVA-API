@@ -1,5 +1,5 @@
 # �����ĸ羵��
-FROM mcr.microsoft.com/java/jre:11-zulu-alpine
+FROM mcr.microsoft.com/java/jre:17-zulu-alpine
 # ����
 MAINTAINER W.F#pkaq@msn.com
 # ӳ��/tmp������
