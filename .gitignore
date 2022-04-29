@@ -2,7 +2,7 @@
 /.gradle
 /.idea
 /*/*.iml
-/*/build
+/**/build
 /docs/db/*.pdb
 /*.log
 /*.lock

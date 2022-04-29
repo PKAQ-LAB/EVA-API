@@ -1,5 +1,4 @@
 plugins {
-   id "name.remal.check-dependency-updates" version "${cdu_ver}"
    id "io.spring.dependency-management" version "${spring_dep}"
    id 'org.springframework.boot' version "${spring_boot_ver}"
 }
@@ -38,7 +37,6 @@ ext {
 }
 
 allprojects {
-    apply plugin: "name.remal.check-dependency-updates"
     group = 'io.nerv'
     version = '2.5.6'
 }
