@@ -7,7 +7,7 @@ jar {
 }
 
 bootJar {
-    mainClassName = 'io.nerv.AuthBooter'
+    mainClass = 'io.nerv.AuthBooter'
 }
 
 compileJava.dependsOn(processResources)

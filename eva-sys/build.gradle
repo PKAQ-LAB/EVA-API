@@ -7,7 +7,7 @@ jar {
 }
 
 bootJar {
-    mainClassName = 'io.nerv.SysBooter'
+    mainClass = 'io.nerv.SysBooter'
 }
 
 description = """sys"""
