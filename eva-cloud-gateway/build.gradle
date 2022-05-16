@@ -1,26 +1,31 @@
 import org.apache.tools.ant.filters.ReplaceTokens
+apply plugin: "org.springframework.boot"
 description = """eva-cloud-gateway"""
+
+jar {
+    enabled = true
+}
+
+bootJar {
+    mainClass = 'io.nerv.GatewayBooter'
+}
 
 compileJava.dependsOn(processResources)
 
 processResources {
     println "==> Load configuration for $profile"
-
-    from(sourceSets.main.resources.srcDirs) {
+    filesMatching('**/*.yaml') {
         filter(ReplaceTokens, tokens: [profile: profile])
     }
-
 }
 
 dependencies {
-    implementation "${lib.gateway}",
-                   "${lib.knife4j}",
-                   "${lib.sentinel}",
-                   "${lib.nacos_config}",
-                   "${lib.nacos_client}",
-                   "${lib.security_config}",
-                   "${lib.resource_server}",
-                   "${lib.jose}",
-                   "${lib.oauth2}",
-                   "${lib.hutool}"
+    implementation  "${lib.gateway}",
+                    "${lib.loadbalancer}",
+                    "${lib.security_config}",
+                    "${lib.resource_server}",
+                    "${lib.oauth2_client}",
+                    "${lib.hutool}",
+                    "${lib.jose}",
+                    "${lib.jwt}"
 }

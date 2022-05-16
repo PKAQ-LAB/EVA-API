@@ -1,71 +1,23 @@
 spring:
-  profiles:
-    active: @profile@
-  application:
-    # 注册到Nacos上的服务名称
-    name: eva-cloud-gateway
   cloud:
     nacos:
-      maxAge: &server_ip 47.104.217.77
-      discovery:
-        # 注册中心地址
-        server-addr: *server_ip
       config:
+        name: dev
         namespace: @profile@
-        server-addr: *server_ip
+        server-addr: 192.168.10.59
         # 指定group
-        group: DEFAULT_GROUP
+        group: DEV_GROUP
         # 文件后缀，默认为properties
         file-extension: yaml
         # 自动刷新
         refresh-enabled: true
         # 共享的配置文件
         shared-configs:
-            - dataId: common.yaml
-              group: DEFAULT_GROUP
+            - dataId: dev.yaml
+              group: DEV_GROUP
               refresh: true
-            - dataId: common-cloud.yaml
-              group: DEFAULT_GROUP
-              refresh: true
-    gateway:
-      discovery:
-        locator:
-          enabled: true
-      # 处理跨域问题
-      globalcors:
-        cors-configurations:
-          # 匹配所有请求
-          '[/**]':
-            # 支持所有域
-            allowedOrigins: "*"
-            # 支持的跨域请求方法
-            allowedMethods:
-              - GET
-              - POST
-              - PUT
-              - DELETE
-              - OPTIONS
-      routes:
-        - id: eva-jxc
-          uri: lb://eva-jxc
-          predicates:
-            - Path=/jxc/**
-          #            - Header=Cookie,Set-Cookie
-#      路由配置
-#      routes:
-#        - id: eva-sys
-##          使用负载均衡, lb://服务名称
-#          uri: lb://eva-sys
-##          所有以 /api/sys 开头的请求都路由的上面的服务地址
-#          predicates:
-#            - Path=/api/sys/**
-##          将请求中的第一个路径去掉
-#          filters:
-#            - StripPrefix=1
-#             - name: RequestRateLimiter #请求数限流 名字不能随便写 ，使用默认的facatory
-#              args:
-#                key-resolver: "#{@ipKeyResolver}"
-##                每秒钟允许的并发请求数
-#                redis-rate-limiter.replenishRate: 5
-##                允许最大并发
-#                redis-rate-limiter.burstCapacity: 15
+    #  Failed to start bean ‘documentationPluginsBootstrapper’; nested exception is java.lang.NullPointerException
+    #  Springboot2.6以后将SpringMVC 默认路径匹配策略从AntPathMatcher 更改为PathPatternParser，导致出错
+  profiles:
+    active: dev
+

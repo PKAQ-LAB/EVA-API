@@ -1,0 +1,64 @@
+package io.nerv.config;
+
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
+import com.nimbusds.jose.JWSObject;
+import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.core.Ordered;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.stereotype.Component;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
+
+import java.util.Objects;
+
+/**
+ * 将登录用户的JWT转化成用户信息的全局过滤器
+ */
+@Component
+public class AuthGlobalFilter implements GlobalFilter, Ordered {
+
+    @Override
+    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        //认证信息从Header 或 请求参数 中获取
+        ServerHttpRequest serverHttpRequest = exchange.getRequest();
+        String token = serverHttpRequest.getHeaders().getFirst("TOKEN");
+        if (Objects.isNull(token)) {
+            token = serverHttpRequest.getQueryParams().getFirst("TOKEN");
+        }
+
+        if (StrUtil.isEmpty(token)) {
+            return chain.filter(exchange);
+        }
+        try {
+            //从token中解析用户信息并设置到Header中去
+            String realToken = token.replace("AUTH", "");
+            JWSObject jwsObject = JWSObject.parse(realToken);
+            String userStr = jwsObject.getPayload().toString();
+
+            // 黑名单token(登出、修改密码)校验
+            JSONObject jsonObject = JSONUtil.parseObj(userStr);
+            String jti = jsonObject.getStr("jti");
+
+            Boolean isBlack = false;
+            if (isBlack) {
+
+            }
+
+            // 存在token且不是黑名单，request写入JWT的载体信息
+            ServerHttpRequest request = serverHttpRequest.mutate().header("U_", userStr).build();
+            exchange = exchange.mutate().request(request).build();
+        } catch (java.text.ParseException e) {
+            e.printStackTrace();
+        }
+
+        return chain.filter(exchange);
+    }
+
+    @Override
+    public int getOrder() {
+        return 0;
+    }
+}

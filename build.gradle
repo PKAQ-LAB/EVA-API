@@ -12,27 +12,35 @@ ext {
             "boot" : "org.springframework.boot:spring-boot-dependencies:${spring_boot_ver}",
             "knife4j_cloud":"com.github.xiaoymin:knife4j-micro-spring-boot-starter:${knife4j}",
             "knife4j":"com.github.xiaoymin:knife4j-spring-boot-starter:${knife4j}",
+            "jaxb_api" : "javax.xml.bind:jaxb-api:${jaxb_api}",
             // lombok
             "lombok" : "org.projectlombok:lombok:${lombok}",
             // test
             "test" : "org.springframework.boot:spring-boot-starter-test",
             "boot_web": "org.springframework.boot:spring-boot-starter-web",
+            // web
+            "web" : "org.springframework.boot:spring-boot-starter-web",
+            "undertow" : "org.springframework.boot:spring-boot-starter-undertow",
             // spring cloud
             "cloud": "org.springframework.cloud:spring-cloud-dependencies:${cloud}",
+            "cloud_bootstrap": "org.springframework.cloud:spring-cloud-starter-bootstrap:${bootstrap}",
             "alibaba":"com.alibaba.cloud:spring-cloud-alibaba-dependencies:${alibaba}",
+            // nacos
             "nacos_config":"com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-config",
             "nacos_client":"com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery",
-            "sentinel":"com.alibaba.cloud:spring-cloud-starter-alibaba-sentinel",
-            "feign":"org.springframework.cloud:spring-cloud-starter-openfeign",
-            "feignHttp": "io.github.openfeign:feign-httpclient",
+            // gateway
             "gateway": "org.springframework.cloud:spring-cloud-starter-gateway",
-            "security": "org.springframework.cloud:spring-cloud-starter-security",
             "security_config": "org.springframework.security:spring-security-config",
-            "oauth2": "org.springframework.cloud:spring-cloud-starter-oauth2",
+            "loadbalancer": "org.springframework.cloud:spring-cloud-starter-loadbalancer",
+            // jwt
+            "jwt": "com.nimbusds:nimbus-jose-jwt:${jwt}",
+            // OAUTH2 SERVER
+            "security": "org.springframework.boot:spring-boot-starter-security",
+            "oauth2_config": "org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure",
             "oauth2_client": "org.springframework.security:spring-security-oauth2-client",
-            "resource_server": "org.springframework.security:spring-security-oauth2-resource-server",
             "jose": "org.springframework.security:spring-security-oauth2-jose",
-            "jwt": "com.nimbusds:nimbus-jose-jwt:${jwt}"
+            "rsa": "org.springframework.security:spring-security-rsa:${rsa}",
+            "resource_server": "org.springframework.security:spring-security-oauth2-resource-server",
     ]
 }
 
@@ -45,8 +53,8 @@ subprojects {
     apply plugin: 'java-library'
     apply plugin: 'io.spring.dependency-management'
 
-	sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+	sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 
     dependencyManagement {
         imports {
@@ -81,7 +89,12 @@ subprojects {
 
     dependencies {
         implementation "${lib.lombok}",
-                       "${lib.knife4j_cloud}"
+                       "${lib.nacos_config}",
+                       "${lib.nacos_client}",
+                       // spring cloud 2020以后的版本,默认不优先读取bootstrap.yml了;
+                       // bootstrap.yml失效,导致nacos报错Param 'serviceName' is illegal, serviceName is blank
+                       // 相关链接:https://docs.spring.io/spring-cloud-config/docs/current/reference/html/#config-first-bootstrap
+                       "${lib.cloud_bootstrap}"
 
         annotationProcessor "${lib.lombok}"
 

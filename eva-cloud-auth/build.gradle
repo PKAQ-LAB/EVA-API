@@ -20,11 +20,16 @@ processResources {
 }
 
 dependencies {
-    implementation "${lib.eva_core_common}",
-                   "${lib.eva_web_sys}",
-                   "${lib.nacos_config}",
-                   "${lib.nacos_client}",
-                   "${lib.oauth2}",
+    api("${lib.web}"){
+        exclude module: 'spring-boot-starter-tomcat'
+    }
+    api "${lib.undertow}"
+
+    implementation "${lib.hutool}",
                    "${lib.security}",
-                   "${lib.jwt}"
+                   "${lib.oauth2_config}",
+                   "${lib.jwt}",
+                   "org.pkaq:eva-core-common:2.6.9.c",
+                   "org.pkaq:eva-core-cache:2.6.9.c",
+                   "${lib.rsa}"
 }
