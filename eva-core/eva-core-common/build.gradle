@@ -7,15 +7,14 @@ project.description='eva common class'
 dependencies {
     implementation 	"${lib.p6spy}",
                     "${lib.flyway}",
-                    "${lib.mysql}",
                     "${lib.jaxb_api}",
                     "${lib.jasypt}"
 
     api "${lib.hutool}",
         "${lib.aop}",
         "${lib.jdbc}",
-        "${lib.knife4j_spring}",
         "${lib.jwt}",
         "${lib.json}",
+        "${lib.knife4j_spring}",
         "${lib.validation}"
 }
