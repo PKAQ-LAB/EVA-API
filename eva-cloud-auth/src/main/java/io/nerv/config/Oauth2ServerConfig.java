@@ -9,12 +9,13 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.config.annotation.builders.JdbcClientDetailsServiceBuilder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.ClientDetailsService;
+import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
@@ -28,6 +29,18 @@ import java.util.List;
 
 /**
  * 认证服务器配置
+ * /oauth/authorize：授权端点
+ *
+ * /oauth/token：获取令牌端点
+ *
+ * /oauth/confirm_access：用户确认授权提交端点
+ *
+ * /oauth/error：授权服务错误信息端点
+ *
+ * /oauth/check_token：用于资源服务访问的令牌解析端点
+ *
+ * /oauth/token_key：提供公有密匙的端点，如果你使用JWT令牌的话
+ *
  */
 @AllArgsConstructor
 @Configuration
@@ -45,24 +58,36 @@ public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
      */
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        // 使用数据库存储的client信息设置
-        clients.configure(jdbcClientDetailsServiceBuilder());
-        // 通过内存方式设置
-//        clients.inMemory()
-//                .withClient("api-admin")
-//                .secret(passwordEncoder.encode("123456"))
-//                .scopes("all")
-//                .authorizedGrantTypes("password", "refresh_token")
-//                .accessTokenValiditySeconds(3600 * 24)
-//                .refreshTokenValiditySeconds(3600 * 24 * 7)
-//                // 配置第二个客户端
-//                .and()
-//                .withClient("AuthConstant.PORTAL_CLIENT_ID")
-//                .secret(passwordEncoder.encode("123456"))
-//                .scopes("all")
-//                .authorizedGrantTypes("password", "refresh_token")
-//                .accessTokenValiditySeconds(3600 * 24)
-//                .refreshTokenValiditySeconds(3600 * 24 * 7);
+        clients.withClientDetails(clientDetailsService());
+/**
+//        持久化client信息
+        clients.jdbc(dataSource)
+                .withClient("api-admin")
+                .secret(passwordEncoder.encode("123456"))
+                .scopes("all")
+                .authorizedGrantTypes("password", "refresh_token")
+                .accessTokenValiditySeconds(3600 * 24)
+                .refreshTokenValiditySeconds(3600 * 24 * 7)
+                .and().build();
+ **/
+/**
+//         通过内存方式设置
+        clients.inMemory()
+                .withClient("api-admin")
+                .secret(passwordEncoder.encode("123456"))
+                .scopes("all")
+                .authorizedGrantTypes("password", "refresh_token")
+                .accessTokenValiditySeconds(3600 * 24)
+                .refreshTokenValiditySeconds(3600 * 24 * 7)
+                // 配置第二个客户端
+                .and()
+                .withClient("AuthConstant.PORTAL_CLIENT_ID")
+                .secret(passwordEncoder.encode("123456"))
+                .scopes("all")
+                .authorizedGrantTypes("password", "refresh_token")
+                .accessTokenValiditySeconds(3600 * 24)
+                .refreshTokenValiditySeconds(3600 * 24 * 7);
+**/
     }
 
     /**
@@ -90,11 +115,14 @@ public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
                 .tokenEnhancer(enhancerChain);
     }
 
-    @Bean
-    public JdbcClientDetailsServiceBuilder jdbcClientDetailsServiceBuilder() {
-        return new JdbcClientDetailsServiceBuilder()
-                .dataSource(dataSource)
-                .passwordEncoder(passwordEncoder);
+    /**
+     * 从数据库获取client配置信息
+     * @return
+     */
+    public ClientDetailsService clientDetailsService(){
+        var clientDetail = new JdbcClientDetailsService(dataSource);
+            clientDetail.setPasswordEncoder(passwordEncoder);
+        return clientDetail;
     }
 
     /**

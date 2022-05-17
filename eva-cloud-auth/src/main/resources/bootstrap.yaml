@@ -22,9 +22,9 @@ spring:
         # 自动刷新
         refresh-enabled: true
         # 共享的配置文件
-        shared-configs[0]:
-          dataId: DEV
-          group: DEFAULT_GROUP
-          refresh: true
+        shared-configs:
+          - dataId: common
+            group: DEV_GROUP
+            refresh: true
     #  Failed to start bean ‘documentationPluginsBootstrapper’; nested exception is java.lang.NullPointerException
     #  Springboot2.6以后将SpringMVC 默认路径匹配策略从AntPathMatcher 更改为PathPatternParser，导致出错

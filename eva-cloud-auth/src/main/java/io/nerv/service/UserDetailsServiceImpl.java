@@ -21,6 +21,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+
     /**
      * 登录判断逻辑
      * 提供一种从用户名可以查到用户并返回的方法
