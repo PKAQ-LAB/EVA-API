@@ -102,14 +102,14 @@ public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
 
         //配置JWT的内容增强器
         enhancerChain.setTokenEnhancers(delegates);
-                //使用密码模式需要配置
+        //使用密码模式需要配置
         endpoints.authenticationManager(authenticationManager)
                 //指定token存储到redis
                 .tokenStore(new RedisTokenStore(redisConnectionFactory))
                 // 重复使用：access token过期刷新时， refresh token过期时间未改变，仍以初次生成的时间为准
                 // 非重复使用：access token过期刷新时， refresh token过期时间延续，在refresh token有效期内刷新便永不失效达到
                 .reuseRefreshTokens(false)
-                // 刷新令牌授权包含对用户信息的检查
+                // 获取令牌时校验用户名密码
                 .userDetailsService(userDetailsService)
                 .accessTokenConverter(accessTokenConverter())
                 .tokenEnhancer(enhancerChain);

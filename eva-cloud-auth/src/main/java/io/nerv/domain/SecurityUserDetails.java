@@ -17,34 +17,23 @@ public class SecurityUserDetails implements UserDetails {
     private final String id;
     /**用户账号**/
     private final String account;
-    /**客户端ID**/
-    private final String clientId;
     /**密码**/
     @JsonIgnore
     private final String password;
+    /****/
+    private String roleId;
+
     /**用户是否已经锁定**/
     private boolean accountNonLocked;
-    /**部门id**/
-    private String deptId;
-    /**部门名称**/
-    private String deptName;
-    /**用户姓名**/
-    private String name;
-    /**用户昵称**/
-    private String nickName;
-    /**权限集合**/
-    private final Collection<? extends GrantedAuthority> authorities;
 
-    public SecurityUserDetails(String id, String account, String clientId, String password, String deptId, String deptName, String name, String nickName, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
+    /**权限集合**/
+    private Collection<? extends GrantedAuthority> authorities;
+    public SecurityUserDetails(String id, String account, String password, String roleId, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.account = account;
-        this.clientId = clientId;
         this.password = password;
-        this.deptId = deptId;
-        this.deptName = deptName;
-        this.name = name;
-        this.nickName = nickName;
-        this.accountNonLocked = !accountNonLocked;
+        this.roleId = roleId;
+        this.accountNonLocked = accountNonLocked;
         this.authorities = authorities;
     }
 
