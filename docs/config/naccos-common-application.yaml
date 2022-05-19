@@ -83,7 +83,6 @@ jasypt:
 # server配置
 server:
   servlet:
-    context-path: /api
     #  2.3.0 新支持, 优雅关机
     shutdown: graceful
     # 编码
@@ -91,7 +90,6 @@ server:
       charset: utf-8
       enabled: true
       force: true
-  port: 9016
 eva:
   norepeat-check: false
   # 该配置必须在jwt配置前 30天有效
@@ -116,7 +114,7 @@ eva:
   security:
     webstatic:
     # 无需鉴权路径(无条件访问)
-    anonymous: /auth/login,/auth/logout,/wx/**,/doc/**,/actuator/**
+    anonymous: /auth/**,/doc/**,/actuator/**
     # 无需资源鉴权的路径
     permit: /auth/**,/wx/**,/doc/**,/actuator/**,/license/**
   # 资源权限
@@ -130,7 +128,6 @@ eva:
     enable: true
     # 需要排除的表
     exclude-tables: sys_module_resources,sys_role_user
-      # 缓存配置
   # 缓存配置
   cache:
     type: redis

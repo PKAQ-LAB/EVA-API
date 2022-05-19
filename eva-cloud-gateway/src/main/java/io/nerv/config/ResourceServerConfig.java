@@ -1,12 +1,16 @@
 package io.nerv.config;
 
-import cn.hutool.core.util.ArrayUtil;
+import io.nerv.filter.IgnoreUrlsRemoveJwtFilter;
+import io.nerv.handler.RestAuthenticationEntryPoint;
+import io.nerv.handler.RestfulAccessDeniedHandler;
+import io.nerv.properties.EvaConfig;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder;
@@ -24,10 +28,11 @@ import reactor.core.publisher.Mono;
 @Configuration
 @EnableWebFluxSecurity
 public class ResourceServerConfig {
+    private final EvaConfig evaConfig;
     private final AuthorizationManager authorizationManager;
     private final RestfulAccessDeniedHandler restfulAccessDeniedHandler;
     private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
-
+    private final IgnoreUrlsRemoveJwtFilter ignoreUrlsRemoveJwtFilter;
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
         http.oauth2ResourceServer().jwt()
@@ -37,12 +42,11 @@ public class ResourceServerConfig {
         http.oauth2ResourceServer().authenticationEntryPoint(restAuthenticationEntryPoint);
 
         //对白名单路径，直接移除JWT请求头
-        //http.addFilterBefore(ignoreUrlsRemoveJwtFilter, SecurityWebFiltersOrder.AUTHENTICATION);
+        http.addFilterBefore(ignoreUrlsRemoveJwtFilter, SecurityWebFiltersOrder.AUTHENTICATION);
 
-        String[] bmd = {"/actuator/**", "/auth/oauth/token"};
         http.authorizeExchange()
                 //白名单配置
-                .pathMatchers(bmd).permitAll()
+                .pathMatchers(evaConfig.getSecurity().getAnonymous()).permitAll()
                 //鉴权管理器配置
                 .anyExchange().access(authorizationManager)
                 .and()
@@ -71,11 +75,6 @@ public class ResourceServerConfig {
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
         return new ReactiveJwtAuthenticationConverterAdapter(jwtAuthenticationConverter);
-    }
-
-    @Bean
-    public ReactiveJwtDecoder jwtDecoder() {
-        return NimbusReactiveJwtDecoder.withJwkSetUri("http://localhost:9599/rsa/publicKey").build();
     }
 }
 

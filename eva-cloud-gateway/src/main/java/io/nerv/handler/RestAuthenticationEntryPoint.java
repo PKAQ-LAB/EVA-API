@@ -1,5 +1,6 @@
-package io.nerv.config;
+package io.nerv.handler;
 
+import io.nerv.core.enums.BizCodeEnum;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -10,27 +11,21 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
-import java.util.regex.Pattern;
 
 /**
  * 自定义返回结果：没有登录或token过期时
  */
 @Component
 public class RestAuthenticationEntryPoint implements ServerAuthenticationEntryPoint {
-    private static final Pattern CALLBACK_PARAM_PATTERN = Pattern.compile("[0-9A-Za-z_\\.]*");
 
     @Override
     public Mono<Void> commence(ServerWebExchange exchange, AuthenticationException e) {
         ServerHttpResponse response = exchange.getResponse();
+        //返回json形式的错误信息
 
         response.setStatusCode(HttpStatus.OK);
 
-
-        DataBuffer buffer = response.bufferFactory().wrap("notoken body".getBytes(StandardCharsets.UTF_8));
+        DataBuffer buffer = response.bufferFactory().wrap(BizCodeEnum.LOGIN_EXPIRED.getName().getBytes(StandardCharsets.UTF_8));
         return response.writeWith(Mono.just(buffer));
-    }
-
-    protected boolean isValidJsonpQueryParam(String value) {
-        return CALLBACK_PARAM_PATTERN.matcher(value).matches();
     }
 }

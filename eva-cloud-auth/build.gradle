@@ -31,5 +31,6 @@ dependencies {
                    "${lib.jwt}",
                    "org.pkaq:eva-core-common:2.7.1",
                    "org.pkaq:eva-core-cache:2.7.1",
+                   "org.pkaq:eva-core-data-mybatis:2.7.1",
                    "${lib.rsa}"
 }

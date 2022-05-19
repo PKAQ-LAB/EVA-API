@@ -1,9 +1,17 @@
 spring:
+  application:
+    name: eva-cloud-gateway
   cloud:
     nacos:
+      discovery:
+        # 注册中心地址
+        server-addr: 192.168.10.59
+        enabled: true
+        service: eva-cloud-gateway
+        group: DEV_GROUP
+        namespace: dev
       config:
-        name: dev
-        namespace: @profile@
+        namespace: dev
         server-addr: 192.168.10.59
         # 指定group
         group: DEV_GROUP
@@ -13,11 +21,8 @@ spring:
         refresh-enabled: true
         # 共享的配置文件
         shared-configs:
-            - dataId: dev.yaml
+            - dataId: common
               group: DEV_GROUP
               refresh: true
-    #  Failed to start bean ‘documentationPluginsBootstrapper’; nested exception is java.lang.NullPointerException
-    #  Springboot2.6以后将SpringMVC 默认路径匹配策略从AntPathMatcher 更改为PathPatternParser，导致出错
-  profiles:
-    active: dev
-
+server:
+  port: 9666
