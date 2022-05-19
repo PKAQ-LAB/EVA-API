@@ -5,14 +5,11 @@ project.archivesBaseName = 'eva-core-common'
 project.description='eva common class'
 
 dependencies {
-    implementation 	"${lib.p6spy}",
-                    "${lib.flyway}",
-                    "${lib.jaxb_api}",
+    implementation 	"${lib.jaxb_api}",
                     "${lib.jasypt}"
 
     api "${lib.hutool}",
         "${lib.aop}",
-        "${lib.jdbc}",
         "${lib.jwt}",
         "${lib.json}",
         "${lib.knife4j_spring}",
