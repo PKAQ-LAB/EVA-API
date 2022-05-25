@@ -7,19 +7,22 @@ package io.nerv.core.constant;
 public interface CommonConstant {
     // 默认分页条数
     Integer PAGE_SIZE = 10;
-
     // 鉴权字符串常量
     String TOKEN_KEY = "auth_token";
+    String ACCESS_TOKEN_KEY = "access_token";
+    String REFRESH_TOKEN_KEY = "refresh_token";
 
-    String ACCESS_TOKEN_KEY = "tk_alpha";
-
-    String REFRESH_TOKEN_KEY = "tk_bravo";
-
+    String BLOCK_PREFIX = "JWTBLOCK:";
+    // 网关转发后下发的用户信息请求头
+    String X_CLIENT_TOKEN_USER = "x-client-token-user";
+    // 网关加入的请求头
+    String X_GATEWAY_HEADER = "x-request";
+    // 网关加入的请求串
+    String X_GATEWAY_VALUE = "eva-gateway-request";
     // 用户信息字符串常量
     String USER_KEY = "user_info";
     // 文件缓存前缀
     String FILE_CACHE_PREFIX = "FILE_TMP_";
-
     // cachename
     // 文件上传
     String CACHE_UPLOADFILES = "uploadfiles";
@@ -31,7 +34,6 @@ public interface CommonConstant {
     String CACHE_DICTDATA = "dictdata";
     // token缓存
     String CACHE_TOKEN = "token";
-
     //业务用
     String UNKNOWN = "unknown";
     // 请求来源设备类型
