@@ -49,8 +49,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 // 获取公钥的接口无需授权
-                .antMatchers("/login").permitAll()
-                .antMatchers("/logout").permitAll()
+                .antMatchers("/auth/**").permitAll()
                 .antMatchers(RSA_KEY).permitAll()
                 // 任何请求都需要授权，注意顺序 从上至下
                 .anyRequest().authenticated();

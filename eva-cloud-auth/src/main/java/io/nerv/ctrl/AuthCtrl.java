@@ -19,6 +19,7 @@ import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,6 +30,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @RestController
+@RequestMapping("/auth")
 public class AuthCtrl {
 
     private final EvaConfig evaConfig;
@@ -54,13 +56,37 @@ public class AuthCtrl {
      * 前端无需传递clientid clientsecrect 以及granttype
      */
     @PostMapping(value = "/login")
-    public Response postAccessToken(Principal principal, @RequestParam Map<String, String> parameters) throws HttpRequestMethodNotSupportedException {
+    public Response login(Principal principal, @RequestParam Map<String, String> parameters) throws HttpRequestMethodNotSupportedException {
         var client = clientDetailsService.loadClientByClientId(clientId);
 
         if (null == client){
             throw new AuthException(BizCodeEnum.PERMISSION_EXPIRED);
         }
         parameters.put("grant_type", "password");
+
+        User clientUser= new User(client.getClientId(),client.getClientSecret(), new ArrayList<>());
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(clientUser,null, new ArrayList<>());
+
+        OAuth2AccessToken oAuth2AccessToken = tokenEndpoint.postAccessToken(token, parameters).getBody();
+
+        JwtToken oauth2TokenDto = JwtToken.builder()
+                .accessToken(oAuth2AccessToken.getValue())
+                .refreshToken(oAuth2AccessToken.getRefreshToken().getValue()).build();
+        return new Response().success(oauth2TokenDto);
+    }
+
+    /**
+     * Oauth2 刷新token
+     * 前端无需传递clientid clientsecrect 以及granttype
+     */
+    @PostMapping(value = "/refresh")
+    public Response refresh(Principal principal, @RequestParam Map<String, String> parameters) throws HttpRequestMethodNotSupportedException {
+        var client = clientDetailsService.loadClientByClientId(clientId);
+
+        if (null == client){
+            throw new AuthException(BizCodeEnum.PERMISSION_EXPIRED);
+        }
+        parameters.put("grant_type", "refresh_token");
 
         User clientUser= new User(client.getClientId(),client.getClientSecret(), new ArrayList<>());
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(clientUser,null, new ArrayList<>());
