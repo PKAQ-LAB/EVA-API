@@ -4,7 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.enums.LockEnumm;
 import io.nerv.domain.SecurityUserDetails;
-import io.nerv.exception.OathException;
+import io.nerv.exception.AuthException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -37,7 +37,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String account) throws UsernameNotFoundException {
 
         if (StrUtil.isBlank(account)){
-            throw new OathException(BizCodeEnum.PERMISSION_DENY);
+            throw new AuthException(BizCodeEnum.PERMISSION_DENY);
         }
         // 查询用户
         String userSQL =  "SELECT ID,ACCOUNT,PASSWORD,LOCKED FROM " +
@@ -54,13 +54,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             Map<String, Object> mapUser = this.jdbcTemplate.queryForMap(userSQL, account, account, account);
 
             if (null == mapUser ){
-                throw new OathException(BizCodeEnum.ACCOUNT_NOT_EXIST);
+                throw new AuthException(BizCodeEnum.ACCOUNT_NOT_EXIST);
             }
 
             var nonLocked =  LockEnumm.UNLOCK.getIndex().equals(mapUser.get("LOCKED"));
             //用户已锁定
             if (!nonLocked){
-                throw new OathException(BizCodeEnum.ACCOUNT_LOCKED);
+                throw new AuthException(BizCodeEnum.ACCOUNT_LOCKED);
             }
 
             // 查询用户拥有的角色
@@ -79,7 +79,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
             return securityUserDetails;
         }catch (EmptyResultDataAccessException e){
-            throw new OathException(BizCodeEnum.ACCOUNT_NOT_EXIST);
+            throw new AuthException(BizCodeEnum.ACCOUNT_NOT_EXIST);
         }
     }
 

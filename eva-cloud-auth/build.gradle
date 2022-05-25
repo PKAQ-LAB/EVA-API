@@ -29,8 +29,9 @@ dependencies {
                    "${lib.security}",
                    "${lib.oauth2_config}",
                    "${lib.jwt}",
-                   "org.pkaq:eva-core-common:2.7.1",
-                   "org.pkaq:eva-core-cache:2.7.1",
-                   "org.pkaq:eva-core-data-mybatis:2.7.1",
+                   "${lib.jdbc}",
+                   "${lib.mysql}",
+                   "${lib.eva_core_common}",
+                   "${lib.eva_core_cache}",
                    "${lib.rsa}"
 }

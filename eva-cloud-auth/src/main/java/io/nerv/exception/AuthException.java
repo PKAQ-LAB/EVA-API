@@ -8,17 +8,17 @@ import org.springframework.security.core.AuthenticationException;
  * 自定义鉴权异常类
  */
 @Getter
-public class OathException extends AuthenticationException {
+public class AuthException extends AuthenticationException {
     // 错误码
     private String code;
     // 消息内容
     private String msg;
 
-    public OathException(String msg) {
+    public AuthException(String msg) {
         super(msg);
     }
 
-    public OathException(BizCode errorCodeEnum) {
+    public AuthException(BizCode errorCodeEnum) {
         super(errorCodeEnum.getName());
         this.code = errorCodeEnum.getIndex();
         this.msg = errorCodeEnum.getName();

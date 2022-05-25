@@ -29,8 +29,6 @@ import org.springframework.security.web.header.writers.StaticHeadersWriter;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final static String RSA_KEY = "/rsa/publicKey";
-//    @Autowired
-//    private EvaConfig evaConfig;
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
@@ -51,6 +49,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 // 获取公钥的接口无需授权
+                .antMatchers("/login").permitAll()
+                .antMatchers("/logout").permitAll()
                 .antMatchers(RSA_KEY).permitAll()
                 // 任何请求都需要授权，注意顺序 从上至下
                 .anyRequest().authenticated();

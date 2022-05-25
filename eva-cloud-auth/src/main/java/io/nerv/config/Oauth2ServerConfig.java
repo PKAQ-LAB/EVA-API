@@ -30,15 +30,10 @@ import java.util.List;
 /**
  * 认证服务器配置
  * /oauth/authorize：授权端点
- *
  * /oauth/token：获取令牌端点
- *
  * /oauth/confirm_access：用户确认授权提交端点
- *
  * /oauth/error：授权服务错误信息端点
- *
  * /oauth/check_token：用于资源服务访问的令牌解析端点
- *
  * /oauth/token_key：提供公有密匙的端点，如果你使用JWT令牌的话
  *
  */
@@ -95,6 +90,9 @@ public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
      */
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
+
+//        endpoints.pathMapping("/oauth/token","/login");
+
         TokenEnhancerChain enhancerChain = new TokenEnhancerChain();
         List<TokenEnhancer> delegates = new ArrayList<>();
         delegates.add(jwtTokenEnhancer);
@@ -122,6 +120,7 @@ public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
     public ClientDetailsService clientDetailsService(){
         var clientDetail = new JdbcClientDetailsService(dataSource);
             clientDetail.setPasswordEncoder(passwordEncoder);
+
         return clientDetail;
     }
 
@@ -130,7 +129,20 @@ public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
      */
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) {
-        security.allowFormAuthenticationForClients();
+//        RequestAuthenticationFilter endpointFilter = new RequestAuthenticationFilter(security);
+//        endpointFilter.afterPropertiesSet();
+//        endpointFilter.setAuthenticationEntryPoint(authenticationEntryPoint());
+//        security.addTokenEndpointAuthenticationFilter(endpointFilter);
+
+        security
+            // 允许所有资源服务器访问公钥端点（/oauth/token_key）
+            // 只允许验证用户访问令牌解析端点（/oauth/check_token）
+            .tokenKeyAccess("permitAll()")
+            // isAuthenticated
+            .checkTokenAccess("isAuthenticated()")
+            // 允许客户端发送表单来进行权限认证来获取令牌
+            //如果关闭的话默认会走basic认证 即clientId和clientSecret组合起来base加密后放在http header中传递
+            .allowFormAuthenticationForClients();
     }
 
     /**
