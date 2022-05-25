@@ -4,10 +4,9 @@ plugins {
 }
 
 ext {
-    lib = [ "eva_core_common": "io.nerv:eva-core-common:${eva}",
-            "eva_core_data_mybatis": "io.nerv:eva-core-data-mybatis:${eva}",
-            "eva_web_base": "io.nerv:eva-web-base:${eva}",
-            "eva_web_sys": "io.nerv:eva-web-sys:${eva}",
+    lib = [ "eva_core_common": "org.pkaq:eva-core-common:${eva}",
+            "eva_core_cache": "org.pkaq:eva-core-cache:${eva}",
+            "eva_core_data_mybatis": "org.pkaq:eva-core-data-mybatis:${eva}",
             "hutool" : "cn.hutool:hutool-all:${hutool}",
             "boot" : "org.springframework.boot:spring-boot-dependencies:${spring_boot_ver}",
             "knife4j_cloud":"com.github.xiaoymin:knife4j-micro-spring-boot-starter:${knife4j}",
@@ -18,6 +17,8 @@ ext {
             // test
             "test" : "org.springframework.boot:spring-boot-starter-test",
             "boot_web": "org.springframework.boot:spring-boot-starter-web",
+            "jdbc" : "org.springframework.boot:spring-boot-starter-jdbc",
+            "mysql" : "mysql:mysql-connector-java:${mysql}",
             // web
             "web" : "org.springframework.boot:spring-boot-starter-web",
             "undertow" : "org.springframework.boot:spring-boot-starter-undertow",
@@ -76,14 +77,15 @@ subprojects {
     repositories {
         mavenLocal()
         mavenCentral()
+        maven { url"https://repo1.maven.org/maven2" }
         maven { url"https://maven.aliyun.com/repository/central" }
         maven { url"https://maven.aliyun.com/repository/jcenter" }
         maven { url"https://mirrors.huaweicloud.com" }
+        maven { url"https://maven.aliyun.com/repository/central" }
         maven { url"https://maven.aliyun.com/repository/spring" }
         maven { url"https://maven.aliyun.com/repository/spring-plugin" }
 		maven { url"https://maven.springframework.org"}
         maven { url"https://repo.spring.io/libs-release" }
-
         google()
     }
 

@@ -1,12 +1,12 @@
 package io.nerv.config;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.ReactiveAuthorizationManager;
@@ -24,8 +24,7 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Component
@@ -35,14 +34,62 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
      */
     private static final Map<String, List<String>> resourceRolesMap = Maps.newConcurrentMap();
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     @PostConstruct
     public void initAuthMap() {
         //TODO 系统启动的时候执行一次
         // 这里需要通过数据库获取角色权限信息
-        resourceRolesMap.put("/admin/hello", CollUtil.toList("USER"));
-        resourceRolesMap.put("/admin/user/currentUser", CollUtil.toList("ADMIN", "TEST"));
+        String sql = "  SELECT" +
+                "        DISTINCT m.path, r.code, mr.resource_url" +
+                "    FROM" +
+                "        sys_module_resources mr," +
+                "        sys_role_module rm," +
+                "        sys_module m," +
+                "        sys_role r" +
+                "    WHERE" +
+                "        rm.MODULE_ID = m.ID" +
+                "        AND" +
+                "        rm.ROLE_ID = r.ID" +
+                "        AND" +
+                "        m.id = mr.module_id" +
+                "        AND" +
+                "        rm.RESOURCE_ID = mr.ID" +
+                "        AND" +
+                "        m.isleaf = '1'";
+        List<Map<String, Object>> menusUrl = jdbcTemplate.queryForList(sql);
 
+        Map<String, List<String>> pathPermMap = new ConcurrentHashMap<>(menusUrl.size());
+
+        menusUrl.stream().forEach(item -> {
+            var path = item.get("path")+"";
+            var role_code = item.get("code")+"";
+            var resoure_path = item.get("resource_url")+"";
+
+            if (StrUtil.isNotBlank(resoure_path)){
+                resoure_path = resoure_path.startsWith("/")? resoure_path.substring(1): resoure_path;
+            }
+
+            var resource = path.endsWith("/")? path+resoure_path: path+"/"+resoure_path;
+
+            var roles = pathPermMap.get(resource);
+
+            if (null == roles){
+                roles = new ArrayList<>();
+            }
+
+            roles.add(role_code);
+
+            pathPermMap.put(resource, roles);
+        });
     }
+
+    /**
+     * 加载资源，初始化资源变量
+     * 角色 - url+资源路径
+     */
+
     @Override
     public Mono<AuthorizationDecision> check(Mono<Authentication> mono, AuthorizationContext authorizationContext) {
         //从Redis中获取当前路径可访问角色列表
@@ -58,7 +105,7 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
         // 判断请求路径是否拥有匹配得资源权限
         for (var key :resourceRolesMap.keySet()) {
             if (pathMatcher.match(key, path)){
-                authorities = resourceRolesMap.get(key);
+                authorities.addAll(resourceRolesMap.get(key));
             }
         }
 
@@ -74,37 +121,7 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
             return Mono.just(new AuthorizationDecision(false));
         }
 
-        mono.filter(a -> a.isAuthenticated())
-                .flatMapIterable( a -> a.getAuthorities())
-                .map( g-> g.getAuthority())
-                .any(c->{
-                    //检测权限是否匹配
-                    String[] roles = c.split(",");
-                    for(String role:roles) {
-                        System.out.println(role);
-                    }
-                    return false;
-                })
-                .map( hasAuthority -> new AuthorizationDecision(hasAuthority))
-                .defaultIfEmpty(new AuthorizationDecision(false));
-
-        // 判断JWT中携带的用户角色是否有权限访问
-        var x = mono
-                .filter(Authentication::isAuthenticated)
-                .flatMapIterable(Authentication::getAuthorities)
-                .map(GrantedAuthority::getAuthority)
-                .any(roleId -> {
-                    // 5. roleId是请求用户的角色(格式:ROLE_{roleId})，authorities是请求资源所需要角色的集合
-                    log.info("访问路径：{}", path);
-                    log.info("用户角色roleId：{}", roleId);
-                    log.info("资源需要权限authorities：{}","111");
-                    return true;
-                })
-                .map(AuthorizationDecision::new)
-                .defaultIfEmpty(new AuthorizationDecision(false));
-
-
-        var s=  mono
+        return mono
                 // 判断是否认证成功
                 // 如果token验证通过即Authentication对象的isAuthenticated返回true则向下执行，否则传递为空
                 .filter(Authentication::isAuthenticated)
@@ -125,7 +142,6 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
                 //默认不允许通过
                 .defaultIfEmpty(new AuthorizationDecision(false));
 
-        return x;
     }
 
 }
