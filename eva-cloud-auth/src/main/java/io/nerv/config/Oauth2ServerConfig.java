@@ -47,7 +47,6 @@ public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenEnhancer jwtTokenEnhancer;
     private final RedisConnectionFactory redisConnectionFactory;
-
     /**
      * 客户端信息配置
      */
@@ -103,7 +102,7 @@ public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
         //使用密码模式需要配置
         endpoints.authenticationManager(authenticationManager)
                 //指定token存储到redis
-                .tokenStore(new RedisTokenStore(redisConnectionFactory))
+                .tokenStore(redisTokenStore())
                 // 重复使用：access token过期刷新时， refresh token过期时间未改变，仍以初次生成的时间为准
                 // 非重复使用：access token过期刷新时， refresh token过期时间延续，在refresh token有效期内刷新便永不失效达到
                 .reuseRefreshTokens(false)
@@ -111,6 +110,10 @@ public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
                 .userDetailsService(userDetailsService)
                 .accessTokenConverter(accessTokenConverter())
                 .tokenEnhancer(enhancerChain);
+    }
+
+    public RedisTokenStore redisTokenStore(){
+        return new RedisTokenStore(redisConnectionFactory);
     }
 
     /**

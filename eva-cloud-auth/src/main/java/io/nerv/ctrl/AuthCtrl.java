@@ -2,12 +2,8 @@ package io.nerv.ctrl;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.ServletUtil;
-import cn.hutool.jwt.JWT;
-import cn.hutool.jwt.JWTUtil;
-import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.vo.Response;
-import io.nerv.core.util.RedisUtil;
 import io.nerv.exception.AuthException;
 import io.nerv.jwt.JwtToken;
 import io.nerv.properties.EvaConfig;
@@ -17,6 +13,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
+import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +24,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/auth")
@@ -36,19 +32,18 @@ public class AuthCtrl {
     private final EvaConfig evaConfig;
     private final TokenEndpoint tokenEndpoint;
 
-    private final RedisUtil redisUtil;
-
     private final ClientDetailsService clientDetailsService;
 
+    private final ConsumerTokenServices consumerTokenServices;
     // 配置的clientId
     @Value("${eva.oauth2.clientId}")
     private String clientId;
 
-    public AuthCtrl(EvaConfig evaConfig, TokenEndpoint tokenEndpoint, RedisUtil redisUtil, ClientDetailsService clientDetailsService) {
+    public AuthCtrl(EvaConfig evaConfig, TokenEndpoint tokenEndpoint, ClientDetailsService clientDetailsService, ConsumerTokenServices consumerTokenServices) {
         this.evaConfig = evaConfig;
         this.tokenEndpoint = tokenEndpoint;
-        this.redisUtil = redisUtil;
         this.clientDetailsService = clientDetailsService;
+        this.consumerTokenServices = consumerTokenServices;
     }
 
     /**
@@ -122,23 +117,33 @@ public class AuthCtrl {
             token = ServletUtil.getCookie(request, tokenKey).getValue();
         }
 
-        String refreshToken = request.getParameter(CommonConstant.REFRESH_TOKEN_KEY);
-        long currentTimeSeconds = System.currentTimeMillis() / 1000;
-
-        // 将token和refresh_token同时加入黑名单
-        String[] tokenArray = new String[2];
-        tokenArray[0] = token.replace("Bearer ", "");
-        tokenArray[1] = refreshToken;
-        for (int i = 0; i < tokenArray.length; i++) {
-            String realToken = tokenArray[i];
-            JWT jwtObj = JWTUtil.parseToken(realToken);
-
-            String jti = jwtObj.getPayload("jti").toString();
-            Long exp = Long.parseLong(jwtObj.getPayload("exp").toString());
-            if (exp - currentTimeSeconds > 0) {
-                redisUtil.setForTimeCustom("JWTBLOCK:"+jti, jti, (exp - currentTimeSeconds), TimeUnit.SECONDS);
-            }
+        if (StrUtil.isNotBlank(token)){
+            token = token.replace(evaConfig.getJwt().getTokenHead(), "");
+            consumerTokenServices.revokeToken(token);
         }
-        return new Response().success();
+
+//        OAuth2AccessToken accessToken = tokenStore.readAccessToken(token);
+//
+//        tokenStore.removeAccessToken(accessToken);
+//        tokenStore.removeRefreshToken(accessToken.getRefreshToken());
+
+//        String refreshToken = request.getParameter(CommonConstant.REFRESH_TOKEN_KEY);
+//        long currentTimeSeconds = System.currentTimeMillis() / 1000;
+//
+//        // 将token和refresh_token同时加入黑名单
+//        String[] tokenArray = new String[2];
+//        tokenArray[0] = token.replace("Bearer ", "");
+//        tokenArray[1] = refreshToken;
+//        for (int i = 0; i < tokenArray.length; i++) {
+//            String realToken = tokenArray[i];
+//            JWT jwtObj = JWTUtil.parseToken(realToken);
+//
+//            String jti = jwtObj.getPayload("jti").toString();
+//            Long exp = Long.parseLong(jwtObj.getPayload("exp").toString());
+//            if (exp - currentTimeSeconds > 0) {
+//                redisUtil.setForTimeCustom("JWTBLOCK:"+jti, jti, (exp - currentTimeSeconds), TimeUnit.SECONDS);
+//            }
+//        }
+        return new Response().success(BizCodeEnum.LOGINOUT_SUCCESS);
     }
 }

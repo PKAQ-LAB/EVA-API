@@ -67,7 +67,7 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
         //从token中解析用户信息并设置到Header中去
         String realToken = authToken.replace(evaConfig.getJwt().getTokenHead(), "");
         JWT jwtObj = JWTUtil.parseToken(realToken);
-        String userStr = jwtObj.getPayload().toString();
+        String userStr = jwtObj.getPayload("userId").toString();
 
 //      解析JWT获取jti，以jti为key判断redis的黑名单列表是否存在，存在则拦截访问
 //      黑名单token(登出、修改密码)校验
