@@ -26,10 +26,14 @@ ext {
             "cloud": "org.springframework.cloud:spring-cloud-dependencies:${cloud}",
             "cloud_bootstrap": "org.springframework.cloud:spring-cloud-starter-bootstrap:${bootstrap}",
             "alibaba":"com.alibaba.cloud:spring-cloud-alibaba-dependencies:${alibaba}",
-            // nacos
+            // nacos 注册 配置中心
             "nacos_config":"com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-config",
             "nacos_client":"com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery",
-            // gateway
+            // bootAdmin 监控
+            "bootAdminServer" : "de.codecentric:spring-boot-admin-starter-server:${boot_admin}",
+            "bootAdmin" : "de.codecentric:spring-boot-admin-starter-client:${boot_admin}",
+            "devTools" : "org.springframework.boot:spring-boot-devtools",
+            // gateway 网关
             "gateway": "org.springframework.cloud:spring-cloud-starter-gateway",
             "security_config": "org.springframework.security:spring-security-config",
             "loadbalancer": "org.springframework.cloud:spring-cloud-starter-loadbalancer",
@@ -93,6 +97,7 @@ subprojects {
         implementation "${lib.lombok}",
                        "${lib.nacos_config}",
                        "${lib.nacos_client}",
+                       "${lib.bootAdmin}",
                        // spring cloud 2020以后的版本,默认不优先读取bootstrap.yml了;
                        // bootstrap.yml失效,导致nacos报错Param 'serviceName' is illegal, serviceName is blank
                        // 相关链接:https://docs.spring.io/spring-cloud-config/docs/current/reference/html/#config-first-bootstrap

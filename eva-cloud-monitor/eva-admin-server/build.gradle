@@ -1,0 +1,22 @@
+apply plugin: "org.springframework.boot"
+
+jar {
+    enabled = true
+}
+
+bootJar {
+    mainClass = 'io.nerv.AdminBooter'
+}
+
+description = """eva-admin-server"""
+// 依赖配置
+dependencies {
+    implementation("${lib.web}"){
+        exclude module: 'spring-boot-starter-tomcat'
+    }
+
+    implementation "${lib.undertow}",
+                   "${lib.bootAdminServer}"
+
+    implementation "${lib.security}"
+}

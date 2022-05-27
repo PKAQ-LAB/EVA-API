@@ -1,4 +1,4 @@
 rootProject.name = 'eva'
 include 'eva-cloud-auth'
 include 'eva-cloud-gateway'
-
+include 'eva-cloud-monitor:eva-admin-server'
