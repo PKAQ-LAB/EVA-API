@@ -46,15 +46,27 @@ yarn start
         |-generator : mybatis generator    
         
 -----------------------------------------------------------------   
+- 配置中心、服务注册中心： NACOS
+- 认证中心：OAUTH2
+- 网关: Spring cloud gateway
+- 服务监控：spring admin
+- 链路监控：skywalking
+- 熔断、流量控制：Sentinel
+- 分布式事务：Seata
+- 服务调用：openfeign
+- 定时任务：XXL-JOB
+- 工作流设计：
+- 表单设计：
+- 大屏设计：
 
- - 连接池: Hikari
- - 配置加密: Jassypt
- - SQL监控: P6SPY
- - 数据库版本管理: Flyway
- - JSON: jackson
- - 日志: Logback
- - 工具包: Hutool
- - ORM: Mybatis, Mybatis-plus
+- 连接池: Hikari
+- 配置加密: Jassypt
+- SQL监控: P6SPY
+- 数据库版本管理: Flyway
+- JSON: jackson
+- 日志: Logback
+- 工具包: Hutool
+- ORM: Mybatis, Mybatis-plus
 
  ![](snapshot.png)
  

@@ -1,0 +1,30 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+apply plugin: "org.springframework.boot"
+description = """eva-cloud-job"""
+
+jar {
+    enabled = true
+}
+
+bootJar {
+    mainClass = 'io.nerv.JobBooter'
+}
+
+compileJava.dependsOn(processResources)
+
+processResources {
+    println "==> Load configuration for $profile"
+    filesMatching('**/*.yaml') {
+        filter(ReplaceTokens, tokens: [profile: profile])
+    }
+}
+
+dependencies {
+    api("${lib.web}"){
+        exclude module: 'spring-boot-starter-tomcat'
+    }
+    api "${lib.undertow}"
+
+    implementation "${lib.job}",
+                   "${lib.eva_core_data_mybatis}"
+}

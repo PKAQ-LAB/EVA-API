@@ -32,11 +32,16 @@ ext {
             // bootAdmin 监控
             "bootAdminServer" : "de.codecentric:spring-boot-admin-starter-server:${boot_admin}",
             "bootAdmin" : "de.codecentric:spring-boot-admin-starter-client:${boot_admin}",
+            // skywalking 链路追踪
+            "skywalking_logback" : "org.apache.skywalking:apm-toolkit-logback-1.x:${skywalking}",
+            "skywalking_trace":"org.apache.skywalking:apm-toolkit-trace:${skywalking}",
             "devTools" : "org.springframework.boot:spring-boot-devtools",
             // gateway 网关
             "gateway": "org.springframework.cloud:spring-cloud-starter-gateway",
             "security_config": "org.springframework.security:spring-security-config",
             "loadbalancer": "org.springframework.cloud:spring-cloud-starter-loadbalancer",
+            // 任务调度
+            "job":"com.xuxueli:xxl-job-core:${job}",
             // jwt
             "jwt": "com.nimbusds:nimbus-jose-jwt:${jwt}",
             // OAUTH2 SERVER
@@ -102,6 +107,9 @@ subprojects {
                        // bootstrap.yml失效,导致nacos报错Param 'serviceName' is illegal, serviceName is blank
                        // 相关链接:https://docs.spring.io/spring-cloud-config/docs/current/reference/html/#config-first-bootstrap
                        "${lib.cloud_bootstrap}"
+// 需要链路追踪的子项目需要引入此依赖
+//        "${lib.skywalking_logback}",
+//        "${lib.skywalking_trace}"
 
         annotationProcessor "${lib.lombok}"
 

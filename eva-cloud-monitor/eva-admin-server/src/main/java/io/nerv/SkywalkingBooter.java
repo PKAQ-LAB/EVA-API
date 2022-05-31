@@ -13,7 +13,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @Slf4j
 @EnableAdminServer
 @SpringBootApplication
-public class AdminBooter implements CommandLineRunner {
+public class SkywalkingBooter implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
@@ -22,6 +22,6 @@ public class AdminBooter implements CommandLineRunner {
 
 
     public static void main(String[] args) {
-        SpringApplication.run(AdminBooter.class, args);
+        SpringApplication.run(SkywalkingBooter.class, args);
     }
 }

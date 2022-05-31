@@ -1,10 +1,8 @@
+server:
+  port: 9615
 spring:
   application:
-    name: eva-cloud-skywalking
-  security:
-    user:
-      name: admin
-      password: admin
+    name: eva-cloud-job
   cloud:
     nacos:
       discovery:
@@ -12,7 +10,7 @@ spring:
         # 注册中心地址
         server-addr: 47.104.217.77
         enabled: true
-        service: eva-cloud-skywalking
+        service: eva-cloud-job
         group: DEV_GROUP
       config:
         namespace: fecb542d-1b8a-4755-8ade-a5733c2f5d68
@@ -25,8 +23,8 @@ spring:
         refresh-enabled: true
         # 共享的配置文件
         shared-configs:
-            - dataId: common
-              group: DEV_GROUP
-              refresh: true
-server:
-  port: 9977
+          - dataId: common
+            group: DEV_GROUP
+            refresh: true
+    #  Failed to start bean ‘documentationPluginsBootstrapper’; nested exception is java.lang.NullPointerException
+    #  Springboot2.6以后将SpringMVC 默认路径匹配策略从AntPathMatcher 更改为PathPatternParser，导致出错
