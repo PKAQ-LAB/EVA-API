@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.core.env.Environment;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
@@ -15,6 +16,8 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @Slf4j
 @EnableWebMvc
 @SpringBootApplication
+//Servlet、Filter、Listener 可以直接通过 @WebServlet、@WebFilter、@WebListener 注解自动注册，无需其他代码
+@ServletComponentScan
 public class SysBooter implements CommandLineRunner {
     private final Environment environment;
 
