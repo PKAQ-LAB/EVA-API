@@ -26,5 +26,6 @@ dependencies {
     api "${lib.undertow}"
 
     implementation "${lib.job}",
+                   "${lib.eva_core_common}",
                    "${lib.eva_core_data_mybatis}"
 }

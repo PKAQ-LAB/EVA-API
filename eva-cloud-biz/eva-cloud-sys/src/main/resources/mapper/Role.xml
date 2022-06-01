@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.nerv.web.sys.role.mapper.RoleMapper">
+  <!-- 根据userId获取 权限相关信息-->
+  <select id="selectByUserId" resultType="role">
+    select R.ID,
+           R.NAME,
+           R.CODE,
+           RU.USER_ID,
+           <if test="_databaseId == 'mysql'">
+            ifnull(DATA_PERMISSION_TYPE, '0000') DATA_PERMISSION_TYPE,
+           </if>
+           <if test="_databaseId == 'oracle'">
+              nvl(DATA_PERMISSION_TYPE, '0000') DATA_PERMISSION_TYPE,
+           </if>
+           DATA_PERMISSION_DEPTID
+      from SYS_ROLE R, SYS_ROLE_USER RU
+    <where>
+        R.ID= RU.ROLE_ID
+        and
+        R.LOCKED != '0001'
+        and
+        RU.USER_ID=#{userId,jdbcType=VARCHAR}
+    </where>
+  </select>
+
+  <!--  获取数据权限  -->
+  <select id="selectDataPermission" resultType="role">
+    select
+        sr.code,
+      <if test="_databaseId =='mysql'">
+          ifnull(DATA_PERMISSION_TYPE, '0000') DATA_PERMISSION_TYPE,
+      </if>
+      <if test="_databaseId =='oracle'">
+          nvl(DATA_PERMISSION_TYPE, '0000') DATA_PERMISSION_TYPE,
+      </if>
+        sr.DATA_PERMISSION_DEPTID
+    from
+        sys_role sr
+    where
+        sr.CODE in ('ROLE_ADMIN', 'ROLE_ACCA')
+  </select>
+
+</mapper>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.nerv.web.sys.user.mapper.UserMapper">
+  <resultMap id="BaseResultMap" type="user" extends="common.resultMap">
+    <result column="CODE" jdbcType="VARCHAR" property="code" />
+    <result column="DEPT_ID" jdbcType="VARCHAR" property="deptId" />
+    <result column="TEL" jdbcType="VARCHAR" property="tel" />
+    <result column="EMAIL" jdbcType="VARCHAR" property="email" />
+    <result column="ACCOUNT" jdbcType="VARCHAR" property="account" />
+    <result column="PASSWORD" jdbcType="VARCHAR" property="password" />
+    <result column="SALT" jdbcType="VARCHAR" property="salt" />
+    <result column="AVATAR" jdbcType="VARCHAR" property="avatar" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="NICK_NAME" jdbcType="VARCHAR" property="nickName" />
+    <result column="REGISTER_IP" jdbcType="VARCHAR" property="registerIp" />
+    <result column="GMT_REGISTER" jdbcType="TIMESTAMP" property="gmtRegister" />
+    <result column="LAST_IP" jdbcType="VARCHAR" property="lastIp" />
+    <result column="LAST_LOGIN" jdbcType="TIMESTAMP" property="lastLogin" />
+    <result column="LOCKED" jdbcType="TINYINT" property="locked" />
+    <result column="DEPT_NAME" jdbcType="TINYINT" property="deptName" />
+  </resultMap>
+  <!-- 获取包含权限列表的用户信息-->
+  <resultMap id="UserWithRole" type="user" extends="BaseResultMap">
+    <collection property="roles" column="{userId=id}" select="io.nerv.web.sys.role.mapper.RoleMapper.selectByUserId" ofType="role"/>
+  </resultMap>
+
+  <!-- 获取包含权限列表的用户信息-->
+  <resultMap id="UserWithRoleId" type="user" extends="BaseResultMap">
+    <collection property="roles" javaType="java.util.List" ofType="roleUser">
+      <id column="R_ID" property="id" jdbcType="VARCHAR" />
+      <result column="ROLE_ID" property="roleId" jdbcType="VARCHAR" />
+    </collection>
+  </resultMap>
+
+  <!-- 获取包含模块 权限列表的用户信息-->
+  <resultMap id="UserWithModuleAndRole" type="user" extends="BaseResultMap">
+    <collection property="roles" column="{userId=id}" select="io.nerv.web.sys.role.mapper.RoleMapper.selectByUserId" ofType="role"/>
+    <collection property="modules" column="{userId=id}" select="io.nerv.web.sys.module.mapper.ModuleMapper.getRoleModuleByUserId" ofType="module"/>
+  </resultMap>
+
+  <select id="getUerWithRoleId" resultMap="UserWithRoleId">
+   SELECT
+      su.*,
+      sru.id R_ID,
+      sru.ROLE_ID
+    FROM
+      sys_user_info su
+    LEFT JOIN sys_role_user sru
+      ON su.id = sru.USER_ID
+    <where>
+      <if test="null != user.deptId and user.deptId != ''">
+        su.dept_Id = #{user.deptId,jdbcType=VARCHAR}
+      </if>
+      <if test="null != user.account and user.account != ''">
+        and su.account = #{user.account,jdbcType=VARCHAR}
+      </if>
+      <if test="null != user.name and user.name != ''">
+        and su.name = #{user.name,jdbcType=VARCHAR}
+      </if>
+      <if test="null != user.tel and user.tel != ''">
+        and su.tel = #{user.tel,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </select>
+   <!-- 根据用户 账号/电话/邮箱 获取包含权限列表的用户信息 -->
+   <select id="getUserWithRole" resultMap="UserWithRole">
+       select * from sys_user_info su
+       <where>
+         <if test="null != id and id != ''">
+           su.id = #{id,jdbcType=VARCHAR}
+         </if>
+         <if test="null != account and account != ''">
+           and (su.account = #{account,jdbcType=VARCHAR} or
+                su.tel = #{account,jdbcType=VARCHAR} or
+                su.email = #{account,jdbcType=VARCHAR} )
+         </if>
+       </where>
+   </select>
+    <!-- 根据用户ID 获取包含模块 权限列表的用户信息-->
+  <select id="getUserWithModuleAndRoleById" resultMap="UserWithModuleAndRole">
+    select * from sys_user_info
+    where id=#{userId,jdbcType=VARCHAR}
+  </select>
+</mapper>

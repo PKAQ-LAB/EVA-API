@@ -1,0 +1,38 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+apply plugin: "org.springframework.boot"
+
+project.archivesBaseName = 'eva-cloud-sys'
+project.description='sys jar with authority and system management'
+
+jar {
+    enabled = true
+}
+
+bootJar {
+    mainClass = 'io.nerv.SysBooter'
+}
+
+compileJava.dependsOn(processResources)
+
+processResources {
+    println "==> Load configuration for $profile"
+    filesMatching('**/*.yaml') {
+        filter(ReplaceTokens, tokens: [profile: profile])
+    }
+}
+
+dependencies {
+    implementation("${lib.web}"){
+        exclude module: 'spring-boot-starter-tomcat'
+    }
+
+    implementation "${lib.undertow}"
+
+    implementation	"${lib.springdoc}",
+                    "${lib.eva_core_cache}",
+                    "${lib.eva_core_data_mybatis}"
+
+    implementation("${lib.eva_core_common}"){
+        exclude module: 'knife4j-spring'
+    }
+}
