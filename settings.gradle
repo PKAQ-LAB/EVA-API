@@ -1,7 +1,11 @@
 rootProject.name = 'eva'
 include 'eva-cloud-auth'
 include 'eva-cloud-gateway'
-include ':eva-cloud-monitor:eva-admin-server'
-include ':eva-cloud-monitor:eva-cloud-skywalking'
 include 'eva-cloud-job'
+include ':eva-cloud-ops:eva-admin-server'
+include ':eva-cloud-ops:eva-cloud-docs'
+include ':eva-cloud-biz:eva-cloud-sys'
+
+
+
 

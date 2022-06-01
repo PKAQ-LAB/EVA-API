@@ -39,8 +39,6 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
 
     @PostConstruct
     public void initAuthMap() {
-        //TODO 系统启动的时候执行一次
-        // 这里需要通过数据库获取角色权限信息
         String sql = "  SELECT" +
                 "        DISTINCT m.path, r.code, mr.resource_url" +
                 "    FROM" +

@@ -55,6 +55,7 @@ yarn start
 - 分布式事务：Seata
 - 服务调用：openfeign
 - 定时任务：XXL-JOB
+- 文档聚合：knife4j
 - 工作流设计：
 - 表单设计：
 - 大屏设计：

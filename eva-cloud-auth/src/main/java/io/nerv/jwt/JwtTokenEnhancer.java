@@ -23,8 +23,6 @@ public class JwtTokenEnhancer implements TokenEnhancer {
         Map<String, Object> info = new HashMap<>();
         info.put("userId", securityUser.getId());
         info.put("userName", securityUser.getUsername());
-        // TODO
-        // 存入redis
         ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(info);
         return accessToken;
     }

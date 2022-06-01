@@ -44,13 +44,17 @@ ext {
             "job":"com.xuxueli:xxl-job-core:${job}",
             // jwt
             "jwt": "com.nimbusds:nimbus-jose-jwt:${jwt}",
-            // OAUTH2 SERVER
+            // 鉴权、认证
             "security": "org.springframework.boot:spring-boot-starter-security",
             "oauth2_config": "org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure",
             "oauth2_client": "org.springframework.security:spring-security-oauth2-client",
             "jose": "org.springframework.security:spring-security-oauth2-jose",
             "rsa": "org.springframework.security:spring-security-rsa:${rsa}",
             "resource_server": "org.springframework.security:spring-security-oauth2-resource-server",
+            // 文档聚合
+            "springdoc" : "org.springdoc:springdoc-openapi-webmvc-core:${springdoc}",
+            "knife4j_aggregation": "com.github.xiaoymin:knife4j-aggregation-spring-boot-starter:${knife4j}"
+
     ]
 }
 
