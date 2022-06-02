@@ -35,8 +35,12 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
 
     //TODO 放到commonconstant中
     private static final String X_CLIENT_TOKEN_USER = "x-client-token-user";
+    private static final String X_CLIENT_TOKEN_ROLES = "x-client-token-roles";
     private final static String X_GATEWAY_HEADER = "x-request";
     private final static String X_GATEWAY_VALUE = "eva-gateway-request";
+    private final static String JWT_USER_ID_STR = "userId";
+    private final static String JWT_USER_NAME_STR = "userName";
+    private final static String JWT_USER_ROLES_STR = "authorities";
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -67,7 +71,8 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
         //从token中解析用户信息并设置到Header中去
         String realToken = authToken.replace(evaConfig.getJwt().getTokenHead(), "");
         JWT jwtObj = JWTUtil.parseToken(realToken);
-        String userStr = jwtObj.getPayload("userId").toString();
+        String userStr = jwtObj.getPayload(JWT_USER_ID_STR).toString();
+        String rolesStr = jwtObj.getPayload(JWT_USER_ROLES_STR).toString();
 
 //      解析JWT获取jti，以jti为key判断redis的黑名单列表是否存在，存在则拦截访问
 //      黑名单token(登出、修改密码)校验
@@ -80,6 +85,7 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
         // 存在token且不是黑名单，request写入JWT的载体信息
         ServerHttpRequest request = serverHttpRequest.mutate()
                                             .header(X_CLIENT_TOKEN_USER, userStr)
+                                            .header(X_CLIENT_TOKEN_ROLES, rolesStr)
                                             .header(X_GATEWAY_HEADER, X_GATEWAY_VALUE).build();
         exchange = exchange.mutate().request(request).build();
 

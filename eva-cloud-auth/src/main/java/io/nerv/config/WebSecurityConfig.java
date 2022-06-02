@@ -1,7 +1,6 @@
 package io.nerv.config;
 
 import cn.hutool.core.util.ArrayUtil;
-//import io.nerv.properties.EvaConfig;
 import io.nerv.properties.EvaConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -31,8 +30,8 @@ import org.springframework.security.web.header.writers.StaticHeadersWriter;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final static String RSA_KEY = "/rsa/publicKey";
 
-    @Autowired
-    private EvaConfig evaconf;
+//    @Autowired
+//    private EvaConfig evaconfig;
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
@@ -96,10 +95,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/*/api-docs"
                 );
 
-        var webStatic = evaconf.getSecurity().getWebstatic();
-        if (ArrayUtil.isNotEmpty(webStatic)){
-            ws.antMatchers(webStatic);
-        }
+//        if (null !=  evaconfig.getSecurity()){
+//            var webStatic = evaconfig.getSecurity().getWebstatic();
+//            if (ArrayUtil.isNotEmpty(webStatic)){
+//                ws.antMatchers(webStatic);
+//            }
+//        }
+
     }
 
     /**
