@@ -1,8 +1,5 @@
 package io.nerv.config;
 
-import cn.hutool.core.util.ArrayUtil;
-import io.nerv.properties.EvaConfig;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -29,9 +26,6 @@ import org.springframework.security.web.header.writers.StaticHeadersWriter;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final static String RSA_KEY = "/rsa/publicKey";
-
-//    @Autowired
-//    private EvaConfig evaconfig;
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
@@ -94,13 +88,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/swagger-resources/**",
                         "/*/api-docs"
                 );
-
-//        if (null !=  evaconfig.getSecurity()){
-//            var webStatic = evaconfig.getSecurity().getWebstatic();
-//            if (ArrayUtil.isNotEmpty(webStatic)){
-//                ws.antMatchers(webStatic);
-//            }
-//        }
 
     }
 
