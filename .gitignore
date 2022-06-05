@@ -2,7 +2,7 @@
 /.gradle
 /.idea
 /*/*.iml
-/*/build
+/**/build
 /docs/db/*.pdb
 /*.log
 /*.lock
@@ -14,17 +14,4 @@
 /wxapp/node_modules
 /gradle/wrapper/*.jar
 /gradle/wrapper/*.properties
-/eva-core/eva-core-cache/build
-/eva-core/eva-core-common/build
-/eva-core/eva-core-data-jpa/build
-/eva-core/eva-core-data-mybatis/build
-/eva-core/eva-core-license/build
-/eva-core/eva-core-log/build
-/eva-core/eva-core-pay/build
-/eva-core/eva-core-security/build
-/eva-core/eva-core-weixin/build
-/eva-web/eva-web-auth/build
-/eva-web/eva-web-base/build
-/eva-web/eva-web-sys/build
-/eva-core/eva-core-sso/build
-/eva-web/eva-web-sso/build
+

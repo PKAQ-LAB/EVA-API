@@ -35,7 +35,7 @@ public class DfsFileUploadUtil implements FileUploadProvider {
     @Autowired
     private JsonUtil jsonUtil;
 
-    private Snowflake snowflake = IdUtil.createSnowflake(SNOW, FLAKE);
+    private Snowflake snowflake = IdUtil.getSnowflake(SNOW, FLAKE);
 
     // 删除接口
     private final static String DELETE_API = "/delete";

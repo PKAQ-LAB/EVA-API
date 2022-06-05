@@ -33,7 +33,7 @@ import java.util.List;
 @Conditional(DefaultNgCondition.class)
 public class NgFileUploadUtil implements FileUploadProvider {
 
-    private Snowflake snowflake = IdUtil.createSnowflake(SNOW, FLAKE);
+    private Snowflake snowflake = IdUtil.getSnowflake(SNOW, FLAKE);
 
     private final static String THUMBNAIL_NAME = "thumbnail_";
 

@@ -56,17 +56,24 @@ public class RedisConfiguration {
         log.debug("初始化 redis 緩存 --- --- --- -->");
         RedisCacheConfiguration defaultCache = buildCache(60*30l);
 
-        Map<String, RedisCacheConfiguration> cacheMap = new HashMap(evaConfig.getCache().getConfig().size());
+        if (null != evaConfig.getCache() && null != evaConfig.getCache().getConfig()){
+            Map<String, RedisCacheConfiguration> cacheMap = new HashMap(evaConfig.getCache().getConfig().size());
 
-        evaConfig.getCache().getConfig().stream().forEach(item -> {
-            cacheMap.put(item.getName(), buildCache(item.getSecondsToExpire()));
-        });
+            evaConfig.getCache().getConfig().stream().forEach(item -> {
+                cacheMap.put(item.getName(), buildCache(item.getSecondsToExpire()));
+            });
 
-        return RedisCacheManager.builder(RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory))
-                         .cacheDefaults(defaultCache)
-                         .initialCacheNames(cacheMap.keySet())
-                         .withInitialCacheConfigurations(cacheMap)
-                         .build();
+            return RedisCacheManager.builder(RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory))
+                    .cacheDefaults(defaultCache)
+                    .initialCacheNames(cacheMap.keySet())
+                    .withInitialCacheConfigurations(cacheMap)
+                    .build();
+        } else {
+            return  RedisCacheManager.builder(RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory))
+                    .cacheDefaults(defaultCache)
+                    .build();
+        }
+
     }
 
     /*
