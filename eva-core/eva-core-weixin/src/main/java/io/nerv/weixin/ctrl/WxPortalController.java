@@ -1,6 +1,6 @@
 package io.nerv.weixin.ctrl;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.mp.api.WxMpMessageRouter;
@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
-@Api("微信接口配置信息回调接口")
+@Tag(name = "微信接口配置信息回调接口")
 @AllArgsConstructor
 @RestController
 @RequestMapping("/wx/portal/{appId}")

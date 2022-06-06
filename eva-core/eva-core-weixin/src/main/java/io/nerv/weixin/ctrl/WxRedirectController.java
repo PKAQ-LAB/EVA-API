@@ -1,9 +1,9 @@
 package io.nerv.weixin.ctrl;
 
 import io.nerv.core.mvc.vo.Response;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
-@Api("微信接口配置信息回调接口")
+@Tag(name = "微信接口配置信息回调接口")
 @AllArgsConstructor
 @RestController
 @RequestMapping("/wx/redirect")
@@ -23,8 +23,8 @@ public class WxRedirectController {
     private final WxMpService wxMpService;
 
     @GetMapping("/getUserInfo")
-    @ApiOperation(value = "获取用户微信账号",response = Response.class)
-    public Response getUserInfo(@ApiParam(name ="code", value = "用户code")
+    @Operation(description = "获取用户微信账号")
+    public Response getUserInfo(@Parameter(name ="code", description = "用户code")
                                         String code) {
 
         WxOAuth2UserInfo wxMpUser = null;

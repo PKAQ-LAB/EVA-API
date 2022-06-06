@@ -11,13 +11,12 @@ import io.nerv.config.WxpayConfig;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.vo.Response;
 import io.nerv.util.IpUtil;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
 import me.chanjar.weixin.common.bean.oauth2.WxOAuth2AccessToken;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.w3c.dom.Document;
@@ -26,19 +25,22 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 
-@Api("微信支付")
+@Tag(name = "微信支付")
 @Slf4j
 @RestController
 @RequestMapping("/wx/pay")
 public class WxPayController {
-  @Autowired
-  private WxPayService payService;
+  private final WxPayService payService;
 
-  @Autowired
-  private WxpayConfig payConfig;
+  private final WxpayConfig payConfig;
 
-  @Autowired
-  private WxMpService wxMpService;
+  private final WxMpService wxMpService;
+
+  public WxPayController(WxPayService payService, WxpayConfig payConfig, WxMpService wxMpService) {
+    this.payService = payService;
+    this.payConfig = payConfig;
+    this.wxMpService = wxMpService;
+  }
 
   /**
    * 返回前台H5调用JS支付所需要的参数，公众号支付调用此接口

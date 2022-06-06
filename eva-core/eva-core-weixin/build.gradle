@@ -10,6 +10,7 @@ dependencies {
     }
 
     implementation "${lib.undertow}"
+    implementation "${lib.springdoc}"
 
     implementation project(":eva-core:eva-core-common")
 

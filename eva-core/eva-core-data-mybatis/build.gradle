@@ -13,7 +13,8 @@ dependencies {
                     "${lib.mysql}",
                     // oracle
                     "${lib.oracle}",
-                    "${lib.orai18n}"
+                    "${lib.orai18n}",
+                    "${lib.springdoc}"
 
     api             "${lib.mybatisPlus}"
 }

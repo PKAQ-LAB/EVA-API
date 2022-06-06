@@ -1,7 +1,5 @@
 package io.nerv.core.mvc.vo;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -13,10 +11,7 @@ import java.util.ArrayList;
  * @author S.PKAQ
  */
 @Data
-@ApiModel("list接收对象")
 public class SingleArray<T> implements Serializable {
-    @ApiModelProperty("对象数组")
     private ArrayList<T> param;
-    @ApiModelProperty("状态字段")
     private String status;
 }

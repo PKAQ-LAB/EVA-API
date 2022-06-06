@@ -34,12 +34,12 @@ ext {
             // test
            "test" : "org.springframework.boot:spring-boot-starter-test",
            "securityTest" : "org.springframework.security:spring-security-test:${securityTest}",
-            // jpa
-           "jpa" : "org.springframework.boot:spring-boot-starter-data-jpa",
            // hutool
            "hutool" : "cn.hutool:hutool-all:${hutool}",
            // mybatis
            "mybatisPlus" : "com.baomidou:mybatis-plus-boot-starter:${mybatis_plus_starter}",
+           // 文档聚合
+           "springdoc" : "org.springdoc:springdoc-openapi-webmvc-core:${springdoc}",
            // swagger
            "knife4j_spring" : "com.github.xiaoymin:knife4j-spring:${knife4j}",
            "knife4j_ui" : "com.github.xiaoymin:knife4j-spring-ui:${knife4j}",

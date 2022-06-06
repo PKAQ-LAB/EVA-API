@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import io.nerv.core.mvc.entity.Entity;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.apache.ibatis.type.JdbcType;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -25,28 +25,28 @@ public abstract class StdBaseEntity implements Entity {
     @TableField(jdbcType = JdbcType.VARCHAR)
     private String id;
 
-    @ApiModelProperty("创建人")
+    @Schema(description = "创建人")
     @TableField(fill = FieldFill.INSERT, jdbcType = JdbcType.VARCHAR)
     private String createBy;
 
-    @ApiModelProperty("创建时间")
+    @Schema(description ="创建时间")
     @TableField(fill = FieldFill.INSERT)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern= "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime gmtCreate;
 
-    @ApiModelProperty("修改人")
+    @Schema(description ="修改人")
     @TableField(fill = FieldFill.INSERT_UPDATE, jdbcType = JdbcType.VARCHAR)
     private String modifyBy;
 
-    @ApiModelProperty("修改时间")
+    @Schema(description ="修改时间")
     @TableField(fill = FieldFill.INSERT_UPDATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat( pattern= "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime gmtModify;
 
-    @ApiModelProperty("备注")
+    @Schema(description ="备注")
     private String remark;
 }

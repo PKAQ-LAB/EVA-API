@@ -2,17 +2,14 @@ package io.nerv.core.mvc.ctrl.mybatis;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-import io.nerv.core.enums.BizCode;
-import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.enums.ResponseEnumm;
 import io.nerv.core.exception.ParamException;
 import io.nerv.core.mvc.ctrl.Ctrl;
 import io.nerv.core.mvc.service.mybatis.ActiveBaseService;
 import io.nerv.core.mvc.vo.Response;
 import io.nerv.core.mvc.vo.SingleArray;
-import io.nerv.core.util.I18NHelper;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,8 +27,8 @@ public abstract class ActiveBaseCtrl<T extends ActiveBaseService, E extends Mode
     protected T service;
 
     @PostMapping("del")
-    @ApiOperation(value = "根据ID删除/批量删除记录",response = Response.class)
-    public Response del(@ApiParam(name = "ids", value = "[记录ID]")
+    @Operation(description = "根据ID删除/批量删除记录")
+    public Response del(@Parameter(name = "ids", description = "[记录ID]")
                         @RequestBody SingleArray<String> ids){
 
         if (null == ids || CollectionUtil.isEmpty(ids.getParam())){
@@ -42,23 +39,23 @@ public abstract class ActiveBaseCtrl<T extends ActiveBaseService, E extends Mode
     }
 
     @PostMapping("edit")
-    @ApiOperation(value = "新增/编辑记录",response = Response.class)
-    public Response save(@ApiParam(name ="formdata", value = "模型对象")
+    @Operation(description = "新增/编辑记录")
+    public Response save(@Parameter(name ="formdata", description = "模型对象")
                          @RequestBody E entity){
         this.service.merge(entity);
         return success(entity, ResponseEnumm.SAVE_SUCCESS.getName());
     }
 
     @GetMapping("list")
-    @ApiOperation(value = "列表查询",response = Response.class)
-    public Response list(@ApiParam(name ="condition", value = "模型对象")
+    @Operation(description = "列表查询")
+    public Response list(@Parameter(name ="condition", description = "模型对象")
                                  E entity, Integer pageNo, Integer pageSize){
         return this.success(this.service.listPage(entity, pageNo, pageSize));
     }
 
     @GetMapping("/get/{id}")
-    @ApiOperation(value = "根据ID获得记录信息", response = Response.class)
-    public Response get(@ApiParam(name = "id", value = "记录ID")
+    @Operation(description = "根据ID获得记录信息")
+    public Response get(@Parameter(name = "id", description = "记录ID")
                             @PathVariable("id") String id){
         return this.success(this.service.getById(id));
     }

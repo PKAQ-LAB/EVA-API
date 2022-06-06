@@ -12,6 +12,5 @@ dependencies {
         "${lib.aop}",
         "${lib.jwt}",
         "${lib.json}",
-        "${lib.knife4j_spring}",
         "${lib.validation}"
 }

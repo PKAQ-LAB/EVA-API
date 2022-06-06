@@ -1,0 +1,16 @@
+if (project.file('../../publish.gradle').exists()) {
+    apply from: '../../publish.gradle'
+}
+project.archivesBaseName = 'eva-core-web'
+project.description='eva web support with all base modules'
+
+dependencies {
+
+    implementation "${lib.springdoc}"
+
+    api("${lib.web}"){
+        exclude module: 'spring-boot-starter-tomcat'
+    }
+    api "${lib.undertow}"
+    api project(":eva-core:eva-core-common")
+}

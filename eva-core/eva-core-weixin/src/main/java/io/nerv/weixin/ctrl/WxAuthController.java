@@ -3,9 +3,9 @@ package io.nerv.weixin.ctrl;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.vo.Response;
 import io.nerv.weixin.exception.WeixinException;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.bean.WxJsapiSignature;
@@ -13,7 +13,6 @@ import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
 import me.chanjar.weixin.common.bean.oauth2.WxOAuth2AccessToken;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
-import me.chanjar.weixin.mp.bean.result.WxMpUser;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URLDecoder;
@@ -22,14 +21,14 @@ import java.nio.charset.Charset;
 @Slf4j
 @RestController
 @AllArgsConstructor
-@Api("需要鉴权才能调用的微信相关接口")
+@Tag(name = "需要鉴权才能调用的微信相关接口")
 @RequestMapping("/wx/auth")
 public class WxAuthController {
 
     private final WxMpService wxMpService;
 
     @PostMapping("/getJsapiTicket")
-    @ApiOperation(value = "获取jsapi_ticket",response = Response.class)
+    @Operation(description = "获取jsapi_ticket")
     public Response getJsapiTicket() throws WeixinException {
         String ticket = null;
         try {
@@ -42,7 +41,7 @@ public class WxAuthController {
     }
 
     @PostMapping(value = "/getShareSign")
-    @ApiOperation(value = "获取分享签名",response = Response.class)
+    @Operation(description = "获取分享签名")
     public Response getShareSign(String url) throws WxErrorException {
         url = URLDecoder.decode(url, Charset.defaultCharset());
 
@@ -51,10 +50,10 @@ public class WxAuthController {
     }
 
     @GetMapping("/getUserInfo")
-    @ApiOperation(value = "获取用户微信账号",response = Response.class)
-    public Response getUserInfo(@ApiParam(name ="code", value = "用户code")
+    @Operation(description = "获取用户微信账号")
+    public Response getUserInfo(@Parameter(name ="code")
                                         String code,
-                                @ApiParam(name ="appid", value = "应用Id")
+                                @Parameter(name ="appid")
                                 @PathVariable String appId) {
 
         if (!this.wxMpService.switchover(appId)) {
