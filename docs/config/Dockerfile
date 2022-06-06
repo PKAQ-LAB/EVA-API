@@ -1,7 +1,7 @@
 # 使用zulujdk
 #FROM mcr.microsoft.com/java/jre:17-zulu-alpine
 # 使用带有skywalking-agent的jdk
-FROM apache/skywalking-java-agent:8.6.0-jdk11
+FROM apache/skywalking-java-agent:8.7.0-jdk11
 # 作者
 MAINTAINER pkaq@msn.com
 ENV SKYWALKING_COLLECTOR_BACKEND_SERVICE=""
