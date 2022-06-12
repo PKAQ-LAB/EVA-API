@@ -7,12 +7,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.core.exception.OathException;
 import io.nerv.core.mvc.entity.mybatis.BaseTreeEntity;
 import io.nerv.core.mvc.service.mybatis.StdBaseService;
 import io.nerv.core.mvc.util.Page;
-import io.nerv.core.upload.util.FileUploadProvider;
-import io.nerv.core.util.SecurityHelper;
 import io.nerv.core.util.tree.TreeHelper;
 import io.nerv.web.sys.dict.cache.DictCacheHelper;
 import io.nerv.web.sys.module.entity.ModuleEntity;
@@ -23,7 +20,6 @@ import io.nerv.web.sys.role.mapper.RoleUserMapper;
 import io.nerv.web.sys.user.entity.UserEntity;
 import io.nerv.web.sys.user.mapper.UserMapper;
 import io.nerv.web.sys.user.vo.PasswordVO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -38,23 +34,23 @@ import java.util.Map;
 @Service
 public class UserService extends StdBaseService<UserMapper, UserEntity> {
 
-    @Autowired
-    private OrganizationMapper organizationMapper;
+    private final OrganizationMapper organizationMapper;
 
-    @Autowired
-    private RoleUserMapper roleUserMapper;
+    private final RoleUserMapper roleUserMapper;
 
-    @Autowired
-    private FileUploadProvider fileUploadProvider;
+    private final FileUploadProvider fileUploadProvider;
 
-    @Autowired
-    private ModuleMapper moduleMapper;
+    private final ModuleMapper moduleMapper;
 
-    @Autowired
-    private DictCacheHelper dictCacheHelper;
+    private final DictCacheHelper dictCacheHelper;
 
-    @Autowired
-    private SecurityHelper securityHelper;
+    public UserService(OrganizationMapper organizationMapper, RoleUserMapper roleUserMapper, FileUploadProvider fileUploadProvider, ModuleMapper moduleMapper, DictCacheHelper dictCacheHelper) {
+        this.organizationMapper = organizationMapper;
+        this.roleUserMapper = roleUserMapper;
+        this.fileUploadProvider = fileUploadProvider;
+        this.moduleMapper = moduleMapper;
+        this.dictCacheHelper = dictCacheHelper;
+    }
 
     /**
      * 修改密码
@@ -62,8 +58,8 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
      * @return
      */
     public boolean repwd(PasswordVO passwordVO){
-        String userid = this.securityHelper.getJwtUserId();
-        UserEntity userEntity = this.mapper.selectById(userid);
+        //TODO 获取用户ID
+        UserEntity userEntity = this.mapper.selectById(passwordVO.getUserId());
 
         if (BCrypt.checkpw(passwordVO.getOriginpassword(), userEntity.getPassword())){
             userEntity.setPassword(BCrypt.hashpw(passwordVO.getNewpassword()));
@@ -193,21 +189,21 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
      * @param uid 用户ID
      * @return
      */
-    public Map<String, Object> fetch(String uid) throws OathException {
+    public Map<String, Object> fetch(String uid) throws Exception {
         UserEntity userEntity = new UserEntity();
         userEntity.setId(uid);
 
         userEntity = this.mapper.getUserWithRole(userEntity);
 
         if (null == userEntity){
-            throw new OathException(BizCodeEnum.ACCOUNT_NOT_EXIST);
+            throw new Exception(BizCodeEnum.ACCOUNT_NOT_EXIST.getName());
         }
 
         List<ModuleEntity> moduleEntity = this.moduleMapper.getRoleModuleByUserId(userEntity.getId());
         List<BaseTreeEntity> treeModule = new TreeHelper().bulid(moduleEntity);
 
         if (CollUtil.isEmpty(userEntity.getRoles()) || CollUtil.isEmpty(treeModule)){
-            throw new OathException(BizCodeEnum.PERMISSION_EXPIRED);
+            throw new Exception(BizCodeEnum.PERMISSION_EXPIRED.getName());
         }
 
         return Map.of("user", userEntity, "menus", treeModule, "dict", dictCacheHelper.getAll());

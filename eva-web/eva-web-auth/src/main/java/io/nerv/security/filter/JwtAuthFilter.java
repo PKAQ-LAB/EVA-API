@@ -4,22 +4,22 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.ServletUtil;
 import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.core.exception.OathException;
+import io.nerv.exception.OathException;
 import io.nerv.core.mvc.vo.Response;
-import io.nerv.core.token.jwt.JwtUtil;
-import io.nerv.core.token.util.CacheTokenUtil;
+import io.nerv.core.threaduser.ThreadUser;
+import io.nerv.core.threaduser.ThreadUserHelper;
+import io.nerv.core.jwt.JwtUtil;
 import io.nerv.core.util.JsonUtil;
 import io.nerv.core.util.TokenUtil;
 import io.nerv.properties.EvaConfig;
+import io.nerv.util.CacheTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -144,7 +144,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             logger.info("checking authentication ：" + uid);
 
-            if (StrUtil.isNotBlank(uid) && SecurityContextHolder.getContext().getAuthentication() == null) {
+//            if (StrUtil.isNotBlank(uid) && SecurityContextHolder.getContext().getAuthentication() == null) {
+            if (StrUtil.isNotBlank(uid) && ThreadUserHelper.getCurrentUser() == null) {
                 logger.debug("io.nerv.security context was null, so authorizing user");
 
                 // 从redis中 根据用户id获取用户权限列表
@@ -158,13 +159,25 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     return;
                 }
 
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
                 logger.info("authenticated user " + uid + ", setting io.nerv.security context");
+                // 验证通过 将用户信息存入 threadlocal
+                String[] roles = userDetails.getAuthorities().stream()
+                                            .map(GrantedAuthority::getAuthority)
+                                            .toArray(String[]::new);
 
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                ThreadUser currentUser = new ThreadUser().setUserId(uid)
+                                                         .setUserId(userDetails.getUsername())
+                                                         .setRoles(roles);
+                ThreadUserHelper.setCurrentUser(currentUser);
+
+//                将用户信息设置到security 上下文中
+//                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+//                        userDetails, null, userDetails.getAuthorities());
+//                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+
+
+//                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
         chain.doFilter(request, response);

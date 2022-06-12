@@ -3,7 +3,6 @@ package io.nerv.web.sys.dict.cache;
 import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.util.JsonUtil;
 import io.nerv.core.util.RedisUtil;
-import io.nerv.web.sys.dict.service.DictService;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
@@ -29,9 +28,6 @@ public class DictCacheHelper {
     private Cache cache;
 
     @Autowired
-    private DictService dictService;
-
-    @Autowired
     private RedisUtil redisUtil;
 
     @Autowired
@@ -39,29 +35,6 @@ public class DictCacheHelper {
         this.cache = cacheManager.getCache(CommonConstant.CACHE_DICTDATA);
     }
 
-    /**
-     * 初始化字典数据
-     */
-   
-    public void init() {
-        var dictMap = dictService.initDictCache();
-        dictMap.forEach((k, v) ->
-            this.cachePut(k, v)
-        );
-    }
-
-    /**
-     * 根据传入的内容重新初始化字典
-     * @param dictMap
-     */
-   
-    public void init(Map<String, LinkedHashMap<String, String>> dictMap) {
-        dictMap.forEach((k, v) ->
-            this.cachePut(k, v)
-        );
-    }
-
-   
     public Map<?, ?> getAll() {
         if (this.cache instanceof CaffeineCache){
             CaffeineCache caffeineCache = (CaffeineCache)this.cache;
@@ -144,24 +117,13 @@ public class DictCacheHelper {
         this.update(code, key, value);
     }
 
-   
-    public void reload() {
-        this.removeAll();
-        this.init();
-    }
-
-   
-    public void reload(Map<String, LinkedHashMap<String, String>> dictMap) {
-        this.removeAll();
-        this.init(dictMap);
-    }
 
     /**
      * 写入缓存
      * @param k
      * @param object
      */
-    private void cachePut(String k, Object object){
+    public void cachePut(String k, Object object){
         this.cache.put(k, jsonUtil.toJSONString(object));
     }
 }

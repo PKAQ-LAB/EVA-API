@@ -4,8 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.nerv.core.mvc.entity.Entity;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
@@ -17,7 +16,7 @@ import org.apache.ibatis.type.Alias;
 @Data
 @Alias("moduleResource")
 @TableName("sys_module_resources")
-@ApiModel("模块资源管理")
+@Schema(title = "模块资源管理")
 @EqualsAndHashCode(callSuper=false)
 public class ModuleResources implements Entity {
     private static final long serialVersionUID = 1L;
@@ -25,15 +24,15 @@ public class ModuleResources implements Entity {
     @TableId(type = IdType.ASSIGN_UUID)
     private String id;
 
-    @ApiModelProperty("模块id")
+    @Schema(name = "模块id")
     private String moduleId;
 
-    @ApiModelProperty("资源描述")
+    @Schema(name = "资源描述")
     private String resourceDesc;
 
-    @ApiModelProperty("资源路径")
+    @Schema(name = "资源路径")
     private String resourceUrl;
 
-    @ApiModelProperty("资源类型（按钮、操作）")
+    @Schema(name = "资源类型（按钮、操作）")
     private String resourceType;
 }

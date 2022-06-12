@@ -10,7 +10,6 @@ import java.util.Locale;
 /**
  * 国际化工具类
  * Author: S.PKAQ
- * Datetime: 2018/3/5 23:55
  */
 @Component
 public class I18NHelper {

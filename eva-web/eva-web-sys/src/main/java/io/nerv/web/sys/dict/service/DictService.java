@@ -36,6 +36,7 @@ public class DictService extends StdBaseService<DictMapper, DictEntity> {
     @Autowired
     private DictItemMapper dictItemMapper;
 
+
     /**
      * 查询字典缓存
      * @return
@@ -166,4 +167,38 @@ public class DictService extends StdBaseService<DictMapper, DictEntity> {
         long records = this.mapper.selectCount(new QueryWrapper<>(dictEntity));
         return records > 0;
     }
+
+    /**
+     * 初始化字典数据
+     */
+
+    public void init() {
+        var dictMap = this.initDictCache();
+        dictMap.forEach((k, v) ->
+                dictCacheHelper.cachePut(k, v)
+        );
+    }
+
+    /**
+     * 根据传入的内容重新初始化字典
+     * @param dictMap
+     */
+
+    public void init(Map<String, LinkedHashMap<String, String>> dictMap) {
+        dictMap.forEach((k, v) ->
+                dictCacheHelper.cachePut(k, v)
+        );
+    }
+
+    public void reload() {
+        dictCacheHelper.removeAll();
+        this.init();
+    }
+
+
+    public void reload(Map<String, LinkedHashMap<String, String>> dictMap) {
+        dictCacheHelper.removeAll();
+        this.init(dictMap);
+    }
+
 }

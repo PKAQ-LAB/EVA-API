@@ -2,7 +2,7 @@ package io.nerv.security.provider;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
-import io.nerv.core.util.SecurityHelper;
+import io.nerv.core.threaduser.ThreadUserHelper;
 import io.nerv.properties.EvaConfig;
 import io.nerv.web.sys.role.service.RoleService;
 import lombok.extern.slf4j.Slf4j;
@@ -27,9 +27,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource, InitializingBean {
     @Autowired
     private RoleService roleService;
-
-    @Autowired
-    private SecurityHelper securityHelper;
 
     @Autowired
     private EvaConfig evaConfig;
@@ -117,21 +114,23 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
         Collection<ConfigAttribute> set = new ArrayList<>();
         // 获取请求地址
         String requestUrl = ((FilterInvocation) o).getRequestUrl();
+
+        var roles = ThreadUserHelper.getUserRoles();
         log.info("请求URL >> " + requestUrl);
-        log.info("当前权限：" + securityHelper.getAuthentication());
+        log.info("当前权限：" + roles);
 
         // 未开启资源权限 直接返回
         if (!evaConfig.getResourcePermission().isEnable()){
             return null;
         }
 
-        if (null != securityHelper.getAuthentication()){
+        if (null != roles){
             /**
              *    严格鉴权模式 仅允许访问授权资源 未授权资源一律禁止访问
              *    根据用户角色获取所有可访问资源路径 置入 Collection<ConfigAttribute>
              */
             if (evaConfig.getResourcePermission().isStrict()){
-                Arrays.stream(securityHelper.getRoleNames()).forEach(item -> {
+                Arrays.stream(roles).forEach(item -> {
                     if (null != rolePermMap.get(item)){
                         set.addAll(rolePermMap.get(item));
                     }

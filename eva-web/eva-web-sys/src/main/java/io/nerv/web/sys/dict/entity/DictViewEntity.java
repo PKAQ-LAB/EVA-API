@@ -1,7 +1,7 @@
 package io.nerv.web.sys.dict.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.apache.ibatis.type.Alias;
 
@@ -13,18 +13,18 @@ import org.apache.ibatis.type.Alias;
 @Alias("dictView")
 @TableName("v_dict")
 public class DictViewEntity {
-    @ApiModelProperty("字典编码")
+    @Schema(name = "字典编码")
     private String code;
 
-    @ApiModelProperty("字典描述")
+    @Schema(name = "字典描述")
     private String name;
 
-    @ApiModelProperty("字典项key")
+    @Schema(name = "字典项key")
     private String keyName;
 
-    @ApiModelProperty("字典项value")
+    @Schema(name = "字典项value")
     private String keyValue;
 
-    @ApiModelProperty("字典项排序")
+    @Schema(name = "字典项排序")
     private String orders;
 }

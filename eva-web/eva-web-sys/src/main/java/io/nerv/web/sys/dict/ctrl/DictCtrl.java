@@ -7,9 +7,9 @@ import io.nerv.core.mvc.vo.Response;
 import io.nerv.web.sys.dict.cache.DictCacheHelper;
 import io.nerv.web.sys.dict.entity.DictEntity;
 import io.nerv.web.sys.dict.service.DictService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +19,7 @@ import javax.validation.Valid;
  * 字典管理控制器
  * @author: S.PKAQ
  */
-@Api("字典管理")
+@Tag(name = "字典管理")
 @RestController
 @RequestMapping("/sys/dictionary")
 @RequiredArgsConstructor
@@ -29,23 +29,23 @@ public class DictCtrl extends Ctrl {
     private final DictCacheHelper dictCacheHelper;
 
     @GetMapping({"/query/{code}"})
-    @ApiOperation(value = "根据 code 从缓存中获取字典项",response = Response.class)
-    public Response query(@ApiParam(name = "code", value = "字典分类ID")
+    @Operation(summary = "根据 code 从缓存中获取字典项")
+    public Response query(@Parameter(name = "code", description = "字典分类ID")
                           @PathVariable(name = "code", required = false) String code){
         return this.success(dictCacheHelper.get(code));
     }
 
     @GetMapping("/list")
-    @ApiOperation(value = "获取字典分类列表",response = Response.class)
+    @Operation(summary = "获取字典分类列表")
     public Response listDict(){
         return this.success(this.service.listDict());
     }
 
     @GetMapping({"/get/{id}", "/get/type/{code}"})
-    @ApiOperation(value = "根据ID获取字典",response = Response.class)
-    public Response getDict(@ApiParam(name = "id", value = "字典分类ID")
+    @Operation(summary = "根据ID获取字典")
+    public Response getDict(@Parameter(name = "id", description = "字典分类ID")
                             @PathVariable(name = "id", required = false) String id,
-                            @ApiParam(name = "code", value = "类型编码")
+                            @Parameter(name = "code", description = "类型编码")
                             @PathVariable(value = "code", required = false) String code){
         // 参数校验
         if (StrUtil.isBlank(id) && StrUtil.isBlank(code)){
@@ -59,16 +59,16 @@ public class DictCtrl extends Ctrl {
     }
 
     @PostMapping("/checkUnique")
-    @ApiOperation(value = "校验code",response = Response.class)
-    public Response checkUnique(@ApiParam(name ="dictEntity", value = "要进行校验的参数")
+    @Operation(summary = "校验code")
+    public Response checkUnique(@Parameter(name ="dictEntity", description = "要进行校验的参数")
                                 @RequestBody DictEntity dictEntity){
         boolean exist = (null != dictEntity && StrUtil.isNotBlank(dictEntity.getCode()))? this.service.checkUnique(dictEntity) : false;
         return exist? this.failure(): this.success();
     }
 
     @GetMapping("/del/{id}")
-    @ApiOperation(value = "根据ID删除",response = Response.class)
-    public Response delDict(@ApiParam(name = "id", value = "[字典ID]")
+    @Operation(summary = "根据ID删除")
+    public Response delDict(@Parameter(name = "id", description = "[字典ID]")
                             @PathVariable("id") String id){
         // 参数非空校验
         if (StrUtil.isBlank(id)){
@@ -78,8 +78,8 @@ public class DictCtrl extends Ctrl {
         return success();
     }
     @PostMapping("/edit")
-    @ApiOperation(value = "新增/编辑字典分类",response = Response.class)
-    public Response editDict(@ApiParam(name ="organization", value = "字典信息")
+    @Operation(summary = "新增/编辑字典分类")
+    public Response editDict(@Parameter(name ="organization", description = "字典信息")
                              @RequestBody @Valid DictEntity dictEntity){
         this.service.edit(dictEntity);
 

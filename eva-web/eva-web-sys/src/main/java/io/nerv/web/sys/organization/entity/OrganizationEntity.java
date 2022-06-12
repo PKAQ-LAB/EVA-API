@@ -4,10 +4,8 @@ import com.baomidou.mybatisplus.annotation.SqlCondition;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.nerv.core.mvc.entity.mybatis.StdBaseEntity;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
@@ -23,59 +21,59 @@ import java.util.List;
 @Alias("organization")
 @TableName("sys_organization")
 @EqualsAndHashCode(callSuper = true)
-@ApiModel("组织管理")
+@Schema(title = "组织管理")
 public class OrganizationEntity extends StdBaseEntity {
     private static final long serialVersionUID = 1L;
 
     @TableField(condition = SqlCondition.LIKE)
-    @ApiModelProperty("组织名称")
+    @Schema(name = "组织名称")
     private String name;
 
     @TableField(condition = SqlCondition.LIKE)
-    @ApiModelProperty("编码")
+    @Schema(name = "编码")
     private String code;
 
-    @ApiModelProperty("上级节点Id")
+    @Schema(name = "上级节点Id")
     private String parentId;
 
-    @ApiModelProperty("上级节点名称")
+    @Schema(name = "上级节点名称")
     private String parentName;
 
-    @ApiModelProperty("上级节点id路径")
+    @Schema(name = "上级节点id路径")
     private String path;
 
-    @ApiModelProperty("上级节点路径描述")
+    @Schema(name = "上级节点路径描述")
     private String pathName;
 
-    @ApiModelProperty("是否是叶子")
+    @Schema(name = "是否是叶子")
     private boolean isleaf;
 
-    @ApiModelProperty("排序")
+    @Schema(name = "排序")
     private Integer orders;
 
     @TableLogic
-    @ApiModelProperty("逻辑删除状态")
+    @Schema(name = "逻辑删除状态")
     private String deleted;
 
-    @ApiModelProperty("是否可用")
+    @Schema(name = "是否可用")
     private String status;
 
     @TableField(exist = false)
-    @ApiModelProperty("子节点")
+    @Schema(name = "子节点")
     private List<OrganizationEntity> children;
 
     /**
      * TreeSelect组件需要为一个key
      */
     @TableField(exist = false)
-    @ApiModelProperty("key")
+    @Schema(name = "key")
     private String key;
 
     /**
      * TreeSelect组件指定treeNodeLabelProp无法生效 仍然按默认title属性读取 这里添加title返回
      */
     @TableField(exist = false)
-    @ApiModelProperty("title")
+    @Schema(name = "title")
     private String title;
 
     public String getKey() {

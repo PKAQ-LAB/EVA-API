@@ -9,9 +9,9 @@ import io.nerv.core.bizlog.supporter.mybatis.mapper.MybatisSupporterMapper;
 import io.nerv.core.mvc.util.Page;
 import io.nerv.core.mvc.vo.DateRangeVo;
 import io.nerv.core.mvc.vo.Response;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
 import org.springframework.context.annotation.Conditional;
@@ -26,7 +26,7 @@ import java.util.Date;
 
 @RestController
 @RequestMapping("/monitor/log/biz")
-@Api(tags = "业务日志")
+@Tag(name = "业务日志")
 @Conditional(MybatisSupporterCondition.class)
 @RequiredArgsConstructor
 public class BizLogCtrl {
@@ -37,17 +37,17 @@ public class BizLogCtrl {
     private final DataSource dataSource;
 
     @GetMapping({"/get/{id}"})
-    @ApiOperation(value = "根据id获取操作日志明细",response = Response.class)
-    public Response query(@ApiParam(name = "id", value = "操作日志id")
+    @Operation(description = "根据id获取操作日志明细")
+    public Response query(@Parameter(name = "id", description = "操作日志id")
                           @PathVariable(name = "id") String id){
         return new Response().success(this.mybatisSupporterMapper.selectById(id));
     }
 
     @GetMapping("/list")
-    @ApiOperation(value = "获取日志列表", response = Response.class)
-    public Response list(@ApiParam(name ="dateRange", value = "查询区间") DateRangeVo dateRange,
-                         @ApiParam(name ="pageNo", value = "页码") Integer pageNo,
-                         @ApiParam(name ="pageCount", value = "条数") Integer size) throws SQLException {
+    @Operation(description = "获取日志列表")
+    public Response list(@Parameter(name ="dateRange", description = "查询区间") DateRangeVo dateRange,
+                         @Parameter(name ="pageNo", description = "页码") Integer pageNo,
+                         @Parameter(name ="pageCount", description = "条数") Integer size) throws SQLException {
 
         QueryWrapper<MybatisBizLogEntity> wrapper = new QueryWrapper<>();
 

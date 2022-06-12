@@ -10,9 +10,9 @@ import io.nerv.core.mvc.vo.SingleArray;
 import io.nerv.web.sys.user.entity.UserEntity;
 import io.nerv.web.sys.user.service.UserService;
 import io.nerv.web.sys.user.vo.PasswordVO;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
  * @author: S.PKAQ
  * @Datetime: 2018/3/30 0:03
  */
-@Api("用户管理")
+@Tag(name = "用户管理")
 @RestController
 @RequestMapping("/sys/account")
 @RequiredArgsConstructor
@@ -30,23 +30,23 @@ public class UserCtrl extends Ctrl {
     private final UserService service;
 
     @PostMapping("/checkUnique")
-    @ApiOperation(value = "校验账号唯一性",response = Response.class)
-    public Response checkUnique(@ApiParam(name ="userEntity", value = "要进行校验的参数")
+    @Operation(summary = "校验账号唯一性")
+    public Response checkUnique(@Parameter(name ="userEntity", description = "要进行校验的参数")
                                 @RequestBody UserEntity user){
         boolean exist = (null != user && StrUtil.isNotBlank(user.getAccount()))? this.service.checkUnique(user) : false;
         return exist? failure(BizCodeEnum.ACCOUNT_ALREADY_EXIST): success();
     }
 
     @PostMapping("repwd")
-    @ApiOperation(value = "重新设置密码",response = Response.class)
-    public Response repwd(@ApiParam(name ="formdata", value = "用户对象")
+    @Operation(summary ="重新设置密码")
+    public Response repwd(@Parameter(name ="formdata", description = "用户对象")
                           @RequestBody PasswordVO passwordVO){
         return this.service.repwd(passwordVO)? success("", BizCodeEnum.OPERATE_SUCCESS): failure(BizCodeEnum.BAD_ORG_PASSWORD);
     }
 
     @PostMapping("/del")
-    @ApiOperation(value = "根据ID删除/批量删除记录",response = Response.class)
-    public Response del(@ApiParam(name = "ids", value = "[记录ID]")
+    @Operation(summary ="根据ID删除/批量删除记录")
+    public Response del(@Parameter(name = "ids", description = "[记录ID]")
                         @RequestBody SingleArray<String> ids){
 
         if (null == ids || CollectionUtil.isEmpty(ids.getParam())){
@@ -57,16 +57,16 @@ public class UserCtrl extends Ctrl {
     }
 
     @PostMapping("/edit")
-    @ApiOperation(value = "新增/编辑记录",response = Response.class)
-    public Response save(@ApiParam(name ="formdata", value = "用户对象")
+    @Operation(summary ="新增/编辑记录")
+    public Response save(@Parameter(name ="formdata", description = "用户对象")
                          @RequestBody UserEntity entity){
         this.service.saveUser(entity);
         return success(null, BizCodeEnum.OPERATE_SUCCESS);
     }
 
     @PostMapping("/grant")
-    @ApiOperation(value = "授权",response = Response.class)
-    public Response grant(@ApiParam(name ="formdata", value = "用户对象")
+    @Operation(summary ="授权")
+    public Response grant(@Parameter(name ="formdata", description = "用户对象")
                          @RequestBody UserEntity entity){
 
         this.service.saveRoles(entity);
@@ -74,23 +74,23 @@ public class UserCtrl extends Ctrl {
     }
 
     @GetMapping("/list")
-    @ApiOperation(value = "列表查询",response = Response.class)
-    public Response list(@ApiParam(name ="condition", value = "用户对象")
+    @Operation(summary ="列表查询")
+    public Response list(@Parameter(name ="condition", description = "用户对象")
                                    UserEntity entity, Integer pageNo, Integer pageSize){
         return success(this.service.listUser(entity, pageNo, pageSize));
     }
 
     @GetMapping("/get/{id}")
-    @ApiOperation(value = "根据ID获得记录信息", response = Response.class)
-    public Response getRole(@ApiParam(name = "id", value = "记录ID")
+    @Operation(summary ="根据ID获得记录信息")
+    public Response getRole(@Parameter(name = "id", description = "记录ID")
                             @PathVariable("id") String id){
         UserEntity user = this.service.getUser(id);
         return null == user? this.failure() : this.success(user);
     }
 
     @PostMapping("/lock")
-    @ApiOperation(value = "锁定/解锁", response = Response.class)
-    public Response lockSwitch(@ApiParam(name = "param", value = "用户[id]")
+    @Operation(summary ="锁定/解锁")
+    public Response lockSwitch(@Parameter(name = "param", description = "用户[id]")
                                @RequestBody SingleArray<String> param) {
         // 参数非空校验
         if (null == param || CollectionUtil.isEmpty(param.getParam())){

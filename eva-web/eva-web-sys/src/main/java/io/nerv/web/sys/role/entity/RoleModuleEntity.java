@@ -3,13 +3,9 @@ package io.nerv.web.sys.role.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
-
-import java.io.Serializable;
 
 /**
  * 角色模块关系表
@@ -18,17 +14,17 @@ import java.io.Serializable;
 @Data
 @Alias("roleModule")
 @TableName("sys_role_module")
-@ApiModel("角色模块关系")
+@Schema(title = "角色模块关系")
 public class RoleModuleEntity{
     @TableId(type = IdType.ASSIGN_UUID)
     private String id;
 
-    @ApiModelProperty("角色ID")
+    @Schema(name = "角色ID")
     private String roleId;
 
-    @ApiModelProperty("模块ID")
+    @Schema(name = "模块ID")
     private String moduleId;
 
-    @ApiModelProperty("资源ID")
+    @Schema(name = "资源ID")
     private String resourceId;
 }

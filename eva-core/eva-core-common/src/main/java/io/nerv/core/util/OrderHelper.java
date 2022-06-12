@@ -5,7 +5,6 @@ import java.util.Random;
 /**
  * 订单帮助类
  * @author: S.PKAQ
- * @Datetime: 2018/3/26 23:52
  */
 public class OrderHelper {
     private final static String prefix = "O";

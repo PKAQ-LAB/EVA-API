@@ -7,6 +7,7 @@ package io.nerv.core.constant;
 public interface CommonConstant {
     // 默认分页条数
     Integer PAGE_SIZE = 10;
+    String ADMIN_ROLE_NAME = "ROLE_ADMIN";
     // 鉴权字符串常量
     String TOKEN_KEY = "auth_token";
     String ACCESS_TOKEN_KEY = "access_token";

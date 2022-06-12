@@ -28,8 +28,6 @@ processResources {
 
 dependencies {
     implementation project(":eva-web:eva-web-auth"),
-                   project(":eva-core:eva-core-web"),
-                   project(":eva-web:eva-web-sys"),
                    project(":eva-core:eva-core-license"),
                    "${lib.knife4j_ui}",
                    "${lib.bootAdmin}",

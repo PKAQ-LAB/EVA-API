@@ -186,6 +186,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 
+    /**
+     * 虽然登录请求可以被所有人访问，但是不能放在这里（而应该通过允许匿名访问的方式来给请求放行）。
+     * 如果放在这里，登录请求将不走 SecurityContextPersistenceFilter 过滤器，也就意味着不会将登录用户信息存入 session，
+     * 进而导致后续请求无法获取到登录用户信息。
+     * @param web
+     */
     @Override
     public void configure(WebSecurity web) {
         var ws = web

@@ -1,6 +1,6 @@
 package io.nerv.web.sys.user.vo;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import io.nerv.web.sys.user.entity.UserEntity;
@@ -16,12 +16,12 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper=false)
 public class UserCenterVO extends UserEntity {
 
-    @ApiModelProperty("权限分组名称")
+    @Schema(name = "权限分组名称")
     private String group;
 
-    @ApiModelProperty("消息数目")
+    @Schema(name = "消息数目")
     private int notifyCount = 12;
 
-    @ApiModelProperty("个人标签")
+    @Schema(name = "个人标签")
     private List<Map<String, String>> tags;
 }

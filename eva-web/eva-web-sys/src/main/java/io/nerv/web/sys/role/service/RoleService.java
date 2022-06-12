@@ -10,13 +10,15 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import io.nerv.core.enums.LockEnumm;
 import io.nerv.core.mvc.service.mybatis.StdBaseService;
 import io.nerv.core.mvc.util.Page;
-import io.nerv.core.util.SecurityHelper;
 import io.nerv.web.sys.module.entity.ModuleEntity;
 import io.nerv.web.sys.module.mapper.ModuleMapper;
 import io.nerv.web.sys.role.entity.RoleEntity;
 import io.nerv.web.sys.role.entity.RoleModuleEntity;
 import io.nerv.web.sys.role.entity.RoleUserEntity;
-import io.nerv.web.sys.role.mapper.*;
+import io.nerv.web.sys.role.mapper.RoleConfigMapper;
+import io.nerv.web.sys.role.mapper.RoleMapper;
+import io.nerv.web.sys.role.mapper.RoleModuleMapper;
+import io.nerv.web.sys.role.mapper.RoleUserMapper;
 import io.nerv.web.sys.user.entity.UserEntity;
 import io.nerv.web.sys.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,8 +49,6 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private SecurityHelper securityHelper;
     /**
      * 查询角色列表
      * @param roleEntity
@@ -139,12 +139,6 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
             role.setCode((AUTH_PREFIX+role.getCode()).toUpperCase());
         }
 
-        // 设置创建人 修改人
-        if (StrUtil.isBlank(role.getId())){
-            role.setCreateBy(securityHelper.getJwtUserId());
-        }
-        role.setModifyBy(securityHelper.getJwtUserId());
-
         this.merge(role);
     }
 
@@ -171,8 +165,9 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
      */
     public Map<String, Object> listModule(RoleModuleEntity roleModule) {
 
-        boolean isAdmin = securityHelper.isAdmin();
-
+        // TODO 判断是否为管理员角色
+//        boolean isAdmin = securityHelper.isAdmin();
+        boolean isAdmin = false;
         // 获取所有菜单
         ModuleEntity moduleEntity = new ModuleEntity();
         moduleEntity.setStatus(LockEnumm.UNLOCK.getIndex());
@@ -182,7 +177,7 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
         if (isAdmin){
             moduleList = this.moduleMapper.listModule(moduleEntity);
         } else {
-            moduleList = this.moduleMapper.listGrantedModule(null, moduleEntity, securityHelper.getRoleNames());
+            moduleList = this.moduleMapper.listGrantedModule(null, moduleEntity, new String[]{"获取角色列表"});
         }
 
         //获取已选且是叶子节点的模块

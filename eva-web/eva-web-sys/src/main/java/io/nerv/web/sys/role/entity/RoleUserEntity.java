@@ -3,8 +3,7 @@ package io.nerv.web.sys.role.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
@@ -19,16 +18,16 @@ import javax.validation.constraints.NotBlank;
 @Alias("roleUser")
 @TableName("sys_role_user")
 @EqualsAndHashCode()
-@ApiModel("角色用户关系")
+@Schema(title = "角色用户关系")
 public class RoleUserEntity{
     @TableId(type = IdType.ASSIGN_UUID)
     private String id;
 
     @NotBlank
-    @ApiModelProperty("角色ID")
+    @Schema(name = "角色ID")
     private String roleId;
 
     @NotBlank
-    @ApiModelProperty("用户ID")
+    @Schema(name = "用户ID")
     private String userId;
 }

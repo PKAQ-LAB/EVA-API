@@ -2,12 +2,11 @@ package io.nerv.web.sys.dict.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.nerv.core.mvc.entity.mybatis.StdBaseEntity;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
-import io.nerv.core.mvc.entity.mybatis.StdBaseEntity;
 
 import javax.validation.constraints.NotBlank;
 import java.util.List;
@@ -20,31 +19,31 @@ import java.util.List;
 @Alias("dict")
 @TableName("sys_dict")
 @EqualsAndHashCode(callSuper = true)
-@ApiModel("字典管理")
+@Schema(title = "字典管理")
 public class DictEntity extends StdBaseEntity {
     private static final long serialVersionUID = 1L;
 
     @NotBlank(message = "编码不允许为空")
-    @ApiModelProperty("字典分类编码")
+    @Schema(name = "字典分类编码")
     private String code;
 
     @NotBlank(message = "编码类型不允许为空")
-    @ApiModelProperty("字典分类名称")
+    @Schema(name = "字典分类名称")
     private String name;
 
     @NotBlank(message = "归属类型不允许为空")
-    @ApiModelProperty("上级节点")
+    @Schema(name = "上级节点")
     private String parentId;
 
-    @ApiModelProperty("是否可用（0 已删除,1 可用）")
+    @Schema(name = "是否可用（0 已删除,1 可用）")
     private String status;
 
     @TableField(exist = false)
-    @ApiModelProperty("字典项列表")
+    @Schema(name = "字典项列表")
     private List<DictItemEntity> lines;
 
     @TableField(exist = false)
-    @ApiModelProperty("子节点")
+    @Schema(name = "子节点")
     private List<DictEntity> children;
 
 }
