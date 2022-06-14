@@ -41,7 +41,6 @@ ext {
            // 文档聚合
            "springdoc" : "org.springdoc:springdoc-openapi-webmvc-core:${springdoc}",
            "springdocui" : "org.springdoc:springdoc-openapi-ui:${springdoc}",
-           "springdoc_security" : "org.springdoc:springdoc-openapi-security:${springdoc}",
            // swagger
            "knife4j_ui" : "com.github.xiaoymin:knife4j-springdoc-ui:${knife4j}",
             // jwt
@@ -66,7 +65,7 @@ ext {
 allprojects {
     apply plugin: "idea"
     group = 'io.nerv'
-    version = '2.7.3'
+    version = '2.7.3A'
 }
 
 subprojects {
