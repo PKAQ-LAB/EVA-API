@@ -23,49 +23,49 @@ import java.util.Map;
 @Schema(title = "角色管理")
 public class RoleEntity extends StdBaseEntity {
     @TableField(condition = SqlCondition.LIKE)
-    @Schema(name = "角色名称")
+    @Schema(description = "角色名称")
     private String name;
 
     @TableField(condition = SqlCondition.LIKE)
-    @Schema(name = "角色编码")
+    @Schema(description = "角色编码")
     private String code;
 
-    @Schema(name = "上级角色")
+    @Schema(description = "上级角色")
     private String parentId;
 
-    @Schema(name = "上级角色名称")
+    @Schema(description = "上级角色名称")
     private String parentName;
 
-    @Schema(name = "上级角色id path")
+    @Schema(description = "上级角色id path")
     private String path;
 
-    @Schema(name = "角色路径名称")
+    @Schema(description = "角色路径名称")
     private String pathName;
 
-    @Schema(name = "是否是叶子")
+    @Schema(description = "是否是叶子")
     private Byte isleaf;
 
-    @Schema(name = "排序")
+    @Schema(description = "排序")
     private Integer orders;
 
-    @Schema(name = "是否锁定")
+    @Schema(description = "是否锁定")
     private String locked;
 
-    @Schema(name = "数据权限类型")
+    @Schema(description = "数据权限类型")
     private String dataPermissionType;
 
-    @Schema(name = "数据权限部门ID")
+    @Schema(description = "数据权限部门ID")
     private String dataPermissionDeptid;
 
     @TableField(exist = false)
-    @Schema(name = "角色拥有的模块列表")
+    @Schema(description = "角色拥有的模块列表")
     private List<RoleModuleEntity> modules;
 
     @TableField(exist = false)
-    @Schema(name = "角色拥有的用户列表")
+    @Schema(description = "角色拥有的用户列表")
     private List<RoleUserEntity> users;
 
     @TableField(exist = false)
-    @Schema(name = "模块权限")
+    @Schema(description = "模块权限")
     private Map<String, String[]> resources;
 }

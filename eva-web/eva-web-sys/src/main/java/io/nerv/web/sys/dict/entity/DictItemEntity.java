@@ -21,21 +21,21 @@ public class DictItemEntity {
     private String id;
 
     @NotBlank(message = "主表ID不允许为空")
-    @Schema(name =  "主表ID", required = true)
+    @Schema(description =  "主表ID", required = true)
     private String mainId;
 
     @NotBlank(message = "字典项不允许为空")
-    @Schema(name =  "字典项键",required = true)
+    @Schema(description =  "字典项键",required = true)
     private String keyName;
 
     @NotBlank(message = "字典值不允许为空")
-    @Schema(name =  "字典项值",required = true)
+    @Schema(description =  "字典项值",required = true)
     private String keyValue;
 
-    @Schema(name = "输出排序")
+    @Schema(description = "输出排序")
     private Integer orders;
 
-    @Schema(name = "是否启用")
+    @Schema(description = "是否启用")
     private String status;
 
     private static final long serialVersionUID = 1L;

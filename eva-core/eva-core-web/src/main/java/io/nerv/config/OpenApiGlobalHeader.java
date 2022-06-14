@@ -4,11 +4,13 @@ import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import org.springdoc.core.customizers.OpenApiCustomiser;
 import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 /**
  * 添加全局的请求头参数
  */
+@Component
 public class OpenApiGlobalHeader {
 
     @Bean

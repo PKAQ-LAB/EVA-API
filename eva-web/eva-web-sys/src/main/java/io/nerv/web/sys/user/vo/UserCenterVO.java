@@ -16,12 +16,12 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper=false)
 public class UserCenterVO extends UserEntity {
 
-    @Schema(name = "权限分组名称")
+    @Schema(description = "权限分组名称")
     private String group;
 
-    @Schema(name = "消息数目")
+    @Schema(description = "消息数目")
     private int notifyCount = 12;
 
-    @Schema(name = "个人标签")
+    @Schema(description = "个人标签")
     private List<Map<String, String>> tags;
 }

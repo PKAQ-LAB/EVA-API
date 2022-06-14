@@ -29,70 +29,70 @@ import java.util.List;
 @Schema(title = "用户管理")
 public class UserEntity extends StdBaseEntity {
 
-    @Schema(name = "编号")
+    @Schema(description = "编号")
     private String code;
 
-    @Schema(name = "所属部门")
+    @Schema(description = "所属部门")
     private String deptId;
 
-    @Schema(name = "所属部门名称")
+    @Schema(description = "所属部门名称")
     private String deptName;
 
-    @Schema(name = "电话")
+    @Schema(description = "电话")
     private String tel;
 
-    @Schema(name = "邮箱")
+    @Schema(description = "邮箱")
     private String email;
 
-    @Schema(name = "账号")
+    @Schema(description = "账号")
     private String account;
 
-    @Schema(name = "密码")
+    @Schema(description = "密码")
     @JsonIgnore
     private String password;
 
     @JsonIgnore
-    @Schema(name = "盐")
+    @Schema(description = "盐")
     private String salt;
 
-    @Schema(name = "用户头像")
+    @Schema(description = "用户头像")
     private String avatar;
 
-    @Schema(name = "姓名")
+    @Schema(description = "姓名")
     @TableField(condition = SqlCondition.LIKE)
     private String name;
 
-    @Schema(name = "昵称")
+    @Schema(description = "昵称")
     private String nickName;
 
-    @Schema(name = "注册ip")
+    @Schema(description = "注册ip")
     private String registerIp;
 
-    @Schema(name = "注册时间")
+    @Schema(description = "注册时间")
     private Date gmtRegister;
 
-    @Schema(name = "最后登录ip")
+    @Schema(description = "最后登录ip")
     private String lastIp;
 
-    @Schema(name = "最后登录时间")
+    @Schema(description = "最后登录时间")
     private Date lastLogin;
 
-    @Schema(name = "是否锁定")
+    @Schema(description = "是否锁定")
     private String locked;
 
-    @Schema(name = "微信id")
+    @Schema(description = "微信id")
     private String weixin_id;
 
-    @Schema(name = "用户拥有的角色")
+    @Schema(description = "用户拥有的角色")
     @TableField(exist = false)
     private List<RoleEntity> roles = new ArrayList<>();
 
-    @Schema(name = "用户拥有的模块")
+    @Schema(description = "用户拥有的模块")
     @TableField(exist = false)
     private List<BaseTreeEntity> modules = new ArrayList<>();
 
     @TableLogic
-    @Schema(name = "逻辑删除状态")
+    @Schema(description = "逻辑删除状态")
     private String deleted;
 
 }

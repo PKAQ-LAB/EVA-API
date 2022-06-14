@@ -30,6 +30,7 @@ dependencies {
     implementation project(":eva-web:eva-web-auth"),
                    project(":eva-core:eva-core-license"),
                    "${lib.knife4j_ui}",
+                   "${lib.springdocui}",
                    "${lib.bootAdmin}",
                    "${lib.devTools}"
 }

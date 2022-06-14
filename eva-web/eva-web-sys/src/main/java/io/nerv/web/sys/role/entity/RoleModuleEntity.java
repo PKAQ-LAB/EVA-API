@@ -19,12 +19,12 @@ public class RoleModuleEntity{
     @TableId(type = IdType.ASSIGN_UUID)
     private String id;
 
-    @Schema(name = "角色ID")
+    @Schema(description = "角色ID")
     private String roleId;
 
-    @Schema(name = "模块ID")
+    @Schema(description = "模块ID")
     private String moduleId;
 
-    @Schema(name = "资源ID")
+    @Schema(description = "资源ID")
     private String resourceId;
 }

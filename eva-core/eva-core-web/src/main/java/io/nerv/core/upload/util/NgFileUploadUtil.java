@@ -189,6 +189,9 @@ public class NgFileUploadUtil implements FileUploadProvider {
      */
     @Override
     public void tempClean() {
+        if (null == evaConfig.getUpload() || null == evaConfig.getUpload().getTempPath()){
+            return;
+        }
         File tempFileFolder = new File(evaConfig.getUpload().getTempPath());
 
         Cache cache = cacheManager.getCache(CommonConstant.CACHE_UPLOADFILES);

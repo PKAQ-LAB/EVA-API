@@ -13,18 +13,18 @@ import org.apache.ibatis.type.Alias;
 @Alias("dictView")
 @TableName("v_dict")
 public class DictViewEntity {
-    @Schema(name = "字典编码")
+    @Schema(description = "字典编码")
     private String code;
 
-    @Schema(name = "字典描述")
+    @Schema(description = "字典描述")
     private String name;
 
-    @Schema(name = "字典项key")
+    @Schema(description = "字典项key")
     private String keyName;
 
-    @Schema(name = "字典项value")
+    @Schema(description = "字典项value")
     private String keyValue;
 
-    @Schema(name = "字典项排序")
+    @Schema(description = "字典项排序")
     private String orders;
 }

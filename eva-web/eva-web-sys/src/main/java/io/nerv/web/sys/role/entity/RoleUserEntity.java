@@ -24,10 +24,10 @@ public class RoleUserEntity{
     private String id;
 
     @NotBlank
-    @Schema(name = "角色ID")
+    @Schema(description = "角色ID")
     private String roleId;
 
     @NotBlank
-    @Schema(name = "用户ID")
+    @Schema(description = "用户ID")
     private String userId;
 }

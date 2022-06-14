@@ -26,54 +26,54 @@ public class OrganizationEntity extends StdBaseEntity {
     private static final long serialVersionUID = 1L;
 
     @TableField(condition = SqlCondition.LIKE)
-    @Schema(name = "组织名称")
+    @Schema(description = "组织名称")
     private String name;
 
     @TableField(condition = SqlCondition.LIKE)
-    @Schema(name = "编码")
+    @Schema(description = "编码")
     private String code;
 
-    @Schema(name = "上级节点Id")
+    @Schema(description = "上级节点Id")
     private String parentId;
 
-    @Schema(name = "上级节点名称")
+    @Schema(description = "上级节点名称")
     private String parentName;
 
-    @Schema(name = "上级节点id路径")
+    @Schema(description = "上级节点id路径")
     private String path;
 
-    @Schema(name = "上级节点路径描述")
+    @Schema(description = "上级节点路径描述")
     private String pathName;
 
-    @Schema(name = "是否是叶子")
+    @Schema(description = "是否是叶子")
     private boolean isleaf;
 
-    @Schema(name = "排序")
+    @Schema(description = "排序")
     private Integer orders;
 
     @TableLogic
-    @Schema(name = "逻辑删除状态")
+    @Schema(description = "逻辑删除状态")
     private String deleted;
 
-    @Schema(name = "是否可用")
+    @Schema(description = "是否可用")
     private String status;
 
     @TableField(exist = false)
-    @Schema(name = "子节点")
+    @Schema(description = "子节点")
     private List<OrganizationEntity> children;
 
     /**
      * TreeSelect组件需要为一个key
      */
     @TableField(exist = false)
-    @Schema(name = "key")
+    @Schema(description = "key")
     private String key;
 
     /**
      * TreeSelect组件指定treeNodeLabelProp无法生效 仍然按默认title属性读取 这里添加title返回
      */
     @TableField(exist = false)
-    @Schema(name = "title")
+    @Schema(description = "title")
     private String title;
 
     public String getKey() {

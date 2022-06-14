@@ -19,12 +19,12 @@ public class RoleConfigEntity {
     @TableId(type = IdType.ASSIGN_UUID)
     private String id;
 
-    @Schema(name = "角色ID")
+    @Schema(description = "角色ID")
     private String roleId;
 
-    @Schema(name = "参数key")
+    @Schema(description = "参数key")
     private String paramKey;
 
-    @Schema(name = "参数值")
+    @Schema(description = "参数值")
     private String paramVal;
 }

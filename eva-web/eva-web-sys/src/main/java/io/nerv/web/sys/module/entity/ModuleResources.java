@@ -24,15 +24,15 @@ public class ModuleResources implements Entity {
     @TableId(type = IdType.ASSIGN_UUID)
     private String id;
 
-    @Schema(name = "模块id")
+    @Schema(description = "模块id")
     private String moduleId;
 
-    @Schema(name = "资源描述")
+    @Schema(description = "资源描述")
     private String resourceDesc;
 
-    @Schema(name = "资源路径")
+    @Schema(description = "资源路径")
     private String resourceUrl;
 
-    @Schema(name = "资源类型（按钮、操作）")
+    @Schema(description = "资源类型（按钮、操作）")
     private String resourceType;
 }

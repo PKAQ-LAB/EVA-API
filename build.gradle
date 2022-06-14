@@ -40,9 +40,10 @@ ext {
            "mybatisPlus" : "com.baomidou:mybatis-plus-boot-starter:${mybatis_plus_starter}",
            // 文档聚合
            "springdoc" : "org.springdoc:springdoc-openapi-webmvc-core:${springdoc}",
+           "springdocui" : "org.springdoc:springdoc-openapi-ui:${springdoc}",
+           "springdoc_security" : "org.springdoc:springdoc-openapi-security:${springdoc}",
            // swagger
-           "knife4j_spring" : "com.github.xiaoymin:knife4j-spring:${knife4j}",
-           "knife4j_ui" : "com.github.xiaoymin:knife4j-spring-ui:${knife4j}",
+           "knife4j_ui" : "com.github.xiaoymin:knife4j-springdoc-ui:${knife4j}",
             // jwt
            "jwt": "com.nimbusds:nimbus-jose-jwt:${jwt}",
             // wxjava

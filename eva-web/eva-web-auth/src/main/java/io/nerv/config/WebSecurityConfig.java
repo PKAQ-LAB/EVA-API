@@ -153,6 +153,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
             .authorizeRequests()
             // 对于获取token的rest api要允许匿名访问
+            .antMatchers("/swagger-resources/**").anonymous()
             .antMatchers(anonymous).permitAll()
             // 除上面外的所有请求全部需要鉴权认证
             .anyRequest().authenticated();
@@ -213,10 +214,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     "/**/*.html",
                     "/**/*.css",
                     "/**/*.js",
-                    "/webjars/**",
-                    "/ureport/**",
-                    "/swagger-resources/**",
-                    "/*/api-docs"
+                    "/**/swagger-resources/**",
+                    "/**/api-docs/**"
             );
 
         if (ArrayUtil.isNotEmpty(webstatic)){

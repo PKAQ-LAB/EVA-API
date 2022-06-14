@@ -27,13 +27,14 @@ public class WebBooter implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        log.info(" ---- 字典初始化 开始 ---- ");
-        var dictMap = dictService.initDictCache();
-        dictMap.forEach((k, v) ->
-            dictCacheHelper.cachePut(k, v)
-        );
-
-        log.info(" ---- 字典初始化 结束 ---- ");
+//        log.info(" ---- 字典初始化 开始 ---- ");
+//        var dictMap = dictService.initDictCache();
+//        dictMap.forEach((k, v) ->
+//            dictCacheHelper.cachePut(k, v)
+//        );
+//
+//        log.info(" ---- 字典初始化 结束 ---- ");
+        log.info(" ---- WEB BOOTER STARTED ---- ");
     }
 
     public static void main(String[] args) {

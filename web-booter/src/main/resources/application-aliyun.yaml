@@ -16,15 +16,15 @@ spring:
         username: eva
         password: 7u8i9o0p
         instance:
-          prefer-ip: true
+          service-host-type: ip
   # 数据源
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    username: BINHAI_BI
-    password: 7u8i9o0p
-#    GsyjJCmmNRiHRVGmXdy+QErynoqC/cOBlt5V9dPZ+c2g2XwPc5+BbKrSxWLsyCGG
-    driver-class-name: com.p6spy.engine.spy.P6SpyDriver
-    url: jdbc:p6spy:oracle:thin:@47.104.217.77:15210:orcl
+    username: eva
+    password: eva
+    #    GsyjJCmmNRiHRVGmXdy+QErynoqC/cOBlt5V9dPZ+c2g2XwPc5+BbKrSxWLsyCGG
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://xilai.my.to:12306/eva?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&autoReconnect=true&failOverReadOnly=false
   hikari:
     minimum-idle: 10
     maximum-pool-size: 50
@@ -53,17 +53,6 @@ spring:
     redis:
       repositories:
         enabled: false
-eva:
-  # 文件上传
-  upload:
-    # ng or dfs
-    type: dfs
-    tempPath: /opt/data/caddy/www/pic
-    storagePath: /opt/data/caddy/www/pic
-    allowSuffixName: jpg,png,jpeg
-    # dfs 地址
-    serverUrl: http://118.31.166.146:18109/ga
-#    监控配置
 management:
   endpoints:
     web:
@@ -72,5 +61,11 @@ management:
   endpoint:
     health:
       show-details: ALWAYS
-#  server:
+# 暴露spring secrity用于登录的端点
+springdoc:
+  show-login-endpoint: true
+  show-actuator: true
+  swagger-ui:
+    query-config-enabled: true
+    use-root-path: true
 #    address: 47.104.217.77

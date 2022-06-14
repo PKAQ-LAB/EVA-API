@@ -24,26 +24,26 @@ public class DictEntity extends StdBaseEntity {
     private static final long serialVersionUID = 1L;
 
     @NotBlank(message = "编码不允许为空")
-    @Schema(name = "字典分类编码")
+    @Schema(description = "字典分类编码")
     private String code;
 
     @NotBlank(message = "编码类型不允许为空")
-    @Schema(name = "字典分类名称")
+    @Schema(description = "字典分类名称")
     private String name;
 
     @NotBlank(message = "归属类型不允许为空")
-    @Schema(name = "上级节点")
+    @Schema(description = "上级节点")
     private String parentId;
 
-    @Schema(name = "是否可用（0 已删除,1 可用）")
+    @Schema(description = "是否可用（0 已删除,1 可用）")
     private String status;
 
     @TableField(exist = false)
-    @Schema(name = "字典项列表")
+    @Schema(description = "字典项列表")
     private List<DictItemEntity> lines;
 
     @TableField(exist = false)
-    @Schema(name = "子节点")
+    @Schema(description = "子节点")
     private List<DictEntity> children;
 
 }

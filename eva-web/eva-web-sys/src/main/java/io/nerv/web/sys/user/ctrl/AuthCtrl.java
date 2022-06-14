@@ -1,9 +1,7 @@
 package io.nerv.web.sys.user.ctrl;
 
 import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.core.exception.BizException;
 import io.nerv.core.mvc.vo.Response;
-import io.nerv.core.threaduser.ThreadUser;
 import io.nerv.core.threaduser.ThreadUserHelper;
 import io.nerv.core.util.I18NHelper;
 import io.nerv.web.sys.user.service.UserService;
@@ -15,15 +13,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
-
 /**
  * JWT鉴权
  * @author: S.PKAQ
  * @Datetime: 2018/4/22 17:12
  */
 @Slf4j
-@Tag(name = "用户登录")
+@Tag(name = "用户信息")
 @RestController
 @RequestMapping("/auth")
 public class AuthCtrl {
