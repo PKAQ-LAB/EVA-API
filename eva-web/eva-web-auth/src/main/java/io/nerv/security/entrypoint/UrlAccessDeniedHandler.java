@@ -3,7 +3,6 @@ package io.nerv.security.entrypoint;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.vo.Response;
 import io.nerv.core.util.JsonUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -19,8 +18,11 @@ import java.io.PrintWriter;
  */
 @Component
 public class UrlAccessDeniedHandler implements AccessDeniedHandler {
-    @Autowired
-    private JsonUtil jsonUtil;
+    private final JsonUtil jsonUtil;
+
+    public UrlAccessDeniedHandler(JsonUtil jsonUtil) {
+        this.jsonUtil = jsonUtil;
+    }
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException e) throws IOException {
