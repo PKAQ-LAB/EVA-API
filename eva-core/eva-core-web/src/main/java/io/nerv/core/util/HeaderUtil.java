@@ -12,7 +12,7 @@ public class HeaderUtil {
      * @param request
      * @return
      */
-    public String getUserId(HttpServletRequest request){
+    public static String getUserId(HttpServletRequest request){
         return ServletUtil.getHeader(request, CommonConstant.JWT_USER_ID_STR, CharsetUtil.UTF_8);
     }
     /**
@@ -20,7 +20,7 @@ public class HeaderUtil {
      * @param request
      * @return
      */
-    public String getUserName(HttpServletRequest request){
+    public static String getUserName(HttpServletRequest request){
         return ServletUtil.getHeader(request, CommonConstant.JWT_USER_NAME_STR, CharsetUtil.UTF_8);
     }
 
@@ -29,9 +29,13 @@ public class HeaderUtil {
      * @param request
      * @return
      */
-    public String getRoles(HttpServletRequest request){
+    public static String getRoles(HttpServletRequest request){
         return ServletUtil.getHeader(request, CommonConstant.JWT_USER_ROLES_STR, CharsetUtil.UTF_8);
     }
 
+    public static String[] getRolesArray(HttpServletRequest request){
+        String roles = ServletUtil.getHeader(request, CommonConstant.JWT_USER_ROLES_STR, CharsetUtil.UTF_8);
+        return null == roles? null : roles.split(",");
+    }
 
 }

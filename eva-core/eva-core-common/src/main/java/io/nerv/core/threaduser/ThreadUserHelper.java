@@ -1,6 +1,7 @@
 package io.nerv.core.threaduser;
 
 import cn.hutool.core.util.ArrayUtil;
+import com.alibaba.ttl.TransmittableThreadLocal;
 import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.exception.BizException;
@@ -11,7 +12,7 @@ public class ThreadUserHelper {
     /**
      * 保存用户对象的ThreadLocal  在拦截器操作 添加、删除相关用户数据
      */
-    private static final ThreadLocal<ThreadUser> userThreadLocal = new ThreadLocal<>();
+    private static final ThreadLocal<ThreadUser> userThreadLocal = new TransmittableThreadLocal<>();
 
     /**
      * 添加当前登录用户方法  在拦截器方法执行前调用设置获取用户

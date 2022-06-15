@@ -1,6 +1,5 @@
 package io.nerv.core.util;
 
-import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.ServletUtil;
 import io.nerv.core.constant.CommonConstant;

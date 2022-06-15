@@ -1,5 +1,8 @@
 package io.nerv.filter;
 
+import io.nerv.core.threaduser.ThreadUser;
+import io.nerv.core.threaduser.ThreadUserHelper;
+import io.nerv.core.util.HeaderUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.*;
@@ -27,6 +30,14 @@ public class RequestFilter implements Filter {
             log.info("非法请求");
             return;
         }
+
+        // 获取用户信息设置到threadlocal中
+        var tu = new ThreadUser();
+            tu.setUserId(HeaderUtil.getUserId(request))
+              .setUserName(HeaderUtil.getUserName(request))
+              .setRoles(HeaderUtil.getRolesArray(request));
+        ThreadUserHelper.setCurrentUser(tu);
+
         filterChain.doFilter(servletRequest, servletResponse);
     }
 

@@ -45,7 +45,9 @@ ext {
            "knife4j_ui" : "com.github.xiaoymin:knife4j-springdoc-ui:${knife4j}",
             // jwt
            "jwt": "com.nimbusds:nimbus-jose-jwt:${jwt}",
-            // wxjava
+            // 线程增强
+           "ttl": "com.alibaba:transmittable-thread-local:${ttl}",
+           // wxjava
            "wxmp" : "com.github.binarywang:weixin-java-mp:${weixin}",
            "wxpay" : "com.github.binarywang:weixin-java-pay:${weixin}",
             // ali
