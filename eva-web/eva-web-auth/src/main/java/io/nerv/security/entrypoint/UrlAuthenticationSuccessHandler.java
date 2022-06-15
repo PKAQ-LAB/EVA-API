@@ -94,9 +94,9 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
                 evaConfig.getCookie().getDomain());
 
         Map<String, Object> map = new HashMap<>(2);
-        map.put("user", user);
-        map.put("tk_alpha", access_token);
-        map.put("tk_bravo", refresh_token);
+        map.put(CommonConstant.USER_KEY, user);
+        map.put(CommonConstant.ACCESS_TOKEN_KEY, access_token);
+        map.put(CommonConstant.REFRESH_TOKEN_KEY, refresh_token);
 
         BizLogEntity bizLogEntity = new BizLogEntity();
         bizLogEntity.setDescription(user.getAccount() + " 登录了系统")
