@@ -5,7 +5,7 @@ plugins {
 
 ext {
     lib = [ "eva_core_common": "org.pkaq:eva-core-common:${eva}",
-    lib = [ "eva_web_common": "org.pkaq:eva-web-common:${eva}",
+            "eva_web_common": "org.pkaq:eva-web-common:${eva}",
             "eva_core_cache": "org.pkaq:eva-core-cache:${eva}",
             "eva_core_data_mybatis": "org.pkaq:eva-core-data-mybatis:${eva}",
             "hutool" : "cn.hutool:hutool-all:${hutool}",

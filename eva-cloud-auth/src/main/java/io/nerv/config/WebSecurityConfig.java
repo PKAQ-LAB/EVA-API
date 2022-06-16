@@ -26,6 +26,7 @@ import org.springframework.security.web.header.writers.StaticHeadersWriter;
 public class WebSecurityConfig {
     private final static String RSA_KEY = "/rsa/publicKey";
 
+    private final AuthenticationConfiguration authenticationConfiguration;
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -55,7 +56,7 @@ public class WebSecurityConfig {
                 // 任何请求都需要授权，注意顺序 从上至下
                 .anyRequest().authenticated();
         // 如果不配置 SpringBoot 会自动配置一个 AuthenticationManager 覆盖掉内存中的用户
-        //httpSecurity.authenticationManager(super.authenticationManagerBean());
+        httpSecurity.authenticationManager(authenticationConfiguration.getAuthenticationManager());
         // 匿名访问拥有的角色
         httpSecurity.anonymous().authorities("ROLE_ANONYMOUS");
 
