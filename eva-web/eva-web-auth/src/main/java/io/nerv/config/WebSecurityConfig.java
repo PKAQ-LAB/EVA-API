@@ -7,22 +7,19 @@ import io.nerv.properties.EvaConfig;
 import io.nerv.security.entrypoint.*;
 import io.nerv.security.filter.JwtAuthFilter;
 import io.nerv.security.provider.JwtUsernamePasswordAuthenticationFilter;
-import io.nerv.security.provider.LoginAuthenticationProvider;
 import io.nerv.security.provider.UrlFilterSecurityInterceptor;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -54,8 +51,6 @@ public class WebSecurityConfig {
 
     private final JsonUtil jsonUtil;
 
-    private final LoginAuthenticationProvider loginAuthenticationProvider;
-
     private final UrlAuthenticationSuccessHandler urlAuthenticationSuccessHandler;
 
     private final UrlAuthenticationFailureHandler urlAuthenticationFailureHandler;
@@ -68,28 +63,9 @@ public class WebSecurityConfig {
 
     private final UrlFilterSecurityInterceptor urlFilterSecurityInterceptor;
 
-    /** Spring会自动寻找同样类型的具体类注入，这里就是JwtUserDetailsServiceImpl了**/
-    private final UserDetailsService userDetailsService;
+    private final AuthenticationConfiguration authenticationConfiguration;
 
     private final JwtAuthFilter jwtAuthFilter;
-
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
-
-    public AuthenticationManager authenticationManagerBuilderConfigure() throws Exception {
-        authenticationManagerBuilder.authenticationProvider(loginAuthenticationProvider)
-            // 设置UserDetailsService
-            .userDetailsService(this.userDetailsService)
-            // 使用BCrypt进行密码的hash
-            .passwordEncoder(bCryptPasswordEncoder);
-        // 默认超级用户
-        authenticationManagerBuilder.inMemoryAuthentication()
-                .withUser("toor")
-                .password(new BCryptPasswordEncoder().encode("nerv_toor_eva"))
-                .roles("ADMIN");
-        return authenticationManagerBuilder.build();
-    }
 
     @Bean
     public JwtAuthFilter authenticationTokenFilterBean() {
@@ -125,7 +101,9 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    protected SecurityFilterChain httpSecurityConfigure(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain httpSecurityConfigure(HttpSecurity httpSecurity) throws Exception {
+        AuthenticationManagerBuilder authenticationManagerBuilder = httpSecurity.getSharedObject(AuthenticationManagerBuilder.class);
+
         httpSecurity
             .cors()
             .and()
@@ -150,7 +128,7 @@ public class WebSecurityConfig {
 
             httpSecurity.logout().logoutUrl("/auth/logout").logoutSuccessHandler(urlLogoutSuccessHandler);
 
-            if (this.evaConfig.getResourcePermission().isEnable()){
+            if (evaConfig.getResourcePermission().isEnable()){
                 httpSecurity.addFilterAt(urlFilterSecurityInterceptor, FilterSecurityInterceptor.class);
             }
 
@@ -160,7 +138,7 @@ public class WebSecurityConfig {
                         .and()
                         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                         .addFilterBefore(new JwtUsernamePasswordAuthenticationFilter("/auth/login",
-                                                                                          authenticationManagerBuilderConfigure(),
+                                                                                          authenticationConfiguration.getAuthenticationManager(),
                                                                                           urlAuthenticationSuccessHandler,
                                                                                           urlAuthenticationFailureHandler,
                                                                                           jsonUtil),
