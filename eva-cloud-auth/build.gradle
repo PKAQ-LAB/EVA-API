@@ -25,13 +25,12 @@ dependencies {
     }
     api "${lib.undertow}"
 
-    implementation "${lib.hutool}",
-                   "${lib.security}",
-                   "${lib.oauth2_config}",
-                   "${lib.jwt}",
-                   "${lib.jdbc}",
-                   "${lib.mysql}",
-                   "${lib.eva_core_common}",
-                   "${lib.eva_core_cache}",
-                   "${lib.rsa}"
+    implementation  "${lib.eva_core_common}",
+                    "${lib.eva_core_cache}",
+                    "${lib.security}",
+                    "${lib.oauth2_config}",
+                    "${lib.jwt}",
+                    "${lib.jdbc}",
+                    "${lib.mysql}",
+                    "${lib.rsa}"
 }

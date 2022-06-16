@@ -20,12 +20,6 @@ processResources {
 }
 
 dependencies {
-    api("${lib.web}"){
-        exclude module: 'spring-boot-starter-tomcat'
-    }
-    api "${lib.undertow}"
-
-    implementation "${lib.job}",
-                   "${lib.eva_core_common}",
-                   "${lib.eva_core_data_mybatis}"
+    implementation "${lib.eva_web_common}"
+                    "${lib.job}"
 }

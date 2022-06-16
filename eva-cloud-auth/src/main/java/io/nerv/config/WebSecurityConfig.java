@@ -4,15 +4,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.header.writers.StaticHeadersWriter;
 
 /**
@@ -24,11 +23,15 @@ import org.springframework.security.web.header.writers.StaticHeadersWriter;
 @Primary
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig {
     private final static String RSA_KEY = "/rsa/publicKey";
 
-    @Override
-    protected void configure(HttpSecurity httpSecurity) throws Exception {
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+    @Bean
+    public SecurityFilterChain httpConfiguer(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .cors()
                 .and()
@@ -51,7 +54,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(RSA_KEY).permitAll()
                 // 任何请求都需要授权，注意顺序 从上至下
                 .anyRequest().authenticated();
-
+        // 如果不配置 SpringBoot 会自动配置一个 AuthenticationManager 覆盖掉内存中的用户
+        //httpSecurity.authenticationManager(super.authenticationManagerBean());
         // 匿名访问拥有的角色
         httpSecurity.anonymous().authorities("ROLE_ANONYMOUS");
 
@@ -60,11 +64,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .headers()
                 .frameOptions().sameOrigin()  // required to set for H2 else H2 Console will be blank.
                 .cacheControl();
+
+        return httpSecurity.build();
+
     }
 
-    @Override
-    public void configure(WebSecurity web) {
-        var ws = web
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer(){
+        return web -> web
                 .ignoring()
                 // allow anonymous resource requests
                 .and()
@@ -87,21 +94,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/ureport/**",
                         "/swagger-resources/**",
                         "/*/api-docs"
-                );
-
+        );
     }
 
-    /**
-     * 如果不配置 SpringBoot 会自动配置一个 AuthenticationManager 覆盖掉内存中的用户
-     */
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 }
