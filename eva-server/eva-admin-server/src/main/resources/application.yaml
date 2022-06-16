@@ -1,7 +1,0 @@
-server:
-  port: 12305
-spring:
-  security:
-    user:
-      name: "eva"
-      password: "7u8i9o0p"
