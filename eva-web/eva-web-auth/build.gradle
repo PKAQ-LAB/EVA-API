@@ -5,7 +5,7 @@ project.archivesBaseName = 'eva-web-auth'
 project.description='we jar with system management'
 
 dependencies {
-    api     project(":eva-core:eva-core-web"),
+    api     project(":eva-web:eva-web-common"),
             project(":eva-core:eva-core-log"),
             project(":eva-web:eva-web-sys"),
             project(":eva-core:eva-core-cache"),
