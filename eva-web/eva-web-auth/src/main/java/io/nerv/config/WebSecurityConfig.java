@@ -9,21 +9,21 @@ import io.nerv.security.filter.JwtAuthFilter;
 import io.nerv.security.provider.JwtUsernamePasswordAuthenticationFilter;
 import io.nerv.security.provider.LoginAuthenticationProvider;
 import io.nerv.security.provider.UrlFilterSecurityInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.writers.StaticHeadersWriter;
@@ -40,8 +40,9 @@ import java.util.Arrays;
  */
 @Configuration
 @EnableWebSecurity
+@AllArgsConstructor
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig {
 
     @Value("${eva.security.anonymous}")
     private String[] anonymous;
@@ -49,56 +50,45 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${eva.security.webstatic}")
     private String[] webstatic;
 
-    @Autowired
-    private EvaConfig evaConfig;
+    private final EvaConfig evaConfig;
 
-    @Autowired
-    private JsonUtil jsonUtil;
+    private final JsonUtil jsonUtil;
 
-    @Autowired
-    private LoginAuthenticationProvider loginAuthenticationProvider;
+    private final LoginAuthenticationProvider loginAuthenticationProvider;
 
-    @Autowired
-    private UrlAuthenticationSuccessHandler urlAuthenticationSuccessHandler;
+    private final UrlAuthenticationSuccessHandler urlAuthenticationSuccessHandler;
 
-    @Autowired
-    private UrlAuthenticationFailureHandler urlAuthenticationFailureHandler;
+    private final UrlAuthenticationFailureHandler urlAuthenticationFailureHandler;
 
-    @Autowired
-    private UrlLogoutSuccessHandler urlLogoutSuccessHandler;
+    private final UrlLogoutSuccessHandler urlLogoutSuccessHandler;
 
-    @Autowired
-    private UrlAccessDeniedHandler urlAccessDeniedHandler;
+    private final UrlAccessDeniedHandler urlAccessDeniedHandler;
 
-    @Autowired
-    private UnauthorizedHandler unauthorizedHandler;
+    private final UnauthorizedHandler unauthorizedHandler;
 
-    @Autowired
-    private UrlFilterSecurityInterceptor urlFilterSecurityInterceptor;
+    private final UrlFilterSecurityInterceptor urlFilterSecurityInterceptor;
 
     /** Spring会自动寻找同样类型的具体类注入，这里就是JwtUserDetailsServiceImpl了**/
-    @Autowired
-    @Qualifier("jwtUserDetailsService")
-    private UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService;
 
-    @Autowired
-    private JwtAuthFilter jwtAuthFilter;
+    private final JwtAuthFilter jwtAuthFilter;
 
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @Override
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(loginAuthenticationProvider)
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+
+    public AuthenticationManager authenticationManagerBuilderConfigure() throws Exception {
+        authenticationManagerBuilder.authenticationProvider(loginAuthenticationProvider)
             // 设置UserDetailsService
             .userDetailsService(this.userDetailsService)
             // 使用BCrypt进行密码的hash
             .passwordEncoder(bCryptPasswordEncoder);
         // 默认超级用户
-        auth.inMemoryAuthentication()
+        authenticationManagerBuilder.inMemoryAuthentication()
                 .withUser("toor")
                 .password(new BCryptPasswordEncoder().encode("nerv_toor_eva"))
                 .roles("ADMIN");
+        return authenticationManagerBuilder.build();
     }
 
     @Bean
@@ -134,8 +124,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return source;
     }
 
-    @Override
-    protected void configure(HttpSecurity httpSecurity) throws Exception {
+    @Bean
+    protected SecurityFilterChain httpSecurityConfigure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
             .cors()
             .and()
@@ -170,7 +160,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         .and()
                         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                         .addFilterBefore(new JwtUsernamePasswordAuthenticationFilter("/auth/login",
-                                                                                          authenticationManager(),
+                                                                                          authenticationManagerBuilderConfigure(),
                                                                                           urlAuthenticationSuccessHandler,
                                                                                           urlAuthenticationFailureHandler,
                                                                                           jsonUtil),
@@ -184,6 +174,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .headers()
             .frameOptions().sameOrigin()  // required to set for H2 else H2 Console will be blank.
             .cacheControl();
+
+            return httpSecurity.build();
     }
 
 
@@ -191,36 +183,40 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      * 虽然登录请求可以被所有人访问，但是不能放在这里（而应该通过允许匿名访问的方式来给请求放行）。
      * 如果放在这里，登录请求将不走 SecurityContextPersistenceFilter 过滤器，也就意味着不会将登录用户信息存入 session，
      * 进而导致后续请求无法获取到登录用户信息。
-     * @param web
      */
-    @Override
-    public void configure(WebSecurity web) {
-        var ws = web
-            .ignoring()
-            // allow anonymous resource requests
-            .and()
-            .ignoring()
-            .antMatchers(
-                    HttpMethod.GET,
-                    "/",
-                    "/static/**",
-                    "/*.html",
-                    "/*.xls",
-                    "/*.xlsx",
-                    "/*.doc",
-                    "/*.docx",
-                    "/*.pdf",
-                    "/favicon.ico",
-                    "/**/*.html",
-                    "/**/*.css",
-                    "/**/*.js",
-                    "/**/swagger-resources/**",
-                    "/**/api-docs/**"
-            );
+    @Bean
+    public WebSecurityCustomizer webSecurityConfigure() {
+      return web -> {
+          String[] paths = null;
+          var staticPath = new String[]{
+                  "/static/**",
+                  "/*.html",
+                  "/*.xls",
+                  "/*.xlsx",
+                  "/*.doc",
+                  "/*.docx",
+                  "/*.pdf",
+                  "/favicon.ico",
+                  "/**/*.html",
+                  "/**/*.css",
+                  "/**/*.js",
+                  "/**/swagger-resources/**",
+                  "/**/api-docs/**"
+          };
 
-        if (ArrayUtil.isNotEmpty(webstatic)){
-            ws.antMatchers(webstatic);
-        }
+          if (null != webstatic ){
+              paths = ArrayUtil.addAll(webstatic,staticPath);
+          }
+
+          web.ignoring()
+              // allow anonymous resource requests
+              .and()
+              .ignoring()
+              .antMatchers(
+                      HttpMethod.GET,
+                      paths
+              );
+      };
     }
 
 }
