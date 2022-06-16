@@ -59,8 +59,7 @@ ext {
            "devTools" : "org.springframework.boot:spring-boot-devtools",
             // generator
            "velocity" : "org.apache.velocity:velocity-engine-core:${velocity}",
-           "mybatis_plus_generator" : "com.baomidou:mybatis-plus-generator:${mybatis_plus_generator}",
-           "snakeyaml" : "org.yaml:snakeyaml:${snakeyaml}"
+           "mybatis_plus_generator" : "com.baomidou:mybatis-plus-generator:${mybatis_plus_generator}"
     ]
 }
 
@@ -110,7 +109,6 @@ subprojects {
     }
 
     dependencies {
-       implementation "${lib.snakeyaml}"
        implementation "${lib.lombok}"
 	   annotationProcessor "${lib.lombok}"
 
