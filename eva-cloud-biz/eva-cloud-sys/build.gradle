@@ -28,11 +28,5 @@ dependencies {
 
     implementation "${lib.undertow}"
 
-    implementation	"${lib.springdoc}",
-                    "${lib.eva_core_cache}",
-                    "${lib.eva_core_data_mybatis}"
-
-    implementation("${lib.eva_core_common}"){
-        exclude module: 'knife4j-spring'
-    }
+    implementation "${lib.eva_web_sys}"
 }

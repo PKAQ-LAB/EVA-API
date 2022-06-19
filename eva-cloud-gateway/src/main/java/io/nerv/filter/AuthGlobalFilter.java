@@ -3,25 +3,19 @@ package io.nerv.filter;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.jwt.JWT;
 import cn.hutool.jwt.JWTUtil;
-import com.nimbusds.jose.JWSObject;
 import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.util.RedisUtil;
 import io.nerv.properties.EvaConfig;
 import io.nerv.util.WebfluxResponseUtil;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
-
-import javax.security.auth.login.AccountExpiredException;
 
 /**
  * 将登录用户的JWT转化成用户信息的全局过滤器
@@ -32,15 +26,6 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
     private final EvaConfig evaConfig;
 
     private final RedisUtil redisUtil;
-
-    //TODO 放到commonconstant中
-    private static final String X_CLIENT_TOKEN_USER = "x-client-token-user";
-    private static final String X_CLIENT_TOKEN_ROLES = "x-client-token-roles";
-    private final static String X_GATEWAY_HEADER = "x-request";
-    private final static String X_GATEWAY_VALUE = "eva-gateway-request";
-    private final static String JWT_USER_ID_STR = "userId";
-    private final static String JWT_USER_NAME_STR = "userName";
-    private final static String JWT_USER_ROLES_STR = "authorities";
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -71,8 +56,8 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
         //从token中解析用户信息并设置到Header中去
         String realToken = authToken.replace(evaConfig.getJwt().getTokenHead(), "");
         JWT jwtObj = JWTUtil.parseToken(realToken);
-        String userStr = jwtObj.getPayload(JWT_USER_ID_STR).toString();
-        String rolesStr = jwtObj.getPayload(JWT_USER_ROLES_STR).toString();
+        String userStr = jwtObj.getPayload(CommonConstant.JWT_USER_ID_STR).toString();
+        String rolesStr = jwtObj.getPayload(CommonConstant.JWT_USER_ROLES_STR).toString();
 
 //      解析JWT获取jti，以jti为key判断redis的黑名单列表是否存在，存在则拦截访问
 //      黑名单token(登出、修改密码)校验
@@ -84,9 +69,9 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
 
         // 存在token且不是黑名单，request写入JWT的载体信息
         ServerHttpRequest request = serverHttpRequest.mutate()
-                                            .header(X_CLIENT_TOKEN_USER, userStr)
-                                            .header(X_CLIENT_TOKEN_ROLES, rolesStr)
-                                            .header(X_GATEWAY_HEADER, X_GATEWAY_VALUE).build();
+                                            .header(CommonConstant.X_CLIENT_TOKEN_ROLES, userStr)
+                                            .header(CommonConstant.X_CLIENT_TOKEN_ROLES, rolesStr)
+                                            .header(CommonConstant.X_GATEWAY_VALUE).build();
         exchange = exchange.mutate().request(request).build();
 
         return chain.filter(exchange);

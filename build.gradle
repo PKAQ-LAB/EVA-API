@@ -8,6 +8,8 @@ ext {
             "eva_web_common": "org.pkaq:eva-web-common:${eva}",
             "eva_core_cache": "org.pkaq:eva-core-cache:${eva}",
             "eva_core_data_mybatis": "org.pkaq:eva-core-data-mybatis:${eva}",
+            "eva_web_sys": "org.pkaq:eva-web-sys:${eva}",
+            "eva_core_cache": "org.pkaq:eva-core-cache:${eva}",
             "hutool" : "cn.hutool:hutool-all:${hutool}",
             "boot" : "org.springframework.boot:spring-boot-dependencies:${spring_boot_ver}",
             "knife4j_cloud":"com.github.xiaoymin:knife4j-micro-spring-boot-starter:${knife4j}",

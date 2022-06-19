@@ -21,8 +21,15 @@ spring:
         refresh-enabled: true
         # 共享的配置文件
         shared-configs:
-            - dataId: common
-              group: DEV_GROUP
-              refresh: true
+          - dataId: common
+            group: DEV_GROUP
+            refresh: true
+          - dataId: cache
+            group: DEV_GROUP
+            refresh: true
+        extension-configs:
+          - dataId: cache
+            group: DEV_GROUP
+            refresh: true
 server:
   port: 9666

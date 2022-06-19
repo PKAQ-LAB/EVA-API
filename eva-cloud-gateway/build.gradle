@@ -29,7 +29,6 @@ dependencies {
                     "${lib.eva_core_cache}",
                     "${lib.jdbc}",
                     "${lib.mysql}",
-                    "${lib.hutool}",
                     "${lib.jose}",
                     "${lib.jwt}"
 }
