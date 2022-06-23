@@ -36,6 +36,7 @@ services:
 2.创建时init.d/custom/properties会映射为文件夹[version.2.1.x]
 提前建立好该文件
 
+以下问题的统一解决方式为 配置中心的公共配置 dataid均加上.yaml 同时bootstrap配置时添加.yaml后缀
 3.evaconfig放在shared-configs公有配置中无法读取[version.2.1.x]
 放置在项目相关文件中
 
