@@ -22,11 +22,6 @@ processResources {
 }
 
 dependencies {
-    implementation("${lib.web}"){
-        exclude module: 'spring-boot-starter-tomcat'
-    }
-
-    implementation "${lib.undertow}"
 
     implementation "${lib.eva_web_sys}"
 }
