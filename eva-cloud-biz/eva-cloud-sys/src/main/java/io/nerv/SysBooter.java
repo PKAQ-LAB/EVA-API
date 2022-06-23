@@ -1,6 +1,7 @@
 package io.nerv;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,13 +21,19 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 public class SysBooter implements CommandLineRunner {
     private final Environment environment;
 
+    @Value("${server.port}")
+    private String ct;
+
     public SysBooter(Environment environment) {
         this.environment = environment;
     }
 
     @Override
     public void run(String... args) {
-        System.out.println(environment.getActiveProfiles());
+        log.info(environment.getProperty("norepeat-check"));
+        log.info(environment.getProperty("server.port"));
+        log.info(environment.getProperty("eva.cache.type"));
+        log.info(" ------ "+ct+" ------ ");
         log.info(" ------ eva cloud System Management started ------ ");
     }
 
