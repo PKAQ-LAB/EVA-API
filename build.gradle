@@ -9,12 +9,8 @@ ext {
             "eva_core_cache": "org.pkaq:eva-core-cache:${eva}",
             "eva_core_data_mybatis": "org.pkaq:eva-core-data-mybatis:${eva}",
             "eva_web_sys": "org.pkaq:eva-web-sys:${eva}",
-            "eva_core_cache": "org.pkaq:eva-core-cache:${eva}",
             "hutool" : "cn.hutool:hutool-all:${hutool}",
             "boot" : "org.springframework.boot:spring-boot-dependencies:${spring_boot_ver}",
-            "knife4j_cloud":"com.github.xiaoymin:knife4j-micro-spring-boot-starter:${knife4j}",
-            "knife4j":"com.github.xiaoymin:knife4j-spring-boot-starter:${knife4j}",
-            "jaxb_api" : "javax.xml.bind:jaxb-api:${jaxb_api}",
             // lombok
             "lombok" : "org.projectlombok:lombok:${lombok}",
             // test
@@ -32,6 +28,16 @@ ext {
             // nacos 注册 配置中心
             "nacos_config":"com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-config",
             "nacos_client":"com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery",
+            // 服务调用
+            /**
+             * 这里解释一下为什么不用 Spring-Cloud-Alibaba 的 Dubbo 依赖
+             * 这个依赖主要是负责处理兼容 Feign 的 Dubbo 代理配置 通过 Feign 做服务发现
+             项目中 如果统一使用 Dubbo 则不需要使用这个依赖 在后续版本 官方也宣布此模块从主分支移除
+             况且 Dubbo 3.0 已经支持 基于应用服务的发现机制 故完全没必要与 Feign 做兼容处理
+             */
+            "dubbo":"org.apache.dubbo:dubbo-spring-boot-starter:${dubbo}",
+            // 自带得依赖过低会导致启动报错
+            "dubbo_client": "com.alibaba.nacos:nacos-client:${dubbo_client}",
             // bootAdmin 监控
             "bootAdminServer" : "de.codecentric:spring-boot-admin-starter-server:${boot_admin}",
             "bootAdmin" : "de.codecentric:spring-boot-admin-starter-client:${boot_admin}",
@@ -104,24 +110,27 @@ subprojects {
         maven { url"https://repo.spring.io/libs-release" }
         google()
     }
+    if (it.name != 'eva-dubbo-service') {
 
-    dependencies {
-        implementation "${lib.lombok}",
-                       "${lib.nacos_config}",
-                       "${lib.nacos_client}",
-                       "${lib.bootAdmin}",
-                       // spring cloud 2020以后的版本,默认不优先读取bootstrap.yml了;
-                       // bootstrap.yml失效,导致nacos报错Param 'serviceName' is illegal, serviceName is blank
-                       // 相关链接:https://docs.spring.io/spring-cloud-config/docs/current/reference/html/#config-first-bootstrap
-                       "${lib.cloud_bootstrap}"
-// 需要链路追踪的子项目需要引入此依赖
-//        "${lib.skywalking_logback}",
-//        "${lib.skywalking_trace}"
+        dependencies {
+            implementation "${lib.lombok}",
+                           "${lib.nacos_config}",
+                           "${lib.nacos_client}",
+                           "${lib.bootAdmin}",
+                           // spring cloud 2020以后的版本,默认不优先读取bootstrap.yml了;
+                           // bootstrap.yml失效,导致nacos报错Param 'serviceName' is illegal, serviceName is blank
+                           // 相关链接:https://docs.spring.io/spring-cloud-config/docs/current/reference/html/#config-first-bootstrap
+                           "${lib.cloud_bootstrap}"
+    // 需要链路追踪的子项目需要引入此依赖
+    //        "${lib.skywalking_logback}",
+    //        "${lib.skywalking_trace}"
 
-        annotationProcessor "${lib.lombok}"
+            annotationProcessor "${lib.lombok}"
 
-        testImplementation "${lib.test}"
+            testImplementation "${lib.test}"
 
-     }
+         }
+    }
+
 }
 

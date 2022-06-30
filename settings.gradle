@@ -2,10 +2,14 @@ rootProject.name = 'eva'
 include 'eva-cloud-auth'
 include 'eva-cloud-gateway'
 include 'eva-cloud-job'
+
 include ':eva-cloud-ops:eva-admin-server'
 include ':eva-cloud-ops:eva-cloud-docs'
+
 include ':eva-cloud-biz:eva-cloud-sys'
 
+include ':eva-cloud-api:eva-dubbo-service'
 
-
+include ':eva-cloud-demo:eva-dubbo-consumer'
+include ':eva-cloud-demo:eva-dubbo-provider'
 

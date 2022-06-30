@@ -1,15 +1,11 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 apply plugin: "org.springframework.boot"
 
-project.archivesBaseName = 'eva-cloud-sys'
-project.description='sys jar with authority and system management'
+project.archivesBaseName = 'eva-dubbo-service'
+project.description='eva dubbo interface jar'
 
 jar {
     enabled = true
-}
-
-bootJar {
-    mainClass = 'io.nerv.SysBooter'
 }
 
 compileJava.dependsOn(processResources)
@@ -19,14 +15,4 @@ processResources {
     filesMatching('**/*.yaml') {
         filter(ReplaceTokens, tokens: [profile: profile])
     }
-}
-
-dependencies {
-
-    api("${lib.web}"){
-        exclude module: 'spring-boot-starter-tomcat'
-    }
-    api "${lib.undertow}"
-
-    implementation "${lib.eva_web_sys}"
 }

@@ -1,15 +1,15 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 apply plugin: "org.springframework.boot"
 
-project.archivesBaseName = 'eva-cloud-sys'
-project.description='sys jar with authority and system management'
+project.archivesBaseName = 'eva-dubbo-provider'
+project.description='eva dubbo provider demo'
 
 jar {
     enabled = true
 }
 
 bootJar {
-    mainClass = 'io.nerv.SysBooter'
+    mainClass = 'io.nerv.ProviderBooter'
 }
 
 compileJava.dependsOn(processResources)
@@ -28,5 +28,7 @@ dependencies {
     }
     api "${lib.undertow}"
 
-    implementation "${lib.eva_web_sys}"
+    implementation project(":eva-cloud-api:eva-dubbo-service"),
+                   "${lib.dubbo}",
+                   "${lib.dubbo_client}"
 }

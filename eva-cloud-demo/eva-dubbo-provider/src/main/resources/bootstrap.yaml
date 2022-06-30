@@ -1,8 +1,8 @@
+server:
+  port: 7788
 spring:
   application:
-    name: eva-cloud-sys
-  main:
-    allow-circular-references: true
+    name: eva-dubbo-provider
   cloud:
     nacos:
       discovery:
@@ -10,7 +10,7 @@ spring:
         # 注册中心地址
         server-addr: 47.104.217.77
         enabled: true
-        service: eva-cloud-sys
+        service: eva-dubbo-provider
         group: DEV_GROUP
       config:
         namespace: fecb542d-1b8a-4755-8ade-a5733c2f5d68
@@ -21,14 +21,3 @@ spring:
         file-extension: 'yaml'
         # 自动刷新
         refresh-enabled: true
-        # 共享的配置文件
-        extension-configs:
-          - dataId: common-base.yaml
-            group: DEV_GROUP
-            refresh: true
-          - dataId: common-cache.yaml
-            group: DEV_GROUP
-            refresh: true
-          - dataId: common-database.yaml
-            group: DEV_GROUP
-            refresh: true
