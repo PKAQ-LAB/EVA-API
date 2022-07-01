@@ -38,6 +38,8 @@ ext {
             "dubbo":"org.apache.dubbo:dubbo-spring-boot-starter:${dubbo}",
             // 自带得依赖过低会导致启动报错
             "dubbo_client": "com.alibaba.nacos:nacos-client:${dubbo_client}",
+            // 熔断 降级
+            "sentinel":"com.alibaba.cloud:spring-cloud-starter-alibaba-sentinel",
             // bootAdmin 监控
             "bootAdminServer" : "de.codecentric:spring-boot-admin-starter-server:${boot_admin}",
             "bootAdmin" : "de.codecentric:spring-boot-admin-starter-client:${boot_admin}",

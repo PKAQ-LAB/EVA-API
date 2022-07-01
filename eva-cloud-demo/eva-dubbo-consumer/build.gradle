@@ -29,6 +29,7 @@ dependencies {
 
     implementation project(":eva-cloud-api:eva-dubbo-service"),
                    "${lib.dubbo}",
-                   "${lib.dubbo_client}"
+                   "${lib.dubbo_client}",
+                   "${lib.sentinel}"
 }
 
