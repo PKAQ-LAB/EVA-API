@@ -10,10 +10,6 @@ dependencies {
                     "${lib.jdbc}",
                     "${lib.p6spy}",
                     "${lib.flyway}",
-                    "${lib.mysql}",
-                    // oracle
-                    "${lib.oracle}",
-                    "${lib.orai18n}",
                     "${lib.springdoc}"
 
     api             "${lib.mybatisPlus}"

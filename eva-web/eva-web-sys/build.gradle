@@ -5,6 +5,8 @@ project.archivesBaseName = 'eva-web-sys'
 project.description='sys jar with authority and system management'
 
 dependencies {
-    implementation	project(":eva-web:eva-web-common"),
-                	project(":eva-core:eva-core-cache")
+    implementation	project(":eva-core:eva-core-web"),
+                	project(":eva-core:eva-core-data-mybatis"),
+                	project(":eva-core:eva-core-cache"),
+                    "${lib.mysql}"
 }
