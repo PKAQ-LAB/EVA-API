@@ -42,12 +42,11 @@ spring:
     password: 7u8i9o0p
     timeout: 10000
     database: 0
-# 校验表结构
-  jpa:
-    hibernate:
-      ddl-auto: none
-    database-platform: org.hibernate.dialect.MySQL5Dialect
+  # flyway配置 对于非空数据库 需要开启此项避免报错
   flyway:
+    baseline-on-migrate: true
+    locations: classpath:/db/migration
+    baseline-version: 0
     enabled: false
   data:
     redis:

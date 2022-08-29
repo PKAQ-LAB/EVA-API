@@ -6,6 +6,5 @@ project.description='sys jar with authority and system management'
 
 dependencies {
     implementation	project(":eva-web:eva-web-common"),
-                	project(":eva-web:eva-web-common"),
                 	project(":eva-core:eva-core-cache")
 }

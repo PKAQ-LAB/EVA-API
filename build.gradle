@@ -64,9 +64,8 @@ ext {
 }
 
 allprojects {
-    apply plugin: "idea"
     group = 'io.nerv'
-    version = '2.7.3D'
+    version = '2.7.4'
 }
 
 subprojects {
@@ -112,8 +111,8 @@ subprojects {
        implementation "${lib.lombok}"
 	   annotationProcessor "${lib.lombok}"
 
-       testImplementation "${lib.test}",
-                          "${lib.securityTest}"
+        testImplementation "${lib.test}",
+                           "${lib.securityTest}"
 
      }
 }

@@ -18,14 +18,6 @@ import java.util.List;
 @Configuration
 @Profile({"!prod"})
 public class APIConfiguration {
-//    @Bean
-//    public OperationCustomizer operationCustomizer() {
-//        return (operation, handlerMethod) -> {
-////            operation.setTags(operation.getTags()); // to adapt
-//            operation.addTagsItem("用户登录");
-//            return operation;
-//        };
-//    }
     @Bean
     public OpenApiCustomiser openApiCustomiser(){
         var pi = new PathItem();

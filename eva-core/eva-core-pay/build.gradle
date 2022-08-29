@@ -13,6 +13,6 @@ dependencies {
 
     implementation	project(":eva-core:eva-core-common"),
                     // 阿里支付
-                    "${lib.alipay}",
-					"${lib.zxing}"
+                    "${lib.alipay}"
+//					"${lib.zxing}"
 }
