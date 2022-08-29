@@ -18,5 +18,6 @@ include ':eva-core:eva-core-upload'
 
 include ':eva-server:eva-admin-server'
 include ':eva-server:eva-license-server'
-
+include 'eva-core:eva-core-web'
+findProject(':eva-core:eva-core-web')?.name = 'eva-core-web'
 

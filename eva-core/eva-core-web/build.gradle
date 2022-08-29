@@ -1,7 +1,7 @@
 if (project.file('../../publish.gradle').exists()) {
     apply from: '../../publish.gradle'
 }
-project.archivesBaseName = 'eva-web-common'
+project.archivesBaseName = 'eva-core-web'
 project.description='eva web support with all base modules'
 
 dependencies {
@@ -12,6 +12,5 @@ dependencies {
     api "${lib.undertow}"
 
     api project(":eva-core:eva-core-common"),
-        project(":eva-core:eva-core-data-mybatis"),
         "${lib.springdoc}"
 }
