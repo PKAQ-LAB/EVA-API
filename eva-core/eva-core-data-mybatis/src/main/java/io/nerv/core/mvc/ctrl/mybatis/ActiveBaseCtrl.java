@@ -27,7 +27,7 @@ public abstract class ActiveBaseCtrl<T extends ActiveBaseService, E extends Mode
     protected T service;
 
     @PostMapping("del")
-    @Operation(description = "根据ID删除/批量删除记录")
+    @Operation(summary = "删除记录", description = "根据ID删除/批量删除记录")
     public Response del(@Parameter(name = "ids", description = "[记录ID]")
                         @RequestBody SingleArray<String> ids){
 
@@ -39,7 +39,7 @@ public abstract class ActiveBaseCtrl<T extends ActiveBaseService, E extends Mode
     }
 
     @PostMapping("edit")
-    @Operation(description = "新增/编辑记录")
+    @Operation(summary = "新增记录",description = "新增/编辑记录")
     public Response save(@Parameter(name ="formdata", description = "模型对象")
                          @RequestBody E entity){
         this.service.merge(entity);
@@ -47,14 +47,14 @@ public abstract class ActiveBaseCtrl<T extends ActiveBaseService, E extends Mode
     }
 
     @GetMapping("list")
-    @Operation(description = "列表查询")
+    @Operation(summary = "分页查询",description = "列表查询")
     public Response list(@Parameter(name ="condition", description = "模型对象")
                                  E entity, Integer pageNo, Integer pageSize){
         return this.success(this.service.listPage(entity, pageNo, pageSize));
     }
 
     @GetMapping("/get/{id}")
-    @Operation(description = "根据ID获得记录信息")
+    @Operation(summary = "根据ID查询", description = "根据ID获得记录信息")
     public Response get(@Parameter(name = "id", description = "记录ID")
                             @PathVariable("id") String id){
         return this.success(this.service.getById(id));
