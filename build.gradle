@@ -65,7 +65,7 @@ ext {
 
 allprojects {
     group = 'io.nerv'
-    version = '2.7.4'
+    version = '2.7.4.1'
 }
 
 subprojects {
