@@ -31,13 +31,13 @@ public class CacheTokenUtil {
     }
 
     // 构造token缓存的value
-    public Map<String, Object> buildCacheValue(HttpServletRequest request,String uid,  String token){
+    public Map<String, Object> buildCacheValue(HttpServletRequest request,String account,  String token){
         return Map.of("device",   RequestUtil.getDeivce(request),
                       "version",  RequestUtil.getVersion(request),
                       "issuedAt", jwtUtil.getIssuedAt(token),
                       "expireAt", jwtUtil.getExpirationDateFromToken(token),
                       "loginTime",LocalDateTime.now(),
-                      "account", uid,
+                      "account", account,
                       "token", token);
     }
 

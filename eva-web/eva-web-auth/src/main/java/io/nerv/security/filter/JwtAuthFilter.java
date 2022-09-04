@@ -144,18 +144,19 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         if (isvalid && (inCache || !cacheToken)) {
             String uid = jwtUtil.getUid(authToken);
+            String account = jwtUtil.getAccount(authToken);
 
-            logger.info("checking authentication ：" + uid);
+            logger.info("checking authentication ：" + account);
 
             logger.info(SecurityContextHolder.getContext().getAuthentication());
 //            if (StrUtil.isNotBlank(uid) && SecurityContextHolder.getContext().getAuthentication() == null) {
-            if (StrUtil.isNotBlank(uid) && ThreadUserHelper.getCurrentUser() == null) {
+            if (StrUtil.isNotBlank(account) ) {
                 logger.debug("io.nerv.security context was null, so authorizing user");
 
                 // 从redis中 根据用户id获取用户权限列表
                 UserDetails userDetails;
                 try{
-                    userDetails = this.userDetailsService.loadUserByUsername(uid);
+                    userDetails = this.userDetailsService.loadUserByUsername(account);
                 } catch(UsernameNotFoundException e){
                     response.setCharacterEncoding("UTF-8");
                     response.setContentType("application/json");
@@ -163,14 +164,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     return;
                 }
 
-                logger.info("authenticated user " + uid + ", setting io.nerv.security context");
+                logger.info("authenticated user " + account + ", setting io.nerv.security context");
                 // 验证通过 将用户信息存入 threadlocal
                 String[] roles = userDetails.getAuthorities().stream()
                                             .map(GrantedAuthority::getAuthority)
                                             .toArray(String[]::new);
 
                 ThreadUser currentUser = new ThreadUser().setUserId(uid)
-                                                         .setUserId(userDetails.getUsername())
+                                                         .setUserName(account)
                                                          .setRoles(roles);
                 ThreadUserHelper.setCurrentUser(currentUser);
 

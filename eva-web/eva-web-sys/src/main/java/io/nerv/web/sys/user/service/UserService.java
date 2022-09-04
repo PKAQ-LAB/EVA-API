@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 用户管理
@@ -186,27 +185,20 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
 
     /**
      * 获取当前登录用户的信息(菜单.权限.消息
+     *
      * @param uid 用户ID
      * @return
      */
-    public Map<String, Object> fetch(String uid) throws Exception {
-        UserEntity userEntity = new UserEntity();
-        userEntity.setId(uid);
+    public List<BaseTreeEntity> fetch(String uid) throws Exception {
 
-        userEntity = this.mapper.getUserWithRole(userEntity);
-
-        if (null == userEntity){
-            throw new Exception(BizCodeEnum.ACCOUNT_NOT_EXIST.getName());
-        }
-
-        List<ModuleEntity> moduleEntity = this.moduleMapper.getRoleModuleByUserId(userEntity.getId());
+        List<ModuleEntity> moduleEntity = this.moduleMapper.getRoleModuleByUserId(uid);
         List<BaseTreeEntity> treeModule = new TreeHelper().bulid(moduleEntity);
 
-        if (CollUtil.isEmpty(userEntity.getRoles()) || CollUtil.isEmpty(treeModule)){
+        if (CollUtil.isEmpty(treeModule)){
             throw new Exception(BizCodeEnum.PERMISSION_EXPIRED.getName());
         }
 
-        return Map.of("user", userEntity, "menus", treeModule, "dict", dictCacheHelper.getAll());
+        return treeModule;
     }
 
     /**

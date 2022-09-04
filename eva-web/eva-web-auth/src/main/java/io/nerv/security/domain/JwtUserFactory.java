@@ -1,5 +1,6 @@
 package io.nerv.security.domain;
 
+import cn.hutool.core.bean.BeanUtil;
 import io.nerv.core.enums.LockEnumm;
 import io.nerv.domain.JwtUserDetail;
 import io.nerv.web.sys.role.entity.RoleEntity;
@@ -32,7 +33,11 @@ public final class JwtUserFactory {
 
     private static List<JwtGrantedAuthority> mapToGrantedAuthorities(List<RoleEntity> authorities) {
         return authorities.stream()
-                .map(item -> new JwtGrantedAuthority(item.getCode(), item))
+                .map(item -> {
+                    GrantedRoles grantedRoles = new GrantedRoles();
+                    BeanUtil.copyProperties(item, grantedRoles);
+                    return new JwtGrantedAuthority(item.getCode(), grantedRoles);
+                })
                 .collect(Collectors.toList());
     }
 }

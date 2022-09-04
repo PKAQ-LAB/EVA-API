@@ -54,12 +54,13 @@ public class TokenCtrl {
         }
 
         // 获取当前用户 account
-        String cur_user = jwtUtil.getUid(refreshTk);
+        String uid = jwtUtil.getUid(refreshTk);
+        String account = jwtUtil.getUid(refreshTk);
         // 签发新 access token
-        String new_alpha = jwtUtil.build(evaConfig.getJwt().getAlphaTtl(), cur_user);
+        String new_alpha = jwtUtil.build(evaConfig.getJwt().getAlphaTtl(), uid, account);
 
         // 签发新 refresh token
-        String new_bravo = jwtUtil.build(evaConfig.getJwt().getBravoTtl(), cur_user);
+        String new_bravo = jwtUtil.build(evaConfig.getJwt().getBravoTtl(), uid, account);
 
         // 替换客户端的旧token
         ServletUtil.addCookie(response,
@@ -78,7 +79,7 @@ public class TokenCtrl {
 
         // 持久化 token
         if (cacheToken) {
-            cacheTokenUtil.saveToken(cur_user, cacheTokenUtil.buildCacheValue(request, cur_user, new_alpha));
+            cacheTokenUtil.saveToken(uid, cacheTokenUtil.buildCacheValue(request, account, new_alpha));
         }
 
         var map = Map.of(CommonConstant.ACCESS_TOKEN_KEY, new_alpha,

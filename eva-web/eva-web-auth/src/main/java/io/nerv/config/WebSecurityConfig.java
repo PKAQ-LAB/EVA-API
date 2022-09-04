@@ -8,12 +8,13 @@ import io.nerv.security.entrypoint.*;
 import io.nerv.security.filter.JwtAuthFilter;
 import io.nerv.security.provider.JwtUsernamePasswordAuthenticationFilter;
 import io.nerv.security.provider.UrlFilterSecurityInterceptor;
+import io.nerv.security.service.JwtUserDetailsService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -46,6 +47,8 @@ public class WebSecurityConfig {
 
     @Value("${eva.security.webstatic}")
     private String[] webstatic;
+
+    private final JwtUserDetailsService userDetailsService;
 
     private final EvaConfig evaConfig;
 
@@ -102,7 +105,12 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain httpSecurityConfigure(HttpSecurity httpSecurity) throws Exception {
-        AuthenticationManagerBuilder authenticationManagerBuilder = httpSecurity.getSharedObject(AuthenticationManagerBuilder.class);
+//        AuthenticationManagerBuilder authenticationManagerBuilder = httpSecurity.getSharedObject(AuthenticationManagerBuilder.class);
+//        authenticationManagerBuilder.userDetailsService(userDetailsService);
+//        AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
+
+        AuthenticationManager authenticationManager =
+                httpSecurity.getSharedObject(AuthenticationManager.class);
 
         httpSecurity
             .cors()
@@ -121,6 +129,7 @@ public class WebSecurityConfig {
             .and()
             .authorizeRequests()
             // 对于获取token的rest api要允许匿名访问
+//            .antMatchers("/**").permitAll();
             .antMatchers(anonymous).permitAll()
             // 除上面外的所有请求全部需要鉴权认证
             .anyRequest().authenticated();

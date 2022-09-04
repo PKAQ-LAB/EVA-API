@@ -13,14 +13,14 @@ public final class JwtGrantedAuthority implements GrantedAuthority {
 
     private final String role;
 
-    private RoleEntity roleEntity;
+    private GrantedRoles roleEntity;
 
     public JwtGrantedAuthority(String role) {
         Assert.hasText(role, "A granted authority textual representation is required");
         this.role = role;
     }
 
-    public JwtGrantedAuthority(String role, RoleEntity roleEntity) {
+    public JwtGrantedAuthority(String role, GrantedRoles roleEntity) {
         Assert.hasText(role, "A granted authority textual representation is required");
         Assert.notNull(roleEntity, "A granted authority textual representation is required");
         this.role = role;
@@ -32,7 +32,7 @@ public final class JwtGrantedAuthority implements GrantedAuthority {
         return this.role;
     }
 
-    public RoleEntity getRoleEntity() {
+    public GrantedRoles getRoleEntity() {
         return this.roleEntity;
     }
 

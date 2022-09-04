@@ -63,13 +63,13 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         //表单输入的用户名
         JwtUserDetail user = (JwtUserDetail) authentication.getPrincipal();
         // 签发 access_token -> ALPHA
-        String access_token = jwtUtil.build(evaConfig.getJwt().getAlphaTtl(), user.getAccount());
+        String access_token = jwtUtil.build(evaConfig.getJwt().getAlphaTtl(), user.getId(), user.getAccount());
         // 签发 refresh_token -> BRAVO
-        String refresh_token = jwtUtil.build(evaConfig.getJwt().getBravoTtl(), user.getAccount());
+        String refresh_token = jwtUtil.build(evaConfig.getJwt().getBravoTtl(), user.getId(), user.getAccount());
 
         // token放入缓存
         if (cacheToken) {
-            tokenUtil.saveToken(user.getAccount(), tokenUtil.buildCacheValue(request, user.getAccount(), access_token));
+            tokenUtil.saveToken(user.getId(), tokenUtil.buildCacheValue(request, user.getId(), access_token));
         }
 
         ServletUtil.addCookie(httpServletResponse,
