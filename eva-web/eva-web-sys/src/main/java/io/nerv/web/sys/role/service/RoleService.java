@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import io.nerv.core.enums.LockEnumm;
 import io.nerv.core.mvc.service.mybatis.StdBaseService;
 import io.nerv.core.mvc.util.Page;
+import io.nerv.core.threaduser.ThreadUserHelper;
 import io.nerv.web.sys.module.entity.ModuleEntity;
 import io.nerv.web.sys.module.mapper.ModuleMapper;
 import io.nerv.web.sys.role.entity.RoleEntity;
@@ -165,9 +166,7 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
      */
     public Map<String, Object> listModule(RoleModuleEntity roleModule) {
 
-        // TODO 判断是否为管理员角色
-//        boolean isAdmin = securityHelper.isAdmin();
-        boolean isAdmin = false;
+        boolean isAdmin = ThreadUserHelper.isAdmin();
         // 获取所有菜单
         ModuleEntity moduleEntity = new ModuleEntity();
         moduleEntity.setStatus(LockEnumm.UNLOCK.getIndex());
