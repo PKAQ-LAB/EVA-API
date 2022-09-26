@@ -35,5 +35,5 @@ dependencies {
                    "${lib.springdocui}",
                    "${lib.bootAdmin}",
                    "${lib.devTools}",
-                   "org.springframework.boot:spring-boot-starter-websocket:2.7.3"
+                   "org.springframework.boot:spring-boot-starter-websocket:2.7.4"
 }
