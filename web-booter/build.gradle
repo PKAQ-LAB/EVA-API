@@ -27,10 +27,13 @@ processResources {
 }
 
 dependencies {
-    implementation project(":eva-web:eva-web-auth"),
-                   project(":eva-core:eva-core-license"),
-                   "${lib.knife4j_ui}",
+    api     project(":eva-core:eva-core-web"),
+            project(":eva-core:eva-core-data-mybatis"),
+            "${lib.mysql}"
+
+    implementation "${lib.knife4j_ui}",
                    "${lib.springdocui}",
                    "${lib.bootAdmin}",
-                   "${lib.devTools}"
+                   "${lib.devTools}",
+                   "org.springframework.boot:spring-boot-starter-websocket:2.7.3"
 }

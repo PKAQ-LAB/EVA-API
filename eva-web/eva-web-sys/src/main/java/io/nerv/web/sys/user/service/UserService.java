@@ -7,12 +7,12 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.core.mvc.entity.mybatis.BaseTreeEntity;
-import io.nerv.core.mvc.service.mybatis.StdBaseService;
+import io.nerv.core.mvc.entity.mybatis.StdTreeEntity;
+import io.nerv.core.mvc.service.mybatis.StdService;
 import io.nerv.core.mvc.util.Page;
 import io.nerv.core.util.tree.TreeHelper;
 import io.nerv.web.sys.dict.cache.DictCacheHelper;
-import io.nerv.web.sys.module.entity.ModuleEntity;
+import io.nerv.web.sys.module.entity.ModuleEntityStd;
 import io.nerv.web.sys.module.mapper.ModuleMapper;
 import io.nerv.web.sys.organization.mapper.OrganizationMapper;
 import io.nerv.web.sys.role.entity.RoleUserEntity;
@@ -31,7 +31,7 @@ import java.util.List;
  * @Datetime: 2018/3/30 0:00
  */
 @Service
-public class UserService extends StdBaseService<UserMapper, UserEntity> {
+public class UserService extends StdService<UserMapper, UserEntity> {
 
     private final OrganizationMapper organizationMapper;
 
@@ -189,10 +189,10 @@ public class UserService extends StdBaseService<UserMapper, UserEntity> {
      * @param uid 用户ID
      * @return
      */
-    public List<BaseTreeEntity> fetch(String uid) throws Exception {
+    public List<StdTreeEntity> fetch(String uid) throws Exception {
 
-        List<ModuleEntity> moduleEntity = this.moduleMapper.getRoleModuleByUserId(uid);
-        List<BaseTreeEntity> treeModule = new TreeHelper().bulid(moduleEntity);
+        List<ModuleEntityStd> moduleEntity = this.moduleMapper.getRoleModuleByUserId(uid);
+        List<StdTreeEntity> treeModule = new TreeHelper().bulid(moduleEntity);
 
         if (CollUtil.isEmpty(treeModule)){
             throw new Exception(BizCodeEnum.PERMISSION_EXPIRED.getName());

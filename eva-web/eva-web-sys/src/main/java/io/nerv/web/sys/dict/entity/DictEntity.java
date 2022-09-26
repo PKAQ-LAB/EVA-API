@@ -2,7 +2,7 @@ package io.nerv.web.sys.dict.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.nerv.core.mvc.entity.mybatis.StdBaseEntity;
+import io.nerv.core.mvc.entity.mybatis.StdEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,7 +20,7 @@ import java.util.List;
 @TableName("sys_dict")
 @EqualsAndHashCode(callSuper = true)
 @Schema(title = "字典管理")
-public class DictEntity extends StdBaseEntity {
+public class DictEntity extends StdEntity {
     private static final long serialVersionUID = 1L;
 
     @NotBlank(message = "编码不允许为空")

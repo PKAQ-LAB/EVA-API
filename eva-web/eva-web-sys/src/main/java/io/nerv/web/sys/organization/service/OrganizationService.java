@@ -4,7 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.core.mvc.service.mybatis.StdBaseService;
+import io.nerv.core.mvc.service.mybatis.StdService;
 import io.nerv.core.mvc.vo.Response;
 import io.nerv.web.sys.organization.entity.OrganizationEntity;
 import io.nerv.web.sys.organization.mapper.OrganizationMapper;
@@ -18,7 +18,7 @@ import java.util.List;
  * @author S.PKAQ
  */
 @Service
-public class OrganizationService extends StdBaseService<OrganizationMapper, OrganizationEntity> {
+public class OrganizationService extends StdService<OrganizationMapper, OrganizationEntity> {
 
     /**
      * 查询组织结构树

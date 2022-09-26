@@ -5,8 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.nerv.core.mvc.entity.mybatis.BaseTreeEntity;
-import io.nerv.core.mvc.entity.mybatis.StdBaseEntity;
+import io.nerv.core.mvc.entity.mybatis.StdTreeEntity;
+import io.nerv.core.mvc.entity.mybatis.StdEntity;
 import io.nerv.web.sys.role.entity.RoleEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -27,7 +27,7 @@ import java.util.List;
 @TableName("sys_user_info")
 @EqualsAndHashCode(callSuper = true)
 @Schema(title = "用户管理")
-public class UserEntity extends StdBaseEntity {
+public class UserEntity extends StdEntity {
 
     @Schema(description = "编号")
     private String code;
@@ -89,7 +89,7 @@ public class UserEntity extends StdBaseEntity {
 
     @Schema(description = "用户拥有的模块")
     @TableField(exist = false)
-    private List<BaseTreeEntity> modules = new ArrayList<>();
+    private List<StdTreeEntity> modules = new ArrayList<>();
 
     @TableLogic
     @Schema(description = "逻辑删除状态")

@@ -8,10 +8,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import io.nerv.core.enums.LockEnumm;
-import io.nerv.core.mvc.service.mybatis.StdBaseService;
+import io.nerv.core.mvc.service.mybatis.StdService;
 import io.nerv.core.mvc.util.Page;
 import io.nerv.core.threaduser.ThreadUserHelper;
-import io.nerv.web.sys.module.entity.ModuleEntity;
+import io.nerv.web.sys.module.entity.ModuleEntityStd;
 import io.nerv.web.sys.module.mapper.ModuleMapper;
 import io.nerv.web.sys.role.entity.RoleEntity;
 import io.nerv.web.sys.role.entity.RoleModuleEntity;
@@ -31,7 +31,7 @@ import java.util.*;
  * @author: S.PKAQ
  */
 @Service
-public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
+public class RoleService extends StdService<RoleMapper, RoleEntity> {
     /** 权限前缀 **/
     private final static String AUTH_PREFIX = "ROLE_";
 
@@ -168,9 +168,9 @@ public class RoleService extends StdBaseService<RoleMapper, RoleEntity> {
 
         boolean isAdmin = ThreadUserHelper.isAdmin();
         // 获取所有菜单
-        ModuleEntity moduleEntity = new ModuleEntity();
+        ModuleEntityStd moduleEntity = new ModuleEntityStd();
         moduleEntity.setStatus(LockEnumm.UNLOCK.getIndex());
-        List<ModuleEntity> moduleList = null;
+        List<ModuleEntityStd> moduleList = null;
 
         // 非管理员仅能授权当前权限范围内的模块
         if (isAdmin){

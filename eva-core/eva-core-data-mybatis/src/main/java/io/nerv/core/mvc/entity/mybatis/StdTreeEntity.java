@@ -33,7 +33,7 @@ public class StdTreeEntity extends StdEntity {
     private String parentName;
 
     @Schema(description ="路径")
-    private Long orders;
+    private long orders;
     @Schema(description ="路径")
     private String path;
 

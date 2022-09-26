@@ -2,13 +2,12 @@ package io.nerv.web.sys.module.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import io.nerv.core.annotation.Ignore;
-import io.nerv.web.sys.module.entity.ModuleEntity;
+import io.nerv.web.sys.module.entity.ModuleEntityStd;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 模块管理module
@@ -16,7 +15,7 @@ import java.util.Map;
  */
 @Mapper
 @Repository
-public interface ModuleMapper extends BaseMapper<ModuleEntity> {
+public interface ModuleMapper extends BaseMapper<ModuleEntityStd> {
 
 
     /**
@@ -27,22 +26,22 @@ public interface ModuleMapper extends BaseMapper<ModuleEntity> {
      * @return
      */
     @Ignore
-    List<ModuleEntity> listGrantedModule(@Param("condition") String condition,
-                                         @Param("module") ModuleEntity module,
-                                         @Param("roleNames") String[] roleNames);
+    List<ModuleEntityStd> listGrantedModule(@Param("condition") String condition,
+                                            @Param("module") ModuleEntityStd module,
+                                            @Param("roleNames") String[] roleNames);
     /**
      * 查询所有符合条件的树
      * @param module 符合条件的List
      * @return 符合查询条件的List
      */
-    List<ModuleEntity> listModule(@Param("module") ModuleEntity module);
+    List<ModuleEntityStd> listModule(@Param("module") ModuleEntityStd module);
 
     /**
      * 根据parentID查询子节点数据
      * @param id parentID
      * @return 符合条件的List
      */
-    List<ModuleEntity> listChildren(String id);
+    List<ModuleEntityStd> listChildren(String id);
 
     /**
      * 根据用户id查询用户拥有的权限模块列表
@@ -50,14 +49,14 @@ public interface ModuleMapper extends BaseMapper<ModuleEntity> {
      * @return 符合条件的List
      */
     @Ignore
-    List<ModuleEntity> getRoleModuleByUserId(String userId);
+    List<ModuleEntityStd> getRoleModuleByUserId(String userId);
 
     /**
      * 根据子节点ID查询父节点信息
      * @param id 子节点ID
      * @return 父节点实体类
      */
-    ModuleEntity getParentById(String id);
+    ModuleEntityStd getParentById(String id);
 
     /**
      * 根据子节点ID查询同级节点数量（包含自身）
@@ -78,7 +77,7 @@ public interface ModuleMapper extends BaseMapper<ModuleEntity> {
      */
     void disableChild(@Param("id") String id);
 
-    ModuleEntity selectId(@Param("id") String id);
+    ModuleEntityStd selectId(@Param("id") String id);
 
     /**
      * 刷新子节点名称

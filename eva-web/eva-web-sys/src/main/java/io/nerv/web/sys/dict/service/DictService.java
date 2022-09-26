@@ -5,7 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import io.nerv.core.exception.ParamException;
-import io.nerv.core.mvc.service.mybatis.StdBaseService;
+import io.nerv.core.mvc.service.mybatis.StdService;
 import io.nerv.web.sys.dict.cache.DictCacheHelper;
 import io.nerv.web.sys.dict.entity.DictEntity;
 import io.nerv.web.sys.dict.entity.DictItemEntity;
@@ -26,7 +26,7 @@ import java.util.Map;
  * @Datetime: 2018/3/15 8:09
  */
 @Service
-public class DictService extends StdBaseService<DictMapper, DictEntity> {
+public class DictService extends StdService<DictMapper, DictEntity> {
     @Autowired
     private DictCacheHelper dictCacheHelper;
 

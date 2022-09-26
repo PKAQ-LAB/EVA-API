@@ -3,7 +3,7 @@ package io.nerv.web.sys.role.entity;
 import com.baomidou.mybatisplus.annotation.SqlCondition;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.nerv.core.mvc.entity.mybatis.StdBaseEntity;
+import io.nerv.core.mvc.entity.mybatis.StdEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -21,7 +21,7 @@ import java.util.Map;
 @TableName("sys_role")
 @EqualsAndHashCode(callSuper = true)
 @Schema(title = "角色管理")
-public class RoleEntity extends StdBaseEntity {
+public class RoleEntity extends StdEntity {
     @TableField(condition = SqlCondition.LIKE)
     @Schema(description = "角色名称")
     private String name;

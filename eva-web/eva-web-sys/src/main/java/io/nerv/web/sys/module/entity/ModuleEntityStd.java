@@ -1,6 +1,5 @@
 package io.nerv.web.sys.module.entity;
 
-import com.baomidou.mybatisplus.annotation.SqlCondition;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.nerv.core.mvc.entity.mybatis.StdTreeEntity;
@@ -23,9 +22,6 @@ import java.util.List;
 public class ModuleEntityStd extends StdTreeEntity {
     private static final long serialVersionUID = 1L;
 
-    @Schema(description = "模块名称")
-    @TableField(condition = SqlCondition.LIKE_RIGHT)
-    private String name;
 
     @Schema(description = "模块图标")
     private String icon;
@@ -36,18 +32,8 @@ public class ModuleEntityStd extends StdTreeEntity {
     @Schema(description = "模块前端model url")
     private String modelurl;
 
-    @Schema(description = "排序")
-    private Integer orders;
-
-    @Schema(description = "状态")
-    private String status;
-
     @TableField(exist = false)
     @Schema(description = "模块拥有的资源")
     private List<ModuleResources> resources;
-
-    public String getKey() {
-        return "";
-    }
 
 }
