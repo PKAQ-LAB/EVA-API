@@ -3,7 +3,7 @@ package io.nerv.web.sys.module.entity;
 import com.baomidou.mybatisplus.annotation.SqlCondition;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.nerv.core.mvc.entity.mybatis.BaseTreeEntity;
+import io.nerv.core.mvc.entity.mybatis.StdTreeEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,7 +20,7 @@ import java.util.List;
 @TableName("sys_module")
 @EqualsAndHashCode(callSuper = true)
 @Schema(title = "模块管理")
-public class ModuleEntity extends BaseTreeEntity {
+public class ModuleEntityStd extends StdTreeEntity {
     private static final long serialVersionUID = 1L;
 
     @Schema(description = "模块名称")

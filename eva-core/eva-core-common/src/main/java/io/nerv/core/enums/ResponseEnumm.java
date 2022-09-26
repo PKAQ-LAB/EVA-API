@@ -8,20 +8,30 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum ResponseEnumm {
+public enum ResponseEnumm implements BizCode {
     /**
      * 可用
      */
-    OPERATE_SUCCESS("操作成功"),
-    SAVE_SUCCESS("保存成功"),
-    EDIT_SUCCESS("编辑成功"),
-    DELETE_SUCCESS("删除成功"),
-    QUERY_SUCCESS("查询成功"),
-    NULL_MSG(null),
-    OPERATE_FAILED("操作失败");
-
+    OPERATE_SUCCESS("操作成功", "0101"),
+    SAVE_SUCCESS("保存成功", "0102"),
+    EDIT_SUCCESS("编辑成功", "0103"),
+    DELETE_SUCCESS("删除成功", "0104"),
+    QUERY_SUCCESS("查询成功", "0105"),
+    NULL_MSG(null, "0100"),
+    OPERATE_FAILED("操作失败", "0106");
+    private String v;
     /**
-     * 名称
+     * 值
      */
-    private String name;
+    private String k;
+
+    @Override
+    public String getName() {
+        return this.v;
+    }
+
+    @Override
+    public String getIndex() {
+        return k;
+    }
 }

@@ -5,6 +5,10 @@ package io.nerv.core.constant;
  * 系统内置常量
  */
 public interface CommonConstant {
+    /**
+     * 有效记录标识
+     */
+    String EFFECTIVE_RECORD = "0000";
     // 默认分页条数
     Integer PAGE_SIZE = 10;
     String ADMIN_ROLE_NAME = "ROLE_ADMIN";

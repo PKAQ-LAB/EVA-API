@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import io.nerv.core.mvc.entity.mybatis.StdBaseEntity;
+import io.nerv.core.mvc.entity.mybatis.StdEntity;
 import io.nerv.core.mvc.util.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
@@ -19,7 +19,7 @@ import java.util.List;
  * 定义一些公用的查询
  * @author S.PKAQ
  */
-public abstract class StdBaseService<M extends BaseMapper<T>, T extends StdBaseEntity> {
+public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
     @Autowired
     public M mapper;
     /**

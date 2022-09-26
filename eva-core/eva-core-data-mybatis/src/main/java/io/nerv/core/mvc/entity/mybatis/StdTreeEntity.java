@@ -1,6 +1,7 @@
 package io.nerv.core.mvc.entity.mybatis;
 
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.annotation.SqlCondition;
 import com.baomidou.mybatisplus.annotation.TableField;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -14,13 +15,25 @@ import java.util.List;
  */
 @Data
 @EqualsAndHashCode(callSuper=false)
-public class BaseTreeEntity extends StdBaseEntity {
+public class StdTreeEntity extends StdEntity {
+    @TableField(condition = SqlCondition.LIKE)
+    @Schema(description = "编码")
+    private String code;
+
+    @Schema(description = "是否可用")
+    private String status;
+
+    @Schema(description ="节点名称")
+    private String name;
+
     @Schema(description ="上级节点id")
     private String parentId;
 
     @Schema(description ="上级节点名称")
     private String parentName;
 
+    @Schema(description ="路径")
+    private Long orders;
     @Schema(description ="路径")
     private String path;
 
@@ -35,7 +48,7 @@ public class BaseTreeEntity extends StdBaseEntity {
 
     @TableField(exist = false)
     @Schema(description ="子节点")
-    private List<BaseTreeEntity> children;
+    private List<StdTreeEntity> children;
 
     @Schema(description ="key")
     @TableField(exist = false)
@@ -61,12 +74,11 @@ public class BaseTreeEntity extends StdBaseEntity {
         return this.isleaf;
     }
 
-    public List<BaseTreeEntity> getChildren(){
+    public List<StdTreeEntity> getChildren(){
         return children == null || children.size()<1?null:children;
     }
 
-    public List<BaseTreeEntity> getOriginChildren(){
+    public List<StdTreeEntity> getOriginChildren(){
         return children;
     }
-
 }

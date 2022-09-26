@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/sys/organization")
 @RequiredArgsConstructor
-public class OrgCtrl extends Ctrl {
+public class OrganizationCtrl extends Ctrl {
     private final OrganizationService service;
 
     @PostMapping("/checkUnique")

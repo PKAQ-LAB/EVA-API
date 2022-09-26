@@ -1,11 +1,12 @@
 package io.nerv.core.mvc.ctrl.mybatis;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
+import io.nerv.core.annotation.NoRepeatSubmit;
 import io.nerv.core.enums.ResponseEnumm;
 import io.nerv.core.exception.ParamException;
 import io.nerv.core.mvc.ctrl.Ctrl;
-import io.nerv.core.mvc.service.mybatis.ActiveBaseService;
+import io.nerv.core.mvc.entity.mybatis.StdMultiEntity;
+import io.nerv.core.mvc.service.mybatis.StdMultiService;
 import io.nerv.core.mvc.vo.Response;
 import io.nerv.core.mvc.vo.SingleArray;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,12 +23,13 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author S.PKAQ
  */
 @Getter
-public abstract class ActiveBaseCtrl<T extends ActiveBaseService, E extends Model> extends Ctrl {
+public abstract class StdMultiCtrl<T extends StdMultiService, E extends StdMultiEntity> extends Ctrl {
     @Autowired
     protected T service;
 
-    @PostMapping("del")
+    @PostMapping("/del")
     @Operation(summary = "删除记录", description = "根据ID删除/批量删除记录")
+    @NoRepeatSubmit
     public Response del(@Parameter(name = "ids", description = "[记录ID]")
                         @RequestBody SingleArray<String> ids){
 
@@ -35,28 +37,55 @@ public abstract class ActiveBaseCtrl<T extends ActiveBaseService, E extends Mode
             throw new ParamException(locale("param_id_notnull"));
         }
         this.service.delete(ids.getParam());
-        return success(this.service.listPage(null, 1), ResponseEnumm.DELETE_SUCCESS.getName());
+        return success(null, ResponseEnumm.DELETE_SUCCESS.getName());
     }
 
-    @PostMapping("edit")
+    @PostMapping("/edit")
     @Operation(summary = "新增记录",description = "新增/编辑记录")
+    @NoRepeatSubmit
     public Response save(@Parameter(name ="formdata", description = "模型对象")
                          @RequestBody E entity){
         this.service.merge(entity);
         return success(entity, ResponseEnumm.SAVE_SUCCESS.getName());
     }
 
-    @GetMapping("list")
+    @GetMapping("/list")
     @Operation(summary = "分页查询",description = "列表查询")
+    @NoRepeatSubmit
     public Response list(@Parameter(name ="condition", description = "模型对象")
                                  E entity, Integer pageNo, Integer pageSize){
         return this.success(this.service.listPage(entity, pageNo, pageSize));
     }
 
+    @GetMapping("/listAll")
+    @Operation(summary = "查询全部",description = "列表查询 无分页")
+    @NoRepeatSubmit
+    public Response listAll(@Parameter(name ="condition", description = "模型对象")
+                                 E entity){
+        return this.success(this.service.list(entity));
+    }
+
+    @GetMapping("/getLine/{mainId}")
+    @Operation(summary = "查询子表明细",description = "列表查询 无分页")
+    @NoRepeatSubmit
+    public Response listAll(@Parameter(name ="mainId", description = "主表id")
+                                @PathVariable("mainId") String mainId){
+        return this.success(this.service.listLines(mainId));
+    }
+
     @GetMapping("/get/{id}")
     @Operation(summary = "根据ID查询", description = "根据ID获得记录信息")
+    @NoRepeatSubmit
     public Response get(@Parameter(name = "id", description = "记录ID")
-                            @PathVariable("id") String id){
+                        @PathVariable("id") String id){
         return this.success(this.service.getById(id));
+    }
+
+    @GetMapping("/get")
+    @Operation(summary = "根据条件查询一条", description = "根据条件获得记录信息")
+    @NoRepeatSubmit
+    public Response get(@Parameter(name = "entity", description = "查询条件")
+                        E entity){
+        return this.success(this.service.getByEntity(entity));
     }
 }

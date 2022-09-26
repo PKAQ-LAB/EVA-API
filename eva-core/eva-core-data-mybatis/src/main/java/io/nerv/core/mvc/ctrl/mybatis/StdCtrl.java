@@ -5,8 +5,8 @@ import io.nerv.core.annotation.NoRepeatSubmit;
 import io.nerv.core.enums.ResponseEnumm;
 import io.nerv.core.exception.ParamException;
 import io.nerv.core.mvc.ctrl.Ctrl;
-import io.nerv.core.mvc.entity.mybatis.StdBaseEntity;
-import io.nerv.core.mvc.service.mybatis.StdBaseService;
+import io.nerv.core.mvc.entity.mybatis.StdEntity;
+import io.nerv.core.mvc.service.mybatis.StdService;
 import io.nerv.core.mvc.vo.Response;
 import io.nerv.core.mvc.vo.SingleArray;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author S.PKAQ
  */
 @Getter
-public abstract class StdBaseCtrl<T extends StdBaseService, E extends StdBaseEntity> extends Ctrl {
+public abstract class StdCtrl<T extends StdService, E extends StdEntity> extends Ctrl {
     @Autowired
     protected T service;
 
@@ -46,7 +46,7 @@ public abstract class StdBaseCtrl<T extends StdBaseService, E extends StdBaseEnt
     public Response save(@Parameter(name ="formdata", description = "模型对象")
                          @RequestBody E entity){
         this.service.merge(entity);
-        return success(entity.getId(), ResponseEnumm.SAVE_SUCCESS.getName());
+        return success(entity, ResponseEnumm.SAVE_SUCCESS.getName());
     }
 
     @GetMapping("/list")

@@ -1,11 +1,14 @@
 package io.nerv.core.mvc.service.mybatis;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import io.nerv.core.mvc.entity.mybatis.StdMultiEntity;
+import io.nerv.core.mvc.entity.mybatis.StdMultiLineEntity;
+import io.nerv.core.mvc.mapper.StdMultiMapper;
+import io.nerv.core.mvc.util.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,9 +22,15 @@ import java.util.List;
  * 定义一些公用的查询
  * @author S.PKAQ
  */
-public abstract class ActiveBaseService<M extends BaseMapper<T>, T extends Model> {
+    public abstract class StdMultiService<M extends StdMultiMapper<T>,
+                                              L extends StdMultiMapper<S>,
+                                              T extends StdMultiEntity<S>,
+                                              S extends StdMultiLineEntity> {
     @Autowired
-    protected M mapper;
+    public M mapper;
+
+    @Autowired
+    public L lineMapper;
     /**
      * 通用根据ID查询
      * @param id id
@@ -30,23 +39,13 @@ public abstract class ActiveBaseService<M extends BaseMapper<T>, T extends Model
     public T getById(String id){
         return this.mapper.selectById(id);
     }
-
-    /**
-     * 查询符合条件得记录条数
-     * @param entity
-     */
-    public void selectCount(T entity){
-        Wrapper<T> wrapper = new QueryWrapper<>(entity);
-        entity.selectCount(wrapper);
-    }
-
     /**
      * 根据条件获取一条记录
      * @param entity
+     * @return
      */
-    public void getByEntity(T entity){
-        Wrapper<T> wrapper = new QueryWrapper<>(entity);
-        entity.selectOne(wrapper);
+    public T getByEntity(T entity){
+        return this.mapper.selectOne(new QueryWrapper<>(entity));
     }
     /**
      * 合并保存,如果不存在id执行插入,存在ID执行更新
@@ -54,18 +53,53 @@ public abstract class ActiveBaseService<M extends BaseMapper<T>, T extends Model
      */
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void merge(T entity){
-        entity.insertOrUpdate();
+        String id = entity.getId();
+        // 校验code唯一性
+
+        if (StrUtil.isBlank(id)){
+            // 保存主表
+            String mainId = IdWorker.getId()+"";
+            entity.setId(mainId);
+            this.mapper.insert(entity);
+            // 保存子表
+            if (CollUtil.isNotEmpty(entity.getLines())){
+                entity.getLines().forEach(item -> {
+                    item.setMainId(mainId);
+                    lineMapper.insert(item);
+                });
+            }
+        } else {
+            this.mapper.updateById(entity);
+            // 更新子表， 先删除再插入
+            if (CollUtil.isNotEmpty(entity.getLines())){
+                QueryWrapper<S> deleteWrapper = new QueryWrapper();
+                deleteWrapper.eq("main_id", id);
+                this.lineMapper.delete(deleteWrapper);
+
+                entity.getLines().forEach(item -> {
+                    item.setMainId(id);
+                    lineMapper.insert(item);
+                });
+            }
+        }
     }
+
     /**
      * 查询所有
      * @param entity 要进行查询的实体类
      * @return 返回结果
      */
-    protected List<T> list(T entity){
-        QueryWrapper<T> wrapper = new QueryWrapper<>(entity);
-        wrapper.orderByDesc("gmt_Modify");
+    public List<T> list(T entity){
+        return this.mapper.list(entity);
+    }
 
-        return entity.selectList(wrapper);
+    /**
+     * 查询子表数据
+     * @param mainId
+     * @return
+     */
+    public List<T> listLines(String mainId){
+        return this.mapper.listLines(mainId);
     }
     /**
      * 按分页查询
@@ -75,7 +109,6 @@ public abstract class ActiveBaseService<M extends BaseMapper<T>, T extends Model
      * @return          分页模型类
      */
     public IPage<T> listPage(T entity, Integer page, Integer size) {
-
         page = null != page ? page : 1;
         size = null != size ? size : 10;
 
@@ -86,7 +119,7 @@ public abstract class ActiveBaseService<M extends BaseMapper<T>, T extends Model
         pagination.setCurrent(page);
         pagination.setSize(size);
 
-        return entity.selectPage(pagination, wrapper);
+        return this.mapper.selectPage(pagination,wrapper);
     }
 
     /**
@@ -96,24 +129,27 @@ public abstract class ActiveBaseService<M extends BaseMapper<T>, T extends Model
      * @return          分页模型类
      */
     public IPage<T> listPage(T entity, Integer page) {
-
         page = null != page ? page : 1;
         // 查询条件
         QueryWrapper<T> wrapper = new QueryWrapper<>(entity);
         wrapper.orderByDesc("gmt_Modify");
-
         // 分页条件
         Page pagination = new Page();
         pagination.setCurrent(page);
-
-        return entity.selectPage(pagination, wrapper);
+        return this.mapper.selectPage(pagination,wrapper);
     }
     /**
      * 通用删除
      * @param param
+     * @return
      */
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void delete(ArrayList<String> param){
+        // 先删除子表 再删除主表
+        QueryWrapper<S> lineWrapper = new QueryWrapper();
+        lineWrapper.in("main_id", param);
+        this.lineMapper.delete(lineWrapper);
+
         this.mapper.deleteBatchIds(param);
     }
 }

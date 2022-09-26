@@ -3,6 +3,7 @@ package io.nerv.core.cache.config;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import io.nerv.core.cache.condition.DefaultCacheCondition;
 import io.nerv.properties.EvaConfig;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
@@ -20,10 +21,10 @@ import java.util.stream.Collectors;
 @Slf4j
 @Configuration
 @Conditional(DefaultCacheCondition.class)
+@RequiredArgsConstructor
 public class CaffeineConfiguration {
 
-    @Autowired
-    private EvaConfig evaConfig;
+    private final EvaConfig evaConfig;
     /**
      *     * 配置缓存管理器
      *     *

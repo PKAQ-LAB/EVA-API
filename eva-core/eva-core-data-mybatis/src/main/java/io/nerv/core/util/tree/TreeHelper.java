@@ -1,7 +1,7 @@
 package io.nerv.core.util.tree;
 
 import cn.hutool.core.util.StrUtil;
-import io.nerv.core.mvc.entity.mybatis.BaseTreeEntity;
+import io.nerv.core.mvc.entity.mybatis.StdTreeEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,17 +17,17 @@ public class TreeHelper {
      * @param moduleEntitys
      * @return
      */
-    public List<BaseTreeEntity> bulid(List<? extends BaseTreeEntity> moduleEntitys) {
+    public List<StdTreeEntity> bulid(List<? extends StdTreeEntity> moduleEntitys) {
 
-        List<BaseTreeEntity> trees = new ArrayList<>();
+        List<StdTreeEntity> trees = new ArrayList<>();
 
-        for (BaseTreeEntity entity : moduleEntitys) {
+        for (StdTreeEntity entity : moduleEntitys) {
             String pid = entity.getParentId();
             if (StrUtil.isBlank(pid) || "0".equals(pid)) {
                 trees.add(entity);
             }
 
-            for (BaseTreeEntity it : moduleEntitys) {
+            for (StdTreeEntity it : moduleEntitys) {
                 if (entity.getId().equals(it.getParentId())) {
                     if (entity.getOriginChildren() == null) {
                         entity.setChildren(new ArrayList<>());
