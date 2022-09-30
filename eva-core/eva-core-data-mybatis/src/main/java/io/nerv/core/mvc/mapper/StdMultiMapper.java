@@ -1,6 +1,8 @@
 package io.nerv.core.mvc.mapper;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import io.nerv.core.mvc.entity.mybatis.StdMultiEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
@@ -25,4 +27,18 @@ public interface StdMultiMapper<T> extends BaseMapper<T> {
      * @return
      */
     List<T> listLines(String mainId);
+
+    /**
+     * 根据id查询
+     * @param id
+     * @return
+     */
+    T getById(String id);
+
+    /**
+     *根据条件查询一条
+     * @param entity
+     * @return
+     */
+    T get(T entity);
 }

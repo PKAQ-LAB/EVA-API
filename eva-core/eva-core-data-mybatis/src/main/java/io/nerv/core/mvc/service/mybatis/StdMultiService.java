@@ -31,13 +31,15 @@ import java.util.List;
 
     @Autowired
     public L lineMapper;
+
+    private final String MAIN_ID = "MAIN_ID";
     /**
      * 通用根据ID查询
      * @param id id
      * @return 实体类对象
      */
     public T getById(String id){
-        return this.mapper.selectById(id);
+        return this.mapper.getById(id);
     }
     /**
      * 根据条件获取一条记录
@@ -45,7 +47,7 @@ import java.util.List;
      * @return
      */
     public T getByEntity(T entity){
-        return this.mapper.selectOne(new QueryWrapper<>(entity));
+        return this.mapper.get(entity);
     }
     /**
      * 合并保存,如果不存在id执行插入,存在ID执行更新
@@ -58,7 +60,8 @@ import java.util.List;
 
         if (StrUtil.isBlank(id)){
             // 保存主表
-            String mainId = IdWorker.getId()+"";
+            String mainId = IdWorker.getIdStr();
+
             entity.setId(mainId);
             this.mapper.insert(entity);
             // 保存子表
@@ -73,7 +76,7 @@ import java.util.List;
             // 更新子表， 先删除再插入
             if (CollUtil.isNotEmpty(entity.getLines())){
                 QueryWrapper<S> deleteWrapper = new QueryWrapper();
-                deleteWrapper.eq("main_id", id);
+                deleteWrapper.eq(MAIN_ID, id);
                 this.lineMapper.delete(deleteWrapper);
 
                 entity.getLines().forEach(item -> {
@@ -113,7 +116,7 @@ import java.util.List;
         size = null != size ? size : 10;
 
         QueryWrapper<T> wrapper = new QueryWrapper<>(entity);
-        wrapper.orderByDesc("gmt_Modify");
+        wrapper.orderByDesc("GMT_MODIFY");
 
         Page pagination = new Page();
         pagination.setCurrent(page);
@@ -132,7 +135,7 @@ import java.util.List;
         page = null != page ? page : 1;
         // 查询条件
         QueryWrapper<T> wrapper = new QueryWrapper<>(entity);
-        wrapper.orderByDesc("gmt_Modify");
+        wrapper.orderByDesc("GMT_MODIFY");
         // 分页条件
         Page pagination = new Page();
         pagination.setCurrent(page);
@@ -147,7 +150,7 @@ import java.util.List;
     public void delete(ArrayList<String> param){
         // 先删除子表 再删除主表
         QueryWrapper<S> lineWrapper = new QueryWrapper();
-        lineWrapper.in("main_id", param);
+        lineWrapper.in(MAIN_ID, param);
         this.lineMapper.delete(lineWrapper);
 
         this.mapper.deleteBatchIds(param);

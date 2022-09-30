@@ -184,7 +184,7 @@ public abstract class StdTreeService<M extends StdTreeMapper<T>, T extends StdTr
      * @param entity
      * @return
      */
-    public Long selectCount(T entity) {
+    public Long count(T entity) {
         return this.mapper.selectCount(new QueryWrapper<>(entity));
     }
 }

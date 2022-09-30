@@ -22,6 +22,7 @@ import java.util.List;
 public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
     @Autowired
     public M mapper;
+
     /**
      * 通用根据ID查询
      * @param id id
@@ -81,7 +82,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
      */
     public List<T> list(T entity){
         QueryWrapper<T> wrapper = new QueryWrapper<>(entity);
-        wrapper.orderByDesc("gmt_Modify");
+        wrapper.orderByDesc("GMT_MODIFY");
 
         return this.mapper.selectList(wrapper);
     }
@@ -97,7 +98,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
         size = null != size ? size : 10;
 
         QueryWrapper<T> wrapper = new QueryWrapper<>(entity);
-        wrapper.orderByDesc("gmt_Modify");
+        wrapper.orderByDesc("GMT_MODIFY");
 
         Page pagination = new Page();
         pagination.setCurrent(page);
@@ -116,7 +117,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
         page = null != page ? page : 1;
         // 查询条件
         QueryWrapper<T> wrapper = new QueryWrapper<>(entity);
-        wrapper.orderByDesc("gmt_Modify");
+        wrapper.orderByDesc("GMT_MODIFY");
         // 分页条件
         Page pagination = new Page();
         pagination.setCurrent(page);
