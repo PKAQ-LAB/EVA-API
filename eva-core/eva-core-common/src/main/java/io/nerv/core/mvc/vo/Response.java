@@ -49,6 +49,7 @@ public class Response{
         this.data = data;
         this.success = true;
         this.code = BizCodeEnum.OPERATE_SUCCESS.getIndex();
+        this.message = BizCodeEnum.OPERATE_SUCCESS.getName();
 
         return this;
     }

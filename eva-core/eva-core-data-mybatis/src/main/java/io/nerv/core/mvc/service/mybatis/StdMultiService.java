@@ -3,6 +3,7 @@ package io.nerv.core.mvc.service.mybatis;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import io.nerv.core.mvc.entity.mybatis.StdMultiEntity;
@@ -23,9 +24,9 @@ import java.util.List;
  * @author S.PKAQ
  */
     public abstract class StdMultiService<M extends StdMultiMapper<T>,
-                                              L extends StdMultiMapper<S>,
-                                              T extends StdMultiEntity<S>,
-                                              S extends StdMultiLineEntity> {
+                                          L extends BaseMapper<S>,
+                                          T extends StdMultiEntity<S>,
+                                          S extends StdMultiLineEntity> {
     @Autowired
     public M mapper;
 
