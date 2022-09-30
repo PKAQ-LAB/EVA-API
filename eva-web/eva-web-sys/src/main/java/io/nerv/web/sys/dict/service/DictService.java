@@ -13,6 +13,7 @@ import io.nerv.web.sys.dict.entity.DictViewEntity;
 import io.nerv.web.sys.dict.mapper.DictItemMapper;
 import io.nerv.web.sys.dict.mapper.DictMapper;
 import io.nerv.web.sys.dict.mapper.DictViewMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,16 +27,13 @@ import java.util.Map;
  * @Datetime: 2018/3/15 8:09
  */
 @Service
+@RequiredArgsConstructor
 public class DictService extends StdService<DictMapper, DictEntity> {
-    @Autowired
-    private DictCacheHelper dictCacheHelper;
+    private final DictCacheHelper dictCacheHelper;
 
-    @Autowired
-    private DictViewMapper dictViewMapper;
+    private final DictViewMapper dictViewMapper;
 
-    @Autowired
-    private DictItemMapper dictItemMapper;
-
+    private final DictItemMapper dictItemMapper;
 
     /**
      * 查询字典缓存

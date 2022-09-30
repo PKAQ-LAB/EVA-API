@@ -14,6 +14,7 @@ import io.nerv.web.sys.module.entity.ModuleEntityStd;
 import io.nerv.web.sys.module.entity.ModuleResources;
 import io.nerv.web.sys.module.mapper.ModuleMapper;
 import io.nerv.web.sys.module.mapper.ModuleResourceMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,10 +26,10 @@ import java.util.List;
  * @author: S.PKAQ
  */
 @Service
+@RequiredArgsConstructor
 public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
 
-    @Autowired
-    private ModuleResourceMapper moduleResourceMapper;
+    private final ModuleResourceMapper moduleResourceMapper;
 
     /**
      * 查询模块结构树
