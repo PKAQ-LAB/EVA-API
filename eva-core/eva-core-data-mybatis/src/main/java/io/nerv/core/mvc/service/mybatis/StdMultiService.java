@@ -2,14 +2,12 @@ package io.nerv.core.mvc.service.mybatis;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import io.nerv.core.mvc.entity.mybatis.StdMultiEntity;
 import io.nerv.core.mvc.entity.mybatis.StdMultiLineEntity;
-import io.nerv.core.mvc.mapper.StdMultiMapper;
 import io.nerv.core.mvc.util.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
@@ -24,7 +22,7 @@ import java.util.List;
  * 定义一些公用的查询
  * @author S.PKAQ
  */
-    public abstract class StdMultiService<M extends StdMultiMapper<T>,
+    public abstract class StdMultiService<M extends BaseMapper<T>,
                                           L extends BaseMapper<S>,
                                           T extends StdMultiEntity<S>,
                                           S extends StdMultiLineEntity> {
@@ -41,7 +39,16 @@ import java.util.List;
      * @return 实体类对象
      */
     public T getById(String id){
-        return this.mapper.getById(id);
+        T main = this.mapper.selectById(id);
+        QueryWrapper<S> q = new QueryWrapper();
+        q.eq(MAIN_ID, id);
+
+        if(null == main) return null;
+
+        List<S> line = this.lineMapper.selectList(q);
+        main.setLines(line);
+
+        return main;
     }
     /**
      * 根据条件获取一条记录
@@ -49,7 +56,16 @@ import java.util.List;
      * @return
      */
     public T getByEntity(T entity){
-        return this.mapper.get(entity);
+        T main = this.mapper.selectOne(new QueryWrapper<>(entity));
+        QueryWrapper<S> q = new QueryWrapper();
+        q.eq(MAIN_ID, main.getId());
+
+        if(null == main) return null;
+
+        List<S> line = this.lineMapper.selectList(q);
+        main.setLines(line);
+
+        return main;
     }
 
     /**
@@ -58,7 +74,17 @@ import java.util.List;
      * @return
      */
     public T getMain(String id) {
-        return this.mapper.getById(id);
+        return this.mapper.selectById(id);
+    }
+    /**
+     * 查询子表数据
+     * @param mainId
+     * @return
+     */
+    public List<S> getLine(String mainId){
+        QueryWrapper<S> q = new QueryWrapper();
+        q.eq(MAIN_ID, mainId);
+        return this.lineMapper.selectList(q);
     }
     /**
      * 合并保存,如果不存在id执行插入,存在ID执行更新
@@ -108,16 +134,7 @@ import java.util.List;
         return this.mapper.selectList(q);
     }
 
-    /**
-     * 查询子表数据
-     * @param mainId
-     * @return
-     */
-    public List<S> listLines(String mainId){
-        QueryWrapper<S> q = new QueryWrapper();
-        q.eq("MAIN_ID", mainId);
-        return this.lineMapper.selectList(q);
-    }
+
     /**
      * 按分页查询
      * @param entity    目标实体类

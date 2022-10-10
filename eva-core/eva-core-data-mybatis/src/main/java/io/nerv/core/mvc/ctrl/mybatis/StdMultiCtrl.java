@@ -78,7 +78,7 @@ public abstract class StdMultiCtrl<T extends StdMultiService, E extends StdMulti
     @NoRepeatSubmit
     public Response getLine(@Parameter(name ="mainId", description = "主表id")
                             @PathVariable("mainId") String mainId){
-        return this.success(this.service.listLines(mainId));
+        return this.success(this.service.getLine(mainId));
     }
 
     @GetMapping("/get/{id}")
