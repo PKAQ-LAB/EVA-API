@@ -2,6 +2,7 @@ package io.nerv.core.mvc.service.mybatis;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -50,6 +51,15 @@ import java.util.List;
     public T getByEntity(T entity){
         return this.mapper.get(entity);
     }
+
+    /**
+     * 获取主表明细
+     * @param id
+     * @return
+     */
+    public T getMain(String id) {
+        return this.mapper.getById(id);
+    }
     /**
      * 合并保存,如果不存在id执行插入,存在ID执行更新
      * @param entity 实体类对象
@@ -94,7 +104,8 @@ import java.util.List;
      * @return 返回结果
      */
     public List<T> list(T entity){
-        return this.mapper.list(entity);
+        QueryWrapper<T> q = new QueryWrapper<>(entity);
+        return this.mapper.selectList(q);
     }
 
     /**
@@ -102,8 +113,10 @@ import java.util.List;
      * @param mainId
      * @return
      */
-    public List<T> listLines(String mainId){
-        return this.mapper.listLines(mainId);
+    public List<S> listLines(String mainId){
+        QueryWrapper<S> q = new QueryWrapper();
+        q.eq("MAIN_ID", mainId);
+        return this.lineMapper.selectList(q);
     }
     /**
      * 按分页查询
@@ -156,4 +169,6 @@ import java.util.List;
 
         this.mapper.deleteBatchIds(param);
     }
+
+
 }

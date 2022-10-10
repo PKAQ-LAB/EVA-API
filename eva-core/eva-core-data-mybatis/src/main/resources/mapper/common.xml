@@ -3,10 +3,10 @@
 <mapper namespace="common">
   <resultMap id="resultMap" type="io.nerv.core.mvc.entity.mybatis.StdEntity">
     <id column="ID" property="id" />
-    <result column="remark" property="remark" />
-    <result column="gmt_create" property="gmtCreate" />
-    <result column="gmt_modify" property="gmtModify" />
-    <result column="create_by" property="createBy" />
-    <result column="modify_by" property="modifyBy" />
+    <result column="REMARK" property="remark" />
+    <result column="GMT_CREATE" property="gmtCreate" />
+    <result column="GMT_MODIFY" property="gmtModify" />
+    <result column="CREATE_BY" property="createBy" />
+    <result column="MODIFY_BY" property="modifyBy" />
   </resultMap>
 </mapper>

@@ -65,11 +65,19 @@ public abstract class StdMultiCtrl<T extends StdMultiService, E extends StdMulti
         return this.success(this.service.list(entity));
     }
 
+    @GetMapping("/getMain/{id}")
+    @Operation(summary = "查询主表明细", description = "根据ID获得记录信息")
+    @NoRepeatSubmit
+    public Response getMain(@Parameter(name = "id", description = "记录ID")
+                            @PathVariable("id") String id){
+        return this.success(this.service.getMain(id));
+    }
+
     @GetMapping("/getLine/{mainId}")
     @Operation(summary = "查询子表明细",description = "列表查询 无分页")
     @NoRepeatSubmit
-    public Response listAll(@Parameter(name ="mainId", description = "主表id")
-                                @PathVariable("mainId") String mainId){
+    public Response getLine(@Parameter(name ="mainId", description = "主表id")
+                            @PathVariable("mainId") String mainId){
         return this.success(this.service.listLines(mainId));
     }
 

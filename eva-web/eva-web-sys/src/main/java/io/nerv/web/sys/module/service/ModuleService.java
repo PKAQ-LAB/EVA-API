@@ -48,7 +48,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
         // 检查是否存在子节点，存在子节点不允许删除
         QueryWrapper<ModuleEntityStd> oew = new QueryWrapper<>();
         oew.setEntity( new ModuleEntityStd() );
-        oew.in("parent_ID", ids);
+        oew.in("PARENT_ID", ids);
 
         List<ModuleEntityStd> leafList = this.mapper.selectList(oew);
 
@@ -62,7 +62,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
             try{
                 // 删除相关资源
                 QueryWrapper<ModuleResources> deleteWrapper = new QueryWrapper<>();
-                deleteWrapper.in("module_id", ids);
+                deleteWrapper.in("MODULE_ID", ids);
                 this.moduleResourceMapper.delete(deleteWrapper);
                 // 删除模块
                 this.mapper.deleteBatchIds(ids);
@@ -181,8 +181,8 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
             // 移除被删除的
             if (StrUtil.isNotBlank(moduleId)){
                 QueryWrapper<ModuleResources> deleteWrapper = new QueryWrapper();
-                deleteWrapper.notIn("id", ids);
-                deleteWrapper.eq("module_id", moduleId);
+                deleteWrapper.notIn("ID", ids);
+                deleteWrapper.eq("MODULE_ID", moduleId);
                 try{
                     this.moduleResourceMapper.delete(deleteWrapper);
                 } catch(Exception e){
@@ -242,7 +242,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
         ModuleEntityStd module = this.getById(id);
         // 获取资源信息
         QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.eq("module_id", id);
+        queryWrapper.eq("MODULE_ID", id);
         List<ModuleResources> resourceList = this.moduleResourceMapper.selectList(queryWrapper);
 
         module.setResources(resourceList);
@@ -276,16 +276,16 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
      */
     public boolean checkUnique(ModuleEntityStd module) {
         QueryWrapper<ModuleEntityStd> entityWrapper = new QueryWrapper<>();
-        entityWrapper.eq("path", module.getPath());
+        entityWrapper.eq("PATH", module.getPath());
 
         if (StrUtil.isNotBlank(module.getId())){
-            entityWrapper.ne("id", module.getId());
+            entityWrapper.ne("ID", module.getId());
         }
 
         if (StrUtil.isBlank(module.getParentId())){
-            entityWrapper.isNull("parent_id");
+            entityWrapper.isNull("PARENT_ID");
         } else {
-            entityWrapper.eq("parent_id", module.getParentId());
+            entityWrapper.eq("PARENT_ID", module.getParentId());
         }
 
         long records = this.mapper.selectCount(entityWrapper);
