@@ -47,6 +47,8 @@ ext {
            "jwt": "com.nimbusds:nimbus-jose-jwt:${jwt}",
             // 线程增强
            "ttl": "com.alibaba:transmittable-thread-local:${ttl}",
+           // websocket
+           "websocket": "org.springframework.boot:spring-boot-starter-websocket",
            // wxjava
            "wxmp" : "com.github.binarywang:weixin-java-mp:${weixin}",
            "wxpay" : "com.github.binarywang:weixin-java-pay:${weixin}",
@@ -96,13 +98,13 @@ subprojects {
     repositories {
         mavenLocal()
 //        allowInsecureProtocol = true
-        maven { url"https://maven.aliyun.com/repository/central" }
-        maven { url"https://maven.aliyun.com/repository/jcenter" }
-        maven { url"https://mirrors.huaweicloud.com" }
-        maven { url"https://maven.aliyun.com/repository/spring" }
-        maven { url"https://maven.aliyun.com/repository/spring-plugin" }
-		maven { url"https://maven.springframework.org"}
-        maven { url"https://repo.spring.io/libs-release" }
+//         maven { url"https://maven.aliyun.com/repository/central" }
+//         maven { url"https://maven.aliyun.com/repository/jcenter" }
+//         maven { url"https://mirrors.huaweicloud.com" }
+//         maven { url"https://maven.aliyun.com/repository/spring" }
+//         maven { url"https://maven.aliyun.com/repository/spring-plugin" }
+// 		maven { url"https://maven.springframework.org"}
+//         maven { url"https://repo.spring.io/libs-release" }
 
         mavenCentral()
     }

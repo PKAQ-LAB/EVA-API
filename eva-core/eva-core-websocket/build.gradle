@@ -1,0 +1,16 @@
+if (project.file('../../publish.gradle').exists()) {
+    apply from: '../../publish.gradle'
+}
+project.archivesBaseName = 'eva-core-weixin'
+project.description = "tool for weixin"
+
+dependencies {
+    implementation("${lib.websocket}"){
+        exclude module: 'spring-boot-starter-tomcat'
+    }
+
+    implementation "${lib.undertow}"
+
+    implementation project(":eva-core:eva-core-common")
+
+}
