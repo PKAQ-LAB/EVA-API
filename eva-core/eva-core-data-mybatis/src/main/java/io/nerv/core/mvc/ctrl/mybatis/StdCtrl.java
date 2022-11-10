@@ -1,6 +1,5 @@
 package io.nerv.core.mvc.ctrl.mybatis;
 
-import cn.hutool.core.collection.CollectionUtil;
 import io.nerv.core.annotation.NoRepeatSubmit;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.enums.ResponseEnumm;

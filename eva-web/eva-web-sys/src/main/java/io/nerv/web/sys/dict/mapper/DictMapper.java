@@ -1,8 +1,8 @@
 package io.nerv.web.sys.dict.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Mapper;
 import io.nerv.web.sys.dict.entity.DictEntity;
+import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

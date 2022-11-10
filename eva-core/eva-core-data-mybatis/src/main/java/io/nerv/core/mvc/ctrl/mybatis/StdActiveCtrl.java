@@ -1,6 +1,5 @@
 package io.nerv.core.mvc.ctrl.mybatis;
 
-import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.enums.ResponseEnumm;

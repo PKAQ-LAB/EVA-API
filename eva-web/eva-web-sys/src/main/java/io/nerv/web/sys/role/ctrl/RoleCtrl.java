@@ -1,6 +1,5 @@
 package io.nerv.web.sys.role.ctrl;
 
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.ctrl.Ctrl;

@@ -10,12 +10,13 @@ import java.text.MessageFormat;
 
 /**
  * 返回对象
+ *
  * @author PKAQ
  */
 @Data
 @Slf4j
 @Accessors(chain = true)
-public class Response{
+public class Response {
 
     private String code;
 
@@ -36,16 +37,19 @@ public class Response{
 
     /**
      * 响应成功
+     *
      * @return
      */
-    public Response success(){
+    public Response success() {
         this.success = true;
         this.code = BizCodeEnum.OPERATE_SUCCESS.getCode();
 
         return this;
     }
+
     /**
      * 响应成功
+     *
      * @param data
      * @return
      */
@@ -57,8 +61,10 @@ public class Response{
 
         return this;
     }
+
     /**
      * 响应成功
+     *
      * @param data
      * @return
      */
@@ -73,6 +79,7 @@ public class Response{
 
     /**
      * 响应成功
+     *
      * @param data
      * @return
      */
@@ -87,6 +94,7 @@ public class Response{
 
     /**
      * 响应成功
+     *
      * @param data
      * @return
      */
@@ -109,6 +117,7 @@ public class Response{
 
     /**
      * 失败响应，自定义响应码和消息
+     *
      * @param code
      * @return
      */
@@ -122,6 +131,7 @@ public class Response{
 
     /**
      * 失败响应，自定义响应码和消息
+     *
      * @param errorCodeEnum
      * @return
      */
@@ -130,7 +140,7 @@ public class Response{
 
         this.code = errorCodeEnum.getCode();
 
-        this.message = String.format("[%s] %s",errorCodeEnum.getCode(), errorCodeEnum.getMsg());
+        this.message = MessageFormat.format("[{0}] {1}", errorCodeEnum.getCode(), errorCodeEnum.getMsg());
 
         return this;
     }
@@ -140,13 +150,14 @@ public class Response{
 
         this.code = errorCodeEnum.getCode();
 
-        this.message = MessageFormat.format("["+code+"]"+ errorCodeEnum.getMsg(), args);
+        this.message = MessageFormat.format("[" + code + "]" + errorCodeEnum.getMsg(), args);
 
         return this;
     }
 
     /**
      * 响应失败
+     *
      * @param data
      * @return
      */

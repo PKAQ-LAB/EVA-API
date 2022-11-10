@@ -2,8 +2,8 @@ package io.nerv.web.sys.role.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import io.nerv.core.annotation.Ignore;
-import org.apache.ibatis.annotations.Mapper;
 import io.nerv.web.sys.role.entity.RoleEntity;
+import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

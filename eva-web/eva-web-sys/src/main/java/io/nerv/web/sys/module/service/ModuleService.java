@@ -15,7 +15,6 @@ import io.nerv.web.sys.module.entity.ModuleResources;
 import io.nerv.web.sys.module.mapper.ModuleMapper;
 import io.nerv.web.sys.module.mapper.ModuleResourceMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

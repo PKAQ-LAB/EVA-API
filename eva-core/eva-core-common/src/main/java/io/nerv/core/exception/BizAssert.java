@@ -1,6 +1,7 @@
 package io.nerv.core.exception;
 
 import io.nerv.core.enums.BizCode;
+
 import java.text.MessageFormat;
 import java.util.Collection;
 
@@ -14,9 +15,8 @@ public interface BizAssert extends BizCode {
      * @return
      */
     default BizException newException(Object... args) {
-        String code = this.getCode();
         String msg = MessageFormat.format(this.getMsg(), args);
-        return new BizException(code, msg);
+        return new BizException(msg);
     }
 
     /**

@@ -10,7 +10,8 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * 序列化对象时过滤某些属性

@@ -2,12 +2,8 @@ package io.nerv.core.mvc.service.mybatis;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.query.Query;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import io.nerv.core.constant.CommonConstant;
-import io.nerv.core.constant.Message;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.entity.mybatis.StdTreeEntity;
 import io.nerv.core.mvc.mapper.StdTreeMapper;

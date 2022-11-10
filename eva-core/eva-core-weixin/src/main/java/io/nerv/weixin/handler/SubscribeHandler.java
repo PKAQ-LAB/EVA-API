@@ -1,16 +1,15 @@
 package io.nerv.weixin.handler;
 
-import java.util.Map;
-
 import io.nerv.weixin.builder.TextBuilder;
-import org.springframework.stereotype.Component;
-
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import me.chanjar.weixin.mp.bean.result.WxMpUser;
+import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 /**
  * @author Binary Wang(https://github.com/binarywang)

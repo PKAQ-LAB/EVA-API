@@ -2,7 +2,6 @@ package io.nerv.web.sys.dict.ctrl;
 
 import cn.hutool.core.util.StrUtil;
 import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.core.exception.BizException;
 import io.nerv.core.mvc.ctrl.Ctrl;
 import io.nerv.core.mvc.vo.Response;
 import io.nerv.web.sys.dict.cache.DictCacheHelper;

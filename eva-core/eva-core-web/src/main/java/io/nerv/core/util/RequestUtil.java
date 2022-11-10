@@ -2,8 +2,6 @@ package io.nerv.core.util;
 
 import cn.hutool.core.util.StrUtil;
 import io.nerv.core.constant.CommonConstant;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 

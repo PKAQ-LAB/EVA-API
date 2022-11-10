@@ -1,5 +1,6 @@
 package io.nerv.core.advice;
 
+import io.nerv.core.enums.BizCode;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.exception.BizException;
 import io.nerv.core.mvc.vo.Response;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import java.text.MessageFormat;
 import java.util.Set;
 
 /**
@@ -35,22 +37,25 @@ public class ExceptionAdvice {
     private final I18NHelper i18NHelper;
 
     private final EvaConfig evaConfig;
+
     /**
      * 获取国际化消息
      *
      * @param e 异常
      * @return
      */
-    public String getMessage(BizException e) {
+    public Response getMessage(BizCode e) {
 
-        String code = e.getBizCode().getCode();
-        String message = evaConfig.isI18n()? i18NHelper.getMessage(code, e.getMessage()) : e.getMessage();
+        String code = e.getCode();
+        String message = evaConfig.isI18n()? i18NHelper.getMessage(e.toString(), e.getMsg()) : e.getMsg();
 
         if (message == null || message.isEmpty()) {
-            return e.getMessage();
+            message = e.getMsg();
         }
 
-        return message;
+        message = MessageFormat.format("[{0}] {1}",   e.getCode(), message);
+
+        return new Response().failure(code, message);
     }
     /**
      * hibernate validator参数校验失败时抛出的异常
@@ -87,7 +92,7 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BizException.class)
     public Response handleException(BizException e) {
-        return new Response().failure(e.getCode(), e.getMsg());
+        return this.getMessage(e.getBizCode());
     }
     /**
      * 400异常.- 参数错误
@@ -98,7 +103,7 @@ public class ExceptionAdvice {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public Response handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         log.error("参数解析失败："+e.getMessage());
-        return new Response().failure(BizCodeEnum.PARAM_TYPEERROR);
+        return this.getMessage(BizCodeEnum.PARAM_TYPEERROR);
     }
     /**
      *  405 - Method Not Allowed.
@@ -109,7 +114,7 @@ public class ExceptionAdvice {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public Response handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
         log.warn("不支持当前请求方法:"+e.getMessage());
-        return new Response().failure(BizCodeEnum.REQUEST_METHOD_ERROR);
+        return this.getMessage(BizCodeEnum.REQUEST_METHOD_ERROR);
     }
     /**
      *  415 - Unsupported Media Type.
@@ -120,7 +125,7 @@ public class ExceptionAdvice {
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     public Response handleHttpMediaTypeNotSupportedException(Exception e) {
         log.warn("不支持当前媒体类型:"+e.getMessage());
-        return new Response().failure(BizCodeEnum.REQUEST_MEDIA_ERROR);
+        return this.getMessage(BizCodeEnum.REQUEST_MEDIA_ERROR);
     }
     /**
      * 参数类型错误
@@ -131,7 +136,7 @@ public class ExceptionAdvice {
     @ExceptionHandler({IllegalArgumentException.class, MissingServletRequestParameterException.class})
     public Response handleIllegalArgumentException(Exception e) {
         log.warn("参数类型错误：不支持当前请求的参数类型:"+e.getMessage());
-        return new Response().failure(BizCodeEnum.PARAM_TYPEERROR);
+        return this.getMessage(BizCodeEnum.PARAM_TYPEERROR);
     }
     /**
      *   400 - spring参数绑定校验错误
@@ -160,7 +165,7 @@ public class ExceptionAdvice {
     public Response handleBindException(BizException e) {
         log.error("业务异常:"+e.getMessage());
         e.printStackTrace();
-        return new Response().failure(e.getCode(), e.getMessage());
+        return this.getMessage(e.getBizCode());
     }
 
 
@@ -174,6 +179,6 @@ public class ExceptionAdvice {
     public Response handleException(Exception e) {
         log.error("服务运行异常:"+e.getMessage());
         e.printStackTrace();
-        return new Response().failure(BizCodeEnum.SERVER_ERROR);
+        return this.getMessage(BizCodeEnum.SERVER_ERROR);
     }
 }

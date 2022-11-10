@@ -1,6 +1,5 @@
 package io.nerv.security.domain;
 
-import io.nerv.web.sys.role.entity.RoleEntity;
 import lombok.EqualsAndHashCode;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.util.Assert;

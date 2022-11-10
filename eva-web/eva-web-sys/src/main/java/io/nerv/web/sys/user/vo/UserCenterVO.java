@@ -1,9 +1,9 @@
 package io.nerv.web.sys.user.vo;
 
+import io.nerv.web.sys.user.entity.UserEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import io.nerv.web.sys.user.entity.UserEntity;
 
 import java.util.List;
 import java.util.Map;

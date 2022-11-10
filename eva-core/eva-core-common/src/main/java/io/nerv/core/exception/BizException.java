@@ -7,46 +7,32 @@ import java.text.MessageFormat;
 
 /**
  * 关于业务的异常
+ * @author PKAQ
  */
 @Getter
 public class BizException extends RuntimeException{
-    // 错误码
-    private String code;
-    // 消息内容
-    private String msg;
-    // 业务代码
+
+    /**
+     * 消息枚举
+     */
     private BizCode bizCode;
 
     public BizException(String msg){
         super(msg);
-        this.msg=msg;
     }
-
-    public BizException(String code, String msg){
-        super(msg);
-        this.code = code;
-        this.msg = msg;
-    }
-
 
     public BizException(BizCode bizCode) {
         super(bizCode.getMsg());
-        this.code = bizCode.getCode();
-        this.msg = bizCode.getMsg();
         this.bizCode = bizCode;
     }
 
     public BizException(BizCode bizCode, Throwable cause, Object... args) {
-        super(bizCode.getMsg(), cause);
-        this.code = bizCode.getCode();
-        this.msg = MessageFormat.format(this.getMsg(), args);
+        super(MessageFormat.format(bizCode.getMsg(), args), cause);
         this.bizCode = bizCode;
     }
 
     public BizException(BizCode bizCode, Object... args) {
-        super(bizCode.getMsg());
-        this.code = bizCode.getCode();
-        this.msg = MessageFormat.format( bizCode.getMsg(), args);
+        super(MessageFormat.format(bizCode.getMsg(), args));
         this.bizCode = bizCode;
     }
 }
