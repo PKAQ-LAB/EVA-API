@@ -3,7 +3,6 @@ package io.nerv.web.sys.module.ctrl;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.core.exception.ParamException;
 import io.nerv.core.mvc.ctrl.Ctrl;
 import io.nerv.core.mvc.vo.Response;
 import io.nerv.core.mvc.vo.SingleArray;
@@ -41,9 +40,9 @@ public class ModuleCtrl extends Ctrl {
     public Response del(@Parameter(name = "ids", description = "[记录ID]")
                         @RequestBody SingleArray<String> ids){
 
-        if (null == ids || CollectionUtil.isEmpty(ids.getParam())){
-            throw new ParamException(locale("param_id_notnull"));
-        }
+        // 参数非空校验
+        BizCodeEnum.NULL_ID.assertNotNull(ids);
+        BizCodeEnum.NULL_ID.assertNotNull(ids.getParam());
 
         //如果Response不为空，则表示该节点下有子节点，返回错误给前台
         this.service.deleteModule(ids.getParam());

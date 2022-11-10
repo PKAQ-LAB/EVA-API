@@ -19,19 +19,12 @@ public enum ResponseEnumm implements BizCode {
     QUERY_SUCCESS("查询成功", "0105"),
     NULL_MSG(null, "0100"),
     OPERATE_FAILED("操作失败", "0106");
-    private String v;
     /**
-     * 值
+     * 名称
      */
-    private String k;
-
-    @Override
-    public String getName() {
-        return this.v;
-    }
-
-    @Override
-    public String getIndex() {
-        return k;
-    }
+    private String msg;
+    /**
+     * 索引
+     */
+    private String code;
 }

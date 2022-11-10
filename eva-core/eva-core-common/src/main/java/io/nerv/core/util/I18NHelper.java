@@ -1,5 +1,6 @@
 package io.nerv.core.util;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -12,9 +13,9 @@ import java.util.Locale;
  * Author: S.PKAQ
  */
 @Component
+@RequiredArgsConstructor
 public class I18NHelper {
-    @Autowired
-    private MessageSource messageSource;
+    private final MessageSource messageSource;
 
     /**
      * @param code ：对应messages配置的key.

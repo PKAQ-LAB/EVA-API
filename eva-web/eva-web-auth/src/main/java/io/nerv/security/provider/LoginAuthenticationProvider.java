@@ -2,12 +2,12 @@ package io.nerv.security.provider;
 
 import cn.hutool.core.util.StrUtil;
 import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.exception.OathException;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -40,22 +40,21 @@ public class LoginAuthenticationProvider extends AbstractUserDetailsAuthenticati
      * @param username
      * @param authentication
      * @return
-     * @throws OathException
      */
     @Override
-    protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication) throws OathException {
+    protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication) {
         String password = (String)authentication.getCredentials();
 
-        if (StrUtil.isBlank(username) || StrUtil.isBlank(password)){
-            throw new OathException(BizCodeEnum.ACCOUNT_OR_PWD_ERROR);
-        }
+        BizCodeEnum.ACCOUNT_OR_PWD_ERROR.assertNotNull(username);
+        BizCodeEnum.ACCOUNT_OR_PWD_ERROR.assertNotNull(password);
+
 
         username = username.trim();
 
         UserDetails user = this.getUserDetailsService().loadUserByUsername(username);
-        if (null == user){
-            throw new OathException(BizCodeEnum.ACCOUNT_NOT_EXIST);
-        }
+
+        BizCodeEnum.ACCOUNT_NOT_EXIST.assertNotNull(user);
+
         return user;
     }
 
@@ -63,18 +62,13 @@ public class LoginAuthenticationProvider extends AbstractUserDetailsAuthenticati
      * 校验密码
      * @param userDetails
      * @param authentication
-     * @throws OathException
      */
     @Override
     protected void additionalAuthenticationChecks(UserDetails userDetails,
-                                                  UsernamePasswordAuthenticationToken authentication) throws OathException {
-        if (authentication.getCredentials() == null) {
-            logger.debug("登录失败，鉴权信息为空");
-
-            throw new BadCredentialsException(messages.getMessage(
-                    "AbstractUserDetailsAuthenticationProvider.badCredentials",
-                    BizCodeEnum.LOGIN_ERROR.getName()));
-        }
+                                                  UsernamePasswordAuthenticationToken authentication) {
+        BizCodeEnum.LOGIN_ERROR.assertNotNull(authentication.getCredentials(),
+                                              BadCredentialsException.class,
+                                              messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials"));
 
         String presentedPassword = authentication.getCredentials().toString();
 
@@ -82,7 +76,7 @@ public class LoginAuthenticationProvider extends AbstractUserDetailsAuthenticati
         boolean matches =  this.bCryptPasswordEncoder.matches(presentedPassword, userDetails.getPassword());
 
         if (!matches) {
-            throw new OathException(BizCodeEnum.ACCOUNT_OR_PWD_ERROR);
+            BizCodeEnum.ACCOUNT_OR_PWD_ERROR.newException(AuthenticationException.class);
         }
 
     }

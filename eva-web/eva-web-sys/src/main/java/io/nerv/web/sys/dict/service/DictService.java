@@ -4,7 +4,8 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
-import io.nerv.core.exception.ParamException;
+import io.nerv.core.enums.BizCodeEnum;
+import io.nerv.core.exception.BizException;
 import io.nerv.core.mvc.service.mybatis.StdService;
 import io.nerv.web.sys.dict.cache.DictCacheHelper;
 import io.nerv.web.sys.dict.entity.DictEntity;
@@ -14,7 +15,6 @@ import io.nerv.web.sys.dict.mapper.DictItemMapper;
 import io.nerv.web.sys.dict.mapper.DictMapper;
 import io.nerv.web.sys.dict.mapper.DictViewMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedHashMap;
@@ -110,20 +110,17 @@ public class DictService extends StdService<DictMapper, DictEntity> {
         conditionEntity = this.mapper.selectOne(new QueryWrapper<>(conditionEntity));
 
         if (StrUtil.isBlank(id)){
-            if (null != conditionEntity){
-                throw new ParamException("编码已存在");
-            } else {
-                // 保存主表
-                String mainID = IdWorker.getId()+"";
-                dictEntity.setId(mainID);
-                this.mapper.insert(dictEntity);
-                // 保存子表
-                if (CollUtil.isNotEmpty(dictEntity.getLines())){
-                    dictEntity.getLines().forEach(item -> {
-                        item.setMainId(mainID);
-                        dictItemMapper.insert(item);
-                    });
-                }
+            BizCodeEnum.CODE_EXIST.assertNotNull("角色");
+            // 保存主表
+            String mainID = IdWorker.getId()+"";
+            dictEntity.setId(mainID);
+            this.mapper.insert(dictEntity);
+            // 保存子表
+            if (CollUtil.isNotEmpty(dictEntity.getLines())){
+                dictEntity.getLines().forEach(item -> {
+                    item.setMainId(mainID);
+                    dictItemMapper.insert(item);
+                });
             }
         } else {
 
@@ -151,7 +148,7 @@ public class DictService extends StdService<DictMapper, DictEntity> {
                     dictCacheHelper.remove(code);
                 }
             } else {
-                throw new ParamException("编码已存在");
+                throw new BizException(BizCodeEnum.CODE_EXIST, "角色");
             }
         }
     }

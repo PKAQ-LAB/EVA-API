@@ -10,13 +10,13 @@ import io.nerv.core.threaduser.ThreadUser;
 import io.nerv.core.threaduser.ThreadUserHelper;
 import io.nerv.core.util.JsonUtil;
 import io.nerv.core.util.TokenUtil;
-import io.nerv.exception.OathException;
 import io.nerv.properties.EvaConfig;
 import io.nerv.util.CacheTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -98,8 +98,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                         logger.warn("鉴权失败 缓存中无法找到对应token");
                         // 清除cookie
                         this.clearCookie(response);
-
-                        throw new OathException(BizCodeEnum.LOGIN_EXPIRED);
+                        BizCodeEnum.LOGIN_EXPIRED.newException(AuthenticationException.class);
                     }
                 }
 
@@ -121,7 +120,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                                 "/",
                                                     evaConfig.getCookie().getDomain());
                 }
-            } catch (OathException e) {
+            } catch (AuthenticationException e) {
                 logger.warn("鉴权失败 Token已过期", e);
 
                 // 清除cookie

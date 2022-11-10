@@ -44,7 +44,8 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
         if (CollectionUtil.isNotEmpty(leafList)){
             List<Object> list = CollectionUtil.getFieldValues(leafList, "parentName");
             String name = CollectionUtil.join(list, ",");
-            response = new Response().failure(BizCodeEnum.CHILD_EXIST.getIndex(), StrUtil.format("[{}] 存在子节点，无法删除。",name), null);
+
+            BizCodeEnum.CHILD_EXIST.newException(name);
          } else {
             this.mapper.deleteBatchIds(ids);
             response = new Response().success();

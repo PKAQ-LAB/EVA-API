@@ -7,15 +7,17 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * 业务日志配置读取类
- *
- * @author: S.PKAQ
- * @Datetime: 2018/9/27 21:06
+ * @author PKAQ
  */
 @Data
 @Configuration
 @ConfigurationProperties(prefix = "eva")
 @EnableConfigurationProperties(EvaConfig.class)
 public class EvaConfig {
+    /**
+     * 是否开启国际化
+     */
+    private boolean i18n;
     /**
      * 是否启用重复提交判断
      **/

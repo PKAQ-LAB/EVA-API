@@ -61,8 +61,8 @@ public abstract class Ctrl {
      * @param msg
      * @return
      */
-    protected Response success(Object data, BizCode msg){
-        return new Response().success(data, msg.getName());
+    protected Response success(Object data, BizCode bizCode){
+        return new Response().success(data, bizCode.getMsg());
     }
     /**
      * 返回失败结果

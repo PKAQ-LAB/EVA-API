@@ -1,12 +1,15 @@
 package io.nerv.core.util;
 
-import io.nerv.core.exception.ReflectException;
+import io.nerv.core.exception.BizException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Map;
 
+/**
+ * @author PKAQ
+ */
 @Slf4j
 public class ReflectHelper {
 
@@ -23,7 +26,8 @@ public class ReflectHelper {
                 field.set(object, value);
             }
         }catch (IllegalAccessException e){
-            throw new ReflectException("把"+object.getClass()+"对象的"+fieldName+"属性值设置成"+value+"失败");
+            log.error("将 [ "+object.getClass()+" ] 对象的 [ "+fieldName+" ] 属性值设置成 [ "+value+" ] 时失败");
+            throw new BizException("把 [ "+object.getClass()+" ] 对象的 [ "+fieldName+" ] 属性值设置成 [ "+value+" ] 失败");
         }
     }
 
@@ -42,6 +46,7 @@ public class ReflectHelper {
                 field=object.getClass().getSuperclass().getDeclaredField(fieldName);
             }catch (NoSuchFieldException e1){
                 log.error(object+"对象没有"+fieldName+"属性");
+                throw new BizException(object+"对象没有"+fieldName+"属性");
             }
         }
         return field;

@@ -9,7 +9,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.core.exception.FileUploadException;
+import io.nerv.core.exception.BizException;
 import io.nerv.web.upload.condition.FastDfsCondition;
 import io.nerv.core.util.JsonUtil;
 import io.nerv.properties.EvaConfig;
@@ -73,8 +73,8 @@ public class DfsFileUploadUtil implements FileUploadProvider {
             suffixName = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
             newFileName = snowflake.nextIdStr() + "." + suffixName;
         } else {
-            log.error(BizCodeEnum.FILEIO_ERROR.getName());
-            throw new FileUploadException(BizCodeEnum.FILENAME_ERROR);
+            log.error(BizCodeEnum.FILEIO_ERROR.getMsg());
+            throw new BizException(BizCodeEnum.FILENAME_ERROR);
         }
         // 判断上传文件是否符合格式
         if (evaConfig.getUpload().getAllowSuffixName().toUpperCase().contains(suffixName)){
@@ -83,7 +83,7 @@ public class DfsFileUploadUtil implements FileUploadProvider {
                 isr = new InputStreamResource(file.getInputStream(), newFileName);
             } catch (IOException e) {
                 log.error(e.getMessage(), e);
-                throw new FileUploadException(BizCodeEnum.FILEIO_ERROR);
+                throw new BizException(BizCodeEnum.FILEIO_ERROR);
             }
 
             Map<String, Object> paramMap = new HashMap<>(3);
@@ -103,8 +103,8 @@ public class DfsFileUploadUtil implements FileUploadProvider {
 
             file_path = jsonObject.get("path");
         } else {
-            log.error(BizCodeEnum.FILETYPE_NOT_SUPPORTED.getName());
-            throw new FileUploadException(BizCodeEnum.FILETYPE_NOT_SUPPORTED);
+            log.error(BizCodeEnum.FILETYPE_NOT_SUPPORTED.getMsg());
+            throw new BizException(BizCodeEnum.FILETYPE_NOT_SUPPORTED);
         }
 
         // 放入缓存
@@ -175,10 +175,12 @@ public class DfsFileUploadUtil implements FileUploadProvider {
 
         List<String> tmpFileList = null == cacheWrapper? null : (List<String>) cacheWrapper.get();
 
-        if (null == cacheWrapper || CollUtil.isEmpty(tmpFileList)) return;
+        if (null == cacheWrapper || CollUtil.isEmpty(tmpFileList)) {
+            return;
+        }
 
         tmpFileList.stream().forEach(item -> {
-            HttpUtil.post(evaConfig.getUpload().getServerUrl() + this.DELETE_API, item);
+            HttpUtil.post(evaConfig.getUpload().getServerUrl() + DELETE_API, item);
         });
 
         // 删除完毕 从缓存中移除此key

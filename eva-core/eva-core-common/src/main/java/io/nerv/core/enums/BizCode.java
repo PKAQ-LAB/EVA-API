@@ -1,11 +1,11 @@
 package io.nerv.core.enums;
 
+/**
+ * 枚举基类
+ * @author PKAQ
+ */
 public interface BizCode {
-    static String getName(int index){
-        return "-";
-    }
+    String getMsg();
 
-    String getName();
-
-    String getIndex();
+    String getCode();
 }

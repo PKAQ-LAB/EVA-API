@@ -54,7 +54,7 @@ public class BizLogAdvice {
 
             bizLogEntity.setDescription(bizlog.description())
                         .setOperateDatetime(DateUtil.now())
-                        .setOperateType(bizlog.operateType().getIndex());
+                        .setOperateType(bizlog.operateType().getCode());
 
             bizLogEntity.setClassName(className)
                         .setMethod(methodName)

@@ -2,7 +2,6 @@ package io.nerv.weixin.ctrl;
 
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.vo.Response;
-import io.nerv.weixin.exception.WeixinException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,12 +28,12 @@ public class WxAuthController {
 
     @PostMapping("/getJsapiTicket")
     @Operation(description = "获取jsapi_ticket")
-    public Response getJsapiTicket() throws WeixinException {
+    public Response getJsapiTicket(){
         String ticket = null;
         try {
             ticket = this.wxMpService.getJsapiTicket();
         } catch (WxErrorException e) {
-            throw new WeixinException(BizCodeEnum.WEIXIN_JSTICKET_ERROR);
+            BizCodeEnum.WEIXIN_JSTICKET_ERROR.newException();
         }
 
         return new Response().success(ticket);

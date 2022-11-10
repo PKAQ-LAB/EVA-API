@@ -3,13 +3,13 @@ package io.nerv.security.ctrl;
 import cn.hutool.extra.servlet.ServletUtil;
 import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.exception.OathException;
 import io.nerv.core.mvc.vo.Response;
 import io.nerv.core.jwt.JwtUtil;
 import io.nerv.core.util.TokenUtil;
 import io.nerv.properties.EvaConfig;
 import io.nerv.util.CacheTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -50,7 +50,7 @@ public class TokenCtrl {
         if (!tokenStatus) {
             // 清除cookie
             this.clearCookie(response);
-            throw new OathException(BizCodeEnum.LOGIN_EXPIRED);
+            BizCodeEnum.LOGIN_EXPIRED.newException(AuthenticationException.class);
         }
 
         // 获取当前用户 account

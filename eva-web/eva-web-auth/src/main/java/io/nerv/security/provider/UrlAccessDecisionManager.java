@@ -16,6 +16,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.AbstractCollection;
 import java.util.Collection;
 
 @Slf4j
@@ -91,7 +92,7 @@ public class UrlAccessDecisionManager implements AccessDecisionManager {
             return;
         }
 
-        throw new AccessDeniedException(BizCodeEnum.PERMISSION_DENY.getName());
+        BizCodeEnum.PERMISSION_DENY.newException(AccessDeniedException.class);
     }
 
     @Override

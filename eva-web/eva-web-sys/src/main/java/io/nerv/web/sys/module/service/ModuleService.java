@@ -57,7 +57,8 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
             List<Object> list = CollectionUtil.getFieldValues(leafList, "parentName");
             // 拼接名称
             String name = CollectionUtil.join(list, ",");
-            throw new BizException(BizCodeEnum.CHILD_EXIST.getIndex(), StrUtil.format(BizCodeEnum.CHILD_EXIST.getName(), name));
+
+            BizCodeEnum.CHILD_EXIST.newException(name);
         } else {
             try{
                 // 删除相关资源
@@ -88,7 +89,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
         String pid = module.getParentId();
         if(StrUtil.isNotBlank(moduleId)){
             //是否启用的逻辑
-            if(StrUtil.isNotBlank(module.getStatus()) && LockEnumm.UNLOCK.getIndex().equals(module.getStatus())) {
+            if(StrUtil.isNotBlank(module.getStatus()) && LockEnumm.UNLOCK.getCode().equals(module.getStatus())) {
                 if(!isDisable(module)){
                     //如果父节点状态为禁用，则子节点状态也只能为禁用
                     throw new BizException(BizCodeEnum.PARENT_NOT_AVAILABLE);
@@ -223,7 +224,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
      * 根据ID更新
      */
     public void updateModule(ModuleEntityStd moduleEntity){
-        if(StrUtil.isNotBlank(moduleEntity.getStatus()) && LockEnumm.UNLOCK.getIndex().equals(moduleEntity.getStatus())) {
+        if(StrUtil.isNotBlank(moduleEntity.getStatus()) && LockEnumm.UNLOCK.getCode().equals(moduleEntity.getStatus())) {
             if(!isDisable(moduleEntity)){
                 return;
             }
@@ -297,7 +298,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
      */
     public void disableChild(ModuleEntityStd module){
         //判断是不是禁用
-        if(StrUtil.isBlank(module.getStatus()) || LockEnumm.LOCK.getIndex().equals(module.getStatus())){
+        if(StrUtil.isBlank(module.getStatus()) || LockEnumm.LOCK.getCode().equals(module.getStatus())){
             return;
         }
         //禁用该父节点下的所有子节点
@@ -317,7 +318,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
                 //得到父节点
                 ModuleEntityStd fatherModule=this.mapper.selectById(module.getParentId());
                 if(fatherModule != null && StrUtil.isNotBlank(fatherModule.getStatus())){
-                    return LockEnumm.LOCK.getIndex().equals(fatherModule.getStatus()) ? false : true;
+                    return LockEnumm.LOCK.getCode().equals(fatherModule.getStatus()) ? false : true;
                 }
 
             }

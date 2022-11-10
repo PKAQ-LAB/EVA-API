@@ -18,9 +18,9 @@ public enum LockEnumm implements BizCode{
     /**
      * 名称
      */
-    private String name;
+    private String msg;
     /**
      * 索引
      */
-    private String index;
+    private String code;
 }

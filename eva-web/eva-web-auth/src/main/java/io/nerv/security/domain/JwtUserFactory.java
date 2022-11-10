@@ -26,7 +26,7 @@ public final class JwtUserFactory {
                 user.getDeptName(),
                 user.getName(),
                 user.getNickName(),
-                LockEnumm.LOCK.getIndex().equals(user.getLocked()),
+                LockEnumm.LOCK.getCode().equals(user.getLocked()),
                 mapToGrantedAuthorities(user.getRoles())
         );
     }

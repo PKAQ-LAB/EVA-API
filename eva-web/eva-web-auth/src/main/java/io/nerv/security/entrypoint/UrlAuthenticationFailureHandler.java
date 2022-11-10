@@ -1,5 +1,6 @@
 package io.nerv.security.entrypoint;
 
+import io.nerv.core.enums.BizCode;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.vo.Response;
 import io.nerv.core.util.JsonUtil;
@@ -31,17 +32,17 @@ public class UrlAuthenticationFailureHandler implements AuthenticationFailureHan
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
         httpServletResponse.setStatus(HttpServletResponse.SC_OK);
 
-        var msg = e.getMessage();
+        BizCode bizcode = BizCodeEnum.LOGIN_FAILED;
 
         if (e instanceof BadCredentialsException){
-            msg = BizCodeEnum.ACCOUNT_OR_PWD_ERROR.getName();
+            bizcode = BizCodeEnum.ACCOUNT_OR_PWD_ERROR;
         }
 
 
         try(PrintWriter printWriter = httpServletResponse.getWriter()){
             printWriter.write(jsonUtil.toJSONString(
-                    new Response()
-                            .failure(BizCodeEnum.LOGIN_FAILED.getIndex(), msg)));
+                                new Response().failure(bizcode)
+                             ));
             printWriter.flush();
         }
     }

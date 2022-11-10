@@ -61,7 +61,7 @@ public abstract class StdTreeService<M extends StdTreeMapper<T>, T extends StdTr
         if (CollectionUtil.isNotEmpty(leafList)){
             List<Object> list = CollectionUtil.getFieldValues(leafList, "parentName");
             String name = CollectionUtil.join(list, ",");
-            response = new Response().failure(BizCodeEnum.CHILD_EXIST.getIndex(), StrUtil.format(Message.NODE_EXISTS,name), null);
+            response = new Response().failure(BizCodeEnum.CHILD_EXIST,name);
         } else {
             this.mapper.deleteBatchIds(ids);
             response = new Response().success();

@@ -3,7 +3,6 @@ package io.nerv.web.sys.role.ctrl;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.core.exception.ParamException;
 import io.nerv.core.mvc.ctrl.Ctrl;
 import io.nerv.core.mvc.vo.Response;
 import io.nerv.core.mvc.vo.SingleArray;
@@ -84,9 +83,9 @@ public class RoleCtrl extends Ctrl {
     @Operation(summary = "保存角色用户关系")
     public Response saveUser(@Parameter(name = "param", description = "模块ID数组")
                              @RequestBody RoleEntity role) {
-        if (null == role || StrUtil.isBlank(role.getId())){
-            throw new ParamException("用户角色不允许为空");
-        }
+        BizCodeEnum.NULL_PARAM_ID.assertNotNull(role, "角色");
+        BizCodeEnum.NULL_PARAM_ID.assertNotNull(role.getId(), "角色");
+
         this.service.saveUser(role);
         return success();
     }
@@ -103,9 +102,11 @@ public class RoleCtrl extends Ctrl {
     @Operation(summary = "根据ID删除/批量删除角色")
     public Response delRole(@Parameter(name = "ids", description = "[角色id]")
                             @RequestBody SingleArray<String> ids){
-        if (null == ids || CollectionUtil.isEmpty(ids.getParam())){
-            throw new ParamException(locale("param_id_notnull"));
-        }
+
+        // 参数非空校验
+        BizCodeEnum.NULL_ID.assertNotNull(ids);
+        BizCodeEnum.NULL_ID.assertNotNull(ids.getParam());
+
         this.service.deleteRole(ids.getParam());
         return success();
     }
@@ -114,9 +115,10 @@ public class RoleCtrl extends Ctrl {
     @Operation(summary = "锁定/解锁")
     public Response lockSwitch(@Parameter(name = "params", description = "角色[id]")
                                @RequestBody SingleArray<String> params) {
-        if (null == params || CollectionUtil.isEmpty(params.getParam())){
-            throw new ParamException(locale("param_id_notnull"));
-        }
+
+        // 参数非空校验
+        BizCodeEnum.NULL_ID.assertNotNull(params);
+        BizCodeEnum.NULL_ID.assertNotNull(params.getParam());
 
         this.service.updateRole(params.getParam(), params.getStatus());
         return success();

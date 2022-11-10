@@ -1,5 +1,7 @@
 package io.nerv.core.enums;
 
+import io.nerv.core.exception.BizAssert;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
@@ -8,7 +10,9 @@ import lombok.Getter;
  * @author PKAQ
  */
 @Getter
-public enum BizCodeEnum implements BizCode {
+@AllArgsConstructor
+public enum BizCodeEnum implements BizAssert {
+
     /** 请求成功 000x **/
     OPERATE_SUCCESS("操作成功", "0000"),
     LOGIN_SUCCESS("登录成功，欢迎回来。", "0001"),
@@ -37,7 +41,7 @@ public enum BizCodeEnum implements BizCode {
     ACCOUNT_NOT_EXIST("登录用户不存在", "4101"),
     ACCOUNT_OR_PWD_ERROR("用户名或密码错误", "4102"),
     ACCOUNT_LOCKED("用户已经被锁定", "4103"),
-    LOGIN_ERROR("登录遇到未知错误", "4104"),
+    LOGIN_ERROR("登录遇到未知错误: [{0}]", "4104"),
     LOGIN_EXPIRED("您的登录已失效, 请重新登录.", "4105"),
     PERMISSION_EXPIRED("用户权限不足，请联系管理员", "4106"),
     ACCOUNT_ALREADY_EXIST("账号名已存在", "4110"),
@@ -53,13 +57,17 @@ public enum BizCodeEnum implements BizCode {
 
     /** 业务 430x ~ 439x **/
     PATH_ALREADY_EXIST("模块路径已经存在", "4301"),
-    CHILD_EXIST("[{}] 存在子节点，无法删除。", "4302"),
-    ROLE_CODE_EXIST("权限编码已经存在", "4303"),
-    RESOURCE_USED("资源已经被引用，无法删除。", "4304"),
-    PARENT_NOT_AVAILABLE("父节点为禁用状态，无法启用。", "4305"),
-    MODULE_RESOURCE_USED("模块下存在已经被引用的资源，无法删除。", "4306"),
-    BAD_ORG_PASSWORD("原始密码校验失败", "4307"),
+    CHILD_EXIST("[{0}] 存在子节点，无法删除。", "4302"),
+    CODE_EXIST("[{0}] 编码已经存在", "4303"),
+    ROLE_CODE_EXIST("权限编码已经存在", "4304"),
+    RESOURCE_USED("资源已经被引用，无法删除。", "4305"),
+    PARENT_NOT_AVAILABLE("父节点为禁用状态，无法启用。", "4306"),
+    MODULE_RESOURCE_USED("模块下存在已经被引用的资源，无法删除。", "4307"),
+    BAD_ORG_PASSWORD("原始密码校验失败", "4308"),
     ORG_CODE_EXIST("组织(部门)编码已经存在", "4310"),
+
+    NULL_ID("所需记录ID为空值", "4311"),
+    NULL_PARAM_ID("所需记录 [ {0} ] 为空值", "4312"),
 
     /** 上传相关 430x ~ 432x **/
     FILEIO_ERROR("文件读取时发生错误", "4306"),
@@ -75,23 +83,9 @@ public enum BizCodeEnum implements BizCode {
     /**
      * 名称
      */
-    private String name;
+    private String msg;
     /**
      * 索引
      */
-    private String index;
-
-    BizCodeEnum(String name, String index) {
-        this.name = name;
-        this.index = index;
-    }
-
-    public static String getName(String index) {
-        for (BizCodeEnum p : BizCodeEnum.values()) {
-            if ( index.equals(p.getIndex())) {
-                return p.name;
-            }
-        }
-        return "-";
-    }
+    private String code;
 }

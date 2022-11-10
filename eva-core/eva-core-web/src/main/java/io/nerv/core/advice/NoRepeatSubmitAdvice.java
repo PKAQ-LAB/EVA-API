@@ -46,9 +46,9 @@ public class NoRepeatSubmitAdvice {
             var key = method + ":" + tokenUtil.getToken(request) + "-" + request.getServletPath();
             key = SecureUtil.md5(key);
 
+
             // 如果缓存中有这个url视为重复提交
             if (cache.get(key) == null) {
-
                 cache.put(key, 0);
             } else {
                 throw new BizException(BizCodeEnum.REQUEST_TOO_MORE);

@@ -19,21 +19,11 @@ public enum DataPermissionEnumm implements BizCode{
     CREATOR_LIMIT("本人创建或修改", "0005");
 
     /**
-     *描述
+     * 名称
      */
-    private String v;
+    private String msg;
     /**
-     * 值
+     * 索引
      */
-    private String k;
-
-    @Override
-    public String getName() {
-        return this.v;
-    }
-
-    @Override
-    public String getIndex() {
-        return k;
-    }
+    private String code;
 }

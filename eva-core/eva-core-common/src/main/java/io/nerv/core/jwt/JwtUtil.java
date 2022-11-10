@@ -170,7 +170,7 @@ public class JwtUtil {
 
             if (null == claimsSet || "-".equals(claimsSet.getSubject())){
                 log.error("登录已失效");
-                throw new BizException("登录已失效");
+                throw new BizException(BizCodeEnum.LOGIN_EXPIRED);
             } else {
                 ret = true;
             }

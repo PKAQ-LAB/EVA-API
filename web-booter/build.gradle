@@ -29,6 +29,7 @@ processResources {
 dependencies {
     api     project(":eva-core:eva-core-web"),
             project(":eva-core:eva-core-data-mybatis"),
+            project(":eva-web:eva-web-auth"),
             "${lib.mysql}"
 
     implementation "${lib.knife4j_ui}",

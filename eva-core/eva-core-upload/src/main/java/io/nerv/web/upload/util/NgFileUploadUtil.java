@@ -9,7 +9,7 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.core.exception.FileUploadException;
+import io.nerv.core.exception.BizException;
 import io.nerv.web.upload.condition.DefaultNgCondition;
 import io.nerv.properties.EvaConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -66,8 +66,8 @@ public class NgFileUploadUtil implements FileUploadProvider {
             suffixName = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
             newFileName = snowflake.nextIdStr() + "." + suffixName;
         } else {
-            log.error(BizCodeEnum.FILEIO_ERROR.getName());
-            throw new FileUploadException(BizCodeEnum.FILENAME_ERROR);
+            log.error(BizCodeEnum.FILEIO_ERROR.getMsg());
+            throw new BizException(BizCodeEnum.FILENAME_ERROR);
         }
         // 判断上传文件是否符合格式
         if (evaConfig.getUpload().getAllowSuffixName().toLowerCase().contains(suffixName)){
@@ -87,12 +87,12 @@ public class NgFileUploadUtil implements FileUploadProvider {
                 file.transferTo(tempFile);
                 tempFile.setReadable(true, false);
             } catch (Exception e) {
-                log.error(BizCodeEnum.FILEIO_ERROR.getName());
-                throw new FileUploadException(BizCodeEnum.FILESAVE_ERROR.getName());
+                log.error(BizCodeEnum.FILEIO_ERROR.getMsg());
+                throw new BizException(BizCodeEnum.FILESAVE_ERROR);
             }
         } else {
-            log.error(BizCodeEnum.FILETYPE_NOT_SUPPORTED.getName());
-            throw new FileUploadException(BizCodeEnum.FILETYPE_NOT_SUPPORTED);
+            log.error(BizCodeEnum.FILETYPE_NOT_SUPPORTED.getMsg());
+            throw new BizException(BizCodeEnum.FILETYPE_NOT_SUPPORTED);
         }
 
         // 放入缓存
@@ -112,7 +112,9 @@ public class NgFileUploadUtil implements FileUploadProvider {
 
         for (String filename : filenames) {
             File sourceFile = new File(tempPath, filename);
-            if (!sourceFile.exists()) continue;
+            if (!sourceFile.exists()) {
+                continue;
+            }
             File distFile = new File(evaConfig.getUpload().getStoragePath(), filename);
             FileUtil.move(sourceFile, distFile, true);
             distFile.setReadable(true, false);
@@ -134,7 +136,7 @@ public class NgFileUploadUtil implements FileUploadProvider {
             if (!sourceFile.exists()) continue;
             File distFile = new File(evaConfig.getUpload().getStoragePath(), filename);
 
-            File distFileThumbnail = new File(evaConfig.getUpload().getStoragePath(), this.THUMBNAIL_NAME + filename);
+            File distFileThumbnail = new File(evaConfig.getUpload().getStoragePath(), THUMBNAIL_NAME + filename);
             this.thumbnail(sourceFile, distFileThumbnail, scale);
             FileUtil.move(sourceFile, distFile, true);
             distFile.setReadable(true, false);
@@ -149,7 +151,7 @@ public class NgFileUploadUtil implements FileUploadProvider {
      */
     @Override
     public void thumbnail(File file, float scale){
-        File destFile = new File(file.getParent(), this.THUMBNAIL_NAME + file.getName());
+        File destFile = new File(file.getParent(), THUMBNAIL_NAME + file.getName());
         ImgUtil.scale(file, destFile, scale);
         destFile.setReadable(true,false);
     }
@@ -204,7 +206,9 @@ public class NgFileUploadUtil implements FileUploadProvider {
             tmpFileList = (List<String>) valueWrapper.get();
         }
 
-        if (CollUtil.isEmpty(tmpFileList)) return;
+        if (CollUtil.isEmpty(tmpFileList)) {
+            return;
+        }
 
         tmpFileList.stream().forEach(item -> {
             if (!FileUtil.isDirEmpty(tempFileFolder)){

@@ -3,6 +3,8 @@ package io.nerv.core.exception;
 import io.nerv.core.enums.BizCode;
 import lombok.Getter;
 
+import java.text.MessageFormat;
+
 /**
  * 关于业务的异常
  */
@@ -26,10 +28,25 @@ public class BizException extends RuntimeException{
         this.msg = msg;
     }
 
+
     public BizException(BizCode bizCode) {
-        super(bizCode.getName());
-        this.code = bizCode.getIndex();
-        this.msg = bizCode.getName();
+        super(bizCode.getMsg());
+        this.code = bizCode.getCode();
+        this.msg = bizCode.getMsg();
+        this.bizCode = bizCode;
+    }
+
+    public BizException(BizCode bizCode, Throwable cause, Object... args) {
+        super(bizCode.getMsg(), cause);
+        this.code = bizCode.getCode();
+        this.msg = MessageFormat.format(this.getMsg(), args);
+        this.bizCode = bizCode;
+    }
+
+    public BizException(BizCode bizCode, Object... args) {
+        super(bizCode.getMsg());
+        this.code = bizCode.getCode();
+        this.msg = MessageFormat.format( bizCode.getMsg(), args);
         this.bizCode = bizCode;
     }
 }

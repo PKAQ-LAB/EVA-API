@@ -2,9 +2,10 @@ package io.nerv.core.advice;
 
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.exception.BizException;
-import io.nerv.core.exception.ParamException;
-import io.nerv.core.exception.ReflectException;
 import io.nerv.core.mvc.vo.Response;
+import io.nerv.core.util.I18NHelper;
+import io.nerv.properties.EvaConfig;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -29,8 +30,28 @@ import java.util.Set;
  */
 @RestControllerAdvice
 @Slf4j
+@RequiredArgsConstructor
 public class ExceptionAdvice {
+    private final I18NHelper i18NHelper;
 
+    private final EvaConfig evaConfig;
+    /**
+     * 获取国际化消息
+     *
+     * @param e 异常
+     * @return
+     */
+    public String getMessage(BizException e) {
+
+        String code = e.getBizCode().getCode();
+        String message = evaConfig.isI18n()? i18NHelper.getMessage(code, e.getMessage()) : e.getMessage();
+
+        if (message == null || message.isEmpty()) {
+            return e.getMessage();
+        }
+
+        return message;
+    }
     /**
      * hibernate validator参数校验失败时抛出的异常
      * @param e
@@ -45,7 +66,7 @@ public class ExceptionAdvice {
         for (ConstraintViolation<?> item : violations) {
             message.append(item.getMessage());
         }
-        return new Response().failure(BizCodeEnum.PARAM_TYPEERROR.getIndex(), message.toString());
+        return new Response().failure(BizCodeEnum.PARAM_TYPEERROR.getCode(), message.toString());
     }
 
     /**
@@ -56,7 +77,7 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Response handleMethodParamCheckException(MethodArgumentNotValidException e){
-        return new Response().failure(BizCodeEnum.PARAM_TYPEERROR.getIndex(),  e.getBindingResult().getFieldError().getDefaultMessage());
+        return new Response().failure(BizCodeEnum.PARAM_TYPEERROR.getCode(),  e.getBindingResult().getFieldError().getDefaultMessage());
     }
     /**
      * 400 - 捕获自定义参数异常
@@ -64,9 +85,9 @@ public class ExceptionAdvice {
      * @return Response
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(ParamException.class)
-    public Response handleException(ParamException e) {
-        return new Response().failure(BizCodeEnum.PARAM_ERROR.getIndex(), e.getMsg());
+    @ExceptionHandler(BizException.class)
+    public Response handleException(BizException e) {
+        return new Response().failure(e.getCode(), e.getMsg());
     }
     /**
      * 400异常.- 参数错误
@@ -126,7 +147,7 @@ public class ExceptionAdvice {
         e.getAllErrors().forEach(
                 x -> errorMsg.append(x.getDefaultMessage()).append(",")
         );
-        return new Response().failure(BizCodeEnum.SERVER_ERROR.getIndex(), errorMsg.toString());
+        return new Response().failure(BizCodeEnum.SERVER_ERROR.getCode(), errorMsg.toString());
     }
 
     /**
@@ -152,19 +173,6 @@ public class ExceptionAdvice {
     @ExceptionHandler(Exception.class)
     public Response handleException(Exception e) {
         log.error("服务运行异常:"+e.getMessage());
-        e.printStackTrace();
-        return new Response().failure(BizCodeEnum.SERVER_ERROR);
-    }
-
-    /**
-     *   500 - Internal Server Error.
-     * @param e 异常类型
-     * @return Response
-     */
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(ReflectException.class)
-    public Response reflectException(ReflectException e) {
-        log.error("反射异常:"+e.getMessage());
         e.printStackTrace();
         return new Response().failure(BizCodeEnum.SERVER_ERROR);
     }

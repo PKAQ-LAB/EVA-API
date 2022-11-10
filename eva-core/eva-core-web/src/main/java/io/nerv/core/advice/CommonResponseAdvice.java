@@ -12,9 +12,9 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 /**
  * 统一处理返回值
- * 注意 这里只对io.nerv包下的返回值自动响应处理
+ * @author PKAQ
  */
-@RestControllerAdvice(basePackages = "io.nerv")
+@RestControllerAdvice
 public class CommonResponseAdvice implements ResponseBodyAdvice {
 
     @Override
@@ -33,10 +33,10 @@ public class CommonResponseAdvice implements ResponseBodyAdvice {
                  res.setSuccess(true);
 
         if (body instanceof BizCode){
-            res.setCode(((BizCode) body).getIndex());
-            res.setMessage(((BizCode) body).getName());
+            res.setCode(((BizCode) body).getCode());
+            res.setMessage(((BizCode) body).getMsg());
         } else {
-            res.setMessage(BizCodeEnum.OPERATE_SUCCESS.getIndex());
+            res.setMessage(BizCodeEnum.OPERATE_SUCCESS.getCode());
             res.setData(body);
         }
 

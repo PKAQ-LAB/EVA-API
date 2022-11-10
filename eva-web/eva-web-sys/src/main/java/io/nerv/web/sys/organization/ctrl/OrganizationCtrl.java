@@ -3,7 +3,6 @@ package io.nerv.web.sys.organization.ctrl;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.core.exception.ParamException;
 import io.nerv.core.mvc.ctrl.Ctrl;
 import io.nerv.core.mvc.vo.Response;
 import io.nerv.core.mvc.vo.SingleArray;
@@ -54,9 +53,9 @@ public class OrganizationCtrl extends Ctrl {
     public Response delOrg(@Parameter(name = "ids", description = "[组织ID]")
                            @RequestBody SingleArray<String> ids){
         // 参数非空校验
-        if (null == ids || CollectionUtil.isEmpty(ids.getParam())){
-           throw new ParamException(locale("param_id_notnull"));
-        }
+        BizCodeEnum.NULL_ID.assertNotNull(ids);
+        BizCodeEnum.NULL_ID.assertNotNull(ids.getParam());
+
         // 判断上级节点是否还有其它叶子 如果没有把 isleaf属性改为false
         return this.service.deleteOrg(ids.getParam());
     }

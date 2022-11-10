@@ -2,8 +2,8 @@ package io.nerv.core.mvc.ctrl.mybatis;
 
 import cn.hutool.core.collection.CollectionUtil;
 import io.nerv.core.annotation.NoRepeatSubmit;
+import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.enums.ResponseEnumm;
-import io.nerv.core.exception.ParamException;
 import io.nerv.core.mvc.ctrl.Ctrl;
 import io.nerv.core.mvc.entity.mybatis.StdMultiEntity;
 import io.nerv.core.mvc.service.mybatis.StdMultiService;
@@ -33,11 +33,11 @@ public abstract class StdMultiCtrl<T extends StdMultiService, E extends StdMulti
     public Response del(@Parameter(name = "ids", description = "[记录ID]")
                         @RequestBody SingleArray<String> ids){
 
-        if (null == ids || CollectionUtil.isEmpty(ids.getParam())){
-            throw new ParamException(locale("param_id_notnull"));
-        }
+        BizCodeEnum.NULL_ID.assertNotNull(ids);
+        BizCodeEnum.NULL_ID.assertNotNull(ids.getParam());
+        
         this.service.delete(ids.getParam());
-        return success(null, ResponseEnumm.DELETE_SUCCESS.getName());
+        return success(null, ResponseEnumm.DELETE_SUCCESS);
     }
 
     @PostMapping("/edit")
@@ -46,7 +46,7 @@ public abstract class StdMultiCtrl<T extends StdMultiService, E extends StdMulti
     public Response save(@Parameter(name ="formdata", description = "模型对象")
                          @RequestBody E entity){
         this.service.merge(entity);
-        return success(entity, ResponseEnumm.SAVE_SUCCESS.getName());
+        return success(entity, ResponseEnumm.SAVE_SUCCESS);
     }
 
     @GetMapping("/list")

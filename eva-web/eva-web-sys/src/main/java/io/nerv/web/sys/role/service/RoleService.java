@@ -169,7 +169,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
         boolean isAdmin = ThreadUserHelper.isAdmin();
         // 获取所有菜单
         ModuleEntityStd moduleEntity = new ModuleEntityStd();
-        moduleEntity.setStatus(LockEnumm.UNLOCK.getIndex());
+        moduleEntity.setStatus(LockEnumm.UNLOCK.getCode());
         List<ModuleEntityStd> moduleList = null;
 
         // 非管理员仅能授权当前权限范围内的模块
@@ -255,7 +255,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
             userEntity.setDeptId(deptId);
         }
 
-        userEntity.setLocked(LockEnumm.UNLOCK.getIndex());
+        userEntity.setLocked(LockEnumm.UNLOCK.getCode());
 
         List<UserEntity> users  = this.userService.listUser(userEntity);
         // 获取已选的模块

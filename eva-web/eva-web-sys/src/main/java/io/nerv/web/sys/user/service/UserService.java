@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import io.nerv.core.enums.BizCodeEnum;
+import io.nerv.core.exception.BizException;
 import io.nerv.core.mvc.entity.mybatis.StdTreeEntity;
 import io.nerv.core.mvc.service.mybatis.StdService;
 import io.nerv.core.mvc.util.Page;
@@ -189,14 +190,12 @@ public class UserService extends StdService<UserMapper, UserEntity> {
      * @param uid 用户ID
      * @return
      */
-    public List<StdTreeEntity> fetch(String uid) throws Exception {
+    public List<StdTreeEntity> fetch(String uid) {
 
         List<ModuleEntityStd> moduleEntity = this.moduleMapper.getRoleModuleByUserId(uid);
         List<StdTreeEntity> treeModule = new TreeHelper().bulid(moduleEntity);
 
-        if (CollUtil.isEmpty(treeModule)){
-            throw new Exception(BizCodeEnum.PERMISSION_EXPIRED.getName());
-        }
+        BizCodeEnum.PERMISSION_EXPIRED.assertNotBlank(treeModule);
 
         return treeModule;
     }

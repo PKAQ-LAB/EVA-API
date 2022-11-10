@@ -3,7 +3,6 @@ package io.nerv.web.sys.user.ctrl;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.core.exception.ParamException;
 import io.nerv.core.mvc.ctrl.Ctrl;
 import io.nerv.core.mvc.vo.Response;
 import io.nerv.core.mvc.vo.SingleArray;
@@ -49,9 +48,10 @@ public class UserCtrl extends Ctrl {
     public Response del(@Parameter(name = "ids", description = "[记录ID]")
                         @RequestBody SingleArray<String> ids){
 
-        if (null == ids || CollectionUtil.isEmpty(ids.getParam())){
-            throw new ParamException(locale("param_id_notnull"));
-        }
+        // 参数非空校验
+        BizCodeEnum.NULL_ID.assertNotNull(ids);
+        BizCodeEnum.NULL_ID.assertNotNull(ids.getParam());
+
         this.service.delete(ids.getParam());
         return success(null, BizCodeEnum.OPERATE_SUCCESS);
     }
@@ -93,9 +93,8 @@ public class UserCtrl extends Ctrl {
     public Response lockSwitch(@Parameter(name = "param", description = "用户[id]")
                                @RequestBody SingleArray<String> param) {
         // 参数非空校验
-        if (null == param || CollectionUtil.isEmpty(param.getParam())){
-            throw new ParamException(locale("param_id_notnull"));
-        }
+        BizCodeEnum.NULL_ID.assertNotNull(param);
+        BizCodeEnum.NULL_ID.assertNotNull(param.getParam());
 
         this.service.updateUser(param.getParam(), param.getStatus());
         return success(this.service.listPage(null, 1));

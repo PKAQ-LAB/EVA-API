@@ -111,7 +111,7 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         try(PrintWriter printWriter = httpServletResponse.getWriter()){
             printWriter.write(mapper.writeValueAsString(
                 new Response()
-                        .success(map, StrUtil.format( BizCodeEnum.LOGIN_SUCCESS_WELCOME.getName(), user.getName() ) )
+                        .success(map, BizCodeEnum.LOGIN_SUCCESS_WELCOME, user.getName())
                 )
             );
             printWriter.flush();

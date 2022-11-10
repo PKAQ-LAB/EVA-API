@@ -1,11 +1,15 @@
 package io.nerv.core.bizlog.base;
 
 import io.nerv.core.enums.BizCode;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
  * 业务日志类型
  * @author: S.PKAQ
  */
+@Getter
+@AllArgsConstructor
 public enum BizLogEnum implements BizCode {
     /** 新增 **/
     CREATE("增加", "C"),
@@ -16,27 +20,12 @@ public enum BizLogEnum implements BizCode {
     /** 查询 **/
     QUERY("查询", "R");
 
-    private String name;
-    private String index;
-
-    BizLogEnum(String name, String index) {
-        this.name = name;
-        this.index = index;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getIndex() {
-        return index;
-    }
-
-    public void setIndex(String index) {
-        this.index = index;
-    }
+    /**
+     * 名称
+     */
+    private String msg;
+    /**
+     * 索引
+     */
+    private String code;
 }

@@ -1,7 +1,8 @@
 package io.nerv.web.sys.dict.ctrl;
 
 import cn.hutool.core.util.StrUtil;
-import io.nerv.core.exception.ParamException;
+import io.nerv.core.enums.BizCodeEnum;
+import io.nerv.core.exception.BizException;
 import io.nerv.core.mvc.ctrl.Ctrl;
 import io.nerv.core.mvc.vo.Response;
 import io.nerv.web.sys.dict.cache.DictCacheHelper;
@@ -49,7 +50,7 @@ public class DictCtrl extends Ctrl {
                             @PathVariable(value = "code", required = false) String code){
         // 参数校验
         if (StrUtil.isBlank(id) && StrUtil.isBlank(code)){
-            throw new ParamException();
+            BizCodeEnum.PARAM_ERROR.newException();
         }
         DictEntity dictEntity = new DictEntity();
         dictEntity.setId(id);
@@ -70,10 +71,10 @@ public class DictCtrl extends Ctrl {
     @Operation(summary = "根据ID删除")
     public Response delDict(@Parameter(name = "id", description = "[字典ID]")
                             @PathVariable("id") String id){
+
         // 参数非空校验
-        if (StrUtil.isBlank(id)){
-            throw new ParamException(locale("param_id_notnull"));
-        }
+        BizCodeEnum.NULL_ID.assertNotNull(id);
+
         this.service.delDict(id);
         return success();
     }
