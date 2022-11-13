@@ -8,7 +8,6 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 /**
  * 是否启用了支付宝支付
  * @author: S.PKAQ
- * @Datetime: 2018/9/29 8:39
  */
 public class AlipayEnabled implements Condition {
     @Override

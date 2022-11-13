@@ -6,6 +6,9 @@ import io.nerv.config.JacksoCodeSerialize;
 
 import java.lang.annotation.*;
 
+/**
+ * @author PKAQ
+ */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

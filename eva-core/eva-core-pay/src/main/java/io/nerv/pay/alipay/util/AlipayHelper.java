@@ -8,6 +8,7 @@ import com.alipay.api.request.AlipayTradeQueryRequest;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
 import io.nerv.config.AlipayConfig;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,16 +16,14 @@ import org.springframework.stereotype.Component;
 /**
  * 支付宝工具类
  * @author: S.PKAQ
- * @Datetime: 2018/9/30 9:07
  */
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class AlipayHelper {
-    @Autowired
-    private AlipayConfig alipayConfig;
+    private final AlipayConfig alipayConfig;
 
-    @Autowired
-    private AlipayClient alipayClient;
+    private final AlipayClient alipayClient;
 
     /**
      * alipay.trade.query(统一收单线下交易查询)

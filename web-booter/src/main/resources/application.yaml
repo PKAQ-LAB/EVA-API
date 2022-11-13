@@ -20,6 +20,13 @@ spring:
       WRITE_DATES_AS_TIMESTAMPS: false
       #格式化输出
       indent_output: true
+springdoc:
+#  api-docs:
+#    enabled: true
+#    groups:
+#      enabled: true
+  swagger-ui:
+    disable-swagger-default-url: true
 # mybatis
 mybatis-plus:
   mapper-locations: classpath*:/mapper/*.xml
@@ -104,7 +111,7 @@ eva:
   security:
     webstatic:
     # 无需鉴权路径(无条件访问)
-    anonymous: /auth/login,/auth/logout,/wx/**,/doc/**,/actuator/**,/swagger-resources/**
+    anonymous: /auth/login,/auth/logout,/wx/**,/doc/**,/actuator/**,/swagger-resources/**,v3/api-docs/swagger-config
     # 无需资源鉴权的路径
     permit: /auth/**,/wx/**,/doc/**,/actuator/**,/license/**
   # 资源权限
@@ -168,7 +175,7 @@ eva:
   # 业务日志
   bizlog:
     enabled: true
-    impl: MybatisSupporter
+    impl: mybatis
   license:
     enable: false
     # 公钥别名

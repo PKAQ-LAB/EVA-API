@@ -3,6 +3,7 @@ package io.nerv.config;
 import io.nerv.weixin.handler.*;
 import io.nerv.weixin.properties.WxMpProperties;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import me.chanjar.weixin.mp.api.WxMpMessageRouter;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.api.impl.WxMpServiceImpl;
@@ -25,12 +26,11 @@ import static me.chanjar.weixin.common.api.WxConsts.XmlMsgType.EVENT;
 import static me.chanjar.weixin.mp.constant.WxMpEventConstants.CustomerService.*;
 import static me.chanjar.weixin.mp.constant.WxMpEventConstants.POI_CHECK_NOTIFY;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Configuration
 @EnableConfigurationProperties(WxMpProperties.class)
 public class WxMpConfiguration {
 
-    @Autowired
     private final WxMpProperties properties;
 
     private final LogHandler logHandler;

@@ -1,7 +1,7 @@
 package io.nerv.config;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import io.nerv.core.threaduser.ThreadUserHelper;
+import io.nerv.common.threaduser.ThreadUserHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.stereotype.Component;

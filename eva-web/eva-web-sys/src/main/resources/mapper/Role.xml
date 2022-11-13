@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="io.nerv.web.sys.role.mapper.RoleMapper">
+<mapper namespace="io.nerv.sys.web.role.mapper.RoleMapper">
   <!-- 根据userId获取 权限相关信息-->
   <select id="selectByUserId" resultType="role">
     select R.ID,

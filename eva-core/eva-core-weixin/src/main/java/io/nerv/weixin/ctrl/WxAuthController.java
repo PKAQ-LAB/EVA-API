@@ -1,7 +1,7 @@
 package io.nerv.weixin.ctrl;
 
-import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.core.mvc.vo.Response;
+import io.nerv.common.enums.BizCodeEnum;
+import io.nerv.common.mvc.vo.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

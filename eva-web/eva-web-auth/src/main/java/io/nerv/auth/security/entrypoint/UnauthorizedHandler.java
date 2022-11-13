@@ -1,0 +1,48 @@
+package io.nerv.auth.security.entrypoint;
+
+import io.nerv.common.enums.BizCodeEnum;
+import io.nerv.common.mvc.vo.Response;
+import io.nerv.common.util.json.JsonUtil;
+import org.springframework.http.MediaType;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.stereotype.Component;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Serializable;
+
+/**
+ * 鉴权失败时的响应
+ * @author: S.PKAQ
+ */
+@Component
+public class UnauthorizedHandler implements AuthenticationEntryPoint, Serializable {
+
+    /**
+     * 当访问的资源没有权限，会调用这里
+     * @param request that resulted in an <code>AuthenticationException</code>
+     * @param response so that the user agent can begin authentication
+     * @param authException that caused the invocation
+     * @throws IOException
+     */
+    @Override
+    public void commence(HttpServletRequest request,
+                         HttpServletResponse response,
+                         AuthenticationException authException) throws IOException {
+        //返回json形式的错误信息
+
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setStatus(HttpServletResponse.SC_OK);
+
+        try(PrintWriter printWriter = response.getWriter()){
+            printWriter.write(JsonUtil.toJson(
+                    new Response()
+                            .failure(BizCodeEnum.PERMISSION_DENY)));
+            printWriter.flush();
+        }
+    }
+}

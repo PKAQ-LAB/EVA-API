@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="io.nerv.web.sys.user.mapper.UserMapper">
+<mapper namespace="io.nerv.sys.web.user.mapper.UserMapper">
   <resultMap id="BaseResultMap" type="user" extends="common.resultMap">
     <result column="CODE" jdbcType="VARCHAR" property="code" />
     <result column="DEPT_ID" jdbcType="VARCHAR" property="deptId" />
@@ -21,7 +21,7 @@
   </resultMap>
   <!-- 获取包含权限列表的用户信息-->
   <resultMap id="UserWithRole" type="user" extends="BaseResultMap">
-    <collection property="roles" column="{userId=id}" select="io.nerv.web.sys.role.mapper.RoleMapper.selectByUserId" ofType="role"/>
+    <collection property="roles" column="{userId=id}" select="io.nerv.sys.web.role.mapper.RoleMapper.selectByUserId" ofType="role"/>
   </resultMap>
 
   <!-- 获取包含权限列表的用户信息-->
@@ -34,8 +34,8 @@
 
   <!-- 获取包含模块 权限列表的用户信息-->
   <resultMap id="UserWithModuleAndRole" type="user" extends="BaseResultMap">
-    <collection property="roles" column="{userId=id}" select="io.nerv.web.sys.role.mapper.RoleMapper.selectByUserId" ofType="role"/>
-    <collection property="modules" column="{userId=id}" select="io.nerv.web.sys.module.mapper.ModuleMapper.getRoleModuleByUserId" ofType="module"/>
+    <collection property="roles" column="{userId=id}" select="io.nerv.sys.web.role.mapper.RoleMapper.selectByUserId" ofType="role"/>
+    <collection property="modules" column="{userId=id}" select="io.nerv.sys.web.module.mapper.ModuleMapper.getRoleModuleByUserId" ofType="module"/>
   </resultMap>
 
   <select id="getUerWithRoleId" resultMap="UserWithRoleId">

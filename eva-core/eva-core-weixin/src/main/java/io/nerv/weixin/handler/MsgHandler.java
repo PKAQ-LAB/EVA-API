@@ -1,6 +1,6 @@
 package io.nerv.weixin.handler;
 
-import io.nerv.core.util.JsonUtil;
+import io.nerv.common.util.json.JsonUtil;
 import io.nerv.weixin.builder.TextBuilder;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
@@ -20,8 +20,6 @@ import static me.chanjar.weixin.common.api.WxConsts.XmlMsgType;
  */
 @Component
 public class MsgHandler extends AbstractHandler {
-    @Autowired
-    private JsonUtil jsonUtil;
 
     @Override
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage,
@@ -46,7 +44,7 @@ public class MsgHandler extends AbstractHandler {
         }
 
         //TODO 组装回复消息
-        String content = "收到信息内容：" + jsonUtil.toJSONString(wxMessage);
+        String content = "收到信息内容：" + JsonUtil.toJson(wxMessage);
 
         return new TextBuilder().build(content, wxMessage, weixinService);
 

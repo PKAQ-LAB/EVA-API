@@ -9,14 +9,14 @@ logging:
     name: e:/applogs/webapp.log
 #  监控
 spring:
-  boot:
-    admin:
-      client:
-        url: http://47.104.217.77:10086/
-        username: eva
-        password: 7u8i9o0p
-        instance:
-          service-host-type: ip
+#  boot:
+#    admin:
+#      client:
+#        url: http://47.104.217.77:10086/
+#        username: eva
+#        password: 7u8i9o0p
+#        instance:
+#          service-host-type: ip
   # 数据源
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
@@ -60,11 +60,3 @@ management:
   endpoint:
     health:
       show-details: ALWAYS
-# 暴露spring secrity用于登录的端点
-springdoc:
-  show-login-endpoint: true
-  show-actuator: true
-  swagger-ui:
-    query-config-enabled: true
-    use-root-path: true
-#    address: 47.104.217.77

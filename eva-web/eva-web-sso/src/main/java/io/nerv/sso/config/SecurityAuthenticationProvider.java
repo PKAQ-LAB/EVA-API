@@ -1,7 +1,7 @@
 package io.nerv.sso.config;
 
-import io.nerv.web.sys.role.service.RoleService;
-import io.nerv.web.sys.user.service.UserService;
+import io.nerv.common.sys.role.service.RoleService;
+import io.nerv.common.sys.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;

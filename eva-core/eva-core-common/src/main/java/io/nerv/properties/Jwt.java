@@ -7,7 +7,6 @@ import java.util.List;
 /**
  * jwt配置
  * @author: S.PKAQ
- * @Datetime: 2018/4/20 15:39
  */
 @Data
 public class Jwt {

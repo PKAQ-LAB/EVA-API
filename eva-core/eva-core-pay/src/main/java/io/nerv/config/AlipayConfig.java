@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 /**
  * 支付宝配置
  * @author: S.PKAQ
- * @Datetime: 2018/9/28 22:59
  */
 @Data
 @Component

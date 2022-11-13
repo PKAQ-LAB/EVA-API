@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 import io.nerv.annotation.Code;
-import io.nerv.web.sys.dict.cache.DictCacheHelper;
+import io.nerv.sys.web.dict.cache.DictCacheHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 

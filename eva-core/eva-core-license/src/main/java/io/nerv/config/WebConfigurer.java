@@ -1,7 +1,8 @@
 package io.nerv.config;
 
-import io.nerv.core.license.LicenseCheckInterceptor;
+import io.nerv.common.license.LicenseCheckInterceptor;
 import io.nerv.properties.EvaConfig;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -13,15 +14,17 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.nio.charset.Charset;
 
+/**
+ * @author PKAQ
+ */
 @Configuration
+@RequiredArgsConstructor
 @ConditionalOnProperty(prefix = "eva.license", name = "enable", havingValue = "true")
 public class WebConfigurer implements WebMvcConfigurer {
 
-    @Autowired
-    private LicenseCheckInterceptor licenseCheckInterceptor;
+    private final LicenseCheckInterceptor licenseCheckInterceptor;
 
-    @Autowired
-    private EvaConfig evaConfig;
+    private final EvaConfig evaConfig;
 
     /**
      * 配置license鉴权拦截器
