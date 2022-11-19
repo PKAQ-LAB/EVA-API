@@ -1,7 +1,7 @@
 package io.nerv.config;
 
 import io.swagger.v3.oas.models.media.StringSchema;
-import io.swagger.v3.oas.models.parameters.Parameter;
+import io.swagger.v3.oas.models.parameters.HeaderParameter;
 import org.springdoc.core.customizers.OpenApiCustomiser;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 /**
  * 添加全局的请求头参数
+ * @author PKAQ
  */
 @Component
 public class OpenApiGlobalHeader {
@@ -20,7 +21,7 @@ public class OpenApiGlobalHeader {
                     StringSchema schema = new StringSchema();
                     schema.setEnum(Arrays.asList("api","iphone","ipad","android","win","mac"));
                     operation.addParametersItem(
-                            new Parameter()
+                            new HeaderParameter()
                                     .in("header")
                                     .required(false)
                                     .schema(new StringSchema())
@@ -28,7 +29,7 @@ public class OpenApiGlobalHeader {
                                     .name("deviceID"));
 
                     operation.addParametersItem(
-                            new Parameter()
+                            new HeaderParameter()
                                     .in("header")
                                     .required(true)
                                     .schema(schema)
@@ -36,7 +37,7 @@ public class OpenApiGlobalHeader {
                                     .name("deviceType"));
 
                     operation.addParametersItem(
-                            new Parameter()
+                            new HeaderParameter()
                                     .in("header")
                                     .required(true)
                                     .schema(new StringSchema())

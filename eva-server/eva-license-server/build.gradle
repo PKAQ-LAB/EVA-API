@@ -6,7 +6,7 @@ jar {
     enabled = true
 }
 bootJar {
-    mainClass = 'io.nerv.LicenseBooter'
+    mainClass = 'io.nerv.core.LicenseBooter'
 }
 
 description = """license"""

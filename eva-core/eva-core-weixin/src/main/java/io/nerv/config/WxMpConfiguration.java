@@ -1,14 +1,12 @@
 package io.nerv.config;
 
-import io.nerv.weixin.handler.*;
-import io.nerv.weixin.properties.WxMpProperties;
-import lombok.AllArgsConstructor;
+import io.nerv.core.weixin.handler.*;
+import io.nerv.core.weixin.properties.WxMpProperties;
 import lombok.RequiredArgsConstructor;
 import me.chanjar.weixin.mp.api.WxMpMessageRouter;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.api.impl.WxMpServiceImpl;
 import me.chanjar.weixin.mp.config.impl.WxMpDefaultConfigImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

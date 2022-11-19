@@ -1,9 +1,8 @@
 package io.nerv.config;
 
-import io.nerv.common.license.LicenseCheckInterceptor;
-import io.nerv.properties.EvaConfig;
+import io.nerv.core.license.LicenseCheckInterceptor;
+import io.nerv.core.properties.EvaConfig;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
