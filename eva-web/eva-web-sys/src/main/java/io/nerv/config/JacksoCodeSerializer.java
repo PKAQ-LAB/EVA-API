@@ -20,26 +20,26 @@ import java.util.Objects;
  * @author PKAQ
  */
 @Configuration
-public class JacksoCodeSerialize extends JsonSerializer<String> implements ContextualSerializer {
+public class JacksoCodeSerializer extends JsonSerializer<String> implements ContextualSerializer {
     @Autowired
     DictCacheHelper dictCacheHelper;
 
     private String code;
 
-    public JacksoCodeSerialize() {
+    public JacksoCodeSerializer() {
         this("");
     }
 
-    public JacksoCodeSerialize(String code) {
+    public JacksoCodeSerializer(String code) {
         this.code = code;
     }
 
     @Override
     public void serialize(String value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-        if (StrUtil.isNotBlank(value)){
+        if (StrUtil.isNotBlank(value)) {
             value = dictCacheHelper.get(value).get(value);
         }
-        gen.writeString (value);
+        gen.writeString(value);
     }
 
     @Override
@@ -47,17 +47,17 @@ public class JacksoCodeSerialize extends JsonSerializer<String> implements Conte
         // 为空直接跳过
         if (property != null) {
             // 非 String 类直接跳过
-            if (Objects.equals (property.getType ().getRawClass (), String.class)) {
+            if (Objects.equals(property.getType().getRawClass(), String.class)) {
                 Code codeFilter = property.getAnnotation(Code.class);
                 if (codeFilter == null) {
-                    codeFilter = property.getContextAnnotation (Code.class);
+                    codeFilter = property.getContextAnnotation(Code.class);
                 }
                 // 如果能得到注解，就将注解的 value 传入
                 if (codeFilter != null) {
-                    return new JacksoCodeSerialize(codeFilter.value());
+                    return new JacksoCodeSerializer(codeFilter.value());
                 }
             }
-            return prov.findValueSerializer(property.getType (), property);
+            return prov.findValueSerializer(property.getType(), property);
         }
         return prov.findNullValueSerializer(property);
     }
