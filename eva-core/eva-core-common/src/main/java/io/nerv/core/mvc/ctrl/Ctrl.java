@@ -33,11 +33,11 @@ public abstract class Ctrl {
         return new Response().success(null);
     }
 
-    protected Response exclude(Object data, String[] values){
-        Response response = new Response();
-        //response.exclude(data, values);
-        return response;
-    }
+//    protected Response exclude(Object data, String... values){
+//        Response response = new Response();
+//        response.exclude(data, values);
+//        return response;
+//    }
     /**
      * 返回成功结果
      * @param data
@@ -71,6 +71,16 @@ public abstract class Ctrl {
      */
     protected Response failure(BizCode failCode){
         return new Response().failure(failCode);
+    }
+
+    /**
+     * 返回失败结果
+     * @param failCode
+     * @param args
+     * @return
+     */
+    protected Response failure(BizCode failCode, Object... args){
+        return new Response().failure(failCode, args);
     }
     /**
      * 返回失败结果

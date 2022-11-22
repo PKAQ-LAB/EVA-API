@@ -20,17 +20,17 @@ import java.util.Objects;
  * @author PKAQ
  */
 @Configuration
-public class JacksoCodeSerializer extends JsonSerializer<String> implements ContextualSerializer {
+public class JacksonCodeSerializer extends JsonSerializer<String> implements ContextualSerializer {
     @Autowired
     DictCacheHelper dictCacheHelper;
 
     private String code;
 
-    public JacksoCodeSerializer() {
+    public JacksonCodeSerializer() {
         this("");
     }
 
-    public JacksoCodeSerializer(String code) {
+    public JacksonCodeSerializer(String code) {
         this.code = code;
     }
 
@@ -54,7 +54,7 @@ public class JacksoCodeSerializer extends JsonSerializer<String> implements Cont
                 }
                 // 如果能得到注解，就将注解的 value 传入
                 if (codeFilter != null) {
-                    return new JacksoCodeSerializer(codeFilter.value());
+                    return new JacksonCodeSerializer(codeFilter.value());
                 }
             }
             return prov.findValueSerializer(property.getType(), property);

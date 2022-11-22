@@ -3,6 +3,7 @@ package io.nerv.core.mvc.vo;
 import io.nerv.core.enums.BizCode;
 import io.nerv.core.enums.BizCodeEnum;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,6 +17,7 @@ import java.text.MessageFormat;
 @Data
 @Slf4j
 @Accessors(chain = true)
+@NoArgsConstructor
 public class Response {
 
     private String code;
@@ -25,10 +27,6 @@ public class Response {
     private String message;
 
     private Object data;
-
-    public Response() {
-
-    }
 
     public Response(Boolean success, Object data) {
         this.data = data;
@@ -109,7 +107,7 @@ public class Response {
     public Response success(Object data, BizCode bizCode, Object... args) {
         this.data = data;
         this.success = true;
-        this.message = MessageFormat.format(bizCode.getMsg(), null == args? "":args);
+        this.message = MessageFormat.format(bizCode.getMsg(), null == args ? "" : args);
         this.code = bizCode.getCode();
         return this;
     }

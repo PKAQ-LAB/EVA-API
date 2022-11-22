@@ -2,7 +2,7 @@ package io.nerv.biz.annotation;
 
 import com.fasterxml.jackson.annotation.JacksonAnnotationsInside;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import io.nerv.config.JacksoCodeSerializer;
+import io.nerv.config.JacksonCodeSerializer;
 
 import java.lang.annotation.*;
 
@@ -13,7 +13,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @JacksonAnnotationsInside
-@JsonSerialize(using = JacksoCodeSerializer.class)
+@JsonSerialize(using = JacksonCodeSerializer.class)
 public @interface Code {
     /**
      * 该属性表示在字典中的code值，为空时则表示cede值与属性名一致。

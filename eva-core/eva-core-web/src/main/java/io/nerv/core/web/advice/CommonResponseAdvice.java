@@ -25,13 +25,14 @@ public class CommonResponseAdvice implements ResponseBodyAdvice {
     @Override
     public boolean supports(MethodParameter returnType, Class converterType) {
         return !returnType.getDeclaringClass().getName().contains("OpenApi") &&
-               !returnType.getDeclaringClass().getName().contains("Swagger") &&
-               !returnType.getDeclaringClass().getName().contains("swagger");
+                !returnType.getDeclaringClass().getName().contains("Swagger") &&
+                !returnType.getDeclaringClass().getName().contains("swagger");
     }
 
 
     @Override
-    public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
+    public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
+                                  Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
 
         if (body instanceof Response) {
             return body;

@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 字典管理service
@@ -40,7 +41,7 @@ public class DictService extends StdService<DictMapper, DictEntity> {
     public void init() {
         var dictMap = this.selectDict();
         dictMap.forEach((k, v) ->
-                dictCacheHelper.cachePut(k, v)
+            dictCacheHelper.cachePut(k, v)
         );
     }
 
@@ -51,24 +52,15 @@ public class DictService extends StdService<DictMapper, DictEntity> {
     public Map<String, LinkedHashMap<String, String>> selectDict(){
         List<DictViewEntity> dictList = this.dictViewMapper.selectList(null);
 
-        LinkedHashMap<String, LinkedHashMap<String, String>> cacheMap = new LinkedHashMap<>();
+        LinkedHashMap<String, LinkedHashMap<String, String>> cacheMap  =
+                dictList.stream()
+                        .collect(Collectors.groupingBy(DictViewEntity::getCode,
+                                                       LinkedHashMap::new,
+                                                       Collectors.toMap(DictViewEntity::getKeyName,
+                                                                        DictViewEntity::getKeyValue,
+                                                                        (o, n) -> n,
+                                                                        LinkedHashMap::new)));
 
-        dictList.forEach( item -> {
-            String code = item.getCode();
-
-            String key = item.getKeyName();
-            String value = item.getKeyValue();
-
-            LinkedHashMap<String, String> itemMap = cacheMap.get(code);
-
-            if(null == itemMap){
-                LinkedHashMap<String, String> tempMap = new LinkedHashMap<>(1);
-                tempMap.put(key, value);
-                cacheMap.put(code, tempMap);
-            } else {
-                itemMap.put(key, value);
-            }
-        });
         return cacheMap;
     }
 
@@ -103,7 +95,7 @@ public class DictService extends StdService<DictMapper, DictEntity> {
 
         // 先删除子表 再删除主表
         QueryWrapper<DictItemEntity> deleteWrapper = new QueryWrapper();
-        deleteWrapper.eq("main_id", id);
+        deleteWrapper.eq("MAIN_ID", id);
         this.dictItemMapper.delete(deleteWrapper);
 
         this.mapper.deleteById(id);
@@ -127,7 +119,7 @@ public class DictService extends StdService<DictMapper, DictEntity> {
         conditionEntity = this.mapper.selectOne(new QueryWrapper<>(conditionEntity));
 
         if (StrUtil.isBlank(id)){
-            BizCodeEnum.CODE_EXIST.assertNotNull("角色");
+            BizCodeEnum.CODE_EXIST.assertNotNull("字典");
             // 保存主表
             String mainID = IdWorker.getId()+"";
             dictEntity.setId(mainID);
@@ -149,7 +141,7 @@ public class DictService extends StdService<DictMapper, DictEntity> {
 
                 // 更新子表， 先删除再插入
                 QueryWrapper<DictItemEntity> deleteWrapper = new QueryWrapper();
-                deleteWrapper.eq("main_id", id);
+                deleteWrapper.eq("MAIN_ID", id);
                 this.dictItemMapper.delete(deleteWrapper);
 
                 if (CollUtil.isNotEmpty(dictEntity.getLines())){
@@ -165,7 +157,7 @@ public class DictService extends StdService<DictMapper, DictEntity> {
                     dictCacheHelper.remove(code);
                 }
             } else {
-                throw new BizException(BizCodeEnum.CODE_EXIST, "角色");
+                throw new BizException(BizCodeEnum.CODE_EXIST, "字典");
             }
         }
     }
@@ -188,7 +180,7 @@ public class DictService extends StdService<DictMapper, DictEntity> {
 
     public void init(Map<String, LinkedHashMap<String, String>> dictMap) {
         dictMap.forEach((k, v) ->
-                dictCacheHelper.cachePut(k, v)
+            dictCacheHelper.cachePut(k, v)
         );
     }
 
