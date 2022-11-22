@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 
 /**
  * 处理日期问题
+ * @author PKAQ
  */
 @Configuration
 public class JacksonConfiguration {

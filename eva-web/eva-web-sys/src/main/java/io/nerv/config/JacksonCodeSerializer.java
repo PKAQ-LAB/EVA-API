@@ -1,6 +1,7 @@
 package io.nerv.config;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -9,35 +10,28 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 import io.nerv.biz.annotation.Code;
 import io.nerv.biz.sys.dict.cache.DictCacheHelper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.io.IOException;
 import java.util.Objects;
-
+import java.util.Optional;
 
 /**
  * @author PKAQ
  */
-@Configuration
+@NoArgsConstructor
+@AllArgsConstructor
 public class JacksonCodeSerializer extends JsonSerializer<String> implements ContextualSerializer {
-    @Autowired
-    DictCacheHelper dictCacheHelper;
 
     private String code;
 
-    public JacksonCodeSerializer() {
-        this("");
-    }
-
-    public JacksonCodeSerializer(String code) {
-        this.code = code;
-    }
-
     @Override
     public void serialize(String value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-        if (StrUtil.isNotBlank(value)) {
-            value = dictCacheHelper.get(value).get(value);
+        String key = this.code;
+        DictCacheHelper dictCacheHelper = SpringUtil.getBean(DictCacheHelper.class);
+        if (null != dictCacheHelper && StrUtil.isNotBlank(value)) {
+            value = dictCacheHelper.get(key).getOrDefault(value, value);
         }
         gen.writeString(value);
     }

@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Profile;
  */
 @Configuration
 @Profile({"!prod"})
-public class SysAPIConfiguration {
+public class SysApiConfiguration {
     @Bean
     public GroupedOpenApi sysApiGroup() {
         return GroupedOpenApi.builder()
