@@ -11,17 +11,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * 用户管理单元测试
+ *
  * @author: S.PKAQ
  * @Datetime: 2018/4/18 7:04
  */
-public class UserCtrlTest extends BaseTest{
+public class UserCtrlTest extends BaseTest {
 
     @Test
     public void checkUnique() {
         try {
             String json = "{account: 'admin'}";
             mockMvc.perform(post("/account/checkUnique")
-                    .content(json))
+                            .content(json))
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andExpect(jsonPath("success").isBoolean())
                     .andReturn().getResponse().getContentAsString();
@@ -31,7 +32,7 @@ public class UserCtrlTest extends BaseTest{
     }
 
     @Test
-    @WithMockUser(username="admin",roles={"ADMIN"})
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
     public void listUser() {
         try {
             mockMvc.perform(get("/sys/account/list"))
@@ -47,7 +48,7 @@ public class UserCtrlTest extends BaseTest{
     @Test
     public void getUser() {
         try {
-            mockMvc.perform(get("/account/get/{id}","4e51e4cb519f4df29c39bae540607362"))
+            mockMvc.perform(get("/account/get/{id}", "4e51e4cb519f4df29c39bae540607362"))
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andExpect(jsonPath("success").value(true))
                     .andExpect(jsonPath("data").exists())
@@ -62,7 +63,7 @@ public class UserCtrlTest extends BaseTest{
         try {
             String json = "{account: 'admin',code: 'admin', name: '超级管理员', password: 'admin'}";
             mockMvc.perform(post("/account/save")
-                    .content(json))
+                            .content(json))
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andExpect(jsonPath("success").isBoolean())
                     .andExpect(jsonPath("data").exists())
@@ -77,7 +78,7 @@ public class UserCtrlTest extends BaseTest{
         try {
             String json = "{param: ['edb26e49c7db4072b2db61d54cd420bf']}";
             mockMvc.perform(post("/account/del")
-                    .content(json))
+                            .content(json))
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andExpect(jsonPath("success").isBoolean())
                     .andReturn().getResponse().getContentAsString();
@@ -91,7 +92,7 @@ public class UserCtrlTest extends BaseTest{
         try {
             String json = "{param: ['4e51e4cb519f4df29c39bae540607362'], status: 1}";
             mockMvc.perform(post("/account/lock")
-                    .content(json))
+                            .content(json))
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andExpect(jsonPath("success").isBoolean())
                     .andReturn().getResponse().getContentAsString();

@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 
 /**
  * 实体类基类，用于存放公共属性
+ *
  * @author: S.PKAQ
  */
 @Data
@@ -29,24 +30,24 @@ public abstract class StdEntity implements Entity {
     @TableField(fill = FieldFill.INSERT, jdbcType = JdbcType.VARCHAR)
     private String createBy;
 
-    @Schema(description ="创建时间")
+    @Schema(description = "创建时间")
     @TableField(fill = FieldFill.INSERT)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern= "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime gmtCreate;
 
-    @Schema(description ="修改人")
+    @Schema(description = "修改人")
     @TableField(fill = FieldFill.INSERT_UPDATE, jdbcType = JdbcType.VARCHAR)
     private String modifyBy;
 
-    @Schema(description ="修改时间")
+    @Schema(description = "修改时间")
     @TableField(fill = FieldFill.INSERT_UPDATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat( pattern= "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime gmtModify;
 
-    @Schema(description ="备注")
+    @Schema(description = "备注")
     private String remark;
 }

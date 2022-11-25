@@ -14,6 +14,7 @@ import java.util.List;
 
 /**
  * 组织管理实体类
+ *
  * @author: S.PKAQ
  */
 
@@ -89,7 +90,7 @@ public class OrganizationEntity extends StdEntity {
     }
 
     public List<OrganizationEntity> getChildren() {
-        return children == null || children.size()<1?null:children;
+        return children == null || children.size() < 1 ? null : children;
     }
 
 }

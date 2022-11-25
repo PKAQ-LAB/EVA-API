@@ -20,6 +20,7 @@ import java.util.Locale;
 public class I18NHelper {
     private final MessageSource messageSource;
     private final EvaConfig evaConfig;
+
     /**
      * 获取国际化消息
      *
@@ -29,16 +30,17 @@ public class I18NHelper {
     public Response getMessage(BizCode e) {
 
         String code = e.getCode();
-        String message = evaConfig.isI18n()? this.getMessage(e.toString(), e.getMsg()) : e.getMsg();
+        String message = evaConfig.isI18n() ? this.getMessage(e.toString(), e.getMsg()) : e.getMsg();
 
         if (message == null || message.isEmpty()) {
             message = e.getMsg();
         }
 
-        message = MessageFormat.format("[{0}] {1}",   e.getCode(), message);
+        message = MessageFormat.format("[{0}] {1}", e.getCode(), message);
 
         return new Response().failure(code, message);
     }
+
     /**
      * @param code ：对应messages配置的key.
      * @return
@@ -49,6 +51,7 @@ public class I18NHelper {
 
     /**
      * 获取code值
+     *
      * @param code
      * @param defaultMessage
      * @return
@@ -59,6 +62,7 @@ public class I18NHelper {
 
     /**
      * 获取code值
+     *
      * @param code
      * @param defaultMessage
      * @param locale
@@ -70,6 +74,7 @@ public class I18NHelper {
 
     /**
      * 获取code值
+     *
      * @param code
      * @param locale
      * @return
@@ -89,6 +94,7 @@ public class I18NHelper {
 
     /**
      * 获取code值
+     *
      * @param code
      * @param args
      * @param locale
@@ -97,6 +103,7 @@ public class I18NHelper {
     public String getMessage(String code, Object[] args, Locale locale) {
         return this.getMessage(code, args, "", locale);
     }
+
     /**
      * @param code           ：对应messages配置的key.
      * @param args           : 数组参数.
@@ -108,6 +115,7 @@ public class I18NHelper {
         Locale locale = LocaleContextHolder.getLocale();
         return this.getMessage(code, args, defaultMessage, locale);
     }
+
     /**
      * 指定语言.
      *

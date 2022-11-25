@@ -4,6 +4,7 @@ import java.util.Random;
 
 /**
  * 订单帮助类
+ *
  * @author: S.PKAQ
  */
 public class OrderHelper {
@@ -11,10 +12,11 @@ public class OrderHelper {
 
     /**
      * 生成订单号
+     *
      * @param userCode
      * @return
      */
-    public static String getOrderNumber(String userCode){
+    public static String getOrderNumber(String userCode) {
         long timestamp = System.currentTimeMillis();
         StringBuilder sb = new StringBuilder();
         sb.append(prefix);

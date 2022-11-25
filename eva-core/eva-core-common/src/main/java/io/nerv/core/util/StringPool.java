@@ -6,5 +6,5 @@ public interface StringPool extends StrPool {
     /**
      * 空字符串
      */
-    String EMPTY= "";
+    String EMPTY = "";
 }

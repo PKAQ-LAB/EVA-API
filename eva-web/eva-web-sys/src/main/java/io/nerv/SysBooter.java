@@ -10,6 +10,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 /**
  * 启动类
+ *
  * @author PKAQ
  */
 @Slf4j

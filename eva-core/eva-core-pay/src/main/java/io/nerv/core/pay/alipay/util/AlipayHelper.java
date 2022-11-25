@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * 支付宝工具类
+ *
  * @author: S.PKAQ
  */
 @Slf4j
@@ -26,6 +27,7 @@ public class AlipayHelper {
 
     /**
      * alipay.trade.query(统一收单线下交易查询)
+     *
      * @param out_trade_no
      * @return
      * @throws AlipayApiException
@@ -42,10 +44,11 @@ public class AlipayHelper {
 
     /**
      * 交易预创建（二维码生成）
-     * @param orderNo 订单号 16位唯一
+     *
+     * @param orderNo     订单号 16位唯一
      * @param totalAmount 订单价格
-     * @param subject 标题
-     * @param timeout 付款时间
+     * @param subject     标题
+     * @param timeout     付款时间
      * @throws AlipayApiException
      */
     public String prepay(String orderNo, String totalAmount, String subject, String timeout) throws AlipayApiException {
@@ -65,7 +68,7 @@ public class AlipayHelper {
 
         AlipayTradePrecreateResponse response = alipayClient.execute(request);
 
-        if(response.isSuccess()){
+        if (response.isSuccess()) {
             log.debug("调用成功");
             return response.getQrCode();
         } else {

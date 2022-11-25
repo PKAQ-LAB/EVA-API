@@ -52,21 +52,21 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final TokenUtil tokenUtil;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,HttpServletResponse response,FilterChain chain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
 
         var isvalid = false;
         var inCache = false;
         var cacheToken = evaConfig.getJwt().isPersistence();
 
         String authToken;
-        try{
+        try {
             authToken = tokenUtil.getToken(request);
-        } catch (Exception e){
+        } catch (Exception e) {
             authToken = null;
             logger.warn(e);
         }
 
-        if(null != ServletUtil.getCookie(request, CommonConstant.ACCESS_TOKEN_KEY)){
+        if (null != ServletUtil.getCookie(request, CommonConstant.ACCESS_TOKEN_KEY)) {
             authToken = ServletUtil.getCookie(request, CommonConstant.ACCESS_TOKEN_KEY).getValue();
         }
 
@@ -80,15 +80,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 // 验证token 是否合法
                 isvalid = jwtUtil.valid(authToken);
                 // 验证缓存中是否存在该token
-                if (cacheToken){
+                if (cacheToken) {
                     Object token = cacheTokenUtil.getToken(uid);
 
                     Map<String, Object> jsonObject = null;
-                    if (null != token){
+                    if (null != token) {
                         jsonObject = JsonUtil.parse(String.valueOf(token), Map.class);
                     }
 
-                    if ( null != jsonObject && authToken.equals(jsonObject.get(CommonConstant.CACHE_TOKEN))) {
+                    if (null != jsonObject && authToken.equals(jsonObject.get(CommonConstant.CACHE_TOKEN))) {
                         inCache = true;
                     } else {
                         logger.warn("鉴权失败 缓存中无法找到对应token");
@@ -99,7 +99,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 }
 
                 // token 即将过期 续命
-                if (jwtUtil.isTokenExpiring(authToken)){
+                if (jwtUtil.isTokenExpiring(authToken)) {
                     String newToken = jwtUtil.refreshToken(authToken);
                     // 刷新缓存中的
                     // token放入缓存
@@ -111,10 +111,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     response.setHeader(CommonConstant.ACCESS_TOKEN_KEY, newToken);
                     // 后台设置前台cookie值
                     ServletUtil.addCookie(response, CommonConstant.ACCESS_TOKEN_KEY,
-                                                    newToken,
-                                                    evaConfig.getCookie().getMaxAge(),
-                                                "/",
-                                                    evaConfig.getCookie().getDomain());
+                            newToken,
+                            evaConfig.getCookie().getMaxAge(),
+                            "/",
+                            evaConfig.getCookie().getDomain());
                 }
             } catch (AuthenticationException e) {
                 logger.warn("鉴权失败 Token已过期", e);
@@ -122,7 +122,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 // 清除cookie
                 // this.clearCookie(response);
 
-                try(PrintWriter printWriter = response.getWriter()){
+                try (PrintWriter printWriter = response.getWriter()) {
                     response.setCharacterEncoding("UTF-8");
                     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
@@ -145,14 +145,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             logger.info(SecurityContextHolder.getContext().getAuthentication());
 //            if (StrUtil.isNotBlank(uid) && SecurityContextHolder.getContext().getAuthentication() == null) {
-            if (StrUtil.isNotBlank(account) ) {
+            if (StrUtil.isNotBlank(account)) {
                 logger.debug("io.nerv.security context was null, so authorizing user");
 
                 // 从redis中 根据用户id获取用户权限列表
                 UserDetails userDetails;
-                try{
+                try {
                     userDetails = this.userDetailsService.loadUserByUsername(account);
-                } catch(UsernameNotFoundException e){
+                } catch (UsernameNotFoundException e) {
                     response.setCharacterEncoding("UTF-8");
                     response.setContentType("application/json");
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "您的登录已过期, 请重新登录.");
@@ -162,12 +162,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 logger.info("authenticated user " + account + ", setting io.nerv.security context");
                 // 验证通过 将用户信息存入 threadlocal
                 String[] roles = userDetails.getAuthorities().stream()
-                                            .map(GrantedAuthority::getAuthority)
-                                            .toArray(String[]::new);
+                        .map(GrantedAuthority::getAuthority)
+                        .toArray(String[]::new);
 
                 ThreadUser currentUser = new ThreadUser().setUserId(uid)
-                                                         .setUserName(account)
-                                                         .setRoles(roles);
+                        .setUserName(account)
+                        .setRoles(roles);
                 ThreadUserHelper.setCurrentUser(currentUser);
 
 //                将用户信息设置到security 上下文中
@@ -183,9 +183,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     /**
      * 清除cookie
+     *
      * @param response
      */
-    public void clearCookie(HttpServletResponse response){
+    public void clearCookie(HttpServletResponse response) {
         ServletUtil.addCookie(response,
                 CommonConstant.ACCESS_TOKEN_KEY,
                 null,

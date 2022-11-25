@@ -9,6 +9,7 @@ import java.util.List;
 
 /**
  * 字典管理mapper
+ *
  * @author S.PKAQ
  */
 @Mapper
@@ -17,12 +18,14 @@ public interface StdTreeMapper<T> extends BaseMapper<T> {
 
     /**
      * 更改状态
+     *
      * @param entity
      */
     void changeStatus(T entity);
 
     /**
      * 刷新子节点的上级节点名称
+     *
      * @param name
      * @param id
      */
@@ -30,6 +33,7 @@ public interface StdTreeMapper<T> extends BaseMapper<T> {
 
     /**
      * 刷新子节点的路径
+     *
      * @param entity
      * @param origin
      */
@@ -37,6 +41,7 @@ public interface StdTreeMapper<T> extends BaseMapper<T> {
 
     /**
      * 子节点个数
+     *
      * @param pid
      * @return
      */
@@ -44,25 +49,28 @@ public interface StdTreeMapper<T> extends BaseMapper<T> {
 
     /**
      * 查询子节点
+     *
      * @param id
-     * @return
      * @param <T>
+     * @return
      */
     <T extends StdTreeEntity> T listChildren(String id);
 
     /**
      * 根据id查询父节点
+     *
      * @param orgId
-     * @return
      * @param <T>
+     * @return
      */
     <T extends StdTreeEntity> T getParentById(String orgId);
 
     /**
      * 加载树结构
+     *
      * @param entity
-     * @return
      * @param <T>
+     * @return
      */
     <T extends StdTreeEntity> List<T> listTree(T entity);
 }

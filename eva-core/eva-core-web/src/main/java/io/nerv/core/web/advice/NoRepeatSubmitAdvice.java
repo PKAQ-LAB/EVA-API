@@ -5,6 +5,7 @@ import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.exception.BizException;
 import io.nerv.core.web.util.TokenUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -17,10 +18,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * 防止重复提交切入点
+ *
  * @author PKAQ
  */
 @Aspect

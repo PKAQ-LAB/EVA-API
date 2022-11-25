@@ -103,11 +103,11 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
 
         bizLogSupporter.save(bizLogEntity);
 
-        try(PrintWriter printWriter = httpServletResponse.getWriter()){
+        try (PrintWriter printWriter = httpServletResponse.getWriter()) {
             printWriter.write(mapper.writeValueAsString(
-                new Response()
-                        .success(map, BizCodeEnum.LOGIN_SUCCESS_WELCOME, user.getName())
-                )
+                            new Response()
+                                    .success(map, BizCodeEnum.LOGIN_SUCCESS_WELCOME, user.getName())
+                    )
             );
             printWriter.flush();
         }

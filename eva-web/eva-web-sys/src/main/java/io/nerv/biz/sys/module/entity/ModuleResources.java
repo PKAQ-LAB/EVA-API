@@ -11,13 +11,14 @@ import org.apache.ibatis.type.Alias;
 
 /**
  * 模块管理
+ *
  * @author : PKAQ
  */
 @Data
 @Alias("moduleResource")
 @TableName("sys_module_resources")
 @Schema(title = "模块资源管理")
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode(callSuper = false)
 public class ModuleResources implements Entity {
     private static final long serialVersionUID = 1L;
 

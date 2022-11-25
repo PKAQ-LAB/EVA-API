@@ -7,6 +7,7 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /**
  * 是否启用了支付宝支付
+ *
  * @author: S.PKAQ
  */
 public class AlipayEnabled implements Condition {
@@ -14,15 +15,15 @@ public class AlipayEnabled implements Condition {
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
         String isEnabled = context.getEnvironment().getProperty("pay.alipay.enabled");
         //  是否启用并且配置了 相关的key
-        if ("true".equalsIgnoreCase(isEnabled)){
+        if ("true".equalsIgnoreCase(isEnabled)) {
 
             String appId = context.getEnvironment().getProperty("pay.alipay.app_id");
             String appPrivateKey = context.getEnvironment().getProperty("pay.alipay.app_private_key");
             String alipayPublicKey = context.getEnvironment().getProperty("pay.alipay.alipay_public_key");
             String signType = context.getEnvironment().getProperty("pay.alipay.sign_type");
 
-            return StrUtil.isNotBlank(appId) &&  !StrUtil.isNotBlank(appPrivateKey) &&
-                   !StrUtil.isNotBlank(alipayPublicKey) &&  !StrUtil.isNotBlank(signType);
+            return StrUtil.isNotBlank(appId) && !StrUtil.isNotBlank(appPrivateKey) &&
+                    !StrUtil.isNotBlank(alipayPublicKey) && !StrUtil.isNotBlank(signType);
         }
         return false;
     }

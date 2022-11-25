@@ -2,6 +2,7 @@ package io.nerv.core.web.log;
 
 import cn.hutool.core.exceptions.ExceptionUtil;
 import io.nerv.core.web.util.IpUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -14,11 +15,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 
 /**
  * AOP记录web日志
+ *
  * @author PKAQ
  */
 @Aspect
@@ -36,13 +37,14 @@ public class WebLogAdvice {
      * ~ .. 匹配任意数量的参数.
      */
     @Pointcut("@within(org.springframework.web.bind.annotation.RestController)" +
-              "@within(org.springframework.stereotype.Controller)")
-    public void webLog(){}
+            "@within(org.springframework.stereotype.Controller)")
+    public void webLog() {
+    }
 
-    private void print(JoinPoint joinPoint){
+    private void print(JoinPoint joinPoint) {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 
-        if(null != attributes){
+        if (null != attributes) {
             HttpServletRequest request = attributes.getRequest();
             var ip = IpUtil.getIPAddress(request);
             var className = joinPoint.getTarget().getClass().getName();
@@ -60,8 +62,9 @@ public class WebLogAdvice {
             log.debug("ARGS : " + Arrays.toString(joinPoint.getArgs()));
         }
     }
+
     @Around("webLog()")
-    public Object  around(ProceedingJoinPoint joinPoint) throws Throwable {
+    public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
 
         //记录开始时间
         long beginTime = System.currentTimeMillis();
@@ -79,13 +82,15 @@ public class WebLogAdvice {
         return result;
         //记录日志
     }
+
     /**
      * 记录异常日志
+     *
      * @param joinPoint
      * @param ex
      */
-    @AfterThrowing(pointcut = "webLog()", throwing="ex")
-    public void doWhenThrowing(JoinPoint joinPoint,Throwable ex){
+    @AfterThrowing(pointcut = "webLog()", throwing = "ex")
+    public void doWhenThrowing(JoinPoint joinPoint, Throwable ex) {
         String jsontStack = ExceptionUtil.stacktraceToString(ex);
         log.error(jsontStack);
         this.print(joinPoint);

@@ -8,7 +8,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum StatusEnumm implements BizCode{
+public enum StatusEnumm implements BizCode {
     /**
      * 可用
      */

@@ -1,51 +1,58 @@
-{"groups": [
-  {
-    "name": "pay.alipay",
-    "type": "io.nerv.config.AlipayConfig"
-  }
-],"properties": [
-  {
-    "name": "pay.alipay.enabled",
-    "type": "java.lang.Boolean",
-    "defaultValue": false,
-    "sourceType": "io.nerv.config.AlipayConfig"
-  },
-  {
-    "name": "pay.alipay.url",
-    "type": "java.lang.String",
-    "sourceType": "io.nerv.config.AlipayConfig",
-    "defaultValue": "https://openapi.alipay.com/gateway.do"
-  },
-  {
-    "name": "pay.alipay.app_id",
-    "type": "java.lang.String",
-    "defaultValue": "",
-    "sourceType": "io.nerv.config.AlipayConfig"
-  },
-  {
-    "name": "pay.alipay.app_private_key",
-    "type": "java.lang.String",
-    "defaultValue": "",
-    "sourceType": "io.nerv.config.AlipayConfig"
-  },{
-    "name": "pay.alipay.charset",
-    "type": "java.lang.String",
-    "defaultValue": "UTF-8",
-    "sourceType": "io.nerv.config.AlipayConfig"
-  },{
-    "name": "pay.alipay.alipay_public_key",
-    "type": "java.lang.String",
-    "defaultValue": "",
-    "sourceType": "io.nerv.config.AlipayConfig"
-  },{
-    "name": "pay.alipay.sign_type",
-    "type": "java.lang.String",
-    "defaultValue": "RSA2",
-    "sourceType": "io.nerv.config.AlipayConfig"
-  },{
-    "name": "pay.alipay.notify_url",
-    "type": "java.lang.String",
-    "defaultValue": "",
-    "sourceType": "io.nerv.config.AlipayConfig"
-  }
-]}
+{
+  "groups": [
+    {
+      "name": "pay.alipay",
+      "type": "io.nerv.config.AlipayConfig"
+    }
+  ],
+  "properties": [
+    {
+      "name": "pay.alipay.enabled",
+      "type": "java.lang.Boolean",
+      "defaultValue": false,
+      "sourceType": "io.nerv.config.AlipayConfig"
+    },
+    {
+      "name": "pay.alipay.url",
+      "type": "java.lang.String",
+      "sourceType": "io.nerv.config.AlipayConfig",
+      "defaultValue": "https://openapi.alipay.com/gateway.do"
+    },
+    {
+      "name": "pay.alipay.app_id",
+      "type": "java.lang.String",
+      "defaultValue": "",
+      "sourceType": "io.nerv.config.AlipayConfig"
+    },
+    {
+      "name": "pay.alipay.app_private_key",
+      "type": "java.lang.String",
+      "defaultValue": "",
+      "sourceType": "io.nerv.config.AlipayConfig"
+    },
+    {
+      "name": "pay.alipay.charset",
+      "type": "java.lang.String",
+      "defaultValue": "UTF-8",
+      "sourceType": "io.nerv.config.AlipayConfig"
+    },
+    {
+      "name": "pay.alipay.alipay_public_key",
+      "type": "java.lang.String",
+      "defaultValue": "",
+      "sourceType": "io.nerv.config.AlipayConfig"
+    },
+    {
+      "name": "pay.alipay.sign_type",
+      "type": "java.lang.String",
+      "defaultValue": "RSA2",
+      "sourceType": "io.nerv.config.AlipayConfig"
+    },
+    {
+      "name": "pay.alipay.notify_url",
+      "type": "java.lang.String",
+      "defaultValue": "",
+      "sourceType": "io.nerv.config.AlipayConfig"
+    }
+  ]
+}

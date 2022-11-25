@@ -8,7 +8,7 @@ services:
     restart: always
     environment:
       #设置root帐号密码
-      MYSQL_ROOT_PASSWORD: 7u8i9o0p 
+      MYSQL_ROOT_PASSWORD: 7u8i9o0p
     ports:
       - 12306:3306
     privileged: true
@@ -29,7 +29,7 @@ services:
     restart: always
     volumes:
       - /etc/localtime:/etc/localtime:ro
-     #数据文件挂载
+      #数据文件挂载
       - /opt/data/redis/data:/data
       - /opt/data/redis/redis.conf:/usr/local/etc/redis/redis.conf
     ports:
@@ -43,11 +43,11 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       #配置文件挂载
-      - /opt/data/nginx/nginx.conf:/etc/nginx/nginx.conf 
+      - /opt/data/nginx/nginx.conf:/etc/nginx/nginx.conf
       #静态资源根目录挂载
       - /opt/data/nginx/www:/usr/share/nginx/html
       #日志文件挂载
-      - /opt/data/nginx/log:/var/log/nginx 
+      - /opt/data/nginx/log:/var/log/nginx
     ports:
       - 80:80
   # 图片服务器
@@ -58,10 +58,10 @@ services:
     privileged: true
     restart: always
     environment:
-        MINIO_ACCESS_KEY: root
-        MINIO_SECRET_KEY: 7u8i9o0p
+      MINIO_ACCESS_KEY: root
+      MINIO_SECRET_KEY: 7u8i9o0p
     volumes:
       - /opt/data/minio/config:/root/.minio
-      - /opt/data/minio:/data 
-    ports: 
+      - /opt/data/minio:/data
+    ports:
       - 9000:9000

@@ -17,20 +17,36 @@ import org.apache.ibatis.type.Alias;
 public class ErrorlogEntity {
     @TableId(type = IdType.ASSIGN_UUID)
     private String id;
-    /** 操作人 **/
+    /**
+     * 操作人
+     **/
     private String requestTime;
-    /** 操作人 **/
+    /**
+     * 操作人
+     **/
     private String ip;
-    /** 操作人 **/
+    /**
+     * 操作人
+     **/
     private String spendTime;
-    /** 操作人 **/
+    /**
+     * 操作人
+     **/
     private String className;
-    /** 操作人 **/
+    /**
+     * 操作人
+     **/
     private String method;
-    /** 操作人 **/
+    /**
+     * 操作人
+     **/
     private String params;
-    /** 操作人 **/
+    /**
+     * 操作人
+     **/
     private String exDesc;
-    /** 操作人 **/
+    /**
+     * 操作人
+     **/
     private String loginUser;
 }

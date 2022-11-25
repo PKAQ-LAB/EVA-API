@@ -33,11 +33,11 @@ public class RedisConfiguration {
     private final EvaConfig evaConfig;
 
     /**
+     * @return 返回类型
      * @Description: 防止redis入库序列化乱码的问题
-     * @return     返回类型
      */
     @Bean
-    public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory){
+    public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         log.debug("初始化 Redis 緩存 --- --- --- -->");
         RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
@@ -53,9 +53,9 @@ public class RedisConfiguration {
     @Bean
     public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
         log.debug("初始化 redis 緩存 --- --- --- -->");
-        RedisCacheConfiguration defaultCache = buildCache(60*30L);
+        RedisCacheConfiguration defaultCache = buildCache(60 * 30L);
 
-        if (null != evaConfig.getCache() && null != evaConfig.getCache().getConfig()){
+        if (null != evaConfig.getCache() && null != evaConfig.getCache().getConfig()) {
             Map<String, RedisCacheConfiguration> cacheMap = new HashMap(evaConfig.getCache().getConfig().size());
 
             evaConfig.getCache().getConfig().stream().forEach(item -> {
@@ -68,7 +68,7 @@ public class RedisConfiguration {
                     .withInitialCacheConfigurations(cacheMap)
                     .build();
         } else {
-            return  RedisCacheManager.builder(RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory))
+            return RedisCacheManager.builder(RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory))
                     .cacheDefaults(defaultCache)
                     .build();
         }
@@ -81,7 +81,7 @@ public class RedisConfiguration {
      * 我们需要将应用连接到它并使用某种“语言”进行交互，因此我们还需要一个连接工厂以及一个 Spring 和 Redis 对话要用的
      * RedisTemplate， 这些都是 Redis 缓存所必需的配置，把它们都放在自定义的 CachingConfigurerSupport 中
      */
-    private RedisCacheConfiguration buildCache(long secondsToExpire ) {
+    private RedisCacheConfiguration buildCache(long secondsToExpire) {
         RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig();
         //设置缓存的默认超时时间：30分钟
         redisCacheConfiguration = redisCacheConfiguration.entryTtl(Duration.ofMillis(secondsToExpire))

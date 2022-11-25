@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 /**
  * 用户管理mapper
+ *
  * @author: S.PKAQ
  * @Datetime: 2018/3/29 23:57
  */
@@ -19,6 +20,7 @@ public interface UserMapper extends BaseMapper<UserEntity> {
 
     /**
      * 查询用户信息
+     *
      * @param user
      * @param page
      * @return
@@ -28,6 +30,7 @@ public interface UserMapper extends BaseMapper<UserEntity> {
 
     /**
      * 根据用户account 获取包含权限列表的用户信息
+     *
      * @return
      */
     @Ignore
@@ -35,6 +38,7 @@ public interface UserMapper extends BaseMapper<UserEntity> {
 
     /**
      * 根据用户userId 获取包含权限列表 菜单列表的用户信息
+     *
      * @param userId
      * @return
      */

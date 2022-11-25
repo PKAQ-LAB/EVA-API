@@ -24,8 +24,8 @@ public class WxRedirectController {
 
     @GetMapping("/getUserInfo")
     @Operation(description = "获取用户微信账号")
-    public Response getUserInfo(@Parameter(name ="code", description = "用户code")
-                                        String code) {
+    public Response getUserInfo(@Parameter(name = "code", description = "用户code")
+                                String code) {
 
         WxOAuth2UserInfo wxMpUser = null;
         try {

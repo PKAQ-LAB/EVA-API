@@ -19,7 +19,7 @@ public class AlipayFactory {
     private final AlipayConfig alipayConfig;
 
     @Bean
-    public AlipayClient getAlipayClient(){
+    public AlipayClient getAlipayClient() {
         return new DefaultAlipayClient(alipayConfig.getURL(),
                 alipayConfig.getAPP_ID(),
                 alipayConfig.getAPP_PRIVATE_KEY(),

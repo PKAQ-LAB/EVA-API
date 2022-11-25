@@ -1,38 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="io.nerv.biz.sys.dict.mapper.DictMapper">
-  <resultMap id="BaseResultMap" type="dict" extends="common.resultMap">
-    <result column="CODE" jdbcType="VARCHAR" property="code" />
-    <result column="NAME" jdbcType="VARCHAR" property="name" />
-    <result column="PARENT_ID" jdbcType="VARCHAR" property="parentId" />
-    <result column="STATUS" jdbcType="VARCHAR" property="status" />
-  </resultMap>
-  <!-- 树形数据 -->
-  <resultMap id="TreeResultMap" type="dict" extends="BaseResultMap">
-    <collection property="children"  column="{id=id}" select="listChildren" />
-  </resultMap>
-  <!-- 带子表数据查询 -->
-  <resultMap id="LineResultMap" type="dict" extends="BaseResultMap">
-      <collection property="lines"  ofType="dictItem" column="{mainId=id}"
-                  select="io.nerv.biz.sys.dict.mapper.DictItemMapper.listItemByMainId"/>
-  </resultMap>
-  <sql id="column">
-      m.id,m.code,m.name,m.parent_ID,m.remark,
+    <resultMap id="BaseResultMap" type="dict" extends="common.resultMap">
+        <result column="CODE" jdbcType="VARCHAR" property="code"/>
+        <result column="NAME" jdbcType="VARCHAR" property="name"/>
+        <result column="PARENT_ID" jdbcType="VARCHAR" property="parentId"/>
+        <result column="STATUS" jdbcType="VARCHAR" property="status"/>
+    </resultMap>
+    <!-- 树形数据 -->
+    <resultMap id="TreeResultMap" type="dict" extends="BaseResultMap">
+        <collection property="children" column="{id=id}" select="listChildren"/>
+    </resultMap>
+    <!-- 带子表数据查询 -->
+    <resultMap id="LineResultMap" type="dict" extends="BaseResultMap">
+        <collection property="lines" ofType="dictItem" column="{mainId=id}"
+                    select="io.nerv.biz.sys.dict.mapper.DictItemMapper.listItemByMainId"/>
+    </resultMap>
+    <sql id="column">
+        m
+        .
+        id
+        ,m.code,m.name,m.parent_ID,m.remark,
       m2.id itemId ,m2.main_id,m2.key_name,m2.key_value,m2.orders,m2.status,m2.remark
-  </sql>
-  <select id="getDict" resultMap="LineResultMap">
-      select * from sys_dict m
-      where m.id = #{id}
-  </select>
-  <!--根据条件查询菜单数据-->
-  <select id="listDict" resultMap="TreeResultMap">
-    select * from sys_dict
-    <where>
-      parent_ID = '0' or parent_ID is null and status != '0001'
-    </where>
-  </select>
-  <!-- 根据parentId查询子节点数据-->
-  <select id="listChildren" resultMap="BaseResultMap">
-    select * from sys_dict where parent_ID = #{id}  and status != '0001'
-  </select>
+    </sql>
+    <select id="getDict" resultMap="LineResultMap">
+        select *
+        from sys_dict m
+        where m.id = #{id}
+    </select>
+    <!--根据条件查询菜单数据-->
+    <select id="listDict" resultMap="TreeResultMap">
+        select * from sys_dict
+        <where>
+            parent_ID = '0' or parent_ID is null and status != '0001'
+        </where>
+    </select>
+    <!-- 根据parentId查询子节点数据-->
+    <select id="listChildren" resultMap="BaseResultMap">
+        select *
+        from sys_dict
+        where parent_ID = #{id}
+          and status != '0001'
+    </select>
 </mapper>

@@ -11,6 +11,7 @@ import java.io.IOException;
 
 /**
  * websocket心跳检测
+ *
  * @author PKAQ
  */
 @Slf4j
@@ -22,11 +23,11 @@ public class HeartbeatTask {
     @Scheduled(cron = "0/2 * * * * *")
     public void run() {
         try {
-            if (WebSocketSessionManager.list().size() > 0){
-                webSocketService.broadcastMsg("HeartBeat:"+System.currentTimeMillis()+"");
+            if (WebSocketSessionManager.list().size() > 0) {
+                webSocketService.broadcastMsg("HeartBeat:" + System.currentTimeMillis() + "");
             }
         } catch (IOException e) {
-           log.error("websocket 心跳检测异常");
+            log.error("websocket 心跳检测异常");
         }
     }
 }

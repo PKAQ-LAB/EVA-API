@@ -26,14 +26,14 @@ public class OnlineUserCtrl {
 
     @GetMapping("/list")
     @Operation(description = "获取在线用户列表")
-    public Response list(@Parameter(name ="uid", description = "查询固定用户") String account){
+    public Response list(@Parameter(name = "uid", description = "查询固定用户") String account) {
         Response response = new Response();
-        if (StrUtil.isNotBlank(account)){
+        if (StrUtil.isNotBlank(account)) {
             Object obj = this.tokenUtil.getToken(account);
 
             List list = new ArrayList(1);
 
-            if (null != obj){
+            if (null != obj) {
                 list.add(obj);
             }
 
@@ -46,7 +46,7 @@ public class OnlineUserCtrl {
 
     @GetMapping("/offline")
     @Operation(description = "踢掉一个用户")
-    public Response offlineUser(@Parameter(name ="uid", description = "要踢掉的用户id")  String uid){
+    public Response offlineUser(@Parameter(name = "uid", description = "要踢掉的用户id") String uid) {
         this.tokenUtil.removeToken(uid);
         return new Response().success();
     }

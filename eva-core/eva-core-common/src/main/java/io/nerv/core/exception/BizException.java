@@ -7,17 +7,18 @@ import java.text.MessageFormat;
 
 /**
  * 关于业务的异常
+ *
  * @author PKAQ
  */
 @Getter
-public class BizException extends RuntimeException{
+public class BizException extends RuntimeException {
 
     /**
      * 消息枚举
      */
     private BizCode bizCode;
 
-    public BizException(String msg){
+    public BizException(String msg) {
         super(msg);
     }
 

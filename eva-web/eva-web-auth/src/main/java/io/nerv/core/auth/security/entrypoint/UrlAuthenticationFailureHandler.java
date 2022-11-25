@@ -17,6 +17,7 @@ import java.io.PrintWriter;
 
 /**
  * 自定义登录失败处理器
+ *
  * @author PKAQ
  */
 @Component
@@ -32,15 +33,15 @@ public class UrlAuthenticationFailureHandler implements AuthenticationFailureHan
 
         BizCode bizcode = BizCodeEnum.LOGIN_FAILED;
 
-        if (e instanceof BadCredentialsException){
+        if (e instanceof BadCredentialsException) {
             bizcode = BizCodeEnum.ACCOUNT_OR_PWD_ERROR;
         }
 
 
-        try(PrintWriter printWriter = httpServletResponse.getWriter()){
+        try (PrintWriter printWriter = httpServletResponse.getWriter()) {
             printWriter.write(JsonUtil.toJson(
-                                new Response().failure(bizcode)
-                             ));
+                    new Response().failure(bizcode)
+            ));
             printWriter.flush();
         }
     }

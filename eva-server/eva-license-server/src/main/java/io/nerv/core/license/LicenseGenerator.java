@@ -50,9 +50,9 @@ public class LicenseGenerator {
         // 参数 4 密钥库存储密码;
         // 参数 5 密钥库密码
         KeyStoreParam privateStoreParam = new DefaultKeyStoreParam(clazz, licenseConfig.getPriv().getPath(),
-                                                                          licenseConfig.getPriv().getKeyAlias(),
-                                                                          licenseConfig.getPriv().getKeystorePwd(),
-                                                                          licenseConfig.getPriv().getKeyPwd());
+                licenseConfig.getPriv().getKeyAlias(),
+                licenseConfig.getPriv().getKeystorePwd(),
+                licenseConfig.getPriv().getKeyPwd());
         // 返回生成证书时需要的参数
         return new DefaultLicenseParam(licenseConfig.getSubject(), preferences, privateStoreParam, cipherParam);
     }
@@ -72,9 +72,9 @@ public class LicenseGenerator {
         content.setConsumerType(licenseConfig.getConsumerType());
         content.setHolder(DEFAULT_HOLDERAND_ISSUER);
         content.setIssuer(DEFAULT_HOLDERAND_ISSUER);
-        content.setIssued( DateUtil.parseDateTime(licenseConfig.getIssuedTime()) );
-        content.setNotBefore( DateUtil.parseDateTime(licenseConfig.getNotBefore()) );
-        content.setNotAfter( DateUtil.parseDateTime(licenseConfig.getNotAfter()) );
+        content.setIssued(DateUtil.parseDateTime(licenseConfig.getIssuedTime()));
+        content.setNotBefore(DateUtil.parseDateTime(licenseConfig.getNotBefore()));
+        content.setNotAfter(DateUtil.parseDateTime(licenseConfig.getNotAfter()));
         content.setInfo(licenseConfig.getInfo());
         // 扩展字段
         Map<String, String> map = new HashMap<>(4);

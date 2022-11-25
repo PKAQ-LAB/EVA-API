@@ -19,6 +19,7 @@ import java.util.List;
 
 /**
  * 用户管理实体类
+ *
  * @author: S.PKAQ
  * @Datetime: 2018/3/29 23:58
  */

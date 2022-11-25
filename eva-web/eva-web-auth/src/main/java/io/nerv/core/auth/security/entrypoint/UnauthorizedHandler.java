@@ -16,6 +16,7 @@ import java.io.Serializable;
 
 /**
  * 鉴权失败时的响应
+ *
  * @author: S.PKAQ
  */
 @Component
@@ -23,8 +24,9 @@ public class UnauthorizedHandler implements AuthenticationEntryPoint, Serializab
 
     /**
      * 当访问的资源没有权限，会调用这里
-     * @param request that resulted in an <code>AuthenticationException</code>
-     * @param response so that the user agent can begin authentication
+     *
+     * @param request       that resulted in an <code>AuthenticationException</code>
+     * @param response      so that the user agent can begin authentication
      * @param authException that caused the invocation
      * @throws IOException
      */
@@ -38,7 +40,7 @@ public class UnauthorizedHandler implements AuthenticationEntryPoint, Serializab
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_OK);
 
-        try(PrintWriter printWriter = response.getWriter()){
+        try (PrintWriter printWriter = response.getWriter()) {
             printWriter.write(JsonUtil.toJson(
                     new Response()
                             .failure(BizCodeEnum.PERMISSION_DENY)));

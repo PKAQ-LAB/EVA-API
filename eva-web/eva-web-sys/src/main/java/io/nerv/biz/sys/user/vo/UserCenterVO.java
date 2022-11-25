@@ -13,7 +13,7 @@ import java.util.Map;
  * @Datetime: 2018/10/28 18:08
  */
 @Data
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode(callSuper = false)
 public class UserCenterVO extends UserEntity {
 
     @Schema(description = "权限分组名称")

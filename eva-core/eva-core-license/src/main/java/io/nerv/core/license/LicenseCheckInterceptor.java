@@ -3,18 +3,19 @@ package io.nerv.core.license;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.vo.Response;
 import io.nerv.core.util.json.JsonUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 
 /**
  * license 验证拦截器
+ *
  * @author PKAQ
  */
 @Component
@@ -30,14 +31,14 @@ public class LicenseCheckInterceptor implements AsyncHandlerInterceptor {
         //校验证书是否有效
         boolean verifyResult = licenseVerify.vertify();
 
-        if(verifyResult){
+        if (verifyResult) {
             return true;
-        }else{
+        } else {
             response.setCharacterEncoding("UTF-8");
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setStatus(HttpServletResponse.SC_OK);
 
-            try(PrintWriter printWriter = response.getWriter()){
+            try (PrintWriter printWriter = response.getWriter()) {
                 printWriter.write(JsonUtil.toJson(
                         new Response()
                                 .failure(BizCodeEnum.LICENSE_LICENSEHASEXPIRED)));

@@ -6,6 +6,7 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /**
  * 缓存启用条件， 是否启用redis
+ *
  * @author: S.PKAQ
  */
 public class RedisCacheCondition implements Condition {

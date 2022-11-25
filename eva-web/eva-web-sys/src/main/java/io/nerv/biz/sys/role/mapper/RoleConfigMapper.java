@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 /**
  * 角色参数权限关系mapper
+ *
  * @author: S.PKAQ
  */
 @Mapper

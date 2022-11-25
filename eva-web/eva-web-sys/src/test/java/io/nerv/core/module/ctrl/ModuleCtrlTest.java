@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * 模块管理测试类
+ *
  * @author: S.PKAQ
  * @Datetime: 2018/4/19 23:40
  */
@@ -59,7 +60,7 @@ public class ModuleCtrlTest extends BaseTest {
         try {
             String json = "{param:['34d31e857b7d4a4f94aba2f7061b6058']}";
             mockMvc.perform(post("/module/del")
-                    .content(json))
+                            .content(json))
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andExpect(jsonPath("success").value(true))
                     .andReturn().getResponse().getContentAsString();
@@ -73,7 +74,7 @@ public class ModuleCtrlTest extends BaseTest {
         try {
             String json = "{name: 'junit module code', status: '0000'}";
             mockMvc.perform(post("/module/edit")
-                    .content(json))
+                            .content(json))
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andExpect(jsonPath("success").value(true))
                     .andExpect(jsonPath("data").exists())
@@ -89,7 +90,7 @@ public class ModuleCtrlTest extends BaseTest {
             String json = "[{id: '23', orders: 10010}," +
                     "{id: '24', orders: 10086}]";
             mockMvc.perform(post("/module/sort")
-                    .content(json))
+                            .content(json))
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andExpect(jsonPath("success").value(true))
                     .andExpect(jsonPath("data").exists())
@@ -104,7 +105,7 @@ public class ModuleCtrlTest extends BaseTest {
         try {
             String json = "{id:'24',status: '0000'}";
             mockMvc.perform(post("/module/switchStatus")
-                     .content(json))
+                            .content(json))
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andExpect(jsonPath("success").value(true))
                     .andReturn().getResponse().getContentAsString();

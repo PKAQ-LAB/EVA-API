@@ -17,6 +17,7 @@ import java.lang.annotation.*;
 public @interface Code {
     /**
      * 该属性表示在字典中的code值，为空时则表示cede值与属性名一致。
+     *
      * @return
      */
     String value() default "";

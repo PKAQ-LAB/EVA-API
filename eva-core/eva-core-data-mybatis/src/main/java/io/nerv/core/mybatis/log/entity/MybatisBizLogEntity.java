@@ -10,6 +10,7 @@ import org.apache.ibatis.type.Alias;
 
 /**
  * 业务日志 mybatis实体类
+ *
  * @author: S.PKAQ
  */
 @Data

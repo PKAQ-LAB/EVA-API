@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * JWT鉴权
+ *
  * @author: S.PKAQ
  */
 @Slf4j
@@ -28,7 +29,7 @@ public class AuthCtrl {
 
     @GetMapping("/fetchMenus")
     @Operation(summary = "获取当前登录用户的信息(菜单.权限.消息)")
-    public Response fetchMenus()  {
+    public Response fetchMenus() {
 
         try {
             final var userId = ThreadUserHelper.getUserId();
@@ -41,7 +42,7 @@ public class AuthCtrl {
 
     @GetMapping("/fetchDicts")
     @Operation(summary = "获取字典信息")
-    public Response fetchDicts()  {
+    public Response fetchDicts() {
         return new Response().success(dictService.fetchDicts());
     }
 }

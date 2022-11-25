@@ -10,15 +10,17 @@ import io.nerv.core.mvc.vo.Response;
 import io.nerv.core.mvc.vo.SingleArray;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 /**
  * 角色管理
+ *
  * @author: S.PKAQ
  */
-@Tag( name = "角色管理")
+@Tag(name = "角色管理")
 @RestController
 @RequestMapping("/sys/role")
 @RequiredArgsConstructor
@@ -27,16 +29,16 @@ public class RoleCtrl extends Ctrl {
 
     @PostMapping("/checkUnique")
     @Operation(summary = "校验角色编码唯一性")
-    public Response checkUnique(@Parameter(name ="roleEsaveModulentity", description = "要进行校验的参数")
-                                @RequestBody RoleEntity role){
-        boolean exist = (null != role && StrUtil.isNotBlank(role.getCode()))? this.service.checkUnique(role) : false;
-        return exist? failure(BizCodeEnum.ROLE_CODE_EXIST): success();
+    public Response checkUnique(@Parameter(name = "roleEsaveModulentity", description = "要进行校验的参数")
+                                @RequestBody RoleEntity role) {
+        boolean exist = (null != role && StrUtil.isNotBlank(role.getCode())) ? this.service.checkUnique(role) : false;
+        return exist ? failure(BizCodeEnum.ROLE_CODE_EXIST) : success();
     }
 
     @GetMapping("/get/{id}")
     @Operation(summary = "根据ID获取角色信息")
     public Response getRole(@Parameter(name = "id", description = "角色ID")
-                            @PathVariable("id") String id){
+                            @PathVariable("id") String id) {
         RoleEntity entity = this.service.getRole(id);
         return success(entity);
     }
@@ -44,21 +46,21 @@ public class RoleCtrl extends Ctrl {
     @GetMapping({"/list"})
     @Operation(summary = "获取角色列表")
     public Response listRoles(@Parameter(name = "roleEntity", description = "包含角色对象属性的查询条件")
-                             RoleEntity roleEntity, Integer page, Integer pageSize) {
+                              RoleEntity roleEntity, Integer page, Integer pageSize) {
         return success(this.service.listRole(roleEntity, page, pageSize));
     }
 
     @GetMapping({"/listAll"})
     @Operation(summary = "获取角色列表 - 无分页")
     public Response listAllRoles(@Parameter(name = "roleEntity", description = "包含角色对象属性的查询条件")
-                                     RoleEntity roleEntity) {
+                                 RoleEntity roleEntity) {
         return success(this.service.listRole(roleEntity));
     }
 
     @GetMapping({"/listModule"})
     @Operation(summary = "获得角色绑定的菜单列表")
     public Response listModule(@Parameter(name = "roleEntity", description = "包含角色对象属性的查询条件")
-                                RoleModuleEntity role) {
+                               RoleModuleEntity role) {
         return success(this.service.listModule(role));
     }
 
@@ -72,7 +74,7 @@ public class RoleCtrl extends Ctrl {
 
     @GetMapping({"/listUser"})
     @Operation(summary = "获得角色绑定的用户列表")
-    public Response listUser(@Parameter(name = "roleEntity", description = "包含角色对象属性的查询条件", required = true)
+    public Response listUser(@Parameter(name = "roleEntity", description = "包含角色对象属性的查询条件", requiredMode = Schema.RequiredMode.REQUIRED)
                              @RequestParam String roleId,
                              @RequestParam(required = false) String deptId) {
         return success(this.service.listUser(roleId, deptId));
@@ -91,8 +93,8 @@ public class RoleCtrl extends Ctrl {
 
     @PostMapping("/save")
     @Operation(summary = "新增/编辑角色信息")
-    public Response saveRole(@Parameter(name ="role", description = "角色信息")
-                             @RequestBody RoleEntity role){
+    public Response saveRole(@Parameter(name = "role", description = "角色信息")
+                             @RequestBody RoleEntity role) {
         this.service.saveRole(role);
         return success();
     }
@@ -100,7 +102,7 @@ public class RoleCtrl extends Ctrl {
     @PostMapping("/del")
     @Operation(summary = "根据ID删除/批量删除角色")
     public Response delRole(@Parameter(name = "ids", description = "[角色id]")
-                            @RequestBody SingleArray<String> ids){
+                            @RequestBody SingleArray<String> ids) {
 
         // 参数非空校验
         BizCodeEnum.NULL_ID.assertNotNull(ids);

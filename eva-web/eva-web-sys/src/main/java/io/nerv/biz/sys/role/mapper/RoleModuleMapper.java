@@ -12,6 +12,7 @@ import java.util.Map;
 
 /**
  * 角色模块关系mapper
+ *
  * @author: S.PKAQ
  */
 @Mapper
@@ -21,6 +22,7 @@ public interface RoleModuleMapper extends BaseMapper<RoleModuleEntity> {
 
     /**
      * 获取已选且是叶子节点的模块
+     *
      * @param roleModuleEntity
      * @return
      */
@@ -28,6 +30,7 @@ public interface RoleModuleMapper extends BaseMapper<RoleModuleEntity> {
 
     /**
      * 根据URL返回匹配的权限名称
+     *
      * @return
      */
     List<Map<String, String>> listRoleNamesWithPath();

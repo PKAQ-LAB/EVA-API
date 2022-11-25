@@ -15,6 +15,7 @@ import java.util.Map;
 
 /**
  * 基于数据库的日志持久话类
+ *
  * @author PKAQ
  */
 public class JdbcSupporter implements BizLogSupporter {

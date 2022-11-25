@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 /**
  * 字典管理service
+ *
  * @author: S.PKAQ
  */
 @Service
@@ -34,6 +35,7 @@ public class DictService extends StdService<DictMapper, DictEntity> {
     private final DictViewMapper dictViewMapper;
 
     private final DictItemMapper dictItemMapper;
+
     /**
      * 初始化字典数据缓存
      */
@@ -41,57 +43,62 @@ public class DictService extends StdService<DictMapper, DictEntity> {
     public void init() {
         var dictMap = this.selectDict();
         dictMap.forEach((k, v) ->
-            dictCacheHelper.cachePut(k, v)
+                dictCacheHelper.cachePut(k, v)
         );
     }
 
     /**
      * 查询字典
+     *
      * @return
      */
-    public Map<String, LinkedHashMap<String, String>> selectDict(){
+    public Map<String, LinkedHashMap<String, String>> selectDict() {
         List<DictViewEntity> dictList = this.dictViewMapper.selectList(null);
 
-        LinkedHashMap<String, LinkedHashMap<String, String>> cacheMap  =
+        LinkedHashMap<String, LinkedHashMap<String, String>> cacheMap =
                 dictList.stream()
                         .collect(Collectors.groupingBy(DictViewEntity::getCode,
-                                                       LinkedHashMap::new,
-                                                       Collectors.toMap(DictViewEntity::getKeyName,
-                                                                        DictViewEntity::getKeyValue,
-                                                                        (o, n) -> n,
-                                                                        LinkedHashMap::new)));
+                                LinkedHashMap::new,
+                                Collectors.toMap(DictViewEntity::getKeyName,
+                                        DictViewEntity::getKeyValue,
+                                        (o, n) -> n,
+                                        LinkedHashMap::new)));
 
         return cacheMap;
     }
 
-    public Map fetchDicts(){
+    public Map fetchDicts() {
         var ret = dictCacheHelper.getAll();
-        if (null == ret){
+        if (null == ret) {
             ret = selectDict();
         }
         return ret;
     }
+
     /**
      * 根据条件获取一条字典
+     *
      * @return DictEntity
      */
-    public DictEntity getDict(DictEntity dictEntity){
+    public DictEntity getDict(DictEntity dictEntity) {
         return this.mapper.getDict(dictEntity.getId());
     }
 
     /**
      * 查询所有字典
+     *
      * @return List<DictEntity>
      */
-    public List<DictEntity> listDict(){
+    public List<DictEntity> listDict() {
         return this.mapper.listDict();
     }
 
     /**
      * 删除一条字典 逻辑删除
+     *
      * @param id 字典ID
      */
-    public void delDict(String id){
+    public void delDict(String id) {
 
         // 先删除子表 再删除主表
         QueryWrapper<DictItemEntity> deleteWrapper = new QueryWrapper();
@@ -101,31 +108,32 @@ public class DictService extends StdService<DictMapper, DictEntity> {
         this.mapper.deleteById(id);
 
         //删掉字典之后，移除字典缓存中的相关字典
-        DictEntity dictEntity=this.mapper.getDict(id);
-        if(dictEntity != null) {
+        DictEntity dictEntity = this.mapper.getDict(id);
+        if (dictEntity != null) {
             dictCacheHelper.remove(dictEntity.getCode());
         }
     }
 
     /**
      * 编辑一条字典
+     *
      * @param dictEntity 字典对象
      */
-    public void edit(DictEntity dictEntity){
+    public void edit(DictEntity dictEntity) {
         String id = dictEntity.getId();
         // 校验code唯一性
         DictEntity conditionEntity = new DictEntity();
         conditionEntity.setCode(dictEntity.getCode());
         conditionEntity = this.mapper.selectOne(new QueryWrapper<>(conditionEntity));
 
-        if (StrUtil.isBlank(id)){
+        if (StrUtil.isBlank(id)) {
             BizCodeEnum.CODE_EXIST.assertNotNull("字典");
             // 保存主表
-            String mainID = IdWorker.getId()+"";
+            String mainID = IdWorker.getId() + "";
             dictEntity.setId(mainID);
             this.mapper.insert(dictEntity);
             // 保存子表
-            if (CollUtil.isNotEmpty(dictEntity.getLines())){
+            if (CollUtil.isNotEmpty(dictEntity.getLines())) {
                 dictEntity.getLines().forEach(item -> {
                     item.setMainId(mainID);
                     dictItemMapper.insert(item);
@@ -133,9 +141,9 @@ public class DictService extends StdService<DictMapper, DictEntity> {
             }
         } else {
 
-            if (null == conditionEntity || id.equals(conditionEntity.getId())){
+            if (null == conditionEntity || id.equals(conditionEntity.getId())) {
                 //可能是修改字典对象的code属性，所以根据id查原始的code
-                String code=this.mapper.selectById(id).getCode();
+                String code = this.mapper.selectById(id).getCode();
 
                 this.mapper.updateById(dictEntity);
 
@@ -144,7 +152,7 @@ public class DictService extends StdService<DictMapper, DictEntity> {
                 deleteWrapper.eq("MAIN_ID", id);
                 this.dictItemMapper.delete(deleteWrapper);
 
-                if (CollUtil.isNotEmpty(dictEntity.getLines())){
+                if (CollUtil.isNotEmpty(dictEntity.getLines())) {
                     dictEntity.getLines().forEach(item -> {
                         item.setMainId(id);
                         dictItemMapper.insert(item);
@@ -152,7 +160,7 @@ public class DictService extends StdService<DictMapper, DictEntity> {
                 }
 
                 //修改了字典的code则把原来的删掉加上最新的
-                if(!code.equals(dictEntity.getCode())){
+                if (!code.equals(dictEntity.getCode())) {
                     dictCacheHelper.add(dictEntity.getCode(), dictCacheHelper.get(code));
                     dictCacheHelper.remove(code);
                 }
@@ -164,6 +172,7 @@ public class DictService extends StdService<DictMapper, DictEntity> {
 
     /**
      * 校验编码是否存在
+     *
      * @param dictEntity
      * @return
      */
@@ -175,12 +184,13 @@ public class DictService extends StdService<DictMapper, DictEntity> {
 
     /**
      * 根据传入的内容重新初始化字典
+     *
      * @param dictMap
      */
 
     public void init(Map<String, LinkedHashMap<String, String>> dictMap) {
         dictMap.forEach((k, v) ->
-            dictCacheHelper.cachePut(k, v)
+                dictCacheHelper.cachePut(k, v)
         );
     }
 

@@ -9,29 +9,48 @@ import java.util.Collection;
 
 /**
  * JwtUser
+ *
  * @author: S.PKAQ
  * @Datetime: 2018/4/24 23:14
  */
 @Data
 public class JwtUserDetail implements UserDetails {
-    /**用户ID**/
+    /**
+     * 用户ID
+     **/
     private final String id;
-    /**用户账号**/
+    /**
+     * 用户账号
+     **/
     private final String account;
-    /**密码**/
+    /**
+     * 密码
+     **/
     @JsonIgnore
     private final String password;
-    /**用户是否已经锁定**/
+    /**
+     * 用户是否已经锁定
+     **/
     private boolean accountNonLocked;
-    /**部门id**/
+    /**
+     * 部门id
+     **/
     private String deptId;
-    /**部门名称**/
+    /**
+     * 部门名称
+     **/
     private String deptName;
-    /**用户姓名**/
+    /**
+     * 用户姓名
+     **/
     private String name;
-    /**用户昵称**/
+    /**
+     * 用户昵称
+     **/
     private String nickName;
-    /**权限集合**/
+    /**
+     * 权限集合
+     **/
     private final Collection<? extends GrantedAuthority> authorities;
 
     public JwtUserDetail(String id, String account, String password, String deptId, String deptName, String name, String nickName, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {

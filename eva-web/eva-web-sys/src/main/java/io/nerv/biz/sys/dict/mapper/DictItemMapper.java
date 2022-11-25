@@ -8,13 +8,16 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- *  字典管理子表mapper
+ * 字典管理子表mapper
+ *
  * @author S.PKAQ
  */
 @Mapper
 @Repository
 public interface DictItemMapper extends BaseMapper<DictItemEntity> {
-    /** 根据mainId查询
+    /**
+     * 根据mainId查询
+     *
      * @return
      */
     List<DictItemEntity> listItemByMainId();

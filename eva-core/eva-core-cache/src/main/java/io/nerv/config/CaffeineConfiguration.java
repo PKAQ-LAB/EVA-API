@@ -24,10 +24,11 @@ import java.util.stream.Collectors;
 public class CaffeineConfiguration {
 
     private final EvaConfig evaConfig;
+
     /**
-     *     * 配置缓存管理器
-     *     *
-     *     * @return 缓存管理器
+     * * 配置缓存管理器
+     * *
+     * * @return 缓存管理器
      */
     @Bean
     public CacheManager cacheManager() {
@@ -42,7 +43,7 @@ public class CaffeineConfiguration {
                 .build());
 
         List<CaffeineCache> caches = evaConfig.getCache().getConfig().stream().map(item ->
-            buildCache(item.getName(), item.getSpec())
+                buildCache(item.getName(), item.getSpec())
         ).collect(Collectors.toList());
 
         caches.add(defaultCache);
@@ -55,13 +56,14 @@ public class CaffeineConfiguration {
 
     /**
      * 构建CaffeineCache对象
+     *
      * @param name
      * @param initialCapacity
      * @param secondsToExpire
      * @return
      */
-    private CaffeineCache buildCache(String name, int initialCapacity, int secondsToExpire){
-       return new CaffeineCache(name, Caffeine.newBuilder()
+    private CaffeineCache buildCache(String name, int initialCapacity, int secondsToExpire) {
+        return new CaffeineCache(name, Caffeine.newBuilder()
                 .expireAfterAccess(secondsToExpire, TimeUnit.MILLISECONDS)
                 // 初始的缓存空间大小
                 .initialCapacity(initialCapacity)
@@ -72,10 +74,11 @@ public class CaffeineConfiguration {
 
     /**
      * 构建CaffeineCache对象
+     *
      * @param name
      * @return
      */
-    private CaffeineCache buildCache(String name, String spec){
+    private CaffeineCache buildCache(String name, String spec) {
         return new CaffeineCache(name, Caffeine.from(spec).build());
     }
 }

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="common">
-  <resultMap id="resultMap" type="io.nerv.core.mybatis.mvc.entity.mybatis.StdEntity">
-    <id column="ID" property="id" />
-    <result column="REMARK" property="remark" />
-    <result column="GMT_CREATE" property="gmtCreate" />
-    <result column="GMT_MODIFY" property="gmtModify" />
-    <result column="CREATE_BY" property="createBy" />
-    <result column="MODIFY_BY" property="modifyBy" />
-  </resultMap>
+    <resultMap id="resultMap" type="io.nerv.core.mybatis.mvc.entity.mybatis.StdEntity">
+        <id column="ID" property="id"/>
+        <result column="REMARK" property="remark"/>
+        <result column="GMT_CREATE" property="gmtCreate"/>
+        <result column="GMT_MODIFY" property="gmtModify"/>
+        <result column="CREATE_BY" property="createBy"/>
+        <result column="MODIFY_BY" property="modifyBy"/>
+    </resultMap>
 </mapper>

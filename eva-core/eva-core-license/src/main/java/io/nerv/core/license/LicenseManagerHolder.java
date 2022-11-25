@@ -34,7 +34,7 @@ public class LicenseManagerHolder {
         KeyStoreParam pubStoreParam = new DefaultKeyStoreParam(clazz,
                 evaConfig.getLicense().getPath(),
                 evaConfig.getLicense().getAlias(),
-                evaConfig.getLicense().getKeystorePwd() , null);
+                evaConfig.getLicense().getKeystorePwd(), null);
         return new DefaultLicenseParam(evaConfig.getLicense().getSubject(), pre, pubStoreParam, cipherParam);
     }
 

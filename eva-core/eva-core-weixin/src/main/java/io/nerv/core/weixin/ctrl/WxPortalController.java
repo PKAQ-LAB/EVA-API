@@ -28,7 +28,7 @@ public class WxPortalController {
                           @RequestParam(name = "echostr", required = false) String echostr) {
 
         log.info("\n接收到来自微信服务器的认证消息：[{}, {}, {}, {}]", signature,
-            timestamp, nonce, echostr);
+                timestamp, nonce, echostr);
         if (StringUtils.isAnyBlank(signature, timestamp, nonce, echostr)) {
             throw new IllegalArgumentException("请求参数非法，请核实!");
         }
@@ -54,8 +54,8 @@ public class WxPortalController {
                        @RequestParam(name = "encrypt_type", required = false) String encType,
                        @RequestParam(name = "msg_signature", required = false) String msgSignature) {
         log.info("\n接收微信请求：[openid=[{}], [signature=[{}], encType=[{}], msgSignature=[{}],"
-                + " timestamp=[{}], nonce=[{}], requestBody=[\n{}\n] ",
-            openid, signature, encType, msgSignature, timestamp, nonce, requestBody);
+                        + " timestamp=[{}], nonce=[{}], requestBody=[\n{}\n] ",
+                openid, signature, encType, msgSignature, timestamp, nonce, requestBody);
 
         if (!this.wxMpService.switchover(appId)) {
             throw new IllegalArgumentException(String.format("未找到对应appId=[%s]的配置，请核实！", appId));
@@ -78,7 +78,7 @@ public class WxPortalController {
         } else if ("aes".equalsIgnoreCase(encType)) {
             // aes加密的消息
             WxMpXmlMessage inMessage = WxMpXmlMessage.fromEncryptedXml(requestBody, wxMpService.getWxMpConfigStorage(),
-                timestamp, nonce, msgSignature);
+                    timestamp, nonce, msgSignature);
             log.debug("\n消息解密后内容为：\n{} ", inMessage.toString());
             WxMpXmlOutMessage outMessage = this.route(inMessage);
             if (outMessage == null) {

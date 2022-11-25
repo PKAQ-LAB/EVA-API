@@ -1,6 +1,7 @@
 package io.nerv.core.weixin.util;
 
-import javax.servlet.http.HttpServletRequest;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * 获取IP

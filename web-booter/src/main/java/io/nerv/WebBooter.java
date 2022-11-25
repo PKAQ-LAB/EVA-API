@@ -11,6 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 /**
  * 启动类
+ *
  * @author PKAQ
  */
 @Slf4j
@@ -20,6 +21,7 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan(basePackages = {"io.nerv.*"})
 public class WebBooter implements CommandLineRunner {
     private final DictService dictService;
+
     @Override
     public void run(String... args) {
         dictService.init();

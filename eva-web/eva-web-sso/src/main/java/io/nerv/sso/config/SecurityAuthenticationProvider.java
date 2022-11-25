@@ -55,17 +55,18 @@ public class SecurityAuthenticationProvider implements AuthenticationProvider {
 //                            token.isInteractive(), mapAuthorities(grantedAuthorities));
 
 //         return authenticationToken;
-        return  null;
+        return null;
     }
 
     /**
      * 获取access token
+     *
      * @param principal
      * @return
      */
     private AccessToken getAccessToken(KeycloakAuthenticationToken principal) {
         KeycloakAuthenticationToken token = principal;
-        KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal)token.getPrincipal();
+        KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) token.getPrincipal();
         KeycloakSecurityContext context = keycloakPrincipal.getKeycloakSecurityContext();
         return context.getToken();
     }

@@ -8,7 +8,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum LockEnumm implements BizCode{
+public enum LockEnumm implements BizCode {
     /**
      * 锁定
      */

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * 自定义用户认证
+ *
  * @author PKAQ
  */
 @Service
@@ -22,6 +23,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     /**
      * 提供一种从用户名可以查到用户并返回的方法
+     *
      * @param account
      * @return UserDetails
      * @throws UsernameNotFoundException

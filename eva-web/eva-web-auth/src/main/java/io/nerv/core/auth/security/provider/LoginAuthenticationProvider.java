@@ -35,13 +35,14 @@ public class LoginAuthenticationProvider extends AbstractUserDetailsAuthenticati
 
     /**
      * 查询用户
+     *
      * @param username
      * @param authentication
      * @return
      */
     @Override
     protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication) {
-        String password = (String)authentication.getCredentials();
+        String password = (String) authentication.getCredentials();
 
         BizCodeEnum.ACCOUNT_OR_PWD_ERROR.assertNotNull(username);
         BizCodeEnum.ACCOUNT_OR_PWD_ERROR.assertNotNull(password);
@@ -57,6 +58,7 @@ public class LoginAuthenticationProvider extends AbstractUserDetailsAuthenticati
 
     /**
      * 校验密码
+     *
      * @param userDetails
      * @param authentication
      */
@@ -67,13 +69,14 @@ public class LoginAuthenticationProvider extends AbstractUserDetailsAuthenticati
 
         String presentedPassword = authentication.getCredentials().toString();
 
-        boolean matches =  this.bCryptPasswordEncoder.matches(presentedPassword, userDetails.getPassword());
+        boolean matches = this.bCryptPasswordEncoder.matches(presentedPassword, userDetails.getPassword());
 
         if (!matches) {
             BizCodeEnum.ACCOUNT_OR_PWD_ERROR.newException(AuthenticationException.class);
         }
 
     }
+
     @Override
     public boolean supports(Class<?> authentication) {
         return (UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication));

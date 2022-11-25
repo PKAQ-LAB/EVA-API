@@ -27,6 +27,7 @@ public class WebConfigurer implements WebMvcConfigurer {
 
     /**
      * 配置license鉴权拦截器
+     *
      * @param registry
      */
     @Override

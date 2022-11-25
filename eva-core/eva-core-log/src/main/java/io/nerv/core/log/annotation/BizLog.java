@@ -6,6 +6,7 @@ import java.lang.annotation.*;
 
 /**
  * 业务日志注解
+ *
  * @author: S.PKAQ
  */
 // 该注解能被声明在一个方法参数 或者 类的方法前
@@ -19,7 +20,7 @@ public @interface BizLog {
     /**
      * 日志描述
      */
-    String description()  default "";
+    String description() default "";
 
     /**
      * 操作表类型
@@ -33,6 +34,7 @@ public @interface BizLog {
 
     /**
      * 操作时间
+     *
      * @return
      */
     String operateDateTime() default "";

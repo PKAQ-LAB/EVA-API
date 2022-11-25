@@ -8,7 +8,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum DataPermissionEnumm implements BizCode{
+public enum DataPermissionEnumm implements BizCode {
     /**
      * 可用
      */

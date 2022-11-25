@@ -1,5 +1,6 @@
 package io.nerv.core.auth.security.provider;
 
+import jakarta.servlet.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.SecurityMetadataSource;
@@ -9,7 +10,6 @@ import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.*;
 import java.io.IOException;
 
 /**

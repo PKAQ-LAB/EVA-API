@@ -9,11 +9,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class AuthCtrlTest extends BaseTest {
     @Test
-    public void testLogin(){
+    public void testLogin() {
         try {
-                String json = "{account: 'admin', password: '123456'}";
+            String json = "{account: 'admin', password: '123456'}";
             this.mockMvc.perform(post("/auth/login")
-                    .content(json))
+                            .content(json))
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andExpect(jsonPath("success").value(true));
         } catch (Exception e) {

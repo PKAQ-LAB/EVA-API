@@ -2,7 +2,7 @@ spring:
   profiles:
     active: @profile@
   servlet:
-  # 文件上传配置
+    # 文件上传配置
     multipart:
       enabled: true
       max-file-size: 10MB
@@ -21,10 +21,10 @@ spring:
       #格式化输出
       indent_output: true
 springdoc:
-#  api-docs:
-#    enabled: true
-#    groups:
-#      enabled: true
+  #  api-docs:
+  #    enabled: true
+  #    groups:
+  #      enabled: true
   swagger-ui:
     disable-swagger-default-url: true
 # mybatis
@@ -33,12 +33,12 @@ mybatis-plus:
   #实体扫描，多个package用逗号或者分号分隔
   typeAliasesPackage: io.nerv.*.**.entity
   global-config:
-#      刷新mapper 调试神器
+    #      刷新mapper 调试神器
     refresh: true
     db-config:
       id-type: assign_id
-#      字段策略
-#      驼峰下划线转换
+      #      字段策略
+      #      驼峰下划线转换
       table-underline: true
       logic-delete-value: '0001' # 逻辑已删除值(默认为 1)
       logic-not-delete-value: '0000' # 逻辑未删除值(默认为 0)
@@ -74,14 +74,14 @@ wechat:
     keyPath: classpath:cert/apiclient_cert.p12
   mp:
     configs:
-#      - appId: wxefdd141dc453eec5
-#        secret : b924bc4582c280826fce5575b0b93389
-#        token: relax
-#        aesKey: DHFzG3nOljaZ6DZiaHOFzizWzVL1XvlGISKTCtvbS1T
-#      - appId: wxfd7f50aa599242f8
-#        secret: dd24c23ff8e61fa261307f47d9962dc5
-#        token: nerv
-#        aesKey: DHFzG3nOljaZ6DZiaHOFzizWzVL1XvlGISKTCtvbS1T
+      #      - appId: wxefdd141dc453eec5
+      #        secret : b924bc4582c280826fce5575b0b93389
+      #        token: relax
+      #        aesKey: DHFzG3nOljaZ6DZiaHOFzizWzVL1XvlGISKTCtvbS1T
+      #      - appId: wxfd7f50aa599242f8
+      #        secret: dd24c23ff8e61fa261307f47d9962dc5
+      #        token: nerv
+      #        aesKey: DHFzG3nOljaZ6DZiaHOFzizWzVL1XvlGISKTCtvbS1T
       - appId: wx12b27a68cc6951da
         secret: 5581e5364618a666ffbbb36dfd56d3fe
 #        token: nerv
@@ -128,9 +128,9 @@ eva:
     strict: false
   # 数据权限
   datapermission:
-  # 是否开启数据权限控制
+    # 是否开启数据权限控制
     enable: true
-  # 需要排除的表
+    # 需要排除的表
     exclude-tables: sys_module_resources,sys_role_user
   # 缓存配置
   cache:
@@ -146,29 +146,29 @@ eva:
         spec: initialCapacity=100,expireAfterAccess=1h
       - name: token
         spec: initialCapacity=100,expireAfterWrite=2592000s
-#    type: redis
-#    config:
-#        # 缓存名称 - 文件上传缓存
-#      - name: uploadfiles
-#        # 初始大小
-#        initialCapacity: 100
-#        # 过期时间(毫秒)
-#        secondsToExpire: 86400000
-#        # 重复提交缓存
-#      - name: repeatsubmit
-#        initialCapacity: 100
-#        secondsToExpire: 500
-#        # 字典缓存
-#      - name: dictdata
-#        initialCapacity: 100
-#        secondsToExpire: -1
-#        # 业务数据缓存
-#      - name: bizdata
-#        initialCapacity: 100
-#        secondsToExpire: 86400000
-#      - name: token
-#        initialCapacity: 1000
-#        secondsToExpire: 2592000
+  #    type: redis
+  #    config:
+  #        # 缓存名称 - 文件上传缓存
+  #      - name: uploadfiles
+  #        # 初始大小
+  #        initialCapacity: 100
+  #        # 过期时间(毫秒)
+  #        secondsToExpire: 86400000
+  #        # 重复提交缓存
+  #      - name: repeatsubmit
+  #        initialCapacity: 100
+  #        secondsToExpire: 500
+  #        # 字典缓存
+  #      - name: dictdata
+  #        initialCapacity: 100
+  #        secondsToExpire: -1
+  #        # 业务数据缓存
+  #      - name: bizdata
+  #        initialCapacity: 100
+  #        secondsToExpire: 86400000
+  #      - name: token
+  #        initialCapacity: 1000
+  #        secondsToExpire: 2592000
   # 错误日志
   errorlog:
     enabled: true

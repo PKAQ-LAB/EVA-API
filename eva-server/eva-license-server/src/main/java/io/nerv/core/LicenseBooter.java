@@ -11,6 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 /**
  * 启动类
+ *
  * @author PKAQ
  */
 @Slf4j

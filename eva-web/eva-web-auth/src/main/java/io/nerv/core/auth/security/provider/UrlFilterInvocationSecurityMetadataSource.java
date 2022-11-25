@@ -21,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 动态获取url权限配置
+ *
  * @author PKAQ
  */
 @Slf4j
@@ -54,17 +55,17 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
             var role_code = item.get("code");
             var resoure_path = item.get("resource_url");
 
-            if (StrUtil.isNotBlank(resoure_path)){
-                resoure_path = resoure_path.startsWith("/")? resoure_path.substring(1): resoure_path;
+            if (StrUtil.isNotBlank(resoure_path)) {
+                resoure_path = resoure_path.startsWith("/") ? resoure_path.substring(1) : resoure_path;
             }
 
-            path = path.endsWith("/")? path+resoure_path: path+"/"+resoure_path;
+            path = path.endsWith("/") ? path + resoure_path : path + "/" + resoure_path;
 
             Collection<ConfigAttribute> values = rolePermMap.get(role_code);
 
             ConfigAttribute securityConfig = new SecurityConfig(path);
 
-            if (null == values){
+            if (null == values) {
                 values = new ArrayList<>();
             }
 
@@ -87,17 +88,17 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
             var role_code = item.get("code");
             var resoure_path = item.get("resource_url");
 
-            if (StrUtil.isNotBlank(resoure_path)){
-                resoure_path = resoure_path.startsWith("/")? resoure_path.substring(1): resoure_path;
+            if (StrUtil.isNotBlank(resoure_path)) {
+                resoure_path = resoure_path.startsWith("/") ? resoure_path.substring(1) : resoure_path;
             }
 
-            var key = path.endsWith("/")? path+resoure_path: path+"/"+resoure_path;
+            var key = path.endsWith("/") ? path + resoure_path : path + "/" + resoure_path;
 
             Collection<ConfigAttribute> values = pathPermMap.get(key);
 
             ConfigAttribute securityConfig = new SecurityConfig(role_code);
 
-            if (null == values){
+            if (null == values) {
                 values = new ArrayList<>();
             }
 
@@ -120,18 +121,18 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
         log.info("当前权限：" + roles);
 
         // 未开启资源权限 直接返回
-        if (!evaConfig.getResourcePermission().isEnable()){
+        if (!evaConfig.getResourcePermission().isEnable()) {
             return null;
         }
 
-        if (null != roles){
+        if (null != roles) {
             /**
              *    严格鉴权模式 仅允许访问授权资源 未授权资源一律禁止访问
              *    根据用户角色获取所有可访问资源路径 置入 Collection<ConfigAttribute>
              */
-            if (evaConfig.getResourcePermission().isStrict()){
+            if (evaConfig.getResourcePermission().isStrict()) {
                 Arrays.stream(roles).forEach(item -> {
-                    if (null != rolePermMap.get(item)){
+                    if (null != rolePermMap.get(item)) {
                         set.addAll(rolePermMap.get(item));
                     }
                 });
@@ -145,7 +146,7 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
 
                 pathPermMap.forEach((k, v) -> {
                     var urlMatcher = new AntPathRequestMatcher(k);
-                    if (urlMatcher.matches(request) || StrUtil.equals(requestUrl,k)){
+                    if (urlMatcher.matches(request) || StrUtil.equals(requestUrl, k)) {
                         set.addAll(v);
                     }
                 });
@@ -155,7 +156,7 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
 //      未配置过权限的页面都不需要鉴权，jwtauthfilter已经进行了登录鉴权
 //      该过滤器是过滤链中的最后一个，该处判断返回ROLE_USER会使 premitall 无效
 //      如需配置非授权接口均不可访问需修改此处
-        if (CollectionUtil.isEmpty(set)){
+        if (CollectionUtil.isEmpty(set)) {
             return null;
         }
         return set;
@@ -177,10 +178,10 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
     @Override
     public void afterPropertiesSet() {
         // 加载权限和路径关系
-        if (evaConfig.getResourcePermission().isEnable()){
+        if (evaConfig.getResourcePermission().isEnable()) {
             List<Map<String, String>> menusUrl = this.roleService.listRoleNamesWithPath();
 
-            if (evaConfig.getResourcePermission().isStrict()){
+            if (evaConfig.getResourcePermission().isStrict()) {
                 loadResourceRoleUrlPermMap(menusUrl);
             } else {
                 loadResourceUrlRolePermMap(menusUrl);

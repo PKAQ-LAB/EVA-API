@@ -16,20 +16,21 @@ import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 @EnableWebSocket
 @RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketConfigurer {
- 
+
     private final WebSocketHandler webSocketHandler;
 
     @Bean
-    public ServerEndpointExporter serverEndpointExporter(){
+    public ServerEndpointExporter serverEndpointExporter() {
         return new ServerEndpointExporter();
     }
+
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry
                 .addHandler(webSocketHandler, "/websocket")
                 //允许跨域，方便本地调试，生产建议去掉
                 .setAllowedOrigins("*");
-                //.setAllowedOriginPatterns("*")
-                //.withSockJS();
+        //.setAllowedOriginPatterns("*")
+        //.withSockJS();
     }
 }

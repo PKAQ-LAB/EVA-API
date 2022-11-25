@@ -10,6 +10,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 /**
  * 单元测试基类
+ *
  * @author: S.PKAQ
  * @Datetime: 2018/4/4 8:32
  */
@@ -22,7 +23,7 @@ public class BaseTest {
     protected WebApplicationContext wac;
 
     @BeforeEach
-    public void setupMockMvc(){
+    public void setupMockMvc() {
         //初始化MockMvc对象
         mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
     }

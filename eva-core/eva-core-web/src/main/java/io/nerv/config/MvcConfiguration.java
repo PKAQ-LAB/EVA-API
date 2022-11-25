@@ -14,8 +14,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class MvcConfiguration implements WebMvcConfigurer {
 
     private final UserInfoInterceptor userInfoInterceptor;
+
     /**
      * 拦截器 管理 threadlocal中的用户信息
+     *
      * @param registry
      */
     @Override

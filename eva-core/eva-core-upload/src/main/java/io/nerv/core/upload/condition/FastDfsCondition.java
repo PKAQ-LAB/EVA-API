@@ -6,6 +6,7 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /**
  * 文件上传启用条件， 是否启用go-fastdfs
+ *
  * @author: S.PKAQ
  */
 public class FastDfsCondition implements Condition {

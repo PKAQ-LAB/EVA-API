@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
  * Websocket Session Manager
+ *
  * @author
  */
 @Slf4j
@@ -21,7 +22,7 @@ public class WebSocketSessionManager {
      * 保存连接 session 的地方
      */
     protected static final ConcurrentMap<String, WebSocketSession> SESSION_POOL = new ConcurrentHashMap<>();
- 
+
     /**
      * 添加 session
      *
@@ -31,7 +32,7 @@ public class WebSocketSessionManager {
         // 添加 session
         SESSION_POOL.put(key, session);
     }
- 
+
     /**
      * 删除 session,会返回删除的 session
      *
@@ -42,7 +43,7 @@ public class WebSocketSessionManager {
         // 删除 session
         return SESSION_POOL.remove(key);
     }
- 
+
     /**
      * 删除并同步关闭连接
      *
@@ -59,7 +60,7 @@ public class WebSocketSessionManager {
             }
         }
     }
- 
+
     /**
      * 获得 session
      *

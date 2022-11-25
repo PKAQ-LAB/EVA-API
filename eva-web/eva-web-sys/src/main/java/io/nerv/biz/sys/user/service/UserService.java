@@ -27,6 +27,7 @@ import java.util.List;
 
 /**
  * 用户管理
+ *
  * @author: S.PKAQ
  * @Datetime: 2018/3/30 0:00
  */
@@ -53,22 +54,25 @@ public class UserService extends StdService<UserMapper, UserEntity> {
 
     /**
      * 修改密码
+     *
      * @param passwordVO
      * @return
      */
-    public boolean repwd(PasswordVO passwordVO){
+    public boolean repwd(PasswordVO passwordVO) {
         //TODO 获取用户ID
         UserEntity userEntity = this.mapper.selectById(passwordVO.getUserId());
 
-        if (BCrypt.checkpw(passwordVO.getOriginpassword(), userEntity.getPassword())){
+        if (BCrypt.checkpw(passwordVO.getOriginpassword(), userEntity.getPassword())) {
             userEntity.setPassword(BCrypt.hashpw(passwordVO.getNewpassword()));
             this.mapper.updateById(userEntity);
             return true;
         }
         return false;
     }
+
     /**
      * 查询用户列表
+     *
      * @param userEntity
      * @return
      */
@@ -85,6 +89,7 @@ public class UserService extends StdService<UserMapper, UserEntity> {
 
     /**
      * 查询用户列表 无分页
+     *
      * @param userEntity
      * @return
      */
@@ -94,6 +99,7 @@ public class UserService extends StdService<UserMapper, UserEntity> {
 
     /**
      * 解锁/锁定用户
+     *
      * @param ids
      * @param lock
      */
@@ -108,6 +114,7 @@ public class UserService extends StdService<UserMapper, UserEntity> {
 
     /**
      * 获取一条用户信息
+     *
      * @param id 用户id
      * @return 符合条件的用户对象
      */
@@ -119,6 +126,7 @@ public class UserService extends StdService<UserMapper, UserEntity> {
 
     /**
      * 新增/编辑用户信息
+     *
      * @param user 用户对象
      * @return 用户列表
      */
@@ -126,12 +134,12 @@ public class UserService extends StdService<UserMapper, UserEntity> {
         // 用户资料发生修改后 重新生成密码
         // 这里传递过来的密码是进行md5加密后的
         String pwd = user.getPassword();
-        if (StrUtil.isNotBlank(pwd)){
+        if (StrUtil.isNotBlank(pwd)) {
             pwd = BCrypt.hashpw(pwd);
             user.setPassword(pwd);
         }
         //设置部门名称
-        if(StrUtil.isNotBlank(user.getDeptId())){
+        if (StrUtil.isNotBlank(user.getDeptId())) {
             user.setDeptName(organizationMapper.selectById(user.getDeptId()).getName());
         }
 
@@ -139,26 +147,26 @@ public class UserService extends StdService<UserMapper, UserEntity> {
         // 编辑， 删除原有头像文件，保存新的头像文件
         String userId = user.getId();
         boolean isInsert = true;
-        if (StrUtil.isBlank(userId)){
+        if (StrUtil.isBlank(userId)) {
             userId = IdWorker.getIdStr();
             user.setId(userId);
         } else {
             isInsert = false;
             UserEntity oldUser = this.mapper.selectById(userId);
             String avatar = oldUser.getAvatar();
-            if (StrUtil.isNotBlank(avatar) && !avatar.equals(user.getAvatar())){
+            if (StrUtil.isNotBlank(avatar) && !avatar.equals(user.getAvatar())) {
                 fileUploadProvider.delFromStorage(avatar);
             }
         }
 
         // 保存新的头像文件
-        if (StrUtil.isNotBlank(user.getAvatar())){
+        if (StrUtil.isNotBlank(user.getAvatar())) {
             fileUploadProvider.storageWithThumbnail(0.3f, user.getAvatar());
         }
         // 保存权限
         this.saveRoles(user);
 
-        if (isInsert){
+        if (isInsert) {
             this.mapper.insert(user);
         } else {
             this.mapper.updateById(user);
@@ -168,15 +176,16 @@ public class UserService extends StdService<UserMapper, UserEntity> {
 
     /**
      * 校验账号是否唯一
+     *
      * @param user
      * @return
      */
     public boolean checkUnique(UserEntity user) {
         QueryWrapper<UserEntity> entityWrapper = new QueryWrapper<>();
-        if (StrUtil.isNotBlank(user.getAccount())){
+        if (StrUtil.isNotBlank(user.getAccount())) {
             entityWrapper.eq("account", user.getAccount());
         }
-        if (StrUtil.isNotBlank(user.getId())){
+        if (StrUtil.isNotBlank(user.getId())) {
             entityWrapper.ne("id", user.getId());
         }
         long records = this.mapper.selectCount(entityWrapper);
@@ -201,11 +210,12 @@ public class UserService extends StdService<UserMapper, UserEntity> {
 
     /**
      * 保存用户权限
+     *
      * @param user
      */
-    public void saveRoles(UserEntity user){
+    public void saveRoles(UserEntity user) {
         // 保存权限
-        if (CollUtil.isNotEmpty(user.getRoles())){
+        if (CollUtil.isNotEmpty(user.getRoles())) {
             // 先删除该用户原有的权限
             QueryWrapper<RoleUserEntity> deleteWrapper = new QueryWrapper<>();
             deleteWrapper.eq("user_id", user.getId());

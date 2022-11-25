@@ -12,8 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 文件上传Ctrl
- *
-*/
+ */
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -24,6 +23,7 @@ public class FileUploadCtrl {
 
     /**
      * 文件上传
+     *
      * @param file
      * @param path
      * @return

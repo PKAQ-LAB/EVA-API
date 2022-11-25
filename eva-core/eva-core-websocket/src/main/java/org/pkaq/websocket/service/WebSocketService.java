@@ -25,7 +25,7 @@ public class WebSocketService {
      * @throws IOException
      */
     public void sendMsg(WebSocketSession session, String text) throws IOException {
-        log.info("【websocket消息】 单点消息:"+text);
+        log.info("【websocket消息】 单点消息:" + text);
         session.sendMessage(new TextMessage(text));
     }
 
@@ -37,7 +37,7 @@ public class WebSocketService {
      * @throws IOException
      */
     public void broadcastMsg(String text) throws IOException {
-        log.info("【websocket消息】广播消息:"+text);
+        log.info("【websocket消息】广播消息:" + text);
         for (WebSocketSession session : WebSocketSessionManager.list()) {
             session.sendMessage(new TextMessage(text));
         }

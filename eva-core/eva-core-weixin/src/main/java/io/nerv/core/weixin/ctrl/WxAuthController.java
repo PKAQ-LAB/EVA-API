@@ -28,7 +28,7 @@ public class WxAuthController {
 
     @PostMapping("/getJsapiTicket")
     @Operation(description = "获取jsapi_ticket")
-    public Response getJsapiTicket(){
+    public Response getJsapiTicket() {
         String ticket = null;
         try {
             ticket = this.wxMpService.getJsapiTicket();
@@ -50,9 +50,9 @@ public class WxAuthController {
 
     @GetMapping("/getUserInfo")
     @Operation(description = "获取用户微信账号")
-    public Response getUserInfo(@Parameter(name ="code")
-                                        String code,
-                                @Parameter(name ="appid")
+    public Response getUserInfo(@Parameter(name = "code")
+                                String code,
+                                @Parameter(name = "appid")
                                 @PathVariable String appId) {
 
         if (!this.wxMpService.switchover(appId)) {

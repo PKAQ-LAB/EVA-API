@@ -14,13 +14,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -37,7 +37,7 @@ import java.util.Arrays;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity()
 public class WebSecurityConfig {
 
     @Value("${eva.security.anonymous}")
@@ -67,27 +67,28 @@ public class WebSecurityConfig {
 
     /**
      * 跨域配置
+     *
      * @return
      */
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(CollUtil.isEmpty(evaConfig.getJwt().getCreditUrl())?Arrays.asList("*"): evaConfig.getJwt().getCreditUrl());
+        configuration.setAllowedOrigins(CollUtil.isEmpty(evaConfig.getJwt().getCreditUrl()) ? Arrays.asList("*") : evaConfig.getJwt().getCreditUrl());
         configuration.setAllowCredentials(false);
         configuration.setAllowedMethods(Arrays.asList("PUT", "DELETE", "GET", "POST", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setMaxAge(1800L);
         configuration.setExposedHeaders(Arrays.asList("Access-Control-Allow-Headers",
-                                                      "Access-Control-Allow-Methods",
-                                                      "Access-Control-Expose-Headers",
-                                                      "Access-Control-Allow-Origin",
-                                                      "Access-Control-Max-Age",
-                                                      "authorization",
-                                                      "auth_token",
-                                                      "xsrf-token",
-                                                      "content-type",
-                                                      "X-Frame-Options",
-                                                      "Authorization"));
+                "Access-Control-Allow-Methods",
+                "Access-Control-Expose-Headers",
+                "Access-Control-Allow-Origin",
+                "Access-Control-Max-Age",
+                "authorization",
+                "auth_token",
+                "xsrf-token",
+                "content-type",
+                "X-Frame-Options",
+                "Authorization"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
@@ -103,54 +104,54 @@ public class WebSecurityConfig {
                 httpSecurity.getSharedObject(AuthenticationManager.class);
 
         httpSecurity
-            .cors()
-            .and()
-            // 关闭csrf 由于使用的是JWT，我们这里不需要csrf
-            .csrf().disable()
-            //允许加载iframe内容 X-Frame-Options
-            .headers().frameOptions().disable()
-            .xssProtection().block(true)
-            .and()
-            // 适配IE
-            .addHeaderWriter(new StaticHeadersWriter("P3P","CP='CAO IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'"))
-            .and()
-            // 基于token，所以不需要session
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-            .authorizeRequests()
-            // 对于获取token的rest api要允许匿名访问
+                .cors()
+                .and()
+                // 关闭csrf 由于使用的是JWT，我们这里不需要csrf
+                .csrf().disable()
+                //允许加载iframe内容 X-Frame-Options
+                .headers().frameOptions().disable()
+                .xssProtection()
+                .and()
+                // 适配IE
+                .addHeaderWriter(new StaticHeadersWriter("P3P", "CP='CAO IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'"))
+                .and()
+                // 基于token，所以不需要session
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .authorizeHttpRequests()
+                // 对于获取token的rest api要允许匿名访问
 //            .antMatchers("/**").permitAll();
-            .antMatchers(anonymous).permitAll()
-            // 除上面外的所有请求全部需要鉴权认证
-            .anyRequest().authenticated();
+                .requestMatchers(anonymous).permitAll()
+                // 除上面外的所有请求全部需要鉴权认证
+                .anyRequest().authenticated();
 
-            httpSecurity.logout().logoutUrl("/auth/logout").logoutSuccessHandler(urlLogoutSuccessHandler);
+        httpSecurity.logout().logoutUrl("/auth/logout").logoutSuccessHandler(urlLogoutSuccessHandler);
 
-            if (evaConfig.getResourcePermission().isEnable()){
-                httpSecurity.addFilterAt(urlFilterSecurityInterceptor, FilterSecurityInterceptor.class);
-            }
+        if (evaConfig.getResourcePermission().isEnable()) {
+            httpSecurity.addFilterAt(urlFilterSecurityInterceptor, AuthorizationFilter.class);
+        }
 
-            httpSecurity.exceptionHandling()
-                        .authenticationEntryPoint(unauthorizedHandler)
-                        .accessDeniedHandler(urlAccessDeniedHandler)
-                        .and()
-                        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                        .addFilterBefore(new JwtUsernamePasswordAuthenticationFilter("/auth/login",
-                                                                                          authenticationConfiguration.getAuthenticationManager(),
-                                                                                          urlAuthenticationSuccessHandler,
-                                                                                          urlAuthenticationFailureHandler),
-                                         UsernamePasswordAuthenticationFilter.class);
+        httpSecurity.exceptionHandling()
+                .authenticationEntryPoint(unauthorizedHandler)
+                .accessDeniedHandler(urlAccessDeniedHandler)
+                .and()
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtUsernamePasswordAuthenticationFilter("/auth/login",
+                                authenticationConfiguration.getAuthenticationManager(),
+                                urlAuthenticationSuccessHandler,
+                                urlAuthenticationFailureHandler),
+                        UsernamePasswordAuthenticationFilter.class);
 
 //            @Secured( value={"ROLE_ANONYMOUS"})
-            httpSecurity.anonymous().authorities("ROLE_ANONYMOUS");
+        httpSecurity.anonymous().authorities("ROLE_ANONYMOUS");
 
-            // disable page caching
-            httpSecurity
-            .headers()
-            .frameOptions().sameOrigin()  // required to set for H2 else H2 Console will be blank.
-            .cacheControl();
+        // disable page caching
+        httpSecurity
+                .headers()
+                .frameOptions().sameOrigin()  // required to set for H2 else H2 Console will be blank.
+                .cacheControl();
 
-            return httpSecurity.build();
+        return httpSecurity.build();
     }
 
 
@@ -161,38 +162,38 @@ public class WebSecurityConfig {
      */
     @Bean
     public WebSecurityCustomizer webSecurityConfigure() {
-      return web -> {
-          String[] paths = null;
-          var staticPath = new String[]{
-                  "/",
-                  "/static/**",
-                  "/*.html",
-                  "/*.xls",
-                  "/*.xlsx",
-                  "/*.doc",
-                  "/*.docx",
-                  "/*.pdf",
-                  "/favicon.ico",
-                  "/**/*.html",
-                  "/**/*.css",
-                  "/**/*.js",
-                  "/**/swagger-resources/**",
-                  "/**/api-docs/**"
-          };
+        return web -> {
+            String[] paths = null;
+            var staticPath = new String[]{
+                    "/",
+                    "/static/**",
+                    "/*.html",
+                    "/*.xls",
+                    "/*.xlsx",
+                    "/*.doc",
+                    "/*.docx",
+                    "/*.pdf",
+                    "/favicon.ico",
+                    "/**/*.html",
+                    "/**/*.css",
+                    "/**/*.js",
+                    "/**/swagger-resources/**",
+                    "/**/api-docs/**"
+            };
 
-          if (null != webstatic ){
-              paths = ArrayUtil.addAll(webstatic,staticPath);
-          }
+            if (null != webstatic) {
+                paths = ArrayUtil.addAll(webstatic, staticPath);
+            }
 
-          web.ignoring()
-              // allow anonymous resource requests
-              .and()
-              .ignoring()
-              .antMatchers(
-                      HttpMethod.GET,
-                      paths
-              );
-      };
+            web.ignoring()
+                    // allow anonymous resource requests
+                    .and()
+                    .ignoring()
+                    .requestMatchers(
+                            HttpMethod.GET,
+                            paths
+                    );
+        };
     }
 
 }

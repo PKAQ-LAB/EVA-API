@@ -10,6 +10,7 @@ import java.util.List;
 
 /**
  * 角色管理mapper
+ *
  * @author: S.PKAQ
  */
 @Mapper
@@ -17,6 +18,7 @@ import java.util.List;
 public interface RoleMapper extends BaseMapper<RoleEntity> {
     /**
      * 根据UserID查询角色权限
+     *
      * @param userId
      * @return
      */
@@ -25,6 +27,7 @@ public interface RoleMapper extends BaseMapper<RoleEntity> {
 
     /**
      * 根据角色编码获取数据权限
+     *
      * @return
      */
     List<RoleEntity> selectDataPermission(List<String> roleCodes);

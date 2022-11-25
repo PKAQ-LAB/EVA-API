@@ -7,6 +7,7 @@ import org.apache.ibatis.type.Alias;
 
 /**
  * 字典视图
+ *
  * @author: S.PKAQ
  */
 @Data

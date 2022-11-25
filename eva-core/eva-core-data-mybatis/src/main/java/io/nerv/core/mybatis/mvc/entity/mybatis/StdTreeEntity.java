@@ -11,10 +11,11 @@ import java.util.List;
 
 /**
  * 树形结构实体基类
+ *
  * @author: S.PKAQ
  */
 @Data
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode(callSuper = false)
 public class StdTreeEntity extends StdEntity {
     @TableField(condition = SqlCondition.LIKE)
     @Schema(description = "编码")
@@ -23,62 +24,62 @@ public class StdTreeEntity extends StdEntity {
     @Schema(description = "是否可用")
     private String status;
 
-    @Schema(description ="节点名称")
+    @Schema(description = "节点名称")
     private String name;
 
-    @Schema(description ="上级节点id")
+    @Schema(description = "上级节点id")
     private String parentId;
 
-    @Schema(description ="上级节点名称")
+    @Schema(description = "上级节点名称")
     private String parentName;
 
-    @Schema(description ="路径")
+    @Schema(description = "路径")
     private long orders;
-    @Schema(description ="路径")
+    @Schema(description = "路径")
     private String path;
 
-    @Schema(description ="上级节点id路径")
+    @Schema(description = "上级节点id路径")
     private String pathId;
 
-    @Schema(description ="上级节点名称路径")
+    @Schema(description = "上级节点名称路径")
     private String pathName;
 
-    @Schema(description ="是否叶子")
+    @Schema(description = "是否叶子")
     private Boolean isleaf;
 
     @TableField(exist = false)
-    @Schema(description ="子节点")
+    @Schema(description = "子节点")
     private List<StdTreeEntity> children;
 
-    @Schema(description ="key")
+    @Schema(description = "key")
     @TableField(exist = false)
     private String key;
 
-    @Schema(description ="exact")
+    @Schema(description = "exact")
     @TableField(exist = false)
     private Boolean exact;
 
     @TableField(exist = false)
-    @Schema(description ="国际化面包屑")
+    @Schema(description = "国际化面包屑")
     private String locale;
 
     public String getLocale() {
-        return StrUtil.isNotBlank(this.path) ? "menu"+this.path.replaceAll("/","."): "";
+        return StrUtil.isNotBlank(this.path) ? "menu" + this.path.replaceAll("/", ".") : "";
     }
 
-    public String getKey(){
+    public String getKey() {
         return this.getId();
     }
 
-    public Boolean getExact(){
+    public Boolean getExact() {
         return this.isleaf;
     }
 
-    public List<StdTreeEntity> getChildren(){
-        return children == null || children.size()<1?null:children;
+    public List<StdTreeEntity> getChildren() {
+        return children == null || children.size() < 1 ? null : children;
     }
 
-    public List<StdTreeEntity> getOriginChildren(){
+    public List<StdTreeEntity> getOriginChildren() {
         return children;
     }
 }

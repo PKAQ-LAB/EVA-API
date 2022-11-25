@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * 记录业务日志
+ *
  * @author PKAQ
  */
 @Slf4j
@@ -26,11 +27,12 @@ import org.springframework.stereotype.Component;
 @Component
 @Conditional(BizlogSupporterCondition.class)
 @RequiredArgsConstructor
-public class BizLogAdvice{
+public class BizLogAdvice {
     private final BizLogSupporter bizLogSupporter;
 
     @Pointcut("@annotation(io.nerv.core.log.annotation.BizLog)")
-    private void bizLog(){}
+    private void bizLog() {
+    }
 
     @Around("bizLog()")
     public void around(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -44,19 +46,19 @@ public class BizLogAdvice{
         var args = JsonUtil.toJson(joinPoint.getArgs());
         var response = JsonUtil.toJson(result);
 
-        if (null != bizlog){
+        if (null != bizlog) {
             BizLogEntity bizLogEntity = new BizLogEntity();
 
             bizLogEntity.setOperator(ThreadUserHelper.getUserName());
 
             bizLogEntity.setDescription(bizlog.description())
-                        .setOperateDatetime(DateUtil.now())
-                        .setOperateType(bizlog.operateType().getCode());
+                    .setOperateDatetime(DateUtil.now())
+                    .setOperateType(bizlog.operateType().getCode());
 
             bizLogEntity.setClassName(className)
-                        .setMethod(methodName)
-                        .setParams(args)
-                        .setResponse(response);
+                    .setMethod(methodName)
+                    .setParams(args)
+                    .setResponse(response);
 
             this.bizLogSupporter.save(bizLogEntity);
         }

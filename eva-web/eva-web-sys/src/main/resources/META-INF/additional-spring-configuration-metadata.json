@@ -25,4 +25,5 @@
       "type": "java.lang.Integer",
       "description": "Description for jwt.ttl."
     }
-  ] }
+  ]
+}

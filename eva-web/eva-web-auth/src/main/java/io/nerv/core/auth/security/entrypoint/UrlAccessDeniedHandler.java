@@ -15,6 +15,7 @@ import java.io.PrintWriter;
 
 /**
  * 自定义权限不足处理器
+ *
  * @author PKAQ
  */
 @Component
@@ -26,10 +27,10 @@ public class UrlAccessDeniedHandler implements AccessDeniedHandler {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_OK);
 
-        try(PrintWriter printWriter = response.getWriter()){
+        try (PrintWriter printWriter = response.getWriter()) {
             printWriter.write(JsonUtil.toJson(
-                                new Response()
-                                        .failure(BizCodeEnum.PERMISSION_DENY)));
+                    new Response()
+                            .failure(BizCodeEnum.PERMISSION_DENY)));
             printWriter.flush();
         }
     }

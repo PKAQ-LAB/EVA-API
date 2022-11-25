@@ -9,6 +9,7 @@ import org.apache.ibatis.type.Alias;
 
 /**
  * 角色配置
+ *
  * @author: S.PKAQ
  */
 @Data

@@ -27,7 +27,7 @@ public class SubscribeHandler extends AbstractHandler {
         // 获取微信用户基本信息
         try {
             WxMpUser userWxInfo = weixinService.getUserService()
-                .userInfo(wxMessage.getFromUser(), null);
+                    .userInfo(wxMessage.getFromUser(), null);
             if (userWxInfo != null) {
                 // TODO 可以添加关注用户到本地数据库
             }
@@ -62,7 +62,7 @@ public class SubscribeHandler extends AbstractHandler {
      * 处理特殊请求，比如如果是扫码进来的，可以做相应处理
      */
     private WxMpXmlOutMessage handleSpecial(WxMpXmlMessage wxMessage)
-        throws Exception {
+            throws Exception {
         //TODO
         return null;
     }

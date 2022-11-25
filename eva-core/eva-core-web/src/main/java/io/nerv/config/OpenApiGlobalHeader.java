@@ -7,8 +7,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+
 /**
  * 添加全局的请求头参数
+ *
  * @author PKAQ
  */
 @Component
@@ -19,7 +21,7 @@ public class OpenApiGlobalHeader {
         return openApi -> openApi.getPaths().values().stream().flatMap(pathItem -> pathItem.readOperations().stream())
                 .forEach(operation -> {
                     StringSchema schema = new StringSchema();
-                    schema.setEnum(Arrays.asList("api","iphone","ipad","android","win","mac"));
+                    schema.setEnum(Arrays.asList("api", "iphone", "ipad", "android", "win", "mac"));
                     operation.addParametersItem(
                             new HeaderParameter()
                                     .in("header")

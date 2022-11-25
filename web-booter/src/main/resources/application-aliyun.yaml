@@ -9,14 +9,14 @@ logging:
     name: e:/applogs/webapp.log
 #  监控
 spring:
-#  boot:
-#    admin:
-#      client:
-#        url: http://47.104.217.77:10086/
-#        username: eva
-#        password: 7u8i9o0p
-#        instance:
-#          service-host-type: ip
+  #  boot:
+  #    admin:
+  #      client:
+  #        url: http://47.104.217.77:10086/
+  #        username: eva
+  #        password: 7u8i9o0p
+  #        instance:
+  #          service-host-type: ip
   # 数据源
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
@@ -35,7 +35,7 @@ spring:
       enabled: true
     restart:
       additional-paths: src/main/java
-# redis 配置
+  # redis 配置
   redis:
     host: 47.104.217.77
     port: 6379

@@ -12,10 +12,11 @@ import java.util.List;
 
 /**
  * 实体类基类，用于存放公共属性
+ *
  * @author PKAQ
  */
 @Data
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode(callSuper = false)
 public abstract class StdMultiEntity<T> extends StdEntity {
 
     @TableId(type = IdType.ASSIGN_UUID)

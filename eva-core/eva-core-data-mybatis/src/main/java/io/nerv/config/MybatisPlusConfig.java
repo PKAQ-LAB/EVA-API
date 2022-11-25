@@ -12,6 +12,7 @@ import java.util.Properties;
 
 /**
  * mybatis plus 配置
+ *
  * @author PKAQ
  */
 @Configuration
@@ -19,13 +20,15 @@ import java.util.Properties;
 @EnableTransactionManagement
 public class MybatisPlusConfig {
     /**
-    * 分页插件
-    * @return
-    */
-   @Bean
-   public MybatisPlusInterceptor mybatisPlusInterceptor() {
-      return new MybatisPlusInterceptor();
-   }
+     * 分页插件
+     *
+     * @return
+     */
+    @Bean
+    public MybatisPlusInterceptor mybatisPlusInterceptor() {
+        return new MybatisPlusInterceptor();
+    }
+
     /**
      * 数据库配置
      *

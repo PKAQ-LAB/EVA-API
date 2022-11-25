@@ -28,6 +28,7 @@ public class JsonFilterAdvice {
     @Pointcut("@annotation(io.nerv.core.annotation.JsonFilter)")
     public void annotation() {
     }
+
     /**
      * 以jsonFilter注解为切入点切入方法，序列化对象时过滤某些属性
      *
@@ -55,6 +56,7 @@ public class JsonFilterAdvice {
 
     /**
      * 把对象的属性置空
+     *
      * @param returnValue
      * @param values
      * @throws NoSuchFieldException

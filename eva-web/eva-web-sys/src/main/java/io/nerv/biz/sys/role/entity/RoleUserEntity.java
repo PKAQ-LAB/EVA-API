@@ -4,14 +4,14 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
 
-import javax.validation.constraints.NotBlank;
-
 /**
  * 角色用户关系表
+ *
  * @author: S.PKAQ
  */
 @Data
@@ -19,7 +19,7 @@ import javax.validation.constraints.NotBlank;
 @TableName("sys_role_user")
 @EqualsAndHashCode()
 @Schema(title = "角色用户关系")
-public class RoleUserEntity{
+public class RoleUserEntity {
     @TableId(type = IdType.ASSIGN_UUID)
     private String id;
 

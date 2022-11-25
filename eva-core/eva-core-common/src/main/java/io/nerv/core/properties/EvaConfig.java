@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * 业务日志配置读取类
+ *
  * @author PKAQ
  */
 @Data

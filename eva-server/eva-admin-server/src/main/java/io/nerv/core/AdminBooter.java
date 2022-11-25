@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * 启动类
+ *
  * @author PKAQ
  */
 @Slf4j

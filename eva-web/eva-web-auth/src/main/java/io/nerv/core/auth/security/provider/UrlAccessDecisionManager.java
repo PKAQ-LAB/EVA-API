@@ -43,14 +43,14 @@ public class UrlAccessDecisionManager implements AccessDecisionManager {
         log.info("requestUrl ： " + requestUrl);
 
         // 可访问资源放行
-        for (var permitUrl : permit){
+        for (var permitUrl : permit) {
             var urlMatcher = new AntPathRequestMatcher(permitUrl);
 
             if (urlMatcher.matches(request) ||
-                    StrUtil.equals(requestUrl,permitUrl)) return;
+                    StrUtil.equals(requestUrl, permitUrl)) return;
         }
 
-        if(evaConfig.getResourcePermission().isEnable()) {
+        if (evaConfig.getResourcePermission().isEnable()) {
             if (evaConfig.getResourcePermission().isStrict()) {
                 /**
                  * 严格模式, 判断 登录角色 请求的资源 是否与 资源需要的角色 一致
@@ -79,8 +79,8 @@ public class UrlAccessDecisionManager implements AccessDecisionManager {
 
                     String role = configAttribute.getAttribute();
 
-                    for (GrantedAuthority grantedAuthority: authorities){
-                        if (grantedAuthority.getAuthority().equals(role)){
+                    for (GrantedAuthority grantedAuthority : authorities) {
+                        if (grantedAuthority.getAuthority().equals(role)) {
                             return;
                         }
                     }

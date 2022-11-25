@@ -19,12 +19,13 @@ public class WebSocketHandler extends AbstractWebSocketHandler {
 
     /**
      * socket连接成功后触发
+     *
      * @param session
      */
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
         // 获取当前用户
-        String key =session.getId() ;
+        String key = session.getId();
         log.info("【有新的客户端连接了】：{}", key);
         WebSocketSessionManager.add(key, session);
         log.info("【websocket消息】有新的连接，总数为:" + WebSocketSessionManager.SESSION_POOL.size());
@@ -32,6 +33,7 @@ public class WebSocketHandler extends AbstractWebSocketHandler {
 
     /**
      * 获得客户端传来的消息
+     *
      * @param session
      * @param message
      */
@@ -39,22 +41,24 @@ public class WebSocketHandler extends AbstractWebSocketHandler {
     protected void handleTextMessage(WebSocketSession session, TextMessage message) {
         // 客户端发送普通文件信息时触发
         String payload = message.getPayload();
-        log.info("【websocket消息】收到客户端消息:"+payload);
+        log.info("【websocket消息】收到客户端消息:" + payload);
     }
 
     /**
      * 客户端发送二进信息是触发
+     *
      * @param session
      * @param message
      */
     @Override
     protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) {
         ByteBuffer payload = message.getPayload();
-        log.info("发送二进制消息:"+payload.toString());
+        log.info("发送二进制消息:" + payload.toString());
     }
 
     /**
      * 异常时触发
+     *
      * @param session
      * @param exception
      */
@@ -63,12 +67,13 @@ public class WebSocketHandler extends AbstractWebSocketHandler {
         // 获取当前用户
         String key = session.getId();
 
-        log.error("用户错误,原因:"+exception.getMessage());
+        log.error("用户错误,原因:" + exception.getMessage());
         WebSocketSessionManager.removeAndClose(key);
     }
 
     /**
      * socket连接关闭后触发
+     *
      * @param session
      * @param status
      */

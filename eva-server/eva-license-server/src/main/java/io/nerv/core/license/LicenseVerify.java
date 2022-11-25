@@ -46,9 +46,9 @@ public class LicenseVerify {
         Preferences pre = Preferences.userNodeForPackage(clazz);
         CipherParam cipherParam = new DefaultCipherParam(licenseConfig.getPub().getKeystorePwd());
         KeyStoreParam pubStoreParam = new DefaultKeyStoreParam(clazz,
-                                                               licenseConfig.getPub().getPath(),
-                                                               licenseConfig.getPub().getAlias(),
-                                                               licenseConfig.getPub().getKeystorePwd() , null);
+                licenseConfig.getPub().getPath(),
+                licenseConfig.getPub().getAlias(),
+                licenseConfig.getPub().getKeystorePwd(), null);
         return new DefaultLicenseParam(licenseConfig.getSubject(), pre, pubStoreParam, cipherParam);
     }
 

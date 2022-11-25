@@ -28,6 +28,7 @@ public class LicenseVerify {
     private final EvaConfig evaConfig;
 
     private final LicenseManager licenseManager;
+
     /**
      * 初始化安装证书证书
      */
@@ -43,6 +44,7 @@ public class LicenseVerify {
             Runtime.getRuntime().halt(1);
         }
     }
+
     /**
      * 安装证书证书
      */
@@ -55,6 +57,7 @@ public class LicenseVerify {
             Runtime.getRuntime().halt(1);
         }
     }
+
     /**
      * 验证证书的合法性
      */

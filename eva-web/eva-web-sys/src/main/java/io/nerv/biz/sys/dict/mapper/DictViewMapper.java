@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 /**
  * 字典视图view
+ *
  * @author: S.PKAQ
  */
 @Mapper

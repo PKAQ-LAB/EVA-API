@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * 组织管理单元测试
+ *
  * @author: S.PKAQ
  * @Datetime: 2018/4/19 23:40
  */
@@ -59,7 +60,7 @@ public class OrgCtrlTest extends BaseTest {
         try {
             String json = "{param:['b0a14a478c6a493da909acf523cc4768']}";
             mockMvc.perform(post("/organization/del")
-                    .content(json))
+                            .content(json))
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andExpect(jsonPath("success").value(true))
                     .andReturn().getResponse().getContentAsString();
@@ -73,7 +74,7 @@ public class OrgCtrlTest extends BaseTest {
         try {
             String json = "{name: 'junit org name', status: '0000'}";
             mockMvc.perform(post("/organization/edit")
-                    .content(json))
+                            .content(json))
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andExpect(jsonPath("success").value(true))
                     .andExpect(jsonPath("data").exists())
@@ -89,7 +90,7 @@ public class OrgCtrlTest extends BaseTest {
             String json = "[{id: '8', orders: 10010}," +
                     "{id: '9', orders: 10086}]";
             mockMvc.perform(post("/organization/sort")
-                    .content(json))
+                            .content(json))
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andExpect(jsonPath("success").value(true))
                     .andExpect(jsonPath("data").exists())
@@ -104,7 +105,7 @@ public class OrgCtrlTest extends BaseTest {
         try {
             String json = "{id:'fc79f82f03d94e6f8b1dfa5baf68e95a',status: '0000'}";
             mockMvc.perform(post("/organization/switchStatus")
-                    .content(json))
+                            .content(json))
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andExpect(jsonPath("success").value(true))
                     .andReturn().getResponse().getContentAsString();

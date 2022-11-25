@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class NoticeCtrl {
 
     @GetMapping("notices")
-    public Response notices(){
+    public Response notices() {
         String json = "[" +
                 "    {" +
                 "      id: '000000001'," +

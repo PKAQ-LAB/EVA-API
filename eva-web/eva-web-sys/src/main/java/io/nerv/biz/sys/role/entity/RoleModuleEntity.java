@@ -9,13 +9,14 @@ import org.apache.ibatis.type.Alias;
 
 /**
  * 角色模块关系表
+ *
  * @author: S.PKAQ
  */
 @Data
 @Alias("roleModule")
 @TableName("sys_role_module")
 @Schema(title = "角色模块关系")
-public class RoleModuleEntity{
+public class RoleModuleEntity {
     @TableId(type = IdType.ASSIGN_UUID)
     private String id;
 

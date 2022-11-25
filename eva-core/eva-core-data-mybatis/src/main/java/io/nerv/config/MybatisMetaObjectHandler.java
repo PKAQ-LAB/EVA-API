@@ -19,17 +19,17 @@ public class MybatisMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {
         log.debug("start insert fill ....");
-        this.strictInsertFill(metaObject,"createBy", String.class , ThreadUserHelper.getUserId());
-        this.strictInsertFill(metaObject,"modifyBy", String.class ,ThreadUserHelper.getUserId());
-        this.strictInsertFill(metaObject,"gmtCreate", LocalDateTime.class ,LocalDateTime.now());
-        this.strictInsertFill(metaObject,"gmtModify", LocalDateTime.class ,LocalDateTime.now());
+        this.strictInsertFill(metaObject, "createBy", String.class, ThreadUserHelper.getUserId());
+        this.strictInsertFill(metaObject, "modifyBy", String.class, ThreadUserHelper.getUserId());
+        this.strictInsertFill(metaObject, "gmtCreate", LocalDateTime.class, LocalDateTime.now());
+        this.strictInsertFill(metaObject, "gmtModify", LocalDateTime.class, LocalDateTime.now());
 
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
         log.debug("start update fill ....");
-        this.strictUpdateFill(metaObject,"modifyBy", String.class ,ThreadUserHelper.getUserId());
-        this.strictUpdateFill(metaObject,"gmtModify", LocalDateTime.class ,LocalDateTime.now());
+        this.strictUpdateFill(metaObject, "modifyBy", String.class, ThreadUserHelper.getUserId());
+        this.strictUpdateFill(metaObject, "gmtModify", LocalDateTime.class, LocalDateTime.now());
     }
 }

@@ -31,6 +31,7 @@ public class TokenCtrl {
      * 2. 删除老的 access_token
      * 3. 签发新的 refreshToken
      * 4. 删除老的 refreshToken
+     *
      * @return
      */
     @PostMapping("/auth/getAlpha")
@@ -80,7 +81,7 @@ public class TokenCtrl {
         }
 
         var map = Map.of(CommonConstant.ACCESS_TOKEN_KEY, new_alpha,
-                                              CommonConstant.REFRESH_TOKEN_KEY, new_bravo );
+                CommonConstant.REFRESH_TOKEN_KEY, new_bravo);
 
         return new Response().success(map);
 
@@ -88,9 +89,10 @@ public class TokenCtrl {
 
     /**
      * 清除cookie
+     *
      * @param response
      */
-    public void clearCookie(HttpServletResponse response){
+    public void clearCookie(HttpServletResponse response) {
         ServletUtil.addCookie(response,
                 CommonConstant.ACCESS_TOKEN_KEY,
                 null,

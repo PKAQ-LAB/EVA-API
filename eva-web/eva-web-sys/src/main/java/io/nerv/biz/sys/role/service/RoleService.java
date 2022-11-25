@@ -33,7 +33,9 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class RoleService extends StdService<RoleMapper, RoleEntity> {
-    /** 权限前缀 **/
+    /**
+     * 权限前缀
+     **/
     private final static String AUTH_PREFIX = "ROLE_";
 
     private final ModuleMapper moduleMapper;
@@ -48,6 +50,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
 
     /**
      * 查询角色列表
+     *
      * @param roleEntity
      * @return
      */
@@ -60,13 +63,14 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
 
     /**
      * 查询角色列表
+     *
      * @param roleEntity
      * @return
      */
     public IPage<RoleEntity> listRole(RoleEntity roleEntity, Integer page, Integer pageSize) {
 
         page = null != page ? page : 1;
-        pageSize = null != pageSize? pageSize: 10;
+        pageSize = null != pageSize ? pageSize : 10;
         // 查询条件
         QueryWrapper<RoleEntity> wrapper = new QueryWrapper<>(roleEntity);
 
@@ -75,18 +79,21 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
         pagination.setCurrent(page);
         pagination.setSize(pageSize);
 
-        return this.mapper.selectPage(pagination,wrapper);
+        return this.mapper.selectPage(pagination, wrapper);
     }
+
     /**
      * 根据请求的URL查询角色所属权限
+     *
      * @return
      */
-    public List<Map<String, String>> listRoleNamesWithPath(){
+    public List<Map<String, String>> listRoleNamesWithPath() {
         return this.roleModuleMapper.listRoleNamesWithPath();
     }
 
     /**
      * 批量删除角色
+     *
      * @param ids
      */
     public void deleteRole(ArrayList<String> ids) {
@@ -104,6 +111,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
 
     /**
      * 解锁/锁定角色
+     *
      * @param ids
      * @param lock
      */
@@ -111,13 +119,14 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
         RoleEntity role = new RoleEntity();
         role.setLocked(lock);
         QueryWrapper<RoleEntity> wrapper = new QueryWrapper<>();
-        wrapper.in("id", CollectionUtil.join(ids,","));
+        wrapper.in("id", CollectionUtil.join(ids, ","));
 
         this.mapper.update(role, wrapper);
     }
 
     /**
      * 获取一条角色信息
+     *
      * @param id 角色id
      * @return 符合条件的角色对象
      */
@@ -127,13 +136,14 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
 
     /**
      * 新增/编辑角色信息
+     *
      * @param role 角色对象
      * @return 角色列表
      */
     public void saveRole(RoleEntity role) {
         // 添加 ROLE_ 前缀 并转大写
-        if(!role.getCode().startsWith(AUTH_PREFIX)){
-            role.setCode((AUTH_PREFIX+role.getCode()).toUpperCase());
+        if (!role.getCode().startsWith(AUTH_PREFIX)) {
+            role.setCode((AUTH_PREFIX + role.getCode()).toUpperCase());
         }
 
         this.merge(role);
@@ -141,14 +151,15 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
 
     /**
      * 校验编码是否唯一
+     *
      * @param role
      * @return
      */
     public boolean checkUnique(RoleEntity role) {
         QueryWrapper<RoleEntity> entityWrapper = new QueryWrapper<>();
         // 添加 ROLE_ 前缀 并转大写
-        if(!role.getCode().startsWith(AUTH_PREFIX)){
-            role.setCode((AUTH_PREFIX+role.getCode()).toUpperCase());
+        if (!role.getCode().startsWith(AUTH_PREFIX)) {
+            role.setCode((AUTH_PREFIX + role.getCode()).toUpperCase());
         }
         entityWrapper.eq("code", role.getCode());
         long records = this.mapper.selectCount(entityWrapper);
@@ -157,6 +168,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
 
     /**
      * 获取该角色绑定的所有模块
+     *
      * @param roleModule 权限条件
      * @return
      */
@@ -169,7 +181,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
         List<ModuleEntityStd> moduleList = null;
 
         // 非管理员仅能授权当前权限范围内的模块
-        if (isAdmin){
+        if (isAdmin) {
             moduleList = this.moduleMapper.listModule(moduleEntity);
         } else {
             moduleList = this.moduleMapper.listGrantedModule(null, moduleEntity, new String[]{"获取角色列表"});
@@ -182,10 +194,10 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
         // 已选的资源权限
         Map<String, List<String>> checkedResource = new HashMap<>(roleModuleList.size());
 
-        if (CollectionUtils.isNotEmpty(roleModuleList)){
+        if (CollectionUtils.isNotEmpty(roleModuleList)) {
             checked = new HashSet<>(roleModuleList.size());
             for (RoleModuleEntity rme : roleModuleList) {
-                if (!checked.contains(rme.getModuleId())){
+                if (!checked.contains(rme.getModuleId())) {
                     checked.add(rme.getModuleId());
                 }
 
@@ -193,7 +205,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
                 String mid = rme.getModuleId();
 
                 List<String> list = checkedResource.get(mid);
-                if (CollUtil.isEmpty(list)){
+                if (CollUtil.isEmpty(list)) {
                     list = new ArrayList<>();
                 }
                 list.add(rid);
@@ -218,15 +230,15 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
         this.roleModuleMapper.delete(wrapper);
 
         // 插入新的权限信息
-        if(CollectionUtil.isNotEmpty(role.getModules())){
+        if (CollectionUtil.isNotEmpty(role.getModules())) {
             List<RoleModuleEntity> modules = role.getModules();
             Map<String, String[]> resourceMap = role.getResources();
 
             for (RoleModuleEntity module : modules) {
                 module.setRoleId(role.getId());
                 //设置角色拥有的资源
-                String[] resources = null != resourceMap? resourceMap.get(module.getModuleId()+"") : null;
-                if (null == resources || resources.length < 1){
+                String[] resources = null != resourceMap ? resourceMap.get(module.getModuleId() + "") : null;
+                if (null == resources || resources.length < 1) {
                     this.roleModuleMapper.insert(module);
                 } else {
                     for (String s : resources) {
@@ -241,19 +253,20 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
 
     /**
      * 获取该角色绑定的所有用户
+     *
      * @param roleId 权限条件
      * @return
      */
     public Map<String, Object> listUser(String roleId, String deptId) {
         // 获取所有用户
         UserEntity userEntity = new UserEntity();
-        if (StrUtil.isNotBlank(deptId)){
+        if (StrUtil.isNotBlank(deptId)) {
             userEntity.setDeptId(deptId);
         }
 
         userEntity.setLocked(LockEnumm.UNLOCK.getCode());
 
-        List<UserEntity> users  = this.userService.listUser(userEntity);
+        List<UserEntity> users = this.userService.listUser(userEntity);
         // 获取已选的模块
         RoleUserEntity roleUserEntity = new RoleUserEntity();
         roleUserEntity.setRoleId(roleId);
@@ -263,7 +276,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
         // 只返回moduleId
         List<RoleUserEntity> roleUserList = this.roleUserMapper.selectList(wrapper);
         List<String> checked = null;
-        if (CollectionUtils.isNotEmpty(roleUserList)){
+        if (CollectionUtils.isNotEmpty(roleUserList)) {
             checked = new ArrayList<>(roleUserList.size());
             for (RoleUserEntity rue : roleUserList) {
                 checked.add(rue.getUserId());
@@ -284,7 +297,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
         // 删除原有角色
         this.roleUserMapper.delete(wrapper);
         // 插入新的权限信息
-        if(CollectionUtil.isNotEmpty(role.getUsers())){
+        if (CollectionUtil.isNotEmpty(role.getUsers())) {
             List<RoleUserEntity> users = role.getUsers();
             for (RoleUserEntity user : users) {
                 user.setRoleId(role.getId());

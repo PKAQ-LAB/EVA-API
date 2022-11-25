@@ -12,6 +12,7 @@ import java.util.List;
 public interface FileUploadProvider {
     /**
      * 上传
+     *
      * @param file
      * @return
      */
@@ -19,6 +20,7 @@ public interface FileUploadProvider {
 
     /**
      * 存储
+     *
      * @param filenames
      * @return
      */
@@ -26,6 +28,7 @@ public interface FileUploadProvider {
 
     /**
      * 存储图片并且生成缩略图
+     *
      * @param scale
      * @param filenames
      */
@@ -33,6 +36,7 @@ public interface FileUploadProvider {
 
     /**
      * 生成缩略图
+     *
      * @param file
      * @param scale
      */
@@ -40,6 +44,7 @@ public interface FileUploadProvider {
 
     /**
      * 生成缩略图,可指定缩放
+     *
      * @param file
      * @param dest
      * @param scale
@@ -48,6 +53,7 @@ public interface FileUploadProvider {
 
     /**
      * 删除图片
+     *
      * @param fileName
      */
     void delFromStorage(String fileName);

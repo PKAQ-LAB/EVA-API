@@ -7,6 +7,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
+/**
+ * @author
+ */
 @Configuration
 public class SecuritySecureConfig {
 
@@ -20,16 +23,16 @@ public class SecuritySecureConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         // @formatter:off
         SavedRequestAwareAuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
-        successHandler.setTargetUrlParameter( "redirectTo" );
+        successHandler.setTargetUrlParameter("redirectTo");
 
-       return http.authorizeRequests()
-                .antMatchers( adminContextPath + "/assets/**" ).permitAll()
-                .antMatchers( adminContextPath + "/login" ).permitAll()
+        return http.authorizeHttpRequests()
+                .requestMatchers(adminContextPath + "/assets/**").permitAll()
+                .requestMatchers(adminContextPath + "/login").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .formLogin().loginPage( adminContextPath + "/login" ).successHandler( successHandler )
+                .formLogin().loginPage(adminContextPath + "/login").successHandler(successHandler)
                 .and()
-                .logout().logoutUrl( adminContextPath + "/logout" ).and()
+                .logout().logoutUrl(adminContextPath + "/logout").and()
                 .httpBasic()
                 .and()
                 .headers().frameOptions().disable()

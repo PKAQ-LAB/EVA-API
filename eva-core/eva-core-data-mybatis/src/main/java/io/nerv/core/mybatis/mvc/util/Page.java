@@ -11,6 +11,7 @@ import java.util.function.Predicate;
 
 /**
  * 自定义分页模型
+ *
  * @author PKAQ
  */
 public class Page<T> implements IPage<T> {

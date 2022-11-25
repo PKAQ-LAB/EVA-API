@@ -8,6 +8,7 @@ import java.util.List;
 
 /**
  * 通用分页对象
+ *
  * @param <T>
  */
 @Data

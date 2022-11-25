@@ -20,6 +20,7 @@ import java.util.Date;
 
 /**
  * JWT 工具类
+ *
  * @author: S.PKAQ
  */
 @Data
@@ -29,19 +30,22 @@ import java.util.Date;
 public class JwtUtil {
     private final EvaConfig evaConfig;
 
-    public Jwt jwtConfig(){
+    public Jwt jwtConfig() {
         return this.evaConfig.getJwt();
     }
 
     /**
      * 生成密钥
+     *
      * @return
      */
     private byte[] generalKey() {
-       return evaConfig.getJwt().getSecert().getBytes(StandardCharsets.UTF_8);
+        return evaConfig.getJwt().getSecert().getBytes(StandardCharsets.UTF_8);
     }
+
     /**
      * 获取uid中的uid属性
+     *
      * @param token
      * @return
      */
@@ -55,8 +59,10 @@ public class JwtUtil {
         }
         return uid;
     }
+
     /**
      * 获取用户名
+     *
      * @param token
      * @return
      */
@@ -70,12 +76,14 @@ public class JwtUtil {
         }
         return uid;
     }
+
     /**
      * 获取jwt自定义属性
+     *
      * @param token jwt
      * @return 属性值
      */
-    private JWTClaimsSet getClaimsFromToken(String token)  {
+    private JWTClaimsSet getClaimsFromToken(String token) {
         // 解析token，将token转换为JWSObject对象
         JWSObject jwsObject = null;
         JWTClaimsSet jwtClaimsSet = null;
@@ -85,7 +93,7 @@ public class JwtUtil {
             // 创建一个JSON Web Signature (JWS) verifier.用于校验签名(即:校验token是否被篡改)
             JWSVerifier jwsVerifier = new MACVerifier(this.generalKey());
             // 如果校验到token被篡改(即:签名认证失败)，那么抛出异常
-            if(!jwsObject.verify(jwsVerifier)) {
+            if (!jwsObject.verify(jwsVerifier)) {
                 throw new BizException(BizCodeEnum.TOKEN_NOT_VERIFY);
             }
             jwtClaimsSet = JWTClaimsSet.parse(jwsObject.getPayload().toJSONObject());
@@ -97,12 +105,11 @@ public class JwtUtil {
     }
 
     /**
-     *
      * @param ttlMillis 有效时间
-     * @param username   username
+     * @param username  username
      * @return jwt token
      */
-    public String build(long ttlMillis, String userId, String username)  {
+    public String build(long ttlMillis, String userId, String username) {
         /**
          * 1.创建一个32-byte的密匙
          */
@@ -120,7 +127,7 @@ public class JwtUtil {
 
         // 过期时间
         long expMillis = nowMillis + (ttlMillis * 1000);
-        Date exp =  new Date(expMillis);
+        Date exp = new Date(expMillis);
 
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                 .issueTime(new Date(nowMillis))
@@ -147,8 +154,10 @@ public class JwtUtil {
         String token = signedJWT.serialize();
         return token;
     }
+
     /**
      * 验证token
+     *
      * @param jwtToken token串
      * @return 验证结果
      */
@@ -162,13 +171,13 @@ public class JwtUtil {
             JWSVerifier jwsVerifier = null;
             jwsVerifier = new MACVerifier(this.generalKey());
             // 如果校验到token被篡改(即:签名认证失败)，那么抛出异常
-            if(!jwsObject.verify(jwsVerifier)) {
+            if (!jwsObject.verify(jwsVerifier)) {
                 throw new BizException(BizCodeEnum.TOKEN_NOT_VERIFY);
             }
             // 获取有效负载
             JWTClaimsSet claimsSet = JWTClaimsSet.parse(jwsObject.getPayload().toJSONObject());
 
-            if (null == claimsSet || "-".equals(claimsSet.getSubject())){
+            if (null == claimsSet || "-".equals(claimsSet.getSubject())) {
                 log.error("登录已失效");
                 throw new BizException(BizCodeEnum.LOGIN_EXPIRED);
             } else {
@@ -179,8 +188,10 @@ public class JwtUtil {
         }
         return ret;
     }
+
     /**
      * 刷新TOKEN TOKEN續命
+     *
      * @param token
      * @return
      */
@@ -192,6 +203,7 @@ public class JwtUtil {
 
     /**
      * Token是否即将过期
+     *
      * @param token
      * @return
      */
@@ -200,8 +212,10 @@ public class JwtUtil {
         expiration = getClaimsFromToken(token).getExpirationTime();
         return (expiration.getTime() - System.currentTimeMillis()) < (this.jwtConfig().getThreshold());
     }
+
     /**
      * 重新计算过期时间
+     *
      * @return
      */
     private Date calculateExpirationDate() {
@@ -211,19 +225,21 @@ public class JwtUtil {
 
     /**
      * 获取签发时间
+     *
      * @param token
      * @return
      */
-    public Date getIssuedAt(String token){
+    public Date getIssuedAt(String token) {
         return this.getClaimsFromToken(token).getIssueTime();
     }
 
     /**
      * 获取过期时间
+     *
      * @param token
      * @return
      */
-    public Date getExpirationDateFromToken(String token){
+    public Date getExpirationDateFromToken(String token) {
         return this.getClaimsFromToken(token).getExpirationTime();
     }
 }

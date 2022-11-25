@@ -52,11 +52,12 @@ public class DfsFileUploadUtil implements FileUploadProvider {
 
     /**
      * 文件上传 默认上传到配置的tmp目录
+     *
      * @param file
      * @return
      */
     @Override
-    public String upload(MultipartFile file, String path){
+    public String upload(MultipartFile file, String path) {
         // 上传文件名
         String fileName = file.getOriginalFilename();
         // 后缀名
@@ -66,7 +67,7 @@ public class DfsFileUploadUtil implements FileUploadProvider {
 
         String file_path = "";
 
-        if (StrUtil.isNotEmpty(fileName)){
+        if (StrUtil.isNotEmpty(fileName)) {
             suffixName = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
             newFileName = snowflake.nextIdStr() + "." + suffixName;
         } else {
@@ -74,7 +75,7 @@ public class DfsFileUploadUtil implements FileUploadProvider {
             throw new BizException(BizCodeEnum.FILENAME_ERROR);
         }
         // 判断上传文件是否符合格式
-        if (evaConfig.getUpload().getAllowSuffixName().toUpperCase().contains(suffixName)){
+        if (evaConfig.getUpload().getAllowSuffixName().toUpperCase().contains(suffixName)) {
             InputStreamResource isr = null;
             try {
                 isr = new InputStreamResource(file.getInputStream(), newFileName);
@@ -87,10 +88,10 @@ public class DfsFileUploadUtil implements FileUploadProvider {
             //文件
             paramMap.put("file", isr);
             //输出
-            paramMap.put("output","json");
+            paramMap.put("output", "json");
             //自定义路径
 //            String curDate = DateUtil.format(new Date(), DatePattern.PURE_DATE_FORMAT);
-            if (StrUtil.isNotBlank(path)){
+            if (StrUtil.isNotBlank(path)) {
                 paramMap.put("path", path);
             } else {
                 paramMap.put("path", suffixName);
@@ -113,50 +114,61 @@ public class DfsFileUploadUtil implements FileUploadProvider {
 
     /**
      * 将文件从缓存目录移动到storage目录
+     *
      * @param filenames
      * @return
      */
     @Override
-    public List<String> storage(String... filenames){ return null;}
+    public List<String> storage(String... filenames) {
+        return null;
+    }
 
     /**
      * 将文件从缓存目录移动到storage目录并生成缩略图
+     *
      * @param filenames
      */
     @Override
-    public void storageWithThumbnail(float scale, String... filenames){}
+    public void storageWithThumbnail(float scale, String... filenames) {
+    }
 
     /**
      * 生成缩略图
+     *
      * @param file
      * @param scale
      */
     @Override
-    public void thumbnail(File file, float scale){}
+    public void thumbnail(File file, float scale) {
+    }
 
     /**
      * 生成缩略图
+     *
      * @param file
      * @param dest
      * @param scale
      */
     @Override
-    public void thumbnail(File file, File dest, float scale){}
+    public void thumbnail(File file, File dest, float scale) {
+    }
 
     /**
      * 从持久目录删除文件以及缩略图
+     *
      * @param path
      */
     @Override
-    public void delFromStorage(String path){
-       HttpUtil.post(evaConfig.getUpload().getServerUrl()+ this.DELETE_API, path);
+    public void delFromStorage(String path) {
+        HttpUtil.post(evaConfig.getUpload().getServerUrl() + this.DELETE_API, path);
     }
 
     /**
      * 传输到go-fastdfs
+     *
      * @return
      */
-    public String transfer(Map<String, Object> map){
+    public String transfer(Map<String, Object> map) {
         return HttpUtil.post(evaConfig.getUpload().getServerUrl() + this.UPLOAD_API, map);
     }
 
@@ -167,10 +179,10 @@ public class DfsFileUploadUtil implements FileUploadProvider {
     public void tempClean() {
         Cache cache = cacheManager.getCache(CommonConstant.CACHE_UPLOADFILES);
 
-        String k = CommonConstant.FILE_CACHE_PREFIX + DateUtil.format(DateUtil.offsetHour(new Date(), -2), "HH") ;
+        String k = CommonConstant.FILE_CACHE_PREFIX + DateUtil.format(DateUtil.offsetHour(new Date(), -2), "HH");
         var cacheWrapper = cache.get(k);
 
-        List<String> tmpFileList = null == cacheWrapper? null : (List<String>) cacheWrapper.get();
+        List<String> tmpFileList = null == cacheWrapper ? null : (List<String>) cacheWrapper.get();
 
         if (null == cacheWrapper || CollUtil.isEmpty(tmpFileList)) {
             return;
@@ -183,20 +195,22 @@ public class DfsFileUploadUtil implements FileUploadProvider {
         // 删除完毕 从缓存中移除此key
         cache.evict(k);
     }
+
     /**
      * 将上传的图片写入缓存 根据清理机制同时会存在3个缓存
      * 即 当前时间-2 当前时间-1 当前时间
      * 清除时 会清除当前时间 - 2 的缓存
+     *
      * @param v
      */
-    private void cachePut(String v){
+    private void cachePut(String v) {
         Cache cache = cacheManager.getCache(CommonConstant.CACHE_UPLOADFILES);
 
-        String k = CommonConstant.FILE_CACHE_PREFIX + DateUtil.format(new Date(), "HH") ;
+        String k = CommonConstant.FILE_CACHE_PREFIX + DateUtil.format(new Date(), "HH");
         Cache.ValueWrapper valueWrapper = cache.get(k);
 
         List<String> tmpFileList = new ArrayList<>();
-        if (null == valueWrapper){
+        if (null == valueWrapper) {
             cache.put(k, tmpFileList);
         } else {
             tmpFileList = (List<String>) valueWrapper.get();

@@ -9,12 +9,18 @@ import java.util.List;
  */
 @Data
 public class DataPermission {
-    /** 是否启用 **/
+    /**
+     * 是否启用
+     **/
     private boolean enable;
 
-    /** 需要排除得表 **/
+    /**
+     * 需要排除得表
+     **/
     private List<String> excludeTables;
 
-    /** 需要排除得语句 **/
+    /**
+     * 需要排除得语句
+     **/
     private List<String> excludeStatements;
 }
