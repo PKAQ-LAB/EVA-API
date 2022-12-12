@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 /**
  * JwtUser 工厂
+ * @author PKAQ
  */
 public final class JwtUserFactory {
 

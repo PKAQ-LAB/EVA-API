@@ -5,6 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import io.nerv.biz.sys.role.service.RoleService;
 import io.nerv.core.properties.EvaConfig;
 import io.nerv.core.threaduser.ThreadUserHelper;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
@@ -15,7 +16,6 @@ import org.springframework.security.web.access.intercept.FilterInvocationSecurit
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -42,6 +42,30 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
      */
     private volatile ConcurrentHashMap<String, Collection<ConfigAttribute>> pathPermMap = null;
 
+    private Collection<ConfigAttribute> getValues(Map<String, String> item) {
+        var path = item.get("path");
+        var role_code = item.get("code");
+        var resoure_path = item.get("resource_url");
+
+        if (StrUtil.isNotBlank(resoure_path)) {
+            resoure_path = resoure_path.startsWith("/") ? resoure_path.substring(1) : resoure_path;
+        }
+
+        path = path.endsWith("/") ? path + resoure_path : path + "/" + resoure_path;
+
+        Collection<ConfigAttribute> values = rolePermMap.get(role_code);
+
+        ConfigAttribute securityConfig = new SecurityConfig(path);
+
+        if (null == values) {
+            values = new ArrayList<>();
+        }
+
+        values.add(securityConfig);
+
+        return values;
+    }
+
     /**
      * 加载资源，初始化资源变量
      * 角色 - url+资源路径
@@ -51,27 +75,8 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
         rolePermMap = new ConcurrentHashMap<>(menusUrl.size());
 
         menusUrl.stream().forEach(item -> {
-            var path = item.get("path");
             var role_code = item.get("code");
-            var resoure_path = item.get("resource_url");
-
-            if (StrUtil.isNotBlank(resoure_path)) {
-                resoure_path = resoure_path.startsWith("/") ? resoure_path.substring(1) : resoure_path;
-            }
-
-            path = path.endsWith("/") ? path + resoure_path : path + "/" + resoure_path;
-
-            Collection<ConfigAttribute> values = rolePermMap.get(role_code);
-
-            ConfigAttribute securityConfig = new SecurityConfig(path);
-
-            if (null == values) {
-                values = new ArrayList<>();
-            }
-
-            values.add(securityConfig);
-
-            rolePermMap.put(role_code, values);
+            rolePermMap.put(role_code, this.getValues(item));
         });
     }
 
@@ -85,26 +90,7 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
 
         menusUrl.stream().forEach(item -> {
             var path = item.get("path");
-            var role_code = item.get("code");
-            var resoure_path = item.get("resource_url");
-
-            if (StrUtil.isNotBlank(resoure_path)) {
-                resoure_path = resoure_path.startsWith("/") ? resoure_path.substring(1) : resoure_path;
-            }
-
-            var key = path.endsWith("/") ? path + resoure_path : path + "/" + resoure_path;
-
-            Collection<ConfigAttribute> values = pathPermMap.get(key);
-
-            ConfigAttribute securityConfig = new SecurityConfig(role_code);
-
-            if (null == values) {
-                values = new ArrayList<>();
-            }
-
-            values.add(securityConfig);
-
-            pathPermMap.put(key, values);
+            pathPermMap.put(path, this.getValues(item));
         });
     }
 

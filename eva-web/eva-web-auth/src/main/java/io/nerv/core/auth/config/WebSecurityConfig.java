@@ -5,7 +5,6 @@ import cn.hutool.core.util.ArrayUtil;
 import io.nerv.core.auth.security.entrypoint.*;
 import io.nerv.core.auth.security.filter.JwtAuthFilter;
 import io.nerv.core.auth.security.provider.JwtUsernamePasswordAuthenticationFilter;
-import io.nerv.core.auth.security.provider.UrlFilterSecurityInterceptor;
 import io.nerv.core.properties.EvaConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

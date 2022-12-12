@@ -18,5 +18,6 @@ include ':eva-core:eva-core-websocket'
 
 include ':eva-server:eva-admin-server'
 include ':eva-server:eva-license-server'
-
+include 'eva-web:eva-web-sauth'
+findProject(':eva-web:eva-web-sauth')?.name = 'eva-web-sauth'
 
