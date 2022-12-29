@@ -74,7 +74,7 @@ public class RoleCtrl extends Ctrl {
 
     @GetMapping({"/listUser"})
     @Operation(summary = "获得角色绑定的用户列表")
-    public Response listUser(@Parameter(name = "roleEntity", description = "包含角色对象属性的查询条件", requiredMode = Schema.RequiredMode.REQUIRED)
+    public Response listUser(@Parameter(name = "roleEntity", description = "包含角色对象属性的查询条件", required = true)
                              @RequestParam String roleId,
                              @RequestParam(required = false) String deptId) {
         return success(this.service.listUser(roleId, deptId));

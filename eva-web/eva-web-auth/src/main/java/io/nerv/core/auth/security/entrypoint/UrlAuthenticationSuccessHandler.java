@@ -2,6 +2,7 @@ package io.nerv.core.auth.security.entrypoint;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.CharsetUtil;
+import cn.hutool.extra.servlet.JakartaServletUtil;
 import cn.hutool.extra.servlet.ServletUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.nerv.core.auth.domain.JwtUserDetail;
@@ -67,21 +68,21 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
             tokenUtil.saveToken(user.getId(), tokenUtil.buildCacheValue(request, user.getId(), access_token));
         }
 
-        ServletUtil.addCookie(httpServletResponse,
+        JakartaServletUtil.addCookie(httpServletResponse,
                 CommonConstant.ACCESS_TOKEN_KEY,
                 access_token,
                 evaConfig.getCookie().getMaxAge(),
                 "/",
                 evaConfig.getCookie().getDomain());
 
-        ServletUtil.addCookie(httpServletResponse,
+        JakartaServletUtil.addCookie(httpServletResponse,
                 CommonConstant.REFRESH_TOKEN_KEY,
                 refresh_token,
                 evaConfig.getCookie().getMaxAge(),
                 "/",
                 evaConfig.getCookie().getDomain());
 
-        ServletUtil.addCookie(httpServletResponse,
+        JakartaServletUtil.addCookie(httpServletResponse,
                 CommonConstant.USER_KEY,
                 URLEncoder.encode(mapper.writeValueAsString(user), CharsetUtil.UTF_8),
                 evaConfig.getCookie().getMaxAge(),

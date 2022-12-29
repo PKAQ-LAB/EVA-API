@@ -1,5 +1,6 @@
 package io.nerv.core.auth.security.ctrl;
 
+import cn.hutool.extra.servlet.JakartaServletUtil;
 import cn.hutool.extra.servlet.ServletUtil;
 import io.nerv.core.auth.util.CacheTokenUtil;
 import io.nerv.core.constant.CommonConstant;
@@ -61,14 +62,14 @@ public class TokenCtrl {
         String new_bravo = jwtUtil.build(evaConfig.getJwt().getBravoTtl(), uid, account);
 
         // 替换客户端的旧token
-        ServletUtil.addCookie(response,
+        JakartaServletUtil.addCookie(response,
                 CommonConstant.ACCESS_TOKEN_KEY,
                 new_alpha,
                 0,
                 "/",
                 evaConfig.getCookie().getDomain());
 
-        ServletUtil.addCookie(response,
+        JakartaServletUtil.addCookie(response,
                 CommonConstant.REFRESH_TOKEN_KEY,
                 new_bravo,
                 0,
@@ -93,21 +94,21 @@ public class TokenCtrl {
      * @param response
      */
     public void clearCookie(HttpServletResponse response) {
-        ServletUtil.addCookie(response,
+        JakartaServletUtil.addCookie(response,
                 CommonConstant.ACCESS_TOKEN_KEY,
                 null,
                 0,
                 "/",
                 evaConfig.getCookie().getDomain());
 
-        ServletUtil.addCookie(response,
+        JakartaServletUtil.addCookie(response,
                 CommonConstant.REFRESH_TOKEN_KEY,
                 null,
                 0,
                 "/",
                 evaConfig.getCookie().getDomain());
 
-        ServletUtil.addCookie(response,
+        JakartaServletUtil.addCookie(response,
                 CommonConstant.USER_KEY,
                 null,
                 0,

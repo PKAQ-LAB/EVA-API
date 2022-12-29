@@ -1,6 +1,7 @@
 package io.nerv.core.web.util;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.servlet.JakartaServletUtil;
 import cn.hutool.extra.servlet.ServletUtil;
 import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.properties.EvaConfig;
@@ -48,8 +49,8 @@ public class TokenUtil {
 
         var authHeader = request.getHeader(evaConfig.getJwt().getHeader());
 
-        if (null != ServletUtil.getCookie(request, CommonConstant.ACCESS_TOKEN_KEY)) {
-            authToken = ServletUtil.getCookie(request, CommonConstant.ACCESS_TOKEN_KEY).getValue();
+        if (null != JakartaServletUtil.getCookie(request, CommonConstant.ACCESS_TOKEN_KEY)) {
+            authToken = JakartaServletUtil.getCookie(request, CommonConstant.ACCESS_TOKEN_KEY).getValue();
         } else if (StrUtil.isNotBlank(authHeader) && authHeader.startsWith(evaConfig.getJwt().getTokenHead())) {
             authToken = authHeader.substring(evaConfig.getJwt().getTokenHead().length());
         }

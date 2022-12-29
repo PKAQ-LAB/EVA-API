@@ -1,5 +1,6 @@
 package io.nerv.core.auth.security.entrypoint;
 
+import cn.hutool.extra.servlet.JakartaServletUtil;
 import cn.hutool.extra.servlet.ServletUtil;
 import io.nerv.core.auth.util.CacheTokenUtil;
 import io.nerv.core.constant.CommonConstant;
@@ -44,14 +45,14 @@ public class UrlLogoutSuccessHandler implements LogoutSuccessHandler {
         }
 
         // 清除cookie
-        ServletUtil.addCookie(httpServletResponse,
+        JakartaServletUtil.addCookie(httpServletResponse,
                 CommonConstant.ACCESS_TOKEN_KEY,
                 null,
                 0,
                 "/",
                 evaConfig.getCookie().getDomain());
 
-        ServletUtil.addCookie(httpServletResponse,
+        JakartaServletUtil.addCookie(httpServletResponse,
                 CommonConstant.REFRESH_TOKEN_KEY,
                 null,
                 0,
@@ -59,7 +60,7 @@ public class UrlLogoutSuccessHandler implements LogoutSuccessHandler {
                 evaConfig.getCookie().getDomain());
 
 
-        ServletUtil.addCookie(httpServletResponse,
+        JakartaServletUtil.addCookie(httpServletResponse,
                 CommonConstant.USER_KEY,
                 null,
                 0,

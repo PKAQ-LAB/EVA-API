@@ -1,6 +1,7 @@
 package io.nerv.core.auth.security.filter;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.servlet.JakartaServletUtil;
 import cn.hutool.extra.servlet.ServletUtil;
 import io.nerv.core.auth.util.CacheTokenUtil;
 import io.nerv.core.constant.CommonConstant;
@@ -66,8 +67,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             logger.warn(e);
         }
 
-        if (null != ServletUtil.getCookie(request, CommonConstant.ACCESS_TOKEN_KEY)) {
-            authToken = ServletUtil.getCookie(request, CommonConstant.ACCESS_TOKEN_KEY).getValue();
+        if (null != JakartaServletUtil.getCookie(request, CommonConstant.ACCESS_TOKEN_KEY)) {
+            authToken = JakartaServletUtil.getCookie(request, CommonConstant.ACCESS_TOKEN_KEY).getValue();
         }
 
         if (StrUtil.isNotBlank(authToken)) {
@@ -110,7 +111,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     // reponse请求头返回刷新后的token
                     response.setHeader(CommonConstant.ACCESS_TOKEN_KEY, newToken);
                     // 后台设置前台cookie值
-                    ServletUtil.addCookie(response, CommonConstant.ACCESS_TOKEN_KEY,
+                    JakartaServletUtil.addCookie(response, CommonConstant.ACCESS_TOKEN_KEY,
                             newToken,
                             evaConfig.getCookie().getMaxAge(),
                             "/",
@@ -187,21 +188,21 @@ public class JwtAuthFilter extends OncePerRequestFilter {
      * @param response
      */
     public void clearCookie(HttpServletResponse response) {
-        ServletUtil.addCookie(response,
+        JakartaServletUtil.addCookie(response,
                 CommonConstant.ACCESS_TOKEN_KEY,
                 null,
                 0,
                 "/",
                 evaConfig.getCookie().getDomain());
 
-        ServletUtil.addCookie(response,
+        JakartaServletUtil.addCookie(response,
                 CommonConstant.REFRESH_TOKEN_KEY,
                 null,
                 0,
                 "/",
                 evaConfig.getCookie().getDomain());
 
-        ServletUtil.addCookie(response,
+        JakartaServletUtil.addCookie(response,
                 CommonConstant.USER_KEY,
                 null,
                 0,

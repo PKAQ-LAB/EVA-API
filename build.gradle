@@ -42,7 +42,7 @@ ext {
            "springdoc" : "org.springdoc:springdoc-openapi-webmvc-core:${springdoc}",
            "springdocui" : "org.springdoc:springdoc-openapi-ui:${springdoc}",
            // swagger
-           "knife4j_ui" : "com.github.xiaoymin:knife4j-springdoc-ui:${knife4j}",
+           "knife4j_ui" : "com.github.xiaoymin:knife4j-openapi3-ui:${knife4j}",
             // jwt
            "jwt": "com.nimbusds:nimbus-jose-jwt:${jwt}",
             // 线程增强
