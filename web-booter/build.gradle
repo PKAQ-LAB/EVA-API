@@ -33,9 +33,10 @@ dependencies {
             project(":eva-web:eva-web-sys"),
             "${lib.mysql}"
 
-    implementation "${lib.knife4j_ui}",
+    implementation "${lib.bootAdmin}",
+                   "${lib.devTools}",
                    "${lib.springdocui}",
-                   "${lib.bootAdmin}",
-                   "${lib.devTools}"
+                   "${lib.knife4j_ui}"
+
 
 }

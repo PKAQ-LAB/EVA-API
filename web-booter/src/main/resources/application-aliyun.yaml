@@ -35,13 +35,6 @@ spring:
       enabled: true
     restart:
       additional-paths: src/main/java
-  # redis 配置
-  redis:
-    host: 47.104.217.77
-    port: 6379
-    password: 7u8i9o0p
-    timeout: 10000
-    database: 0
   # flyway配置 对于非空数据库 需要开启此项避免报错
   flyway:
     baseline-on-migrate: true
@@ -49,9 +42,15 @@ spring:
     baseline-version: 0
     enabled: false
   data:
+  # redis 配置
     redis:
       repositories:
         enabled: false
+      host: 47.104.217.77
+      port: 6379
+      password: 7u8i9o0p
+      timeout: 10000
+      database: 0
 management:
   endpoints:
     web:

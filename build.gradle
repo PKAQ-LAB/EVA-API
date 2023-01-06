@@ -39,8 +39,8 @@ ext {
            // mybatis
            "mybatisPlus" : "com.baomidou:mybatis-plus-boot-starter:${mybatis_plus_starter}",
            // 文档聚合
-           "springdoc" : "org.springdoc:springdoc-openapi-webmvc-core:${springdoc}",
-           "springdocui" : "org.springdoc:springdoc-openapi-ui:${springdoc}",
+           "springdoc" : "org.springdoc:springdoc-openapi-starter-webmvc-api:${springdoc}",
+           "springdocui" : "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springdoc}",
            // swagger
            "knife4j_ui" : "com.github.xiaoymin:knife4j-openapi3-ui:${knife4j}",
             // jwt

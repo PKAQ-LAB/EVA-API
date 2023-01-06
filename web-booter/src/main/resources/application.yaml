@@ -20,13 +20,13 @@ spring:
       WRITE_DATES_AS_TIMESTAMPS: false
       #格式化输出
       indent_output: true
-springdoc:
+#springdoc:
   #  api-docs:
   #    enabled: true
   #    groups:
   #      enabled: true
-  swagger-ui:
-    disable-swagger-default-url: true
+#  swagger-ui:
+#    disable-swagger-default-url: true
 # mybatis
 mybatis-plus:
   mapper-locations: classpath*:/mapper/*.xml

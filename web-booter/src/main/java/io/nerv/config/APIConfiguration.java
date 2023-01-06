@@ -5,8 +5,8 @@ import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.media.JsonSchema;
 import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.parameters.Parameter;
-import org.springdoc.core.GroupedOpenApi;
-import org.springdoc.core.customizers.OpenApiCustomiser;
+import org.springdoc.core.customizers.OpenApiCustomizer;
+import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -22,7 +22,7 @@ import java.util.List;
 @Configuration
 @Profile({"!prod"})
 public class APIConfiguration {
-    public OpenApiCustomiser openApiCustomiser() {
+    public OpenApiCustomizer openApiCustomiser() {
         var pi = new PathItem();
         pi.description("用户登录")
                 .summary("概括")
@@ -49,7 +49,7 @@ public class APIConfiguration {
         return GroupedOpenApi.builder()
                 .group("访问中心")
                 .pathsToMatch("/auth/**")
-                .addOpenApiCustomiser(openApiCustomiser())
+                .addOpenApiCustomizer(openApiCustomiser())
                 .build();
     }
 

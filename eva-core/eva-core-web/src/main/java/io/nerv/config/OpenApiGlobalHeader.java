@@ -2,7 +2,7 @@ package io.nerv.config;
 
 import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.parameters.HeaderParameter;
-import org.springdoc.core.customizers.OpenApiCustomiser;
+import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +17,7 @@ import java.util.Arrays;
 public class OpenApiGlobalHeader {
 
     @Bean
-    public OpenApiCustomiser customerGlobalHeaderOpenApiCustomiser() {
+    public OpenApiCustomizer customerGlobalHeaderOpenApiCustomiser() {
         return openApi -> openApi.getPaths().values().stream().flatMap(pathItem -> pathItem.readOperations().stream())
                 .forEach(operation -> {
                     StringSchema schema = new StringSchema();
