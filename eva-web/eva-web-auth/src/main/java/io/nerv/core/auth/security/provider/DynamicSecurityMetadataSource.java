@@ -1,6 +1,8 @@
 package io.nerv.core.auth.security.provider;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.ConcurrentHashSet;
+import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
 import io.nerv.biz.sys.role.service.RoleService;
 import io.nerv.core.properties.EvaConfig;
@@ -13,8 +15,10 @@ import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
+import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UrlPathHelper;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,12 +26,12 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * 动态获取url权限配置
  *
- * @author PKAQ
+ * @author
  */
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource, InitializingBean {
+public class DynamicSecurityMetadataSource implements FilterInvocationSecurityMetadataSource, InitializingBean {
     private final RoleService roleService;
 
     private final EvaConfig evaConfig;
@@ -35,12 +39,12 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
     /**
      * 资源权限 角色 - 资源路径 的map
      */
-    private volatile ConcurrentHashMap<String, Collection<ConfigAttribute>> rolePermMap = null;
+    private volatile Map<String, Collection<ConfigAttribute>> rolePermMap = new ConcurrentHashMap<>();
 
     /**
      * 资源权限 资源路径 - 角色 的map
      */
-    private volatile ConcurrentHashMap<String, Collection<ConfigAttribute>> pathPermMap = null;
+    private volatile Set<String> pathPermSet = new ConcurrentHashSet<>();
 
     private Collection<ConfigAttribute> getValues(Map<String, String> item) {
         var path = item.get("path");
@@ -72,8 +76,6 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
      */
     public void loadResourceRoleUrlPermMap(List<Map<String, String>> menusUrl) {
 
-        rolePermMap = new ConcurrentHashMap<>(menusUrl.size());
-
         menusUrl.stream().forEach(item -> {
             var role_code = item.get("code");
             rolePermMap.put(role_code, this.getValues(item));
@@ -86,11 +88,17 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
      */
     public void loadResourceUrlRolePermMap(List<Map<String, String>> menusUrl) {
 
-        pathPermMap = new ConcurrentHashMap<>(menusUrl.size());
-
         menusUrl.stream().forEach(item -> {
             var path = item.get("path");
-            pathPermMap.put(path, this.getValues(item));
+            var resoure_path = item.get("resource_url");
+
+            if (StrUtil.isNotBlank(resoure_path)) {
+                resoure_path = resoure_path.startsWith("/") ? resoure_path.substring(1) : resoure_path;
+            }
+
+            path = path.endsWith("/") ? path + resoure_path : path + "/" + resoure_path;
+
+            pathPermSet.add(path);
         });
     }
 
@@ -100,18 +108,19 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
         // 角色列表
         Collection<ConfigAttribute> set = new ArrayList<>();
         // 获取请求地址
-        String requestUrl = ((FilterInvocation) o).getRequestUrl();
+
+        HttpServletRequest request = ((RequestAuthorizationContext) o).getRequest();
+        String requestUrl = new UrlPathHelper().getPathWithinApplication(request);
 
         var roles = ThreadUserHelper.getUserRoles();
-        log.info("请求URL >> " + requestUrl);
-        log.info("当前权限：" + roles);
 
         // 未开启资源权限 直接返回
         if (!evaConfig.getResourcePermission().isEnable()) {
             return null;
         }
 
-        if (null != roles) {
+        if (ArrayUtil.isNotEmpty(roles)) {
+
             /**
              *    严格鉴权模式 仅允许访问授权资源 未授权资源一律禁止访问
              *    根据用户角色获取所有可访问资源路径 置入 Collection<ConfigAttribute>
@@ -127,13 +136,11 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
                  *  简单鉴权模式 可访问所有无权限要求的资源
                  *  根据资源路径获取访问该资源需要的所有角色 置入 Collection<ConfigAttribute>
                  */
-
-                HttpServletRequest request = ((FilterInvocation) o).getHttpRequest();
-
-                pathPermMap.forEach((k, v) -> {
-                    var urlMatcher = new AntPathRequestMatcher(k);
-                    if (urlMatcher.matches(request) || StrUtil.equals(requestUrl, k)) {
-                        set.addAll(v);
+                pathPermSet.forEach((v) -> {
+                    var urlMatcher = new AntPathRequestMatcher(v);
+                    if (urlMatcher.matches(request) || StrUtil.equals(requestUrl, v)) {
+                        ConfigAttribute securityConfig = new SecurityConfig(v);
+                        set.add(securityConfig);
                     }
                 });
             }

@@ -23,6 +23,10 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * 重新实现用户登录逻辑
+ * @author
+ */
 public class JwtUsernamePasswordAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
     private AuthenticationManager authenticationManager;

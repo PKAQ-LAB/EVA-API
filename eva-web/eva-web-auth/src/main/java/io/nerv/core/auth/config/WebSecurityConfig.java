@@ -5,13 +5,14 @@ import cn.hutool.core.util.ArrayUtil;
 import io.nerv.core.auth.security.entrypoint.*;
 import io.nerv.core.auth.security.filter.JwtAuthFilter;
 import io.nerv.core.auth.security.provider.JwtUsernamePasswordAuthenticationFilter;
+import io.nerv.core.auth.security.provider.DynamiclAccessDecisionManager;
 import io.nerv.core.properties.EvaConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,7 +20,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -49,6 +49,7 @@ public class WebSecurityConfig {
 
     private final UrlAuthenticationSuccessHandler urlAuthenticationSuccessHandler;
 
+    private final DynamiclAccessDecisionManager urlAccessDecisionManager;
     private final UrlAuthenticationFailureHandler urlAuthenticationFailureHandler;
 
     private final UrlLogoutSuccessHandler urlLogoutSuccessHandler;
@@ -56,8 +57,6 @@ public class WebSecurityConfig {
     private final UrlAccessDeniedHandler urlAccessDeniedHandler;
 
     private final UnauthorizedHandler unauthorizedHandler;
-
-    private final UrlFilterSecurityInterceptor urlFilterSecurityInterceptor;
 
     private final AuthenticationConfiguration authenticationConfiguration;
 
@@ -95,12 +94,6 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain httpSecurityConfigure(HttpSecurity httpSecurity) throws Exception {
-//        AuthenticationManagerBuilder authenticationManagerBuilder = httpSecurity.getSharedObject(AuthenticationManagerBuilder.class);
-//        authenticationManagerBuilder.userDetailsService(userDetailsService);
-//        AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
-
-        AuthenticationManager authenticationManager =
-                httpSecurity.getSharedObject(AuthenticationManager.class);
 
         httpSecurity
                 .cors()
@@ -122,13 +115,9 @@ public class WebSecurityConfig {
 //            .antMatchers("/**").permitAll();
                 .requestMatchers(anonymous).permitAll()
                 // 除上面外的所有请求全部需要鉴权认证
-                .anyRequest().authenticated();
+                .anyRequest().access(urlAccessDecisionManager);
 
         httpSecurity.logout().logoutUrl("/auth/logout").logoutSuccessHandler(urlLogoutSuccessHandler);
-
-        if (evaConfig.getResourcePermission().isEnable()) {
-            httpSecurity.addFilterAt(urlFilterSecurityInterceptor, AuthorizationFilter.class);
-        }
 
         httpSecurity.exceptionHandling()
                 .authenticationEntryPoint(unauthorizedHandler)
@@ -153,6 +142,16 @@ public class WebSecurityConfig {
         return httpSecurity.build();
     }
 
+//    @Bean
+//    SecurityFilterChain decisionConfig(HttpSecurity http) throws Exception {
+//        http
+//                .authorizeHttpRequests((authorize) -> authorize
+//                        .anyRequest().access(urlAccessDecisionManager)
+//        );
+////        http.authorizeHttpRequests().anyRequest().access(urlAccessDecisionManager);
+//
+//        return http.build();
+//    }
 
     /**
      * 虽然登录请求可以被所有人访问，但是不能放在这里（而应该通过允许匿名访问的方式来给请求放行）。
@@ -173,11 +172,11 @@ public class WebSecurityConfig {
                     "/*.docx",
                     "/*.pdf",
                     "/favicon.ico",
-                    "/**/*.html",
-                    "/**/*.css",
-                    "/**/*.js",
-                    "/**/swagger-resources/**",
-                    "/**/api-docs/**"
+                    "/*/*.html",
+                    "/*/*.css",
+                    "/*/*.js",
+                    "/*/swagger-resources/**",
+                    "/*/api-docs/**"
             };
 
             if (null != webstatic) {
@@ -186,13 +185,8 @@ public class WebSecurityConfig {
 
             web.ignoring()
                     // allow anonymous resource requests
-                    .and()
-                    .ignoring()
-                    .requestMatchers(
-                            HttpMethod.GET,
-                            paths
-                    );
+                    .requestMatchers(HttpMethod.GET, paths)
+                    .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
         };
     }
-
 }

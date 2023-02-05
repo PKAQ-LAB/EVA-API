@@ -8,6 +8,9 @@ import io.nerv.core.exception.BizException;
 
 import java.util.Optional;
 
+/**
+ * @author
+ */
 public class ThreadUserHelper {
     /**
      * 保存用户对象的ThreadLocal  在拦截器操作 添加、删除相关用户数据

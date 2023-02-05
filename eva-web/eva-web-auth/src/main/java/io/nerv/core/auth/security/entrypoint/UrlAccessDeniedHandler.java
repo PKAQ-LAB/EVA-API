@@ -15,6 +15,7 @@ import java.io.PrintWriter;
 
 /**
  * 自定义权限不足处理器
+ * AccessDeineHandler 用来解决认证过的用户访问无权限资源时的异常
  *
  * @author PKAQ
  */

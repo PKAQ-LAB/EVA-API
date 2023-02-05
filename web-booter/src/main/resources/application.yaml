@@ -117,7 +117,7 @@ eva:
   # 资源权限
   resource-permission:
     # 是否启用
-    enable: false
+    enable: true
     # 是否采用严格鉴权模式
     #    严格模式, 判断 登录角色 请求的资源 是否与 资源需要的角色 一致
     #    * 一致 return 放行

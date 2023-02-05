@@ -18,7 +18,7 @@ public enum BizCodeEnum implements BizAssert {
      * 请求成功 000x
      **/
     OPERATE_SUCCESS("操作成功", "0000"),
-    LOGIN_SUCCESS("登录成功，欢迎回来。", "0001"),
+    LOGIN_SUCCESS("登录成功，欢迎回来", "0001"),
     SAVE_SUCCESS("数据保存成功", "0002"),
     LOGIN_SUCCESS_WELCOME("登录成功，欢迎回来 [{0}]", "0003"),
     LOGINOUT_SUCCESS("已经成功退出登录", "0005"),
@@ -32,14 +32,14 @@ public enum BizCodeEnum implements BizAssert {
      * 请求失败 400x
      **/
     TOKEN_NOT_VERIFY("Token校验异常", "4000"),
-    PARAM_ERROR("请求参数错误.", "4006"),
-    PARAM_LOST("请求参数丢失.", "4007"),
+    PARAM_ERROR("请求参数错误", "4006"),
+    PARAM_LOST("请求参数丢失", "4007"),
     PARAM_TYPEERROR("参数类型错误 ", "4008"),
     PARAM_LENGTH("参数长度错误", "4009"),
-    SERVER_ERROR("服务器发生错误,请联系管理员.", "4010"),
-    REQUEST_METHOD_ERROR("服务器不支持当前请求的方法.", "4011"),
-    REQUEST_TOO_MORE("当前请求过于频繁，请稍后再试.", "4012"),
-    REQUEST_MEDIA_ERROR("服务器不支持当前请求的类型.", "4015"),
+    SERVER_ERROR("服务器发生错误,请联系管理员", "4010"),
+    REQUEST_METHOD_ERROR("服务器不支持当前请求的方法", "4011"),
+    REQUEST_TOO_MORE("当前请求过于频繁，请稍后再试", "4012"),
+    REQUEST_MEDIA_ERROR("服务器不支持当前请求的类型", "4015"),
 
     /**
      * 用户相关 410x
@@ -49,14 +49,14 @@ public enum BizCodeEnum implements BizAssert {
     ACCOUNT_OR_PWD_ERROR("用户名或密码错误", "4102"),
     ACCOUNT_LOCKED("用户已经被锁定", "4103"),
     LOGIN_ERROR("登录遇到未知错误: [{0}]", "4104"),
-    LOGIN_EXPIRED("您的登录已失效, 请重新登录.", "4105"),
+    LOGIN_EXPIRED("未登录或登录已失效, 请重新登录", "4105"),
     PERMISSION_EXPIRED("用户权限不足，请联系管理员", "4106"),
     ACCOUNT_ALREADY_EXIST("账号名已存在", "4110"),
 
     /**
      * 权限相关 420x
      **/
-    PERMISSION_DENY("权限不足", "4200"),
+    PERMISSION_DENY("请求资源所需的权限不足", "4200"),
 
     /**
      * license相关 421x
@@ -70,12 +70,12 @@ public enum BizCodeEnum implements BizAssert {
      * 业务 430x ~ 439x
      **/
     PATH_ALREADY_EXIST("模块路径已经存在", "4301"),
-    CHILD_EXIST("[{0}] 存在子节点，无法删除。", "4302"),
+    CHILD_EXIST("[{0}] 存在子节点，无法删除", "4302"),
     CODE_EXIST("[{0}] 编码已经存在", "4303"),
     ROLE_CODE_EXIST("权限编码已经存在", "4304"),
-    RESOURCE_USED("资源已经被引用，无法删除。", "4305"),
-    PARENT_NOT_AVAILABLE("父节点为禁用状态，无法启用。", "4306"),
-    MODULE_RESOURCE_USED("模块下存在已经被引用的资源，无法删除。", "4307"),
+    RESOURCE_USED("资源已经被引用，无法删除", "4305"),
+    PARENT_NOT_AVAILABLE("父节点为禁用状态，无法启用", "4306"),
+    MODULE_RESOURCE_USED("模块下存在已经被引用的资源，无法删除", "4307"),
     BAD_ORG_PASSWORD("原始密码校验失败", "4308"),
     ORG_CODE_EXIST("组织(部门)编码已经存在", "4310"),
 

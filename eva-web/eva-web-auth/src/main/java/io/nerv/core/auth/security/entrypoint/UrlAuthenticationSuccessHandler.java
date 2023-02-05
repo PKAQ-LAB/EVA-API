@@ -3,7 +3,6 @@ package io.nerv.core.auth.security.entrypoint;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.extra.servlet.JakartaServletUtil;
-import cn.hutool.extra.servlet.ServletUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.nerv.core.auth.domain.JwtUserDetail;
 import io.nerv.core.auth.util.CacheTokenUtil;
@@ -18,6 +17,7 @@ import io.nerv.core.web.util.RequestUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -32,6 +32,7 @@ import java.util.Map;
 /**
  * 自定义登录成功处理器
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
@@ -101,6 +102,8 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
                 .setVersion(RequestUtil.getVersion(request))
                 .setOperator(user.getAccount())
                 .setOperateType("login");
+
+        log.info(bizLogEntity.toString());
 
         bizLogSupporter.save(bizLogEntity);
 

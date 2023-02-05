@@ -1,7 +1,6 @@
 package io.nerv.core.auth.security.ctrl;
 
 import cn.hutool.extra.servlet.JakartaServletUtil;
-import cn.hutool.extra.servlet.ServletUtil;
 import io.nerv.core.auth.util.CacheTokenUtil;
 import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.enums.BizCodeEnum;

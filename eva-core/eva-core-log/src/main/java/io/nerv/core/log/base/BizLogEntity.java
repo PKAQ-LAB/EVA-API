@@ -35,6 +35,7 @@ public class BizLogEntity {
      * 方法名
      **/
     private String method;
+
     /**
      * 参数
      **/
@@ -51,4 +52,15 @@ public class BizLogEntity {
      * 应用版本
      **/
     private String version;
+
+    @Override
+    public String toString() {
+        return  "用户登录了系统：[" +
+                "登录用户 ='" + operator + '\'' +
+                ", 登录时间 ='" + operateDatetime + '\'' +
+                ", 设备类型 ='" + device + '\'' +
+                ", 版本 ='" + version + '\'' +
+                ']';
+    }
+
 }

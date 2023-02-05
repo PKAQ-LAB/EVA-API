@@ -1,4 +1,4 @@
-debug: true
+  debug: true
 # 日志
 logging:
   pattern:
@@ -12,7 +12,7 @@ logging:
       springframework:
         boot:
           autoconfigure:
-            logging: info
+            logging: DEBUG
 #  监控
 spring:
   #  boot:
@@ -42,17 +42,18 @@ spring:
     restart:
       additional-paths: src/main/java
   # redis 配置
-  redis:
-    host: 118.31.166.146
-    port: 6379
-    password: 7u8i9o0p
-    timeout: 10000
-    database: 0
   # 校验表结构
   jpa:
     hibernate:
       ddl-auto: none
     database-platform: org.hibernate.dialect.MySQL5Dialect
+  data:
+    redis:
+      host: 118.31.166.146
+      database: 0
+      timeout: 10000
+      password: 7u8i9o0p
+      port: 6379
 eva:
   # 文件上传
   upload:
