@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.FilterInvocation;
@@ -31,6 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @Component
 @RequiredArgsConstructor
+@ConditionalOnProperty(prefix = "eva.resource-permission", name = "enable", havingValue = "true")
 public class DynamicSecurityMetadataSource implements FilterInvocationSecurityMetadataSource, InitializingBean {
     private final RoleService roleService;
 
@@ -113,11 +115,6 @@ public class DynamicSecurityMetadataSource implements FilterInvocationSecurityMe
         String requestUrl = new UrlPathHelper().getPathWithinApplication(request);
 
         var roles = ThreadUserHelper.getUserRoles();
-
-        // 未开启资源权限 直接返回
-        if (!evaConfig.getResourcePermission().isEnable()) {
-            return null;
-        }
 
         if (ArrayUtil.isNotEmpty(roles)) {
 

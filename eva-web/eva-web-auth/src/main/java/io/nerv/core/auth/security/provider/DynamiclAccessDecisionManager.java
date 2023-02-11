@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.ConfigAttribute;
@@ -21,19 +22,18 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 /**
- *
  * @author PKAQ
  */
 @Slf4j
 @Component
 @RequiredArgsConstructor
+@ConditionalOnProperty(prefix = "eva.resource-permission", name = "enable", havingValue = "true")
 public final class DynamiclAccessDecisionManager implements AuthorizationManager<RequestAuthorizationContext> {
     private final SecurityMetadataSource securityMetadataSource;
 
     @Override
     public AuthorizationDecision check(Supplier<Authentication> authentication, RequestAuthorizationContext requestAuthorizationContext) {
         try {
-
             // 当前用户的权限信息 比如角色
             Collection<? extends GrantedAuthority> authorities = authentication.get().getAuthorities();
             // 当前请求上下文
@@ -44,7 +44,7 @@ public final class DynamiclAccessDecisionManager implements AuthorizationManager
             String requestUrl = new UrlPathHelper().getPathWithinApplication(request);
 
             log.info(" ：：权限决策 ：：");
-            log.info(" 请求地址: [{}] , 当前权限： [{}] , 携带参数: [{}] ",requestUrl, authorities, variables);
+            log.info(" 请求地址: [{}] , 当前权限： [{}] , 携带参数: [{}] ", requestUrl, authorities, variables);
 
             // 预检请求直接放行
             if (request.getMethod().equals(HttpMethod.OPTIONS)) {
@@ -53,7 +53,7 @@ public final class DynamiclAccessDecisionManager implements AuthorizationManager
 
             Collection<ConfigAttribute> attributes = this.securityMetadataSource.getAttributes(requestAuthorizationContext);
 
-            if (CollUtil.isNotEmpty(attributes)){
+            if (CollUtil.isNotEmpty(attributes)) {
                 return new AuthorizationDecision(true);
             } else {
                 return new AuthorizationDecision(false);

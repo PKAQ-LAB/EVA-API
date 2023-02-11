@@ -67,7 +67,7 @@ public abstract class Ctrl {
      * 返回成功结果
      *
      * @param data
-     * @param msg
+     * @param bizCode
      * @return
      */
     protected Response success(Object data, BizCode bizCode) {
