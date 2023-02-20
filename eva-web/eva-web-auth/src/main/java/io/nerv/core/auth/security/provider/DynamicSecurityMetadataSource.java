@@ -107,6 +107,10 @@ public class DynamicSecurityMetadataSource implements FilterInvocationSecurityMe
     @Override
     public Collection<ConfigAttribute> getAttributes(Object o) throws IllegalArgumentException {
 
+        if (!evaConfig.getResourcePermission().isEnable()){
+            return null;
+        }
+
         // 角色列表
         Collection<ConfigAttribute> set = new ArrayList<>();
         // 获取请求地址

@@ -8,10 +8,12 @@ import io.nerv.core.auth.security.provider.JwtUsernamePasswordAuthenticationFilt
 import io.nerv.core.auth.security.provider.DynamiclAccessDecisionManager;
 import io.nerv.core.properties.EvaConfig;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -49,7 +51,8 @@ public class WebSecurityConfig {
 
     private final UrlAuthenticationSuccessHandler urlAuthenticationSuccessHandler;
 
-    private final DynamiclAccessDecisionManager urlAccessDecisionManager;
+    @Autowired(required = false)
+    private DynamiclAccessDecisionManager urlAccessDecisionManager;
     private final UrlAuthenticationFailureHandler urlAuthenticationFailureHandler;
 
     private final UrlLogoutSuccessHandler urlLogoutSuccessHandler;
@@ -111,11 +114,14 @@ public class WebSecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests()
-                // 对于获取token的rest api要允许匿名访问
-//            .antMatchers("/**").permitAll();
-                .requestMatchers(anonymous).permitAll()
-                // 除上面外的所有请求全部需要鉴权认证
-                .anyRequest().access(urlAccessDecisionManager);
+                // 允许匿名访问的url
+                .requestMatchers(anonymous).permitAll();
+
+        if (null != urlAccessDecisionManager) {
+            httpSecurity.authorizeHttpRequests().anyRequest().access(urlAccessDecisionManager);
+        } else {
+            httpSecurity.authorizeHttpRequests().anyRequest().authenticated();
+        }
 
         httpSecurity.logout().logoutUrl("/auth/logout").logoutSuccessHandler(urlLogoutSuccessHandler);
 

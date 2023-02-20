@@ -1,6 +1,7 @@
 package io.nerv.core.auth.security.provider;
 
 import cn.hutool.core.collection.CollUtil;
+import io.nerv.core.properties.EvaConfig;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +37,8 @@ public final class DynamiclAccessDecisionManager implements AuthorizationManager
         try {
             // 当前用户的权限信息 比如角色
             Collection<? extends GrantedAuthority> authorities = authentication.get().getAuthorities();
+            //
+            //authentication.get().isAuthenticated();
             // 当前请求上下文
             // 我们可以获取携带的参数
             Map<String, String> variables = requestAuthorizationContext.getVariables();
@@ -46,7 +49,7 @@ public final class DynamiclAccessDecisionManager implements AuthorizationManager
             log.info(" ：：权限决策 ：：");
             log.info(" 请求地址: [{}] , 当前权限： [{}] , 携带参数: [{}] ", requestUrl, authorities, variables);
 
-            // 预检请求直接放行
+            // 预检请求  或未开启资源权限 直接放行
             if (request.getMethod().equals(HttpMethod.OPTIONS)) {
                 return new AuthorizationDecision(true);
             }
