@@ -1,0 +1,101 @@
+version: "3"
+
+services:
+  redis:
+    restart: always
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /opt/docker_data/redis/redis.conf:/etc/redis/redis.conf
+      - /opt/docker_data/redis/data:/data
+    command: redis-server /etc/redis/redis.conf
+    privileged: true
+  mysql:
+    image: percona/percona-server:latest
+    restart: always
+    container_name: mysql
+    environment:
+     - MYSQL_ROOT_PASSWORD=7u8i9o0p
+     - MYSQL_ALLOW_EMPTY_PASSWORD=no
+     - MYSQL_DATABASE=DB_ALPHA
+     - MYSQL_USER=yunyue
+     - MYSQL_PASSWORD=7u8i9o0p
+    ports:
+       - "12306:3306"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /opt/docker_data/mysql/db:/var/lib/mysql
+      - /opt/docker_data/mysql/my.conf.d:/etc/my.cnf.d
+      - /opt/docker_data/mysql/mysql-files:/var/lib/mysql-files
+      - /opt/docker_data/mysql/init:/docker-entrypoint-initdb.d
+    command: --default-authentication-plugin=mysql_native_password --lower_case_table_names=1 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    privileged: true
+  minio:
+    restart: always
+    image: minio/minio:latest
+    container_name: minio
+    environment:
+      - MINIO_ACCESS_KEY=minio
+      - MINIO_SECRET_KEY=7u8i9o0p
+      - MINIO_ROOT_USER=minio
+      - MINIO_ROOT_PASSWORD=7u8i9o0p
+    ports:
+      - "9009:9000"
+      - "10090:9090"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /opt/docker_data/minio/config:/root/.minio
+      - /opt/docker_data/minio/data:/data
+    command: /data --console-address ":9090" -address ":9000"
+    privileged: true
+  nginx:
+    restart: always
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /opt/docker_data/nginx/www:/usr/share/nginx/html
+      - /opt/docker_data/nginx/nginx.conf:/etc/nginx/nginx.conf
+    privileged: true
+  portainer:
+    restart: always
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    ports:
+      - "8000:8000"
+      - "9000:9000"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /opt/docker_data/portainer/data:/data
+    privileged: true
+  gitea:
+    restart: always
+    image: gitea/gitea:latest
+    container_name: gitea
+    depends_on:
+      - mysql
+    links:
+      - mysql    
+    ports:
+      - "10022:22"
+      - "10080:3000"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /opt/docker_data/gitea/data:/data
+    privileged: true
+  svn:
+    restart: always
+    image: garethflowers/svn-server:latest
+    container_name: svn
+    ports:
+      - "3690:3690"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /opt/docker_data/svn:/var/opt/svn 
+    privileged: true

@@ -53,6 +53,7 @@ public class WebSecurityConfig {
 
     @Autowired(required = false)
     private DynamiclAccessDecisionManager urlAccessDecisionManager;
+
     private final UrlAuthenticationFailureHandler urlAuthenticationFailureHandler;
 
     private final UrlLogoutSuccessHandler urlLogoutSuccessHandler;
@@ -64,7 +65,6 @@ public class WebSecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
 
     private final JwtAuthFilter jwtAuthFilter;
-
 
     /**
      * 跨域配置

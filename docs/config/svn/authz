@@ -1,0 +1,48 @@
+### This file is an example authorization file for svnserve.
+### Its format is identical to that of mod_authz_svn authorization
+### files.
+### As shown below each section defines authorizations for the path and
+### (optional) repository specified by the section name.
+### The authorizations follow. An authorization line can refer to:
+###  - a single user,
+###  - a group of users defined in a special [groups] section,
+###  - an alias defined in a special [aliases] section,
+###  - all authenticated users, using the '$authenticated' token,
+###  - only anonymous users, using the '$anonymous' token,
+###  - anyone, using the '*' wildcard.
+###
+### A match can be inverted by prefixing the rule with '~'. Rules can
+### grant read ('r') access, read-write ('rw') access, or no access
+### ('').
+
+[groups]
+all=wuf,zhangj,wangl,weiqk,zhangy,hud,zhoujj,jiam,wuyy,zhengzhm,zhouyh,linjl,wangy,yangm,zhangxy,chenx,linjz,zhengym,yufm,huangby,xuxin,zhangq,zhengxb,xuq,wangxz,duw,zhouy,lizy,wangch
+[toolbox:/]
+@all = rw
+*=
+[pmtrip:/]
+@all = rw
+*=
+
+[xl-mall:/]
+@all = rw
+*=
+
+[9air:/]
+@all = rw
+*=
+
+[dzka:/]
+@all = rw
+*=
+
+[dzka_wl:/]
+@all = rw
+*=
+
+[9air2:/]
+@all = rw
+*=
+[dzka_job:/]
+@all = rw
+*=
