@@ -1,6 +1,6 @@
 package io.nerv;
 
-import io.nerv.biz.sys.dict.service.DictService;
+import io.nerv.sys.dict.service.DictService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;

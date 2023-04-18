@@ -4,7 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.collection.ConcurrentHashSet;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
-import io.nerv.biz.sys.role.service.RoleService;
+import io.nerv.sys.role.service.RoleService;
 import io.nerv.core.properties.EvaConfig;
 import io.nerv.core.threaduser.ThreadUserHelper;
 import jakarta.servlet.http.HttpServletRequest;

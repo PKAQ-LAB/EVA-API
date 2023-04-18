@@ -1,8 +1,8 @@
 package io.nerv.core.auth.security.domain;
 
 import cn.hutool.core.bean.BeanUtil;
-import io.nerv.biz.sys.role.entity.RoleEntity;
-import io.nerv.biz.sys.user.entity.UserEntity;
+import io.nerv.sys.role.entity.RoleEntity;
+import io.nerv.sys.user.entity.UserEntity;
 import io.nerv.core.auth.domain.JwtUserDetail;
 import io.nerv.core.enums.LockEnumm;
 

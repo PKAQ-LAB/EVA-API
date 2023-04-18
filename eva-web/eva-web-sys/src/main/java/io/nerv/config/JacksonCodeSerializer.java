@@ -8,8 +8,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
-import io.nerv.biz.annotation.Code;
-import io.nerv.biz.sys.dict.cache.DictCacheHelper;
+import io.nerv.sys.annotation.Code;
+import io.nerv.sys.dict.cache.DictCacheHelper;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 

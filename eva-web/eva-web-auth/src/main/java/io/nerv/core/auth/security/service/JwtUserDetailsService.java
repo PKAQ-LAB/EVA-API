@@ -1,7 +1,7 @@
 package io.nerv.core.auth.security.service;
 
-import io.nerv.biz.sys.user.entity.UserEntity;
-import io.nerv.biz.sys.user.mapper.UserMapper;
+import io.nerv.sys.user.entity.UserEntity;
+import io.nerv.sys.user.mapper.UserMapper;
 import io.nerv.core.auth.security.domain.JwtUserFactory;
 import io.nerv.core.enums.BizCodeEnum;
 import lombok.RequiredArgsConstructor;
