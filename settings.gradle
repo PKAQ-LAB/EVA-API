@@ -1,7 +1,6 @@
 rootProject.name = 'eva'
 
 include 'web-booter'
-include 'webTest'
 
 include ':eva-web:eva-web-sys'
 include ':eva-web:eva-web-auth'
