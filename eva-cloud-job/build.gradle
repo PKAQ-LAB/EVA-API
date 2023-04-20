@@ -20,6 +20,6 @@ processResources {
 }
 
 dependencies {
-    implementation "${lib.eva_web_common}"
+    implementation "${lib.eva_core_web}"
                     "${lib.job}"
 }

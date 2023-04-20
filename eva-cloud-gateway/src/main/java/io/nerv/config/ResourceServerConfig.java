@@ -1,9 +1,9 @@
 package io.nerv.config;
 
+import io.nerv.core.properties.EvaConfig;
 import io.nerv.filter.IgnoreUrlsRemoveJwtFilter;
 import io.nerv.handler.RestAuthenticationEntryPoint;
 import io.nerv.handler.RestfulAccessDeniedHandler;
-import io.nerv.properties.EvaConfig;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

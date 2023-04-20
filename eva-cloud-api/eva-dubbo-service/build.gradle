@@ -1,5 +1,4 @@
 import org.apache.tools.ant.filters.ReplaceTokens
-apply plugin: "org.springframework.boot"
 
 project.archivesBaseName = 'eva-dubbo-service'
 project.description='eva dubbo interface jar'

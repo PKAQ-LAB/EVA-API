@@ -5,7 +5,7 @@ plugins {
 
 ext {
     lib = [ "eva_core_common": "org.pkaq:eva-core-common:${eva}",
-            "eva_web_common": "org.pkaq:eva-web-common:${eva}",
+            "eva_core_web": "org.pkaq:eva-core-web:${eva}",
             "eva_core_cache": "org.pkaq:eva-core-cache:${eva}",
             "eva_core_data_mybatis": "org.pkaq:eva-core-data-mybatis:${eva}",
             "eva_web_sys": "org.pkaq:eva-web-sys:${eva}",
@@ -71,15 +71,15 @@ ext {
 
 allprojects {
     group = 'io.nerv'
-    version = '2.7.3C'
+    version = '3.0.0'
 }
 
 subprojects {
     apply plugin: 'java-library'
     apply plugin: 'io.spring.dependency-management'
 
-	sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+	sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 
     dependencyManagement {
         imports {
@@ -101,15 +101,10 @@ subprojects {
     repositories {
         mavenLocal()
         mavenCentral()
-        maven { url"https://repo1.maven.org/maven2" }
-        maven { url"https://maven.aliyun.com/repository/central" }
-        maven { url"https://maven.aliyun.com/repository/jcenter" }
-        maven { url"https://mirrors.huaweicloud.com" }
-        maven { url"https://maven.aliyun.com/repository/central" }
-        maven { url"https://maven.aliyun.com/repository/spring" }
-        maven { url"https://maven.aliyun.com/repository/spring-plugin" }
-		maven { url"https://maven.springframework.org"}
-        maven { url"https://repo.spring.io/libs-release" }
+        maven {
+            url "http://192.168.10.12:8082/artifactory/public/"
+            allowInsecureProtocol = true
+        }
         google()
     }
     if (it.name != 'eva-dubbo-service') {

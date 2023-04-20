@@ -25,7 +25,7 @@ public class RestAuthenticationEntryPoint implements ServerAuthenticationEntryPo
 
         response.setStatusCode(HttpStatus.OK);
 
-        DataBuffer buffer = response.bufferFactory().wrap(BizCodeEnum.LOGIN_EXPIRED.getName().getBytes(StandardCharsets.UTF_8));
+        DataBuffer buffer = response.bufferFactory().wrap(BizCodeEnum.LOGIN_EXPIRED.getMsg().getBytes(StandardCharsets.UTF_8));
         return response.writeWith(Mono.just(buffer));
     }
 }

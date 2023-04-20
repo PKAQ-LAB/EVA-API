@@ -3,10 +3,10 @@ package io.nerv.filter;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.jwt.JWT;
 import cn.hutool.jwt.JWTUtil;
+import io.nerv.core.cache.util.RedisUtil;
 import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.core.util.RedisUtil;
-import io.nerv.properties.EvaConfig;
+import io.nerv.core.properties.EvaConfig;
 import io.nerv.util.WebfluxResponseUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -64,7 +64,7 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
         String jti = jwtObj.getPayload("jti").toString();
         String blockTk = redisUtil.get("JWTBLOCK:"+jti);
         if (StrUtil.isNotBlank(blockTk)) {
-            return WebfluxResponseUtil.responseFailed(exchange, BizCodeEnum.LOGIN_EXPIRED.getName());
+            return WebfluxResponseUtil.responseFailed(exchange, BizCodeEnum.LOGIN_EXPIRED.getMsg());
         }
 
         // 存在token且不是黑名单，request写入JWT的载体信息

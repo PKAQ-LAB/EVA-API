@@ -1,7 +1,7 @@
 package io.nerv.filter;
 
 import io.nerv.core.constant.CommonConstant;
-import io.nerv.properties.EvaConfig;
+import io.nerv.core.properties.EvaConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;

@@ -2,7 +2,7 @@ package io.nerv.handler;
 
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.vo.Response;
-import io.nerv.core.util.JsonUtil;
+import io.nerv.core.util.json.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -24,8 +24,6 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 @Component
 public class RestfulAccessDeniedHandler implements ServerAccessDeniedHandler {
-    @Autowired
-    private JsonUtil jsonUtil;
 
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, AccessDeniedException denied) {
@@ -37,7 +35,7 @@ public class RestfulAccessDeniedHandler implements ServerAccessDeniedHandler {
                 .flatMap(principal -> {
                     ServerHttpResponse response = exchange.getResponse();
                     response.setStatusCode(HttpStatus.OK);
-                    String body =jsonUtil.toJSONString(
+                    String body = JsonUtil.toJson(
                             new Response()
                                     .failure(BizCodeEnum.PERMISSION_DENY));
 
