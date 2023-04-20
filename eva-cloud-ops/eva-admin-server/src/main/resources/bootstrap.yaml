@@ -12,13 +12,13 @@ spring:
       discovery:
         namespace: fecb542d-1b8a-4755-8ade-a5733c2f5d68
         # 注册中心地址
-        server-addr: 47.104.217.77
+        server-addr: 192.168.10.12
         enabled: true
         service: eva-admin-server
         group: DEV_GROUP
       config:
         namespace: fecb542d-1b8a-4755-8ade-a5733c2f5d68
-        server-addr: 47.104.217.77
+        server-addr: 192.168.10.12
         # 指定group
         group: DEV_GROUP
         # 文件后缀，默认为properties

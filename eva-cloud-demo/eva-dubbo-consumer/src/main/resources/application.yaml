@@ -25,7 +25,7 @@ dubbo:
     port: -1
   # 注册中心配置
   registry:
-    address: nacos://47.104.217.77:8848
+    address: nacos://192.168.10.12:8848
     # 这里注意 由于 3.X 的 bug 导致注册组不生效
     group: DUBBO_GROUP
     # 由于 group 不生效 这里使用 namespace 将 dubbo 服务与 cloud 服务隔离
