@@ -57,7 +57,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 throw new AuthException(BizCodeEnum.ACCOUNT_NOT_EXIST);
             }
 
-            var nonLocked =  LockEnumm.UNLOCK.getIndex().equals(mapUser.get("LOCKED"));
+            var nonLocked =  LockEnumm.UNLOCK.getCode().equals(mapUser.get("LOCKED"));
             //用户已锁定
             if (!nonLocked){
                 throw new AuthException(BizCodeEnum.ACCOUNT_LOCKED);

@@ -19,8 +19,8 @@ public class AuthException extends AuthenticationException {
     }
 
     public AuthException(BizCode errorCodeEnum) {
-        super(errorCodeEnum.getName());
-        this.code = errorCodeEnum.getIndex();
-        this.msg = errorCodeEnum.getName();
+        super(errorCodeEnum.getMsg());
+        this.code = errorCodeEnum.getCode();
+        this.msg = errorCodeEnum.getMsg();
     }
 }
