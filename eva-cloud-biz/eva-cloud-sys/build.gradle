@@ -22,5 +22,6 @@ processResources {
 }
 
 dependencies {
-    implementation "${lib.eva_web_sys}"
+    implementation "${lib.eva_web_sys}",
+                   project(":eva-cloud-api:eva-dubbo-service")
 }
