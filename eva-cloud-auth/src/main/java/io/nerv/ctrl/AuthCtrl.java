@@ -1,6 +1,7 @@
 package io.nerv.ctrl;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.servlet.JakartaServletUtil;
 import cn.hutool.extra.servlet.ServletUtil;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.vo.Response;
@@ -114,7 +115,7 @@ public class AuthCtrl {
         }
 
         if (StrUtil.isBlank(token)){
-            token = ServletUtil.getCookie(request, tokenKey).getValue();
+            token = JakartaServletUtil.getCookie(request, tokenKey).getValue();
         }
 
         if (StrUtil.isNotBlank(token)){

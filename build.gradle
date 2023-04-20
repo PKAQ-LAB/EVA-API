@@ -58,7 +58,7 @@ ext {
             // 鉴权、认证
             "security": "org.springframework.boot:spring-boot-starter-security",
             "oauth2_config": "org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.6.8",
-            "oauth2_client": "org.springframework.security:spring-security-oauth2-client:2.6.8",
+            "oauth2_client": "org.springframework.security:spring-security-oauth2-client:6.0.3",
             "jose": "org.springframework.security:spring-security-oauth2-jose",
             "rsa": "org.springframework.security:spring-security-rsa:${rsa}",
             "resource_server": "org.springframework.security:spring-security-oauth2-resource-server",

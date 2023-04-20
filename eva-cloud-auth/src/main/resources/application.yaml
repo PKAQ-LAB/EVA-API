@@ -1,0 +1,6 @@
+eva:
+  security:
+    anonymous:
+      - /auth/**
+      - /actuator/**
+      - /rsa/publicKey

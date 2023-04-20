@@ -1,6 +1,7 @@
 package io.nerv.config;
 
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -10,6 +11,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.headers.XssProtectionConfigDsl;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,6 +29,10 @@ import org.springframework.security.web.header.writers.StaticHeadersWriter;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @AllArgsConstructor
 public class WebSecurityConfig {
+
+    @Value("${eva.security.anonymous}")
+    private String[] anonymous;
+
     private final static String RSA_KEY = "/rsa/publicKey";
 
     private final AuthenticationConfiguration authenticationConfiguration;
@@ -43,7 +49,7 @@ public class WebSecurityConfig {
                 .csrf().disable()
                 //允许加载iframe内容 X-Frame-Options
                 .headers().frameOptions().disable()
-                .xssProtection().block(true)
+                .xssProtection()
                 .and()
                 // 适配IE
                 .addHeaderWriter(new StaticHeadersWriter("P3P", "CP='CAO IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'"))
@@ -53,9 +59,8 @@ public class WebSecurityConfig {
                 .and()
                 .authorizeRequests()
                 // 获取公钥的接口无需授权
-                .antMatchers("/auth/**").permitAll()
-                .antMatchers("/actuator/**").permitAll()
-                .antMatchers(RSA_KEY).permitAll()
+                .requestMatchers(anonymous)
+                .permitAll()
                 // 任何请求都需要授权，注意顺序 从上至下
                 .anyRequest().authenticated();
         // 如果不配置 SpringBoot 会自动配置一个 AuthenticationManager 覆盖掉内存中的用户
@@ -78,9 +83,7 @@ public class WebSecurityConfig {
         return web -> web
                 .ignoring()
                 // allow anonymous resource requests
-                .and()
-                .ignoring()
-                .antMatchers(
+                .requestMatchers(
                         HttpMethod.GET,
                         "/",
                         "/static/**",
