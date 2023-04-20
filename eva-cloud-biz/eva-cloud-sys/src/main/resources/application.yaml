@@ -1,0 +1,155 @@
+spring:
+  profiles:
+    active: @profile@
+  servlet:
+  # 国际化配置
+  messages:
+    basename: i18n/i18n
+  jackson:
+    #日期格式化
+    date-format: yyyy-MM-dd HH:mm:ss
+    # 时区
+    time-zone: GMT+8
+    default-property-inclusion: always
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+      #格式化输出
+      indent_output: true
+#  监控
+  #  boot:
+  #    admin:
+  #      client:
+  #        url: http://47.104.217.77:10086/
+  #        username: eva
+  #        password: 7u8i9o0p
+  #        instance:
+  #          service-host-type: ip
+  # 数据源
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    username: eva
+    password: eva
+    #    GsyjJCmmNRiHRVGmXdy+QErynoqC/cOBlt5V9dPZ+c2g2XwPc5+BbKrSxWLsyCGG
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.10.12:12306/eva?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&autoReconnect=true&failOverReadOnly=false
+  hikari:
+    minimum-idle: 10
+    maximum-pool-size: 50
+    max-lifetime: 3000
+    connection-test-query: select 1
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      additional-paths: src/main/java
+  # flyway配置 对于非空数据库 需要开启此项避免报错
+  flyway:
+    baseline-on-migrate: true
+    locations: classpath:/db/migration
+    baseline-version: 0
+    enabled: false
+  data:
+    # redis 配置
+    redis:
+      repositories:
+        enabled: false
+      host: 192.168.10.12
+      port: 6379
+      password: 7u8i9o0p
+      timeout: 10000
+      database: 0
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: ALWAYS
+# mybatis
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/*.xml
+  #实体扫描，多个package用逗号或者分号分隔
+  typeAliasesPackage: io.nerv.*.**.entity
+  global-config:
+    #      刷新mapper 调试神器
+    refresh: true
+    db-config:
+      id-type: assign_id
+      #      字段策略
+      #      驼峰下划线转换
+      table-underline: true
+      logic-delete-value: '0001' # 逻辑已删除值(默认为 1)
+      logic-not-delete-value: '0000' # 逻辑未删除值(默认为 0)
+      where-strategy: not_empty
+    banner: false
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+# 配置加密
+jasypt:
+  encryptor:
+    password: ::eva
+# server配置
+server:
+  servlet:
+    context-path: /api-sys
+    #  2.3.0 新支持, 优雅关机
+    shutdown: graceful
+    # 编码
+    encoding:
+      charset: utf-8
+      enabled: true
+      force: true
+  port: 9016
+debug: true
+# 日志
+logging:
+  pattern:
+    level: debug
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%thread]){faint} %clr(%-40.40logger{39}){cyan} %L %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
+  # 日志文件配置 file 和 path只需配置一个 不可同时配置 ， 同时配置只生效file
+  file:
+    name: e:/applogs/webapp.log
+  level:
+    org:
+      springframework:
+        boot:
+          autoconfigure:
+            logging: info
+eva:
+  i18n: true
+  norepeat-check: false
+  # 缓存配置
+  cache:
+      type: redis
+      config:
+          # 缓存名称 - 文件上传缓存
+        - name: uploadfiles
+          # 初始大小
+          initialCapacity: 100
+          # 过期时间(毫秒)
+          secondsToExpire: 86400000
+          # 重复提交缓存
+        - name: repeatsubmit
+          initialCapacity: 100
+          secondsToExpire: 500
+          # 字典缓存
+        - name: dictdata
+          initialCapacity: 100
+          secondsToExpire: -1
+          # 业务数据缓存
+        - name: bizdata
+          initialCapacity: 100
+          secondsToExpire: 86400000
+        - name: token
+          initialCapacity: 1000
+          secondsToExpire: 2592000
+  # 错误日志
+  errorlog:
+    enabled: true
+  # 业务日志
+  bizlog:
+    enabled: true
+    impl: mybatis
