@@ -2,7 +2,9 @@ package io.nerv.core.mybatis.mvc.service.mybatis;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.vo.Response;
@@ -53,8 +55,8 @@ public abstract class StdTreeService<M extends StdTreeMapper<T>, T extends StdTr
     public Response delete(ArrayList<String> ids) {
         Response response = null;
         // 检查是否存在子节点，存在子节点不允许删除
-        QueryWrapper<T> oew = new QueryWrapper<>();
-        oew.in("PARENT_ID", ids);
+        LambdaQueryWrapper<T> oew = Wrappers.lambdaQuery();
+        oew.in(T::getParentId, ids);
 
         List<T> leafList = this.mapper.selectList(oew);
 
@@ -192,6 +194,6 @@ public abstract class StdTreeService<M extends StdTreeMapper<T>, T extends StdTr
      * @return
      */
     public Long count(T entity) {
-        return this.mapper.selectCount(new QueryWrapper<>(entity));
+        return this.mapper.selectCount(Wrappers.lambdaQuery());
     }
 }

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public abstract class StdActiveService<M extends BaseMapper<T>, T extends Model>
      * @param entity
      */
     public void selectCount(T entity) {
-        Wrapper<T> wrapper = new QueryWrapper<>(entity);
+        Wrapper<T> wrapper = Wrappers.lambdaQuery(entity);
         entity.selectCount(wrapper);
     }
 
@@ -50,7 +51,7 @@ public abstract class StdActiveService<M extends BaseMapper<T>, T extends Model>
      * @param entity
      */
     public void getByEntity(T entity) {
-        Wrapper<T> wrapper = new QueryWrapper<>(entity);
+        Wrapper<T> wrapper = Wrappers.lambdaQuery(entity);
         entity.selectOne(wrapper);
     }
 
@@ -71,7 +72,7 @@ public abstract class StdActiveService<M extends BaseMapper<T>, T extends Model>
      * @return 返回结果
      */
     protected List<T> list(T entity) {
-        QueryWrapper<T> wrapper = new QueryWrapper<>(entity);
+        QueryWrapper<T> wrapper = Wrappers.query(entity);
         wrapper.orderByDesc("gmt_Modify");
 
         return entity.selectList(wrapper);
@@ -90,7 +91,7 @@ public abstract class StdActiveService<M extends BaseMapper<T>, T extends Model>
         page = null != page ? page : 1;
         size = null != size ? size : 10;
 
-        QueryWrapper<T> wrapper = new QueryWrapper<>(entity);
+        QueryWrapper<T> wrapper = Wrappers.query(entity);
         wrapper.orderByDesc("gmt_Modify");
 
         Page pagination = new Page();
@@ -111,7 +112,7 @@ public abstract class StdActiveService<M extends BaseMapper<T>, T extends Model>
 
         page = null != page ? page : 1;
         // 查询条件
-        QueryWrapper<T> wrapper = new QueryWrapper<>(entity);
+        QueryWrapper<T> wrapper = Wrappers.query(entity);
         wrapper.orderByDesc("gmt_Modify");
 
         // 分页条件

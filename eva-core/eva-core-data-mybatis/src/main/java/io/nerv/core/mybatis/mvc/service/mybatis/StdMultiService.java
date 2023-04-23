@@ -2,10 +2,11 @@ package io.nerv.core.mybatis.mvc.service.mybatis;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import io.nerv.core.mybatis.mvc.entity.mybatis.StdMultiEntity;
 import io.nerv.core.mybatis.mvc.entity.mybatis.StdMultiLineEntity;
 import io.nerv.core.mybatis.mvc.util.Page;
@@ -33,8 +34,6 @@ public abstract class StdMultiService<M extends BaseMapper<T>,
     @Autowired
     public L lineMapper;
 
-    private final String MAIN_ID = "MAIN_ID";
-
     /**
      * 通用根据ID查询
      *
@@ -43,8 +42,8 @@ public abstract class StdMultiService<M extends BaseMapper<T>,
      */
     public T getById(String id) {
         T main = this.mapper.selectById(id);
-        QueryWrapper<S> q = new QueryWrapper();
-        q.eq(MAIN_ID, id);
+        LambdaQueryWrapper<S> q = Wrappers.lambdaQuery();
+        q.eq(S::getMainId, id);
 
         if (null == main) return null;
 
@@ -61,9 +60,9 @@ public abstract class StdMultiService<M extends BaseMapper<T>,
      * @return
      */
     public T getByEntity(T entity) {
-        T main = this.mapper.selectOne(new QueryWrapper<>(entity));
-        QueryWrapper<S> q = new QueryWrapper();
-        q.eq(MAIN_ID, main.getId());
+        T main = this.mapper.selectOne(Wrappers.lambdaQuery(entity));
+        LambdaQueryWrapper<S> q = Wrappers.lambdaQuery();
+        q.eq(S::getMainId, main.getId());
 
         if (null == main) return null;
 
@@ -90,8 +89,8 @@ public abstract class StdMultiService<M extends BaseMapper<T>,
      * @return
      */
     public List<S> getLine(String mainId) {
-        QueryWrapper<S> q = new QueryWrapper();
-        q.eq(MAIN_ID, mainId);
+        LambdaQueryWrapper<S> q = Wrappers.lambdaQuery();
+        q.eq(S::getMainId, mainId);
         return this.lineMapper.selectList(q);
     }
 
@@ -122,8 +121,8 @@ public abstract class StdMultiService<M extends BaseMapper<T>,
             this.mapper.updateById(entity);
             // 更新子表， 先删除再插入
             if (CollUtil.isNotEmpty(entity.getLines())) {
-                QueryWrapper<S> deleteWrapper = new QueryWrapper();
-                deleteWrapper.eq(MAIN_ID, id);
+                LambdaQueryWrapper<S> deleteWrapper = Wrappers.lambdaQuery();
+                deleteWrapper.eq(S::getMainId, id);
                 this.lineMapper.delete(deleteWrapper);
 
                 entity.getLines().forEach(item -> {
@@ -141,7 +140,7 @@ public abstract class StdMultiService<M extends BaseMapper<T>,
      * @return 返回结果
      */
     public List<T> list(T entity) {
-        QueryWrapper<T> q = new QueryWrapper<>(entity);
+        LambdaQueryWrapper<T> q = Wrappers.lambdaQuery(entity);
         return this.mapper.selectList(q);
     }
 
@@ -158,8 +157,8 @@ public abstract class StdMultiService<M extends BaseMapper<T>,
         page = null != page ? page : 1;
         size = null != size ? size : 10;
 
-        QueryWrapper<T> wrapper = new QueryWrapper<>(entity);
-        wrapper.orderByDesc("GMT_MODIFY");
+        LambdaQueryWrapper<T> wrapper = Wrappers.lambdaQuery(entity);
+        wrapper.orderByDesc(T::getGmtModify);
 
         Page pagination = new Page();
         pagination.setCurrent(page);
@@ -178,8 +177,8 @@ public abstract class StdMultiService<M extends BaseMapper<T>,
     public IPage<T> listPage(T entity, Integer page) {
         page = null != page ? page : 1;
         // 查询条件
-        QueryWrapper<T> wrapper = new QueryWrapper<>(entity);
-        wrapper.orderByDesc("GMT_MODIFY");
+        LambdaQueryWrapper<T> wrapper = Wrappers.lambdaQuery(entity);
+        wrapper.orderByDesc(T::getGmtModify);
         // 分页条件
         Page pagination = new Page();
         pagination.setCurrent(page);
@@ -195,8 +194,8 @@ public abstract class StdMultiService<M extends BaseMapper<T>,
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void delete(ArrayList<String> param) {
         // 先删除子表 再删除主表
-        QueryWrapper<S> lineWrapper = new QueryWrapper();
-        lineWrapper.in(MAIN_ID, param);
+        LambdaQueryWrapper<S> lineWrapper = Wrappers.lambdaQuery();
+        lineWrapper.in(S::getMainId, param);
         this.lineMapper.delete(lineWrapper);
 
         this.mapper.deleteBatchIds(param);

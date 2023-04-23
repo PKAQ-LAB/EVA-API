@@ -1,9 +1,14 @@
 package io.nerv.core.mybatis.mvc.service.mybatis;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.ClassUtil;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import io.nerv.core.mvc.vo.Vo;
 import io.nerv.core.mybatis.mvc.entity.mybatis.StdEntity;
 import io.nerv.core.mybatis.mvc.util.Page;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +46,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
      * @return
      */
     public Long selectCount(T entity) {
-        Wrapper<T> wrapper = new QueryWrapper<>(entity);
+        Wrapper<T> wrapper = Wrappers.lambdaQuery();
         return this.mapper.selectCount(wrapper);
     }
 
@@ -52,7 +57,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
      * @return
      */
     public T getByEntity(T entity) {
-        Wrapper<T> wrapper = new QueryWrapper<>(entity);
+        Wrapper<T> wrapper = Wrappers.lambdaQuery();
         return this.mapper.selectOne(wrapper);
     }
 
@@ -91,8 +96,8 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
      * @return 返回结果
      */
     public List<T> list(T entity) {
-        QueryWrapper<T> wrapper = new QueryWrapper<>(entity);
-        wrapper.orderByDesc("GMT_MODIFY");
+        LambdaQueryWrapper<T> wrapper = Wrappers.lambdaQuery();
+        wrapper.orderByDesc(T::getModifyBy);
 
         return this.mapper.selectList(wrapper);
     }
@@ -109,8 +114,9 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
         page = null != page ? page : 1;
         size = null != size ? size : 10;
 
-        QueryWrapper<T> wrapper = new QueryWrapper<>(entity);
-        wrapper.orderByDesc("GMT_MODIFY");
+        LambdaQueryWrapper<T> wrapper = Wrappers.lambdaQuery();
+        wrapper.setEntity(entity);
+        wrapper.orderByDesc(T::getGmtModify);
 
         Page pagination = new Page();
         pagination.setCurrent(page);
@@ -128,9 +134,10 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
      */
     public IPage<T> listPage(T entity, Integer page) {
         page = null != page ? page : 1;
-        // 查询条件
-        QueryWrapper<T> wrapper = new QueryWrapper<>(entity);
-        wrapper.orderByDesc("GMT_MODIFY");
+
+        LambdaQueryWrapper<T> wrapper = Wrappers.lambdaQuery();
+        wrapper.setEntity(entity);
+        wrapper.orderByDesc(T::getGmtModify);
         // 分页条件
         Page pagination = new Page();
         pagination.setCurrent(page);
