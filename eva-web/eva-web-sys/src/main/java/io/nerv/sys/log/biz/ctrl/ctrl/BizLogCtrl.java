@@ -1,9 +1,8 @@
-package io.nerv.core.auth.log.biz.ctrl;
+package io.nerv.sys.log.biz.ctrl.ctrl;
 
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import io.nerv.core.log.condition.MybatisSupporterCondition;
 import io.nerv.core.mvc.vo.DateRangeVo;
 import io.nerv.core.mvc.vo.Response;
 import io.nerv.core.mybatis.log.entity.MybatisBizLogEntity;
@@ -14,7 +13,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +25,6 @@ import java.util.Date;
 @RestController
 @RequestMapping("/monitor/log/biz")
 @Tag(name = "业务日志")
-@Conditional(MybatisSupporterCondition.class)
 @RequiredArgsConstructor
 public class BizLogCtrl {
     private final MybatisSupporterMapper mybatisSupporterMapper;

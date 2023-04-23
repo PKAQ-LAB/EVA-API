@@ -67,13 +67,14 @@ ext {
 
 allprojects {
     group = 'io.nerv'
-    version = '3.0.0'
+    version = '3.0.1'
 }
 
 subprojects {
     apply plugin: 'java-library'
 	apply plugin: 'maven-publish'
     apply plugin: 'signing'
+	apply plugin: 'idea'
 
     apply plugin: 'io.spring.dependency-management'
 
@@ -97,16 +98,16 @@ subprojects {
 
     repositories {
         mavenLocal()
-        maven {
-            url "http://192.168.10.13:8082/artifactory/public/"
-            allowInsecureProtocol = true
-        }
+        //maven {
+        //    url "http://192.168.10.12:8082/artifactory/public/"
+        //    allowInsecureProtocol = true
+        //}
 //        allowInsecureProtocol = true
-//         maven { url"https://maven.aliyun.com/repository/public" }
-//         maven { url"https://maven.aliyun.com/repository/spring" }
-//         maven { url"https://maven.aliyun.com/repository/spring-plugin" }
-// 		maven { url"https://maven.springframework.org"}
-//         maven { url"https://repo.spring.io/libs-release" }
+		maven { url"https://maven.aliyun.com/repository/public" }
+        maven { url"https://maven.aliyun.com/repository/spring" }
+        maven { url"https://maven.aliyun.com/repository/spring-plugin" }
+		maven { url"https://maven.springframework.org"}
+        maven { url"https://repo.spring.io/libs-release" }
 
         mavenCentral()
     }

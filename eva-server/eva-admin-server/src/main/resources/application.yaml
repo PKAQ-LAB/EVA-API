@@ -3,5 +3,5 @@ server:
 spring:
   security:
     user:
-      name: "eva"
+      name: "admin"
       password: "7u8i9o0p"

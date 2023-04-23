@@ -1,4 +1,4 @@
-package io.nerv.core.auth.log.biz.pointcut;
+package io.nerv.core.log.pointcut;
 
 import cn.hutool.core.date.DateUtil;
 import io.nerv.core.log.annotation.BizLog;
