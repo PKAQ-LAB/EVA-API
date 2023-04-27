@@ -1,0 +1,16 @@
+if (project.file('../../publish.gradle').exists()) {
+    apply from: '../../publish.gradle'
+}
+project.archivesBaseName = 'yunyue-core-web'
+project.description='yunyue web support with all base modules'
+
+dependencies {
+
+    api("${lib.web}"){
+        exclude module: 'spring-boot-starter-tomcat'
+    }
+    api "${lib.undertow}"
+
+    api project(":yunyue-core:yunyue-core-common"),
+        "${lib.springdoc}"
+}

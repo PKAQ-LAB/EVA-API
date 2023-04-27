@@ -1,0 +1,16 @@
+if (project.file('../../publish.gradle').exists()) {
+    apply from: '../../publish.gradle'
+}
+project.archivesBaseName = 'yunyue-core-data-mybatis'
+project.description='yunyue mybatis support'
+
+dependencies {
+    implementation  project(":yunyue-core:yunyue-core-common"),
+                    project(":yunyue-core:yunyue-core-log"),
+                    "${lib.jdbc}",
+                    "${lib.p6spy}",
+                    "${lib.flyway}",
+                    "${lib.springdoc}"
+
+    api             "${lib.mybatisPlus}"
+}

@@ -9,7 +9,7 @@ jar {
 }
 
 bootJar {
-    mainClass = 'io.nerv.WebBooter'
+    mainClass = 'tech.yunyue.WebBooter'
 }
 
 description = """web"""
@@ -28,9 +28,9 @@ processResources {
 
 dependencies {
 
-    api     project(":eva-core:eva-core-web"),
-            project(":eva-core:eva-core-data-mybatis"),
-            project(":eva-web:eva-web-auth"),
+    api     project(":yunyue-core:yunyue-core-web"),
+            project(":yunyue-core:yunyue-core-data-mybatis"),
+            project(":yunyue-web:yunyue-web-auth"),
             "${lib.mysql}"
 
     implementation "${lib.bootAdmin}",

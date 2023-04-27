@@ -1,0 +1,24 @@
+apply plugin: "org.springframework.boot"
+
+project.tasks.publish.enabled = false
+
+jar {
+    enabled = true
+}
+
+bootJar {
+    mainClass = 'tech.yunyue.core.AdminBooter'
+}
+
+description = """admin-server"""
+// 依赖配置
+dependencies {
+    implementation("${lib.web}"){
+        exclude module: 'spring-boot-starter-tomcat'
+    }
+
+    implementation "${lib.undertow}",
+                   "${lib.bootAdminServer}"
+
+    implementation "${lib.security}"
+}

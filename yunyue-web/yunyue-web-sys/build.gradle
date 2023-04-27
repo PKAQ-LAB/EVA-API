@@ -1,0 +1,12 @@
+if (project.file('../../publish.gradle').exists()) {
+    apply from: '../../publish.gradle'
+}
+project.archivesBaseName = 'yunyue-web-sys'
+project.description='sys jar with authority and system management'
+
+dependencies {
+    implementation	project(":yunyue-core:yunyue-core-web"),
+                	project(":yunyue-core:yunyue-core-data-mybatis"),
+                	project(":yunyue-core:yunyue-core-cache"),
+                    "${lib.mysql}"
+}

@@ -1,0 +1,10 @@
+if (project.file('../../publish.gradle').exists()) {
+    apply from: '../../publish.gradle'
+}
+project.archivesBaseName = 'yunyue-core-log'
+project.description='yunyue log support'
+
+dependencies {
+    implementation  project(":yunyue-core:yunyue-core-common"),
+                    "${lib.jdbc}"
+}

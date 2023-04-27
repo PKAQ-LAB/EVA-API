@@ -1,0 +1,18 @@
+if (project.file('../../publish.gradle').exists()) {
+    apply from: '../../publish.gradle'
+}
+project.archivesBaseName = 'yunyue-core-common'
+project.description='yunyue common class'
+
+dependencies {
+    implementation 	"${lib.jaxb_api}",
+                    "${lib.jasypt}"
+
+
+    api "${lib.hutool}",
+        "${lib.aop}",
+        "${lib.jwt}",
+        "${lib.json}",
+        "${lib.ttl}",
+        "${lib.validation}"
+}

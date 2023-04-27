@@ -1,0 +1,16 @@
+if (project.file('../../publish.gradle').exists()) {
+    apply from: '../../publish.gradle'
+}
+project.archivesBaseName = 'yunyue-core-websocket'
+project.description = "tool for websocket"
+
+dependencies {
+    implementation("${lib.websocket}"){
+        exclude module: 'spring-boot-starter-tomcat'
+    }
+
+    implementation "${lib.undertow}"
+
+    implementation project(":yunyue-core:yunyue-core-common")
+
+}

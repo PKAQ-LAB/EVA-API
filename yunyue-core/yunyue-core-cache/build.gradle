@@ -1,0 +1,13 @@
+if (project.file('../../publish.gradle').exists()) {
+    apply from: '../../publish.gradle'
+}
+project.archivesBaseName = 'yunyue-core-cache'
+project.description='eva cache , redis && caffeine'
+
+dependencies {
+    implementation project(":yunyue-core:yunyue-core-common")
+
+    api             "${lib.cache}",
+                    "${lib.redis}",
+                    "${lib.caffeine}"
+}
