@@ -11,6 +11,7 @@ import tech.yunyue.core.properties.EvaConfig;
 import tech.yunyue.core.threaduser.ThreadUser;
 import tech.yunyue.core.threaduser.ThreadUserHelper;
 import tech.yunyue.core.util.json.JsonUtil;
+import tech.yunyue.core.web.util.TenantUtil;
 import tech.yunyue.core.web.util.TokenUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -51,12 +52,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final TokenUtil tokenUtil;
 
+    private final  TenantUtil tenantUtil;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
 
         var isvalid = false;
         var inCache = false;
         var cacheToken = evaConfig.getJwt().isPersistence();
+
+        var tenantId = tenantUtil.getTenantId(request);
 
         String authToken;
         try {
@@ -167,7 +172,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
                 ThreadUser currentUser = new ThreadUser().setUserId(uid)
                         .setUserName(account)
-                        .setRoles(roles);
+                        .setRoles(roles)
+                        .setTenantId(tenantId);
                 ThreadUserHelper.setCurrentUser(currentUser);
 
 //                将用户信息设置到security 上下文中

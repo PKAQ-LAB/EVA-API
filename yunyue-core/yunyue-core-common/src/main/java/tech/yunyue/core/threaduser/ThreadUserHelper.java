@@ -116,4 +116,14 @@ public class ThreadUserHelper {
         return isAdmin;
     }
 
+    /**
+     * 获取租户号
+     *
+     * @return
+     */
+    public static String getTenantId() {
+        return Optional.ofNullable(userThreadLocal.get())
+                .map(ThreadUser::getTenantId).orElse(null);
+    }
+
 }

@@ -64,6 +64,11 @@ public class EvaConfig {
      **/
     private Cache cache;
 
+    /**
+     * 租户配置
+     */
+    private Tenant tenant;
+
     public BizLog getBizlog() {
         return null == this.bizlog ? new BizLog() : bizlog;
     }
@@ -99,4 +104,6 @@ public class EvaConfig {
     public Cache getCache() {
         return null == cache ? new Cache() : cache;
     }
+
+    public Tenant getTenant() { return null == tenant ? new Tenant() : tenant; }
 }
