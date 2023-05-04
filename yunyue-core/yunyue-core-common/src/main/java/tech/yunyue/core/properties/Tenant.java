@@ -27,6 +27,8 @@ public class Tenant {
     private String tenantIdColumn = "TENANT_ID";
     /**
      * 不需要拼接租户字段的表
+     * <p>
+     * 如果有部分 sql 不需要加上租户ID条件 可以使用 @InterceptorIgnore(tenantLine = "true") 标注在 Mapper 接口的方法上
      */
     private String[] ignoreTables;
 }
