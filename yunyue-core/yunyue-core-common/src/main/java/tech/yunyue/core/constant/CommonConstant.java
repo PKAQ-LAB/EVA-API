@@ -53,4 +53,6 @@ public interface CommonConstant {
     String DEVICE = "device";
     // 请求来源版本号
     String VERSION = "version";
+    //租户常量
+    String TENANT_KEY = "tenant_id";
 }

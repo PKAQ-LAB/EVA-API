@@ -24,13 +24,13 @@ public class TenantUtil {
     public String getTenantId(HttpServletRequest request) {
         String tenantId = null;
 
-        var authHeader = request.getHeader(evaConfig.getTenant().getHeader());
+        var tenantHeader = request.getHeader(evaConfig.getTenant().getHeader());
 
-        var cookie = JakartaServletUtil.getCookie(request, CommonConstant.tenantId);
+        var cookie = JakartaServletUtil.getCookie(request, CommonConstant.TENANT_KEY);
         if (null != cookie) {
             tenantId = cookie.getValue();
-        } else if (StrUtil.isNotBlank(authHeader)) {
-            tenantId = authHeader;
+        } else if (StrUtil.isNotBlank(tenantHeader)) {
+            tenantId = tenantHeader;
         }
 
         return tenantId;
