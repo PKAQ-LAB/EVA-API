@@ -73,7 +73,7 @@ public class LoginAuthenticationProvider extends AbstractUserDetailsAuthenticati
         boolean matches = this.bCryptPasswordEncoder.matches(presentedPassword, userDetails.getPassword());
 
         if (!matches) {
-            throw BizCodeEnum.ACCOUNT_OR_PWD_ERROR.newException(AuthenticationException.class);
+            BizCodeEnum.ACCOUNT_OR_PWD_ERROR.newException(AuthenticationException.class);
         }
 
     }
