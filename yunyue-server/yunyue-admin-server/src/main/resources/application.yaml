@@ -1,7 +1,0 @@
-server:
-  port: 16010
-spring:
-  security:
-    user:
-      name: "admin"
-      password: "7u8i9o0p"
