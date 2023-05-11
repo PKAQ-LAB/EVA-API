@@ -17,7 +17,7 @@ public interface BizAssert extends BizCode {
      */
     default BizException newException(Object... args) {
         String msg = MessageFormat.format(this.getMsg(), null == args ? "" : args);
-        return new BizException(msg);
+        throw new BizException(msg);
     }
 
     /**
