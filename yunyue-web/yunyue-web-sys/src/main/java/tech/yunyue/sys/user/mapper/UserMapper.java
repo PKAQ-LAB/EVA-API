@@ -8,6 +8,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * 用户管理mapper
  *
@@ -44,4 +46,12 @@ public interface UserMapper extends BaseMapper<UserEntity> {
      */
     @Ignore
     UserEntity getUserWithModuleAndRoleById(String userId);
+
+    /**
+     * 根据用户id查询用户角色
+     *
+     * @param userId
+     * @return
+     */
+    List<String> getRoleById(String userId);
 }

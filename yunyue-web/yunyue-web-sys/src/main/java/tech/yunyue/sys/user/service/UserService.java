@@ -230,4 +230,11 @@ public class UserService extends StdService<UserMapper, UserEntity> {
             });
         }
     }
+
+    /**
+     * 根据用户id查询用户角色
+     */
+    public List<String> getRoleById(String userId) {
+        return this.mapper.getRoleById(userId);
+    }
 }

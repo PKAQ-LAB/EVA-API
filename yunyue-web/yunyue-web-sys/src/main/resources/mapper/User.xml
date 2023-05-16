@@ -85,4 +85,8 @@
         from sys_user_info
         where id = #{userId,jdbcType=VARCHAR}
     </select>
+	<!-- 根据用户id查询用户角色 -->
+    <select id="getRoleById" resultType="java.lang.String">
+        select r.`CODE` from sys_role_user ru LEFT JOIN sys_role r on ru.ROLE_ID = r.ID where ru.USER_ID=#{userId,jdbcType=VARCHAR}
+    </select>
 </mapper>
