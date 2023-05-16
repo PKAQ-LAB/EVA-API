@@ -1,11 +1,7 @@
 package tech.yunyue.core.web.util;
 
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.extra.servlet.JakartaServletUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import tech.yunyue.core.constant.CommonConstant;
 import tech.yunyue.core.properties.EvaConfig;
 
 
@@ -21,18 +17,12 @@ public class TenantUtil {
      * @param request
      * @return
      */
-    public String getTenantId(HttpServletRequest request) {
-        String tenantId = null;
+    public String getTenantId(String uid) {
+        //从redis中获取
 
-        var tenantHeader = request.getHeader(evaConfig.getTenant().getHeader());
+        //redis没有就从数据库读取
 
-        var cookie = JakartaServletUtil.getCookie(request, CommonConstant.TENANT_KEY);
-        if (null != cookie) {
-            tenantId = cookie.getValue();
-        } else if (StrUtil.isNotBlank(tenantHeader)) {
-            tenantId = tenantHeader;
-        }
 
-        return tenantId;
+        return "";
     }
 }
