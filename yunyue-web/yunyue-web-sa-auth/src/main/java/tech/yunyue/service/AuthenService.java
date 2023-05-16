@@ -1,17 +1,17 @@
 package tech.yunyue.service;
 
 import cn.dev33.satoken.config.SaTokenConfig;
+import cn.dev33.satoken.context.SaHolder;
 import cn.dev33.satoken.dao.SaTokenDao;
-import cn.dev33.satoken.jwt.SaJwtUtil;
 import cn.dev33.satoken.secure.BCrypt;
 import cn.dev33.satoken.stp.SaLoginConfig;
-import cn.dev33.satoken.stp.StpLogic;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.date.DateUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import tech.yunyue.core.cache.util.RedisUtil;
 import tech.yunyue.core.constant.CommonConstant;
 import tech.yunyue.core.log.base.BizLogEntity;
 import tech.yunyue.core.log.base.BizLogSupporter;
@@ -45,17 +45,15 @@ public class AuthenService {
      * 登录
      *
      */
-    public Response additionalAuthenticationChecks(HttpServletRequest request) {
-        Map<String, String[]> parameterMap = request.getParameterMap();
-
-        String[] passwordArr = parameterMap.get("password");
-        JwtUserDetail user = retrieveUser(parameterMap.get("username"),passwordArr);
-
-        boolean matches = BCrypt.checkpw(passwordArr[0], user.getPassword());
+    public Response additionalAuthenticationChecks(String username, String password) {
+        //查询和校验数据库用户
+        JwtUserDetail user = retrieveUser(username);
+        boolean matches = BCrypt.checkpw(password, user.getPassword());
         if (!matches) {
             BizCodeEnum.ACCOUNT_OR_PWD_ERROR.newException();
         }
         //生成access_token 6小时
+        HttpServletRequest request = (HttpServletRequest)SaHolder.getRequest().getSource();
         saTokenConfig.setTokenName(CommonConstant.ACCESS_TOKEN_KEY);
         StpUtil.login(user.getId(), SaLoginConfig.setExtra("userId", user.getId())
                                                 .setExtra("account", user.getUsername())
@@ -71,8 +69,8 @@ public class AuthenService {
         saTokenConfig.setTokenName(CommonConstant.ACCESS_TOKEN_KEY); //改回来
 
         // 将用户角色保存到redis中
-        SaTokenDao dao = StpUtil.getStpLogic().getSaTokenDao();
-        dao.setObject(CommonConstant.REDIS_USER_ROLES_PREFIX_KEY+user.getId(), new ArrayList<String>(user.getAuthorities().keySet()), evaConfig.getJwt().getBravoTtl());
+        SaTokenDao redisDao = StpUtil.getStpLogic().getSaTokenDao();
+        redisDao.setObject(CommonConstant.REDIS_USER_ROLES_PREFIX_KEY+user.getId(), new ArrayList<String>(user.getAuthorities().keySet()), evaConfig.getJwt().getBravoTtl());
 
 
         //登录日志
@@ -92,14 +90,12 @@ public class AuthenService {
         return new Response().success(BizCodeEnum.LOGIN_SUCCESS_WELCOME, user.getUsername());
     }
 
+
     /**
      * 查询和校验数据库用户
      */
-    private JwtUserDetail retrieveUser(String[] usernameArr, String[] passwordArr) {
-        if(Objects.isNull(usernameArr) || usernameArr.length < 1 || Objects.isNull(passwordArr) || passwordArr.length < 1 ){
-            BizCodeEnum.ACCOUNT_OR_PWD_ERROR.newException();
-        }
-        String username = usernameArr[0].trim();
+    private JwtUserDetail retrieveUser(String username) {
+
         // 数据中中查询
         JwtUserDetail user = loadUserByUsername(username);
         // 校验用户状态

@@ -1,30 +1,19 @@
 package tech.yunyue.ctrl;
 
 import cn.dev33.satoken.config.SaTokenConfig;
-import cn.dev33.satoken.dao.SaTokenDao;
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.stp.SaLoginConfig;
 import cn.dev33.satoken.stp.StpUtil;
-import cn.dev33.satoken.strategy.SaStrategy;
-import cn.hutool.extra.servlet.JakartaServletUtil;
-import com.mysql.cj.util.StringUtils;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import tech.yunyue.core.constant.CommonConstant;
 import tech.yunyue.core.enums.BizCodeEnum;
 import tech.yunyue.core.mvc.vo.Response;
 import tech.yunyue.core.properties.EvaConfig;
 import tech.yunyue.core.threaduser.ThreadUserHelper;
-import tech.yunyue.core.web.util.RequestUtil;
 import tech.yunyue.service.AuthenService;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/auth")
@@ -40,7 +29,12 @@ public class AuthenCtrl {
 
     @PostMapping(value = "/login")
     public Response login(HttpServletRequest request) {
-        return authenService.additionalAuthenticationChecks(request);
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+        if (!StringUtils.hasText(username) || !StringUtils.hasText(password)) {
+            BizCodeEnum.ACCOUNT_OR_PWD_ERROR.newException();
+        }
+        return authenService.additionalAuthenticationChecks(username, password);
     }
 
 
@@ -60,7 +54,7 @@ public class AuthenCtrl {
         // 注销refresh_token
         saTokenConfig.setTokenName(CommonConstant.REFRESH_TOKEN_KEY);
         // 用户access_token过期则不会有userId  从refresh_token中得到用户id
-        if (StringUtils.isNullOrEmpty(userId)) {
+        if (!StringUtils.hasText(userId)) {
             userId = (String) StpUtil.getLoginId();
         }
         StpUtil.logout();
