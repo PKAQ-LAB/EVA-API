@@ -53,6 +53,8 @@ public interface CommonConstant {
     String DEVICE = "device";
     // 请求来源版本号
     String VERSION = "version";
-    //租户常量
-    String TENANT_KEY = "tenant_id";
+    // 把用户角色保存在redis中的前缀
+    String REDIS_USER_ROLES_PREFIX_KEY = "USER_ROLES:";
+    // 把全局角色-权限保存在redis中的前缀
+    String REDIS_ROLES_PERMISSION_PREFIX_KEY = "GLOBAL:ROLE:PERMISSION:";
 }
