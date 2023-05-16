@@ -34,19 +34,19 @@ public class Jwt {
     /**
      * token 30天 有效时间
      **/
-    private long ttl = 30 * 24 * 60 * 60 * 1000;
+    private long ttl = 30 * 24 * 60 * 60;
     /**
      * access token有效时间,  6 小时
      **/
-    private long alphaTtl = 6 * 60 * 60 * 1000;
+    private long alphaTtl = 6 * 60 * 60;
     /**
      * refresh token有效时间, 30 天
      **/
-    private long bravoTtl = 30 * 24 * 60 * 60 * 1000;
+    private long bravoTtl = 30 * 24 * 60 * 60;
     /**
      * 续期时间 , 6 小时
      **/
-    private long threshold = 60 * 60 * 6 * 1000;
+    private long threshold = 60 * 60 * 6;
     /**
      * 可信任域
      **/
