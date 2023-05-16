@@ -1,4 +1,4 @@
-package tech.yunyue.core.auth.config;
+package tech.yunyue.config;
 
 import cn.dev33.satoken.dao.SaTokenDao;
 import cn.dev33.satoken.stp.StpInterface;

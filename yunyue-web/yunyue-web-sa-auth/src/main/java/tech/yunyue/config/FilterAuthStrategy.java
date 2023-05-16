@@ -1,4 +1,4 @@
-package tech.yunyue.core.auth.config;
+package tech.yunyue.config;
 
 import cn.dev33.satoken.context.SaHolder;
 import cn.dev33.satoken.filter.SaFilterAuthStrategy;

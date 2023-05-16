@@ -1,4 +1,4 @@
-package tech.yunyue.core.auth.config;
+package tech.yunyue.config;
 
 
 import java.util.List;
