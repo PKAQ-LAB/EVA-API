@@ -27,11 +27,11 @@ public class RequestFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         log.info("进入 服务请求拦截 过滤器========");
         HttpServletRequest request = (HttpServletRequest) servletRequest;
-        String gateway = request.getHeader("gatewayKey");
-        if (gateway == null || gateway.equals("") || !gateway.equals("key")) {
-            log.info("非法请求");
-            return;
-        }
+//        String gateway = request.getHeader("gatewayKey");
+//        if (gateway == null || gateway.equals("") || !gateway.equals("key")) {
+//            log.info("非法请求");
+//            return;
+//        }
 
         // 获取用户信息设置到threadlocal中
         var tu = new ThreadUser();
