@@ -61,7 +61,12 @@ ext {
            "devTools" : "org.springframework.boot:spring-boot-devtools",
             // generator
            "velocity" : "org.apache.velocity:velocity-engine-core:${velocity}",
-           "mybatis_plus_generator" : "com.baomidou:mybatis-plus-generator:${mybatis_plus_generator}"
+           "mybatis_plus_generator" : "com.baomidou:mybatis-plus-generator:${mybatis_plus_generator}",
+            // sa-token
+            "sa_token_starter" : "cn.dev33:sa-token-spring-boot3-starter:${sa_token}",
+            "sa_token_redis" : "cn.dev33:sa-token-dao-redis-jackson:${sa_token}",
+            "commons_pool" : "org.apache.commons:commons-pool2",
+            "sa_token_jwt" : "cn.dev33:sa-token-jwt:${sa_token}"
     ]
 }
 
@@ -121,4 +126,5 @@ subprojects {
 
      }
 }
+
 

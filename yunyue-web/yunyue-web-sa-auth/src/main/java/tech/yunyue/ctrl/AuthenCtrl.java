@@ -1,0 +1,115 @@
+package tech.yunyue.ctrl;
+
+import cn.dev33.satoken.config.SaTokenConfig;
+import cn.dev33.satoken.dao.SaTokenDao;
+import cn.dev33.satoken.exception.NotLoginException;
+import cn.dev33.satoken.stp.SaLoginConfig;
+import cn.dev33.satoken.stp.StpUtil;
+import cn.dev33.satoken.strategy.SaStrategy;
+import cn.hutool.extra.servlet.JakartaServletUtil;
+import com.mysql.cj.util.StringUtils;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import tech.yunyue.core.constant.CommonConstant;
+import tech.yunyue.core.enums.BizCodeEnum;
+import tech.yunyue.core.mvc.vo.Response;
+import tech.yunyue.core.properties.EvaConfig;
+import tech.yunyue.core.threaduser.ThreadUserHelper;
+import tech.yunyue.core.web.util.RequestUtil;
+import tech.yunyue.service.AuthenService;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+@RestController
+@RequestMapping("/auth")
+@AllArgsConstructor
+public class AuthenCtrl {
+    private final AuthenService authenService;
+    private final EvaConfig evaConfig;
+    private final SaTokenConfig saTokenConfig;
+
+    /**
+     * 登录认证
+     */
+
+    @PostMapping(value = "/login")
+    public Response login(HttpServletRequest request) {
+        return authenService.additionalAuthenticationChecks(request);
+    }
+
+
+    /**
+     * 退出登录需要需要登录的一点思考：
+     * 1、如果不需要登录，那么在调用接口的时候就需要把token传过来，且系统不校验token有效性，此时如果系统被攻击，不停的大量发送token，最后会把redis充爆
+     * 2、如果调用退出接口必须登录，那么系统会调用token校验有效性，refresh_token通过参数传过来加入黑名单
+     * 综上：选择调用退出接口需要登录的方式
+     * @return
+     */
+    @PostMapping("/logout")
+    public Response logout() {
+        String userId = ThreadUserHelper.getUserId();
+
+        // 注销access_token
+        StpUtil.logout();
+        // 注销refresh_token
+        saTokenConfig.setTokenName(CommonConstant.REFRESH_TOKEN_KEY);
+        // 用户access_token过期则不会有userId  从refresh_token中得到用户id
+        if (StringUtils.isNullOrEmpty(userId)) {
+            userId = (String) StpUtil.getLoginId();
+        }
+        StpUtil.logout();
+        saTokenConfig.setTokenName(CommonConstant.ACCESS_TOKEN_KEY); //改回来
+
+        // 把缓存中的用户角色删掉
+        StpUtil.getStpLogic().getSaTokenDao().delete(CommonConstant.REDIS_USER_ROLES_PREFIX_KEY+userId);
+        return new Response().success(null,BizCodeEnum.LOGINOUT_SUCCESS);
+    }
+
+    /**
+     * 使用refresh token 换取 access token
+     * 1. 签发新的 access_token
+     * 2. 删除老的 access_token
+     * 3. 签发新的 refreshToken
+     * 4. 删除老的 refreshToken
+     *
+     * @return
+     */
+    @PostMapping("/getAlpha")
+    public Response refreshToken() {
+        String refreshTokenId = "";
+        //判断refresh_token是否有效
+        try {
+            saTokenConfig.setTokenName(CommonConstant.REFRESH_TOKEN_KEY);
+            refreshTokenId = (String) StpUtil.getLoginId();
+        }catch (NotLoginException e){
+            BizCodeEnum.LOGIN_EXPIRED.newException();
+        }
+
+        String userId = (String)StpUtil.getExtra("userId");
+        String account = (String)StpUtil.getExtra("account");
+        String version = (String)StpUtil.getExtra("version");
+        String device = StpUtil.getLoginDevice();
+        //重新生成refresh_token
+        StpUtil.login(refreshTokenId,SaLoginConfig.setExtra("userId", userId)
+                .setExtra("account", account)
+                .setExtra("version",version)
+                .setDevice(device)
+                .setTimeout(evaConfig.getJwt().getBravoTtl()));
+
+        //重新生成access_token
+        saTokenConfig.setTokenName(CommonConstant.ACCESS_TOKEN_KEY);
+        StpUtil.login(userId, SaLoginConfig.setExtra("userId", userId)
+                .setExtra("account", account)
+                .setExtra("version",version)
+                .setDevice(device));
+//        var map = Map.of(CommonConstant.ACCESS_TOKEN_KEY, new_alpha,
+//                CommonConstant.REFRESH_TOKEN_KEY, new_bravo);
+        return new Response().success();
+    }
+}
