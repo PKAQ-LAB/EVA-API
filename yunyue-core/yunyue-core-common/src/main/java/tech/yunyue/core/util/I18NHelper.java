@@ -41,6 +41,20 @@ public class I18NHelper {
         return new Response().failure(code, message);
     }
 
+    public Response getMessage(BizCode e, String defaultMsg) {
+
+        String code = e.getCode();
+        String message = evaConfig.isI18n() ? this.getMessage(e.toString(), e.getMsg()) : defaultMsg;
+
+        if (message == null || message.isEmpty()) {
+            message = defaultMsg;
+        }
+
+        message = MessageFormat.format("[{0}] {1}", e.getCode(), message);
+
+        return new Response().failure(code, message);
+    }
+
     /**
      * @param code ：对应messages配置的key.
      * @return
