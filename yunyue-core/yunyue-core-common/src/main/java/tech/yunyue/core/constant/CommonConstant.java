@@ -57,4 +57,9 @@ public interface CommonConstant {
     String REDIS_USER_ROLES_PREFIX_KEY = "USER_ROLES:";
     // 把全局角色-权限保存在redis中的前缀
     String REDIS_ROLES_PERMISSION_PREFIX_KEY = "GLOBAL:ROLE:PERMISSION:";
+    // 用户登录密码错误失败key
+    String REDIS_USER_LOGIN_FAIL_KEY = "USER:LOGIN:FAIL:";
+    // 锁定标记：用户限制登录30分钟key
+    String REDIS_USER_NO_LOGIN_KEY = "USER:NO:LOGIN:";
+
 }

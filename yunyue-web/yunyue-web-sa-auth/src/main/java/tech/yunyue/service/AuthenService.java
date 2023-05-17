@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import tech.yunyue.core.cache.util.RedisUtil;
 import tech.yunyue.core.constant.CommonConstant;
 import tech.yunyue.core.log.base.BizLogEntity;
@@ -41,31 +42,45 @@ public class AuthenService {
 
     private final EvaConfig evaConfig;
 
+    private final RedisUtil redisUtil;
+
     /**
      * 登录
      *
      */
     public Response additionalAuthenticationChecks(String username, String password) {
+        // 判断锁定标记是否存在 存在就直接报错
+        String key = CommonConstant.REDIS_USER_NO_LOGIN_KEY + username;
+        if(StringUtils.hasLength(redisUtil.get(key))){
+            //计算剩余分钟数
+            Long minutes =  redisUtil.getExpire(CommonConstant.REDIS_USER_NO_LOGIN_KEY + username) / 60 ;
+            BizCodeEnum.LOGIN_FAIL_COUNT_LOCKED.newException(minutes+1);
+        }
+
         //查询和校验数据库用户
         JwtUserDetail user = retrieveUser(username);
         boolean matches = BCrypt.checkpw(password, user.getPassword());
         if (!matches) {
+            recordFail(user.getUsername());
             BizCodeEnum.ACCOUNT_OR_PWD_ERROR.newException();
         }
+        //登录成功 删除记录失败记录的集合
+        redisUtil.delete(CommonConstant.REDIS_USER_LOGIN_FAIL_KEY + user.getUsername());
+
         //生成access_token 6小时
         HttpServletRequest request = (HttpServletRequest)SaHolder.getRequest().getSource();
         saTokenConfig.setTokenName(CommonConstant.ACCESS_TOKEN_KEY);
         StpUtil.login(user.getId(), SaLoginConfig.setExtra("userId", user.getId())
-                                                .setExtra("account", user.getUsername())
-                                                .setExtra("version",RequestUtil.getVersion(request))
-                                                .setDevice(RequestUtil.getDeivce(request)));
+                .setExtra("account", user.getUsername())
+                .setExtra("version",RequestUtil.getVersion(request))
+                .setDevice(RequestUtil.getDeivce(request)));
         //生成refresh_token 30天
         saTokenConfig.setTokenName(CommonConstant.REFRESH_TOKEN_KEY);
         StpUtil.login(CommonConstant.REFRESH_TOKEN_KEY+":"+user.getId(),SaLoginConfig.setExtra("userId", user.getId())
-                                                .setExtra("account", user.getUsername())
-                                                .setExtra("version",RequestUtil.getVersion(request))
-                                                .setDevice(RequestUtil.getDeivce(request))
-                                                .setTimeout(evaConfig.getJwt().getBravoTtl()));
+                .setExtra("account", user.getUsername())
+                .setExtra("version",RequestUtil.getVersion(request))
+                .setDevice(RequestUtil.getDeivce(request))
+                .setTimeout(evaConfig.getJwt().getBravoTtl()));
         saTokenConfig.setTokenName(CommonConstant.ACCESS_TOKEN_KEY); //改回来
 
         // 将用户角色保存到redis中
@@ -88,6 +103,29 @@ public class AuthenService {
         bizLogSupporter.save(bizLogEntity);
 
         return new Response().success(BizCodeEnum.LOGIN_SUCCESS_WELCOME, user.getUsername());
+    }
+
+    /**
+     * 记录用户失败次数 并判断是否30分钟内连续失败5次
+     * @param username 用户名
+     */
+    private void recordFail(String username) {
+        synchronized (username) {
+            Long now = System.currentTimeMillis();
+            String key = CommonConstant.REDIS_USER_LOGIN_FAIL_KEY + username;
+            //当前失败时间从左入栈
+            Long listSize = redisUtil.leftPush(key,now);
+            int maxCount = evaConfig.getLoginFailureCount();
+            // 集合的数量大等于5 且当前时间-往后数第五个时间 < 30分钟 则保存该用户限制登录标记
+            if (listSize >= maxCount && now - (Long)redisUtil.popIndex(key,maxCount-1) < evaConfig.getLoginFailureTime()){
+                redisUtil.setForTimeMIN(CommonConstant.REDIS_USER_NO_LOGIN_KEY + username,"true",evaConfig.getLoginLockTime());
+                redisUtil.delete(key);
+                BizCodeEnum.LOGIN_FAIL_COUNT_LOCKED.newException(evaConfig.getLoginLockTime());
+            }else{
+                //手动删掉多余数据 保留4个
+                redisUtil.listTrim(key,0,maxCount-2);
+            }
+        }
     }
 
 

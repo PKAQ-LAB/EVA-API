@@ -69,6 +69,21 @@ public class EvaConfig {
      */
     private Tenant tenant;
 
+    /**
+     * 多少分钟内连续失败则限制用户登录[毫秒]
+     */
+    private long loginFailureTime = 30 * 60 * 1000;
+
+    /**
+     * 失败次数
+     */
+    private int loginFailureCount = 5;
+
+    /**
+     * 限制用户登录分钟数
+     */
+    private long loginLockTime = 30;
+
     public BizLog getBizlog() {
         return null == this.bizlog ? new BizLog() : bizlog;
     }
