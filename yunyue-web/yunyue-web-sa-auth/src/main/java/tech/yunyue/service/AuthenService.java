@@ -110,7 +110,7 @@ public class AuthenService {
      * @param username 用户名
      */
     private void recordFail(String username) {
-        synchronized (username) {
+        synchronized (username.intern()) {
             Long now = System.currentTimeMillis();
             String key = CommonConstant.REDIS_USER_LOGIN_FAIL_KEY + username;
             //当前失败时间从左入栈
