@@ -15,8 +15,8 @@ public interface BizAssert extends BizCode {
      * @param args
      * @return
      */
-    default BizException newException(Object... args) {
-        throw new BizException(this,null == args ? "" : args);
+    default BizException newException(Object ... args) {
+        throw new BizException(this, args);
     }
 
     /**
