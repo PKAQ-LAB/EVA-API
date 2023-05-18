@@ -4,8 +4,11 @@ import cn.dev33.satoken.config.SaTokenConfig;
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.stp.SaLoginConfig;
 import cn.dev33.satoken.stp.StpUtil;
-import jakarta.servlet.http.HttpServletRequest;
+import com.anji.captcha.model.common.ResponseModel;
+import com.anji.captcha.model.vo.CaptchaVO;
+import com.anji.captcha.service.CaptchaService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import tech.yunyue.core.constant.CommonConstant;
@@ -15,22 +18,37 @@ import tech.yunyue.core.properties.EvaConfig;
 import tech.yunyue.core.threaduser.ThreadUserHelper;
 import tech.yunyue.service.AuthenService;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/auth")
 @AllArgsConstructor
+@Slf4j
 public class AuthenCtrl {
     private final AuthenService authenService;
     private final EvaConfig evaConfig;
     private final SaTokenConfig saTokenConfig;
+    private final CaptchaService captchaService;
 
     /**
      * 登录认证
      */
 
     @PostMapping(value = "/login")
-    public Response login(HttpServletRequest request) {
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
+    public Response login(@RequestBody Map<String,String> params) {
+        //验证码二次校验
+        String captchaVerification = params.get("captchaVerification");
+        CaptchaVO captchaVO = new CaptchaVO();
+        captchaVO.setCaptchaVerification(captchaVerification);
+        ResponseModel response = captchaService.verification(captchaVO);
+        if(!response.isSuccess()) {
+            BizCodeEnum.LOGIN_CAPTCHA_FAIL.newException();
+            log.error("验证失败：" + response.getRepMsg());
+        }
+
+        //校验账号密码
+        String username = params.get("username");
+        String password = params.get("password");
         if (!StringUtils.hasText(username) || !StringUtils.hasText(password)) {
             BizCodeEnum.ACCOUNT_OR_PWD_ERROR.newException();
         }

@@ -14,5 +14,7 @@ dependencies {
             "${lib.sa_token_starter}",
             "${lib.sa_token_redis}",
             "${lib.commons_pool}",
-            "${lib.sa_token_jwt}"
+            "${lib.sa_token_jwt}",
+            "${lib.aj_captcha}",
+            "${lib.aj_captcha_starter}"
 }
