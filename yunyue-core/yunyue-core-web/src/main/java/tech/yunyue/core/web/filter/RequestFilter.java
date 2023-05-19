@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * 请求拦截，避免服务绕过接口被直接访问
@@ -34,12 +35,14 @@ public class RequestFilter implements Filter {
 //        }
 
         // 获取用户信息设置到threadlocal中
-        var tu = new ThreadUser();
-        tu.setUserId(HeaderUtil.getUserId(request))
-                .setUserName(HeaderUtil.getUserName(request))
-                .setRoles(HeaderUtil.getRolesArray(request));
-        ThreadUserHelper.setCurrentUser(tu);
-
+        var tu = ThreadUserHelper.getCurrentUser();
+        if(Objects.isNull(tu)){
+            tu = new ThreadUser();
+            tu.setUserId(HeaderUtil.getUserId(request))
+                    .setUserName(HeaderUtil.getUserName(request))
+                    .setRoles(HeaderUtil.getRolesArray(request));
+            ThreadUserHelper.setCurrentUser(tu);
+        }
         filterChain.doFilter(servletRequest, servletResponse);
     }
 
