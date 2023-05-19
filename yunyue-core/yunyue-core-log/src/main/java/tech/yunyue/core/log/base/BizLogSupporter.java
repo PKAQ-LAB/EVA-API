@@ -1,7 +1,15 @@
 package tech.yunyue.core.log.base;
 
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
+import tech.yunyue.core.log.constant.LogConstant;
+import tech.yunyue.core.log.events.BizLogEvent;
+
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * 业务日志持久化接口
@@ -26,6 +34,36 @@ public interface BizLogSupporter {
      * @return 符合条件的结果集
      */
     List<? extends BizLogEntity> getLogByType(String type);
+
+    /**
+     * 监听有事务且成功提交 或者 没有事务<br/>
+     * 异步保存操作日志
+     */
+    @TransactionalEventListener(phase=TransactionPhase.AFTER_COMMIT,fallbackExecution=true)
+    @Async("log_task")
+    default void listenerCommit(BizLogEvent event) {
+        Map<String, Object> source = (Map<String, Object>) event.getSource();
+        BizLogEntity logEntity = (BizLogEntity) source.get(LogConstant.TRANSACTIONAL_LOG);
+        if(Objects.isNull(logEntity)){
+            logEntity =  (BizLogEntity) source.get(LogConstant.EVENT_LOG);
+        }
+        this.save(logEntity);
+    }
+
+    /**
+     * 监听存在事务且事务回滚的BizLogEvent事件<br/>
+     * 异步保存失败操作日志
+     */
+    @TransactionalEventListener(phase= TransactionPhase.AFTER_ROLLBACK)
+    @Async("log_task")
+     default void listenerRollbask(BizLogEvent event) {
+        Map<String, Object> source = (Map<String, Object>) event.getSource();
+        BizLogEntity logEntity = (BizLogEntity) source.get(LogConstant.TRANSACTIONAL_LOG);
+        if(Objects.nonNull(logEntity)){
+            logEntity.setDescription("【操作失败】"+logEntity.getDescription());
+            this.save(logEntity);
+        }
+    }
 
     /**
      * 获取某个时间之后的日志

@@ -5,4 +5,5 @@ package tech.yunyue.core.log.constant;
  */
 public interface LogConstant {
     String EVENT_LOG = "BIZ-LOG";
+    String TRANSACTIONAL_LOG = "TRANSACTIONAL-BIZ-LOG";
 }

@@ -6,5 +6,6 @@ project.description='yunyue log support'
 
 dependencies {
     implementation  project(":yunyue-core:yunyue-core-common"),
-                    "${lib.jdbc}"
+                    "${lib.jdbc}",
+                    "${lib.springdoc}"
 }
