@@ -94,8 +94,7 @@ public class SaTokenConfigure{
         config.setIsShare(false);
         config.setIsConcurrent(false);
 //       过期策略
-//        config.setTimeout(evaConfig.getJwt().getAlphaTtl());
-        config.setTimeout(20);
+        config.setTimeout(evaConfig.getJwt().getAlphaTtl());
         config.setAutoRenew(false);  //是否自动设置最后操作时间
         // token风格
         config.setTokenStyle("uuid");
