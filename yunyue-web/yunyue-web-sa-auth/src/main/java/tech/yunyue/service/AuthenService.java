@@ -15,7 +15,7 @@ import org.springframework.util.StringUtils;
 import tech.yunyue.core.cache.util.RedisUtil;
 import tech.yunyue.core.constant.CommonConstant;
 import tech.yunyue.core.log.base.BizLogEntity;
-import tech.yunyue.core.log.base.BizLogSupporter;
+import tech.yunyue.core.log.util.BizLogUtil;
 import tech.yunyue.core.mvc.vo.Response;
 import tech.yunyue.core.properties.EvaConfig;
 import tech.yunyue.core.web.util.RequestUtil;
@@ -37,9 +37,6 @@ public class AuthenService {
     private final UserMapper userMapper;
 
     private final SaTokenConfig saTokenConfig;
-
-    private final BizLogSupporter bizLogSupporter;
-
     private final EvaConfig evaConfig;
 
     private final RedisUtil redisUtil;
@@ -89,9 +86,6 @@ public class AuthenService {
 
 
         //登录日志
-        Map<String, Object> map = new HashMap<>(2);
-        map.put(CommonConstant.USER_KEY, user);
-        map.put(CommonConstant.ACCESS_TOKEN_KEY, StpUtil.getTokenValue());
         BizLogEntity bizLogEntity = new BizLogEntity();
         bizLogEntity.setDescription(user.getAccount() + " 登录了系统")
                 .setOperateDatetime(DateUtil.now())
@@ -100,7 +94,7 @@ public class AuthenService {
                 .setOperator(user.getAccount())
                 .setOperateType("login");
         log.info(bizLogEntity.toString());
-        bizLogSupporter.save(bizLogEntity);
+        BizLogUtil.sava(bizLogEntity);
 
         return new Response().success(BizCodeEnum.LOGIN_SUCCESS_WELCOME, user.getUsername());
     }
