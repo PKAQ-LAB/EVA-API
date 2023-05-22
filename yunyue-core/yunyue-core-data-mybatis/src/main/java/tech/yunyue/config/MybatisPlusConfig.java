@@ -1,6 +1,7 @@
 package tech.yunyue.config;
 
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
 import org.apache.ibatis.mapping.VendorDatabaseIdProvider;
@@ -40,6 +41,8 @@ public class MybatisPlusConfig {
         if(evaConfig.getTenant().isEnable()){
             interceptor.addInnerInterceptor(new TenantLineInnerInterceptor(tenantLineHandler));
         }
+        //分页插件
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
         return interceptor;
     }
 
