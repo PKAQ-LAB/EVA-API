@@ -7,6 +7,8 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.anji.captcha.model.common.ResponseModel;
 import com.anji.captcha.model.vo.CaptchaVO;
 import com.anji.captcha.service.CaptchaService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
@@ -24,6 +26,7 @@ import java.util.Map;
 @RequestMapping("/auth")
 @AllArgsConstructor
 @Slf4j
+@Tag(name = "登录管理")
 public class AuthenCtrl {
     private final AuthenService authenService;
     private final EvaConfig evaConfig;
@@ -35,6 +38,7 @@ public class AuthenCtrl {
      */
 
     @PostMapping(value = "/login")
+    @Operation(summary = "登录")
     public Response login(@RequestBody Map<String,String> params) {
         //验证码二次校验
         String captchaVerification = params.get("captchaVerification");
@@ -64,6 +68,7 @@ public class AuthenCtrl {
      * @return
      */
     @PostMapping("/logout")
+    @Operation(summary = "登出")
     public Response logout() {
         String userId = ThreadUserHelper.getUserId();
 
@@ -93,6 +98,7 @@ public class AuthenCtrl {
      * @return
      */
     @PostMapping("/getAlpha")
+    @Operation(summary = "刷新token")
     public Response refreshToken() {
         String refreshTokenId = "";
         //判断refresh_token是否有效
