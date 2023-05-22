@@ -1,6 +1,7 @@
 package tech.yunyue.config;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import tech.yunyue.core.enums.DeleteEnumm;
 import tech.yunyue.core.threaduser.ThreadUserHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
@@ -23,7 +24,7 @@ public class MybatisMetaObjectHandler implements MetaObjectHandler {
         this.strictInsertFill(metaObject, "modifyBy", String.class, ThreadUserHelper.getUserId());
         this.strictInsertFill(metaObject, "gmtCreate", LocalDateTime.class, LocalDateTime.now());
         this.strictInsertFill(metaObject, "gmtModify", LocalDateTime.class, LocalDateTime.now());
-
+        this.strictInsertFill(metaObject, "deleted", String.class, DeleteEnumm.NOT_DELETE.getCode());
     }
 
     @Override
