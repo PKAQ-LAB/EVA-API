@@ -10,6 +10,7 @@ import com.anji.captcha.model.common.ResponseModel;
 import com.anji.captcha.model.vo.CaptchaVO;
 import com.anji.captcha.service.CaptchaService;
 import com.anji.captcha.util.StringUtils;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +24,8 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/captcha")
-public class CaptchaController {
+@Tag(name = "验证码")
+public class CaptchaCtrl {
 
     @Autowired
     private CaptchaService captchaService;
