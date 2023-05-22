@@ -14,5 +14,6 @@ dependencies {
         "${lib.jwt}",
         "${lib.json}",
         "${lib.ttl}",
-        "${lib.validation}"
+        "${lib.validation}",
+        "${lib.springdoc}"
 }
