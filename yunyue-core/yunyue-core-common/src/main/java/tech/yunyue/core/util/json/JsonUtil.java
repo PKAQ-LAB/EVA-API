@@ -6,6 +6,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import org.springframework.util.ClassUtils;
 import tech.yunyue.core.exception.Exceptions;
 import tech.yunyue.core.util.StringPool;
 import lombok.extern.slf4j.Slf4j;
@@ -174,7 +176,11 @@ public class JsonUtil {
             if (!StrUtil.startWithIgnoreCase(content, StringPool.BRACKET_START)) {
                 content = StringPool.BRACKET_START + content + StringPool.BRACKET_END;
             }
-
+            //基本数据类型或者String类型的json数组
+            if(ClassUtils.isPrimitiveOrWrapper(valueTypeRef) || String.class == valueTypeRef){
+                return objectMapper.readValue(content, new TypeReference<>() {});
+            }
+            //复杂对象
             List<Map<String, Object>> list = objectMapper.readValue(content, new TypeReference<>() {
             });
             List<T> result = new ArrayList<>();
