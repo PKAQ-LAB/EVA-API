@@ -1,4 +1,4 @@
-package tech.yunyue.core.mvc.util;
+package tech.yunyue.core.mybatis.mvc.util;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
