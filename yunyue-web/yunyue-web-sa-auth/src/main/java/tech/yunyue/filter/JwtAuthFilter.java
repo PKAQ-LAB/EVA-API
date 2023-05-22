@@ -60,7 +60,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         //往web上下文注入request和response StpUtil需要使用  抄袭RequestContextListener
-        ServletRequestAttributes attributes = new ServletRequestAttributes((HttpServletRequest)request, (HttpServletResponse)response);
+        ServletRequestAttributes attributes = new ServletRequestAttributes(request, response);
         request.setAttribute(REQUEST_ATTRIBUTES_ATTRIBUTE, attributes);
         LocaleContextHolder.setLocale(request.getLocale());
         RequestContextHolder.setRequestAttributes(attributes);
