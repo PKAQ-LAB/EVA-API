@@ -68,17 +68,10 @@ public class BlackListCacheHelper {
         cachePut(list);
     }
 
-    /**
-     * 删除一个黑名单 重新保存
-     */
-    public void remove(ArrayList<String> target) {
-        List<String> list = getAll();
-        list.remove(target);
-    }
-
     public void removeAll() {
         this.cache.clear();
     }
+
     /**
      * 写入缓存
      */
