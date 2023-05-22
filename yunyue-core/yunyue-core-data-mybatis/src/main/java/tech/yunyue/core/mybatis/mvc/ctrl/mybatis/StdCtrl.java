@@ -4,6 +4,7 @@ import tech.yunyue.core.annotation.NoRepeatSubmit;
 import tech.yunyue.core.enums.BizCodeEnum;
 import tech.yunyue.core.enums.ResponseEnumm;
 import tech.yunyue.core.mvc.ctrl.Ctrl;
+import tech.yunyue.core.mvc.vo.PageBo;
 import tech.yunyue.core.mvc.vo.Response;
 import tech.yunyue.core.mvc.vo.SingleArray;
 import tech.yunyue.core.mybatis.mvc.entity.mybatis.StdEntity;
@@ -53,8 +54,8 @@ public abstract class StdCtrl<T extends StdService, E extends StdEntity> extends
     @Operation(summary = "分页查询", description = "列表查询")
     @NoRepeatSubmit
     public Response list(@Parameter(name = "condition", description = "模型对象")
-                         E entity, Integer pageNo, Integer pageSize) {
-        return this.success(this.service.listPage(entity, pageNo, pageSize));
+                         PageBo<E> page) {
+        return this.success(this.service.listPage(page));
     }
 
     @GetMapping("/listAll")

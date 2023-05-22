@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import tech.yunyue.core.mvc.vo.PageBo;
 import tech.yunyue.core.mybatis.mvc.entity.mybatis.StdEntity;
 import tech.yunyue.core.mybatis.mvc.mapper.StdMapper;
 import tech.yunyue.core.mybatis.mvc.util.Page;
@@ -110,17 +111,14 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
      * @param size   分页条数
      * @return 分页模型类
      */
-    public IPage<T> listPage(T entity, Integer page, Integer size) {
-        page = null != page ? page : 1;
-        size = null != size ? size : 10;
-
+    public IPage<T> listPage(PageBo<T> pageBo) {
         LambdaQueryWrapper<T> wrapper = Wrappers.lambdaQuery();
-        wrapper.setEntity(entity);
+        wrapper.setEntity(pageBo.getParam());
         wrapper.orderByDesc(T::getGmtModify);
 
         Page pagination = new Page();
-        pagination.setCurrent(page);
-        pagination.setSize(size);
+        pagination.setCurrent(pageBo.getPageNo());
+        pagination.setSize(pageBo.getPageSize());
 
         return this.mapper.selectPage(pagination, wrapper);
     }
