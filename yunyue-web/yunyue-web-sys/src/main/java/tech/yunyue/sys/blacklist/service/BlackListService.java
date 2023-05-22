@@ -25,7 +25,7 @@ public class BlackListService extends StdService<BlackListMapper, BlackListEntit
      */
     @PostConstruct
     public void init() {
-        var blackList = this.list(new BlackListEntity()).stream().map(BlackListEntity::getTarget).collect(Collectors.toList());
+        var blackList = this.list(null).stream().map(BlackListEntity::getTarget).collect(Collectors.toList());
         blackListCacheHelper.cachePut(blackList);
     }
 
