@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import tech.yunyue.core.mybatis.mvc.entity.mybatis.StdEntity;
+import tech.yunyue.core.mybatis.mvc.mapper.StdMapper;
 import tech.yunyue.core.mybatis.mvc.util.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
@@ -24,6 +25,9 @@ import java.util.List;
 public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
     @Autowired
     public M mapper;
+    //调用该类的方法之前必须让Mybatis-plus缓存StdEntity的字段信息 否则调用存在父类的泛型的Lambda表达式时会报错
+    @Autowired
+    private StdMapper stdMapper;
 
     /**
      * 通用根据ID查询
