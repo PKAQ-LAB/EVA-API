@@ -25,9 +25,7 @@ public class BlackListService extends StdService<BlackListMapper, BlackListEntit
      */
     @PostConstruct
     public void init() {
-        //保存常量池的引用
         var blackList = this.list(new BlackListEntity()).stream().map(BlackListEntity::getTarget).collect(Collectors.toList());
-        //不能一条一条数据存储
         blackListCacheHelper.cachePut(blackList);
     }
 
