@@ -1,0 +1,36 @@
+package tech.yunyue.sys.blacklist.entity;
+
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.apache.ibatis.type.Alias;
+import tech.yunyue.core.mybatis.mvc.entity.mybatis.StdEntity;
+
+/**
+ * 黑名单管理实体类
+ */
+@Data
+@Alias("blackList")
+@TableName("sys_black_list")
+@EqualsAndHashCode(callSuper = true)
+@Schema(title = "黑名单管理")
+public class BlackListEntity extends StdEntity {
+    private static final long serialVersionUID = 1L;
+
+    @NotBlank(message = "封禁目标不允许为空")
+    @Schema(description = "封禁目标")
+    private String target;
+
+    @NotBlank(message = "封禁类型不允许为空")
+    @Schema(description = "封禁类型（0000-IP、0001-请求来源URL）")
+    private String category;
+
+
+    @Schema(description = "是否删除（0000-未删除、0001-删除）")
+    @TableField(fill = FieldFill.INSERT)
+    private String deleted;
+}
