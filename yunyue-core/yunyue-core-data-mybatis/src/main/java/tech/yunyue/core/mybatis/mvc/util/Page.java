@@ -1,4 +1,4 @@
-package tech.yunyue.core.mybatis.mvc.util;
+package tech.yunyue.core.mvc.util;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
@@ -7,7 +7,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Predicate;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * 自定义分页模型
@@ -17,11 +20,6 @@ import java.util.function.Predicate;
 public class Page<T> implements IPage<T> {
 
     private static final long serialVersionUID = 8545996863226528798L;
-
-    /**
-     * 查询数据列表
-     */
-    private List<T> list = Collections.emptyList();
 
     /**
      * 总数
@@ -36,6 +34,9 @@ public class Page<T> implements IPage<T> {
      * 当前页
      */
     private long current = 1;
+    protected List<T> records = Collections.emptyList();
+
+
 
     /**
      * 排序字段信息
@@ -102,21 +103,6 @@ public class Page<T> implements IPage<T> {
      */
     public boolean hasNext() {
         return this.current < this.getPages();
-    }
-
-    @Override
-    public List<T> getRecords() {
-        return null;
-    }
-
-    public List<T> getList() {
-        return this.list;
-    }
-
-    @Override
-    public Page<T> setRecords(List<T> data) {
-        this.list = data;
-        return this;
     }
 
     @Override
@@ -208,7 +194,7 @@ public class Page<T> implements IPage<T> {
         return getOrders();
     }
 
-    public List<OrderItem> getOrders() {
+    private List<OrderItem> getOrders() {
         return orders;
     }
 
@@ -221,6 +207,17 @@ public class Page<T> implements IPage<T> {
         return optimizeCountSql;
     }
 
+    @Override
+    public List<T> getRecords() {
+        return this.records;
+    }
+
+    @Override
+    public IPage<T> setRecords(List<T> records) {
+        this.records = records;
+        return this;
+    }
+
 
     public Page<T> setSearchCount(boolean isSearchCount) {
         this.isSearchCount = isSearchCount;
@@ -231,5 +228,11 @@ public class Page<T> implements IPage<T> {
         this.optimizeCountSql = optimizeCountSql;
         return this;
     }
+
+    public <R> IPage<R> convert(Function<? super T, ? extends R> mapper) {
+        List<R> collect = this.getRecords().stream().map(mapper).collect(toList());
+        return ((IPage<R>) this).setRecords(collect);
+    }
+
 
 }
