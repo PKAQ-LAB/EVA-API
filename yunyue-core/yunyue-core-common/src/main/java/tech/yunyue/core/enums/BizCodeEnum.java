@@ -59,6 +59,7 @@ public enum BizCodeEnum implements BizAssert {
      * 权限相关 420x
      **/
     PERMISSION_DENY("请求资源所需的权限不足", "4200"),
+    BLACK_IP_DENY("当前请求ip[{0}]在黑名单中，拒绝访问", "4201"),
 
     /**
      * license相关 421x
