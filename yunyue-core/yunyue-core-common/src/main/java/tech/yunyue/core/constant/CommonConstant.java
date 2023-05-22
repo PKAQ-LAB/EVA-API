@@ -61,5 +61,7 @@ public interface CommonConstant {
     String REDIS_USER_LOGIN_FAIL_KEY = "USER:LOGIN:FAIL:";
     // 锁定标记：用户限制登录30分钟key
     String REDIS_USER_NO_LOGIN_KEY = "USER:NO:LOGIN:";
+    //黑名单数据
+    String CACHE_BLACKDATA = "blackdata";
 
 }
