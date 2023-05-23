@@ -49,7 +49,7 @@ public interface ModuleMapper extends BaseMapper<ModuleEntityStd> {
     List<ModuleEntityStd> listChildren(String id);
 
     /**
-     * 根据用户id查询用户拥有的权限模块列表
+     * 根据用户id查询用户拥有的权限模块资源列表
      *
      * @param userId 用户id
      * @return 符合条件的List
