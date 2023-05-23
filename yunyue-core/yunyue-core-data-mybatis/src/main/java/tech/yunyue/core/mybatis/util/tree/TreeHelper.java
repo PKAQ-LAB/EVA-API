@@ -13,16 +13,16 @@ import java.util.List;
  */
 public class TreeHelper {
     /**
-     * 将list转换为树结构
+     * 将list转换为树结构 保留类型
      *
      * @param moduleEntitys
      * @return
      */
-    public List<StdTreeEntity> bulid(List<? extends StdTreeEntity> moduleEntitys) {
+    public static  <T extends StdTreeEntity> List<T> bulid(List<T> moduleEntitys) {
 
-        List<StdTreeEntity> trees = new ArrayList<>();
+        List<T> trees = new ArrayList<>();
 
-        for (StdTreeEntity entity : moduleEntitys) {
+        for (T entity : moduleEntitys) {
             String pid = entity.getParentId();
             if (StrUtil.isBlank(pid) || "0".equals(pid)) {
                 trees.add(entity);
