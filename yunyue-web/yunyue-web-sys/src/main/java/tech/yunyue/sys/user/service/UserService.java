@@ -6,9 +6,11 @@ import cn.hutool.crypto.digest.BCrypt;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import lombok.AllArgsConstructor;
 import tech.yunyue.sys.dict.cache.DictCacheHelper;
 import tech.yunyue.sys.module.entity.ModuleEntityStd;
 import tech.yunyue.sys.module.mapper.ModuleMapper;
+import tech.yunyue.sys.module.mapper.ModuleResourceMapper;
 import tech.yunyue.sys.organization.mapper.OrganizationMapper;
 import tech.yunyue.sys.role.entity.RoleUserEntity;
 import tech.yunyue.sys.role.mapper.RoleUserMapper;
@@ -16,14 +18,12 @@ import tech.yunyue.sys.user.entity.UserEntity;
 import tech.yunyue.sys.user.mapper.UserMapper;
 import tech.yunyue.sys.user.vo.PasswordVO;
 import tech.yunyue.core.enums.BizCodeEnum;
-import tech.yunyue.core.mybatis.mvc.entity.mybatis.StdTreeEntity;
 import tech.yunyue.core.mybatis.mvc.service.mybatis.StdService;
 import tech.yunyue.core.mybatis.mvc.util.Page;
 import tech.yunyue.core.mybatis.util.tree.TreeHelper;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * 用户管理
@@ -32,6 +32,7 @@ import java.util.List;
  * @Datetime: 2018/3/30 0:00
  */
 @Service
+@AllArgsConstructor
 public class UserService extends StdService<UserMapper, UserEntity> {
 
     private final OrganizationMapper organizationMapper;
@@ -43,14 +44,6 @@ public class UserService extends StdService<UserMapper, UserEntity> {
     private final ModuleMapper moduleMapper;
 
     private final DictCacheHelper dictCacheHelper;
-
-    public UserService(OrganizationMapper organizationMapper, RoleUserMapper roleUserMapper, FileUploadProvider fileUploadProvider, ModuleMapper moduleMapper, DictCacheHelper dictCacheHelper) {
-        this.organizationMapper = organizationMapper;
-        this.roleUserMapper = roleUserMapper;
-        this.fileUploadProvider = fileUploadProvider;
-        this.moduleMapper = moduleMapper;
-        this.dictCacheHelper = dictCacheHelper;
-    }
 
     /**
      * 修改密码
@@ -198,10 +191,10 @@ public class UserService extends StdService<UserMapper, UserEntity> {
      * @param uid 用户ID
      * @return
      */
-    public List<StdTreeEntity> fetch(String uid) {
+    public List<ModuleEntityStd> fetch(String uid) {
 
         List<ModuleEntityStd> moduleEntity = this.moduleMapper.getRoleModuleByUserId(uid);
-        List<StdTreeEntity> treeModule = new TreeHelper().bulid(moduleEntity);
+        List<ModuleEntityStd> treeModule = TreeHelper.bulid(moduleEntity);
 
         BizCodeEnum.PERMISSION_EXPIRED.assertNotBlank(treeModule);
 
