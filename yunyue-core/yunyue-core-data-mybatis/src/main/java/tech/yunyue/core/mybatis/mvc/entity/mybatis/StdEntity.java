@@ -1,9 +1,6 @@
 package tech.yunyue.core.mybatis.mvc.entity.mybatis;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
@@ -47,6 +44,21 @@ public abstract class StdEntity implements Entity {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime gmtModify;
+
+    /** 逻辑删除 */
+    @Schema(description = "逻辑删除")
+    @TableLogic
+    @TableField(fill = FieldFill.INSERT)
+    private String deleted;
+
+    /** 租户号 */
+    @Schema(description = "租户号")
+    private String tenantId;
+
+    /** 乐观锁 */
+    @Schema(description = "乐观锁")
+    @Version
+    private String revision;
 
     @Schema(description = "备注")
     private String remark;
