@@ -40,6 +40,12 @@ public class AuthCtrl {
         }
     }
 
+    @GetMapping("/init")
+    @Operation(summary = "返回登录用户的基本信息/资源信息/参数配置/列头配置")
+    public Response init() {
+        return new Response().success(this.userService.init());
+    }
+
     @GetMapping("/fetchDicts")
     @Operation(summary = "获取字典信息")
     public Response fetchDicts() {

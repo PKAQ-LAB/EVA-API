@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import lombok.AllArgsConstructor;
+import tech.yunyue.core.threaduser.ThreadUserHelper;
 import tech.yunyue.sys.dict.cache.DictCacheHelper;
 import tech.yunyue.sys.module.entity.ModuleEntityStd;
 import tech.yunyue.sys.module.mapper.ModuleMapper;
@@ -229,5 +230,22 @@ public class UserService extends StdService<UserMapper, UserEntity> {
      */
     public List<String> getRoleById(String userId) {
         return this.mapper.getRoleById(userId);
+    }
+
+    /**
+     * @return 登录用户的基本信息/资源信息/参数配置/列头配置
+     */
+    public Map<String, Object> init() {
+        Map<String,Object> reMap = new HashMap<>(4);
+        var userId = ThreadUserHelper.getUserId();
+
+        //登录用户基本信息
+        reMap.put("userInfo",ThreadUserHelper.getCurrentUser());
+        //登录用户模块资源信息
+        reMap.put("menus",this.fetch(userId));
+        //参数配置
+
+        //列头配置
+        return reMap;
     }
 }
