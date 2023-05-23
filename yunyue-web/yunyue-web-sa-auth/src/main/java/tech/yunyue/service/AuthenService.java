@@ -144,6 +144,7 @@ public class AuthenService {
         user.setTel(account);
         user.setEmail(account);
         user = userMapper.getUserWithRole(user);
+        BizCodeEnum.ACCOUNT_NOT_EXIST.assertNotNull(user);
         return JwtUserFactory.create(user);
     }
 
@@ -151,7 +152,6 @@ public class AuthenService {
      * 校验用户是否可用
      */
     private void check(JwtUserDetail user) {
-        BizCodeEnum.ACCOUNT_NOT_EXIST.assertNotNull(user);
         if (!user.isAccountNonLocked()) {
             BizCodeEnum.ACCOUNT_LOCKED.assertNotNull(user);
         }
