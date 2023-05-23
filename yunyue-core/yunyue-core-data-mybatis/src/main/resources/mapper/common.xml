@@ -8,5 +8,8 @@
         <result column="GMT_MODIFY" property="gmtModify"/>
         <result column="CREATE_BY" property="createBy"/>
         <result column="MODIFY_BY" property="modifyBy"/>
+        <result column="DELETED" jdbcType="VARCHAR" property="deleted"/>
+        <result column="TENANT_ID" jdbcType="VARCHAR" property="tenantId"/>
+        <result column="REVISION" jdbcType="VARCHAR" property="revision"/>
     </resultMap>
 </mapper>
