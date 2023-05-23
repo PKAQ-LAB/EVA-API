@@ -117,7 +117,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         //把登录用户信息存到ThreadUser中
-        if (isvalid && Objects.isNull(ThreadUserHelper.getCurrentUser())) {
+        if (isvalid) {
             StpUtil.getRoleList();
             var tenantId = tenantUtil.getTenantId(uid);
             List<String> roles = (List<String>)dao.getObject(CommonConstant.REDIS_USER_ROLES_PREFIX_KEY+uid);

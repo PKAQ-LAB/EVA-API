@@ -6,6 +6,7 @@ import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.stp.StpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import tech.yunyue.core.enums.BizCodeEnum;
 import tech.yunyue.core.properties.EvaConfig;
 import tech.yunyue.core.threaduser.ThreadUserHelper;
@@ -29,7 +30,7 @@ public class FilterAuthStrategy implements SaFilterAuthStrategy {
         //不是匿名访问的接口 但是不一定携带了token 没有携带token直接报错 携带token则鉴权
         SaRouter.match("/**",r->{
             // 当前会话是否经过jwtFilter的token验证
-            if(Objects.isNull(ThreadUserHelper.getCurrentUser())){
+            if(Objects.isNull(ThreadUserHelper.getCurrentUser()) || !StringUtils.hasText(ThreadUserHelper.getCurrentUser().getUserId())){
                 //说明没带token 即用户没登录
                 BizCodeEnum.LOGIN_EXPIRED.newException();
             }
