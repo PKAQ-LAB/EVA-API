@@ -46,7 +46,7 @@ public abstract class StdEntity implements Entity {
     private LocalDateTime gmtModify;
 
     /** 逻辑删除 */
-    @Schema(description = "逻辑删除")
+    @Schema(description = "逻辑删除 (0000-未删除、0001-删除)")
     @TableLogic
     @TableField(fill = FieldFill.INSERT)
     private String deleted;
