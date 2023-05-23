@@ -29,8 +29,4 @@ public class BlackListEntity extends StdEntity {
     @Schema(description = "封禁类型（0000-IP、0001-请求来源URL）")
     private String category;
 
-
-    @Schema(description = "是否删除（0000-未删除、0001-删除）")
-    @TableField(fill = FieldFill.INSERT)
-    private String deleted;
 }

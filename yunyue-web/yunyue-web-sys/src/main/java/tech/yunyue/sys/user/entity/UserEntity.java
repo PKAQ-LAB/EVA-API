@@ -92,8 +92,4 @@ public class UserEntity extends StdEntity {
     @TableField(exist = false)
     private List<StdTreeEntity> modules = new ArrayList<>();
 
-    @TableLogic
-    @Schema(description = "逻辑删除状态")
-    private String deleted;
-
 }
