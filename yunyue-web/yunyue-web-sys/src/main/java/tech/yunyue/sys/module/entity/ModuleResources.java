@@ -36,4 +36,7 @@ public class ModuleResources implements Entity {
 
     @Schema(description = "资源类型（按钮、操作）")
     private String resourceType;
+
+    @Schema(description = "资源编码")
+    private String resourceCode;
 }
