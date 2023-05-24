@@ -47,7 +47,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
      * @return
      */
     public Long selectCount(T entity) {
-        Wrapper<T> wrapper = Wrappers.lambdaQuery();
+        Wrapper<T> wrapper = Wrappers.lambdaQuery(entity);
         return this.mapper.selectCount(wrapper);
     }
 
@@ -58,7 +58,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
      * @return
      */
     public T getByEntity(T entity) {
-        Wrapper<T> wrapper = Wrappers.lambdaQuery();
+        Wrapper<T> wrapper = Wrappers.lambdaQuery(entity);
         return this.mapper.selectOne(wrapper);
     }
 
