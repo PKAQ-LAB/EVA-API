@@ -1,9 +1,7 @@
 package tech.yunyue.filter;
 
 import cn.dev33.satoken.router.SaRouter;
-import cn.dev33.satoken.util.SaTokenConsts;
 import cn.hutool.core.util.ArrayUtil;
-import cn.hutool.http.HttpUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,10 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.annotation.Order;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import tech.yunyue.core.constant.CommonConstant;
