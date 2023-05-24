@@ -1,6 +1,7 @@
 package tech.yunyue.sys.user.ctrl;
 
 import tech.yunyue.sys.dict.service.DictService;
+import tech.yunyue.sys.module.service.ModuleService;
 import tech.yunyue.sys.user.service.UserService;
 import tech.yunyue.core.enums.BizCodeEnum;
 import tech.yunyue.core.mvc.vo.Response;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthCtrl {
     private final UserService userService;
     private final DictService dictService;
+    private final ModuleService moduleService;
 
     @GetMapping("/fetchMenus")
     @Operation(summary = "获取当前登录用户的信息(菜单.权限.消息)")
@@ -50,5 +52,11 @@ public class AuthCtrl {
     @Operation(summary = "获取字典信息")
     public Response fetchDicts() {
         return new Response().success(dictService.fetchDicts());
+    }
+
+    @GetMapping("/fetchResourcese")
+    @Operation(summary = "系统全部可用模块的资源列表")
+    public Response fetchAllResourcese() {
+        return new Response().success(moduleService.fetchResourcese());
     }
 }
