@@ -1,0 +1,52 @@
+package tech.yunyue.filter;
+
+import cn.dev33.satoken.router.SaRouter;
+import cn.dev33.satoken.util.SaTokenConsts;
+import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.http.HttpUtil;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+import tech.yunyue.core.constant.CommonConstant;
+import tech.yunyue.core.enums.BizCodeEnum;
+import tech.yunyue.core.exception.BizException;
+import tech.yunyue.core.properties.EvaConfig;
+import tech.yunyue.core.web.util.RequestUtil;
+
+import java.io.IOException;
+
+/**
+ * 校验请求头中是否携带mid
+ */
+@Component
+@RequiredArgsConstructor
+public class MidFilter extends OncePerRequestFilter {
+    @Autowired
+    EvaConfig evaConfig;
+    @Autowired
+    @Qualifier("handlerExceptionResolver")
+    private HandlerExceptionResolver resolver;
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        var security = evaConfig.getSecurity();
+        String[] noMidPaths = ArrayUtil.addAll(security.getNoMid(),security.getAnonymous());
+        String mid = RequestUtil.getModuleId(request);
+        if(CommonConstant.UNKNOWN.equals(mid) && !SaRouter.match(noMidPaths).isHit()){
+            resolver.resolveException(request, response, null, new BizException(BizCodeEnum.MID_DENY));
+            return;
+        }
+
+        filterChain.doFilter(request,response);
+    }
+}
