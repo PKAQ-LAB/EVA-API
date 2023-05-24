@@ -9,7 +9,7 @@ import com.github.binarywang.wxpay.service.WxPayService;
 import com.github.binarywang.wxpay.util.SignUtils;
 import io.nerv.config.WxpayConfig;
 import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.core.mvc.vo.Response;
+import io.nerv.core.mvc.response.Response;
 import io.nerv.core.weixin.util.IpUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;

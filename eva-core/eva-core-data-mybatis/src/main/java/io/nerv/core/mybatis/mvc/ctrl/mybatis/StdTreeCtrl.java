@@ -3,8 +3,8 @@ package io.nerv.core.mybatis.mvc.ctrl.mybatis;
 import cn.hutool.core.util.StrUtil;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.ctrl.Ctrl;
-import io.nerv.core.mvc.vo.Response;
-import io.nerv.core.mvc.vo.SingleArray;
+import io.nerv.core.mvc.response.Response;
+import io.nerv.core.mvc.bo.SingleArrayBo;
 import io.nerv.core.mybatis.mvc.entity.mybatis.StdTreeEntity;
 import io.nerv.core.mybatis.mvc.service.mybatis.StdTreeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -52,7 +52,7 @@ public abstract class StdTreeCtrl<T extends StdTreeService, E extends StdTreeEnt
     @Operation(summary = "根据ID删除/批量删除节点")
     //@PreAuthorize("hasRole('ADMIN')")
     public Response delOrg(@Parameter(name = "ids", description = "[节点ID]")
-                           @RequestBody SingleArray<String> ids) {
+                           @RequestBody SingleArrayBo<String> ids) {
         // 参数非空校验
         BizCodeEnum.NULL_ID.assertNotNull(ids);
         BizCodeEnum.NULL_ID.assertNotNull(ids.getParam());

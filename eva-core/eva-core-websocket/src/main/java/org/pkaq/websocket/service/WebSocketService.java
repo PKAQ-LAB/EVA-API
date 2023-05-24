@@ -18,11 +18,6 @@ import java.io.IOException;
 public class WebSocketService {
     /**
      * 发送消息
-     *
-     * @param session
-     * @param text
-     * @return
-     * @throws IOException
      */
     public void sendMsg(WebSocketSession session, String text) throws IOException {
         log.info("【websocket消息】 单点消息:" + text);
@@ -31,10 +26,6 @@ public class WebSocketService {
 
     /**
      * 广播消息
-     *
-     * @param text
-     * @return
-     * @throws IOException
      */
     public void broadcastMsg(String text) throws IOException {
         log.info("【websocket消息】广播消息:" + text);
@@ -46,8 +37,6 @@ public class WebSocketService {
     /**
      * 此为单点消息(多人)
      *
-     * @param userIds
-     * @param message
      */
     public void sendMsg(String[] userIds, String message) {
         for (String userId : userIds) {

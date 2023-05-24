@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.enums.ResponseEnumm;
 import io.nerv.core.mvc.ctrl.Ctrl;
-import io.nerv.core.mvc.vo.Response;
-import io.nerv.core.mvc.vo.SingleArray;
+import io.nerv.core.mvc.response.Response;
+import io.nerv.core.mvc.bo.SingleArrayBo;
 import io.nerv.core.mybatis.mvc.service.mybatis.StdActiveService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -29,7 +29,7 @@ public abstract class StdActiveCtrl<T extends StdActiveService, E extends Model>
     @PostMapping("del")
     @Operation(summary = "删除记录", description = "根据ID删除/批量删除记录")
     public Response del(@Parameter(name = "ids", description = "[记录ID]")
-                        @RequestBody SingleArray<String> ids) {
+                        @RequestBody SingleArrayBo<String> ids) {
 
         BizCodeEnum.NULL_ID.assertNotNull(ids);
         BizCodeEnum.NULL_ID.assertNotNull(ids.getParam());

@@ -2,7 +2,7 @@ package io.nerv.core.web.advice;
 
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.exception.BizException;
-import io.nerv.core.mvc.vo.Response;
+import io.nerv.core.mvc.response.Response;
 import io.nerv.core.util.I18NHelper;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;

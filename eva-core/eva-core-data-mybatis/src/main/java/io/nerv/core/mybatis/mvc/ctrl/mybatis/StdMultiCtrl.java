@@ -4,8 +4,8 @@ import io.nerv.core.annotation.NoRepeatSubmit;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.enums.ResponseEnumm;
 import io.nerv.core.mvc.ctrl.Ctrl;
-import io.nerv.core.mvc.vo.Response;
-import io.nerv.core.mvc.vo.SingleArray;
+import io.nerv.core.mvc.response.Response;
+import io.nerv.core.mvc.bo.SingleArrayBo;
 import io.nerv.core.mybatis.mvc.entity.mybatis.StdMultiEntity;
 import io.nerv.core.mybatis.mvc.service.mybatis.StdMultiService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,7 +31,7 @@ public abstract class StdMultiCtrl<T extends StdMultiService, E extends StdMulti
     @Operation(summary = "删除记录", description = "根据ID删除/批量删除记录")
     @NoRepeatSubmit
     public Response del(@Parameter(name = "ids", description = "[记录ID]")
-                        @RequestBody SingleArray<String> ids) {
+                        @RequestBody SingleArrayBo<String> ids) {
 
         BizCodeEnum.NULL_ID.assertNotNull(ids);
         BizCodeEnum.NULL_ID.assertNotNull(ids.getParam());

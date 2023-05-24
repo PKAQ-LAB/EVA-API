@@ -1,7 +1,7 @@
 package io.nerv.core.license;
 
 import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.core.mvc.vo.Response;
+import io.nerv.core.mvc.response.Response;
 import io.nerv.core.util.json.JsonUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

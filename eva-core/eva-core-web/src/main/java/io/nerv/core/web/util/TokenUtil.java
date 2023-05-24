@@ -2,7 +2,6 @@ package io.nerv.core.web.util;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.JakartaServletUtil;
-import cn.hutool.extra.servlet.ServletUtil;
 import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.properties.EvaConfig;
 import jakarta.servlet.http.HttpServletRequest;

@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.core.mvc.vo.Response;
+import io.nerv.core.mvc.response.Response;
 import io.nerv.core.mybatis.mvc.entity.mybatis.StdTreeEntity;
 import io.nerv.core.mybatis.mvc.mapper.StdTreeMapper;
 import org.springframework.beans.factory.annotation.Autowired;

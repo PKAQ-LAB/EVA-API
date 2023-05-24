@@ -2,7 +2,7 @@ package io.nerv.core.mvc.ctrl;
 
 import io.nerv.core.enums.BizCode;
 import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.core.mvc.vo.Response;
+import io.nerv.core.mvc.response.Response;
 import io.nerv.core.util.I18NHelper;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;

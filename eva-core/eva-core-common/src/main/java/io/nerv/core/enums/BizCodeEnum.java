@@ -13,7 +13,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum BizCodeEnum implements BizAssert {
-
     /**
      * 请求成功 000x
      **/

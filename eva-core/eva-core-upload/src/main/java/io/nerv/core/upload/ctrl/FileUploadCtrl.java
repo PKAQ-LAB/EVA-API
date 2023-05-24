@@ -1,7 +1,7 @@
 package io.nerv.core.upload.ctrl;
 
 import cn.hutool.core.map.MapUtil;
-import io.nerv.core.mvc.vo.Response;
+import io.nerv.core.mvc.response.Response;
 import io.nerv.core.upload.util.FileUploadProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

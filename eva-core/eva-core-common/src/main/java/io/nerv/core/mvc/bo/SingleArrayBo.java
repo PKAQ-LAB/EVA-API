@@ -1,4 +1,4 @@
-package io.nerv.core.mvc.vo;
+package io.nerv.core.mvc.bo;
 
 import lombok.Data;
 
@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * @author S.PKAQ
  */
 @Data
-public class SingleArray<T> implements Serializable {
+public class SingleArrayBo<T> implements Serializable {
     private ArrayList<T> param;
     private String status;
 }

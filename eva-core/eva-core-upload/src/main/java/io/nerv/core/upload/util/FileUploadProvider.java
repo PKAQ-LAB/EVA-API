@@ -52,7 +52,7 @@ public interface FileUploadProvider {
     void thumbnail(File file, File dest, float scale);
 
     /**
-     * 删除图片
+     * 删除文件
      *
      * @param fileName
      */

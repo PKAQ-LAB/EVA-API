@@ -1,9 +1,9 @@
 package io.nerv.config;
 
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
 import org.apache.ibatis.mapping.VendorDatabaseIdProvider;
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -16,7 +16,6 @@ import java.util.Properties;
  * @author PKAQ
  */
 @Configuration
-@MapperScan("io.nerv.**.mapper")
 @EnableTransactionManagement
 public class MybatisPlusConfig {
     /**
@@ -26,7 +25,11 @@ public class MybatisPlusConfig {
      */
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
-        return new MybatisPlusInterceptor();
+        MybatisPlusInterceptor mybatisPlusInterceptor = new MybatisPlusInterceptor();
+
+        mybatisPlusInterceptor.addInnerInterceptor(new PaginationInnerInterceptor());
+
+        return mybatisPlusInterceptor;
     }
 
     /**

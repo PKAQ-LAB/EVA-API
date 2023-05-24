@@ -1,4 +1,4 @@
-package io.nerv.core.mvc.vo;
+package io.nerv.core.mvc.response;
 
 import io.nerv.core.enums.BizCode;
 import io.nerv.core.enums.BizCodeEnum;

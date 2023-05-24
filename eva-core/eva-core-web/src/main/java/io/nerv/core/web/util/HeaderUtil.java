@@ -2,7 +2,6 @@ package io.nerv.core.web.util;
 
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.extra.servlet.JakartaServletUtil;
-import cn.hutool.extra.servlet.ServletUtil;
 import io.nerv.core.constant.CommonConstant;
 import jakarta.servlet.http.HttpServletRequest;
 
