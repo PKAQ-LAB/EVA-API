@@ -53,6 +53,8 @@ public interface CommonConstant {
     String DEVICE = "device";
     // 请求来源版本号
     String VERSION = "version";
+    // 用户操作的模块id请求头
+    String MODULE_ID = "module";
     // 把用户角色保存在redis中的前缀
     String REDIS_USER_ROLES_PREFIX_KEY = "USER_ROLES:";
     // 把全局角色-权限保存在redis中的前缀
@@ -63,5 +65,6 @@ public interface CommonConstant {
     String REDIS_USER_NO_LOGIN_KEY = "USER:NO:LOGIN:";
     //黑名单数据
     String CACHE_BLACKDATA = "blackdata";
+
 
 }

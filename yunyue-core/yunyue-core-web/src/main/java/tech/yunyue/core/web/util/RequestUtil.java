@@ -85,4 +85,16 @@ public class RequestUtil {
         }
         return ip;
     }
+
+    /**
+     * 获取请求模块id
+     *
+     * @param request
+     * @return
+     */
+    public static String getModuleId(HttpServletRequest request) {
+        String moduleId = request.getHeader(CommonConstant.MODULE_ID);
+
+        return StrUtil.isBlank(moduleId) ? CommonConstant.UNKNOWN : moduleId;
+    }
 }

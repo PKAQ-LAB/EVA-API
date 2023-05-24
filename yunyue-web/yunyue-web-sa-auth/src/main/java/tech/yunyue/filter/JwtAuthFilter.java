@@ -33,6 +33,7 @@ import tech.yunyue.core.properties.Jwt;
 import tech.yunyue.core.threaduser.ThreadUser;
 import tech.yunyue.core.threaduser.ThreadUserHelper;
 import tech.yunyue.core.util.json.JsonUtil;
+import tech.yunyue.core.web.util.RequestUtil;
 import tech.yunyue.core.web.util.TenantUtil;
 import tech.yunyue.core.web.util.TokenUtil;
 
@@ -126,7 +127,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 ThreadUser currentUser = new ThreadUser().setUserId(uid)
                         .setUserName(account)
                         .setRoles(roles.toArray(new String[0]))
-                        .setTenantId(tenantId);
+                        .setTenantId(tenantId)
+                        .setModuleId(RequestUtil.getModuleId(request));
                 ThreadUserHelper.setCurrentUser(currentUser);
             }
         }
