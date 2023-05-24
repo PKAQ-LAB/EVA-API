@@ -126,4 +126,14 @@ public class ThreadUserHelper {
                 .map(ThreadUser::getTenantId).orElse(null);
     }
 
+    /**
+     * 当前用户操作的模块id
+     *
+     * @return
+     */
+    public static String getMid() {
+        return Optional.ofNullable(userThreadLocal.get())
+                .map(ThreadUser::getModuleId).orElse(null);
+    }
+
 }
