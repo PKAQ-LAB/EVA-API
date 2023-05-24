@@ -1,6 +1,6 @@
 package io.nerv.sys.notice.ctrl;
 
-import io.nerv.core.mvc.vo.Response;
+import io.nerv.core.mvc.response.Response;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 

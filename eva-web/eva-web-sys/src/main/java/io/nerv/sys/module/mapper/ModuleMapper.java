@@ -1,8 +1,8 @@
 package io.nerv.sys.module.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import io.nerv.sys.module.entity.ModuleEntityStd;
 import io.nerv.core.annotation.Ignore;
+import io.nerv.sys.module.entity.ModuleEntityStd;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;

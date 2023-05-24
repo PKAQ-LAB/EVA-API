@@ -31,10 +31,10 @@
                     </when>
                     <when test="organization.name != '' and organization.name != null">
                         <if test="_databaseId == 'mysql'">
-                            ( name like concat('%',#{organization.name},',%'))
+                            ( name like concat('%',#{organization.name},'%'))
                         </if>
                         <if test="_databaseId == 'oracle'">
-                            ( name like '%' ||#{organization.name}||'%' )
+                            ( name like '%'||#{organization.name}||'%' )
                         </if>
                     </when>
                     <otherwise>

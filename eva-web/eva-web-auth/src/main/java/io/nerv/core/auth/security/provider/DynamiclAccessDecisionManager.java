@@ -1,7 +1,6 @@
 package io.nerv.core.auth.security.provider;
 
 import cn.hutool.core.collection.CollUtil;
-import io.nerv.core.properties.EvaConfig;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

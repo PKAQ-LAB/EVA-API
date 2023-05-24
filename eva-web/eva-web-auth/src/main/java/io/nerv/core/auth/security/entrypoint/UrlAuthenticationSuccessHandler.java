@@ -11,7 +11,7 @@ import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.jwt.JwtUtil;
 import io.nerv.core.log.base.BizLogEntity;
 import io.nerv.core.log.base.BizLogSupporter;
-import io.nerv.core.mvc.vo.Response;
+import io.nerv.core.mvc.response.Response;
 import io.nerv.core.properties.EvaConfig;
 import io.nerv.core.web.util.RequestUtil;
 import jakarta.servlet.http.HttpServletRequest;

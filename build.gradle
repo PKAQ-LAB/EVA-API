@@ -67,7 +67,7 @@ ext {
 
 allprojects {
     group = 'io.nerv'
-    version = '3.0.1'
+    version = '3.0.2'
 }
 
 subprojects {
@@ -86,14 +86,14 @@ subprojects {
             mavenBom "${lib.boot}"
         }
     }
-    
-    tasks.withType(JavaCompile) {
+
+    tasks.withType(JavaCompile).configureEach {
         options.encoding = "UTF-8"
     }
-	
-	tasks.withType(Javadoc) {
+
+    tasks.withType(Javadoc).configureEach {
         options.encoding = "UTF-8"
-		options.addStringOption('Xdoclint:none', '-quiet')
+        options.addStringOption('Xdoclint:none', '-quiet')
     }
 
     repositories {
@@ -113,8 +113,8 @@ subprojects {
     }
 
     dependencies {
-       implementation "${lib.lombok}"
-	   annotationProcessor "${lib.lombok}"
+       implementation       "${lib.lombok}"
+	   annotationProcessor  "${lib.lombok}"
 
         testImplementation "${lib.test}",
                            "${lib.securityTest}"

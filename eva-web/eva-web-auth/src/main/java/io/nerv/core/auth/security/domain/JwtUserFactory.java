@@ -1,10 +1,10 @@
 package io.nerv.core.auth.security.domain;
 
 import cn.hutool.core.bean.BeanUtil;
-import io.nerv.sys.role.entity.RoleEntity;
-import io.nerv.sys.user.entity.UserEntity;
 import io.nerv.core.auth.domain.JwtUserDetail;
 import io.nerv.core.enums.LockEnumm;
+import io.nerv.sys.role.entity.RoleEntity;
+import io.nerv.sys.user.entity.UserEntity;
 
 import java.util.List;
 import java.util.stream.Collectors;

@@ -2,7 +2,7 @@ package io.nerv.core.auth.log.ctrl;
 
 import cn.hutool.core.util.StrUtil;
 import io.nerv.core.auth.util.CacheTokenUtil;
-import io.nerv.core.mvc.vo.Response;
+import io.nerv.core.mvc.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

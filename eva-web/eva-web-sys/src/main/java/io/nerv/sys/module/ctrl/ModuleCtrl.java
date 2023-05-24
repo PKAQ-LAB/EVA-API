@@ -1,12 +1,12 @@
 package io.nerv.sys.module.ctrl;
 
 import cn.hutool.core.util.StrUtil;
-import io.nerv.sys.module.entity.ModuleEntityStd;
-import io.nerv.sys.module.service.ModuleService;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.ctrl.Ctrl;
-import io.nerv.core.mvc.vo.Response;
-import io.nerv.core.mvc.vo.SingleArray;
+import io.nerv.core.mvc.response.Response;
+import io.nerv.core.mvc.bo.SingleArrayBo;
+import io.nerv.sys.module.entity.ModuleEntityStd;
+import io.nerv.sys.module.service.ModuleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -38,7 +38,7 @@ public class ModuleCtrl extends Ctrl {
     @PostMapping("/del")
     @Operation(summary = "根据ID删除/批量删除记录")
     public Response del(@Parameter(name = "ids", description = "[记录ID]")
-                        @RequestBody SingleArray<String> ids) {
+                        @RequestBody SingleArrayBo<String> ids) {
 
         // 参数非空校验
         BizCodeEnum.NULL_ID.assertNotNull(ids);

@@ -1,12 +1,12 @@
 package io.nerv.sys.organization.ctrl;
 
 import cn.hutool.core.util.StrUtil;
-import io.nerv.sys.organization.entity.OrganizationEntity;
-import io.nerv.sys.organization.service.OrganizationService;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.ctrl.Ctrl;
-import io.nerv.core.mvc.vo.Response;
-import io.nerv.core.mvc.vo.SingleArray;
+import io.nerv.core.mvc.response.Response;
+import io.nerv.core.mvc.bo.SingleArrayBo;
+import io.nerv.sys.organization.entity.OrganizationEntity;
+import io.nerv.sys.organization.service.OrganizationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -51,7 +51,7 @@ public class OrganizationCtrl extends Ctrl {
     @Operation(summary = "根据ID删除/批量删除组织")
     //@PreAuthorize("hasRole('ADMIN')")
     public Response delOrg(@Parameter(name = "ids", description = "[组织ID]")
-                           @RequestBody SingleArray<String> ids) {
+                           @RequestBody SingleArrayBo<String> ids) {
         // 参数非空校验
         BizCodeEnum.NULL_ID.assertNotNull(ids);
         BizCodeEnum.NULL_ID.assertNotNull(ids.getParam());

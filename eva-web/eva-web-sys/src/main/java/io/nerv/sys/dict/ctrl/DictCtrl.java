@@ -1,12 +1,12 @@
 package io.nerv.sys.dict.ctrl;
 
 import cn.hutool.core.util.StrUtil;
+import io.nerv.core.enums.BizCodeEnum;
+import io.nerv.core.mvc.ctrl.Ctrl;
+import io.nerv.core.mvc.response.Response;
 import io.nerv.sys.dict.cache.DictCacheHelper;
 import io.nerv.sys.dict.entity.DictEntity;
 import io.nerv.sys.dict.service.DictService;
-import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.core.mvc.ctrl.Ctrl;
-import io.nerv.core.mvc.vo.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,6 +28,11 @@ public class DictCtrl extends Ctrl {
     private final DictService service;
 
     private final DictCacheHelper dictCacheHelper;
+
+    public static void main(String[] args) {
+        BizCodeEnum.NULL_PARAM_ID.assertNotNull(null, "角色");
+    }
+
 
     @GetMapping({"/query/{code}"})
     @Operation(summary = "根据 code 从缓存中获取字典项")

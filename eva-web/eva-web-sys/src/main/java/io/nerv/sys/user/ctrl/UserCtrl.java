@@ -1,13 +1,13 @@
 package io.nerv.sys.user.ctrl;
 
 import cn.hutool.core.util.StrUtil;
+import io.nerv.core.enums.BizCodeEnum;
+import io.nerv.core.mvc.ctrl.Ctrl;
+import io.nerv.core.mvc.response.Response;
+import io.nerv.core.mvc.bo.SingleArrayBo;
 import io.nerv.sys.user.entity.UserEntity;
 import io.nerv.sys.user.service.UserService;
 import io.nerv.sys.user.vo.PasswordVO;
-import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.core.mvc.ctrl.Ctrl;
-import io.nerv.core.mvc.vo.Response;
-import io.nerv.core.mvc.vo.SingleArray;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -45,7 +45,7 @@ public class UserCtrl extends Ctrl {
     @PostMapping("/del")
     @Operation(summary = "根据ID删除/批量删除记录")
     public Response del(@Parameter(name = "ids", description = "[记录ID]")
-                        @RequestBody SingleArray<String> ids) {
+                        @RequestBody SingleArrayBo<String> ids) {
 
         // 参数非空校验
         BizCodeEnum.NULL_ID.assertNotNull(ids);
@@ -90,7 +90,7 @@ public class UserCtrl extends Ctrl {
     @PostMapping("/lock")
     @Operation(summary = "锁定/解锁")
     public Response lockSwitch(@Parameter(name = "param", description = "用户[id]")
-                               @RequestBody SingleArray<String> param) {
+                               @RequestBody SingleArrayBo<String> param) {
         // 参数非空校验
         BizCodeEnum.NULL_ID.assertNotNull(param);
         BizCodeEnum.NULL_ID.assertNotNull(param.getParam());

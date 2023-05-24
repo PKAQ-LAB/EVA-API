@@ -2,8 +2,8 @@ package io.nerv.sys.user.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import io.nerv.sys.user.entity.UserEntity;
 import io.nerv.core.annotation.Ignore;
+import io.nerv.sys.user.entity.UserEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;

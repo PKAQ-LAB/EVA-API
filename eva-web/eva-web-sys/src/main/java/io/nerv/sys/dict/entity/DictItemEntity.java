@@ -18,6 +18,7 @@ import org.apache.ibatis.type.Alias;
 @Alias("dictItem")
 @TableName("sys_dict_item")
 public class DictItemEntity {
+
     @TableId(type = IdType.ASSIGN_UUID)
     private String id;
 

@@ -4,7 +4,7 @@ import cn.hutool.extra.servlet.JakartaServletUtil;
 import io.nerv.core.auth.util.CacheTokenUtil;
 import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.core.mvc.vo.Response;
+import io.nerv.core.mvc.response.Response;
 import io.nerv.core.properties.EvaConfig;
 import io.nerv.core.threaduser.ThreadUserHelper;
 import io.nerv.core.util.json.JsonUtil;

@@ -5,7 +5,7 @@ import io.nerv.core.auth.util.CacheTokenUtil;
 import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.jwt.JwtUtil;
-import io.nerv.core.mvc.vo.Response;
+import io.nerv.core.mvc.response.Response;
 import io.nerv.core.properties.EvaConfig;
 import io.nerv.core.web.util.TokenUtil;
 import jakarta.servlet.http.HttpServletRequest;
