@@ -6,18 +6,18 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 import tech.yunyue.core.enums.BizCodeEnum;
-import tech.yunyue.core.mvc.vo.Response;
-import tech.yunyue.core.util.json.JsonUtil;
+import tech.yunyue.core.exception.BizException;
 import tech.yunyue.core.web.util.RequestUtil;
 import tech.yunyue.sys.blacklist.cache.BlackListCacheHelper;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 /**
  * 黑名单过滤器 第一个执行
@@ -27,18 +27,16 @@ import java.io.PrintWriter;
 @Order(SaTokenConsts.ASSEMBLY_ORDER-1)
 public class BlackIpFilter extends OncePerRequestFilter {
     private final BlackListCacheHelper blackListCache;
+    @Autowired
+    @Qualifier("handlerExceptionResolver")
+    private HandlerExceptionResolver resolver;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         //IP黑名单过滤
         String ip = RequestUtil.getIpAddr(request);
         if(blackListCache.getAll().contains(ip)){
-            try (PrintWriter printWriter = response.getWriter()) {
-                response.setCharacterEncoding("UTF-8");
-                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                printWriter.write(JsonUtil.toJson(new Response().failure(BizCodeEnum.BLACK_IP_DENY,ip)));
-                printWriter.flush();
-            }
+            resolver.resolveException(request, response, null, new BizException(BizCodeEnum.BLACK_IP_DENY,ip));
             return;
         }
 
