@@ -22,7 +22,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 模块管理service
@@ -80,7 +83,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
             }
         }
         //刷新缓存中的资源信息
-        refreshResourcese();
+        refreshCacheResourcese();
     }
 
     /**
@@ -209,7 +212,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
             this.refreshChild(module, originModule);
         }
         //刷新缓存中的资源信息
-        refreshResourcese();
+        refreshCacheResourcese();
     }
 
     /**
@@ -246,7 +249,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
         disableChild(moduleEntity);
         this.mapper.updateById(moduleEntity);
         //刷新缓存中的资源信息
-        refreshResourcese();
+        refreshCacheResourcese();
     }
 
 
@@ -289,7 +292,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
             this.mapper.updateById(module);
         }
         //刷新缓存中的资源信息
-        refreshResourcese();
+        refreshCacheResourcese();
     }
 
     /**
@@ -327,7 +330,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
         //禁用该父节点下的所有子节点
         this.mapper.disableChild(module.getId());
         //刷新缓存中的资源信息
-        refreshResourcese();
+        refreshCacheResourcese();
     }
 
 
@@ -352,9 +355,9 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
     }
 
     /**
-     * @return 系统全部可用模块的资源列表
+     * @return 系统全部可用模块的资源列表 Map<String,List<String>>
      */
-    public List<String> fetchResourcese(){
+    public Map<String, ?> fetchResourcese(){
         //1、读取缓存中的数据
         String jsonStr = redisUtil.get(CommonConstant.REDIS_RESOURCE_CODE_PREFIX_KEY);
         if(!StringUtils.hasText(jsonStr)){
@@ -363,20 +366,21 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
                 jsonStr = redisUtil.get(CommonConstant.REDIS_RESOURCE_CODE_PREFIX_KEY);
                 if(!StringUtils.hasText(jsonStr)){
                     //2、查询数据库并保存到redis中
-                    List<String> list= this.mapper.selectAllResources();
-                    redisUtil.set(CommonConstant.REDIS_RESOURCE_CODE_PREFIX_KEY, JsonUtil.toJson(list));
-                    return list;
+                    return refreshCacheResourcese();
                 }
-
             }
         }
-        return JsonUtil.parseArray(jsonStr, String.class);
+        return JsonUtil.toMap(jsonStr);
     }
 
     /**
-     * 刷新系统全部可用模块的资源列表
+     * 查询系统全部可用模块的资源列表且保存到redis中
      */
-    public void refreshResourcese(){
-        redisUtil.set(CommonConstant.REDIS_RESOURCE_CODE_PREFIX_KEY, JsonUtil.toJson(this.mapper.selectAllResources()));
+    public Map<String, ?> refreshCacheResourcese(){
+        Map<String, List<String>> map = this.mapper.selectAllResources()
+                                                    .stream()
+                                                    .collect(Collectors.toMap(ModuleEntityStd::getId,item-> Arrays.stream(item.getCode().split(",")).toList()));
+        redisUtil.set(CommonConstant.REDIS_RESOURCE_CODE_PREFIX_KEY, JsonUtil.toJson(map));
+        return map;
     }
 }

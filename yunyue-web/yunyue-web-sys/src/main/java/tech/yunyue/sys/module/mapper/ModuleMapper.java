@@ -99,5 +99,5 @@ public interface ModuleMapper extends BaseMapper<ModuleEntityStd> {
     /**
      * 把系统可用模块和其下资源code拼接返回
      */
-    List<String> selectAllResources();
+    List<ModuleEntityStd> selectAllResources();
 }

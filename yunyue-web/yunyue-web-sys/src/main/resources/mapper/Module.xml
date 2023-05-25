@@ -216,10 +216,11 @@
     </update>
 
     <!--    把系统可用模块和其下资源code拼接返回-->
-    <select id="selectAllResources" resultType="string">
-        select CONCAT(m.id,"_",IFNULL(mr.RESOURCE_code,''))
-        from sys_module m left JOIN sys_module_resources mr on m.id = mr.MODULE_ID
-        where m.deleted ='0000' and m.status != '0001' order by m.orders
+    <select id="selectAllResources" resultType="module">
+        select m.id, ifnull(group_concat(mr.resource_code),'') code
+        from sys_module m left join sys_module_resources mr on m.id = mr.module_id
+        where m.deleted ='0000' and m.status != '0001'
+        group by m.id order by m.orders
     </select>
 
 </mapper>
