@@ -14,4 +14,7 @@ public class Security {
 
     // 无需资源鉴权的路径
     private String[] permit;
+
+    //无需mid的路径 一定包含anonymous
+    private String[] noMid;
 }

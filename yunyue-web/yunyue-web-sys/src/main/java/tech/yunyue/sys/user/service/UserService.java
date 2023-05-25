@@ -7,7 +7,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import tech.yunyue.core.threaduser.ThreadUserHelper;
+import tech.yunyue.events.KickUserEvent;
 import tech.yunyue.sys.dict.cache.DictCacheHelper;
 import tech.yunyue.sys.module.entity.ModuleEntityStd;
 import tech.yunyue.sys.module.mapper.ModuleMapper;
@@ -46,6 +49,8 @@ public class UserService extends StdService<UserMapper, UserEntity> {
 
     private final DictCacheHelper dictCacheHelper;
 
+    private final ApplicationEventPublisher publisher;
+
     /**
      * 修改密码
      *
@@ -59,6 +64,8 @@ public class UserService extends StdService<UserMapper, UserEntity> {
         if (BCrypt.checkpw(passwordVO.getOriginpassword(), userEntity.getPassword())) {
             userEntity.setPassword(BCrypt.hashpw(passwordVO.getNewpassword()));
             this.mapper.updateById(userEntity);
+			//踢出当前用户
+            kickOut(Collections.singletonList(passwordVO.getUserId()));
             return true;
         }
         return false;
@@ -247,5 +254,13 @@ public class UserService extends StdService<UserMapper, UserEntity> {
 
         //列头配置
         return reMap;
+    }
+
+    /**
+     * 发布踢出用户事件
+     * @param idList 需要踢出的用户id集合
+     */
+    public void kickOut(List<String> idList) {
+        publisher.publishEvent(new KickUserEvent(idList));
     }
 }

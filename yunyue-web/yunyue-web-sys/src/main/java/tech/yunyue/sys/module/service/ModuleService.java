@@ -5,6 +5,10 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import org.springframework.util.StringUtils;
+import tech.yunyue.core.cache.util.RedisUtil;
+import tech.yunyue.core.constant.CommonConstant;
+import tech.yunyue.core.util.json.JsonUtil;
 import tech.yunyue.sys.module.entity.ModuleEntityStd;
 import tech.yunyue.sys.module.entity.ModuleResources;
 import tech.yunyue.sys.module.mapper.ModuleMapper;
@@ -18,7 +22,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 模块管理service
@@ -30,6 +37,8 @@ import java.util.List;
 public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
 
     private final ModuleResourceMapper moduleResourceMapper;
+
+    private final RedisUtil redisUtil;
 
     /**
      * 查询模块结构树
@@ -73,6 +82,8 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
                 throw new BizException(BizCodeEnum.MODULE_RESOURCE_USED);
             }
         }
+        //刷新缓存中的资源信息
+        refreshCacheResourcese();
     }
 
     /**
@@ -200,7 +211,8 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
         if (StrUtil.isNotBlank(module.getId()) && null != originModule) {
             this.refreshChild(module, originModule);
         }
-
+        //刷新缓存中的资源信息
+        refreshCacheResourcese();
     }
 
     /**
@@ -236,6 +248,8 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
         }
         disableChild(moduleEntity);
         this.mapper.updateById(moduleEntity);
+        //刷新缓存中的资源信息
+        refreshCacheResourcese();
     }
 
 
@@ -277,6 +291,8 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
         for (ModuleEntityStd module : switchModule) {
             this.mapper.updateById(module);
         }
+        //刷新缓存中的资源信息
+        refreshCacheResourcese();
     }
 
     /**
@@ -313,6 +329,8 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
         }
         //禁用该父节点下的所有子节点
         this.mapper.disableChild(module.getId());
+        //刷新缓存中的资源信息
+        refreshCacheResourcese();
     }
 
 
@@ -334,5 +352,35 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
 
         }
         return true;
+    }
+
+    /**
+     * @return 系统全部可用模块的资源列表 Map<String,List<String>>
+     */
+    public Map<String, ?> fetchResourcese(){
+        //1、读取缓存中的数据
+        String jsonStr = redisUtil.get(CommonConstant.REDIS_RESOURCE_CODE_PREFIX_KEY);
+        if(!StringUtils.hasText(jsonStr)){
+            //因为该资源是全局的 所以用同样的锁
+            synchronized ("lock"){
+                jsonStr = redisUtil.get(CommonConstant.REDIS_RESOURCE_CODE_PREFIX_KEY);
+                if(!StringUtils.hasText(jsonStr)){
+                    //2、查询数据库并保存到redis中
+                    return refreshCacheResourcese();
+                }
+            }
+        }
+        return JsonUtil.toMap(jsonStr);
+    }
+
+    /**
+     * 查询系统全部可用模块的资源列表且保存到redis中
+     */
+    public Map<String, ?> refreshCacheResourcese(){
+        Map<String, List<String>> map = this.mapper.selectAllResources()
+                                                    .stream()
+                                                    .collect(Collectors.toMap(ModuleEntityStd::getId,item-> Arrays.stream(item.getCode().split(",")).toList()));
+        redisUtil.set(CommonConstant.REDIS_RESOURCE_CODE_PREFIX_KEY, JsonUtil.toJson(map));
+        return map;
     }
 }

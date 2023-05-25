@@ -113,9 +113,7 @@ public class SaTokenConfigure{
      * 不需要鉴权的静态资源配置
      */
     private String[] excludeStaticPaths(){
-        String[] paths = null;
-        var webstatic = evaConfig.getSecurity().getWebstatic();
-        var staticPath = new String[]{
+        var paths = new String[]{
                 "/",
                 "/static/**",
                 "/*.html",
@@ -131,8 +129,9 @@ public class SaTokenConfigure{
                 "/*/swagger-resources/**",
                 "/*/api-docs/**"
         };
+        var webstatic = evaConfig.getSecurity().getWebstatic();
         if (null != webstatic) {
-            paths = ArrayUtil.addAll(webstatic, staticPath);
+            paths = ArrayUtil.addAll(webstatic, paths);
         }
         return paths;
     }

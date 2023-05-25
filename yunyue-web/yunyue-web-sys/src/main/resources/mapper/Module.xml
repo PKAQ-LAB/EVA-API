@@ -37,7 +37,7 @@
         LEFT JOIN SYS_ROLE_MODULE RM on ru.ROLE_ID = RM.ROLE_ID
         LEFT JOIN SYS_MODULE M on RM.MODULE_ID = M.ID
         LEFT JOIN sys_module_resources MR on MR.id = RM.RESOURCE_ID
-        where RU.USER_ID= #{userId} order by m.orders asc
+        where RU.USER_ID= #{userId} and M.STATUS != '0001' order by m.orders asc
     </select>
     <!--根据条件查询 拥有权限的 菜单数据-->
     <select id="listGrantedModule" resultMap="BaseResultMap">
@@ -214,5 +214,13 @@
         </if>
         and id != #{oldModule.id,jdbcType=VARCHAR}
     </update>
+
+    <!--    把系统可用模块和其下资源code拼接返回-->
+    <select id="selectAllResources" resultType="module">
+        select m.id, ifnull(group_concat(mr.resource_code),'') code
+        from sys_module m left join sys_module_resources mr on m.id = mr.module_id
+        where m.deleted ='0000' and m.status != '0001'
+        group by m.id order by m.orders
+    </select>
 
 </mapper>

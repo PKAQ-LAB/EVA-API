@@ -2,13 +2,17 @@ package tech.yunyue.listener;
 
 import cn.dev33.satoken.listener.SaTokenListenerForSimple;
 import cn.dev33.satoken.stp.StpUtil;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import tech.yunyue.events.KickUserEvent;
+
+import java.util.List;
 
 /**
  *  Sa-Token 侦听器
  */
 @Component
-public class ReplacedSaTokenListener extends SaTokenListenerForSimple {
+public class SaTokenListener extends SaTokenListenerForSimple {
 
     /**
      * 用户token过期 但是ActivityTimeout还没到期 直接生成一个新token
@@ -21,5 +25,18 @@ public class ReplacedSaTokenListener extends SaTokenListenerForSimple {
     public void doReplaced(String loginType, Object loginId, String tokenValue) {
         // 删掉旧token的一切缓存
         StpUtil.logoutByTokenValue(tokenValue);
+    }
+
+
+    /**
+     * 监听踢出用户事件 并根据id踢出用户
+     * 先同步处理
+     */
+    @EventListener
+    public void listenerCommit(KickUserEvent event) {
+        List<String> idList = (List<String>) event.getSource();
+        for (String id : idList) {
+            StpUtil.logout(id);
+        }
     }
 }

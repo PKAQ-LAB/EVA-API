@@ -66,5 +66,7 @@ public interface CommonConstant {
     //黑名单数据
     String CACHE_BLACKDATA = "blackdata";
 
+    // 把全局资源code保存在redis中的前缀
+    String REDIS_RESOURCE_CODE_PREFIX_KEY = "GLOBAL:RESOURCE:CODE:";
 
 }

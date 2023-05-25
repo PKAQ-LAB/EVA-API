@@ -1,6 +1,5 @@
 package tech.yunyue.filter;
 
-import cn.dev33.satoken.context.SaHolder;
 import cn.dev33.satoken.dao.SaTokenDao;
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.router.SaRouter;
@@ -8,41 +7,33 @@ import cn.dev33.satoken.stp.SaLoginConfig;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaTokenConsts;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.extra.servlet.JakartaServletUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 import tech.yunyue.core.constant.CommonConstant;
 import tech.yunyue.core.enums.BizCodeEnum;
-import tech.yunyue.core.jwt.JwtUtil;
-import tech.yunyue.core.mvc.vo.Response;
+import tech.yunyue.core.exception.BizException;
 import tech.yunyue.core.properties.EvaConfig;
 import tech.yunyue.core.properties.Jwt;
 import tech.yunyue.core.threaduser.ThreadUser;
 import tech.yunyue.core.threaduser.ThreadUserHelper;
-import tech.yunyue.core.util.json.JsonUtil;
 import tech.yunyue.core.web.util.RequestUtil;
 import tech.yunyue.core.web.util.TenantUtil;
-import tech.yunyue.core.web.util.TokenUtil;
 
-import javax.security.sasl.AuthenticationException;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author PKAQ
@@ -57,6 +48,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final EvaConfig evaConfig;
 
     private final  TenantUtil tenantUtil;
+
+    @Autowired
+    @Qualifier("handlerExceptionResolver")
+    private HandlerExceptionResolver resolver;
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
@@ -106,13 +102,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 isvalid = true;
             } catch (NotLoginException e) {
                 logger.warn(e.getMessage(), e);
-                try (PrintWriter printWriter = response.getWriter()) {
-                    response.setCharacterEncoding("UTF-8");
-                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-
-                    printWriter.write(JsonUtil.toJson(new Response().failure(BizCodeEnum.LOGIN_EXPIRED)));
-                    printWriter.flush();
-                }
+                resolver.resolveException(request, response, null, new BizException(BizCodeEnum.LOGIN_EXPIRED));
                 return;
             }
         }

@@ -27,14 +27,14 @@ public class FilterAuthStrategy implements SaFilterAuthStrategy {
         SaRouter.match(evaConfig.getSecurity().getAnonymous()).stop();
         //  SaRouter.match("/**", "/auth/login", r -> StpUtil.checkLogin()); login进来为false 别的进来都是true
 
-        //不是匿名访问的接口 但是不一定携带了token 没有携带token直接报错 携带token则鉴权
+        //鉴权
         SaRouter.match("/**",r->{
-            // 当前会话是否经过jwtFilter的token验证
-            if(Objects.isNull(ThreadUserHelper.getCurrentUser()) || !StringUtils.hasText(ThreadUserHelper.getCurrentUser().getUserId())){
-                //说明没带token 即用户没登录
+            // 当前会话是否登录
+            if(Objects.isNull(ThreadUserHelper.getCurrentUser()) || !StringUtils.hasText(ThreadUserHelper.getUserId())){
                 BizCodeEnum.LOGIN_EXPIRED.newException();
             }
-
+            //当前资源是否需要鉴权
+            SaRouter.match(evaConfig.getSecurity().getPermit()).stop();
             //权限验证
             if (!evaConfig.getResourcePermission().isEnable()) return;
             boolean granted = StpUtil.hasPermission(SaHolder.getRequest().getRequestPath());
