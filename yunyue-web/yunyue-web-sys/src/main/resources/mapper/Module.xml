@@ -219,7 +219,7 @@
     <select id="selectAllResources" resultType="module">
         select m.id, ifnull(group_concat(mr.resource_code),'') code
         from sys_module m left join sys_module_resources mr on m.id = mr.module_id
-        where m.deleted ='0000' and m.status != '0001'
+        where m.status != '0001'
         group by m.id order by m.orders
     </select>
 

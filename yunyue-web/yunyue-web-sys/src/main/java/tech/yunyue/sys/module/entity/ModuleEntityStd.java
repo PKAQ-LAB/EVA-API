@@ -1,6 +1,8 @@
 package tech.yunyue.sys.module.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import tech.yunyue.core.mybatis.mvc.entity.mybatis.StdTreeEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -36,5 +38,9 @@ public class ModuleEntityStd extends StdTreeEntity {
     @TableField(exist = false)
     @Schema(description = "模块拥有的资源")
     private List<ModuleResources> resources;
+
+    //覆盖父类逻辑删除字段 模块不需要逻辑删除
+    @TableField(exist = false)
+    private String deleted;
 
 }
