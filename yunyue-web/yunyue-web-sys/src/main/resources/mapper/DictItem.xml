@@ -6,7 +6,7 @@
     <select id="listItemByMainId" resultType="dictItem">
         select *
         from sys_dict_item
-        where main_id = #{mainId}
+        where main_id = #{mainId} and deleted = '0000'
         order by orders
     </select>
 </mapper>
