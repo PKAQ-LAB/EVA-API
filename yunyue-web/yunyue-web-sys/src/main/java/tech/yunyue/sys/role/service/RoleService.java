@@ -26,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author: S.PKAQ
@@ -249,6 +250,12 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
                 }
             }
         }
+
+        // 踢出拥有该角色所有的用户
+        RoleUserEntity roleUserEntity = new RoleUserEntity();
+        roleUserEntity.setRoleId(role.getId());
+        List<RoleUserEntity> roleUserList = this.roleUserMapper.selectList(new QueryWrapper<>(roleUserEntity));
+        userService.kickOut(roleUserList.stream().map(RoleUserEntity::getUserId).collect(Collectors.toList()));
     }
 
     /**
