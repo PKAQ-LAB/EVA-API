@@ -58,7 +58,7 @@ public abstract class StdEntity implements Entity {
     /** 乐观锁 */
     @Schema(description = "乐观锁")
     @Version
-    private String revision;
+    private Integer revision;
 
     @Schema(description = "备注")
     private String remark;
