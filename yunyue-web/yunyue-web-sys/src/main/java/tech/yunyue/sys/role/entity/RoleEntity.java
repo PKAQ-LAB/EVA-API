@@ -1,8 +1,6 @@
 package tech.yunyue.sys.role.entity;
 
-import com.baomidou.mybatisplus.annotation.SqlCondition;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import tech.yunyue.core.mybatis.mvc.entity.mybatis.StdEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -69,4 +67,8 @@ public class RoleEntity extends StdEntity {
     @TableField(exist = false)
     @Schema(description = "模块权限")
     private Map<String, String[]> resources;
+
+    //覆盖父类逻辑删除字段 模块不需要逻辑删除
+    @TableField(exist = false)
+    private String deleted;
 }
