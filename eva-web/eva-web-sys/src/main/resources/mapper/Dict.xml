@@ -17,10 +17,7 @@
                     select="io.nerv.sys.dict.mapper.DictItemMapper.listItemByMainId"/>
     </resultMap>
     <sql id="column">
-        m
-        .
-        id
-        ,m.code,m.name,m.parent_ID,m.remark,
+        m.id,m.code,m.name,m.parent_ID,m.remark,
       m2.id itemId ,m2.main_id,m2.key_name,m2.key_value,m2.orders,m2.status,m2.remark
     </sql>
     <select id="getDict" resultMap="LineResultMap">
