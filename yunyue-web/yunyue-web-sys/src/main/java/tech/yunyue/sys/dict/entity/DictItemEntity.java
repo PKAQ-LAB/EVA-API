@@ -37,12 +37,6 @@ public class DictItemEntity {
     @Schema(description = "是否启用")
     private String status;
 
-    /** 逻辑删除 */
-    @Schema(description = "逻辑删除 (0000-未删除、0001-删除)")
-    @TableLogic
-    @TableField(fill = FieldFill.INSERT)
-    private String deleted;
-
     private static final long serialVersionUID = 1L;
 
 }
