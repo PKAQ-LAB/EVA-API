@@ -68,7 +68,7 @@ public class RoleEntity extends StdEntity {
     @Schema(description = "模块权限")
     private Map<String, String[]> resources;
 
-    //覆盖父类逻辑删除字段 模块不需要逻辑删除
+    //覆盖父类逻辑删除字段 角色不关联业务 不需要逻辑删除
     @TableField(exist = false)
     private String deleted;
 }
