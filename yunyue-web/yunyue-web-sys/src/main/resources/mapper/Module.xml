@@ -32,12 +32,12 @@
 
     <!--根据用户id查询用户拥有的权限模块资源列表-->
     <select id="getRoleModuleByUserId" resultMap="NoChildrenResultMap">
-        select  m.*,MR.id R_ID,MR.*
+        select  M.*,MR.id R_ID,MR.*
         from SYS_ROLE_USER RU
         LEFT JOIN SYS_ROLE_MODULE RM on ru.ROLE_ID = RM.ROLE_ID
         LEFT JOIN SYS_MODULE M on RM.MODULE_ID = M.ID
         LEFT JOIN sys_module_resources MR on MR.id = RM.RESOURCE_ID
-        where RU.USER_ID= #{userId} and M.STATUS != '0001' order by m.orders asc
+        where RU.USER_ID= #{userId} and M.STATUS != '0001' and M.deleted = '0000' order by m.orders asc
     </select>
     <!--根据条件查询 拥有权限的 菜单数据-->
     <select id="listGrantedModule" resultMap="BaseResultMap">
@@ -96,6 +96,7 @@
         SYS_MODULE_RESOURCES SMR
         ON SM.ID = SMR.MODULE_ID
         <where>
+            and SM.deleted = '0000'
             <if test="null == module or null == module.parentId or '' == module.parentId">
                 and (parent_id is null or parent_id = '0')
             </if>
@@ -133,20 +134,20 @@
         LEFT JOIN
         SYS_MODULE_RESOURCES SMR
         ON SM.ID = SMR.MODULE_ID
-        where parent_ID = #{id,jdbcType=VARCHAR}
+        where parent_ID = #{id,jdbcType=VARCHAR} and SM.deleted = '0000'
         order by orders asc
     </select>
     <!-- 根据ID查询-->
     <select id="getParentById" resultMap="BaseResultMap">
         select * from sys_module module
-        where module.id = (select parent_Id from sys_module og where og.id = #{id,jdbcType=VARCHAR})
+        where module.id = (select parent_Id from sys_module og where og.id = #{id,jdbcType=VARCHAR} and og.deleted = '0000')
         order by orders asc
     </select>
     <!--查询叶子节点数量-->
     <select id="countPrantLeaf" resultType="int">
         select count(id)
         from sys_module
-        where parent_Id=#{id,jdbcType=VARCHAR}
+        where parent_Id=#{id,jdbcType=VARCHAR} and deleted = '0000'
     </select>
 
     <!-- 根据parentId查询子节点数据-->
@@ -168,6 +169,7 @@
                 parent_ID = #{pid,jdbcType=VARCHAR}
             </otherwise>
         </choose>
+        and deleted = '0000'
     </select>
 
     <!-- 根据id禁用节点-->
@@ -180,12 +182,13 @@
         <if test="_databaseId == 'oracle'">
             #{id}||'%' or id = #{id}
         </if>
+        and deleted = '0000'
     </update>
 
     <!-- 根据id查询数据-->
     <select id="selectId" resultMap="BaseResultMap">
         select *
-        from sys_module where id = #{id,jdbcType=VARCHAR}
+        from sys_module where id = #{id,jdbcType=VARCHAR} and deleted = '0000'
     </select>
     <!--  刷新子节点名称-->
     <update id="updateChildParentName">
@@ -198,6 +201,7 @@
         <if test="_databaseId == 'oracle'">
             #{id}||'%'
         </if>
+        and deleted = '0000'
     </update>
 
     <!--  刷新子节点的path_name  和 path -->
@@ -213,13 +217,14 @@
             '%'||#{oldModule.path}||'%'
         </if>
         and id != #{oldModule.id,jdbcType=VARCHAR}
+        and deleted = '0000'
     </update>
 
     <!--    把系统可用模块和其下资源code拼接返回-->
     <select id="selectAllResources" resultType="module">
         select m.id, ifnull(group_concat(mr.resource_code),'') code
         from sys_module m left join sys_module_resources mr on m.id = mr.module_id
-        where m.status != '0001'
+        where m.status != '0001' and m.deleted = '0000'
         group by m.id order by m.orders
     </select>
 

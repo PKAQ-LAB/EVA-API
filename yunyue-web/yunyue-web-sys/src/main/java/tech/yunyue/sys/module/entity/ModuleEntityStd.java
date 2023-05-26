@@ -39,8 +39,4 @@ public class ModuleEntityStd extends StdTreeEntity {
     @Schema(description = "模块拥有的资源")
     private List<ModuleResources> resources;
 
-    //覆盖父类逻辑删除字段 模块不需要逻辑删除
-    @TableField(exist = false)
-    private String deleted;
-
 }
