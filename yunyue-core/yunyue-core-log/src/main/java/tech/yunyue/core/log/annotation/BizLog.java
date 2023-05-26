@@ -38,4 +38,12 @@ public @interface BizLog {
      * @return
      */
     String operateDateTime() default "";
+
+    /**
+     * 格式化日志描述的参数名
+     * @BizLog(args = {"name","code"})  取方法返回对象的name、code属性
+     * @BizLog(args = {"this"})  取方法返回值[当返回对象是基本数据类型或者string类型时]
+     * @BizLog(args = {"name","param:0","param:1.code"})  取方法返回对象的name属性以及第一个入参和第二个入参code属性的值
+     */
+    String[] args() default {};
 }
