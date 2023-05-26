@@ -64,6 +64,7 @@
                 and su.tel = #{user.tel,jdbcType=VARCHAR}
             </if>
         </where>
+        and su.deleted = '0000'
     </select>
     <!-- 根据用户 账号/电话/邮箱 获取包含权限列表的用户信息 -->
     <select id="getUserWithRole" resultMap="UserWithRole">
@@ -78,12 +79,13 @@
                 su.email = #{account,jdbcType=VARCHAR} )
             </if>
         </where>
+        and su.deleted = '0000'
     </select>
     <!-- 根据用户ID 获取包含模块 权限列表的用户信息-->
     <select id="getUserWithModuleAndRoleById" resultMap="UserWithModuleAndRole">
         select *
         from sys_user_info
-        where id = #{userId,jdbcType=VARCHAR}
+        where id = #{userId,jdbcType=VARCHAR} and deleted = '0000'
     </select>
 	<!-- 根据用户id查询用户角色 -->
     <select id="getRoleById" resultType="java.lang.String">
