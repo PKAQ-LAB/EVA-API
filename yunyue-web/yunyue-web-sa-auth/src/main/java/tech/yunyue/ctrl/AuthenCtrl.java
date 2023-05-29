@@ -4,6 +4,7 @@ import cn.dev33.satoken.config.SaTokenConfig;
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.stp.SaLoginConfig;
 import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import com.anji.captcha.model.common.ResponseModel;
 import com.anji.captcha.model.vo.CaptchaVO;
 import com.anji.captcha.service.CaptchaService;
@@ -45,7 +46,7 @@ public class AuthenCtrl {
         CaptchaVO captchaVO = new CaptchaVO();
         captchaVO.setCaptchaVerification(captchaVerification);
         ResponseModel response = captchaService.verification(captchaVO);
-        if(!response.isSuccess()) {
+        if(!response.isSuccess() && "prod".equals(SpringUtil.getActiveProfile())) {
             BizCodeEnum.LOGIN_CAPTCHA_FAIL.newException();
             log.error("验证失败：" + response.getRepMsg());
         }
