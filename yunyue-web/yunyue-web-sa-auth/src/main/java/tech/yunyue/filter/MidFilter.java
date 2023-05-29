@@ -2,6 +2,7 @@ package tech.yunyue.filter;
 
 import cn.dev33.satoken.router.SaRouter;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.StrUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,7 +38,7 @@ public class MidFilter extends OncePerRequestFilter {
         var security = evaConfig.getSecurity();
         String[] noMidPaths = ArrayUtil.addAll(security.getNoMid(),security.getAnonymous());
         String mid = RequestUtil.getModuleId(request);
-        if(CommonConstant.UNKNOWN.equals(mid) && !SaRouter.match(noMidPaths).isHit()){
+        if(StrUtil.isEmpty(mid) && !SaRouter.match(noMidPaths).isHit()){
             resolver.resolveException(request, response, null, new BizException(BizCodeEnum.MID_DENY));
             return;
         }
