@@ -59,6 +59,9 @@ public class OrganizationEntity extends StdEntity {
     @Schema(description = "是否可用")
     private String status;
 
+    @Schema(description = "类型 (0001-集团、0002-公司、0003部门)")
+    private String type;
+
     @TableField(exist = false)
     @Schema(description = "子节点")
     private List<OrganizationEntity> children;
