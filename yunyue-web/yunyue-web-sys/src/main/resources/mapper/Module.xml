@@ -32,7 +32,12 @@
 
     <!--根据用户id查询用户拥有的权限模块资源列表-->
     <select id="getRoleModuleByUserId" resultMap="NoChildrenResultMap">
-        select  M.*,MR.id R_ID,MR.*
+        select
+        case when path = '/sys/organization'
+        then if(#{platform},SUBSTRING_INDEX(M.name,',',1),SUBSTRING_INDEX(M.name,',',-1))
+        else name end name,
+        M.*,
+        MR.id R_ID,MR.*
         from SYS_ROLE_USER RU
         LEFT JOIN SYS_ROLE_MODULE RM on ru.ROLE_ID = RM.ROLE_ID
         LEFT JOIN SYS_MODULE M on RM.MODULE_ID = M.ID

@@ -84,6 +84,11 @@ public class EvaConfig {
      */
     private long loginLockTime = 30;
 
+    /**
+     * 当前系统是否是平台
+     */
+    private boolean platform = true;
+
     public BizLog getBizlog() {
         return null == this.bizlog ? new BizLog() : bizlog;
     }

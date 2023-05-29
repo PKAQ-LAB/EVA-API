@@ -55,7 +55,7 @@ public interface ModuleMapper extends BaseMapper<ModuleEntityStd> {
      * @return 符合条件的List
      */
     @Ignore
-    List<ModuleEntityStd> getRoleModuleByUserId(String userId);
+    List<ModuleEntityStd> getRoleModuleByUserId(@Param("platform") boolean platform, @Param("userId") String userId);
 
     /**
      * 根据子节点ID查询父节点信息

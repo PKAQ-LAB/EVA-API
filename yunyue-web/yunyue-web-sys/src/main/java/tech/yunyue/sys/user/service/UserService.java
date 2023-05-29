@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import tech.yunyue.core.properties.EvaConfig;
 import tech.yunyue.core.threaduser.ThreadUserHelper;
 import tech.yunyue.events.KickUserEvent;
 import tech.yunyue.sys.dict.cache.DictCacheHelper;
@@ -50,6 +51,7 @@ public class UserService extends StdService<UserMapper, UserEntity> {
     private final DictCacheHelper dictCacheHelper;
 
     private final ApplicationEventPublisher publisher;
+    private final EvaConfig evaConfig;
 
     /**
      * 修改密码
@@ -200,8 +202,7 @@ public class UserService extends StdService<UserMapper, UserEntity> {
      * @return
      */
     public List<ModuleEntityStd> fetch(String uid) {
-
-        List<ModuleEntityStd> moduleEntity = this.moduleMapper.getRoleModuleByUserId(uid);
+        List<ModuleEntityStd> moduleEntity = this.moduleMapper.getRoleModuleByUserId(evaConfig.isPlatform(),uid);
         List<ModuleEntityStd> treeModule = TreeHelper.bulid(moduleEntity);
 
         BizCodeEnum.PERMISSION_EXPIRED.assertNotBlank(treeModule);
