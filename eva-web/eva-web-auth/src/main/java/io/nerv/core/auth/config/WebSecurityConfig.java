@@ -14,11 +14,14 @@ import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -28,6 +31,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author PKAQ
@@ -73,10 +77,10 @@ public class WebSecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(CollUtil.isEmpty(evaConfig.getJwt().getCreditUrl()) ? Arrays.asList("*") : evaConfig.getJwt().getCreditUrl());
+        configuration.setAllowedOrigins(CollUtil.isEmpty(evaConfig.getJwt().getCreditUrl()) ? List.of("*") : evaConfig.getJwt().getCreditUrl());
         configuration.setAllowCredentials(false);
         configuration.setAllowedMethods(Arrays.asList("PUT", "DELETE", "GET", "POST", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowedHeaders(List.of("*"));
         configuration.setMaxAge(1800L);
         configuration.setExposedHeaders(Arrays.asList("Access-Control-Allow-Headers",
                 "Access-Control-Allow-Methods",
@@ -96,38 +100,42 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain httpSecurityConfigure(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity.cors(Customizer.withDefaults())
+                    // 关闭csrf 由于使用的是JWT，我们这里不需要csrf
+                    .csrf(AbstractHttpConfigurer::disable)
+                    .headers(header -> {
+                        //允许加载iframe内容 X-Frame-Options
+                        header.frameOptions(frame -> {
+                            frame.disable();
+                            frame.sameOrigin();
+                        });
+                        header.cacheControl(Customizer.withDefaults());
+                        // 适配IE
+                        header.addHeaderWriter(new StaticHeadersWriter("P3P", "CP='CAO IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'"));
+                        header.xssProtection(Customizer.withDefaults());
+                    })
+                    // 基于token，所以不需要session
+                    .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                    .authorizeHttpRequests(Customizer.withDefaults());
 
-        httpSecurity
-                .cors()
-                .and()
-                // 关闭csrf 由于使用的是JWT，我们这里不需要csrf
-                .csrf().disable()
-                //允许加载iframe内容 X-Frame-Options
-                .headers().frameOptions().disable()
-                .xssProtection()
-                .and()
-                // 适配IE
-                .addHeaderWriter(new StaticHeadersWriter("P3P", "CP='CAO IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'"))
-                .and()
-                // 基于token，所以不需要session
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeHttpRequests()
-                // 允许匿名访问的url
-                .requestMatchers(anonymous).permitAll();
+        // 允许匿名访问的url
+        httpSecurity.authorizeHttpRequests(auth -> auth.requestMatchers(anonymous).permitAll());
 
         if (null != urlAccessDecisionManager) {
-            httpSecurity.authorizeHttpRequests().anyRequest().access(urlAccessDecisionManager);
+            httpSecurity.authorizeHttpRequests(auth -> auth.anyRequest().access(urlAccessDecisionManager));
         } else {
-            httpSecurity.authorizeHttpRequests().anyRequest().authenticated();
+            httpSecurity.authorizeHttpRequests(auth -> auth.anyRequest().authenticated());
         }
 
-        httpSecurity.logout().logoutUrl("/auth/logout").logoutSuccessHandler(urlLogoutSuccessHandler);
+        httpSecurity.logout(logout -> {
+            logout.logoutUrl("/auth/logout").logoutSuccessHandler(urlLogoutSuccessHandler);
+        });
 
-        httpSecurity.exceptionHandling()
-                .authenticationEntryPoint(unauthorizedHandler)
-                .accessDeniedHandler(urlAccessDeniedHandler)
-                .and()
+        httpSecurity.exceptionHandling(ex ->
+                ex.authenticationEntryPoint(unauthorizedHandler)
+                  .accessDeniedHandler(urlAccessDeniedHandler));
+
+        httpSecurity
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtUsernamePasswordAuthenticationFilter("/auth/login",
                                 authenticationConfiguration.getAuthenticationManager(),
@@ -136,13 +144,7 @@ public class WebSecurityConfig {
                         UsernamePasswordAuthenticationFilter.class);
 
 //            @Secured( value={"ROLE_ANONYMOUS"})
-        httpSecurity.anonymous().authorities("ROLE_ANONYMOUS");
-
-        // disable page caching
-        httpSecurity
-                .headers()
-                .frameOptions().sameOrigin()  // required to set for H2 else H2 Console will be blank.
-                .cacheControl();
+        httpSecurity.anonymous(anonymous -> anonymous.authorities("ROLE_ANONYMOUS"));
 
         return httpSecurity.build();
     }

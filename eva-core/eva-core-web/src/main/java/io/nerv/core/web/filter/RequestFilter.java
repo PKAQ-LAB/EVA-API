@@ -1,5 +1,6 @@
 package io.nerv.core.web.filter;
 
+import cn.hutool.core.util.StrUtil;
 import io.nerv.core.threaduser.ThreadUser;
 import io.nerv.core.threaduser.ThreadUserHelper;
 import io.nerv.core.web.util.HeaderUtil;
@@ -28,7 +29,7 @@ public class RequestFilter implements Filter {
         log.info("进入 服务请求拦截 过滤器========");
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         String gateway = request.getHeader("gatewayKey");
-        if (gateway == null || gateway.equals("") || !gateway.equals("key")) {
+        if (StrUtil.isBlank(gateway) || !gateway.equals("key")) {
             log.info("非法请求");
             return;
         }
