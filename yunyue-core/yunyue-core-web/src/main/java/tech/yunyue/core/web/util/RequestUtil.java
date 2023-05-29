@@ -94,7 +94,6 @@ public class RequestUtil {
      */
     public static String getModuleId(HttpServletRequest request) {
         String moduleId = request.getHeader(CommonConstant.MODULE_ID);
-
-        return StrUtil.isBlank(moduleId) ? CommonConstant.UNKNOWN : moduleId;
+        return StrUtil.isBlank(moduleId) ? "" : moduleId;
     }
 }

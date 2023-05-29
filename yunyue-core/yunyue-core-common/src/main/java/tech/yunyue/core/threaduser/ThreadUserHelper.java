@@ -133,7 +133,7 @@ public class ThreadUserHelper {
      */
     public static String getMid() {
         return Optional.ofNullable(userThreadLocal.get())
-                .map(ThreadUser::getModuleId).orElse(null);
+                .map(ThreadUser::getModuleId).orElse("");
     }
 
 }
