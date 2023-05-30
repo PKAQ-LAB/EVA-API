@@ -35,7 +35,7 @@ public class AlipayHelper {
     public AlipayTradeQueryResponse payquery(String out_trade_no) throws AlipayApiException {
         AlipayTradeQueryRequest queryRequest = new AlipayTradeQueryRequest();
         JSONObject json = new JSONObject();
-        json.put("out_trade_no", out_trade_no);
+        json.set("out_trade_no", out_trade_no);
 
         queryRequest.setBizContent(json.toString());
 
@@ -55,10 +55,10 @@ public class AlipayHelper {
         AlipayTradePrecreateRequest request = new AlipayTradePrecreateRequest();
 
         JSONObject json = new JSONObject();
-        json.put("out_trade_no", orderNo);
-        json.put("total_amount", totalAmount);
-        json.put("subject", subject);
-        json.put("timeout_express", timeout);
+        json.set("out_trade_no", orderNo);
+        json.set("total_amount", totalAmount);
+        json.set("subject", subject);
+        json.set("timeout_express", timeout);
 
         log.debug(json.toString());
 

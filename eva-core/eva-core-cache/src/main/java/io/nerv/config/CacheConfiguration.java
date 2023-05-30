@@ -1,13 +1,14 @@
 package io.nerv.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CachingConfigurer;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.Configuration;
 
 @Slf4j
 @Configuration
-public class CacheConfiguration extends CachingConfigurerSupport {
+public class CacheConfiguration implements CachingConfigurer {
     /*
      * 定义缓存数据 key 生成策略的bean 包名+类名+方法名+所有参数
      */
@@ -23,7 +24,7 @@ public class CacheConfiguration extends CachingConfigurerSupport {
             for (Object obj : objects) {
                 sb.append(obj.toString());
             }
-            log.debug("调用缓存Key : " + sb.toString());
+            log.debug("调用缓存Key : " + sb);
             return sb.toString();
         };
     }
