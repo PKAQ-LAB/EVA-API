@@ -41,9 +41,9 @@ public interface OrganizationMapper extends BaseMapper<OrganizationEntity> {
     OrganizationEntity getParentById(String id);
 
     /**
-     * 根据子节点ID查询同级节点数量（包含自身）
+     * 根据父节点ID查询子节点数量
      *
-     * @param id 子节点ID
+     * @param id 父节点ID
      * @return 同级节点数量
      */
     int countPrantLeaf(String id);
