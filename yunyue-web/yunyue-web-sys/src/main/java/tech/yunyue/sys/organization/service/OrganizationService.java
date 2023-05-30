@@ -159,13 +159,17 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
     }
 
     /**
-     * 交换两个orders值
+     * 组织排序
      *
      * @param switchOrg 进行交换的两个实体
      */
     public void sortOrg(OrganizationEntity[] switchOrg) {
+        int i=0;
         for (OrganizationEntity org : switchOrg) {
-            this.mapper.updateById(org);
+            OrganizationEntity update = new OrganizationEntity();
+            update.setId(org.getId());
+            update.setOrders(i++);
+            this.mapper.updateById(update);
         }
     }
 
