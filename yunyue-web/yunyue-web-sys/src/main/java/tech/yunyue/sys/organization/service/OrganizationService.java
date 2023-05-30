@@ -64,25 +64,24 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
      */
     public void editOrg(OrganizationEntity organization) {
         String orgId = organization.getId();
+        boolean isNew = StrUtil.isBlank(orgId);
+
         // 获取上级节点
         String pid = organization.getParentId();
         String root = "0";
         if (!root.equals(pid) && StrUtil.isNotBlank(pid)) {
             // 查询新父节点信息
             OrganizationEntity parentOrg = this.getOrg(pid);
-            // 设置当前节点信息
-            String parentPath = StrUtil.isNotBlank(organization.getId()) ? parentOrg.getPath() + "/" + organization.getId() : parentOrg.getPath();
+            // 设置当前节点信息  当前若是新增 则只要把自己的id加在path后即可
+            String parentPath = parentOrg.getPath() + "/" + (StrUtil.isNotBlank(orgId) ? orgId : "");
             organization.setPath(parentPath);
             String pathName = parentOrg.getPathName() + "/" + organization.getName();
             organization.setPathName(pathName);
             organization.setParentName(parentOrg.getName());
-
         } else {
-            // 父节点为空, 根节点 设置为非叶子\
+            // 父节点为空, 根节点 设置为非叶子
             pid = root;
-            if (StrUtil.isNotBlank(organization.getId())) {
-                organization.setPath(organization.getId());
-            }
+            organization.setPath(orgId);
             organization.setParentId(pid);
             organization.setIsleaf(false);
             organization.setPathName(organization.getName());
@@ -90,41 +89,36 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
 
         // 检查原父节点是否还存在子节点 不存在设置leaf为false
         OrganizationEntity orginNode = this.mapper.getParentById(orgId);
-
+        boolean isChangePa = false;
         // 如果更换了父节点 重新确定原父节点的 leaf属性，以及所修改节点的orders属性
-        if (null != orginNode && !pid.equals(orginNode.getParentId())) {
-            int brothers = this.mapper.countPrantLeaf(orgId) - 1;
+        if (null != orginNode && !pid.equals(orginNode.getId())) {
+            int brothers = this.mapper.countPrantLeaf(orginNode.getId()) - 1;
             if (brothers < 1) {
                 orginNode.setIsleaf(true);
                 this.updateOrg(orginNode);
             }
+            isChangePa = true;
         }
-        //如果是新增且orders属性为空则设置orders属性
-        OrganizationEntity oldOrgin = null;
-        if (StrUtil.isBlank(organization.getId())) {
+        //新增或者更换了父节点则设置orders属性
+        if (isNew || isChangePa) {
             organization.setOrders(this.mapper.countPrantLeaf(pid));
-        } else {
-            oldOrgin = this.mapper.selectById(orgId);
         }
+        OrganizationEntity oldOrgin = isNew ? null : this.mapper.selectById(orgId);
         this.merge(organization);
 
-        //新增
-        if (null == oldOrgin) {
-            //设置path路径 把path路径加上自己本身
-            //String path= StrUtil.isBlank(organization.getPath()) ? organization.getId() : organization.getPath() + "/" + organization.getId();
+        if (isNew) {
+            //新增 把path路径加上自己id
+            organization.setPath(organization.getPath() + organization.getId());
             this.mapper.updateById(organization);
         } else {
             //刷新子节点相关数据
             this.refreshChild(organization, oldOrgin);
         }
-        // 保存完重新查询一遍列表数据
     }
 
     // 父节点信息有修改 刷新子节点相关数据
     public void refreshChild(OrganizationEntity organizationEntity, OrganizationEntity oldOrgin) {
-        // 刷新子节点名称
-        this.mapper.updateChildParentName(organizationEntity.getName(), organizationEntity.getId());
-        // TODO 刷新所有子节点的 path_name 和 path
+        // 刷新所有子节点的path_name、path 以及直接子节点的parent_name
         this.mapper.updateChildPathInfo(organizationEntity, oldOrgin);
     }
 
