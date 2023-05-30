@@ -288,11 +288,13 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
      * @param switchModule 进行交换的两个实体
      */
     public void sortModule(ModuleEntityStd[] switchModule) {
+        int i=0;
         for (ModuleEntityStd module : switchModule) {
-            this.mapper.updateById(module);
+            ModuleEntityStd update = new ModuleEntityStd();
+            update.setId(module.getId());
+            update.setOrders(i++);
+            this.mapper.updateById(update);
         }
-        //刷新缓存中的资源信息
-        refreshCacheResourcese();
     }
 
     /**
