@@ -63,10 +63,11 @@ public interface CommonConstant {
     String REDIS_USER_LOGIN_FAIL_KEY = "USER:LOGIN:FAIL:";
     // 锁定标记：用户限制登录30分钟key
     String REDIS_USER_NO_LOGIN_KEY = "USER:NO:LOGIN:";
-    //黑名单数据
+    // 黑名单数据
     String CACHE_BLACKDATA = "blackdata";
-
     // 把全局资源code保存在redis中的前缀
     String REDIS_RESOURCE_CODE_PREFIX_KEY = "GLOBAL:RESOURCE:CODE:";
+    // 组织类型-字典标识
+    String ORGANIZATION_TYPE_CODE = "organization_type";
 
 }

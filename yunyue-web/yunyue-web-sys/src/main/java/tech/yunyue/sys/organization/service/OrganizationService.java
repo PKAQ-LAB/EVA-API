@@ -3,6 +3,11 @@ package tech.yunyue.sys.organization.service;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import tech.yunyue.core.constant.CommonConstant;
+import tech.yunyue.core.enums.OrgTypeEnum;
+import tech.yunyue.core.properties.EvaConfig;
+import tech.yunyue.sys.dict.cache.DictCacheHelper;
 import tech.yunyue.sys.organization.entity.OrganizationEntity;
 import tech.yunyue.sys.organization.mapper.OrganizationMapper;
 import tech.yunyue.core.enums.BizCodeEnum;
@@ -20,7 +25,10 @@ import java.util.List;
  */
 @Service
 public class OrganizationService extends StdService<OrganizationMapper, OrganizationEntity> {
-
+    @Autowired
+    EvaConfig evaConfig;
+    @Autowired
+    DictCacheHelper dictCacheHelper;
     /**
      * 查询组织结构树
      *
@@ -72,6 +80,11 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
         if (!root.equals(pid) && StrUtil.isNotBlank(pid)) {
             // 查询新父节点信息
             OrganizationEntity parentOrg = this.getOrg(pid);
+            //子节点的类型不能大于父节点
+            if (OrgTypeEnum.isLeapFrogging(parentOrg.getType(),organization.getType())) {
+                String code= CommonConstant.ORGANIZATION_TYPE_CODE;
+                BizCodeEnum.ORG_TYPE_INVALID.newException(dictCacheHelper.get(code,parentOrg.getType()),dictCacheHelper.get(code,organization.getType()));
+            }
             // 设置当前节点信息  当前若是新增 则只要把自己的id加在path后即可
             String parentPath = parentOrg.getPath() + "/" + (StrUtil.isNotBlank(orgId) ? orgId : "");
             organization.setPath(parentPath);
@@ -79,6 +92,8 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
             organization.setPathName(pathName);
             organization.setParentName(parentOrg.getName());
         } else {
+            // 平台才能创建根节点
+            if(!evaConfig.isPlatform()) BizCodeEnum.PERMISSION_EXPIRED.newException();
             // 父节点为空, 根节点 设置为非叶子
             pid = root;
             organization.setPath(orgId);
