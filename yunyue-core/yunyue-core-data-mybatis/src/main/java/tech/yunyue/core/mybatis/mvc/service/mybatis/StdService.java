@@ -72,7 +72,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
      *
      * @param entity 实体类对象
      */
-    @BizLog(operateType= BizLogEnum.CREATE_UPDATE,description = "保存记录")
+    @BizLog(operateType= BizLogEnum.CREATE_UPDATE,description = "保存记录[{0}]",args = {"param:0.id"})
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void merge(T entity) {
         if (entity.getId() == null) {
@@ -87,7 +87,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
      * @param entity
      * @param wrapper
      */
-    @BizLog(operateType= BizLogEnum.CREATE_UPDATE,description = "保存记录")
+    @BizLog(operateType= BizLogEnum.CREATE_UPDATE,description = "保存记录[{0}]",args = {"param:0.id"})
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void merge(T entity, Wrapper<T> wrapper) {
         if (entity.getId() == null) {
@@ -158,7 +158,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
      * @param param
      * @return
      */
-    @BizLog(operateType= BizLogEnum.DELETE,description = "根据id删除记录")
+    @BizLog(operateType= BizLogEnum.DELETE,description = "删除记录[{0}]",args = {"param:0"})
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void delete(ArrayList<String> param) {
         this.mapper.deleteBatchIds(param);
