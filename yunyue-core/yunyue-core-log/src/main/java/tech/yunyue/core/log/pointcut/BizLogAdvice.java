@@ -93,6 +93,10 @@ public class BizLogAdvice {
             }
             throw e;
         } finally {
+            //操作类型为新增 id在新增之后才会回显到入参中 所以需要重新处理一下
+            if (BizLogEnum.CREATE.equals(operatorType)) {
+                processArgs(joinPoint.getArgs(),bizlog.args(),formatArgs);
+            }
             bizLogEntity.setDescription(MessageFormat.format(description, formatArgs));
             //触发事件 使用事务监听器异步保存操作记录
             Map<String,Object> map = new HashMap<>(1);
