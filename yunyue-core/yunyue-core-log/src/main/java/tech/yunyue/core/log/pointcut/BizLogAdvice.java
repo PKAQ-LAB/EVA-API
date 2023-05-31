@@ -153,11 +153,8 @@ public class BizLogAdvice {
                         //复杂对象
                         int index = pMap.get(k+"."+n);
                         var obj = args[k];
-                        Class clazz = obj.getClass();
                         try {
-                            Field field = clazz.getDeclaredField(n);
-                            field.setAccessible(true);
-                            formatArgs[index] = field.get(obj);
+                            formatArgs[index] = getFieldValue(obj,n);
                         } catch (NoSuchFieldException | IllegalAccessException e) {
                             formatArgs[index] = "";
                             log.error("根据方法实参构造格式化参数异常:" + e.getMessage());
@@ -183,15 +180,12 @@ public class BizLogAdvice {
      */
     private void processResult(Object result, Map<String, Integer> rMap, Object[] formatArgs) {
         if(CollectionUtil.isEmpty(rMap)) return;
-        Class clazz = result.getClass();
         try {
             rMap.forEach((k, v) -> {
                 Object value = result;
                 if (!formatResult.equalsIgnoreCase(k)) {
                     try {
-                        Field field = clazz.getDeclaredField(k);
-                        field.setAccessible(true);
-                        value = field.get(result);
+                        value = getFieldValue(result,k);
                     } catch (NoSuchFieldException | IllegalAccessException e) {
                         value = "";
                         log.error("根据返回对象构造格式化参数异常:" + e.getMessage());
@@ -229,13 +223,14 @@ public class BizLogAdvice {
      * @param param 属性名
      * @return 属性值
      */
-    private Object getFieldValue(Object object, String param) throws Exception {
+    private Object getFieldValue(Object object, String param) throws NoSuchFieldException, IllegalAccessException  {
         Class objClass = object.getClass();
         Class superClass = objClass.getSuperclass();
         //当前类属性在前 超类属性在后
         Field [] fields = objClass.getDeclaredFields();
-        if (superClass != null) {
+        while (superClass != null) {
             fields = ArrayUtil.addAll(fields, superClass.getDeclaredFields());
+            superClass = superClass.getSuperclass();
         }
         Field field = Arrays.stream(fields).filter(f -> f.getName().equals(param)).findFirst().get();
         field.setAccessible(true);
