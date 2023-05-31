@@ -29,7 +29,7 @@ public class BlackListEntity extends StdEntity {
     @Schema(description = "封禁类型（0000-IP、0001-请求来源URL）")
     private String category;
 
-    //覆盖父类逻辑删除字段 角色不关联业务 不需要逻辑删除
+    //覆盖父类逻辑删除字段 不关联业务 不需要逻辑删除
     @TableField(exist = false)
     private String deleted;
 
