@@ -27,7 +27,13 @@ public enum BizLogEnum implements BizCode {
     /**
      * 查询
      **/
-    QUERY("查询", "R");
+    QUERY("查询", "R"),
+
+    /**
+     * 新增或更新操作<br/>
+     * 与{@link tech.yunyue.core.log.annotation.BizLog#distinguishParam}搭配使用
+     **/
+    CREATE_UPDATE("新增/更新", "CR");
 
     /**
      * 名称

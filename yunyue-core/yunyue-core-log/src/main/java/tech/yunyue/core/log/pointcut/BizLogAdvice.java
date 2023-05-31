@@ -2,11 +2,13 @@ package tech.yunyue.core.log.pointcut;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ArrayUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.transaction.annotation.Transactional;
 import tech.yunyue.core.log.annotation.BizLog;
 import tech.yunyue.core.log.base.BizLogEntity;
+import tech.yunyue.core.log.base.BizLogEnum;
 import tech.yunyue.core.log.condition.BizlogSupporterCondition;
 import tech.yunyue.core.log.constant.LogConstant;
 import tech.yunyue.core.log.events.BizLogEvent;
@@ -23,11 +25,8 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.text.MessageFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 记录业务日志
@@ -67,10 +66,15 @@ public class BizLogAdvice {
         //根据方法入参设置操作描述的格式化参数 并返回需要的响应参数名
         var formatArgs = new Object[bizlog.args().length];
         var rMap = processArgs(joinPoint.getArgs(),bizlog.args(),formatArgs);
+        //根据参数的某个属性是否为空来判断是新增还是修改
+        var operatorType = bizlog.operateType();
+        if (BizLogEnum.CREATE_UPDATE.equals(operatorType)) {
+            operatorType = processOperatorType(bizlog.distinguishParam(),joinPoint.getArgs());
+        }
         BizLogEntity bizLogEntity = new BizLogEntity();
         bizLogEntity.setOperator(ThreadUserHelper.getUserName())
                     .setOperateDatetime(DateUtil.now())
-                    .setOperateType(bizlog.operateType().getCode())
+                    .setOperateType(operatorType.getCode())
                     .setClassName(className)
                     .setMethod(methodName)
                     .setParams(args);
@@ -199,6 +203,43 @@ public class BizLogAdvice {
             log.error("记录日志异常:" + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+
+    /**
+     * service方法根据参数判断是新增还是修改时  操作类型也根据同样的参数来判断
+     * @param distinguishParam 区分新增或修改的参数 0.id表示取第一个入参的id属性 id有值为修改 无则新增
+     * @param args 方法入参
+     */
+    private BizLogEnum processOperatorType(String distinguishParam, Object[] args) {
+        try {
+            var index = Integer.parseInt(distinguishParam.substring(0, 1));
+            var param = distinguishParam.substring(2);
+            var value =  getFieldValue(args[index], param);
+            if(!Objects.isNull(value)){
+                return BizLogEnum.UPDATE;
+            }
+        }catch (Exception ignored){}
+        return BizLogEnum.CREATE;
+    }
+
+    /**
+     * 得到对象的属性值 属性可能继承于超类
+     * @param object 对象
+     * @param param 属性名
+     * @return 属性值
+     */
+    private Object getFieldValue(Object object, String param) throws Exception {
+        Class objClass = object.getClass();
+        Class superClass = objClass.getSuperclass();
+        //当前类属性在前 超类属性在后
+        Field [] fields = objClass.getDeclaredFields();
+        if (superClass != null) {
+            fields = ArrayUtil.addAll(fields, superClass.getDeclaredFields());
+        }
+        Field field = Arrays.stream(fields).filter(f -> f.getName().equals(param)).findFirst().get();
+        field.setAccessible(true);
+        return field.get(object);
     }
 }
 

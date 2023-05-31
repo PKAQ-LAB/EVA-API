@@ -27,6 +27,13 @@ public @interface BizLog {
      */
     BizLogEnum operateType() default BizLogEnum.CREATE;
 
+    /**
+     * 区分新增或修改的参数
+     * 与{@link tech.yunyue.core.log.base.BizLogEnum#CREATE_UPDATE}搭配使用 <br/>
+     * 数字表示第几个入参 默认通过第一个参数的id属性来区分操作类型是新增还是修改 id有值为修改 无则新增
+     */
+    String distinguishParam() default "0.id";
+
     /***
      * 操作人
      */
