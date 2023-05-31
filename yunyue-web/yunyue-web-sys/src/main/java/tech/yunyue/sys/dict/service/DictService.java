@@ -4,6 +4,10 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import io.swagger.v3.oas.annotations.media.Schema;
+import org.springframework.transaction.annotation.Transactional;
+import tech.yunyue.core.log.annotation.BizLog;
+import tech.yunyue.core.log.base.BizLogEnum;
 import tech.yunyue.sys.dict.cache.DictCacheHelper;
 import tech.yunyue.sys.dict.entity.DictEntity;
 import tech.yunyue.sys.dict.entity.DictItemEntity;
@@ -29,6 +33,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
+@Schema(description = "字典管理")
 public class DictService extends StdService<DictMapper, DictEntity> {
     private final DictCacheHelper dictCacheHelper;
 
@@ -52,6 +57,7 @@ public class DictService extends StdService<DictMapper, DictEntity> {
      *
      * @return
      */
+    @BizLog(operateType = BizLogEnum.QUERY,description = "查询字典")
     public Map<String, LinkedHashMap<String, String>> selectDict() {
         List<DictViewEntity> dictList = this.dictViewMapper.selectList(null);
 
@@ -67,6 +73,7 @@ public class DictService extends StdService<DictMapper, DictEntity> {
         return cacheMap;
     }
 
+    @BizLog(operateType = BizLogEnum.QUERY,description = "查询字典")
     public Map fetchDicts() {
         var ret = dictCacheHelper.getAll();
         if (null == ret) {
@@ -80,6 +87,7 @@ public class DictService extends StdService<DictMapper, DictEntity> {
      *
      * @return DictEntity
      */
+    @BizLog(operateType = BizLogEnum.QUERY,description = "根据条件获取一条字典")
     public DictEntity getDict(DictEntity dictEntity) {
         return this.mapper.getDict(dictEntity.getId());
     }
@@ -89,6 +97,7 @@ public class DictService extends StdService<DictMapper, DictEntity> {
      *
      * @return List<DictEntity>
      */
+    @BizLog(operateType= BizLogEnum.QUERY,description = "查询所有字典")
     public List<DictEntity> listDict() {
         return this.mapper.listDict();
     }
@@ -98,6 +107,7 @@ public class DictService extends StdService<DictMapper, DictEntity> {
      *
      * @param id 字典ID
      */
+    @BizLog(operateType = BizLogEnum.DELETE,description = "删除字典[{0}]",args = {"param:0"})
     public void delDict(String id) {
 
         // 先删除子表 再删除主表
@@ -119,6 +129,8 @@ public class DictService extends StdService<DictMapper, DictEntity> {
      *
      * @param dictEntity 字典对象
      */
+    @BizLog(operateType = BizLogEnum.CREATE_UPDATE,description = "保存字典[{0}]",args = {"param:0.id"})
+    @Transactional
     public void edit(DictEntity dictEntity) {
         String id = dictEntity.getId();
         // 校验code唯一性
