@@ -33,7 +33,7 @@ public class BlackListService extends StdService<BlackListMapper, BlackListEntit
         blackListCacheHelper.cachePut(blackList);
     }
 
-    @BizLog(operateType= BizLogEnum.CREATE_UPDATE,description = "保存黑名单列表")
+    @BizLog(operateType= BizLogEnum.CREATE_UPDATE,description = "保存黑名单列表[{0}]",args = {"param:0.id"})
     @Override
     public void merge(BlackListEntity entity) {
         //新增/修改缓存
@@ -47,7 +47,7 @@ public class BlackListService extends StdService<BlackListMapper, BlackListEntit
         super.merge(entity);
     }
 
-    @BizLog(operateType= BizLogEnum.DELETE,description = "删除黑名单列表")
+    @BizLog(operateType= BizLogEnum.DELETE,description = "删除黑名单列表[{0}]",args = {"param:0"})
     @Override
     public void delete(ArrayList<String> param) {
         super.delete(param);
