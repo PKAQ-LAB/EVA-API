@@ -8,5 +8,6 @@ dependencies {
     implementation	project(":yunyue-core:yunyue-core-web"),
                 	project(":yunyue-core:yunyue-core-data-mybatis"),
                 	project(":yunyue-core:yunyue-core-cache"),
+                    project(":yunyue-core:yunyue-core-log"),
                     "${lib.mysql}"
 }
