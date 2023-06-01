@@ -52,6 +52,8 @@ public class UserCtrl extends Ctrl {
         BizCodeEnum.NULL_ID.assertNotNull(ids.getParam());
 
         this.service.delete(ids.getParam());
+        // 踢出用户
+        this.service.kickOut(ids.getParam());
         return success(null, BizCodeEnum.OPERATE_SUCCESS);
     }
 
