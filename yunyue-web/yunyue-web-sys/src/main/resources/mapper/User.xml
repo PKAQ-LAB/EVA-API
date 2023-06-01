@@ -52,8 +52,8 @@
         ON su.id = sru.USER_ID
         <if test="null != user.deptId and user.deptId != ''">
 --             返回部门和其子部门的信息 并且根据父子关系排名
-            RIGHT JOIN (select id,@rank := @rank+1 rankNum from ( select #{user.deptId,jdbcType=VARCHAR} id UNION (select id from sys_organization where DELETED='0000' and PARENT_ID = #{user.deptId,jdbcType=VARCHAR} order by gmt_create)) id_r,(select @rank:=0) r) SO
-            on su.dept_id = SO.id
+            RIGHT JOIN (SELECT id,@rank := @rank+1 rankNum FROM ( SELECT #{user.deptId,jdbcType=VARCHAR} id UNION (SELECT id FROM sys_organization WHERE DELETED = '0000' AND LOCATE(CONCAT(#{user.deptId,jdbcType=VARCHAR},'/'), path) > 0 ORDER BY path)) id_r,(select @rank:=0) r) so
+            on su.dept_id = so.id
         </if>
         <where>
             <if test="null != user.account and user.account != ''">
@@ -69,7 +69,7 @@
         </where>
         <if test="null != user.deptId and user.deptId != ''">
 --         根据部门排名 当前查询的部门用户排在前面
-            order by SO.rankNum
+            order by so.rankNum
         </if>
     </select>
     <!-- 根据用户 账号/电话/邮箱 获取包含权限列表的用户信息 -->
