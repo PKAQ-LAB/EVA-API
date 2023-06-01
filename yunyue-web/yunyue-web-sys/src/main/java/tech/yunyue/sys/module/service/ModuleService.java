@@ -20,6 +20,7 @@ import tech.yunyue.core.mybatis.mvc.service.mybatis.StdService;
 import tech.yunyue.core.mybatis.util.tree.TreeHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import tech.yunyue.sys.role.mapper.RoleModuleMapper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,6 +40,8 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
     private final ModuleResourceMapper moduleResourceMapper;
 
     private final RedisUtil redisUtil;
+
+    private final RoleModuleMapper roleModuleMapper;
 
     /**
      * 查询模块结构树
@@ -73,11 +76,13 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
         } else {
             try {
                 // 删除相关资源
-                QueryWrapper<ModuleResources> deleteWrapper = new QueryWrapper<>();
+                QueryWrapper deleteWrapper = new QueryWrapper<>();
                 deleteWrapper.in("MODULE_ID", ids);
                 this.moduleResourceMapper.delete(deleteWrapper);
                 // 删除模块
                 this.mapper.deleteBatchIds(ids);
+                // 删除模块相关的 授权模块
+                this.roleModuleMapper.delete(deleteWrapper);
             } catch (Exception e) {
                 throw new BizException(BizCodeEnum.MODULE_RESOURCE_USED);
             }
