@@ -73,7 +73,7 @@ public class AuthenService {
                 .setDevice(RequestUtil.getDeivce(request)));
         //生成refresh_token 30天
         saTokenConfig.setTokenName(CommonConstant.REFRESH_TOKEN_KEY);
-        StpUtil.login(CommonConstant.REFRESH_TOKEN_KEY+":"+user.getId(),SaLoginConfig.setExtra("userId", user.getId())
+        StpUtil.login(user.getId(),SaLoginConfig.setExtra("userId", user.getId())
                 .setExtra("account", user.getUsername())
                 .setExtra("version",RequestUtil.getVersion(request))
                 .setDevice(RequestUtil.getDeivce(request))
