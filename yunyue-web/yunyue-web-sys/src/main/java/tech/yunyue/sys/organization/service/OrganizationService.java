@@ -3,9 +3,13 @@ package tech.yunyue.sys.organization.service;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import tech.yunyue.core.constant.CommonConstant;
 import tech.yunyue.core.enums.OrgTypeEnum;
+import tech.yunyue.core.log.annotation.BizLog;
+import tech.yunyue.core.log.base.BizLogEnum;
 import tech.yunyue.core.properties.EvaConfig;
 import tech.yunyue.sys.dict.cache.DictCacheHelper;
 import tech.yunyue.sys.organization.entity.OrganizationEntity;
@@ -24,6 +28,7 @@ import java.util.List;
  * @author S.PKAQ
  */
 @Service
+@Schema(description = "组织管理")
 public class OrganizationService extends StdService<OrganizationMapper, OrganizationEntity> {
     @Autowired
     EvaConfig evaConfig;
@@ -44,6 +49,8 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
      * @param ids
      * @return
      */
+    @BizLog(operateType= BizLogEnum.DELETE,description = "删除组织[{0}]",args = {"param:0"})
+    @Transactional
     public Response deleteOrg(ArrayList<String> ids) {
         Response response = null;
         // 检查是否存在子节点，存在子节点不允许删除
@@ -70,6 +77,8 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
      *
      * @param organization 要 新增/编辑 得组织对象
      */
+    @BizLog(operateType= BizLogEnum.CREATE_UPDATE,description = "保存组织[{0}]",args = {"param:0.id"})
+    @Transactional
     public void editOrg(OrganizationEntity organization) {
         String orgId = organization.getId();
         boolean isNew = StrUtil.isBlank(orgId);
@@ -153,6 +162,7 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
      * @param id 组织ID
      * @return 组织信息
      */
+    @BizLog(operateType= BizLogEnum.QUERY,description = "根据id查询组织")
     public OrganizationEntity getOrg(String id) {
         return this.getById(id);
     }
@@ -163,6 +173,7 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
      * @param organization 属性实体类
      * @return 组织树列表
      */
+    @BizLog(operateType= BizLogEnum.QUERY,description = "查询组织树")
     public List<OrganizationEntity> list(OrganizationEntity organization) {
         return this.mapper.listOrg(organization);
     }
@@ -172,6 +183,8 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
      *
      * @param switchOrg 进行交换的两个实体
      */
+    @BizLog(operateType= BizLogEnum.UPDATE,description = "调整组织顺序")
+    @Transactional
     public void sortOrg(OrganizationEntity[] switchOrg) {
         int i=0;
         for (OrganizationEntity org : switchOrg) {
@@ -187,6 +200,8 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
      *
      * @param organization
      */
+    @BizLog(operateType= BizLogEnum.UPDATE,description = "切换组织可用状态")
+    @Transactional
     public void switchStatus(OrganizationEntity organization) {
         this.mapper.switchStatus(organization);
     }
