@@ -7,15 +7,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import tech.yunyue.core.enums.LockEnumm;
 import tech.yunyue.core.properties.EvaConfig;
 import tech.yunyue.core.threaduser.ThreadUserHelper;
 import tech.yunyue.events.KickUserEvent;
 import tech.yunyue.sys.dict.cache.DictCacheHelper;
 import tech.yunyue.sys.module.entity.ModuleEntityStd;
 import tech.yunyue.sys.module.mapper.ModuleMapper;
-import tech.yunyue.sys.module.mapper.ModuleResourceMapper;
 import tech.yunyue.sys.organization.mapper.OrganizationMapper;
 import tech.yunyue.sys.role.entity.RoleUserEntity;
 import tech.yunyue.sys.role.mapper.RoleUserMapper;
@@ -113,6 +112,8 @@ public class UserService extends StdService<UserMapper, UserEntity> {
         wrapper.in("id", ids);
 
         this.mapper.update(user, wrapper);
+        //踢出被锁定的用户
+        if (LockEnumm.LOCK.getCode().equals(lock)) this.kickOut(ids);
     }
 
     /**
