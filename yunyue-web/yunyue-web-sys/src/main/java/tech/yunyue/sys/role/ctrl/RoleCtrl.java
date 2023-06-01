@@ -60,6 +60,7 @@ public class RoleCtrl extends Ctrl {
     @Operation(summary = "获得角色绑定的菜单列表")
     public Response listModule(@Parameter(name = "roleEntity", description = "包含角色对象属性的查询条件")
                                RoleModuleEntity role) {
+        BizCodeEnum.NULL_ID.assertNotNull(role.getRoleId());
         return success(this.service.listModule(role));
     }
 
