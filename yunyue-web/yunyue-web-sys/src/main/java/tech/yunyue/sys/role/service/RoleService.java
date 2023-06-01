@@ -7,6 +7,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import io.swagger.v3.oas.annotations.media.Schema;
+import org.springframework.transaction.annotation.Transactional;
+import tech.yunyue.core.log.annotation.BizLog;
+import tech.yunyue.core.log.base.BizLogEnum;
 import tech.yunyue.sys.module.entity.ModuleEntityStd;
 import tech.yunyue.sys.module.mapper.ModuleMapper;
 import tech.yunyue.sys.role.entity.RoleEntity;
@@ -33,6 +37,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
+@Schema(description = "角色管理")
 public class RoleService extends StdService<RoleMapper, RoleEntity> {
     /**
      * 权限前缀
@@ -55,6 +60,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
      * @param roleEntity
      * @return
      */
+    @BizLog(operateType= BizLogEnum.QUERY,description = "查询角色列表")
     public List<RoleEntity> listRole(RoleEntity roleEntity) {
         // 查询条件
         QueryWrapper<RoleEntity> wrapper = new QueryWrapper<>(roleEntity);
@@ -68,6 +74,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
      * @param roleEntity
      * @return
      */
+    @BizLog(operateType= BizLogEnum.QUERY,description = "分页查询角色列表")
     public IPage<RoleEntity> listRole(RoleEntity roleEntity, Integer page, Integer pageSize) {
 
         page = null != page ? page : 1;
@@ -97,6 +104,8 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
      *
      * @param ids
      */
+    @BizLog(operateType= BizLogEnum.DELETE,description = "删除角色[{0}]",args = {"param:0"})
+    @Transactional
     public void deleteRole(ArrayList<String> ids) {
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.in("role_id", ids);
@@ -116,6 +125,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
      * @param ids
      * @param lock
      */
+    @BizLog(operateType= BizLogEnum.UPDATE,description = "解锁/锁定角色")
     public void updateRole(ArrayList<String> ids, String lock) {
         RoleEntity role = new RoleEntity();
         role.setLocked(lock);
@@ -131,6 +141,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
      * @param id 角色id
      * @return 符合条件的角色对象
      */
+    @BizLog(operateType= BizLogEnum.QUERY,description = "根据id查询角色")
     public RoleEntity getRole(String id) {
         return this.mapper.selectById(id);
     }
@@ -141,6 +152,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
      * @param role 角色对象
      * @return 角色列表
      */
+    @BizLog(operateType= BizLogEnum.CREATE_UPDATE,description = "保存角色[{0}]",args = {"param:0.id"})
     public void saveRole(RoleEntity role) {
         // 添加 ROLE_ 前缀 并转大写
         if (!role.getCode().startsWith(AUTH_PREFIX)) {
@@ -173,6 +185,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
      * @param roleModule 权限条件
      * @return
      */
+    @BizLog(operateType= BizLogEnum.QUERY,description = "获取角色绑定的所有模块")
     public Map<String, Object> listModule(RoleModuleEntity roleModule) {
 
         boolean isAdmin = ThreadUserHelper.isAdmin();
@@ -224,6 +237,8 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
     /**
      * 保存角色关系表
      */
+    @BizLog(operateType= BizLogEnum.UPDATE,description = "保存角色的模块资源")
+    @Transactional
     public void saveModule(RoleEntity role) {
         QueryWrapper<RoleModuleEntity> wrapper = new QueryWrapper<>();
         wrapper.eq("role_id", role.getId());
@@ -264,6 +279,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
      * @param roleId 权限条件
      * @return
      */
+    @BizLog(operateType= BizLogEnum.QUERY,description = "获取角色绑定的所有用户")
     public Map<String, Object> listUser(String roleId, String deptId) {
         // 获取所有用户
         UserEntity userEntity = new UserEntity();
@@ -298,6 +314,8 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
     /**
      * 保存角色关系表
      */
+    @BizLog(operateType= BizLogEnum.UPDATE,description = "授权角色给用户")
+    @Transactional
     public void saveUser(RoleEntity role) {
         QueryWrapper<RoleUserEntity> wrapper = new QueryWrapper<>();
         wrapper.eq("role_id", role.getId());
