@@ -5,9 +5,13 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import io.swagger.v3.oas.annotations.media.Schema;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import tech.yunyue.core.cache.util.RedisUtil;
 import tech.yunyue.core.constant.CommonConstant;
+import tech.yunyue.core.log.annotation.BizLog;
+import tech.yunyue.core.log.base.BizLogEnum;
 import tech.yunyue.core.util.json.JsonUtil;
 import tech.yunyue.sys.module.entity.ModuleEntityStd;
 import tech.yunyue.sys.module.entity.ModuleResources;
@@ -35,6 +39,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
+@Schema(description = "模块管理")
 public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
 
     private final ModuleResourceMapper moduleResourceMapper;
@@ -58,6 +63,8 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
      * @param ids
      * @return
      */
+    @BizLog(operateType= BizLogEnum.DELETE,description = "删除模块[{0}]",args = {"param:0"})
+    @Transactional
     public void deleteModule(ArrayList<String> ids) {
         // 检查是否存在子节点，存在子节点不允许删除
         QueryWrapper<ModuleEntityStd> oew = new QueryWrapper<>();
@@ -97,6 +104,8 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
      * @param module 要 新增/编辑 得模块对象
      * @return 重新查询模块列表
      */
+    @BizLog(operateType= BizLogEnum.CREATE_UPDATE,description = "保存模块[{0}]",args = {"param:0.id"})
+    @Transactional
     public void editModule(ModuleEntityStd module) {
         String moduleId = module.getId();
 
@@ -264,6 +273,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
      * @param id 模块ID
      * @return 模块信息
      */
+    @BizLog(operateType= BizLogEnum.QUERY,description = "根据id查询模块")
     public ModuleEntityStd getModule(String id) {
         ModuleEntityStd module = this.getById(id);
         // 获取资源信息
@@ -282,6 +292,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
      * @param module 属性实体类
      * @return 模块树列表
      */
+    @BizLog(operateType= BizLogEnum.QUERY,description = "查询模块树")
     public List<ModuleEntityStd> listModuleByAttr(ModuleEntityStd module) {
         //根据名字查询节点信息
         return this.mapper.listModule(module);
@@ -292,6 +303,8 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
      *
      * @param switchModule 进行交换的两个实体
      */
+    @BizLog(operateType= BizLogEnum.UPDATE,description = "调整模块顺序")
+    @Transactional
     public void sortModule(ModuleEntityStd[] switchModule) {
         int i=0;
         for (ModuleEntityStd module : switchModule) {
@@ -329,6 +342,8 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
     /**
      * 父节点被禁用，子节点也会被禁用
      */
+    @BizLog(operateType= BizLogEnum.UPDATE,description = "切换模块可用状态")
+    @Transactional
     public void disableChild(ModuleEntityStd module) {
         //判断是不是禁用
         if (StrUtil.isBlank(module.getStatus()) || LockEnumm.LOCK.getCode().equals(module.getStatus())) {
