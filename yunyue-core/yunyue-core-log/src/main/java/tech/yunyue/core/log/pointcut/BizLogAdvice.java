@@ -88,9 +88,7 @@ public class BizLogAdvice {
             processResult(result, rMap, formatArgs);
         } catch (Exception e){
             //无事务时操作失败不会走AFTER_ROLLBACK监听器 所以手动设置操作失败的记录
-            if(!isTransactional){
-                bizLogEntity.setDescription("【操作失败】" + bizLogEntity.getDescription());
-            }
+            if(!isTransactional) description = "【操作失败】" + description;
             throw e;
         } finally {
             //操作类型为新增 id在新增之后才会回显到入参中 所以需要重新处理一下
