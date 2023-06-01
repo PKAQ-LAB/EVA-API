@@ -1,11 +1,15 @@
 package tech.yunyue.listener;
 
+import cn.dev33.satoken.config.SaTokenConfig;
 import cn.dev33.satoken.dao.SaTokenDao;
 import cn.dev33.satoken.listener.SaTokenListenerForSimple;
+import cn.dev33.satoken.stp.SaLoginConfig;
 import cn.dev33.satoken.stp.StpUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import tech.yunyue.core.constant.CommonConstant;
+import tech.yunyue.core.web.util.RequestUtil;
 import tech.yunyue.events.KickUserEvent;
 
 import java.util.List;
@@ -15,6 +19,8 @@ import java.util.List;
  */
 @Component
 public class SaTokenListener extends SaTokenListenerForSimple {
+    @Autowired
+    SaTokenConfig saTokenConfig;
 
     /**
      * 用户token过期 但是ActivityTimeout还没到期 直接生成一个新token
@@ -38,7 +44,12 @@ public class SaTokenListener extends SaTokenListenerForSimple {
     public void listenerCommit(KickUserEvent event) {
         List<String> idList = (List<String>) event.getSource();
         for (String id : idList) {
+            //删掉access_token
             StpUtil.logout(id);
+            //删掉refresh_token
+            saTokenConfig.setTokenName(CommonConstant.REFRESH_TOKEN_KEY);
+            StpUtil.logout(id);
+            saTokenConfig.setTokenName(CommonConstant.ACCESS_TOKEN_KEY); //改回来
             // 删除redis中用户角色
             SaTokenDao dao = StpUtil.getStpLogic().getSaTokenDao();
             dao.deleteObject(CommonConstant.REDIS_USER_ROLES_PREFIX_KEY+id);
