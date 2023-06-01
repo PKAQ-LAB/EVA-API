@@ -6,9 +6,12 @@ import cn.hutool.crypto.digest.BCrypt;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import tech.yunyue.core.enums.LockEnumm;
+import tech.yunyue.core.log.annotation.BizLog;
+import tech.yunyue.core.log.base.BizLogEnum;
 import tech.yunyue.core.properties.EvaConfig;
 import tech.yunyue.core.threaduser.ThreadUserHelper;
 import tech.yunyue.events.KickUserEvent;
@@ -35,8 +38,10 @@ import java.util.*;
  * @author: S.PKAQ
  * @Datetime: 2018/3/30 0:00
  */
+
 @Service
 @AllArgsConstructor
+@Schema(description = "用户管理")
 public class UserService extends StdService<UserMapper, UserEntity> {
 
     private final OrganizationMapper organizationMapper;
@@ -58,6 +63,7 @@ public class UserService extends StdService<UserMapper, UserEntity> {
      * @param passwordVO
      * @return
      */
+    @BizLog(operateType = BizLogEnum.UPDATE, description = "修改密码")
     public boolean repwd(PasswordVO passwordVO) {
         //TODO 获取用户ID
         UserEntity userEntity = this.mapper.selectById(passwordVO.getUserId());
@@ -78,6 +84,7 @@ public class UserService extends StdService<UserMapper, UserEntity> {
      * @param userEntity
      * @return
      */
+    @BizLog(operateType = BizLogEnum.QUERY, description = "分页查询用户列表")
     public IPage<UserEntity> listUser(UserEntity userEntity, Integer page, Integer size) {
         page = null != page ? page : 1;
         size = null != size ? size : 10;
@@ -95,6 +102,7 @@ public class UserService extends StdService<UserMapper, UserEntity> {
      * @param userEntity
      * @return
      */
+    @BizLog(operateType = BizLogEnum.QUERY, description = "查询用户列表")
     public List<UserEntity> listUser(UserEntity userEntity) {
         return this.list(userEntity);
     }
@@ -105,6 +113,7 @@ public class UserService extends StdService<UserMapper, UserEntity> {
      * @param ids
      * @param lock
      */
+    @BizLog(operateType = BizLogEnum.UPDATE, description = "解锁/锁定用户")
     public void updateUser(ArrayList<String> ids, String lock) {
         UserEntity user = new UserEntity();
         user.setLocked(lock);
@@ -122,6 +131,7 @@ public class UserService extends StdService<UserMapper, UserEntity> {
      * @param id 用户id
      * @return 符合条件的用户对象
      */
+    @BizLog(operateType = BizLogEnum.QUERY, description = "根据id查询用户")
     public UserEntity getUser(String id) {
         UserEntity userEntity = new UserEntity();
         userEntity.setId(id);
@@ -134,6 +144,7 @@ public class UserService extends StdService<UserMapper, UserEntity> {
      * @param user 用户对象
      * @return 用户列表
      */
+    @BizLog(operateType = BizLogEnum.CREATE_UPDATE, description = "保存用户记录[{0}]",args = {"param:0.id"})
     public void saveUser(UserEntity user) {
         // 用户资料发生修改后 重新生成密码
         // 这里传递过来的密码是进行md5加密后的
@@ -216,6 +227,7 @@ public class UserService extends StdService<UserMapper, UserEntity> {
      *
      * @param user
      */
+    @BizLog(operateType = BizLogEnum.UPDATE, description = "保存用户权限")
     public void saveRoles(UserEntity user) {
         // 保存权限
         if (CollUtil.isNotEmpty(user.getRoles())) {
