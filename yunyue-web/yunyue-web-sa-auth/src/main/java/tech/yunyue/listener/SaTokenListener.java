@@ -1,9 +1,11 @@
 package tech.yunyue.listener;
 
+import cn.dev33.satoken.dao.SaTokenDao;
 import cn.dev33.satoken.listener.SaTokenListenerForSimple;
 import cn.dev33.satoken.stp.StpUtil;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import tech.yunyue.core.constant.CommonConstant;
 import tech.yunyue.events.KickUserEvent;
 
 import java.util.List;
@@ -37,6 +39,9 @@ public class SaTokenListener extends SaTokenListenerForSimple {
         List<String> idList = (List<String>) event.getSource();
         for (String id : idList) {
             StpUtil.logout(id);
+            // 删除redis中用户角色
+            SaTokenDao dao = StpUtil.getStpLogic().getSaTokenDao();
+            dao.deleteObject(CommonConstant.REDIS_USER_ROLES_PREFIX_KEY+id);
         }
     }
 }
