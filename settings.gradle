@@ -1,7 +1,6 @@
 rootProject.name = 'yunyue'
 
 include ':yunyue-web:yunyue-web-sys'
-include ':yunyue-web:yunyue-web-auth'
 include ':yunyue-web:yunyue-web-sa-auth'
 
 include ':yunyue-core:yunyue-core-log'
