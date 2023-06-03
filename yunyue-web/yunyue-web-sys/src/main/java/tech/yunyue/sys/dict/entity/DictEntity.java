@@ -36,7 +36,7 @@ public class DictEntity extends StdEntity {
     @Schema(description = "上级节点")
     private String parentId;
 
-    @Schema(description = "是否可用（0 已删除,1 可用）")
+    @Schema(description = "是否可用（0001 不可用,0000 可用）")
     private String status;
 
     @TableField(exist = false)
