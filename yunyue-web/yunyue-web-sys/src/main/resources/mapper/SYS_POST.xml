@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="tech.yunyue.sys.post.mapper.PostMapper">
+
+
+    <!-- 岗位模块分页列表 -->
+    <select id="list" resultType="tech.yunyue.sys.post.vo.PostTableVo">
+        SELECT
+            y.ID,
+            y.`CODE`,
+            y.`TITLE`,
+            y.`LEVEL`,
+            y.PARENT_ID,
+            t.key_value AS `STATUS`,
+            y.`SORTS`,
+            s.TITLE AS PARENT_NAME
+        FROM
+            SYS_POST y
+            LEFT JOIN SYS_POST s ON s.ID = y.PARENT_ID
+            LEFT JOIN v_dict t ON t.key_name = y.`STATUS`
+        <choose>
+            <when test="q != null">
+                <where>
+                    AND y.DELETED = '0000'
+                    AND t.code = #{code}
+                    <if test="q.title!=null and q.title !=''">
+                        AND y.TITLE like concat('%',#{q.title},'%')
+                    </if>
+                    <if test="q.level!=null and q.level !=''">
+                        AND y.LEVEL like concat('%',#{q.level},'%')
+                    </if>
+                </where>
+            </when>
+        </choose>
+        ORDER BY
+        y.SORTS ASC,
+        y.GMT_MODIFY DESC
+    </select>
+
+</mapper>
