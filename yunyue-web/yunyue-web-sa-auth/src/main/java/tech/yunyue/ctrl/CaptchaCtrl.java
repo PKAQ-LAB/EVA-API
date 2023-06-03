@@ -12,6 +12,7 @@ import com.anji.captcha.service.CaptchaService;
 import com.anji.captcha.util.StringUtils;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/captcha")
 @Tag(name = "验证码")
+@Slf4j
 public class CaptchaCtrl {
 
     @Autowired
@@ -34,12 +36,14 @@ public class CaptchaCtrl {
     public ResponseModel get(@RequestBody CaptchaVO data, HttpServletRequest request) {
         assert request.getRemoteHost()!=null;
         data.setBrowserInfo(getRemoteId(request));
+        log.info("获取验证图片");
         return captchaService.get(data);
     }
 
     @PostMapping("/check")
     public ResponseModel check(@RequestBody CaptchaVO data, HttpServletRequest request) {
         data.setBrowserInfo(getRemoteId(request));
+        log.info("前端核对验证码");
         return captchaService.check(data);
     }
 
