@@ -4,12 +4,13 @@ package tech.yunyue.core.upload.util;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.OutputStream;
 import java.util.List;
 
 /**
- * 文件上传接口
+ * 文件上传下载接口
  */
-public interface FileUploadProvider {
+public interface FileProvider {
     /**
      * 上传
      *
@@ -62,4 +63,11 @@ public interface FileUploadProvider {
      * 缓存清除
      */
     void tempClean();
+
+    /**
+     * 下载文件
+     */
+    default void downLoad(String fileName, OutputStream out){};
+
+
 }
