@@ -70,6 +70,11 @@ public class EvaConfig {
     private Tenant tenant;
 
     /**
+     *  是否允许同一账号并发登录 (为true时允许一起登录, 为false时新登录挤掉旧登录)
+     */
+    private Boolean concurrent = true;
+
+    /**
      * 多少分钟内连续失败则限制用户登录[毫秒]
      */
     private long loginFailureTime = 30 * 60 * 1000;

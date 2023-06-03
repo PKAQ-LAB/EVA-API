@@ -92,7 +92,7 @@ public class SaTokenConfigure{
         //token通过heard头传递过来的 则可以加 否则从cookie中获取到token之后会判断前缀 没有前缀则无效 但是satoken存在cookie中时 不存前缀！
 //        config.setTokenPrefix(jwt.getTokenHead());
         config.setIsShare(false);
-        config.setIsConcurrent(false);
+        config.setIsConcurrent(evaConfig.getConcurrent());
 //       过期策略
         config.setTimeout(evaConfig.getJwt().getAlphaTtl());
         config.setAutoRenew(false);  //是否自动设置最后操作时间
