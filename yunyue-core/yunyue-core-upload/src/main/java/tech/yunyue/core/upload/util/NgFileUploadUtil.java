@@ -32,7 +32,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Conditional(DefaultNgCondition.class)
-public class NgFileUploadUtil implements FileUploadProvider {
+public class NgFileUploadUtil implements FileProvider {
 
     private Snowflake snowflake = IdUtil.getSnowflake(SNOW, FLAKE);
 

@@ -32,7 +32,7 @@ import java.util.*;
 @Component
 @Conditional(FastDfsCondition.class)
 @RequiredArgsConstructor
-public class DfsFileUploadUtil implements FileUploadProvider {
+public class DfsFileUploadUtil implements FileProvider {
 
     private Snowflake snowflake = IdUtil.getSnowflake(SNOW, FLAKE);
 
