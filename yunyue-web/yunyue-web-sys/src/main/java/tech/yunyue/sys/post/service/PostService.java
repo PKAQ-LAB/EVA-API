@@ -7,12 +7,15 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import tech.yunyue.core.log.annotation.BizLog;
+import tech.yunyue.core.log.base.BizLogEnum;
 import tech.yunyue.sys.post.bo.PostEditBo;
 import tech.yunyue.sys.post.bo.PostQueryBo;
 import tech.yunyue.sys.post.consts.SYSConstant;
@@ -30,6 +33,7 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor
+@Schema(description = "岗位管理")
 public class PostService {
 
     /**
@@ -58,6 +62,7 @@ public class PostService {
      *
      * @param query 分页参数
      */
+    @BizLog(operateType= BizLogEnum.QUERY,description = "分页查询岗位")
     public List<Tree<String>> list(PostQueryBo query) {
 
         List<PostTableVo> listVo = this.postMapper.list(SYSConstant.COMMON_STATUS_DICT,query);
@@ -87,6 +92,7 @@ public class PostService {
      *
      * @param postEditBo 实体参数
      */
+    @BizLog(operateType= BizLogEnum.CREATE_UPDATE,description = "保存岗位[{0}]",args = {"param:0.id"})
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void edit(PostEditBo postEditBo) {
 
@@ -116,6 +122,7 @@ public class PostService {
     /**
      * 根据id查询详情
      */
+    @BizLog(operateType= BizLogEnum.QUERY,description = "根据id查询岗位")
     public PostDetailVo get(String id) {
 
         PostDetailVo vo = new PostDetailVo();
@@ -139,6 +146,7 @@ public class PostService {
      *
      * @param param 批量传入id
      */
+    @BizLog(operateType= BizLogEnum.DELETE,description = "删除岗位[{0}]",args = {"param:0"})
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void del(ArrayList<String> param) {
         // 限制： 最多只允许同时删除100条
