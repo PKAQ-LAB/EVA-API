@@ -83,7 +83,8 @@ public class BizLogAdvice {
         try {
             result = joinPoint.proceed();
             var response = JsonUtil.toJson(result);
-            bizLogEntity.setResponse(response);
+            //查询接口不需要保存响应
+            if(operatorType.equals(BizLogEnum.QUERY)) bizLogEntity.setResponse(response);
             //根据响应设置操作描述的格式化参数
             processResult(result, rMap, formatArgs);
         } catch (Exception e){
