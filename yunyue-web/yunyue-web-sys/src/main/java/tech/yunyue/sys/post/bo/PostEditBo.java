@@ -49,7 +49,7 @@ public class PostEditBo {
     /**
      * 乐观锁
      */
-    private int revision;
+    private Integer revision;
     /**
      * 备注
      */
