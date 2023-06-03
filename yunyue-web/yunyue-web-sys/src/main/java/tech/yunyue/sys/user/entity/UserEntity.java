@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import tech.yunyue.sys.role.entity.RoleEntity;
 import tech.yunyue.core.mybatis.mvc.entity.mybatis.StdEntity;
 import tech.yunyue.core.mybatis.mvc.entity.mybatis.StdTreeEntity;
@@ -49,7 +50,6 @@ public class UserEntity extends StdEntity {
     private String account;
 
     @Schema(description = "密码")
-    @JsonIgnore
     private String password;
 
     @JsonIgnore
@@ -92,4 +92,12 @@ public class UserEntity extends StdEntity {
     @TableField(exist = false)
     private List<StdTreeEntity> modules = new ArrayList<>();
 
+    @JsonIgnore
+    public String getPassword() {
+        return password;
+    }
+    @JsonProperty
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }
