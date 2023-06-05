@@ -9,10 +9,7 @@ ext {
            "flyway" : "org.flywaydb:flyway-core:${flyway}",
            // database
            "mysql" : "mysql:mysql-connector-java:${mysql}",
-           "oracle" : "com.oracle.database.jdbc:ojdbc10:${oracle}",
-           "orai18n": "cn.easyproject:orai18n:${orai18n}",
            "jaxb_api" : "javax.xml.bind:jaxb-api:${jaxb_api}",
-           "truelicense" : "de.schlichtherle.truelicense:truelicense-core:${truelicense}",
            "jasypt" : "com.github.ulisesbocchio:jasypt-spring-boot-starter:${jasypt}",
            "validation" : "org.springframework.boot:spring-boot-starter-validation",
            "json" : "org.springframework.boot:spring-boot-starter-json",
@@ -26,8 +23,6 @@ ext {
            // AOP
            "aop" : "org.springframework.boot:spring-boot-starter-aop",
            "jdbc" : "org.springframework.boot:spring-boot-starter-jdbc",
-           // security
-           "security" : "org.springframework.boot:spring-boot-starter-security",
            // web
            "web" : "org.springframework.boot:spring-boot-starter-web",
            "undertow" : "org.springframework.boot:spring-boot-starter-undertow",
@@ -49,12 +44,6 @@ ext {
            "ttl": "com.alibaba:transmittable-thread-local:${ttl}",
            // websocket
            "websocket": "org.springframework.boot:spring-boot-starter-websocket",
-           // wxjava
-           "wxmp" : "com.github.binarywang:weixin-java-mp:${weixin}",
-           "wxpay" : "com.github.binarywang:weixin-java-pay:${weixin}",
-            // ali
-           "alipay" : "com.alipay.sdk:alipay-sdk-java:${alipay}",
-           "zxing" : "com.google.zxing:core:${zxing}",
             // bootAdmin
            "bootAdminServer" : "de.codecentric:spring-boot-admin-starter-server:${boot_admin}",
            "bootAdmin" : "de.codecentric:spring-boot-admin-starter-client:${boot_admin}",
