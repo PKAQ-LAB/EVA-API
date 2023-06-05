@@ -146,10 +146,14 @@ public class DictService extends StdService<DictMapper, DictEntity> {
             this.mapper.insert(dictEntity);
             // 保存子表
             if (CollUtil.isNotEmpty(dictEntity.getLines())) {
+                LinkedHashMap<String, String> map = new LinkedHashMap<>(dictEntity.getLines().size());
                 dictEntity.getLines().forEach(item -> {
                     item.setMainId(mainID);
                     dictItemMapper.insert(item);
+                    map.put(item.getKeyName(), item.getKeyValue());
                 });
+                //加到缓存中
+                dictCacheHelper.add(dictEntity.getCode(), map);
             }
         } else {
 
