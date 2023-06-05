@@ -2,7 +2,7 @@ package tech.yunyue.core.upload.ctrl;
 
 import cn.hutool.core.map.MapUtil;
 import tech.yunyue.core.mvc.vo.Response;
-import tech.yunyue.core.upload.util.FileUploadProvider;
+import tech.yunyue.core.upload.util.FileProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/upload")
 public class FileUploadCtrl {
 
-    private final FileUploadProvider fileUploadProvider;
+    private final FileProvider fileProvider;
 
     /**
      * 文件上传
@@ -30,7 +30,7 @@ public class FileUploadCtrl {
      */
     @PostMapping("/file")
     public Response upload(MultipartFile file, String path) {
-        String filePath = fileUploadProvider.upload(file, path);
+        String filePath = fileProvider.upload(file, path);
         return new Response().success(MapUtil.of("pname", filePath));
     }
 }
