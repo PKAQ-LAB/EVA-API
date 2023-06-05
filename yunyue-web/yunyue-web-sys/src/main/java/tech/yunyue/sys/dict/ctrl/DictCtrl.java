@@ -64,7 +64,7 @@ public class DictCtrl extends Ctrl {
     public Response checkUnique(@Parameter(name = "dictEntity", description = "要进行校验的参数")
                                 @RequestBody DictEntity dictEntity) {
         boolean exist = (null != dictEntity && StrUtil.isNotBlank(dictEntity.getCode())) ? this.service.checkUnique(dictEntity) : false;
-        return exist ? this.failure() : this.success();
+        return exist ? failure(BizCodeEnum.DICT_CODE_EXIST) : this.success();
     }
 
     @GetMapping("/del/{id}")
