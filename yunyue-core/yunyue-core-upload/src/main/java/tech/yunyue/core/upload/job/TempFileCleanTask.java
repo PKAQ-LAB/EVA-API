@@ -1,6 +1,6 @@
 package tech.yunyue.core.upload.job;
 
-import tech.yunyue.core.upload.util.FileUploadProvider;
+import tech.yunyue.core.upload.util.FileProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -27,7 +27,7 @@ import java.time.Duration;
 @RequiredArgsConstructor
 public class TempFileCleanTask implements SchedulingConfigurer {
 
-    private final FileUploadProvider fileUploadProvider;
+    private final FileProvider fileProvider;
 
     @Override
     public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
@@ -38,7 +38,7 @@ public class TempFileCleanTask implements SchedulingConfigurer {
          */
         taskRegistrar.addTriggerTask(() -> {
                     log.info("File Tmp Clear ---- > ");
-                    fileUploadProvider.tempClean();
+                    fileProvider.tempClean();
                 },
                 triggerContext -> new PeriodicTrigger(Duration.ofHours(2)).nextExecution(triggerContext));
     }
