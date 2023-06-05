@@ -189,7 +189,14 @@ public class DictService extends StdService<DictMapper, DictEntity> {
      * @return
      */
     public boolean checkUnique(DictEntity dictEntity) {
-        long records = this.mapper.selectCount(new QueryWrapper<>(dictEntity));
+        QueryWrapper<DictEntity> entityWrapper = new QueryWrapper<>();
+        if (StrUtil.isNotBlank(dictEntity.getCode())) {
+            entityWrapper.eq("code", dictEntity.getCode());
+        }
+        if (StrUtil.isNotBlank(dictEntity.getId())) {
+            entityWrapper.ne("id", dictEntity.getId());
+        }
+        long records = this.mapper.selectCount(entityWrapper);
         return records > 0;
     }
 
