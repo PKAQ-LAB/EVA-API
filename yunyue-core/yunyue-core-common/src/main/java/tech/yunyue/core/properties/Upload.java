@@ -11,10 +11,10 @@ public class Upload {
     private String type;
 
     // 上传存储临时路径
-    private String tempPath;
+    private String tempPath = "temp";
 
     // 上传存储路径
-    private String storagePath;
+    private String storagePath = "storage";
 
     // 后缀名集
     private String allowSuffixName;
@@ -22,4 +22,12 @@ public class Upload {
     // DFS服务器地址
     private String serverUrl;
 
+    // MinIO服务器地址
+    private String minioUrl;
+
+    //MinIO服务器的Access key
+    private String minioAccess;
+
+    //MinIO服务器的secret Key
+    private String minioSecret;
 }
