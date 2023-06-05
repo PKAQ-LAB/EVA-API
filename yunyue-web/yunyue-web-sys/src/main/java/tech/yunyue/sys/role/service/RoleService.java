@@ -175,6 +175,9 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
             role.setCode((AUTH_PREFIX + role.getCode()).toUpperCase());
         }
         entityWrapper.eq("code", role.getCode());
+        if (StrUtil.isNotBlank(role.getId())) {
+            entityWrapper.ne("id", role.getId());
+        }
         long records = this.mapper.selectCount(entityWrapper);
         return records > 0;
     }
