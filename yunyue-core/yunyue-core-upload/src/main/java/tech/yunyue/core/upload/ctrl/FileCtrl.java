@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * 文件上传Ctrl
+ * 文件Ctrl
  */
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/upload")
-public class FileUploadCtrl {
+public class FileCtrl {
 
     private final FileProvider fileProvider;
 
