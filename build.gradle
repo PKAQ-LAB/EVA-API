@@ -69,7 +69,9 @@ ext {
             "sa_token_jwt" : "cn.dev33:sa-token-jwt:${sa_token}",
             //行为验证码AJ-Captcha
             "aj_captcha" : "com.anji-plus:captcha:${aj_captcha}",
-            "aj_captcha_starter" : "com.anji-plus:spring-boot-starter-captcha:${aj_captcha}"
+            "aj_captcha_starter" : "com.anji-plus:spring-boot-starter-captcha:${aj_captcha}",
+            //文件上传minIO
+            "minio" : "io.minio:minio:${minio}",
 
 
     ]
