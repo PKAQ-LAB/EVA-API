@@ -70,7 +70,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         Jwt jwtConfig=evaConfig.getJwt();
         var isvalid = false;
-
         String authToken;
         try {
             // 从Storage、请求体、cookie中获取token
@@ -85,19 +84,36 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         if (StrUtil.isNotBlank(authToken)) {
             try {
-                //验证token 是否合法
-                uid = (String) StpUtil.getLoginId();
-                account = (String) StpUtil.getExtra("account");
+                // 该token是否在redis中有对应的新token 旧token已经在redis中被删掉了 所以这边用新token替代
+                boolean isReplace = false;
+                var newToken = dao.get(authToken);
+                if(StrUtil.isNotBlank(newToken)) {
+                    isReplace = true;
+                }
 
-                //判断token是否临期  临期就刷新token
+                //验证token 是否合法
+                uid = (String) (isReplace ? StpUtil.getLoginIdByToken(newToken) : StpUtil.getLoginId());
+                account = (String) (isReplace ? StpUtil.getExtra(newToken,"account") : StpUtil.getExtra("account"));
+
+                //判断token是否临期且不存在上一个临期token  就刷新token
                 long timeout = StpUtil.getTokenTimeout();
-                if(timeout > 0 && timeout < jwtConfig.getThreshold()) {
-                    // 放入缓存、cookie 且通过事件把旧token清除了
-                    StpUtil.login(uid, SaLoginConfig
-                            .setExtra("userId", uid)
-                            .setExtra("account", account)
-                            .setExtra("version", StpUtil.getExtra("version"))
-                            .setDevice(StpUtil.getLoginDevice()));
+                if(!isReplace && timeout > 0 && timeout < jwtConfig.getThreshold()) {
+                    //多个临期token的线程同时到这边 锁住
+                    synchronized (authToken.intern()) {
+                        // 双重监测 redis里面确实没有该token的映射 就生成一个新token
+                        if(!StrUtil.isNotBlank(dao.get(authToken))) {
+                            String device = StpUtil.getLoginDevice();
+                            //允许并发登录时，需手动删除临期token
+                            if(evaConfig.getConcurrent()) StpUtil.logout(uid,device);
+                            StpUtil.login(uid, SaLoginConfig
+                                    .setExtra("userId", uid)
+                                    .setExtra("account", account)
+                                    .setExtra("version", StpUtil.getExtra("version"))
+                                    .setDevice(device));
+                            //在redis中旧token映射到新token上
+                            dao.setObject(authToken, StpUtil.getTokenValue(), timeout);
+                        }
+                    }
                 }
                 isvalid = true;
             } catch (NotLoginException e) {
@@ -109,7 +125,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         //把登录用户信息存到ThreadUser中
         if (isvalid) {
-            StpUtil.getRoleList();
             var tenantId = tenantUtil.getTenantId(uid);
             List<String> roles = (List<String>)dao.getObject(CommonConstant.REDIS_USER_ROLES_PREFIX_KEY+uid);
             logger.info("checking authentication ：" + account);
