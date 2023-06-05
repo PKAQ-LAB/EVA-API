@@ -44,9 +44,9 @@ public class Jwt {
      **/
     private long bravoTtl = 30 * 24 * 60 * 60;
     /**
-     * 续期时间 , 6 小时
+     * 续期时间 , 5分钟
      **/
-    private long threshold = 60 * 60 * 6;
+    private long threshold = 60 * 5;
     /**
      * 可信任域
      **/
