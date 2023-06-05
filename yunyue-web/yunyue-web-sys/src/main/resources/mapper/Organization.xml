@@ -13,7 +13,7 @@
         <result column="STATUS" jdbcType="VARCHAR" property="status"/>
         <collection property="children" column="{id=id}" select="listChildren"/>
     </resultMap>
-    <!--根据条件查询菜单数据-->
+    <!--根据条件查询组织数据-->
     <select id="listOrg" resultMap="BaseResultMap">
         select * from sys_organization
         <where>
@@ -23,23 +23,12 @@
             </if>
             <if test="null != organization">
                 <choose>
+                    <when test="organization.name != '' and organization.name != null">
+                        and name like concat('%',#{organization.name},'%')
+                    </when>
                     <when test="organization.parentId == '' or organization.parentId == null">
                         and (parent_ID = '0' or parent_ID is null)
                     </when>
-                    <when test="organization.status != '' and != organization.status != null">
-                        and status = #{organization.status}
-                    </when>
-                    <when test="organization.name != '' and organization.name != null">
-                        <if test="_databaseId == 'mysql'">
-                            ( name like concat('%',#{organization.name},'%'))
-                        </if>
-                        <if test="_databaseId == 'oracle'">
-                            ( name like '%'||#{organization.name}||'%' )
-                        </if>
-                    </when>
-                    <otherwise>
-                        and (parent_ID = '0' or parent_ID is null)
-                    </otherwise>
                 </choose>
 
             </if>
