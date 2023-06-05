@@ -1,6 +1,7 @@
 package tech.yunyue.core.upload.util;
 
 
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -69,5 +70,12 @@ public interface FileProvider {
      */
     default void downLoad(String fileName, OutputStream out){};
 
+    /**
+     * 判断文件是否为图片
+     */
+    static boolean isPicture(String imgName) {
+        String suffixStr = ".bmp .dib .gif .jfif .jpe .jpeg .jpg .png .tif .tiff .ico";
+        return StringUtils.hasText(imgName) && suffixStr.contains(imgName.substring(imgName.lastIndexOf(".")));
+    }
 
 }
