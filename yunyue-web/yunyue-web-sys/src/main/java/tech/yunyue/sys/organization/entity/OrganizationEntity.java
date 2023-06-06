@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.SqlCondition;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
+import jakarta.validation.constraints.NotBlank;
 import tech.yunyue.core.mybatis.mvc.entity.mybatis.StdEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -60,6 +61,7 @@ public class OrganizationEntity extends StdEntity {
     private String status;
 
     @Schema(description = "类型 (0001-集团、0002-公司、0003部门)")
+    @NotBlank(message = "组织类型不允许为空")
     private String type;
 
     @TableField(exist = false)

@@ -1,6 +1,7 @@
 package tech.yunyue.sys.organization.ctrl;
 
 import cn.hutool.core.util.StrUtil;
+import org.springframework.validation.annotation.Validated;
 import tech.yunyue.sys.organization.entity.OrganizationEntity;
 import tech.yunyue.sys.organization.service.OrganizationService;
 import tech.yunyue.core.enums.BizCodeEnum;
@@ -63,7 +64,7 @@ public class OrganizationCtrl extends Ctrl {
     @PostMapping("/edit")
     @Operation(summary = "编辑组织信息")
     public Response editOrg(@Parameter(name = "organization", description = "组织信息")
-                            @RequestBody OrganizationEntity organization) {
+                            @RequestBody @Validated OrganizationEntity organization) {
         this.service.editOrg(organization);
         return success();
     }
