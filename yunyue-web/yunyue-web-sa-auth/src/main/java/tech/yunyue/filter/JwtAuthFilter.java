@@ -111,7 +111,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     .setExtra("version", StpUtil.getExtra("version"))
                                     .setDevice(device));
                             //在redis中旧token映射到新token上
-                            dao.setObject(authToken, StpUtil.getTokenValue(), timeout);
+                            dao.set(authToken, StpUtil.getTokenValue(), timeout);
                         }
                     }
                 }
