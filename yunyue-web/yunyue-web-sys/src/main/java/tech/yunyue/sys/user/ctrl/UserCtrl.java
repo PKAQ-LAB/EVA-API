@@ -1,6 +1,7 @@
 package tech.yunyue.sys.user.ctrl;
 
 import cn.hutool.core.util.StrUtil;
+import org.springframework.validation.annotation.Validated;
 import tech.yunyue.sys.user.entity.UserEntity;
 import tech.yunyue.sys.user.service.UserService;
 import tech.yunyue.sys.user.vo.PasswordVO;
@@ -60,7 +61,7 @@ public class UserCtrl extends Ctrl {
     @PostMapping("/edit")
     @Operation(summary = "新增/编辑记录")
     public Response save(@Parameter(name = "formdata", description = "用户对象")
-                         @RequestBody UserEntity entity) {
+                         @RequestBody @Validated UserEntity entity) {
         this.service.saveUser(entity);
         return success(null, BizCodeEnum.OPERATE_SUCCESS);
     }

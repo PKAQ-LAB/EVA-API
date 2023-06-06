@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotBlank;
 import tech.yunyue.sys.role.entity.RoleEntity;
 import tech.yunyue.core.mybatis.mvc.entity.mybatis.StdEntity;
 import tech.yunyue.core.mybatis.mvc.entity.mybatis.StdTreeEntity;
@@ -35,6 +36,7 @@ public class UserEntity extends StdEntity {
     private String code;
 
     @Schema(description = "所属部门")
+    @NotBlank(message = "所属组织不允许为空")
     private String deptId;
 
     @Schema(description = "所属部门名称")
