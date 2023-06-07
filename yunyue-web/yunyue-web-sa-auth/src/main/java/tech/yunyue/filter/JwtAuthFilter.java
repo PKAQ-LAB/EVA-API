@@ -30,7 +30,7 @@ import tech.yunyue.core.properties.Jwt;
 import tech.yunyue.core.threaduser.ThreadUser;
 import tech.yunyue.core.threaduser.ThreadUserHelper;
 import tech.yunyue.core.web.util.RequestUtil;
-import tech.yunyue.core.web.util.TenantUtil;
+import tech.yunyue.util.TenantUtil;
 
 import java.io.IOException;
 import java.util.List;
@@ -46,8 +46,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             RequestContextListener.class.getName() + ".REQUEST_ATTRIBUTES";
 
     private final EvaConfig evaConfig;
-
-    private final  TenantUtil tenantUtil;
 
     @Autowired
     @Qualifier("handlerExceptionResolver")
@@ -125,14 +123,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         //把登录用户信息存到ThreadUser中
         if (isvalid) {
-            var tenantId = tenantUtil.getTenantId(uid);
             List<String> roles = (List<String>)dao.getObject(CommonConstant.REDIS_USER_ROLES_PREFIX_KEY+uid);
             logger.info("checking authentication ：" + account);
             if (StrUtil.isNotBlank(account)) {
                 ThreadUser currentUser = new ThreadUser().setUserId(uid)
                         .setUserName(account)
                         .setRoles(roles.toArray(new String[0]))
-                        .setTenantId(tenantId)
+                        .setTenantId(TenantUtil.getTenantId(uid))
+                        .setCompanyTenantId(TenantUtil.getComTenantId(uid))
                         .setModuleId(RequestUtil.getModuleId(request));
                 ThreadUserHelper.setCurrentUser(currentUser);
             }
