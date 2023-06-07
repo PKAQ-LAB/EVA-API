@@ -33,4 +33,10 @@ public class BlackListEntity extends StdEntity {
     @TableField(exist = false)
     private String deleted;
 
+    @TableField(exist = false)
+    private String tenantId;
+
+    @TableField(exist = false)
+    private String companyTenantId;
+
 }

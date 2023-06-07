@@ -39,4 +39,10 @@ public class ModuleEntityStd extends StdTreeEntity {
     @Schema(description = "模块拥有的资源")
     private List<ModuleResources> resources;
 
+    @TableField(exist = false)
+    private String tenantId;
+
+    @TableField(exist = false)
+    private String companyTenantId;
+
 }

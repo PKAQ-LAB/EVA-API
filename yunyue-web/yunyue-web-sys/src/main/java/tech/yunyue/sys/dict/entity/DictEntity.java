@@ -47,4 +47,10 @@ public class DictEntity extends StdEntity {
     @Schema(description = "子节点")
     private List<DictEntity> children;
 
+    @TableField(exist = false)
+    private String tenantId;
+
+    @TableField(exist = false)
+    private String companyTenantId;
+
 }
