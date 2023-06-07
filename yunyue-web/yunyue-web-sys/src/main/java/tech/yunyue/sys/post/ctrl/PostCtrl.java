@@ -48,7 +48,7 @@ public class PostCtrl extends Ctrl {
     @GetMapping("/list")
     @Operation(summary = "根据条件查询岗位管理列表数据")
     public Response list(@Parameter(name = "query", description = "请求参数")
-                         @RequestBody(required = false) PostQueryBo query) {
+                         PostQueryBo query) {
 
         return success(this.postService.list(query));
     }
