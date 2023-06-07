@@ -55,9 +55,13 @@ public abstract class StdEntity implements Entity {
     @TableField(fill = FieldFill.INSERT)
     private String deleted;
 
-    /** 租户号 */
-    @Schema(description = "租户号")
+    /** 集团租户号 */
+    @Schema(description = "集团id 集团数据隔离")
     private String tenantId;
+
+    /** 公司租户号 */
+    @Schema(description = "公司id 公司数据隔离")
+    private String companyTenantId;
 
     /** 乐观锁 */
     @Schema(description = "乐观锁")
