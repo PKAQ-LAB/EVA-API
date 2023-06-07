@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="common">
-    <resultMap id="resultMap" type="tech.yunyue.core.mybatis.mvc.entity.mybatis.StdEntity">
+    <resultMap id="resultMap" type="tech.yunyue.core.mybatis.mvc.entity.mybatis.StdEntity" extends="resultNoTenantMap">
+        <result column="TENANT_ID" jdbcType="VARCHAR" property="tenantId"/>
+        <result column="COMPANY_TENANT_ID" jdbcType="VARCHAR" property="companyTenantId"/>
+    </resultMap>
+    <resultMap id="resultNoTenantMap" type="tech.yunyue.core.mybatis.mvc.entity.mybatis.StdEntity">
         <id column="ID" property="id"/>
         <result column="REMARK" property="remark"/>
         <result column="GMT_CREATE" property="gmtCreate"/>
@@ -9,7 +13,6 @@
         <result column="CREATE_BY" property="createBy"/>
         <result column="MODIFY_BY" property="modifyBy"/>
         <result column="DELETED" jdbcType="VARCHAR" property="deleted"/>
-        <result column="TENANT_ID" jdbcType="VARCHAR" property="tenantId"/>
         <result column="REVISION" jdbcType="VARCHAR" property="revision"/>
     </resultMap>
 </mapper>
