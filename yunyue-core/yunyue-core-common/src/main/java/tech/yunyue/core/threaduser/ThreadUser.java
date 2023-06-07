@@ -19,8 +19,10 @@ public class ThreadUser implements Serializable {
     private String[] roles;
     // 用户拥有的数据权限
     private String dataPermission;
-    // 用户的租户id
+    // 用户的租户id【集团】
     private String tenantId;
+    // 用户的租户id【公司】
+    private String companyTenantId;
     // 当前用户操作的模块id
     private String moduleId;
 }

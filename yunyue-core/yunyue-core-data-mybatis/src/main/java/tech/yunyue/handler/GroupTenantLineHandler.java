@@ -13,8 +13,11 @@ import tech.yunyue.core.threaduser.ThreadUserHelper;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * 集团租户插件
+ */
 @Component
-public class PreTenantLineHandler implements TenantLineHandler {
+public class GroupTenantLineHandler implements TenantLineHandler {
     @Autowired
     EvaConfig evaConfig;
 
@@ -38,7 +41,7 @@ public class PreTenantLineHandler implements TenantLineHandler {
      */
     @Override
     public String getTenantIdColumn() {
-        return evaConfig.getTenant().getTenantIdColumn();
+        return evaConfig.getTenant().getTenantId();
     }
 
     /**
@@ -54,6 +57,7 @@ public class PreTenantLineHandler implements TenantLineHandler {
         String[] tableNames = evaConfig.getTenant().getIgnoreTables();
         if(null == tableNames || tableNames.length == 0) return false;
 
+        //返回true就不拼接
         return Arrays.stream(tableNames).anyMatch(((name) -> name.equalsIgnoreCase(tableName)));
     }
 
@@ -66,6 +70,7 @@ public class PreTenantLineHandler implements TenantLineHandler {
      */
     @Override
     public boolean ignoreInsert(List<Column> columns, String tenantIdColumn) {
+        // 返回true就不拼接
         return TenantLineHandler.super.ignoreInsert(columns, tenantIdColumn);
     }
 }

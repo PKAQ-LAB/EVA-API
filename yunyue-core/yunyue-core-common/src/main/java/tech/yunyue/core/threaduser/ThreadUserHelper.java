@@ -117,13 +117,23 @@ public class ThreadUserHelper {
     }
 
     /**
-     * 获取租户号
+     * 获取集团租户号 所有用户都有
      *
      * @return
      */
     public static String getTenantId() {
         return Optional.ofNullable(userThreadLocal.get())
                 .map(ThreadUser::getTenantId).orElse(null);
+    }
+
+    /**
+     * 获取公司租户号  集团用户无
+     *
+     * @return
+     */
+    public static String getComTenantId() {
+        return Optional.ofNullable(userThreadLocal.get())
+                .map(ThreadUser::getCompanyTenantId).orElse(null);
     }
 
     /**

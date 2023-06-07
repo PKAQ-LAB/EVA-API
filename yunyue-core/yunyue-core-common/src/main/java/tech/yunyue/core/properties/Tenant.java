@@ -16,15 +16,20 @@ public class Tenant {
     /**
      * 是否开启租户模式
      */
-    private boolean enable = false;
+    private boolean enable = true;
     /**
      * 默认租户id
      */
     private String defaultTenantId="0";
     /**
-     * 租户字段名
+     * 集团租户字段名  一定存在
      */
-    private String tenantIdColumn = "TENANT_ID";
+    private String tenantId = "TENANT_ID";
+
+    /**
+     * 公司租户字段名
+     */
+    private String comTenantId = "COMPANY_TENANT_ID";
     /**
      * 不需要拼接租户字段的表
      * <p>
