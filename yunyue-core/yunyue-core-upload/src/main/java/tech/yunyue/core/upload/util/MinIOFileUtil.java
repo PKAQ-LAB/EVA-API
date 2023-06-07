@@ -11,14 +11,11 @@ import io.minio.*;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import tech.yunyue.core.constant.CommonConstant;
 import tech.yunyue.core.enums.BizCodeEnum;
 import tech.yunyue.core.exception.BizException;
 import tech.yunyue.core.properties.EvaConfig;
@@ -45,7 +42,6 @@ public class MinIOFileUtil implements FileProvider {
     private static String storeageImgBucketName;
     private static MinioClient minioClient;
 
-    private final CacheManager cacheManager;
     private final EvaConfig evaConfig;
 
 
@@ -116,8 +112,6 @@ public class MinIOFileUtil implements FileProvider {
             log.error(BizCodeEnum.FILETYPE_NOT_SUPPORTED.getMsg());
             throw new BizException(BizCodeEnum.FILETYPE_NOT_SUPPORTED);
         }
-        // 放入缓存 todo 暂时
-        this.cachePut(newFileName);
         return newFileName;
     }
 
@@ -219,19 +213,7 @@ public class MinIOFileUtil implements FileProvider {
      */
     @Override
     public void tempClean() {
-        Cache cache = cacheManager.getCache(CommonConstant.CACHE_UPLOADFILES);
-        String k = CommonConstant.FILE_CACHE_PREFIX + DateUtil.format(DateUtil.offsetHour(new Date(), -2), "HH");
-        var cacheWrapper = cache.get(k);
-        List<String> tmpFileList = null == cacheWrapper ? null : (List<String>) cacheWrapper.get();
-        if (null == cacheWrapper || CollUtil.isEmpty(tmpFileList)) {
-            return;
-        }
-
-        tmpFileList.stream().forEach(fileName -> {
-            this.removeMinio(temBucketName, fileName);
-        });
-        // 删除完毕 从缓存中移除此key
-        cache.evict(k);
+        // minio桶可以设置自动对象过期 自动删除过期对象
     }
 
     /**
@@ -245,23 +227,6 @@ public class MinIOFileUtil implements FileProvider {
         }catch (Exception e){
             e.printStackTrace();
         }
-    }
-    /**
-     * 把临时文件名放到缓存中
-     */
-    private void cachePut(String fileName) {
-        Cache cache = cacheManager.getCache(CommonConstant.CACHE_UPLOADFILES);
-
-        String k = CommonConstant.FILE_CACHE_PREFIX + DateUtil.format(new Date(), "HH");
-        Cache.ValueWrapper valueWrapper = cache.get(k);
-
-        List<String> tmpFileList = new ArrayList<>();
-        if (null == valueWrapper) {
-            cache.put(k, tmpFileList);
-        } else {
-            tmpFileList = (List<String>) valueWrapper.get();
-        }
-        tmpFileList.add(fileName);
     }
 
     private static String getStorageBuketName(String fileName){
