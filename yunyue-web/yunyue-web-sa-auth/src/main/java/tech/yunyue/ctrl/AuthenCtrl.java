@@ -10,8 +10,10 @@ import com.anji.captcha.model.vo.CaptchaVO;
 import com.anji.captcha.service.CaptchaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import tech.yunyue.core.constant.CommonConstant;
@@ -21,6 +23,7 @@ import tech.yunyue.core.properties.EvaConfig;
 import tech.yunyue.core.threaduser.ThreadUserHelper;
 import tech.yunyue.service.AuthenService;
 
+import java.io.IOException;
 import java.util.Map;
 
 @RestController
@@ -100,14 +103,18 @@ public class AuthenCtrl {
      */
     @PostMapping("/getAlpha")
     @Operation(summary = "刷新token")
-    public Response refreshToken() {
+    public Response refreshToken(HttpServletResponse response) throws IOException {
         String refreshTokenId = "";
         //判断refresh_token是否有效
         try {
             saTokenConfig.setTokenName(CommonConstant.REFRESH_TOKEN_KEY);
             refreshTokenId = (String) StpUtil.getLoginId();
         }catch (NotLoginException e){
-            BizCodeEnum.LOGIN_EXPIRED.newException();
+            // tokne过期 返回401 用户重新登录
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.setContentType("text/plain; charset=utf-8");
+            response.getWriter().print(BizCodeEnum.LOGIN_EXPIRED.getMsg());
+            return null;
         }
 
         String userId = (String)StpUtil.getExtra("userId");
