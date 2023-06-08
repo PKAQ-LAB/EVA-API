@@ -158,19 +158,9 @@ public class UserService extends StdService<UserMapper, UserEntity> {
         if (StrUtil.isNotBlank(user.getDeptId())) {
             var org = organizationMapper.selectById(user.getDeptId());
             user.setDeptName(org.getName());
-
             //设置用户的租户  与所属组织的一样
-            switch (OrgTypeEnum.getByCode(org.getType())) {
-                case GROUP -> user.setTenantId(org.getId());
-                case COMPANY -> {
-                    user.setTenantId(org.getTenantId());
-                    user.setCompanyTenantId(org.getId());
-                }
-                default -> {
-                    user.setTenantId(org.getTenantId());
-                    user.setCompanyTenantId(org.getCompanyTenantId());
-                }
-            }
+            user.setTenantId(org.getTenantId());
+            user.setCompanyTenantId(org.getCompanyTenantId());
         }else{
             //用户不选择部门时 租户则与当前登录用户租户一致
             user.setTenantId(ThreadUserHelper.getTenantId());
