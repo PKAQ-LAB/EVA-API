@@ -1,5 +1,6 @@
 package tech.yunyue.core.properties;
 
+import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -92,7 +93,15 @@ public class EvaConfig {
     /**
      * 当前系统是否是平台
      */
-    private boolean platform = true;
+    private boolean platform = false;
+
+    //静态变量 给xml使用：${@tech.yunyue.core.properties.EvaConfig@staticPlatform}
+    private static boolean staticPlatform;
+
+    @PostConstruct
+    public void init(){
+        staticPlatform = platform;
+    }
 
     public BizLog getBizlog() {
         return null == this.bizlog ? new BizLog() : bizlog;
