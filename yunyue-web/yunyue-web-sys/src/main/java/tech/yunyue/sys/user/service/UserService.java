@@ -214,7 +214,7 @@ public class UserService extends StdService<UserMapper, UserEntity> {
      * @return
      */
     public List<ModuleEntityStd> fetch(String uid) {
-        List<ModuleEntityStd> moduleEntity = this.moduleMapper.getRoleModuleByUserId(evaConfig.isPlatform(),uid);
+        List<ModuleEntityStd> moduleEntity = this.moduleMapper.getRoleModuleByUserId(uid);
         List<ModuleEntityStd> treeModule = TreeHelper.bulid(moduleEntity);
 
         BizCodeEnum.PERMISSION_EXPIRED.assertNotBlank(treeModule);

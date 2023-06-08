@@ -34,7 +34,7 @@
     <select id="getRoleModuleByUserId" resultMap="NoChildrenResultMap">
         select
         case when path = '/sys/organization'
-        then if(#{platform},SUBSTRING_INDEX(M.name,',',1),SUBSTRING_INDEX(M.name,',',-1))
+        then if(${@tech.yunyue.core.properties.EvaConfig@staticPlatform},SUBSTRING_INDEX(M.name,',',1),SUBSTRING_INDEX(M.name,',',-1))
         else name end name,
         M.*,
         MR.id R_ID,MR.*
@@ -46,7 +46,11 @@
     </select>
     <!--根据条件查询 拥有权限的 菜单数据-->
     <select id="listGrantedModule" resultMap="BaseResultMap">
-        select * from v_granted_module m
+        select
+        case when m.path = '/sys/organization'
+        then if(${@tech.yunyue.core.properties.EvaConfig@staticPlatform},SUBSTRING_INDEX(m.name,',',1),SUBSTRING_INDEX(m.name,',',-1))
+        else name end name, m.*
+        from v_granted_module m
         <where>
             <if test="null != roleNames and roleNames.length > 0">
                 and role_Code in
@@ -89,6 +93,9 @@
     <!--根据条件查询菜单数据-->
     <select id="listModule" resultMap="BaseResultMap">
         select
+        case when SM.path = '/sys/organization'
+        then if(${@tech.yunyue.core.properties.EvaConfig@staticPlatform},SUBSTRING_INDEX(SM.name,',',1),SUBSTRING_INDEX(SM.name,',',-1))
+        else name end name,
         SM.*,
         SMR.ID R_ID,
         SMR.MODULE_ID,
@@ -128,6 +135,9 @@
     <!-- 根据parentId查询子节点数据-->
     <select id="listChildren" resultMap="BaseResultMap">
         select
+        case when SM.path = '/sys/organization'
+        then if(${@tech.yunyue.core.properties.EvaConfig@staticPlatform},SUBSTRING_INDEX(SM.name,',',1),SUBSTRING_INDEX(SM.name,',',-1))
+        else name end name,
         SM.*,
         SMR.ID R_ID,
         SMR.MODULE_ID,
