@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import tech.yunyue.core.enums.LockEnumm;
+import tech.yunyue.core.enums.OrgTypeEnum;
 import tech.yunyue.core.log.annotation.BizLog;
 import tech.yunyue.core.log.base.BizLogEnum;
 import tech.yunyue.core.properties.EvaConfig;
@@ -153,9 +154,27 @@ public class UserService extends StdService<UserMapper, UserEntity> {
             pwd = BCrypt.hashpw(pwd);
             user.setPassword(pwd);
         }
-        //设置部门名称
+        //设置部门名称与租户信息
         if (StrUtil.isNotBlank(user.getDeptId())) {
-            user.setDeptName(organizationMapper.selectById(user.getDeptId()).getName());
+            var org = organizationMapper.selectById(user.getDeptId());
+            user.setDeptName(org.getName());
+
+            //设置用户的租户  与所属组织的一样
+            switch (OrgTypeEnum.getByCode(org.getType())) {
+                case GROUP -> user.setTenantId(org.getId());
+                case COMPANY -> {
+                    user.setTenantId(org.getTenantId());
+                    user.setCompanyTenantId(org.getId());
+                }
+                default -> {
+                    user.setTenantId(org.getTenantId());
+                    user.setCompanyTenantId(org.getCompanyTenantId());
+                }
+            }
+        }else{
+            //用户不选择部门时 租户则与当前登录用户租户一致
+            user.setTenantId(ThreadUserHelper.getTenantId());
+            user.setCompanyTenantId(ThreadUserHelper.getComTenantId());
         }
 
         // 新增手工生成主键
@@ -171,6 +190,11 @@ public class UserService extends StdService<UserMapper, UserEntity> {
             String avatar = oldUser.getAvatar();
             if (StrUtil.isNotBlank(avatar) && !avatar.equals(user.getAvatar())) {
                 fileUploadProvider.delFromStorage(avatar);
+            }
+            //修改用户时不能修改用户所属公司和集团
+            if(!Objects.equals(oldUser.getTenantId(), user.getTenantId())
+                    || !Objects.equals(oldUser.getCompanyTenantId(), user.getCompanyTenantId())){
+                BizCodeEnum.NO_CHANGE_COMPANY.newException();
             }
         }
 
