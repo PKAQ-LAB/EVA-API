@@ -36,7 +36,6 @@ public class UserEntity extends StdEntity {
     private String code;
 
     @Schema(description = "所属部门")
-    @NotBlank(message = "所属组织不允许为空")
     private String deptId;
 
     @Schema(description = "所属部门名称")
@@ -52,6 +51,7 @@ public class UserEntity extends StdEntity {
     private String account;
 
     @Schema(description = "密码")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @JsonIgnore
@@ -93,13 +93,4 @@ public class UserEntity extends StdEntity {
     @Schema(description = "用户拥有的模块")
     @TableField(exist = false)
     private List<StdTreeEntity> modules = new ArrayList<>();
-
-    @JsonIgnore
-    public String getPassword() {
-        return password;
-    }
-    @JsonProperty
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }
