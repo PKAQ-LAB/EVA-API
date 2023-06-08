@@ -1,5 +1,6 @@
 package tech.yunyue.util;
 
+import cn.hutool.json.JSONUtil;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -70,6 +71,6 @@ public class TenantUtil {
                 return userEntity;
             }
         }
-        return JsonUtil.parse(userStr, UserEntity.class);
+        return JSONUtil.toBean(userStr, UserEntity.class);
     }
 }
