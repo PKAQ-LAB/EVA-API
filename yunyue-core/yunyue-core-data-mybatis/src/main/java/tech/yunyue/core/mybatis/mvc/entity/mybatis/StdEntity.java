@@ -2,6 +2,7 @@ package tech.yunyue.core.mybatis.mvc.entity.mybatis;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -57,10 +58,12 @@ public abstract class StdEntity implements Entity {
 
     /** 集团租户号 */
     @Schema(description = "集团id 集团数据隔离")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String tenantId;
 
     /** 公司租户号 */
     @Schema(description = "公司id 公司数据隔离")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String companyTenantId;
 
     /** 乐观锁 */
