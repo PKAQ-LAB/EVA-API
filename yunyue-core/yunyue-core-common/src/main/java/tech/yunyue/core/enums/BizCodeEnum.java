@@ -87,6 +87,8 @@ public enum BizCodeEnum implements BizAssert {
     NULL_PARAM_ID("所需记录 [ {0} ] 为空值", "4312"),
     ORG_TYPE_INVALID("[{0}]不能添加[{1}] ", "4313"),
     DICT_CODE_EXIST("字典编码已经存在", "4314"),
+    ORG_TYPE_NO_EXIST("所属组织类型[{0}]没有定义，请稍后再试", "4315"),
+    NO_CHANGE_ORG("不能修改所属组织", "4316"),
 
     /**
      * 上传相关 430x ~ 432x

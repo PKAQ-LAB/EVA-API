@@ -184,7 +184,7 @@ public class UserService extends StdService<UserMapper, UserEntity> {
             //修改用户时不能修改用户所属公司和集团
             if(!Objects.equals(oldUser.getTenantId(), user.getTenantId())
                     || !Objects.equals(oldUser.getCompanyTenantId(), user.getCompanyTenantId())){
-                BizCodeEnum.NO_CHANGE_COMPANY.newException();
+                BizCodeEnum.NO_CHANGE_ORG.newException();
             }
         }
 
