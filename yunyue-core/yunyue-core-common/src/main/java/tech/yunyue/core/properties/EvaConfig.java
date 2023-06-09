@@ -93,7 +93,7 @@ public class EvaConfig {
     /**
      * 当前系统是否是平台
      */
-    private boolean platform = false;
+    private boolean platform = true;
 
     //静态变量 给xml使用：${@tech.yunyue.core.properties.EvaConfig@staticPlatform}
     private static boolean staticPlatform;
