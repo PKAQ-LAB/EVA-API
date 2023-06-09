@@ -201,11 +201,15 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
         if (isAdmin) {
             moduleList = this.moduleMapper.listModule(moduleEntity);
         } else {
-            moduleList = this.moduleMapper.listGrantedModule(null, moduleEntity, ThreadUserHelper.getUserRoles());
+			// 根据用户拥有角色返回模块资源
+            var roleList = ThreadUserHelper.getUserRoles();
+            if(Objects.nonNull(roleList) && roleList.length > 0){
+                moduleList = this.moduleMapper.listGrantedModule(null, moduleEntity, roleList);
+            }
         }
 
         //获取已选且是叶子节点的模块
-        List<RoleModuleEntity> roleModuleList = this.roleModuleMapper.roleModuleList(roleModule);
+        List<RoleModuleEntity> roleModuleList = CollectionUtil.isEmpty(moduleList) ? Collections.emptyList() : this.roleModuleMapper.roleModuleList(roleModule);
         // 已选的moduleId
         HashSet<String> checked = null;
         // 已选的资源权限
