@@ -37,4 +37,11 @@ public interface DictMapper extends BaseMapper<DictEntity> {
      * @return
      */
     DictEntity getDict(String id);
+
+    /**
+     * 根据code查询子节点数据
+     * @param code
+     * @return
+     */
+    List<DictEntity> listChildrenByCode(String code);
 }

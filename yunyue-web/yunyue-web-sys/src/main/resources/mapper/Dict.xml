@@ -42,4 +42,12 @@
         where parent_ID = #{id}
           and status != '0001' and deleted = '0000'
     </select>
+
+    <!-- 根据code查询子节点数据-->
+    <select id="listChildrenByCode" resultMap="LineResultMap">
+        select *
+        from sys_dict
+        where PARENT_ID = (select id from sys_dict where code = #{code})
+          and status != '0001' and deleted = '0000'
+    </select>
 </mapper>

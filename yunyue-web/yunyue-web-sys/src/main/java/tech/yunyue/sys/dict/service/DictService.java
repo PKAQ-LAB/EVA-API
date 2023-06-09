@@ -228,4 +228,9 @@ public class DictService extends StdService<DictMapper, DictEntity> {
         this.init(dictMap);
     }
 
+    @BizLog(operateType = BizLogEnum.QUERY,description = "查询字典")
+    public List<DictEntity> selectDict(String code) {
+        return this.mapper.listChildrenByCode(code);
+    }
+
 }
