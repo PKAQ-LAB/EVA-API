@@ -23,11 +23,13 @@ public final class JwtUserFactory {
                 String.valueOf(user.getId()),
                 user.getAccount(),
                 user.getPassword(),
+                LockEnumm.LOCK.getCode().equals(user.getLocked()),
                 user.getDeptId(),
                 user.getDeptName(),
                 user.getName(),
                 user.getNickName(),
-                LockEnumm.LOCK.getCode().equals(user.getLocked()),
+                user.getTenantId(),
+                user.getCompanyTenantId(),
                 mapToGrantedAuthorities(user.getRoles())
         );
     }

@@ -18,6 +18,7 @@ import tech.yunyue.core.log.base.BizLogEntity;
 import tech.yunyue.core.log.util.BizLogUtil;
 import tech.yunyue.core.mvc.vo.Response;
 import tech.yunyue.core.properties.EvaConfig;
+import tech.yunyue.core.util.json.JsonUtil;
 import tech.yunyue.core.web.util.RequestUtil;
 import tech.yunyue.domain.JwtUserDetail;
 import tech.yunyue.domain.JwtUserFactory;
@@ -83,7 +84,8 @@ public class AuthenService {
         // 将用户角色保存到redis中
         SaTokenDao redisDao = StpUtil.getStpLogic().getSaTokenDao();
         redisDao.setObject(CommonConstant.REDIS_USER_ROLES_PREFIX_KEY+user.getId(), new ArrayList<String>(user.getAuthorities().keySet()), evaConfig.getJwt().getBravoTtl());
-
+        // 将用户信息保存到redis中
+        redisUtil.setForTimeMIN(CommonConstant.REDIS_USER_INFO_PREFIX_KEY+user.getId(), JsonUtil.toJson(user), evaConfig.getJwt().getBravoTtl() / 60);
 
         //登录日志
         BizLogEntity bizLogEntity = new BizLogEntity();
@@ -152,8 +154,8 @@ public class AuthenService {
      * 校验用户是否可用
      */
     private void check(JwtUserDetail user) {
-        if (!user.isAccountNonLocked()) {
-            BizCodeEnum.ACCOUNT_LOCKED.assertNotNull(user);
+        if (user.isAccountNonLocked()) {
+            BizCodeEnum.ACCOUNT_LOCKED.newException();
         }
     }
 }

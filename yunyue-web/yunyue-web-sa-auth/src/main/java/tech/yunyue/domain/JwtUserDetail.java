@@ -1,6 +1,7 @@
 package tech.yunyue.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.Map;
@@ -12,6 +13,7 @@ import java.util.Map;
  * @Datetime: 2018/4/24 23:14
  */
 @Data
+@AllArgsConstructor
 public class JwtUserDetail{
     /**
      * 用户ID
@@ -46,25 +48,16 @@ public class JwtUserDetail{
      * 用户昵称
      **/
     private String nickName;
+    /** 集团租户号 */
+    private String tenantId;
+    /** 公司租户号 */
+    private String companyTenantId;
     /**
      * 权限集合
      **/
     private final Map<String,GrantedRoles> authorities;
 
-    public JwtUserDetail(String id, String account, String password, String deptId, String deptName, String name, String nickName, boolean accountNonLocked, Map<String,GrantedRoles> authorities) {
-        this.id = id;
-        this.account = account;
-        this.password = password;
-        this.deptId = deptId;
-        this.deptName = deptName;
-        this.name = name;
-        this.nickName = nickName;
-        this.accountNonLocked = !accountNonLocked;
-        this.authorities = authorities;
-    }
-
     public String getUsername() {
         return this.account;
     }
-
 }
