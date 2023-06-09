@@ -1,4 +1,4 @@
-package tech.yunyue.param.bo;
+package tech.yunyue.sys.param.bo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;

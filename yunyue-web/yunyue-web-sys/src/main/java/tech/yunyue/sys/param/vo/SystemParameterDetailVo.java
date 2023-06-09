@@ -1,4 +1,4 @@
-package tech.yunyue.param.vo;
+package tech.yunyue.sys.param.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;

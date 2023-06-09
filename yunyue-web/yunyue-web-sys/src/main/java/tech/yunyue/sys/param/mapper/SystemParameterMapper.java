@@ -1,11 +1,11 @@
-package tech.yunyue.param.mapper;
+package tech.yunyue.sys.param.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import tech.yunyue.param.bo.SystemParameterEditBo;
-import tech.yunyue.param.entity.SystemParameterEntity;
-import tech.yunyue.param.vo.SystemParameterDetailVo;
+import tech.yunyue.sys.param.bo.SystemParameterEditBo;
+import tech.yunyue.sys.param.entity.SystemParameterEntity;
+import tech.yunyue.sys.param.vo.SystemParameterDetailVo;
 
 import java.util.List;
 

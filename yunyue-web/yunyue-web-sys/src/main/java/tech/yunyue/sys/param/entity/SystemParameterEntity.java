@@ -1,4 +1,4 @@
-package tech.yunyue.param.entity;
+package tech.yunyue.sys.param.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;

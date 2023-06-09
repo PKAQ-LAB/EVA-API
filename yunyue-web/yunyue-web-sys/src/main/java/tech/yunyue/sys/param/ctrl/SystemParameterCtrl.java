@@ -1,4 +1,4 @@
-package tech.yunyue.param.ctrl;
+package tech.yunyue.sys.param.ctrl;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -8,8 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import tech.yunyue.core.mvc.ctrl.Ctrl;
 import tech.yunyue.core.mvc.vo.Response;
-import tech.yunyue.param.bo.SystemParameterEditBo;
-import tech.yunyue.param.service.SystemParameterService;
+import tech.yunyue.sys.param.bo.SystemParameterEditBo;
+import tech.yunyue.sys.param.service.SystemParameterService;
 
 import java.util.List;
 

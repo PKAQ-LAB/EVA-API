@@ -1,4 +1,4 @@
-package tech.yunyue.param.service;
+package tech.yunyue.sys.param.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -9,10 +9,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import tech.yunyue.core.log.annotation.BizLog;
 import tech.yunyue.core.log.base.BizLogEnum;
-import tech.yunyue.param.bo.SystemParameterEditBo;
-import tech.yunyue.param.entity.SystemParameterEntity;
-import tech.yunyue.param.mapper.SystemParameterMapper;
-import tech.yunyue.param.vo.SystemParameterDetailVo;
+import tech.yunyue.sys.param.bo.SystemParameterEditBo;
+import tech.yunyue.sys.param.entity.SystemParameterEntity;
+import tech.yunyue.sys.param.mapper.SystemParameterMapper;
+import tech.yunyue.sys.param.vo.SystemParameterDetailVo;
 
 import java.util.List;
 import java.util.stream.Collectors;
