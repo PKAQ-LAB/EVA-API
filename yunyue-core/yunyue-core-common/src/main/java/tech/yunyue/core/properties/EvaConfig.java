@@ -96,7 +96,7 @@ public class EvaConfig {
     private boolean platform = true;
 
     //静态变量 给xml使用：${@tech.yunyue.core.properties.EvaConfig@staticPlatform}
-    private static boolean staticPlatform;
+    public static boolean staticPlatform;
 
     @PostConstruct
     public void init(){
