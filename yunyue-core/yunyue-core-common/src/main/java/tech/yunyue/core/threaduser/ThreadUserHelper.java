@@ -137,6 +137,14 @@ public class ThreadUserHelper {
     }
 
     /**
+     * 返回当前用户的组织id 即公司用户返回公司id  集团用户返回集团id
+     * @return
+     */
+    public static String getOrgTenantId() {
+        return Optional.ofNullable(getComTenantId()).orElse(getTenantId());
+    }
+
+    /**
      * 当前用户操作的模块id
      *
      * @return

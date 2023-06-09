@@ -11,7 +11,12 @@ import tech.yunyue.core.enums.OrgTypeEnum;
 import tech.yunyue.core.log.annotation.BizLog;
 import tech.yunyue.core.log.base.BizLogEnum;
 import tech.yunyue.core.properties.EvaConfig;
+import tech.yunyue.core.threaduser.ThreadUserHelper;
+import tech.yunyue.core.util.json.JsonUtil;
+import tech.yunyue.param.entity.SystemParameterEntity;
+import tech.yunyue.param.mapper.SystemParameterMapper;
 import tech.yunyue.sys.dict.cache.DictCacheHelper;
+import tech.yunyue.sys.dict.service.DictService;
 import tech.yunyue.sys.organization.entity.OrganizationEntity;
 import tech.yunyue.sys.organization.mapper.OrganizationMapper;
 import tech.yunyue.core.enums.BizCodeEnum;
@@ -21,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 组织信息Service
@@ -34,6 +40,12 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
     EvaConfig evaConfig;
     @Autowired
     DictCacheHelper dictCacheHelper;
+
+    @Autowired
+    DictService dictService;
+
+    @Autowired
+    SystemParameterMapper systemParameterMapper;
     /**
      * 查询组织结构树
      *
@@ -86,16 +98,29 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
         // 获取上级节点
         String pid = organization.getParentId();
         String root = "0";
+        //集团/公司用户的组织模块数据为空  新建的公司/部门需要手动加上父节点（集团/公司）
+        if(!evaConfig.isPlatform() && isNew && StrUtil.isBlank(pid)){
+            OrgTypeEnum orgTypeEnum = OrgTypeEnum.getByCode(organization.getType());
+            switch (orgTypeEnum) {
+                // 集团-->报错 非平台不能创建集团
+                //公司的pid只能是集团id
+                case COMPANY ->  pid = ThreadUserHelper.getTenantId();
+                //公司用户创建部门，pid为公司id  集团用户创建部门，pid为集团id
+                case DEPARTMENT -> pid = ThreadUserHelper.getOrgTenantId();
+            }
+            organization.setParentId(pid);
+        }
+        OrganizationEntity parentOrg = null;
         if (!root.equals(pid) && StrUtil.isNotBlank(pid)) {
             // 查询新父节点信息
-            OrganizationEntity parentOrg = this.getOrg(pid);
+            parentOrg = this.getOrg(pid);
             //子节点的类型不能大于父节点
             if (OrgTypeEnum.isLeapFrogging(parentOrg.getType(),organization.getType())) {
                 String code= CommonConstant.ORGANIZATION_TYPE_CODE;
                 BizCodeEnum.ORG_TYPE_INVALID.newException(dictCacheHelper.get(code,parentOrg.getType()),dictCacheHelper.get(code,organization.getType()));
             }
             // 设置当前节点信息  当前若是新增 则只要把自己的id加在path后即可
-            String parentPath = parentOrg.getPath() + "/" + (StrUtil.isNotBlank(orgId) ? orgId : "");
+            String parentPath = parentOrg.getPath() + "/" + (isNew ? "" : orgId);
             organization.setPath(parentPath);
             String pathName = parentOrg.getPathName() + "/" + organization.getName();
             organization.setPathName(pathName);
@@ -105,34 +130,58 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
             if(!evaConfig.isPlatform()) BizCodeEnum.PERMISSION_EXPIRED.newException();
             // 父节点为空, 根节点 设置为非叶子
             pid = root;
-            organization.setPath(orgId);
+            organization.setPath(isNew ? "" : orgId);
             organization.setParentId(pid);
             organization.setIsleaf(false);
             organization.setPathName(organization.getName());
         }
 
-        // 检查原父节点是否还存在子节点 不存在设置leaf为false
-        OrganizationEntity orginNode = this.mapper.getParentById(orgId);
-        boolean isChangePa = false;
-        // 如果更换了父节点 重新确定原父节点的 leaf属性，以及所修改节点的orders属性
-        if (null != orginNode && !pid.equals(orginNode.getId())) {
+        // 检查原父节点是否还存在子节点 不存在设置leaf为false 以及判断新旧组织的租户信息是否一致
+        OrganizationEntity oldOrgin = isNew ? null : this.mapper.selectById(orgId);
+        boolean isChangePa = !isNew && !Objects.equals(oldOrgin.getParentId(), pid);
+        if (isChangePa) {
+            // 修改父节点后 重新确定原父节点的 leaf属性
+            OrganizationEntity orginNode = this.mapper.getParentById(orgId);
             int brothers = this.mapper.countPrantLeaf(orginNode.getId()) - 1;
             if (brothers < 1) {
                 orginNode.setIsleaf(true);
                 this.updateOrg(orginNode);
             }
-            isChangePa = true;
         }
         //新增或者更换了父节点则设置orders属性
         if (isNew || isChangePa) {
             organization.setOrders(this.mapper.countPrantLeaf(pid));
+            if(pid != root) {
+                organization.setTenantId(parentOrg.getTenantId());
+                organization.setCompanyTenantId(parentOrg.getCompanyTenantId());
+            }
+            // 修改父节点后 判断新旧组织的租户信息是否一致
+            if(isChangePa && (!Objects.equals(oldOrgin.getTenantId(), organization.getTenantId())
+                                || !Objects.equals(oldOrgin.getCompanyTenantId(), organization.getCompanyTenantId()))){
+                BizCodeEnum.NO_CHANGE_ORG.newException();
+            }
         }
-        OrganizationEntity oldOrgin = isNew ? null : this.mapper.selectById(orgId);
+
         this.merge(organization);
 
         if (isNew) {
+            orgId = organization.getId();
             //新增 把path路径加上自己id
-            organization.setPath(organization.getPath() + organization.getId());
+            organization.setPath(organization.getPath() + orgId);
+            //新增集团时 复制一份业务字典到系统参数中
+            if(Objects.equals(organization.getType(),OrgTypeEnum.GROUP.getCode())){
+                SystemParameterEntity paramEntity = new SystemParameterEntity();
+                paramEntity.setCode(CommonConstant.BIZ_DICT_PARAMETER_CODE);
+                paramEntity.setTenantId(orgId);
+                // todo 拿到字典  之后再确定展示格式
+                paramEntity.setCodeVal(JsonUtil.toJson(dictService.selectDict(CommonConstant.BIZ_DICT_CODE)));
+                systemParameterMapper.insert(paramEntity);
+            }
+            //公司和集团的租户id是自己
+            switch (OrgTypeEnum.getByCode(organization.getType())) {
+                case GROUP -> organization.setTenantId(orgId);
+                case COMPANY ->  organization.setCompanyTenantId(orgId);
+            }
             this.mapper.updateById(organization);
         } else {
             //刷新子节点相关数据

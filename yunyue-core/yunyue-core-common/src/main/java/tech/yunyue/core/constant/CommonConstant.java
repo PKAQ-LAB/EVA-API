@@ -72,4 +72,9 @@ public interface CommonConstant {
     // 把用户保存在redis中的前缀
     String REDIS_USER_INFO_PREFIX_KEY = "USER_INFO:";
 
+    //业务字典的code
+    String BIZ_DICT_CODE = "biz";
+    //业务字典存在系统参数中的code
+    String BIZ_DICT_PARAMETER_CODE = "dict_" + BIZ_DICT_CODE;
+
 }

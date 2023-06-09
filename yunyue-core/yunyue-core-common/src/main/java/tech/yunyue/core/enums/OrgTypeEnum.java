@@ -2,8 +2,10 @@ package tech.yunyue.core.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import tech.yunyue.core.exception.BizException;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -31,12 +33,17 @@ public enum OrgTypeEnum implements BizCode {
      * @param code 当前类型
      */
     public static boolean isLeapFrogging(String higherLevelCode,String code){
-        OrgTypeEnum higherLevel = getByCode(higherLevelCode).orElse(OrgTypeEnum.GROUP);
-        OrgTypeEnum orgTypeEnum = getByCode(code).orElse(OrgTypeEnum.GROUP);
-        return  orgTypeEnum.ordinal() <= higherLevel.ordinal();
+        OrgTypeEnum higherLevel = getByCode(higherLevelCode);
+        OrgTypeEnum orgTypeEnum = getByCode(code);
+        //只能向下创建 但是部门可以创建部门
+        return  !(higherLevel == DEPARTMENT && higherLevel == orgTypeEnum) && orgTypeEnum.ordinal() <= higherLevel.ordinal()  ;
     }
 
-    public static Optional<OrgTypeEnum> getByCode(String code){
-        return Arrays.stream(OrgTypeEnum.values()).filter(o -> o.getCode().equals(code)).findFirst();
+    public static OrgTypeEnum getByCode(String code){
+        OrgTypeEnum orgTypeEnum = Arrays.stream(OrgTypeEnum.values()).filter(o -> o.getCode().equals(code)).findFirst().orElse(null);
+        if(Objects.isNull(orgTypeEnum)){
+            BizCodeEnum.ORG_TYPE_NO_EXIST.newException(code);
+        }
+        return orgTypeEnum;
     }
 }
