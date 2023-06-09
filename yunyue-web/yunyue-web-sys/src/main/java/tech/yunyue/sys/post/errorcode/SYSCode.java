@@ -10,8 +10,8 @@ public enum SYSCode implements BizAssert {
     MISS_CODE_OR_NAME("未接收到岗位管理编码或名称", "0x001-0701-0001"),
     DUPLICATE_CODE_OR_NAME("岗位管理编码或名称已存在", "0x001-0701-0002"),
     DELETE_LIMIT("超过最大限制,最多仅允许同时删除100条记录", "0x001-0701-0003"),
-
-    RECORD_NOT_FOUND("记录未找到或已删除", "0x001-0701-0004");
+    RECORD_NOT_FOUND("记录未找到或已删除", "0x001-0701-0004"),
+    DELETE_EXISTENCE_CHILD_NODE("删除记录中存在子节点,请检查数据", "0x001-0701-0005");
 
     private String msg;
     private String code;

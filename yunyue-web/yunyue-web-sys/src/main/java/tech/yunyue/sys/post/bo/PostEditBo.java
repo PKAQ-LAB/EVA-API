@@ -1,6 +1,7 @@
 package tech.yunyue.sys.post.bo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -20,11 +21,13 @@ public class PostEditBo {
      * 编码
      */
     @Schema(description = "编码")
+    @NotBlank(message = "岗位编码不能为null")
     private String code;
     /**
      * 岗位
      */
     @Schema(description = "岗位")
+    @NotBlank(message = "岗位名称不能为null")
     private String title;
     /**
      * 职级

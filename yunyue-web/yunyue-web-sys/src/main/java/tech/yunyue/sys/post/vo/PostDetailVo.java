@@ -7,8 +7,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.format.annotation.DateTimeFormat;
-import tech.yunyue.sys.post.consts.SYSConstant;
-import tech.yunyue.sys.annotation.Code;
 
 import java.time.LocalDateTime;
 
@@ -48,7 +46,6 @@ public class PostDetailVo {
      * 状态
      */
     @Schema(description = "状态")
-    @Code(SYSConstant.COMMON_STATUS_DICT)
     private String status;
     /**
      * 排序
