@@ -201,7 +201,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
         if (isAdmin) {
             moduleList = this.moduleMapper.listModule(moduleEntity);
         } else {
-            moduleList = this.moduleMapper.listGrantedModule(null, moduleEntity, new String[]{"获取角色列表"});
+            moduleList = this.moduleMapper.listGrantedModule(null, moduleEntity, ThreadUserHelper.getUserRoles());
         }
 
         //获取已选且是叶子节点的模块
