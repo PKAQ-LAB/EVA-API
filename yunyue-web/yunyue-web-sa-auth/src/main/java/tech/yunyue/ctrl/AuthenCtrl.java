@@ -24,9 +24,11 @@ import tech.yunyue.core.properties.EvaConfig;
 import tech.yunyue.core.threaduser.ThreadUserHelper;
 import tech.yunyue.core.util.json.JsonUtil;
 import tech.yunyue.service.AuthenService;
+import tech.yunyue.sys.user.service.UserService;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
 import java.util.Map;
 
 @RestController
@@ -39,6 +41,7 @@ public class AuthenCtrl {
     private final EvaConfig evaConfig;
     private final SaTokenConfig saTokenConfig;
     private final CaptchaService captchaService;
+    private final UserService userService;
 
     /**
      * 登录认证
@@ -90,8 +93,8 @@ public class AuthenCtrl {
         StpUtil.logout();
         saTokenConfig.setTokenName(CommonConstant.ACCESS_TOKEN_KEY); //改回来
 
-        // 把缓存中的用户角色删掉
-        StpUtil.getStpLogic().getSaTokenDao().delete(CommonConstant.REDIS_USER_ROLES_PREFIX_KEY+userId);
+        // 发布踢出用户事件 删掉用户其余缓存数据
+        userService.kickOut(Arrays.asList(userId));
         return new Response().success(null,BizCodeEnum.LOGINOUT_SUCCESS);
     }
 

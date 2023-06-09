@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import tech.yunyue.core.constant.CommonConstant;
-import tech.yunyue.core.web.util.RequestUtil;
 import tech.yunyue.events.KickUserEvent;
 
 import java.util.List;
@@ -53,6 +52,8 @@ public class SaTokenListener extends SaTokenListenerForSimple {
             // 删除redis中用户角色
             SaTokenDao dao = StpUtil.getStpLogic().getSaTokenDao();
             dao.deleteObject(CommonConstant.REDIS_USER_ROLES_PREFIX_KEY+id);
+            // 删除redis中的用户信息
+            dao.delete(CommonConstant.REDIS_USER_INFO_PREFIX_KEY+id);
         }
     }
 }
