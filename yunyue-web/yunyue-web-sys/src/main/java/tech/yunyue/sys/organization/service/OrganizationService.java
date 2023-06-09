@@ -224,6 +224,10 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
      */
     @BizLog(operateType= BizLogEnum.QUERY,description = "查询组织树")
     public List<OrganizationEntity> list(OrganizationEntity organization) {
+        //租户模式且没有设置查询条件时  公司用户Parent为公司  集团用户Parent为集团
+        if(!EvaConfig.staticPlatform && StrUtil.isBlank(organization.getName()) && StrUtil.isBlank(organization.getParentId())){
+            organization.setParentId(ThreadUserHelper.getOrgTenantId());
+        }
         return this.mapper.listOrg(organization);
     }
 
