@@ -7,12 +7,7 @@
         R.NAME,
         R.CODE,
         RU.USER_ID,
-        <if test="_databaseId == 'mysql'">
             ifnull(DATA_PERMISSION_TYPE, '0000') DATA_PERMISSION_TYPE,
-        </if>
-        <if test="_databaseId == 'oracle'">
-            nvl(DATA_PERMISSION_TYPE, '0000') DATA_PERMISSION_TYPE,
-        </if>
         DATA_PERMISSION_DEPTID
         from SYS_ROLE R, SYS_ROLE_USER RU
         <where>
@@ -28,12 +23,7 @@
     <select id="selectDataPermission" resultType="role">
         select
         sr.code,
-        <if test="_databaseId =='mysql'">
             ifnull(DATA_PERMISSION_TYPE, '0000') DATA_PERMISSION_TYPE,
-        </if>
-        <if test="_databaseId =='oracle'">
-            nvl(DATA_PERMISSION_TYPE, '0000') DATA_PERMISSION_TYPE,
-        </if>
         sr.DATA_PERMISSION_DEPTID
         from
         sys_role sr

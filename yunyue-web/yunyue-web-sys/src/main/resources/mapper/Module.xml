@@ -64,12 +64,7 @@
                 </when>
                 <otherwise>
                     and m.name like
-                    <if test="_databaseId == 'mysql'">
                         concat('%',#{condition,jdbcType=VARCHAR},'%')
-                    </if>
-                    <if test="_databaseId == 'oracle'">
-                        '%' ||#{condition}||'%'
-                    </if>
                 </otherwise>
             </choose>
             <if test="null != module">
@@ -78,12 +73,7 @@
                 </if>
                 <if test="null != module.name and module.name != '' ">
                     and m.name like
-                    <if test="_databaseId =='mysql'">
                         concat('%',#{module.name,jdbcType=VARCHAR},'%')
-                    </if>
-                    <if test="_databaseId == 'oracle'">
-                        '%'||#{module.name}||'%'
-                    </if>
                 </if>
             </if>
         </where>
@@ -121,12 +111,7 @@
                 </if>
                 <if test="null != module.name and module.name != '' ">
                     and name like
-                    <if test="_databaseId == 'mysql'">
                         concat('%',#{module.name,jdbcType=VARCHAR},'%')
-                    </if>
-                    <if test="_databaseId == 'oracle'">
-                        '%'||#{module.name}||'%'
-                    </if>
                 </if>
             </if>
         </where>
@@ -168,12 +153,7 @@
     <!-- 根据parentId查询子节点数据-->
     <select id="listOrder" resultType="Integer">
         select
-        <if test="_databaseId == 'mysql'">
             ifnull(max(orders),0)
-        </if>
-        <if test="_databaseId == 'oracle'">
-            nvl(max(orders),0)
-        </if>
         from
         sys_module where
         <choose>
@@ -191,12 +171,7 @@
     <update id="disableChild">
         update sys_module set status = '0001'
         where path_id like
-        <if test="_databaseId == 'mysql'">
             concat(#{id,jdbcType=VARCHAR},'%') or id = #{id}
-        </if>
-        <if test="_databaseId == 'oracle'">
-            #{id}||'%' or id = #{id}
-        </if>
         and deleted = '0000'
     </update>
 
@@ -210,12 +185,7 @@
         update sys_module
         set PARENT_NAME=#{name,jdbcType=VARCHAR}
         where parent_id like
-        <if test="_databaseId == 'mysql'">
             concat(#{id,jdbcType=VARCHAR},'%')
-        </if>
-        <if test="_databaseId == 'oracle'">
-            #{id}||'%'
-        </if>
         and deleted = '0000'
     </update>
 
@@ -225,12 +195,7 @@
         PATH_NAME=REPLACE(PARENT_NAME,#{oldModule.name,jdbcType=VARCHAR},#{newModule.name,jdbcType=VARCHAR}),
         PATH=REPLACE(PATH,#{oldModule.path,jdbcType=VARCHAR},#{newModule.path,jdbcType=VARCHAR})
         where path like
-        <if test="_databaseId == 'mysql'">
             concat('%',#{oldModule.path,jdbcType=VARCHAR},'%')
-        </if>
-        <if test="_databaseId =='oracle'">
-            '%'||#{oldModule.path}||'%'
-        </if>
         and id != #{oldModule.id,jdbcType=VARCHAR}
         and deleted = '0000'
     </update>

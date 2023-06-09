@@ -65,12 +65,7 @@
         update sys_organization
         set status=#{status}
         where
-        <if test="_databaseId == 'mysql'">
             ( path like concat(#{id,jdbcType=VARCHAR},'%') or id = #{id} )
-        </if>
-        <if test="_databaseId == 'oracle'">
-            ( path like #{id}||'%' or id = #{id} )
-        </if>
         and deleted = '0000'
     </update>
     <!--  刷新子节点名称-->
@@ -78,12 +73,7 @@
         update sys_organization
         set PARENT_NAME=#{name,jdbcType=VARCHAR}
         where
-        <if test="_databaseId == 'mysql'">
             ( parent_id like concat(#{id,jdbcType=VARCHAR},'%') or id = #{id} )
-        </if>
-        <if test="_databaseId == 'oracle'">
-            ( parent_id like #{id}||'%' or id = #{id} )
-        </if>
         and
         deleted = '0000'
     </update>
