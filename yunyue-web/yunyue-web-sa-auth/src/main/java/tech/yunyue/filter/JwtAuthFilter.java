@@ -12,27 +12,28 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.servlet.HandlerExceptionResolver;
 import tech.yunyue.core.constant.CommonConstant;
 import tech.yunyue.core.enums.BizCodeEnum;
-import tech.yunyue.core.exception.BizException;
+import tech.yunyue.core.mvc.vo.Response;
 import tech.yunyue.core.properties.EvaConfig;
 import tech.yunyue.core.properties.Jwt;
 import tech.yunyue.core.threaduser.ThreadUser;
 import tech.yunyue.core.threaduser.ThreadUserHelper;
+import tech.yunyue.core.util.json.JsonUtil;
 import tech.yunyue.core.web.util.RequestUtil;
 import tech.yunyue.util.TenantUtil;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 
 /**
@@ -46,10 +47,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             RequestContextListener.class.getName() + ".REQUEST_ATTRIBUTES";
 
     private final EvaConfig evaConfig;
-
-    @Autowired
-    @Qualifier("handlerExceptionResolver")
-    private HandlerExceptionResolver resolver;
 
 
     @Override
@@ -115,8 +112,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 }
                 isvalid = true;
             } catch (NotLoginException e) {
-                logger.warn(e.getMessage(), e);
-                resolver.resolveException(request, response, null, new BizException(BizCodeEnum.LOGIN_EXPIRED));
+				// tokne过期 返回401
+                try (PrintWriter printWriter = response.getWriter()) {
+                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                    response.setCharacterEncoding("UTF-8");
+                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
+                    printWriter.write(JsonUtil.toJson(new Response().failure(BizCodeEnum.LOGIN_EXPIRED)));
+                    printWriter.flush();
+                }
                 return;
             }
         }
