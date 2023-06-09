@@ -346,7 +346,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
     @Transactional
     public void disableChild(ModuleEntityStd module) {
         //判断是不是禁用
-        if (StrUtil.isBlank(module.getStatus()) || LockEnumm.LOCK.getCode().equals(module.getStatus())) {
+        if (StrUtil.isBlank(module.getStatus()) || LockEnumm.UNLOCK.getCode().equals(module.getStatus())) {
             return;
         }
         //禁用该父节点下的所有子节点
