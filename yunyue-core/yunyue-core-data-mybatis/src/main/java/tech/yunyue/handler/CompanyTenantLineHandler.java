@@ -45,7 +45,7 @@ public class CompanyTenantLineHandler extends GroupTenantLineHandler {
     @Override
     public boolean ignoreTable(String tableName) {
         //没有公司id的即集团用户 查询范围是整个集团
-        if(Objects.isNull(ThreadUserHelper.getComTenantId())) return false;
+        if(Objects.isNull(ThreadUserHelper.getComTenantId())) return true;
         return super.ignoreTable(tableName);
     }
 }

@@ -12,6 +12,7 @@ import tech.yunyue.core.threaduser.ThreadUserHelper;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 集团租户插件
@@ -54,6 +55,8 @@ public class GroupTenantLineHandler implements TenantLineHandler {
      */
     @Override
     public boolean ignoreTable(String tableName) {
+        //防止匿名用户
+        if(Objects.isNull(ThreadUserHelper.getTenantId())) return true;
         String[] tableNames = evaConfig.getTenant().getIgnoreTables();
         if(null == tableNames || tableNames.length == 0) return false;
 
