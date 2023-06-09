@@ -5,6 +5,7 @@ import cn.dev33.satoken.filter.SaFilterAuthStrategy;
 import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.stp.StpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import tech.yunyue.core.enums.BizCodeEnum;
@@ -31,6 +32,7 @@ public class FilterAuthStrategy implements SaFilterAuthStrategy {
         SaRouter.match("/**",r->{
             // 当前会话是否登录
             if(Objects.isNull(ThreadUserHelper.getCurrentUser()) || !StringUtils.hasText(ThreadUserHelper.getUserId())){
+                SaHolder.getResponse().setStatus(HttpStatus.UNAUTHORIZED.value());
                 BizCodeEnum.LOGIN_EXPIRED.newException();
             }
             //当前资源是否需要鉴权
