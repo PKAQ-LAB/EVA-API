@@ -7,6 +7,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import tech.yunyue.core.log.annotation.BizLog;
+import tech.yunyue.core.log.base.BizLogEnum;
 import tech.yunyue.param.bo.SystemParameterEditBo;
 import tech.yunyue.param.entity.SystemParameterEntity;
 import tech.yunyue.param.mapper.SystemParameterMapper;
@@ -30,6 +32,7 @@ public class SystemParameterService {
     /**
      * 查询系统参数
      */
+    @BizLog(operateType= BizLogEnum.QUERY,description = "查询系统参数")
     public List<SystemParameterDetailVo> get() {
         LambdaQueryWrapper<SystemParameterEntity> wrapper = Wrappers.lambdaQuery();
         List<SystemParameterEntity> list = systemParameterMapper.selectList(wrapper);
@@ -46,6 +49,7 @@ public class SystemParameterService {
      * @param systemParameterEditBo 实体参数
      */
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    @BizLog(operateType= BizLogEnum.UPDATE,description = "编辑系统参数")
     public void edit(List<SystemParameterEditBo> systemParameterEditBo) {
 
         systemParameterEditBo.forEach(item -> {
