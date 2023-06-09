@@ -2,6 +2,7 @@ package tech.yunyue.ctrl;
 
 import cn.dev33.satoken.config.SaTokenConfig;
 import cn.dev33.satoken.exception.NotLoginException;
+import cn.dev33.satoken.exception.SaTokenException;
 import cn.dev33.satoken.stp.SaLoginConfig;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.extra.spring.SpringUtil;
@@ -80,21 +81,23 @@ public class AuthenCtrl {
     @PostMapping("/logout")
     @Operation(summary = "登出")
     public Response logout() {
-        String userId = ThreadUserHelper.getUserId();
+        try {
+            String userId = ThreadUserHelper.getUserId();
 
-        // 注销access_token
-        StpUtil.logout();
-        // 注销refresh_token
-        saTokenConfig.setTokenName(CommonConstant.REFRESH_TOKEN_KEY);
-        // 用户access_token过期则不会有userId  从refresh_token中得到用户id
-        if (!StringUtils.hasText(userId)) {
-            userId = (String) StpUtil.getLoginId();
-        }
-        StpUtil.logout();
-        saTokenConfig.setTokenName(CommonConstant.ACCESS_TOKEN_KEY); //改回来
+            // 注销access_token
+            StpUtil.logout();
+            // 注销refresh_token
+            saTokenConfig.setTokenName(CommonConstant.REFRESH_TOKEN_KEY);
+            // 用户access_token过期则不会有userId  从refresh_token中得到用户id
+            if (!StringUtils.hasText(userId)) {
+                userId = (String) StpUtil.getLoginId();
+            }
+            StpUtil.logout();
+            saTokenConfig.setTokenName(CommonConstant.ACCESS_TOKEN_KEY); //改回来
 
-        // 发布踢出用户事件 删掉用户其余缓存数据
-        userService.kickOut(Arrays.asList(userId));
+            // 发布踢出用户事件 删掉用户其余缓存数据
+            userService.kickOut(Arrays.asList(userId));
+        }catch (SaTokenException ignored){}
         return new Response().success(null,BizCodeEnum.LOGINOUT_SUCCESS);
     }
 
