@@ -167,9 +167,9 @@
         and deleted = '0000'
     </select>
 
-    <!-- 根据id禁用节点-->
-    <update id="disableChild">
-        update sys_module set status = '0001'
+    <!-- 切换可用状态 - 级联操作-->
+    <update id="switchStatus">
+        update sys_module set status = #{status}
         where path_id like
             concat(#{id,jdbcType=VARCHAR},'%') or id = #{id}
         and deleted = '0000'

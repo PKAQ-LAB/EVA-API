@@ -83,7 +83,7 @@ public class ModuleCtrl extends Ctrl {
     @Operation(summary = "切换模块可用状态")
     public Response switchStatus(@Parameter(name = "id", description = "模块Id")
                                  @RequestBody ModuleEntityStd module) {
-        this.service.disableChild(module);
+        this.service.switchStatus(module);
         return success();
     }
 }

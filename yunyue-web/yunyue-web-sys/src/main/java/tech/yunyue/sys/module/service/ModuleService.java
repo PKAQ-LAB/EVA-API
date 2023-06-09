@@ -124,7 +124,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
                 }
             }
             //是否禁用的逻辑
-            disableChild(module);
+            switchStatus(module);
         } else {
             //新增设置orders为同级模块中最大的orders+1
             module.setIsleaf(true);
@@ -260,7 +260,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
                 return;
             }
         }
-        disableChild(moduleEntity);
+        switchStatus(moduleEntity);
         this.mapper.updateById(moduleEntity);
         //刷新缓存中的资源信息
         refreshCacheResourcese();
@@ -340,17 +340,13 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
     }
 
     /**
-     * 父节点被禁用，子节点也会被禁用
+     * 父切换可用状态 - 级联操作
      */
     @BizLog(operateType= BizLogEnum.UPDATE,description = "切换模块可用状态")
     @Transactional
-    public void disableChild(ModuleEntityStd module) {
-        //判断是不是禁用
-        if (StrUtil.isBlank(module.getStatus()) || LockEnumm.UNLOCK.getCode().equals(module.getStatus())) {
-            return;
-        }
+    public void switchStatus(ModuleEntityStd module) {
         //禁用该父节点下的所有子节点
-        this.mapper.disableChild(module.getId());
+        this.mapper.switchStatus(module.getId(), module.getStatus());
         //刷新缓存中的资源信息
         refreshCacheResourcese();
     }

@@ -82,9 +82,9 @@ public interface ModuleMapper extends BaseMapper<ModuleEntityStd> {
     Integer listOrder(@Param("pid") String id);
 
     /**
-     * 根据id禁用子节点
+     * 切换可用状态 - 级联操作
      */
-    void disableChild(@Param("id") String id);
+    void switchStatus(@Param("id") String id, @Param("status") String status);
 
     ModuleEntityStd selectId(@Param("id") String id);
 
