@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="tech.yunyue.param.mapper.SystemParameterMapper">
+
+    <select id="detail" resultType="tech.yunyue.param.vo.SystemParameterDetailVo">
+        SELECT DISTINCT
+            t.ID,
+            t.REMARK,
+            t.CODE_VAL,
+            t.`CODE`,
+            t.GMT_CREATE
+        FROM
+            sys_default_config t
+        WHERE
+            t.DELETED = '0000'
+        ORDER BY t.GMT_CREATE ASC
+    </select>
+
+    <!-- 批量提交审批-->
+    <update id="systemParam">
+        UPDATE
+        SYS_DEFAULT_CONFIG
+        SET
+        CODE_VAL=#{codeVal},
+        MODIFY_BY=#{userName},
+        GMT_MODIFY=NOW()
+        WHERE
+        <foreach collection="data" item="it" separator="or">
+            (id=#{it.id} AND REVISION =#{it.revision})
+        </foreach>
+    </update>
+</mapper>
