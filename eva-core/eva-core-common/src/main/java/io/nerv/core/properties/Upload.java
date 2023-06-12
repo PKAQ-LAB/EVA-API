@@ -22,4 +22,13 @@ public class Upload {
     // DFS服务器地址
     private String serverUrl;
 
+    private final MinIo minIo;
+
+    @Data
+    public static class MinIo {
+        private String url;
+        private String access;
+        private String secret;
+    }
+
 }

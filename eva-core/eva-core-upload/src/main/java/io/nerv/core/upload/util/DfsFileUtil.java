@@ -4,8 +4,8 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.resource.InputStreamResource;
 import cn.hutool.core.lang.Snowflake;
+import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.enums.BizCodeEnum;
@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.*;
 
 /**
@@ -32,23 +33,23 @@ import java.util.*;
 @Component
 @Conditional(FastDfsCondition.class)
 @RequiredArgsConstructor
-public class DfsFileUploadUtil implements FileUploadProvider {
+public class DfsFileUtil implements FileProvider {
 
-    private Snowflake snowflake = IdUtil.getSnowflake(SNOW, FLAKE);
+    private final Snowflake snowflake = IdUtil.getSnowflake(SNOW, FLAKE);
 
     // 删除接口
-    private final static String DELETE_API = "/delete";
+    private static final String DELETE_API = "/delete";
 
     // 上传接口
-    private final static String UPLOAD_API = "/upload";
+    private static final String UPLOAD_API = "/upload";
 
     private final CacheManager cacheManager;
 
     private final EvaConfig evaConfig;
 
-    private final static long SNOW = 16;
+    private static final long SNOW = 16;
 
-    private final static long FLAKE = 18;
+    private static final long FLAKE = 18;
 
     /**
      * 文件上传 默认上传到配置的tmp目录
@@ -67,7 +68,7 @@ public class DfsFileUploadUtil implements FileUploadProvider {
 
         String file_path = "";
 
-        if (StrUtil.isNotEmpty(fileName)) {
+        if (CharSequenceUtil.isNotEmpty(fileName)) {
             suffixName = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
             newFileName = snowflake.nextIdStr() + "." + suffixName;
         } else {
@@ -91,7 +92,7 @@ public class DfsFileUploadUtil implements FileUploadProvider {
             paramMap.put("output", "json");
             //自定义路径
 //            String curDate = DateUtil.format(new Date(), DatePattern.PURE_DATE_FORMAT);
-            if (StrUtil.isNotBlank(path)) {
+            if (CharSequenceUtil.isNotBlank(path)) {
                 paramMap.put("path", path);
             } else {
                 paramMap.put("path", suffixName);
@@ -99,7 +100,9 @@ public class DfsFileUploadUtil implements FileUploadProvider {
 
             Map<String, String> jsonObject = JsonUtil.parse(this.transfer(paramMap), Map.class);
 
-            file_path = jsonObject.get("path");
+            if (jsonObject != null) {
+                file_path = jsonObject.get("path");
+            }
         } else {
             log.error(BizCodeEnum.FILETYPE_NOT_SUPPORTED.getMsg());
             throw new BizException(BizCodeEnum.FILETYPE_NOT_SUPPORTED);
@@ -160,7 +163,7 @@ public class DfsFileUploadUtil implements FileUploadProvider {
      */
     @Override
     public void delFromStorage(String path) {
-        HttpUtil.post(evaConfig.getUpload().getServerUrl() + this.DELETE_API, path);
+        HttpUtil.post(evaConfig.getUpload().getServerUrl() + DELETE_API, path);
     }
 
     /**
@@ -169,7 +172,7 @@ public class DfsFileUploadUtil implements FileUploadProvider {
      * @return
      */
     public String transfer(Map<String, Object> map) {
-        return HttpUtil.post(evaConfig.getUpload().getServerUrl() + this.UPLOAD_API, map);
+        return HttpUtil.post(evaConfig.getUpload().getServerUrl() + UPLOAD_API, map);
     }
 
     /**
@@ -188,12 +191,17 @@ public class DfsFileUploadUtil implements FileUploadProvider {
             return;
         }
 
-        tmpFileList.stream().forEach(item -> {
+        for (String item : tmpFileList) {
             HttpUtil.post(evaConfig.getUpload().getServerUrl() + DELETE_API, item);
-        });
+        }
 
         // 删除完毕 从缓存中移除此key
         cache.evict(k);
+    }
+
+    @Override
+    public void downLoad(String fileName, OutputStream out) {
+
     }
 
     /**

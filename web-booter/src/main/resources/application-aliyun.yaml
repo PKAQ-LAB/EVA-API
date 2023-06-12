@@ -31,11 +31,11 @@ spring:
     #    GsyjJCmmNRiHRVGmXdy+QErynoqC/cOBlt5V9dPZ+c2g2XwPc5+BbKrSxWLsyCGG
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://xilai.my.to:12306/eva?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&autoReconnect=true&failOverReadOnly=false
-  hikari:
-    minimum-idle: 10
-    maximum-pool-size: 50
-    max-lifetime: 3000
-    connection-test-query: select 1
+    hikari:
+      minimum-idle: 10
+      maximum-pool-size: 50
+      max-lifetime: 3000
+      connection-test-query: select 1
   devtools:
     livereload:
       enabled: true

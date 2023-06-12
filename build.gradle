@@ -59,6 +59,8 @@ ext {
            "bootAdminServer" : "de.codecentric:spring-boot-admin-starter-server:${boot_admin}",
            "bootAdmin" : "de.codecentric:spring-boot-admin-starter-client:${boot_admin}",
            "devTools" : "org.springframework.boot:spring-boot-devtools",
+           //文件上传minIO
+           "minio" : "io.minio:minio:${minio}",
             // generator
            "velocity" : "org.apache.velocity:velocity-engine-core:${velocity}",
            "mybatis_plus_generator" : "com.baomidou:mybatis-plus-generator:${mybatis_plus_generator}"

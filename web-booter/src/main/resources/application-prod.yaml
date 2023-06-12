@@ -15,23 +15,24 @@ spring:
     username: eva
     password: eva666
     driver-class-name: com.mysql.cj.jdbc.Driver
-  hikari:
-    minimum-idle: 3
-    maximum-pool-size: 10
-    max-lifetime: 3000
-    connection-test-query: select 1
+    hikari:
+      minimum-idle: 3
+      maximum-pool-size: 10
+      max-lifetime: 3000
+      connection-test-query: select 1
   devtools:
     livereload:
       enabled: true
     restart:
       additional-paths: src/main/java
   # redis 配置
-  redis:
-    host: 182.61.49.92
-    port: 6379
-    password: 8i9o0p
-    timeout: 10000
-    database: 0
+  data:
+    redis:
+      host: 182.61.49.92
+      port: 6379
+      password: 8i9o0p
+      timeout: 10000
+      database: 0
   # 校验表结构
   jpa:
     hibernate:

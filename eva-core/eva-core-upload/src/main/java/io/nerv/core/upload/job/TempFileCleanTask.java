@@ -1,6 +1,6 @@
 package io.nerv.core.upload.job;
 
-import io.nerv.core.upload.util.FileUploadProvider;
+import io.nerv.core.upload.util.FileProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -27,7 +27,7 @@ import java.time.Duration;
 @RequiredArgsConstructor
 public class TempFileCleanTask implements SchedulingConfigurer {
 
-    private final FileUploadProvider fileUploadProvider;
+    private final FileProvider fileUploadProvider;
 
     @Override
     public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {

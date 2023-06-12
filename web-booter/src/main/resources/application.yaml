@@ -56,14 +56,14 @@ jasypt:
 server:
   servlet:
     context-path: /api
-    #  2.3.0 新支持, 优雅关机
-    shutdown: graceful
     # 编码
     encoding:
       charset: utf-8
       enabled: true
       force: true
-  port: 9016
+  port: 9018
+  #  2.3.0 新支持, 优雅关机
+  shutdown: graceful
 # 微信配置
 wechat:
   pay:

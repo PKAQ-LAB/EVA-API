@@ -2,7 +2,7 @@ package io.nerv.core.upload.ctrl;
 
 import cn.hutool.core.map.MapUtil;
 import io.nerv.core.mvc.response.Response;
-import io.nerv.core.upload.util.FileUploadProvider;
+import io.nerv.core.upload.util.FileProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/upload")
 public class FileUploadCtrl {
 
-    private final FileUploadProvider fileUploadProvider;
+    private final FileProvider fileUploadProvider;
 
     /**
      * 文件上传

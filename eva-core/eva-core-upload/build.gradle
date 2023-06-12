@@ -9,7 +9,8 @@ dependencies {
     implementation("${lib.web}"){
         exclude module: 'spring-boot-starter-tomcat'
     }
-    implementation "${lib.undertow}"
+    implementation "${lib.undertow}",
+                   "${lib.minio}"
 
     implementation project(":eva-core:eva-core-common")
 }

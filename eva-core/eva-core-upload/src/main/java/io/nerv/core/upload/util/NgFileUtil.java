@@ -5,8 +5,8 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.img.ImgUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Snowflake;
+import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.StrUtil;
 import io.nerv.core.constant.CommonConstant;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.exception.BizException;
@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,15 +33,15 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Conditional(DefaultNgCondition.class)
-public class NgFileUploadUtil implements FileUploadProvider {
+public class NgFileUtil implements FileProvider {
 
-    private Snowflake snowflake = IdUtil.getSnowflake(SNOW, FLAKE);
+    private final Snowflake snowflake = IdUtil.getSnowflake(SNOW, FLAKE);
 
-    private final static String THUMBNAIL_NAME = "thumbnail_";
+    private static final String THUMBNAIL_NAME = "thumbnail_";
 
-    private final static long SNOW = 16;
+    private static final long SNOW = 16;
 
-    private final static long FLAKE = 18;
+    private static final long FLAKE = 18;
 
     private final CacheManager cacheManager;
 
@@ -62,7 +63,7 @@ public class NgFileUploadUtil implements FileUploadProvider {
         // 新图片名
         String newFileName = "";
 
-        if (StrUtil.isNotBlank(fileName)) {
+        if (CharSequenceUtil.isNotBlank(fileName)) {
             suffixName = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
             newFileName = snowflake.nextIdStr() + "." + suffixName;
         } else {
@@ -72,7 +73,7 @@ public class NgFileUploadUtil implements FileUploadProvider {
         // 判断上传文件是否符合格式
         if (evaConfig.getUpload().getAllowSuffixName().toLowerCase().contains(suffixName)) {
             String destPath = evaConfig.getUpload().getTempPath();
-            if (StrUtil.isNotBlank(destPath) && !destPath.endsWith("/")) {
+            if (CharSequenceUtil.isNotBlank(destPath) && !destPath.endsWith("/")) {
                 destPath += "/";
             }
 
@@ -180,17 +181,15 @@ public class NgFileUploadUtil implements FileUploadProvider {
     public void delFromStorage(String fileName) {
         String sotragePath = evaConfig.getUpload().getStoragePath();
         File sourceFile = new File(sotragePath, fileName);
-        File sourceThumbnailFile = new File(sotragePath, this.THUMBNAIL_NAME + fileName);
+        File sourceThumbnailFile = new File(sotragePath, THUMBNAIL_NAME + fileName);
         // 删除原图
         if (sourceFile.exists()) {
             sourceFile.delete();
         }
-        ;
         // 删除缩略图
         if (sourceThumbnailFile.exists()) {
             sourceThumbnailFile.delete();
         }
-        ;
     }
 
     /**
@@ -217,14 +216,19 @@ public class NgFileUploadUtil implements FileUploadProvider {
             return;
         }
 
-        tmpFileList.stream().forEach(item -> {
+        for (String item : tmpFileList) {
             if (!FileUtil.isDirEmpty(tempFileFolder)) {
                 FileUtil.del(new File(tempFileFolder, item));
             }
-        });
+        }
 
         // 删除完毕 从缓存中移除此key
         cache.evict(k);
+    }
+
+    @Override
+    public void downLoad(String fileName, OutputStream out) {
+
     }
 
     /**

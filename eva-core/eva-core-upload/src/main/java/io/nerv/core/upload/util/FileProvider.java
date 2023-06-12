@@ -4,19 +4,21 @@ package io.nerv.core.upload.util;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 
 /**
  * 文件上传接口
  */
-public interface FileUploadProvider {
+public interface FileProvider {
     /**
      * 上传
      *
      * @param file
      * @return
      */
-    String upload(MultipartFile file, String path);
+    String upload(MultipartFile file, String path) throws IOException, Exception;
 
     /**
      * 存储
@@ -62,4 +64,6 @@ public interface FileUploadProvider {
      * 缓存清除
      */
     void tempClean();
+
+    void downLoad(String fileName, OutputStream out);
 }
