@@ -121,7 +121,7 @@ public abstract class StdTreeService<M extends StdTreeMapper<T>, T extends StdTr
             orderQuery.eq("PARENT_ID", pid);
             orderQuery.eq("DELETED", CommonConstant.EFFECTIVE_RECORD);
 
-            entity.setOrders(this.mapper.selectCount(orderQuery));
+            entity.setOrders(this.mapper.selectCount(orderQuery).intValue());
         } else {
             oldOrgin = this.mapper.selectById(orgId);
         }
