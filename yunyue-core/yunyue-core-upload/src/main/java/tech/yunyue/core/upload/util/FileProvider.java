@@ -18,7 +18,7 @@ public interface FileProvider {
      * @param file
      * @return
      */
-    String upload(MultipartFile file, String path);
+    String upload(MultipartFile file, String path) throws Exception;
 
     /**
      * 存储
@@ -69,13 +69,5 @@ public interface FileProvider {
      * 下载文件
      */
     default void downLoad(String fileName, OutputStream out){};
-
-    /**
-     * 判断文件是否为图片
-     */
-    static boolean isPicture(String imgName) {
-        String suffixStr = ".bmp .dib .gif .jfif .jpe .jpeg .jpg .png .tif .tiff .ico";
-        return StringUtils.hasText(imgName) && suffixStr.contains(imgName.substring(imgName.lastIndexOf(".")));
-    }
 
 }

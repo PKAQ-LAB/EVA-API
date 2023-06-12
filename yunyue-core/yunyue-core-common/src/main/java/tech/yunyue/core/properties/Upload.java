@@ -22,12 +22,11 @@ public class Upload {
     // DFS服务器地址
     private String serverUrl;
 
-    // MinIO服务器地址
-    private String minioUrl;
-
-    //MinIO服务器的Access key
-    private String minioAccess;
-
-    //MinIO服务器的secret Key
-    private String minioSecret;
+    private MinIO minIo;
+    @Data
+    public static class MinIO {
+        private String url;
+        private String access;
+        private String secret;
+    }
 }

@@ -26,6 +26,7 @@ import java.net.URLEncoder;
 public class FileCtrl {
 
     private final FileProvider fileProvider;
+    private static final String IMAGE = "images";
 
     /**
      * 文件上传
@@ -35,7 +36,7 @@ public class FileCtrl {
      * @return
      */
     @PostMapping("/file")
-    public Response upload(MultipartFile file, String path) {
+    public Response upload(MultipartFile file, String path) throws Exception {
         String filePath = fileProvider.upload(file, path);
         return new Response().success(MapUtil.of("pname", filePath));
     }
@@ -49,7 +50,7 @@ public class FileCtrl {
         response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
         var name = fileName.substring(fileName.lastIndexOf("/")+1);;
         //非图片文件返回原文件名
-        if(!FileProvider.isPicture(fileName)){
+        if(!fileName.startsWith(IMAGE+"/")){
             name = name.substring(name.lastIndexOf(":")+1);
         }
         response.addHeader("Content-Disposition", "attachment;fileName=" + URLEncoder.encode(name, "UTF-8"));
