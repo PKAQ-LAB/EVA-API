@@ -13,7 +13,8 @@
         y.PARENT_ID,
         y.`STATUS`,
         y.`SORTS`,
-        s.TITLE AS PARENT_NAME
+        s.TITLE AS PARENT_NAME,
+        y.REMARK
         FROM
         SYS_POST y
         LEFT JOIN SYS_POST s ON s.ID = y.PARENT_ID

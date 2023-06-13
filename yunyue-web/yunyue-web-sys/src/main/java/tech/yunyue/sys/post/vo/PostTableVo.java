@@ -3,8 +3,6 @@ package tech.yunyue.sys.post.vo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import tech.yunyue.sys.post.consts.SYSConstant;
-import tech.yunyue.sys.annotation.Code;
 
 /**
  * @author dmz
@@ -53,4 +51,9 @@ public class PostTableVo {
      */
     @Schema(description = "上级岗位名称")
     private String parentName;
+    /**
+     * 备注
+     */
+    @Schema(description = "备注")
+    private String remark;
 }

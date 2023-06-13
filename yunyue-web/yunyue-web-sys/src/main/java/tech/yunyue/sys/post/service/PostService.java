@@ -4,11 +4,9 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.lang.tree.Tree;
 import cn.hutool.core.lang.tree.TreeNodeConfig;
 import cn.hutool.core.lang.tree.TreeUtil;
-import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +17,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import tech.yunyue.core.log.annotation.BizLog;
 import tech.yunyue.core.log.base.BizLogEnum;
-import tech.yunyue.sys.module.entity.ModuleEntityStd;
 import tech.yunyue.sys.post.bo.PostEditBo;
 import tech.yunyue.sys.post.bo.PostQueryBo;
 import tech.yunyue.sys.post.consts.SYSConstant;
@@ -70,6 +67,7 @@ public class PostService {
     public List<Tree<String>> list(PostQueryBo query) {
 
         List<PostTableVo> listVo = this.postMapper.list(SYSConstant.COMMON_STATUS_DICT, query);
+
         // 配置
         TreeNodeConfig treeNodeConfig = new TreeNodeConfig();
         // 自定义属性名 ，即返回列表里对象的字段名
@@ -88,6 +86,7 @@ public class PostService {
                     tree.putExtra("sorts", treeNode.getSorts());
                     tree.putExtra("status", treeNode.getStatus());
                     tree.putExtra("parentName", treeNode.getParentName());
+                    tree.putExtra("remark", treeNode.getRemark());
                 });
     }
 
@@ -103,7 +102,7 @@ public class PostService {
         boolean isUpdate = StrUtil.isNotBlank(postEditBo.getId());
 
         PostEntity dto = new PostEntity();
-        if(isUpdate){
+        if (isUpdate) {
             dto = this.postMapper.selectById(postEditBo.getId());
         }
 
@@ -118,10 +117,21 @@ public class PostService {
             }
         } else {
             dto.setParentId(SYSConstant.ROOT);
+            dto.setPathId(null);
         }
         // 检测通过 保存
         if (isUpdate) {
             this.postMapper.updateById(dto);
+
+            // 倘若上级停用下级也跟着停用
+            if (StrUtil.isNotBlank(postEditBo.getStatus())) {
+
+                this.postMapper.update(null,Wrappers.<PostEntity>lambdaUpdate()
+                        .set(PostEntity::getStatus,postEditBo.getStatus())
+                        .apply(StringUtils.isNotEmpty(dto.getId()), "FIND_IN_SET({0},PATH_ID)", dto.getId()));
+            }
+
+
         } else {
             this.postMapper.insert(dto);
         }
@@ -165,7 +175,7 @@ public class PostService {
         LambdaQueryWrapper<PostEntity> oew = new LambdaQueryWrapper<>();
         oew.in(PostEntity::getParentId, param);
         List<PostEntity> list = this.postMapper.selectList(oew);
-        if(CollectionUtil.isNotEmpty(list)){
+        if (CollectionUtil.isNotEmpty(list)) {
             SYSCode.DELETE_EXISTENCE_CHILD_NODE.newException();
         }
 
