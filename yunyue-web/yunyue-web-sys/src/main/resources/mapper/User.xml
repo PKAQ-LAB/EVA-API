@@ -57,13 +57,13 @@
         </if>
         <where>
             <if test="null != user.account and user.account != ''">
-                and su.account = #{user.account,jdbcType=VARCHAR}
+                and su.account like concat('%', #{user.account,jdbcType=VARCHAR},'%')
             </if>
             <if test="null != user.name and user.name != ''">
-                and su.name = #{user.name,jdbcType=VARCHAR}
+                and su.name like concat('%', #{user.name,jdbcType=VARCHAR},'%')
             </if>
             <if test="null != user.tel and user.tel != ''">
-                and su.tel = #{user.tel,jdbcType=VARCHAR}
+                and su.tel like concat('%', #{user.tel,jdbcType=VARCHAR},'%')
             </if>
             and su.deleted = '0000'
         </where>
