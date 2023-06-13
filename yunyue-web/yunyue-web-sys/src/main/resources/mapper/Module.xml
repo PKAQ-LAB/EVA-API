@@ -34,7 +34,7 @@
     <select id="getRoleModuleByUserId" resultMap="NoChildrenResultMap">
         select
         case when path = '/sys/organization'
-        then if(${@tech.yunyue.core.properties.EvaConfig@staticPlatform},SUBSTRING_INDEX(M.name,',',1),SUBSTRING_INDEX(M.name,',',-1))
+        then SUBSTRING_INDEX(M.name,',',-1)
         else name end name,
         M.*,
         MR.id R_ID,MR.*
@@ -48,7 +48,7 @@
     <select id="listGrantedModule" resultMap="BaseResultMap">
         select
         case when m.path = '/sys/organization'
-        then if(${@tech.yunyue.core.properties.EvaConfig@staticPlatform},SUBSTRING_INDEX(m.name,',',1),SUBSTRING_INDEX(m.name,',',-1))
+        then SUBSTRING_INDEX(m.name,',',-1)
         else name end name, m.*
         from v_granted_module m
         <where>
@@ -84,7 +84,7 @@
     <select id="listModule" resultMap="BaseResultMap">
         select
         case when SM.path = '/sys/organization'
-        then if(${@tech.yunyue.core.properties.EvaConfig@staticPlatform},SUBSTRING_INDEX(SM.name,',',1),SUBSTRING_INDEX(SM.name,',',-1))
+        then SUBSTRING_INDEX(SM.name,',',-1)
         else name end name,
         SM.*,
         SMR.ID R_ID,
@@ -121,7 +121,7 @@
     <select id="listChildren" resultMap="BaseResultMap">
         select
         case when SM.path = '/sys/organization'
-        then if(${@tech.yunyue.core.properties.EvaConfig@staticPlatform},SUBSTRING_INDEX(SM.name,',',1),SUBSTRING_INDEX(SM.name,',',-1))
+        then SUBSTRING_INDEX(SM.name,',',-1)
         else name end name,
         SM.*,
         SMR.ID R_ID,
