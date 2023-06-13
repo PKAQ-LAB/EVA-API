@@ -57,10 +57,6 @@ public class TenantUtil {
      * @return
      */
     public static UserEntity getUserEntity(String uid) {
-        //平台用户登录不查询租户信息
-        if(sEvaConfig.isPlatform()){
-            return new UserEntity();
-        }
         //从redis中获取
         var key = CommonConstant.REDIS_USER_INFO_PREFIX_KEY+uid;
         UserEntity userEntity = null;

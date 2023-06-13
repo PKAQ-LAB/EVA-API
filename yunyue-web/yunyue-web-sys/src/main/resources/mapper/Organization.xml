@@ -18,19 +18,13 @@
         select * from sys_organization
         <where>
             deleted = '0000'
-            <if test="null == organization and @tech.yunyue.core.properties.EvaConfig@staticPlatform">
-                and (parent_ID = '0' or parent_ID is null)
-            </if>
             <if test="null != organization">
                 <choose>
                     <when test="organization.name != '' and organization.name != null">
                         and name like concat('%',#{organization.name},'%')
                     </when>
-                    <when test="!@tech.yunyue.core.properties.EvaConfig@staticPlatform and organization.parentId != '' and organization.parentId != null">
+                    <when test="organization.parentId != '' and organization.parentId != null">
                         and parent_ID = #{organization.parentId, jdbcType=VARCHAR}
-                    </when>
-                    <when test="organization.parentId == '' or organization.parentId == null">
-                        and (parent_ID = '0' or parent_ID is null)
                     </when>
                 </choose>
 

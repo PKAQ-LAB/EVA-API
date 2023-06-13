@@ -90,19 +90,6 @@ public class EvaConfig {
      */
     private long loginLockTime = 30;
 
-    /**
-     * 当前系统是否是平台
-     */
-    private boolean platform = true;
-
-    //静态变量 给xml使用：${@tech.yunyue.core.properties.EvaConfig@staticPlatform}
-    public static boolean staticPlatform;
-
-    @PostConstruct
-    public void init(){
-        staticPlatform = platform;
-    }
-
     public BizLog getBizlog() {
         return null == this.bizlog ? new BizLog() : bizlog;
     }

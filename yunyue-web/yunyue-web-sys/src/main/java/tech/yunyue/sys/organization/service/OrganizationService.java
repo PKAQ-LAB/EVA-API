@@ -99,7 +99,7 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
         String pid = organization.getParentId();
         String root = "0";
         //集团/公司用户的组织模块数据为空  新建的公司/部门需要手动加上父节点（集团/公司）
-        if(!evaConfig.isPlatform() && isNew && StrUtil.isBlank(pid)){
+        if(isNew && StrUtil.isBlank(pid)){
             OrgTypeEnum orgTypeEnum = OrgTypeEnum.getByCode(organization.getType());
             switch (orgTypeEnum) {
                 // 集团-->报错 非平台不能创建集团
@@ -127,7 +127,7 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
             organization.setParentName(parentOrg.getName());
         } else {
             // 平台才能创建根节点
-            if(!evaConfig.isPlatform()) BizCodeEnum.PERMISSION_EXPIRED.newException();
+            BizCodeEnum.PERMISSION_EXPIRED.newException();
             // 父节点为空, 根节点 设置为非叶子
             pid = root;
             organization.setPath(isNew ? "" : orgId);
@@ -225,7 +225,7 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
     @BizLog(operateType= BizLogEnum.QUERY,description = "查询组织树")
     public List<OrganizationEntity> list(OrganizationEntity organization) {
         //租户模式且没有设置查询条件时  公司用户Parent为公司  集团用户Parent为集团
-        if(!EvaConfig.staticPlatform && StrUtil.isBlank(organization.getName()) && StrUtil.isBlank(organization.getParentId())){
+        if(StrUtil.isBlank(organization.getName()) && StrUtil.isBlank(organization.getParentId())){
             organization.setParentId(ThreadUserHelper.getOrgTenantId());
         }
         return this.mapper.listOrg(organization);
