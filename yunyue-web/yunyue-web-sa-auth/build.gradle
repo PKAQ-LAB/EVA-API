@@ -5,7 +5,7 @@ project.archivesBaseName = 'yunyue-web-sa-auth'
 project.description='we jar with system management'
 
 dependencies {
-    api     project(":yunyue-core:yunyue-core-web"),
+    implementation     project(":yunyue-core:yunyue-core-web"),
             project(":yunyue-core:yunyue-core-log"),
             project(":yunyue-core:yunyue-core-data-mybatis"),
             project(":yunyue-core:yunyue-core-cache"),
