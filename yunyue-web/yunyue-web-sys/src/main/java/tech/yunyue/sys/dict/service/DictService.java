@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.transaction.annotation.Transactional;
+import tech.yunyue.core.constant.CommonConstant;
 import tech.yunyue.core.log.annotation.BizLog;
 import tech.yunyue.core.log.base.BizLogEnum;
 import tech.yunyue.sys.dict.cache.DictCacheHelper;
@@ -21,9 +22,7 @@ import tech.yunyue.core.mybatis.mvc.service.mybatis.StdService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -79,7 +78,10 @@ public class DictService extends StdService<DictMapper, DictEntity> {
         if (null == ret) {
             ret = selectDict();
         }
-        return ret;
+        //erp端使用不带集团的organization_type
+        Map map=new HashMap(ret);
+        map.put(CommonConstant.ORGANIZATION_DICT_CODE,map.get(CommonConstant.ERP_ORGANIZATION_DICT_CODE));
+        return map;
     }
 
     /**
