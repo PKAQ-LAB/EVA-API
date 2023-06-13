@@ -49,21 +49,12 @@ ext {
            "ttl": "com.alibaba:transmittable-thread-local:${ttl}",
            // websocket
            "websocket": "org.springframework.boot:spring-boot-starter-websocket",
-           // wxjava
-           "wxmp" : "com.github.binarywang:weixin-java-mp:${weixin}",
-           "wxpay" : "com.github.binarywang:weixin-java-pay:${weixin}",
-            // ali
-           "alipay" : "com.alipay.sdk:alipay-sdk-java:${alipay}",
-           "zxing" : "com.google.zxing:core:${zxing}",
             // bootAdmin
            "bootAdminServer" : "de.codecentric:spring-boot-admin-starter-server:${boot_admin}",
            "bootAdmin" : "de.codecentric:spring-boot-admin-starter-client:${boot_admin}",
            "devTools" : "org.springframework.boot:spring-boot-devtools",
            //文件上传minIO
-           "minio" : "io.minio:minio:${minio}",
-            // generator
-           "velocity" : "org.apache.velocity:velocity-engine-core:${velocity}",
-           "mybatis_plus_generator" : "com.baomidou:mybatis-plus-generator:${mybatis_plus_generator}"
+           "minio" : "io.minio:minio:${minio}"
     ]
 }
 
