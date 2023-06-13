@@ -39,12 +39,9 @@ public class MybatisPlusConfig {
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-
-        //多租户插件  不是平台且启用租户插件
-        if(!evaConfig.isPlatform() && evaConfig.getTenant().isEnable()){
-            interceptor.addInnerInterceptor(new TenantLineInnerInterceptor(groupTenantLineHandler));
-            interceptor.addInnerInterceptor(new TenantLineInnerInterceptor(companyTenantLineHandler));
-        }
+        //多租户插件
+        interceptor.addInnerInterceptor(new TenantLineInnerInterceptor(groupTenantLineHandler));
+        interceptor.addInnerInterceptor(new TenantLineInnerInterceptor(companyTenantLineHandler));
         //分页插件
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
         return interceptor;
