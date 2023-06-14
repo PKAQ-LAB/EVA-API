@@ -1,4 +1,4 @@
-package tech.yunyue.sys.blacklist.cache;
+package tech.yunyue.blacklist.cache;
 
 import cn.hutool.core.collection.CollectionUtil;
 import lombok.Data;

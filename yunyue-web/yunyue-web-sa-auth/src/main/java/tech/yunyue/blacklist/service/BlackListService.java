@@ -1,4 +1,4 @@
-package tech.yunyue.sys.blacklist.service;
+package tech.yunyue.blacklist.service;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.PostConstruct;
@@ -8,9 +8,9 @@ import org.springframework.util.StringUtils;
 import tech.yunyue.core.log.annotation.BizLog;
 import tech.yunyue.core.log.base.BizLogEnum;
 import tech.yunyue.core.mybatis.mvc.service.mybatis.StdService;
-import tech.yunyue.sys.blacklist.cache.BlackListCacheHelper;
-import tech.yunyue.sys.blacklist.entity.BlackListEntity;
-import tech.yunyue.sys.blacklist.mapper.BlackListMapper;
+import tech.yunyue.blacklist.cache.BlackListCacheHelper;
+import tech.yunyue.blacklist.entity.BlackListEntity;
+import tech.yunyue.blacklist.mapper.BlackListMapper;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;

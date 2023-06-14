@@ -15,7 +15,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import tech.yunyue.core.enums.BizCodeEnum;
 import tech.yunyue.core.exception.BizException;
 import tech.yunyue.core.web.util.RequestUtil;
-import tech.yunyue.sys.blacklist.cache.BlackListCacheHelper;
+import tech.yunyue.blacklist.cache.BlackListCacheHelper;
 
 import java.io.IOException;
 

@@ -1,11 +1,12 @@
-package tech.yunyue.sys.blacklist.ctrl;
+package tech.yunyue.blacklist.ctrl;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import tech.yunyue.core.mybatis.mvc.ctrl.mybatis.StdCtrl;
-import tech.yunyue.sys.blacklist.entity.BlackListEntity;
-import tech.yunyue.sys.blacklist.service.BlackListService;
+import tech.yunyue.blacklist.entity.BlackListEntity;
+import tech.yunyue.blacklist.service.BlackListService;
 
 
 /**
@@ -13,7 +14,7 @@ import tech.yunyue.sys.blacklist.service.BlackListService;
  */
 @Tag(name = "黑名单管理")
 @RestController
-@RequestMapping("/sys/blacklist")
+@RequestMapping("/blacklist")
 @RequiredArgsConstructor
 public class BlackListCtrl extends StdCtrl<BlackListService,BlackListEntity> {
 }
