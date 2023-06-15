@@ -1,6 +1,7 @@
 package tech.yunyue.sys.param.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -19,7 +20,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @Alias("sys_default_config")
-@TableName("SYS_DEFAULT_CONFIG")
+@TableName(value = "SYS_DEFAULT_CONFIG", autoResultMap = true)
 @EqualsAndHashCode(callSuper = false)
 public class SystemParameterEntity {
     /**
@@ -35,6 +36,7 @@ public class SystemParameterEntity {
     /**
      * 参数值
      */
+    @TableField(typeHandler = JacksonTypeHandler.class)
     private String codeVal;
     /**
      * 创建人
