@@ -1,4 +1,4 @@
-package tech.yunyue.service;
+package tech.yunyue.captcha.service;
 
 import com.anji.captcha.service.CaptchaCacheService;
 import lombok.extern.slf4j.Slf4j;

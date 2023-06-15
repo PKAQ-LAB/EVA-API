@@ -1,1 +1,1 @@
-tech.yunyue.service.CaptchaCacheServiceRedisImpl
+tech.yunyue.captcha.service.CaptchaCacheServiceRedisImpl
