@@ -1,4 +1,4 @@
-package tech.yunyue.domain;
+package tech.yunyue.auth.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;

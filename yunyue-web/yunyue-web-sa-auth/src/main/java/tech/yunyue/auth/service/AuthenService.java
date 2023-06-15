@@ -1,4 +1,4 @@
-package tech.yunyue.service;
+package tech.yunyue.auth.service;
 
 import cn.dev33.satoken.config.SaTokenConfig;
 import cn.dev33.satoken.context.SaHolder;
@@ -10,7 +10,7 @@ import cn.hutool.core.date.DateUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tech.yunyue.core.cache.util.RedisUtil;
 import tech.yunyue.core.constant.CommonConstant;
@@ -32,7 +32,7 @@ import java.util.*;
  * 校验密码
  */
 @Slf4j
-@Component
+@Service
 @AllArgsConstructor
 public class AuthenService {
     private final UserMapper userMapper;

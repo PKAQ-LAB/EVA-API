@@ -1,4 +1,4 @@
-package tech.yunyue.ctrl;
+package tech.yunyue.auth.ctrl;
 
 import cn.dev33.satoken.config.SaTokenConfig;
 import cn.dev33.satoken.exception.NotLoginException;

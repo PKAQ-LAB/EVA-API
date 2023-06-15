@@ -1,4 +1,4 @@
-package tech.yunyue.domain;
+package tech.yunyue.auth.domain;
 
 import cn.hutool.core.bean.BeanUtil;
 import tech.yunyue.core.enums.LockEnumm;
