@@ -2,6 +2,7 @@ package tech.yunyue.core.threaduser;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
@@ -28,6 +29,8 @@ public class ThreadUser implements Serializable {
     // 当前用户操作的模块id
     private String moduleId;
     @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class GrantedRoles {
         private String name;
 
@@ -36,14 +39,6 @@ public class ThreadUser implements Serializable {
         private String dataPermissionType;
 
         private String dataPermissionDeptid;
-        public GrantedRoles() {
-        }
-        public GrantedRoles(String name, String code, String dataPermissionType, String dataPermissionDeptid) {
-            this.name = name;
-            this.code = code;
-            this.dataPermissionType = dataPermissionType;
-            this.dataPermissionDeptid = dataPermissionDeptid;
-        }
     }
 }
 
