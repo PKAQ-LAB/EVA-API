@@ -15,7 +15,7 @@ import tech.yunyue.core.log.annotation.BizLog;
 import tech.yunyue.core.log.base.BizLogEnum;
 import tech.yunyue.core.properties.EvaConfig;
 import tech.yunyue.core.threaduser.ThreadUserHelper;
-import tech.yunyue.events.KickUserEvent;
+import tech.yunyue.core.event.KickUserEvent;
 import tech.yunyue.sys.dict.cache.DictCacheHelper;
 import tech.yunyue.sys.module.entity.ModuleEntityStd;
 import tech.yunyue.sys.module.mapper.ModuleMapper;

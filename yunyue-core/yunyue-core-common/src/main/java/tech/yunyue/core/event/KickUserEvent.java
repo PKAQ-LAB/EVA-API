@@ -1,4 +1,4 @@
-package tech.yunyue.events;
+package tech.yunyue.core.event;
 
 import org.springframework.context.ApplicationEvent;
 

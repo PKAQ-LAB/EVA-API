@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import tech.yunyue.core.constant.CommonConstant;
-import tech.yunyue.events.KickUserEvent;
+import tech.yunyue.core.event.KickUserEvent;
 
 import java.util.List;
 
