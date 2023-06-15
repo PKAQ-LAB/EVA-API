@@ -10,7 +10,7 @@ import tech.yunyue.auth.service.JDBCService;
 import tech.yunyue.core.cache.util.RedisUtil;
 import tech.yunyue.core.constant.CommonConstant;
 import tech.yunyue.core.properties.EvaConfig;
-import tech.yunyue.core.util.json.JsonUtil;
+import cn.hutool.json.JSONUtil;
 
 import java.util.Collections;
 
@@ -68,11 +68,11 @@ public class TenantUtil {
                 if(!StringUtils.hasText(redisUtil.get(key))){
                     //redis没有就从数据库读取
                     userEntity = JwtUserFactory.create(jdbcService.loadUserById(uid), Collections.emptyList());
-                    redisUtil.setForTimeMIN(key, JsonUtil.toJson(userEntity), sEvaConfig.getJwt().getBravoTtl() / 60);
+                    redisUtil.setForTimeMIN(key, JSONUtil.toJsonStr(userEntity), sEvaConfig.getJwt().getBravoTtl() / 60);
                 }
                 return userEntity;
             }
         }
-        return JsonUtil.parse(userStr, JwtUserDetail.class);
+        return JSONUtil.toBean(userStr, JwtUserDetail.class);
     }
 }
