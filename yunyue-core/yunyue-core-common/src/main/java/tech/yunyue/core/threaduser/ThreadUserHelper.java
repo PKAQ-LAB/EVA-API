@@ -6,6 +6,8 @@ import tech.yunyue.core.constant.CommonConstant;
 import tech.yunyue.core.enums.BizCodeEnum;
 import tech.yunyue.core.exception.BizException;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -81,13 +83,22 @@ public class ThreadUserHelper {
     }
 
     /**
+     * 获取角色以及角色的数据权限类型
+     *
+     * @return
+     */
+    public static Map<String, ThreadUser.GrantedRoles> getUsetGrantedRoles() {
+        return Optional.ofNullable(userThreadLocal.get())
+                .map(i -> Optional.ofNullable(i.getRolesMap()).orElse(null)).orElse(null);
+    }
+    /**
      * 获取角色
      *
      * @return
      */
     public static String[] getUserRoles() {
-        return Optional.ofNullable(userThreadLocal.get())
-                .map(ThreadUser::getRoles).orElse(null);
+        return Optional.ofNullable(getUsetGrantedRoles())
+                .map(i -> i.keySet().stream().toArray(String[]::new)).orElse(null);
     }
 
     /**
@@ -96,8 +107,8 @@ public class ThreadUserHelper {
      * @return
      */
     public static String[] getUserRolesEx() {
-        return Optional.ofNullable(userThreadLocal.get())
-                .map(ThreadUser::getRoles).orElseThrow(() -> new BizException(BizCodeEnum.ACCOUNT_NOT_EXIST));
+        return Optional.ofNullable(getUsetGrantedRoles())
+                .map(i -> i.keySet().stream().toArray(String[]::new)).orElseThrow(() -> new BizException(BizCodeEnum.ACCOUNT_NOT_EXIST));
     }
 
     /**
@@ -108,8 +119,7 @@ public class ThreadUserHelper {
      */
     public static boolean isAdmin() {
         var isAdmin = false;
-        var roles = Optional.ofNullable(userThreadLocal.get())
-                .map(ThreadUser::getRoles).orElse(null);
+        var roles = getUserRoles();
         if (null != roles) {
             isAdmin = ArrayUtil.contains(roles, CommonConstant.ADMIN_ROLE_NAME);
         }

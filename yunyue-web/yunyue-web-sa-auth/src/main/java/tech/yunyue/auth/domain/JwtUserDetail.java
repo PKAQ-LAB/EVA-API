@@ -3,6 +3,7 @@ package tech.yunyue.auth.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import tech.yunyue.core.threaduser.ThreadUser;
 
 import java.util.Map;
 
@@ -55,7 +56,7 @@ public class JwtUserDetail{
     /**
      * 权限集合
      **/
-    private final Map<String,GrantedRoles> authorities;
+    private final Map<String, ThreadUser.GrantedRoles> authorities;
 
     public String getUsername() {
         return this.account;

@@ -7,11 +7,12 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import tech.yunyue.auth.domain.JwtUserFactory;
+import tech.yunyue.auth.service.JDBCService;
 import tech.yunyue.core.constant.CommonConstant;
 import tech.yunyue.core.properties.EvaConfig;
+import tech.yunyue.core.threaduser.ThreadUser;
 import tech.yunyue.core.threaduser.ThreadUserHelper;
-import tech.yunyue.sys.role.service.RoleService;
-import tech.yunyue.sys.user.service.UserService;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,17 +22,15 @@ import java.util.concurrent.ConcurrentHashMap;
  * [账号id->权限列表]的缓存模型简单，但是修改角色的权限后 缓存中所有拥有该角色的账号缓存信息都需要改变<br/>
  * 使用[账号id -> 角色id -> 权限列表] 的缓存模型 则只需要清除或修改 [角色id -> 权限列表] 一条缓存即可
  */
-    @Component
-    @RequiredArgsConstructor
-    public class UserRolePermission implements StpInterface {
-        private final RoleService roleService;
-        private final UserService userService;
+@Component
+@RequiredArgsConstructor
+public class UserRolePermission implements StpInterface {
+    private final EvaConfig evaConfig;
+    private final JDBCService jdbcService;
     /**
      * 资源权限 角色 - 资源路径 的map
      */
     private volatile Map<String, Collection<String>> rolePermMap = new ConcurrentHashMap<>();
-
-    private final EvaConfig evaConfig;
 
     /**
      * 返回一个账号所拥有的权限码集合
@@ -56,7 +55,7 @@ import java.util.concurrent.ConcurrentHashMap;
             synchronized (rolePermMap) {
                 //双重检测
                 if (CollectionUtil.isEmpty(rolePermMap)) {
-                    loadResourceRoleUrlPermMap(this.roleService.listRoleNamesWithPath());
+                    loadResourceRoleUrlPermMap(this.jdbcService.listRoleNamesWithPath());
                     // 把角色和权限的集合保存起来 永不过期  todo 要不要改成一个角色一条缓存 这样子修改角色只需要修改一条记录 否则就是每次修改都删掉缓存重新放
                     redisDao.setObject(CommonConstant.REDIS_ROLES_PERMISSION_PREFIX_KEY,rolePermMap,SaTokenDao.NEVER_EXPIRE);
                 }
@@ -89,13 +88,13 @@ import java.util.concurrent.ConcurrentHashMap;
         }
         //从redis中取 用户可能没有角色 所以只需要判断是否为null
         SaTokenDao dao = StpUtil.getStpLogic().getSaTokenDao();
-        List<String> roles = (List<String>)dao.getObject(CommonConstant.REDIS_USER_ROLES_PREFIX_KEY+loginId);
-        if (Objects.nonNull(roles)) return roles;
-
-        // 查询数据库且将用户角色保存到redis中
-        roles = userService.getRoleById((String)loginId);
-        dao.setObject(CommonConstant.REDIS_USER_ROLES_PREFIX_KEY+loginId,roles,StpUtil.getTokenTimeout());
-        return roles;
+        Map<String, ThreadUser.GrantedRoles> roles = (Map<String, ThreadUser.GrantedRoles>)dao.getObject(CommonConstant.REDIS_USER_ROLES_PREFIX_KEY+loginId);
+        if (Objects.isNull(roles)){
+            // 查询数据库且将用户角色保存到redis中
+            roles = JwtUserFactory.mapToGrantedAuthorities(this.jdbcService.getRoleById((String)loginId));
+            dao.setObject(CommonConstant.REDIS_USER_ROLES_PREFIX_KEY+loginId,roles,StpUtil.getTokenTimeout());
+        }
+        return roles.keySet().stream().toList();
     }
 
     /**
@@ -103,9 +102,9 @@ import java.util.concurrent.ConcurrentHashMap;
      * 角色 - url+资源路径
      *
      */
-    public void loadResourceRoleUrlPermMap(List<Map<String, String>> menusUrl) {
+    public void loadResourceRoleUrlPermMap(List<Map<String, Object>> menusUrl) {
         menusUrl.stream().forEach(item -> {
-            var role_code = item.get("code");
+            var role_code = StrUtil.toStringOrNull(item.get("code"));
             rolePermMap.put(role_code, this.getValues(item));
         });
     }
@@ -113,10 +112,10 @@ import java.util.concurrent.ConcurrentHashMap;
     /**
      * 拼接资源url path+resource_url
      */
-    private Collection<String> getValues(Map<String, String> item) {
-        var role_code = item.get("code");
-        var path = item.get("path");
-        var resoure_path = item.get("resource_url");
+    private Collection<String> getValues(Map<String, Object> item) {
+        var role_code = StrUtil.toStringOrNull(item.get("CODE"));
+        var path = StrUtil.toStringOrNull(item.get("PATH"));
+        var resoure_path = StrUtil.toStringOrNull(item.get("RESOURCE_URL"));
 
         if (StrUtil.isNotBlank(resoure_path)) {
             resoure_path = resoure_path.startsWith("/") ? resoure_path.substring(1) : resoure_path;

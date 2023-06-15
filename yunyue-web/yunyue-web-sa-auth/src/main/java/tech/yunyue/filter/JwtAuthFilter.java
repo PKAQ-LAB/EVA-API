@@ -35,6 +35,7 @@ import tech.yunyue.util.TenantUtil;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author PKAQ
@@ -127,12 +128,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         //把登录用户信息存到ThreadUser中
         if (isvalid) {
-            List<String> roles = (List<String>)dao.getObject(CommonConstant.REDIS_USER_ROLES_PREFIX_KEY+uid);
+            Map<String, ThreadUser.GrantedRoles> rolesMap = (Map<String, ThreadUser.GrantedRoles>)dao.getObject(CommonConstant.REDIS_USER_ROLES_PREFIX_KEY+uid);
             logger.info("checking authentication ：" + account);
             if (StrUtil.isNotBlank(account)) {
                 ThreadUser currentUser = new ThreadUser().setUserId(uid)
                         .setUserName(account)
-                        .setRoles(roles.toArray(new String[0]))
+                        .setRolesMap(rolesMap)
                         .setTenantId(TenantUtil.getTenantId(uid))
                         .setCompanyTenantId(TenantUtil.getComTenantId(uid))
                         .setModuleId(RequestUtil.getModuleId(request));

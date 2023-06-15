@@ -7,6 +7,7 @@ import cn.dev33.satoken.secure.BCrypt;
 import cn.dev33.satoken.stp.SaLoginConfig;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,13 +21,9 @@ import tech.yunyue.core.mvc.vo.Response;
 import tech.yunyue.core.properties.EvaConfig;
 import tech.yunyue.core.util.json.JsonUtil;
 import tech.yunyue.core.web.util.RequestUtil;
-import tech.yunyue.domain.JwtUserDetail;
-import tech.yunyue.domain.JwtUserFactory;
+import tech.yunyue.auth.domain.JwtUserDetail;
+import tech.yunyue.auth.domain.JwtUserFactory;
 import tech.yunyue.core.enums.BizCodeEnum;
-import tech.yunyue.sys.user.entity.UserEntity;
-import tech.yunyue.sys.user.mapper.UserMapper;
-
-import java.util.*;
 
 /**
  * 校验密码
@@ -35,12 +32,10 @@ import java.util.*;
 @Service
 @AllArgsConstructor
 public class AuthenService {
-    private final UserMapper userMapper;
-
     private final SaTokenConfig saTokenConfig;
     private final EvaConfig evaConfig;
-
     private final RedisUtil redisUtil;
+    private final JDBCService jdbcService;
 
     /**
      * 登录
@@ -83,7 +78,7 @@ public class AuthenService {
 
         // 将用户角色保存到redis中
         SaTokenDao redisDao = StpUtil.getStpLogic().getSaTokenDao();
-        redisDao.setObject(CommonConstant.REDIS_USER_ROLES_PREFIX_KEY+user.getId(), new ArrayList<String>(user.getAuthorities().keySet()), evaConfig.getJwt().getBravoTtl());
+        redisDao.setObject(CommonConstant.REDIS_USER_ROLES_PREFIX_KEY+user.getId(), user.getAuthorities(), evaConfig.getJwt().getBravoTtl());
         // 将用户信息保存到redis中
         redisUtil.setForTimeMIN(CommonConstant.REDIS_USER_INFO_PREFIX_KEY+user.getId(), JsonUtil.toJson(user), evaConfig.getJwt().getBravoTtl() / 60);
 
@@ -141,13 +136,14 @@ public class AuthenService {
      * 根据用户名在数据中查询用户和角色
      */
     private JwtUserDetail loadUserByUsername(String account) {
-        UserEntity user = new UserEntity();
-        user.setAccount(account);
-        user.setTel(account);
-        user.setEmail(account);
-        user = userMapper.getUserWithRole(user);
-        BizCodeEnum.ACCOUNT_NOT_EXIST.assertNotNull(user);
-        return JwtUserFactory.create(user);
+        if (StrUtil.isBlank(account)){
+            BizCodeEnum.PERMISSION_DENY.newException();
+        }
+        var userMap = this.jdbcService.loadUserByUsername(account);
+        BizCodeEnum.ACCOUNT_NOT_EXIST.assertNotBlank(userMap);
+        // 查询用户拥有的角色
+        var roleList = this.jdbcService.getRoleById(StrUtil.toStringOrNull(userMap.get("ID")));
+        return JwtUserFactory.create(userMap, roleList);
     }
 
     /**

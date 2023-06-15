@@ -1,13 +1,11 @@
 package tech.yunyue.auth.domain;
 
-import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.StrUtil;
 import tech.yunyue.core.enums.LockEnumm;
-import tech.yunyue.sys.role.entity.RoleEntity;
-import tech.yunyue.sys.user.entity.UserEntity;
+import tech.yunyue.core.threaduser.ThreadUser;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * JwtUser 工厂
@@ -18,30 +16,31 @@ public final class JwtUserFactory {
     private JwtUserFactory() {
     }
 
-    public static JwtUserDetail create(UserEntity user) {
+    public static JwtUserDetail create(Map<String, Object> userMap,List<Map<String, Object>> roleList) {
         return new JwtUserDetail(
-                String.valueOf(user.getId()),
-                user.getAccount(),
-                user.getPassword(),
-                LockEnumm.LOCK.getCode().equals(user.getLocked()),
-                user.getDeptId(),
-                user.getDeptName(),
-                user.getName(),
-                user.getNickName(),
-                user.getTenantId(),
-                user.getCompanyTenantId(),
-                mapToGrantedAuthorities(user.getRoles())
+                StrUtil.toStringOrNull(userMap.get("ID")),
+                StrUtil.toStringOrNull(userMap.get("ACCOUNT")),
+                StrUtil.toStringOrNull(userMap.get("PASSWORD")),
+                LockEnumm.LOCK.getCode().equals(StrUtil.toStringOrNull(userMap.get("LOCKED"))),
+                StrUtil.toStringOrNull(userMap.get("DEPT_ID")),
+                StrUtil.toStringOrNull(userMap.get("DEPT_NAME")),
+                StrUtil.toStringOrNull(userMap.get("NAME")),
+                StrUtil.toStringOrNull(userMap.get("NICK_NAME")),
+                StrUtil.toStringOrNull(userMap.get("TENANT_ID")),
+                StrUtil.toStringOrNull(userMap.get("COMPANY_TENANT_ID")),
+                mapToGrantedAuthorities(roleList)
         );
     }
 
-    private static Map<String,GrantedRoles> mapToGrantedAuthorities(List<RoleEntity> authorities) {
-        Map<String,GrantedRoles> rolesMap=new HashMap<>(authorities.size());
-        authorities.stream()
-                .forEach(item -> {
-                    GrantedRoles grantedRoles = new GrantedRoles();
-                    BeanUtil.copyProperties(item, grantedRoles);
-                    rolesMap.put(item.getCode(),grantedRoles);
-                });
-        return rolesMap;
+    public static Map<String, ThreadUser.GrantedRoles> mapToGrantedAuthorities(List<Map<String, Object>> roleList) {
+        Map<String, ThreadUser.GrantedRoles> roles = roleList.stream()
+                .collect(Collectors.toMap(
+                        o->StrUtil.toStringOrNull(o.get("CODE")),
+                        o->new ThreadUser.GrantedRoles(
+                                StrUtil.toStringOrNull(o.get("NAME")),
+                                StrUtil.toStringOrNull(o.get("CODE")),
+                                StrUtil.toStringOrNull(o.get("DATA_PERMISSION_TYPE")),
+                                StrUtil.toStringOrNull(o.get("DATA_PERMISSION_DEPTID")))));
+        return roles;
     }
 }

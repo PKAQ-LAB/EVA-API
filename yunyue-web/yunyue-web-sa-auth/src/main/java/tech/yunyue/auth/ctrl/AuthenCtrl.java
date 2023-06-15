@@ -14,22 +14,23 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import tech.yunyue.core.constant.CommonConstant;
 import tech.yunyue.core.enums.BizCodeEnum;
+import tech.yunyue.core.event.KickUserEvent;
 import tech.yunyue.core.mvc.vo.Response;
 import tech.yunyue.core.properties.EvaConfig;
 import tech.yunyue.core.threaduser.ThreadUserHelper;
 import tech.yunyue.core.util.json.JsonUtil;
-import tech.yunyue.service.AuthenService;
-import tech.yunyue.sys.user.service.UserService;
+import tech.yunyue.auth.service.AuthenService;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 
 @RestController
@@ -42,7 +43,7 @@ public class AuthenCtrl {
     private final EvaConfig evaConfig;
     private final SaTokenConfig saTokenConfig;
     private final CaptchaService captchaService;
-    private final UserService userService;
+    private final ApplicationEventPublisher publisher;
 
     /**
      * 登录认证
@@ -96,7 +97,7 @@ public class AuthenCtrl {
             saTokenConfig.setTokenName(CommonConstant.ACCESS_TOKEN_KEY); //改回来
 
             // 发布踢出用户事件 删掉用户其余缓存数据
-            userService.kickOut(Arrays.asList(userId));
+            publisher.publishEvent(new KickUserEvent(Collections.singletonList(userId)));
         }catch (SaTokenException ignored){}
         return new Response().success(null,BizCodeEnum.LOGINOUT_SUCCESS);
     }

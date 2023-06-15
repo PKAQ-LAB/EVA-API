@@ -1,9 +1,11 @@
 package tech.yunyue.core.threaduser;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * 用于trheadlocal存储用户信息的实体类
@@ -15,8 +17,8 @@ public class ThreadUser implements Serializable {
     private String userId;
     // 用户名称
     private String userName;
-    // 用户拥有的角色
-    private String[] roles;
+    // 用户拥有的角色以及角色的数据权限类型
+    private Map<String, GrantedRoles> rolesMap;
     // 用户拥有的数据权限
     private String dataPermission;
     // 用户的租户id【集团】
@@ -25,4 +27,23 @@ public class ThreadUser implements Serializable {
     private String companyTenantId;
     // 当前用户操作的模块id
     private String moduleId;
+    @Data
+    public static class GrantedRoles {
+        private String name;
+
+        private String code;
+
+        private String dataPermissionType;
+
+        private String dataPermissionDeptid;
+        public GrantedRoles() {
+        }
+        public GrantedRoles(String name, String code, String dataPermissionType, String dataPermissionDeptid) {
+            this.name = name;
+            this.code = code;
+            this.dataPermissionType = dataPermissionType;
+            this.dataPermissionDeptid = dataPermissionDeptid;
+        }
+    }
 }
+
