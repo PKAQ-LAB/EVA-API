@@ -1,4 +1,4 @@
-package tech.yunyue.core.enums;
+package tech.yunyue.sys.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

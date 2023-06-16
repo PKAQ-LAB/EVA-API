@@ -1,12 +1,12 @@
-package tech.yunyue.core.enums;
+package tech.yunyue.sys.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import tech.yunyue.core.exception.BizException;
+import tech.yunyue.core.enums.BizCode;
+import tech.yunyue.core.enums.BizCodeEnum;
 
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * 组织类型

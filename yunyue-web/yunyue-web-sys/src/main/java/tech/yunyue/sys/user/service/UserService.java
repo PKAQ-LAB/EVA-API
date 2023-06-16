@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import tech.yunyue.core.enums.LockEnumm;
-import tech.yunyue.core.enums.OrgTypeEnum;
 import tech.yunyue.core.log.annotation.BizLog;
 import tech.yunyue.core.log.base.BizLogEnum;
 import tech.yunyue.core.properties.EvaConfig;
