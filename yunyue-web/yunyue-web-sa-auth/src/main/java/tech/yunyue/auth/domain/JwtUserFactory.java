@@ -28,6 +28,8 @@ public final class JwtUserFactory {
                 StrUtil.toStringOrNull(userMap.get("NICK_NAME")),
                 StrUtil.toStringOrNull(userMap.get("TENANT_ID")),
                 StrUtil.toStringOrNull(userMap.get("COMPANY_TENANT_ID")),
+                StrUtil.toStringOrNull(userMap.get("POST_ID")),
+                StrUtil.toStringOrNull(userMap.get("POST_NAME")),
                 mapToGrantedAuthorities(roleList)
         );
     }

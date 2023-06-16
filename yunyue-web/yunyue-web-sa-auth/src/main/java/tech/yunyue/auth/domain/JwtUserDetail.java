@@ -54,6 +54,14 @@ public class JwtUserDetail{
     /** 公司租户号 */
     private String companyTenantId;
     /**
+     * 岗位id
+     **/
+    private String postId;
+    /**
+     * 岗位名称
+     **/
+    private String postName;
+    /**
      * 权限集合
      **/
     private final Map<String, ThreadUser.GrantedRoles> authorities;
