@@ -22,6 +22,10 @@ public class Upload {
     // DFS服务器地址
     private String serverUrl;
 
+    // 图片缩略长宽
+    private int scaleWidth = 300;
+    private int scaleHeight = 300;
+
     private MinIO minIo;
     @Data
     public static class MinIO {

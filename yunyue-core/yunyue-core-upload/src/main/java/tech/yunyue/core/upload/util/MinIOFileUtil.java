@@ -158,12 +158,38 @@ public class MinIOFileUtil implements FileProvider {
     }
 
     /**
-     * 将文件从缓存目录移动到storage目录 如果是图片则生成缩略图
-     *
-     * @param filenames
+     * 将文件从缓存目录移动到storage目录 如果是图片则根据配置的长宽生成缩略图
+     */
+    @Override
+    public void storageWithThumbnail(String... filenames) {
+        var upload = evaConfig.getUpload();
+        storageWithThumbnail(upload.getScaleWidth(), upload.getScaleHeight(), filenames);
+    }
+
+    /**
+     * 将文件从缓存目录移动到storage目录 如果是图片则按长宽生成缩略图
+     */
+    @Override
+    public void storageWithThumbnail(int width, int height, String... filenames) {
+        storageWithThumbnail(Float.NaN, width, height, filenames);
+    }
+
+    /**
+     * 将文件从缓存目录移动到storage目录 如果是图片则按比例生成缩略图
      */
     @Override
     public void storageWithThumbnail(float scale, String... filenames) {
+        storageWithThumbnail(scale,0,0,filenames);
+    }
+
+    /**
+     * 将文件从缓存目录移动到storage目录 如果是图片则按比例/长宽生成缩略图
+     * @param scale 缩放比例 Float.NaN时按长宽缩放
+     * @param width 宽
+     * @param height 长
+     * @param filenames 文件名
+     */
+    private void storageWithThumbnail(float scale, int width, int height, String... filenames) {
         //保存到持久桶中 如果是图片则生成缩略图并保存
         Arrays.stream(filenames)
                 .filter(fileName -> Objects.nonNull(this.storage(fileName)))
@@ -173,8 +199,11 @@ public class MinIOFileUtil implements FileProvider {
                         ByteArrayOutputStream outThumbnail = new ByteArrayOutputStream();
 
                         // 缩放后默认变成jpeg格式 用原来的后缀也能打开
-                        ImgUtil.scale(in, outThumbnail, scale);
-
+                        if(Float.isNaN(scale)) {
+                            ImgUtil.write(ImgUtil.scale(ImgUtil.read(in), width, height), FileUtil.extName(fileName), outThumbnail);
+                        }else{
+                            ImgUtil.scale(in, outThumbnail, scale);
+                        }
                         // 缩略图的路径要与原图路径一致 所以不能根据当前时间生成文件夹
                         var name = fileName.substring(fileName.lastIndexOf("/") + 1);
                         uploadObject(new ByteArrayInputStream(outThumbnail.toByteArray()), STORAGE,

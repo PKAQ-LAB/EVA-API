@@ -29,13 +29,24 @@ public interface FileProvider {
     List<String> storage(String... filenames);
 
     /**
-     * 存储图片并且生成缩略图
+     * 将文件从缓存目录移动到storage目录 是图片则根据配置的长宽生成缩略图 300*300
+     * @param filenames
+     */
+    default void storageWithThumbnail(String... filenames){};
+
+    /**
+     * 将文件从缓存目录移动到storage目录 是图片则按比例生成缩略图
      *
      * @param scale
      * @param filenames
      */
     void storageWithThumbnail(float scale, String... filenames);
 
+    /**
+     * 将文件从缓存目录移动到storage目录 是图片则按长宽生成缩略图
+     * @param filenames
+     */
+    default void storageWithThumbnail(int width, int height, String... filenames){};
     /**
      * 生成缩略图
      *
