@@ -168,21 +168,14 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
             orgId = organization.getId();
             //新增 把path路径加上自己id
             organization.setPath(organization.getPath() + orgId);
-            //新增集团时 复制一份业务字典到系统参数中
-            if(Objects.equals(organization.getType(),OrgTypeEnum.GROUP.getCode())){
-                SystemParameterEntity paramEntity = new SystemParameterEntity();
-                paramEntity.setCode(CommonConstant.BIZ_DICT_PARAMETER_CODE);
-                paramEntity.setTenantId(orgId);
-                // todo 拿到字典  之后再确定展示格式
-                paramEntity.setCodeVal(JsonUtil.toJson(dictService.selectDict(CommonConstant.BIZ_DICT_CODE)));
-                systemParameterMapper.insert(paramEntity);
-            }
             //公司和集团的租户id是自己
             switch (OrgTypeEnum.getByCode(organization.getType())) {
                 case GROUP -> organization.setTenantId(orgId);
                 case COMPANY ->  organization.setCompanyTenantId(orgId);
             }
             this.mapper.updateById(organization);
+            //初始化集团数据
+            initGroupData(organization);
         } else {
             //刷新子节点相关数据
             this.refreshChild(organization, oldOrgin);
@@ -273,5 +266,26 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
         }
         long records = this.mapper.selectCount(entityWrapper);
         return records > 0;
+    }
+
+    /**
+     * 创建集团后初始化集团数据
+     */
+    private void initGroupData(OrganizationEntity organization){
+        if(!Objects.equals(organization.getType(),OrgTypeEnum.GROUP.getCode())){
+            return;
+        }
+        String orgId = organization.getId();
+        //初始化默认参数
+        SystemParameterEntity paramEntity = new SystemParameterEntity();
+        paramEntity.setCode(CommonConstant.BIZ_DICT_PARAMETER_CODE);
+        paramEntity.setTenantId(orgId);
+        // todo 拿到字典  之后再确定展示格式
+        paramEntity.setCodeVal(JsonUtil.toJson(dictService.selectDict(CommonConstant.BIZ_DICT_CODE)));
+        systemParameterMapper.insert(paramEntity);
+
+        //初始化企业信息
+
+
     }
 }
