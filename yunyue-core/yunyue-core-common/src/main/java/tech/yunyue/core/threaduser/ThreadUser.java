@@ -28,6 +28,10 @@ public class ThreadUser implements Serializable {
     private String companyTenantId;
     // 当前用户操作的模块id
     private String moduleId;
+    // 当前用户部门id
+    private String deptId;
+    // 当前用户岗位id
+    private String postId;
     @Data
     @AllArgsConstructor
     @NoArgsConstructor

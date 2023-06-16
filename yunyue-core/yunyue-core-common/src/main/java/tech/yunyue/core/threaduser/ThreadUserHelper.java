@@ -6,9 +6,7 @@ import tech.yunyue.core.constant.CommonConstant;
 import tech.yunyue.core.enums.BizCodeEnum;
 import tech.yunyue.core.exception.BizException;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author
@@ -144,6 +142,22 @@ public class ThreadUserHelper {
     public static String getComTenantId() {
         return Optional.ofNullable(userThreadLocal.get())
                 .map(ThreadUser::getCompanyTenantId).orElse(null);
+    }
+
+    /**
+     * 获取部门id
+     */
+    public static String getDeptId() {
+        return Optional.ofNullable(userThreadLocal.get())
+                .map(ThreadUser::getDeptId).orElse(null);
+    }
+
+    /**
+     * 获取岗位id
+     */
+    public static String getPostId() {
+        return Optional.ofNullable(userThreadLocal.get())
+                .map(ThreadUser::getPostId).orElse(null);
     }
 
     /**
