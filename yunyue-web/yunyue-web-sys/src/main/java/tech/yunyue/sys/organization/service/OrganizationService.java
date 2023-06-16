@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import tech.yunyue.core.constant.CommonConstant;
 import tech.yunyue.core.enums.OrgTypeEnum;
+import tech.yunyue.core.enums.SystemParamEnum;
 import tech.yunyue.core.log.annotation.BizLog;
 import tech.yunyue.core.log.base.BizLogEnum;
 import tech.yunyue.core.properties.EvaConfig;
@@ -24,9 +25,7 @@ import tech.yunyue.core.mvc.vo.Response;
 import tech.yunyue.core.mybatis.mvc.service.mybatis.StdService;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * 组织信息Service
@@ -276,13 +275,17 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
             return;
         }
         String orgId = organization.getId();
+
         //初始化默认参数
-        SystemParameterEntity paramEntity = new SystemParameterEntity();
-        paramEntity.setCode(CommonConstant.BIZ_DICT_PARAMETER_CODE);
-        paramEntity.setTenantId(orgId);
-        // todo 拿到字典  之后再确定展示格式
-        paramEntity.setCodeVal(JsonUtil.toJson(dictService.selectDict(CommonConstant.BIZ_DICT_CODE)));
-        systemParameterMapper.insert(paramEntity);
+        Arrays.stream(SystemParamEnum.values()).forEach(e -> {
+            SystemParameterEntity paramEntity = new SystemParameterEntity();
+            paramEntity.setCode(e.getName());
+            paramEntity.setTenantId(orgId);
+            if (e.equals(SystemParamEnum.BIZ_DICT)){
+                paramEntity.setCodeVal(JsonUtil.toJson(dictService.selectDict(CommonConstant.BIZ_DICT_CODE)));
+            }
+            systemParameterMapper.insert(paramEntity);
+        });
 
         //初始化企业信息
 
