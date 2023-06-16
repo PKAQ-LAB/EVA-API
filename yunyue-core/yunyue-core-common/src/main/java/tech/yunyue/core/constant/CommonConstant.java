@@ -74,8 +74,6 @@ public interface CommonConstant {
 
     //业务字典的code
     String BIZ_DICT_CODE = "biz";
-    //业务字典存在系统参数中的code
-    String BIZ_DICT_PARAMETER_CODE = "dict_" + BIZ_DICT_CODE;
     //组织类型的字典编码
     String ORGANIZATION_DICT_CODE = "organization_type";
     //ERP端的组织类型的字典编码
