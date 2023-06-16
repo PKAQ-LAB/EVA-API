@@ -7,6 +7,7 @@ import cn.dev33.satoken.stp.SaLoginConfig;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaTokenConsts;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,8 +35,7 @@ import tech.yunyue.util.TenantUtil;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author PKAQ
@@ -131,7 +131,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             Map<String, ThreadUser.GrantedRoles> rolesMap = (Map<String, ThreadUser.GrantedRoles>)dao.getObject(CommonConstant.REDIS_USER_ROLES_PREFIX_KEY+uid);
             logger.info("checking authentication ：" + account);
             if (StrUtil.isNotBlank(account)) {
-                ThreadUser currentUser = new ThreadUser().setUserId(uid)
+                var userStr = Optional.ofNullable((String)dao.getObject(CommonConstant.REDIS_USER_INFO_PREFIX_KEY+uid)).orElse("{}");
+                ThreadUser currentUser = JSONUtil.toBean(userStr, ThreadUser.class);
+                currentUser.setUserId(uid)
                         .setUserName(account)
                         .setRolesMap(rolesMap)
                         .setTenantId(TenantUtil.getTenantId(uid))
