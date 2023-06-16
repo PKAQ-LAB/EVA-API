@@ -15,7 +15,7 @@ import tech.yunyue.core.log.base.BizLogEnum;
 import tech.yunyue.core.properties.EvaConfig;
 import tech.yunyue.core.threaduser.ThreadUserHelper;
 import tech.yunyue.core.event.KickUserEvent;
-import tech.yunyue.sys.dict.cache.DictCacheHelper;
+import tech.yunyue.core.upload.util.FileProvider;
 import tech.yunyue.sys.module.entity.ModuleEntityStd;
 import tech.yunyue.sys.module.mapper.ModuleMapper;
 import tech.yunyue.sys.organization.mapper.OrganizationMapper;
@@ -43,19 +43,11 @@ import java.util.*;
 @AllArgsConstructor
 @Schema(description = "用户管理")
 public class UserService extends StdService<UserMapper, UserEntity> {
-
     private final OrganizationMapper organizationMapper;
-
     private final RoleUserMapper roleUserMapper;
-
-    private final FileUploadProvider fileUploadProvider;
-
+    private final FileProvider fileProvider;
     private final ModuleMapper moduleMapper;
-
-    private final DictCacheHelper dictCacheHelper;
-
     private final ApplicationEventPublisher publisher;
-    private final EvaConfig evaConfig;
 
     /**
      * 修改密码
@@ -178,7 +170,7 @@ public class UserService extends StdService<UserMapper, UserEntity> {
             UserEntity oldUser = this.mapper.selectById(userId);
             String avatar = oldUser.getAvatar();
             if (StrUtil.isNotBlank(avatar) && !avatar.equals(user.getAvatar())) {
-                fileUploadProvider.delFromStorage(avatar);
+                fileProvider.delFromStorage(avatar);
             }
             //修改用户时不能修改用户所属公司和集团
             if(!Objects.equals(oldUser.getTenantId(), user.getTenantId())
@@ -189,7 +181,7 @@ public class UserService extends StdService<UserMapper, UserEntity> {
 
         // 保存新的头像文件
         if (StrUtil.isNotBlank(user.getAvatar())) {
-            fileUploadProvider.storageWithThumbnail(0.3f, user.getAvatar());
+            fileProvider.storageWithThumbnail(user.getAvatar());
         }
         // 保存权限
         this.saveRoles(user);
