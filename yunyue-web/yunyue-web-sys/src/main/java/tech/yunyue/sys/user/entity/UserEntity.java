@@ -86,6 +86,12 @@ public class UserEntity extends StdEntity {
     @Schema(description = "微信id")
     private String weixin_id;
 
+    @Schema(description = "所属岗位")
+    private String postId;
+
+    @Schema(description = "所属岗位名称")
+    private String postName;
+
     @Schema(description = "用户拥有的角色")
     @TableField(exist = false)
     private List<RoleEntity> roles = new ArrayList<>();
