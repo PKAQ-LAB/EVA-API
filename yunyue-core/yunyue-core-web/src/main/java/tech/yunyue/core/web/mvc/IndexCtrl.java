@@ -17,7 +17,6 @@ public class IndexCtrl {
     @RequestMapping("/")
     @Hidden
     public void index(HttpServletResponse response) throws IOException {
-        System.out.println("-------------------------->");
         response.sendRedirect("doc.html");
     }
 }
