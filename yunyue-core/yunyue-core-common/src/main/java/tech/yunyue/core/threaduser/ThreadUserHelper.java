@@ -108,6 +108,13 @@ public class ThreadUserHelper {
         return Optional.ofNullable(getUsetGrantedRoles())
                 .map(i -> i.keySet().stream().toArray(String[]::new)).orElseThrow(() -> new BizException(BizCodeEnum.ACCOUNT_NOT_EXIST));
     }
+    /**
+     * 获取角色的数据权限类型
+     */
+    public static List<ThreadUser.GrantedRoles> getUsetGrantedRoleList() {
+        return new ArrayList<>(Optional.ofNullable(getUsetGrantedRoles())
+                .map(Map::values).orElse(Collections.emptyList()));
+    }
 
     /**
      * 是否是管理员
@@ -149,7 +156,7 @@ public class ThreadUserHelper {
      */
     public static String getDeptId() {
         return Optional.ofNullable(userThreadLocal.get())
-                .map(ThreadUser::getDeptId).orElse(null);
+                .map(ThreadUser::getDeptId).orElse("");
     }
 
     /**
@@ -157,7 +164,7 @@ public class ThreadUserHelper {
      */
     public static String getPostId() {
         return Optional.ofNullable(userThreadLocal.get())
-                .map(ThreadUser::getPostId).orElse(null);
+                .map(ThreadUser::getPostId).orElse("");
     }
 
     /**
