@@ -1,8 +1,8 @@
 package tech.yunyue.config;
 
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.handler.DataPermissionHandler;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
 import org.apache.ibatis.mapping.VendorDatabaseIdProvider;
 import org.mybatis.spring.annotation.MapperScan;
@@ -13,7 +13,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import tech.yunyue.core.properties.EvaConfig;
 import tech.yunyue.handler.GroupTenantLineHandler;
 import tech.yunyue.handler.CompanyTenantLineHandler;
+import tech.yunyue.interceptor.DataPermissionInterceptor;
+import tech.yunyue.interceptor.TenantLineInnerInterceptor;
 
+import java.util.Objects;
 import java.util.Properties;
 
 /**
@@ -31,6 +34,8 @@ public class MybatisPlusConfig {
     CompanyTenantLineHandler companyTenantLineHandler;
     @Autowired
     EvaConfig evaConfig;
+    @Autowired(required = false)
+    DataPermissionHandler dataPermissionHandler;
     /**
      * 分页插件
      *
@@ -40,9 +45,14 @@ public class MybatisPlusConfig {
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
         //多租户插件
-        interceptor.addInnerInterceptor(new TenantLineInnerInterceptor(groupTenantLineHandler));
-        interceptor.addInnerInterceptor(new TenantLineInnerInterceptor(companyTenantLineHandler));
-        //分页插件
+        if(evaConfig.getTenant().isEnable()){
+            interceptor.addInnerInterceptor(new TenantLineInnerInterceptor(groupTenantLineHandler));
+            interceptor.addInnerInterceptor(new TenantLineInnerInterceptor(companyTenantLineHandler));
+        }
+        //数据权限插件
+        if(Objects.nonNull(dataPermissionHandler)) {
+            interceptor.addInnerInterceptor(new DataPermissionInterceptor(dataPermissionHandler));
+        }        //分页插件
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
         return interceptor;
     }
