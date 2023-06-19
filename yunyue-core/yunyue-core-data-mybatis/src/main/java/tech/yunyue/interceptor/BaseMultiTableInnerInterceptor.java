@@ -167,7 +167,8 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
             processOtherFromItem((FromItem) where, whereSegment);
             return;
         }
-        if (where.toString().indexOf("SELECT") > 0) {
+        // todo where子查询先不处理
+        if (false && where.toString().indexOf("SELECT") > 0) {
             // 有子查询
             if (where instanceof BinaryExpression) {
                 // 比较符号 , and , or , 等等
@@ -201,7 +202,8 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
             SelectExpressionItem selectExpressionItem = (SelectExpressionItem) selectItem;
             final Expression expression = selectExpressionItem.getExpression();
             if (expression instanceof SubSelect) {
-                processSelectBody(((SubSelect) expression).getSelectBody(), whereSegment);
+                // todo 不处理select子查询
+//                processSelectBody(((SubSelect) expression).getSelectBody(), whereSegment);
             } else if (expression instanceof Function) {
                 processFunction((Function) expression, whereSegment);
             }
@@ -304,6 +306,11 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
                 joinTables.add((Table) joinItem);
             } else if (joinItem instanceof SubJoin) {
                 joinTables = processSubJoin((SubJoin) joinItem, whereSegment);
+            } else if(joinItem.getAlias() != null) {
+                // todo 连接子查询【select * from a,(select * from b) c 】不在子查询内拦截sql 跟其余join一样 在外层where条件中加
+                joinTables = new ArrayList<>();
+                Table table = new Table(joinItem.getAlias().getName());
+                joinTables.add(table);
             }
 
             if (joinTables != null) {
@@ -330,19 +337,20 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
                     } else {
                         onTables = Arrays.asList(mainTable, joinTable);
                     }
-                    mainTable = null;
+                    mainTable = joinTable;
                 } else {
                     onTables = Collections.singletonList(joinTable);
                 }
 
-                mainTables = new ArrayList<>();
                 if (mainTable != null) {
                     mainTables.add(mainTable);
+                    continue;
                 }
 
                 // 获取 join 尾缀的 on 表达式列表
                 Collection<Expression> originOnExpressions = join.getOnExpressions();
                 // 正常 join on 表达式只有一个，立刻处理
+                // 只有内连接的on与where一样  外连接的on条件无效，还是左右表全部数据  所以不在on条件后面加上拦截sql 只在外层
                 if (originOnExpressions.size() == 1 && onTables != null) {
                     List<Expression> onExpressions = new LinkedList<>();
                     onExpressions.add(builderExpression(originOnExpressions.iterator().next(), onTables, whereSegment));
@@ -371,8 +379,9 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
                 leftTable = null;
             }
         }
-
-        return mainTables;
+        //根据表名和别名去重
+        Set<String> set = new HashSet<>();
+        return mainTables.stream().filter(i->set.add(i.getName()+i.getAlias())).toList();
     }
 
     /**
