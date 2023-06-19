@@ -27,6 +27,7 @@ import tech.yunyue.core.threaduser.ThreadUser;
 import tech.yunyue.core.threaduser.ThreadUserHelper;
 import tech.yunyue.core.util.json.JsonUtil;
 import tech.yunyue.core.web.util.RequestUtil;
+import tech.yunyue.util.TenantUtil;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -125,6 +126,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                         .setTenantId(TenantUtil.getTenantId(uid))
                         .setCompanyTenantId(TenantUtil.getComTenantId(uid))
                         .setModuleId(RequestUtil.getModuleId(request));
+
+                //启用租户则设置租户id
+                if(evaConfig.getTenant().isEnable()) {
+                    currentUser.setTenantId(TenantUtil.getTenantId(uid))
+                            .setCompanyTenantId(TenantUtil.getComTenantId(uid));
+                }
                 ThreadUserHelper.setCurrentUser(currentUser);
             }
         }
