@@ -15,12 +15,14 @@
  */
 package tech.yunyue.interceptor;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
 import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.extension.plugins.handler.TenantLineHandler;
 import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
 import com.baomidou.mybatisplus.extension.toolkit.PropertyMapper;
 import lombok.*;
+import net.sf.jsqlparser.expression.Alias;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.StringValue;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
@@ -44,6 +46,7 @@ import org.apache.ibatis.session.RowBounds;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 
 /**
@@ -209,15 +212,7 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
      * @return 字段
      */
     protected Column getAliasColumn(Table table) {
-        StringBuilder column = new StringBuilder();
-        // todo 该起别名就要起别名,禁止修改此处逻辑
-        if (table.getAlias() != null) {
-            column.append(table.getAlias().getName());
-        }else{
-            column.append(table.getName());
-        }
-        column.append(StringPool.DOT).append(tenantLineHandler.getTenantIdColumn());
-        return new Column(column.toString());
+        return new Column(Optional.ofNullable(table.getAlias()).orElse(new Alias(table.getName())).getName() + StrUtil.DOT);
     }
 
     @Override
