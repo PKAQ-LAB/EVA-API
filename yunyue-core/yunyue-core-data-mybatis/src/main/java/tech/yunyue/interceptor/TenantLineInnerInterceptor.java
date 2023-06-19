@@ -212,7 +212,7 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
      * @return 字段
      */
     protected Column getAliasColumn(Table table) {
-        return new Column(Optional.ofNullable(table.getAlias()).orElse(new Alias(table.getName())).getName() + StrUtil.DOT);
+        return new Column(Optional.ofNullable(table.getAlias()).orElse(new Alias(table.getName())).getName() + StrUtil.DOT + tenantLineHandler.getTenantIdColumn());
     }
 
     @Override
