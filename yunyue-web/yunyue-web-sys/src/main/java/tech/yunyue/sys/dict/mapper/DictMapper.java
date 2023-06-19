@@ -1,6 +1,7 @@
 package tech.yunyue.sys.dict.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import tech.yunyue.core.annotation.Ignore;
 import tech.yunyue.sys.dict.entity.DictEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
@@ -14,6 +15,7 @@ import java.util.List;
  */
 @Mapper
 @Repository
+@Ignore
 public interface DictMapper extends BaseMapper<DictEntity> {
     /**
      * 查询所有符合条件的树

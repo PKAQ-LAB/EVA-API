@@ -16,6 +16,7 @@ import java.util.List;
  */
 @Mapper
 @Repository
+@Ignore
 public interface ModuleMapper extends BaseMapper<ModuleEntityStd> {
 
 
