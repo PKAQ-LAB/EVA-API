@@ -13,14 +13,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.RequestContextListener;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.filter.OncePerRequestFilter;
 import tech.yunyue.core.constant.CommonConstant;
 import tech.yunyue.core.enums.BizCodeEnum;
@@ -31,7 +27,6 @@ import tech.yunyue.core.threaduser.ThreadUser;
 import tech.yunyue.core.threaduser.ThreadUserHelper;
 import tech.yunyue.core.util.json.JsonUtil;
 import tech.yunyue.core.web.util.RequestUtil;
-import tech.yunyue.util.TenantUtil;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -44,26 +39,17 @@ import java.util.*;
 @RequiredArgsConstructor
 @Order(SaTokenConsts.ASSEMBLY_ORDER)
 public class JwtAuthFilter extends OncePerRequestFilter {
-    private static final String REQUEST_ATTRIBUTES_ATTRIBUTE =
-            RequestContextListener.class.getName() + ".REQUEST_ATTRIBUTES";
 
     private final EvaConfig evaConfig;
 
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request){
+        // 匿名访问url不需要校验token
+        return SaRouter.match(evaConfig.getSecurity().getWebstatic()).isHit() || SaRouter.match(evaConfig.getSecurity().getAnonymous()).isHit();
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-        //往web上下文注入request和response StpUtil需要使用  抄袭RequestContextListener
-        ServletRequestAttributes attributes = new ServletRequestAttributes(request, response);
-        request.setAttribute(REQUEST_ATTRIBUTES_ATTRIBUTE, attributes);
-        LocaleContextHolder.setLocale(request.getLocale());
-        RequestContextHolder.setRequestAttributes(attributes);
-
-        // 匿名访问url不需要校验token
-        if (SaRouter.match(evaConfig.getSecurity().getAnonymous()).isHit()) {
-            chain.doFilter(request, response);
-            return;
-        }
-
         Jwt jwtConfig=evaConfig.getJwt();
         var isvalid = false;
         String authToken;
