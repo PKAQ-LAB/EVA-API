@@ -16,7 +16,7 @@ public class Tenant {
     /**
      * 是否开启租户模式
      */
-    private boolean enable = true;
+    private boolean enable = false;
     /**
      * 默认租户id
      */
