@@ -123,8 +123,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 currentUser.setUserId(uid)
                         .setUserName(account)
                         .setRolesMap(rolesMap)
-                        .setTenantId(TenantUtil.getTenantId(uid))
-                        .setCompanyTenantId(TenantUtil.getComTenantId(uid))
                         .setModuleId(RequestUtil.getModuleId(request));
 
                 //启用租户则设置租户id

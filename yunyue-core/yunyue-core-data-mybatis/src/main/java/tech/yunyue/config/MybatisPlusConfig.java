@@ -52,7 +52,8 @@ public class MybatisPlusConfig {
         //数据权限插件
         if(Objects.nonNull(dataPermissionHandler)) {
             interceptor.addInnerInterceptor(new DataPermissionInterceptor(dataPermissionHandler));
-        }        //分页插件
+        }
+        //分页插件
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
         return interceptor;
     }
