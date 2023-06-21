@@ -119,7 +119,7 @@ public class MybatisPlusDataPermissionHandler implements MultiDataPermissionHand
                 //指定部门
                 case DEPT_LIMIT ->{
                     String deptId = Arrays.stream(item.getDataPermissionDeptid().split(","))
-                        .map(str -> "'"+item+"'")
+                        .map(str -> "'"+str+"'")
                         .collect(Collectors.joining(","));
                     sql += "dp_sui.dept_id in (" +deptId+ ")";
                 }
@@ -130,7 +130,7 @@ public class MybatisPlusDataPermissionHandler implements MultiDataPermissionHand
                 //指定岗位
                 case POST_LIMIT ->{
                     var postIds = Arrays.stream(item.getDataPermissionDeptid().split(","))
-                            .map(str -> "'"+item+"'")
+                            .map(str -> "'"+str+"'")
                             .collect(Collectors.joining(","));
                     sql = "dp_sui.post_id in (" +postIds+ ")";
                 }
