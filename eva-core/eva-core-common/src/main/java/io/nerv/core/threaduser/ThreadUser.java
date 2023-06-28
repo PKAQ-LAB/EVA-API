@@ -18,5 +18,5 @@ public class ThreadUser implements Serializable {
     // 用户拥有的角色
     private String[] roles;
     // 用户拥有的数据权限
-    private String dataPermission;
+    private String[] dataPermission;
 }
