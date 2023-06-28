@@ -18,7 +18,7 @@ import java.text.MessageFormat;
 @Slf4j
 @Accessors(chain = true)
 @NoArgsConstructor
-public class Response {
+public class Response<T> {
 
     private String code;
 
@@ -26,9 +26,9 @@ public class Response {
 
     private String message;
 
-    private Object data;
+    private T data;
 
-    public Response(Boolean success, Object data) {
+    public Response(Boolean success, T data) {
         this.data = data;
         this.success = success;
     }
@@ -51,7 +51,7 @@ public class Response {
      * @param data
      * @return
      */
-    public Response success(Object data) {
+    public Response success(T data) {
         this.data = data;
         this.success = true;
         this.code = BizCodeEnum.OPERATE_SUCCESS.getCode();
@@ -66,7 +66,7 @@ public class Response {
      * @param data
      * @return
      */
-    public Response success(Object data, String msg) {
+    public Response success(T data, String msg) {
         this.data = data;
         this.success = true;
         this.message = msg;
@@ -81,7 +81,7 @@ public class Response {
      * @param data
      * @return
      */
-    public Response success(Object data, BizCode msg) {
+    public Response success(T data, BizCode msg) {
         this.data = data;
         this.success = true;
         this.message = msg.getMsg();
@@ -96,7 +96,7 @@ public class Response {
      * @param data
      * @return
      */
-    public Response success(Object data, String msg, String code) {
+    public Response success(T data, String msg, String code) {
         this.data = data;
         this.success = true;
         this.message = msg;
@@ -104,7 +104,7 @@ public class Response {
         return this;
     }
 
-    public Response success(Object data, BizCode bizCode, Object... args) {
+    public Response success(T data, BizCode bizCode, Object... args) {
         this.data = data;
         this.success = true;
         this.message = MessageFormat.format(bizCode.getMsg(), null == args ? "" : args);
@@ -159,7 +159,7 @@ public class Response {
      * @param data
      * @return
      */
-    public Response failure(String code, String message, Object data) {
+    public Response failure(String code, String message, T data) {
         this.data = data;
         this.message = message;
         this.success = false;
