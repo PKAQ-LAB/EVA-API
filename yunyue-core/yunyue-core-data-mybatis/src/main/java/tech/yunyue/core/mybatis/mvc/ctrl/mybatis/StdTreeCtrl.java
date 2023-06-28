@@ -6,6 +6,7 @@ import tech.yunyue.core.mvc.ctrl.Ctrl;
 import tech.yunyue.core.mvc.vo.Response;
 import tech.yunyue.core.mvc.vo.SingleArray;
 import tech.yunyue.core.mybatis.mvc.entity.mybatis.StdTreeEntity;
+import tech.yunyue.core.mybatis.mvc.mapper.StdTreeMapper;
 import tech.yunyue.core.mybatis.mvc.service.mybatis.StdTreeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -24,7 +25,7 @@ import java.util.List;
  * @author S.PKAQ
  */
 @Getter
-public abstract class StdTreeCtrl<T extends StdTreeService, E extends StdTreeEntity> extends Ctrl {
+public abstract class StdTreeCtrl<T extends StdTreeService<? extends StdTreeMapper<E>,E>, E extends StdTreeEntity> extends Ctrl {
     @Autowired
     protected T service;
 

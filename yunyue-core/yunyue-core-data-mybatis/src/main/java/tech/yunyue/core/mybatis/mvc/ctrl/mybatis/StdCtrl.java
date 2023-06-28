@@ -1,5 +1,6 @@
 package tech.yunyue.core.mybatis.mvc.ctrl.mybatis;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import tech.yunyue.core.annotation.NoRepeatSubmit;
 import tech.yunyue.core.enums.BizCodeEnum;
@@ -27,7 +28,7 @@ import java.util.List;
  * @author S.PKAQ
  */
 @Getter
-public abstract class StdCtrl<T extends StdService, E extends StdEntity> extends Ctrl {
+public abstract class StdCtrl<T extends StdService<? extends BaseMapper<E>,E>, E extends StdEntity> extends Ctrl {
     @Autowired
     protected T service;
 

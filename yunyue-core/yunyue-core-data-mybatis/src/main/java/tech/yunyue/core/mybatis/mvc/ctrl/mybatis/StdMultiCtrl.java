@@ -1,5 +1,6 @@
 package tech.yunyue.core.mybatis.mvc.ctrl.mybatis;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import tech.yunyue.core.annotation.NoRepeatSubmit;
 import tech.yunyue.core.enums.BizCodeEnum;
@@ -8,6 +9,7 @@ import tech.yunyue.core.mvc.ctrl.Ctrl;
 import tech.yunyue.core.mvc.vo.Response;
 import tech.yunyue.core.mvc.vo.SingleArray;
 import tech.yunyue.core.mybatis.mvc.entity.mybatis.StdMultiEntity;
+import tech.yunyue.core.mybatis.mvc.entity.mybatis.StdMultiLineEntity;
 import tech.yunyue.core.mybatis.mvc.service.mybatis.StdMultiService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -26,7 +28,8 @@ import java.util.List;
  * @author S.PKAQ
  */
 @Getter
-public abstract class StdMultiCtrl<T extends StdMultiService, E extends StdMultiEntity> extends Ctrl {
+public abstract class StdMultiCtrl<T extends StdMultiService<? extends BaseMapper<E>,? extends BaseMapper,E,? extends StdMultiLineEntity>,
+                                    E extends StdMultiEntity<? extends StdMultiLineEntity>> extends Ctrl {
     @Autowired
     protected T service;
 

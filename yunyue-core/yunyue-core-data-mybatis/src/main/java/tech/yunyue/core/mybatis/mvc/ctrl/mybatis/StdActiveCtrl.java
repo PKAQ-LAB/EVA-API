@@ -1,5 +1,6 @@
 package tech.yunyue.core.mybatis.mvc.ctrl.mybatis;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import tech.yunyue.core.enums.BizCodeEnum;
@@ -23,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author S.PKAQ
  */
 @Getter
-public abstract class StdActiveCtrl<T extends StdActiveService, E extends Model> extends Ctrl {
+public abstract class StdActiveCtrl<T extends StdActiveService<? extends BaseMapper<E>,E>, E extends Model> extends Ctrl {
     @Autowired
     protected T service;
 

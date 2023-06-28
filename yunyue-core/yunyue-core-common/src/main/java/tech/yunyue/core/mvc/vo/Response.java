@@ -51,7 +51,7 @@ public class Response<T> {
      * @param data
      * @return
      */
-    public Response success(T data) {
+    public Response<T> success(T data) {
         this.data = data;
         this.success = true;
         this.code = BizCodeEnum.OPERATE_SUCCESS.getCode();
@@ -66,7 +66,7 @@ public class Response<T> {
      * @param data
      * @return
      */
-    public Response success(T data, String msg) {
+    public Response<T> success(T data, String msg) {
         this.data = data;
         this.success = true;
         this.message = msg;
@@ -81,7 +81,7 @@ public class Response<T> {
      * @param data
      * @return
      */
-    public Response success(T data, BizCode msg) {
+    public Response<T> success(T data, BizCode msg) {
         this.data = data;
         this.success = true;
         this.message = msg.getMsg();
@@ -96,7 +96,7 @@ public class Response<T> {
      * @param data
      * @return
      */
-    public Response success(T data, String msg, String code) {
+    public Response<T> success(T data, String msg, String code) {
         this.data = data;
         this.success = true;
         this.message = msg;
@@ -104,7 +104,7 @@ public class Response<T> {
         return this;
     }
 
-    public Response success(T data, BizCode bizCode, Object... args) {
+    public Response<T> success(T data, BizCode bizCode, Object... args) {
         this.data = data;
         this.success = true;
         this.message = MessageFormat.format(bizCode.getMsg(), null == args ? "" : args);

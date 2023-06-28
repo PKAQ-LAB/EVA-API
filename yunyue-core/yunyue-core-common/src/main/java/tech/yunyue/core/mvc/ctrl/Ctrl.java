@@ -50,8 +50,8 @@ public abstract class Ctrl {
      * @param data
      * @return
      */
-    protected  Response success(Object data) {
-        return new Response<>().success(data);
+    protected <T> Response<T> success(T data) {
+        return new Response<T>().success(data);
     }
 
     /**
@@ -60,8 +60,8 @@ public abstract class Ctrl {
      * @param data
      * @return
      */
-    protected Response success(Object data, String msg) {
-        return new Response<>().success(data, msg);
+    protected <T> Response<T> success(T data, String msg) {
+        return new Response<T>().success(data, msg);
     }
 
     /**
@@ -71,8 +71,8 @@ public abstract class Ctrl {
      * @param bizCode
      * @return
      */
-    protected Response success(Object data, BizCode bizCode) {
-        return new Response<>().success(data, bizCode.getMsg());
+    protected <T> Response<T> success(T data, BizCode bizCode) {
+        return new Response<T>().success(data, bizCode.getMsg());
     }
 
     /**
