@@ -1,5 +1,6 @@
 package tech.yunyue.core.mybatis.mvc.ctrl.mybatis;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import tech.yunyue.core.enums.BizCodeEnum;
 import tech.yunyue.core.enums.ResponseEnumm;
@@ -48,14 +49,14 @@ public abstract class StdActiveCtrl<T extends StdActiveService, E extends Model>
 
     @GetMapping("list")
     @Operation(summary = "分页查询", description = "列表查询")
-    public Response list(@Parameter(name = "condition", description = "模型对象")
+    public Response<IPage<E>> list(@Parameter(name = "condition", description = "模型对象")
                          E entity, Integer pageNo, Integer pageSize) {
         return this.success(this.service.listPage(entity, pageNo, pageSize));
     }
 
     @GetMapping("/get/{id}")
     @Operation(summary = "根据ID查询", description = "根据ID获得记录信息")
-    public Response get(@Parameter(name = "id", description = "记录ID")
+    public Response<E> get(@Parameter(name = "id", description = "记录ID")
                         @PathVariable("id") String id) {
         return this.success(this.service.getById(id));
     }

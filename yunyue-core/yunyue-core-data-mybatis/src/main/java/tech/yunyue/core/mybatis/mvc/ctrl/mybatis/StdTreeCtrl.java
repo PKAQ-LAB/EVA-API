@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.List;
+
 /**
  * Controller 基类
  *
@@ -37,13 +39,13 @@ public abstract class StdTreeCtrl<T extends StdTreeService, E extends StdTreeEnt
 
     @GetMapping("/list")
     @Operation(summary = "根据实体类属性获取相应的树结构 ")
-    public Response listOrgByAttr(@Parameter(name = "entity", description = "{key: value}") E entity) {
+    public Response<List<E>> listOrgByAttr(@Parameter(name = "entity", description = "{key: value}") E entity) {
         return success(this.service.lisTree(entity));
     }
 
     @GetMapping("/get/{id}")
     @Operation(summary = "根据ID获取节点信息")
-    public Response getOrg(@Parameter(name = "id", description = "节点ID")
+    public Response<E> getOrg(@Parameter(name = "id", description = "节点ID")
                            @PathVariable("id") String id) {
         return success(this.service.get(id));
     }

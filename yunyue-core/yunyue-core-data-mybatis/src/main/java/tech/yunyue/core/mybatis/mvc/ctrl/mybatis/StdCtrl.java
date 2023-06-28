@@ -1,5 +1,6 @@
 package tech.yunyue.core.mybatis.mvc.ctrl.mybatis;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import tech.yunyue.core.annotation.NoRepeatSubmit;
 import tech.yunyue.core.enums.BizCodeEnum;
 import tech.yunyue.core.enums.ResponseEnumm;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.List;
 
 /**
  * Controller 基类
@@ -53,7 +56,7 @@ public abstract class StdCtrl<T extends StdService, E extends StdEntity> extends
     @GetMapping("/list")
     @Operation(summary = "分页查询", description = "列表查询")
     @NoRepeatSubmit
-    public Response list(@Parameter(name = "condition", description = "模型对象")
+    public Response<IPage<E>> list(@Parameter(name = "condition", description = "模型对象")
                          PageBo<E> page) {
         return this.success(this.service.listPage(page));
     }
@@ -61,7 +64,7 @@ public abstract class StdCtrl<T extends StdService, E extends StdEntity> extends
     @GetMapping("/listAll")
     @Operation(summary = "查询全部", description = "列表查询 无分页")
     @NoRepeatSubmit
-    public Response listAll(@Parameter(name = "condition", description = "模型对象")
+    public Response<List<E>> listAll(@Parameter(name = "condition", description = "模型对象")
                             E entity) {
         return this.success(this.service.list(entity));
     }
@@ -69,7 +72,7 @@ public abstract class StdCtrl<T extends StdService, E extends StdEntity> extends
     @GetMapping("/get/{id}")
     @Operation(summary = "根据ID查询", description = "根据ID获得记录信息")
     @NoRepeatSubmit
-    public Response get(@Parameter(name = "id", description = "记录ID")
+    public Response<E> get(@Parameter(name = "id", description = "记录ID")
                         @PathVariable("id") String id) {
         return this.success(this.service.getById(id));
     }
