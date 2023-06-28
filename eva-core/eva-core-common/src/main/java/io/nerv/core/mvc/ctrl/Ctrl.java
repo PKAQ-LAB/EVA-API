@@ -34,11 +34,11 @@ public abstract class Ctrl {
      * @return
      */
     protected Response success() {
-        return new Response().success(null);
+        return new Response<>().success(null);
     }
 
 //    protected Response exclude(Object data, String... values){
-//        Response response = new Response();
+//        Response response = new Response<>();
 //        response.exclude(data, values);
 //        return response;
 //    }
@@ -50,7 +50,7 @@ public abstract class Ctrl {
      * @return
      */
     protected Response success(Object data) {
-        return new Response().success(data);
+        return new Response<>().success(data);
     }
 
     /**
@@ -60,7 +60,7 @@ public abstract class Ctrl {
      * @return
      */
     protected Response success(Object data, String msg) {
-        return new Response().success(data, msg);
+        return new Response<>().success(data, msg);
     }
 
     /**
@@ -71,7 +71,7 @@ public abstract class Ctrl {
      * @return
      */
     protected Response success(Object data, BizCode bizCode) {
-        return new Response().success(data, bizCode.getMsg());
+        return new Response<>().success(data, bizCode.getMsg());
     }
 
     /**
@@ -81,7 +81,7 @@ public abstract class Ctrl {
      * @return
      */
     protected Response failure(BizCode failCode) {
-        return new Response().failure(failCode);
+        return new Response<>().failure(failCode);
     }
 
     /**
@@ -92,7 +92,7 @@ public abstract class Ctrl {
      * @return
      */
     protected Response failure(BizCode failCode, Object... args) {
-        return new Response().failure(failCode, args);
+        return new Response<>().failure(failCode, args);
     }
 
     /**
@@ -102,7 +102,7 @@ public abstract class Ctrl {
      * @return
      */
     protected Response failure(String failCode, String msg) {
-        return new Response().failure(failCode, msg);
+        return new Response<>().failure(failCode, msg);
     }
 
     /**
@@ -111,6 +111,6 @@ public abstract class Ctrl {
      * @return
      */
     protected Response failure() {
-        return new Response().failure(BizCodeEnum.SERVER_ERROR);
+        return new Response<>().failure(BizCodeEnum.SERVER_ERROR);
     }
 }
