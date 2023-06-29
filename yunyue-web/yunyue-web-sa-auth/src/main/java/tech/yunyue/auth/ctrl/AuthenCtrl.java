@@ -21,7 +21,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import tech.yunyue.core.constant.CommonConstant;
 import tech.yunyue.core.enums.BizCodeEnum;
-import tech.yunyue.core.event.KickUserEvent;
+import tech.yunyue.core.event.BizEvent;
 import tech.yunyue.core.mvc.vo.Response;
 import tech.yunyue.core.properties.EvaConfig;
 import tech.yunyue.core.threaduser.ThreadUserHelper;
@@ -97,7 +97,7 @@ public class AuthenCtrl {
             saTokenConfig.setTokenName(CommonConstant.ACCESS_TOKEN_KEY); //改回来
 
             // 发布踢出用户事件 删掉用户其余缓存数据
-            publisher.publishEvent(new KickUserEvent(Collections.singletonList(userId)));
+            publisher.publishEvent(new BizEvent(CommonConstant.KICK_USER_EVENT,Collections.singletonList(userId)));
         }catch (SaTokenException ignored){}
         return new Response().success(null,BizCodeEnum.LOGINOUT_SUCCESS);
     }

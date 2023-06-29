@@ -78,5 +78,7 @@ public interface CommonConstant {
     String ORGANIZATION_DICT_CODE = "organization_type";
     //ERP端的组织类型的字典编码
     String ERP_ORGANIZATION_DICT_CODE = "erp_organization_type";
+    //踢出用户事件
+    String KICK_USER_EVENT = "kick_user_event";
 
 }

@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import tech.yunyue.core.constant.CommonConstant;
-import tech.yunyue.core.event.KickUserEvent;
+import tech.yunyue.core.event.BizEvent;
 
 import java.util.List;
 
@@ -40,9 +40,12 @@ public class SaTokenListener extends SaTokenListenerForSimple {
      * 先同步处理
      */
     @EventListener
-    public void listenerCommit(KickUserEvent event) {
-        List<String> idList = (List<String>) event.getSource();
-        for (String id : idList) {
+    public void listenerCommit(BizEvent event) {
+        BizEvent.Event evt = (BizEvent.Event) event.getSource();
+        if(!CommonConstant.KICK_USER_EVENT.equals(evt.getEventName())) return;
+
+        List<String> idList = (List<String>) evt.getObj();
+        idList.stream().forEach(id -> {
             //删掉access_token
             StpUtil.logout(id);
             //删掉refresh_token
@@ -54,6 +57,6 @@ public class SaTokenListener extends SaTokenListenerForSimple {
             dao.deleteObject(CommonConstant.REDIS_USER_ROLES_PREFIX_KEY+id);
             // 删除redis中的用户信息
             dao.delete(CommonConstant.REDIS_USER_INFO_PREFIX_KEY+id);
-        }
+        });
     }
 }
