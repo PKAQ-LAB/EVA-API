@@ -1,12 +1,12 @@
 package tech.yunyue.core.upload.util;
 
 
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 文件上传下载接口
@@ -80,5 +80,29 @@ public interface FileProvider {
      * 下载文件
      */
     default void downLoad(String fileName, OutputStream out){};
+
+    /**
+     * @param fileName 文件名
+     * @return 根据文件名称 生成临时桶的预览url
+     */
+    default String previewTemp(String fileName){
+        return "";
+    };
+
+    /**
+     * @param isThumbnail 是否生成缩略图的预览url
+     * @param fileName 文件名
+     * @return 根据文件名称 生成持久桶缩略图/原图的预览url
+     */
+    default String preview(Boolean isThumbnail, String fileName){
+        return "";
+    };
+    /**
+     * @param fileNames 文件名集合
+     * @return 根据文件名称 批量生成预览url
+     */
+    default List<String> preview(List<String> fileNames){
+        return fileNames.stream().map(name -> preview(false,name)).collect(Collectors.toList());
+    };
 
 }

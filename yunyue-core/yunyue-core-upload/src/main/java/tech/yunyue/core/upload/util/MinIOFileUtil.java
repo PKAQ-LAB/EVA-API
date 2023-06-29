@@ -10,6 +10,7 @@ import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.IdUtil;
 import io.minio.*;
+import io.minio.http.Method;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -27,6 +28,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 文件上传工具类 - 使用MinIO
@@ -384,6 +386,43 @@ public class MinIOFileUtil implements FileProvider {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * @param fileName 文件名
+     * @return 根据文件名称 生成临时桶的预览url
+     */
+    public String previewTemp(String fileName){
+            return preview(TEMP,fileName);
+    }
+    /**
+     * @param isThumbnail 是否生成缩略图的预览url
+     * @param fileName 文件名
+     * @return 根据文件名称 生成持久桶缩略图/原图的预览url
+     */
+    public String preview(Boolean isThumbnail, String fileName){
+        var name = fileName.substring(fileName.lastIndexOf("/") + 1);
+        fileName = isThumbnail ? fileName.replace(name, THUMBNAIL_NAME + name) : fileName;
+        return preview(STORAGE,fileName);
+    }
+
+    /**
+     * 生成文件预览url
+     */
+    private String preview(String bucketName, String fileName){
+        try {
+            // 5分钟过期
+            return minioClient.getPresignedObjectUrl(
+                    GetPresignedObjectUrlArgs.builder()
+                            .method(Method.GET)
+                            .bucket(bucketName)
+                            .object(fileName)
+                            .expiry(5, TimeUnit.MINUTES)
+                            .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     /**
