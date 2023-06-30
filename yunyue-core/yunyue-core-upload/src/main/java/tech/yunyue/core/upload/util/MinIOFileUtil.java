@@ -401,6 +401,7 @@ public class MinIOFileUtil implements FileProvider {
      * @return 根据文件名称 生成持久桶缩略图/原图的预览url
      */
     public String preview(Boolean isThumbnail, String fileName){
+        fileName = Optional.ofNullable(fileName).orElse("");
         var name = fileName.substring(fileName.lastIndexOf("/") + 1);
         fileName = isThumbnail ? fileName.replace(name, THUMBNAIL_NAME + name) : fileName;
         return preview(STORAGE,fileName);
@@ -410,6 +411,7 @@ public class MinIOFileUtil implements FileProvider {
      * 生成文件预览url
      */
     private String preview(String bucketName, String fileName){
+        if(!StringUtils.hasText(fileName)) return null;
         try {
             // 5分钟过期
             return minioClient.getPresignedObjectUrl(
@@ -422,7 +424,7 @@ public class MinIOFileUtil implements FileProvider {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return "";
+        return null;
     }
 
     /**
