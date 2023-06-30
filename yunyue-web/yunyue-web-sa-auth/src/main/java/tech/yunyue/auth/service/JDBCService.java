@@ -60,14 +60,19 @@ public class JDBCService {
         }
     }
     /**
-     * 查询系统全部的角色与其拥有的资源路径
+     * 根据角色名称查询其拥有的资源路径
      */
-    public List<Map<String, Object>>  listRoleNamesWithPath(){
+    public List<String>  listRoleNamesWithPath(String roleName){
         try{
-            String sql="SELECT DISTINCT M.PATH, R.CODE, MR.RESOURCE_URL "+
+            String sql="SELECT REPLACE(CONCAT(IFNULL(GROUP_CONCAT(B.PATH ORDER BY FIND_IN_SET( B.ID, A.PATH_ID)),''),',',ANY_VALUE(A.PATH)),',','') AS PATH " +
+                    "FROM ( " +
+                    "SELECT DISTINCT  CONCAT(M.ID,',',MR.ID) ID,M.PATH_ID, REPLACE(CONCAT(M.PATH,'/',MR.RESOURCE_URL),'//','/') PATH " +
                     "FROM SYS_MODULE_RESOURCES MR, SYS_ROLE_MODULE RM, SYS_MODULE M, SYS_ROLE R " +
-                    "WHERE RM.MODULE_ID = M.ID AND RM.ROLE_ID = R.ID AND M.ID = MR.MODULE_ID AND RM.RESOURCE_ID = MR.ID AND M.ISLEAF = '1'";
-            return this.jdbcTemplate.queryForList(sql);
+                    "WHERE RM.MODULE_ID = M.ID AND RM.ROLE_ID = R.ID AND M.ID = MR.MODULE_ID AND RM.RESOURCE_ID = MR.ID AND M.ISLEAF = '1' " +
+                    "AND R.CODE = ? )A " +
+                    "LEFT JOIN SYS_MODULE B ON FIND_IN_SET( B.ID, A.PATH_ID) " +
+                    "GROUP BY A.ID";
+            return this.jdbcTemplate.queryForList(sql, String.class, roleName);
         }catch (EmptyResultDataAccessException e){
             return Collections.emptyList();
         }
