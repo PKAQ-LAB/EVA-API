@@ -24,7 +24,6 @@ import tech.yunyue.core.enums.BizCodeEnum;
 import tech.yunyue.core.event.BizEvent;
 import tech.yunyue.core.mvc.vo.Response;
 import tech.yunyue.core.properties.EvaConfig;
-import tech.yunyue.core.threaduser.ThreadUserHelper;
 import tech.yunyue.core.util.json.JsonUtil;
 import tech.yunyue.auth.service.AuthenService;
 
@@ -32,6 +31,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/auth")
@@ -81,25 +81,19 @@ public class AuthenCtrl {
      */
     @PostMapping("/logout")
     @Operation(summary = "登出")
-    public Response logout() {
+    public Response<String> logout() {
+        String userId = null;
         try {
-            String userId = ThreadUserHelper.getUserId();
-
-            // 注销access_token
-            StpUtil.logout();
-            // 注销refresh_token
+            // 通过refresh_token得到用户id
             saTokenConfig.setTokenName(CommonConstant.REFRESH_TOKEN_KEY);
-            // 用户access_token过期则不会有userId  从refresh_token中得到用户id
-            if (!StringUtils.hasText(userId)) {
-                userId = (String) StpUtil.getLoginId();
-            }
-            StpUtil.logout();
+            userId = (String) StpUtil.getLoginId();
+        } catch (SaTokenException ignored){
+        } finally {
             saTokenConfig.setTokenName(CommonConstant.ACCESS_TOKEN_KEY); //改回来
-
-            // 发布踢出用户事件 删掉用户其余缓存数据
-            publisher.publishEvent(new BizEvent(CommonConstant.KICK_USER_EVENT,Collections.singletonList(userId)));
-        }catch (SaTokenException ignored){}
-        return new Response().success(null,BizCodeEnum.LOGINOUT_SUCCESS);
+        }
+        // 发布踢出用户事件 登出用户
+        if (Objects.nonNull(userId)) publisher.publishEvent(new BizEvent(CommonConstant.KICK_USER_EVENT,Collections.singletonList(userId)));
+        return new Response<String>().success("",BizCodeEnum.LOGINOUT_SUCCESS);
     }
 
     /**
@@ -114,13 +108,13 @@ public class AuthenCtrl {
     @PostMapping("/getAlpha")
     @Operation(summary = "刷新token")
     public Response refreshToken(HttpServletResponse response) throws IOException {
-        String refreshTokenId = "";
+        String userId = "";
         //判断refresh_token是否有效
         try {
             saTokenConfig.setTokenName(CommonConstant.REFRESH_TOKEN_KEY);
-            refreshTokenId = (String) StpUtil.getLoginId();
+            userId = (String) StpUtil.getLoginId();
         }catch (NotLoginException e){
-            // tokne过期 返回401 用户重新登录
+            // token过期 返回401 用户重新登录
             try (PrintWriter printWriter = response.getWriter()) {
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 response.setCharacterEncoding("UTF-8");
@@ -129,15 +123,15 @@ public class AuthenCtrl {
                 printWriter.write(JsonUtil.toJson(new Response().failure(BizCodeEnum.LOGIN_EXPIRED)));
                 printWriter.flush();
             }
+            saTokenConfig.setTokenName(CommonConstant.ACCESS_TOKEN_KEY); //改回来
             return null;
         }
 
-        String userId = (String)StpUtil.getExtra("userId");
         String account = (String)StpUtil.getExtra("account");
         String version = (String)StpUtil.getExtra("version");
         String device = StpUtil.getLoginDevice();
         //重新生成refresh_token
-        StpUtil.login(refreshTokenId,SaLoginConfig.setExtra("userId", userId)
+        StpUtil.login(userId, SaLoginConfig.setExtra("userId", userId)
                 .setExtra("account", account)
                 .setExtra("version",version)
                 .setDevice(device)
@@ -149,8 +143,6 @@ public class AuthenCtrl {
                 .setExtra("account", account)
                 .setExtra("version",version)
                 .setDevice(device));
-//        var map = Map.of(CommonConstant.ACCESS_TOKEN_KEY, new_alpha,
-//                CommonConstant.REFRESH_TOKEN_KEY, new_bravo);
-        return new Response().success();
+        return new Response<>().success();
     }
 }
