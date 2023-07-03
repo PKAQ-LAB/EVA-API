@@ -33,8 +33,8 @@ public abstract class Ctrl {
      *
      * @return
      */
-    protected Response success() {
-        return new Response<>().success(null);
+    protected <T> Response<T> success() {
+        return new Response<T>().success(null);
     }
 
 //    protected Response exclude(Object data, String... values){
