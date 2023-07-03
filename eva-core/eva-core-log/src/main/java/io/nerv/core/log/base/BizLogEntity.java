@@ -55,7 +55,7 @@ public class BizLogEntity {
 
     @Override
     public String toString() {
-        return  "用户登录了系统：[" +
+        return "用户登录了系统：[" +
                 "登录用户 ='" + operator + '\'' +
                 ", 登录时间 ='" + operateDatetime + '\'' +
                 ", 设备类型 ='" + device + '\'' +

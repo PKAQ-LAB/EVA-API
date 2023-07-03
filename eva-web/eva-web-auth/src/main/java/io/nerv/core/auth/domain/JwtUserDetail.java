@@ -29,6 +29,10 @@ public class JwtUserDetail implements UserDetails {
     @JsonIgnore
     private final String password;
     /**
+     * 权限集合
+     **/
+    private final Collection<? extends GrantedAuthority> authorities;
+    /**
      * 用户是否已经锁定
      **/
     private boolean accountNonLocked;
@@ -48,10 +52,6 @@ public class JwtUserDetail implements UserDetails {
      * 用户昵称
      **/
     private String nickName;
-    /**
-     * 权限集合
-     **/
-    private final Collection<? extends GrantedAuthority> authorities;
 
     public JwtUserDetail(String id, String account, String password, String deptId, String deptName, String name, String nickName, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;

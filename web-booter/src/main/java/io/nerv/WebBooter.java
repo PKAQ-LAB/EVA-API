@@ -22,13 +22,13 @@ import org.springframework.context.annotation.ComponentScan;
 public class WebBooter implements CommandLineRunner {
     private final DictService dictService;
 
+    public static void main(String[] args) {
+        SpringApplication.run(WebBooter.class, args);
+    }
+
     @Override
     public void run(String... args) {
         dictService.init();
         log.info(" ---- WEB BOOTER STARTED ---- ");
-    }
-
-    public static void main(String[] args) {
-        SpringApplication.run(WebBooter.class, args);
     }
 }

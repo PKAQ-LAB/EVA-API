@@ -18,13 +18,13 @@ services:
     restart: always
     container_name: mysql
     environment:
-     - MYSQL_ROOT_PASSWORD=7u8i9o0p
-     - MYSQL_ALLOW_EMPTY_PASSWORD=no
-     - MYSQL_DATABASE=DB_ALPHA
-     - MYSQL_USER=yunyue
-     - MYSQL_PASSWORD=7u8i9o0p
+      - MYSQL_ROOT_PASSWORD=7u8i9o0p
+      - MYSQL_ALLOW_EMPTY_PASSWORD=no
+      - MYSQL_DATABASE=DB_ALPHA
+      - MYSQL_USER=yunyue
+      - MYSQL_PASSWORD=7u8i9o0p
     ports:
-       - "12306:3306"
+      - "12306:3306"
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /opt/docker_data/mysql/db:/var/lib/mysql
@@ -81,7 +81,7 @@ services:
     depends_on:
       - mysql
     links:
-      - mysql    
+      - mysql
     ports:
       - "10022:22"
       - "10080:3000"
@@ -97,5 +97,5 @@ services:
       - "3690:3690"
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /opt/docker_data/svn:/var/opt/svn 
+      - /opt/docker_data/svn:/var/opt/svn
     privileged: true

@@ -33,12 +33,12 @@ public abstract class Ctrl {
      *
      * @return
      */
-    protected Response success() {
-        return new Response<>().success(null);
+    protected <T> Response<T> success() {
+        return new Response<T>().success(null);
     }
 
-//    protected Response exclude(Object data, String... values){
-//        Response response = new Response<>();
+//    protected <T> Response<T> exclude(Object data, String... values){
+//        <T> Response<T> response = new Response<>();
 //        response.exclude(data, values);
 //        return response;
 //    }
@@ -49,8 +49,8 @@ public abstract class Ctrl {
      * @param data
      * @return
      */
-    protected Response success(Object data) {
-        return new Response<>().success(data);
+    protected <T> Response<T> success(T data) {
+        return new Response<T>().success(data);
     }
 
     /**
@@ -59,8 +59,8 @@ public abstract class Ctrl {
      * @param data
      * @return
      */
-    protected Response success(Object data, String msg) {
-        return new Response<>().success(data, msg);
+    protected <T> Response<T> success(T data, String msg) {
+        return new Response<T>().success(data, msg);
     }
 
     /**
@@ -70,8 +70,8 @@ public abstract class Ctrl {
      * @param bizCode
      * @return
      */
-    protected Response success(Object data, BizCode bizCode) {
-        return new Response<>().success(data, bizCode.getMsg());
+    protected <T> Response<T> success(T data, BizCode bizCode) {
+        return new Response<T>().success(data, bizCode.getMsg());
     }
 
     /**
@@ -80,8 +80,8 @@ public abstract class Ctrl {
      * @param failCode
      * @return
      */
-    protected Response failure(BizCode failCode) {
-        return new Response<>().failure(failCode);
+    protected <T> Response<T> failure(BizCode failCode) {
+        return new Response<T>().failure(failCode);
     }
 
     /**
@@ -91,8 +91,8 @@ public abstract class Ctrl {
      * @param args
      * @return
      */
-    protected Response failure(BizCode failCode, Object... args) {
-        return new Response<>().failure(failCode, args);
+    protected <T> Response<T> failure(BizCode failCode, Object... args) {
+        return new Response<T>().failure(failCode, args);
     }
 
     /**
@@ -101,8 +101,8 @@ public abstract class Ctrl {
      * @param failCode
      * @return
      */
-    protected Response failure(String failCode, String msg) {
-        return new Response<>().failure(failCode, msg);
+    protected <T> Response<T> failure(String failCode, String msg) {
+        return new Response<T>().failure(failCode, msg);
     }
 
     /**
@@ -110,7 +110,7 @@ public abstract class Ctrl {
      *
      * @return
      */
-    protected Response failure() {
-        return new Response<>().failure(BizCodeEnum.SERVER_ERROR);
+    protected <T> Response<T> failure() {
+        return new Response<T>().failure(BizCodeEnum.SERVER_ERROR);
     }
 }

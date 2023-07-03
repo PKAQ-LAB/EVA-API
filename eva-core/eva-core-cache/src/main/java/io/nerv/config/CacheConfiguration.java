@@ -2,7 +2,6 @@ package io.nerv.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CachingConfigurer;
-import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.Configuration;
 

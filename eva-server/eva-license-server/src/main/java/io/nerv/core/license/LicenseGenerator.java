@@ -17,12 +17,12 @@ import java.util.prefs.Preferences;
 @Component
 public class LicenseGenerator {
 
-    @Autowired
-    private LicenseConfig licenseConfig;
     /**
      * X500Princal 是一个证书文件的固有格式，详见API
      */
     private final static X500Principal DEFAULT_HOLDERAND_ISSUER = new X500Principal("CN=Eva, OU=Nerv, O=Nerv, L=Nerv, ST=Unknown, C=CN");
+    @Autowired
+    private LicenseConfig licenseConfig;
 
     /**
      * 生成证书，在证书发布者端执行

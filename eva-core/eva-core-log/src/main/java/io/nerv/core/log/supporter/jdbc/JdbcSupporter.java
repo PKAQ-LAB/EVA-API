@@ -20,13 +20,12 @@ import java.util.Map;
  */
 public class JdbcSupporter implements BizLogSupporter {
     private BizLogEntity bizLogEntity;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     public JdbcSupporter(BizLogEntity bizLogEntity) {
         this.bizLogEntity = bizLogEntity;
     }
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
 
     @Override
     public void save(BizLogEntity entity) {

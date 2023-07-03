@@ -20,21 +20,20 @@ spring:
       WRITE_DATES_AS_TIMESTAMPS: false
       #格式化输出
       indent_output: true
+#  spring doc 配置
 #springdoc:
-  #  api-docs:
-  #    enabled: true
-  #    groups:
-  #      enabled: true
 #  swagger-ui:
 #    disable-swagger-default-url: true
+#  api-docs:
+#    groups:
+#      enabled: true
+#    enabled: true
 # mybatis
 mybatis-plus:
   mapper-locations: classpath*:/mapper/*.xml
   #实体扫描，多个package用逗号或者分号分隔
   typeAliasesPackage: io.nerv.*.**.entity
   global-config:
-    #      刷新mapper 调试神器
-    refresh: true
     db-config:
       id-type: assign_id
       #      字段策略
@@ -64,28 +63,6 @@ server:
   port: 9018
   #  2.3.0 新支持, 优雅关机
   shutdown: graceful
-# 微信配置
-wechat:
-  pay:
-    appId: wxefdd141dc453eec5
-    mchId: 1561278171
-    mchKey: c180aaadf5ab10fb3a733f43f3ffc4b3
-    # p12证书的位置，可以指定绝对路径，也可以指定类路径（以classpath:开头）
-    keyPath: classpath:cert/apiclient_cert.p12
-  mp:
-    configs:
-      #      - appId: wxefdd141dc453eec5
-      #        secret : b924bc4582c280826fce5575b0b93389
-      #        token: relax
-      #        aesKey: DHFzG3nOljaZ6DZiaHOFzizWzVL1XvlGISKTCtvbS1T
-      #      - appId: wxfd7f50aa599242f8
-      #        secret: dd24c23ff8e61fa261307f47d9962dc5
-      #        token: nerv
-      #        aesKey: DHFzG3nOljaZ6DZiaHOFzizWzVL1XvlGISKTCtvbS1T
-      - appId: wx12b27a68cc6951da
-        secret: 5581e5364618a666ffbbb36dfd56d3fe
-#        token: nerv
-#        aesKey: DHFzG3nOljaZ6DZiaHOFzizWzVL1XvlGISKTCtvbS1T
 eva:
   i18n: true
   norepeat-check: false

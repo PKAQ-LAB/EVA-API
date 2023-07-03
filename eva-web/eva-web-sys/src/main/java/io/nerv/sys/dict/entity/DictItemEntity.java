@@ -19,27 +19,21 @@ import org.apache.ibatis.type.Alias;
 @TableName("sys_dict_item")
 public class DictItemEntity {
 
+    private static final long serialVersionUID = 1L;
     @TableId(type = IdType.ASSIGN_UUID)
     private String id;
-
     @NotBlank(message = "主表ID不允许为空")
     @Schema(description = "主表ID", requiredMode = Schema.RequiredMode.REQUIRED)
     private String mainId;
-
     @NotBlank(message = "字典项不允许为空")
     @Schema(description = "字典项键", requiredMode = Schema.RequiredMode.REQUIRED)
     private String keyName;
-
     @NotBlank(message = "字典值不允许为空")
     @Schema(description = "字典项值", requiredMode = Schema.RequiredMode.REQUIRED)
     private String keyValue;
-
     @Schema(description = "输出排序")
     private Integer orders;
-
     @Schema(description = "是否启用")
     private String status;
-
-    private static final long serialVersionUID = 1L;
 
 }

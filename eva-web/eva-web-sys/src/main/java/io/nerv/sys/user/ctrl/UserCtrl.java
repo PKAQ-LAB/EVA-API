@@ -2,9 +2,9 @@ package io.nerv.sys.user.ctrl;
 
 import cn.hutool.core.util.StrUtil;
 import io.nerv.core.enums.BizCodeEnum;
+import io.nerv.core.mvc.bo.SingleArrayBo;
 import io.nerv.core.mvc.ctrl.Ctrl;
 import io.nerv.core.mvc.response.Response;
-import io.nerv.core.mvc.bo.SingleArrayBo;
 import io.nerv.sys.user.entity.UserEntity;
 import io.nerv.sys.user.service.UserService;
 import io.nerv.sys.user.vo.PasswordVO;

@@ -109,14 +109,14 @@ public class Page<T> implements IPage<T> {
         return null;
     }
 
-    public List<T> getList() {
-        return this.list;
-    }
-
     @Override
     public Page<T> setRecords(List<T> data) {
         this.list = data;
         return this;
+    }
+
+    public List<T> getList() {
+        return this.list;
     }
 
     @Override

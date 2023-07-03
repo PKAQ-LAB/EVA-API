@@ -35,21 +35,15 @@ import java.util.*;
 @RequiredArgsConstructor
 public class DfsFileUtil implements FileProvider {
 
-    private final Snowflake snowflake = IdUtil.getSnowflake(SNOW, FLAKE);
-
     // 删除接口
     private static final String DELETE_API = "/delete";
-
     // 上传接口
     private static final String UPLOAD_API = "/upload";
-
-    private final CacheManager cacheManager;
-
-    private final EvaConfig evaConfig;
-
     private static final long SNOW = 16;
-
     private static final long FLAKE = 18;
+    private final Snowflake snowflake = IdUtil.getSnowflake(SNOW, FLAKE);
+    private final CacheManager cacheManager;
+    private final EvaConfig evaConfig;
 
     /**
      * 文件上传 默认上传到配置的tmp目录

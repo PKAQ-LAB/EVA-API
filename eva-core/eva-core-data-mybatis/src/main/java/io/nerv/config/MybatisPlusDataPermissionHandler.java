@@ -5,10 +5,9 @@
 //import com.baomidou.mybatisplus.extension.plugins.handler.DataPermissionHandler;
 //import io.nerv.core.annotation.Ignore;
 //import io.nerv.core.enums.DataPermissionEnumm;
+//import io.nerv.core.properties.EvaConfig;
 //import io.nerv.core.security.domain.JwtUserDetail;
 //import io.nerv.core.threaduser.ThreadUserHelper;
-//import io.nerv.core.util.SecurityHelper;
-//import io.nerv.properties.EvaConfig;
 //import io.nerv.security.domain.JwtGrantedAuthority;
 //import io.nerv.web.sys.role.entity.RoleEntity;
 //import lombok.Getter;

@@ -5,11 +5,7 @@ import cn.hutool.core.img.ImgUtil;
 import cn.hutool.core.io.FileTypeUtil;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.io.NioUtil;
-import cn.hutool.core.lang.Snowflake;
-import cn.hutool.core.text.CharSequenceUtil;
-import cn.hutool.core.util.IdUtil;
 import io.minio.*;
-import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.exception.BizException;
 import io.nerv.core.properties.EvaConfig;
 import io.nerv.core.properties.Upload;
@@ -37,12 +33,12 @@ import java.util.Objects;
 @Conditional(MinIOCondition.class)
 @RequiredArgsConstructor
 public class MinIOFileUtil implements FileProvider {
-    private final EvaConfig evaConfig;
-    private final MinioClient minioClient;
     //缩略图前缀
     private static final String THUMBNAIL_NAME = "thumbnail_";
     private static final String TEMP = "_temp";
     private static final String STORAGE = "_storage";
+    private final EvaConfig evaConfig;
+    private final MinioClient minioClient;
 
     /**
      * 初始化MinioClient和存储桶
@@ -77,6 +73,7 @@ public class MinIOFileUtil implements FileProvider {
     /**
      * 文件上传 默认上传到配置的tmp目录
      * 按文件类型/YYYYMM结构存储文件
+     *
      * @param file
      * @return
      */
@@ -84,11 +81,11 @@ public class MinIOFileUtil implements FileProvider {
     public String upload(MultipartFile file, String path) throws Exception {
         // 判断桶是否存在 fileType/yyyyMM
         String fileType = FileTypeUtil.getType(file.getInputStream());
-        String times = DateUtil.format(new Date(),"yyyyMM");
+        String times = DateUtil.format(new Date(), "yyyyMM");
         String dirName = TEMP + fileType + "/" + times;
 
         // 目标桶不存在 新建
-        if (!minioClient.bucketExists(BucketExistsArgs.builder().bucket(dirName).build())){
+        if (!minioClient.bucketExists(BucketExistsArgs.builder().bucket(dirName).build())) {
             createBucket(dirName);
         }
 
@@ -178,14 +175,14 @@ public class MinIOFileUtil implements FileProvider {
                         // 缩略图的路径要与原图路径一致 所以不能根据当前时间生成文件夹
                         var name = fileName.substring(fileName.lastIndexOf("/") + 1);
                         uploadObject(new ByteArrayInputStream(outThumbnail.toByteArray()), fileName,
-                                    fileName.replace(name, THUMBNAIL_NAME + name),
+                                fileName.replace(name, THUMBNAIL_NAME + name),
                                 false,
                                 "image/" + suffix);
 
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-        });
+                });
     }
 
     /**
@@ -246,6 +243,7 @@ public class MinIOFileUtil implements FileProvider {
             e.printStackTrace();
         }
     }
+
     /**
      * 查看存储桶是否存在
      */

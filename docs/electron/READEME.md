@@ -1,20 +1,26 @@
 使用Electron打包伪桌面版b/s应用
 
-  借助`Electron`可以用来非常轻易的构建跨平台桌面应用，因为你只需要熟悉`html`、`css`、`javascript`这些基本技能就可以快速构建一个简单应用。
-这意味着我们可以借助`Electron`来打包我们的`B/S`应用伪装成一个本地应用,这不仅可以提高传统用户的亲和度还可以免去`不要用ie装谷歌; 怎么装谷歌,360可以吗?`的烦恼\扩大可视区域(免去地址栏 菜单栏等)\快速打开应用(无需打开浏览器翻收藏夹)等一系列好处。 
-  那么下面的内容就是告诉你如何快速打包一个伪桌面应用
+借助`Electron`可以用来非常轻易的构建跨平台桌面应用，因为你只需要熟悉`html`、`css`、`javascript`这些基本技能就可以快速构建一个简单应用。
+这意味着我们可以借助`Electron`来打包我们的`B/S`
+应用伪装成一个本地应用,这不仅可以提高传统用户的亲和度还可以免去`不要用ie装谷歌; 怎么装谷歌,360可以吗?`
+的烦恼\扩大可视区域(免去地址栏 菜单栏等)\快速打开应用(无需打开浏览器翻收藏夹)等一系列好处。
+那么下面的内容就是告诉你如何快速打包一个伪桌面应用
 
-前提:   
- - nodejs   
- - yarn   
- 
-## 1.安装   
-可以执行如下命令,更多详细内容可以查看[官网安装文档](https://electronjs.org/docs/tutorial/installation)    
+前提:
+
+- nodejs
+- yarn
+
+## 1.安装
+
+可以执行如下命令,更多详细内容可以查看[官网安装文档](https://electronjs.org/docs/tutorial/installation)
+
 ```bash
 yarn global add electron
 ```
 
-## 2.创建入口配置 main.js   
+## 2.创建入口配置 main.js
+
 ```javascript
 const electron = require('electron');
 // 控制应用生命周期的模块
@@ -74,8 +80,11 @@ app.on('activate', () => {
 // 在这个文件后面你可以直接包含你应用特定的由主进程运行的代码。
 // 也可以把这些代码放在另一个文件中然后在这里导入。
 ```
-## 3.创建打包配置 package.json   
-可以通过 `yarn init`或新建文件得方式创建此文件   
+
+## 3.创建打包配置 package.json
+
+可以通过 `yarn init`或新建文件得方式创建此文件
+
 ```json
 {
   "name": "Evatron",
@@ -87,25 +96,31 @@ app.on('activate', () => {
 }
 ```
 
-## 4.打包   
+## 4.打包
+
 安装打包管理器
+
 ```bash
 yarn global add electron-packager
 ```   
-执行打包   
+
+执行打包
+
 ```bash
 electron-packager . Evatron --win --out=release --arch=x64 --version=1.0.0 --electron-version=2.0.0 --overwrite --icon=./favicon.ico
 ```
-命令解释   
-- `.` ：打包入口   
-- `Evatron` ： 打包文件名   
-- `--win --out=release --arch=x64` ： 生成win64类型文件   
-- `--version=1.0.0` ：生成的文件版本   
-- `--electron-version=2.0.0` ：electron版本,可以通过`electron --version`查看   
-- `--overwrite` ：是否覆盖之前的打包文件   
-- `--icon=./favicon.ico` ：favicon   
 
-打包后会在命令目录生成一个release文件夹 点击里面生成的exe可以查看我们的桌面程序   
+命令解释
 
->p.s:如果你的react项目index页面死活出不来，可能是你使用了react-router的BroswerHistory，换成HashHistory就可以了。
-参考：https://segmentfault.com/a/1190000014030465
+- `.` ：打包入口
+- `Evatron` ： 打包文件名
+- `--win --out=release --arch=x64` ： 生成win64类型文件
+- `--version=1.0.0` ：生成的文件版本
+- `--electron-version=2.0.0` ：electron版本,可以通过`electron --version`查看
+- `--overwrite` ：是否覆盖之前的打包文件
+- `--icon=./favicon.ico` ：favicon
+
+打包后会在命令目录生成一个release文件夹 点击里面生成的exe可以查看我们的桌面程序
+
+> p.s:如果你的react项目index页面死活出不来，可能是你使用了react-router的BroswerHistory，换成HashHistory就可以了。
+> 参考：https://segmentfault.com/a/1190000014030465

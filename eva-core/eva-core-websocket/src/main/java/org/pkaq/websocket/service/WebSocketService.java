@@ -36,7 +36,6 @@ public class WebSocketService {
 
     /**
      * 此为单点消息(多人)
-     *
      */
     public void sendMsg(String[] userIds, String message) {
         for (String userId : userIds) {

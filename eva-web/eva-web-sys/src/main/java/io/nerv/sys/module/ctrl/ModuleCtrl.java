@@ -2,9 +2,9 @@ package io.nerv.sys.module.ctrl;
 
 import cn.hutool.core.util.StrUtil;
 import io.nerv.core.enums.BizCodeEnum;
+import io.nerv.core.mvc.bo.SingleArrayBo;
 import io.nerv.core.mvc.ctrl.Ctrl;
 import io.nerv.core.mvc.response.Response;
-import io.nerv.core.mvc.bo.SingleArrayBo;
 import io.nerv.sys.module.entity.ModuleEntityStd;
 import io.nerv.sys.module.service.ModuleService;
 import io.swagger.v3.oas.annotations.Operation;

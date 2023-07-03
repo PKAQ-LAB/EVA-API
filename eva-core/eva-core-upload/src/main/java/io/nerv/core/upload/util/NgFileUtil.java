@@ -35,14 +35,10 @@ import java.util.List;
 @Conditional(DefaultNgCondition.class)
 public class NgFileUtil implements FileProvider {
 
-    private final Snowflake snowflake = IdUtil.getSnowflake(SNOW, FLAKE);
-
     private static final String THUMBNAIL_NAME = "thumbnail_";
-
     private static final long SNOW = 16;
-
     private static final long FLAKE = 18;
-
+    private final Snowflake snowflake = IdUtil.getSnowflake(SNOW, FLAKE);
     private final CacheManager cacheManager;
 
     private final EvaConfig evaConfig;

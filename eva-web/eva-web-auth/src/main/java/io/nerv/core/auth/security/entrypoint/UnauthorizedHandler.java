@@ -17,6 +17,7 @@ import java.io.Serializable;
 /**
  * 鉴权失败时的响应
  * AuthenticationEntryPoint 用来解决匿名用户访问无权限资源时的异常
+ *
  * @author: S.PKAQ
  */
 @Component

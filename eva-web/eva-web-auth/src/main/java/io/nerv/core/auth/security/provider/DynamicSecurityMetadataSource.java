@@ -107,7 +107,7 @@ public class DynamicSecurityMetadataSource implements FilterInvocationSecurityMe
     @Override
     public Collection<ConfigAttribute> getAttributes(Object o) throws IllegalArgumentException {
 
-        if (!evaConfig.getResourcePermission().isEnable()){
+        if (!evaConfig.getResourcePermission().isEnable()) {
             return null;
         }
 

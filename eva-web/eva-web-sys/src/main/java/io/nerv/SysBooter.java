@@ -25,13 +25,13 @@ public class SysBooter implements CommandLineRunner {
         this.environment = environment;
     }
 
+    public static void main(String[] args) {
+        SpringApplication.run(SysBooter.class, args);
+    }
+
     @Override
     public void run(String... args) {
         System.out.println(environment.getActiveProfiles());
         log.info(" ------ eva cloud System Management started ------ ");
-    }
-
-    public static void main(String[] args) {
-        SpringApplication.run(SysBooter.class, args);
     }
 }

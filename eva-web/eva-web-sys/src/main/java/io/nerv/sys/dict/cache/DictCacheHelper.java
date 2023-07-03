@@ -22,8 +22,8 @@ import java.util.Map;
 @Data
 @Component
 public class DictCacheHelper {
-    private Cache cache;
     private final RedisUtil redisUtil;
+    private Cache cache;
 
     @Autowired
     public DictCacheHelper(CacheManager cacheManager, RedisUtil redisUtil) {

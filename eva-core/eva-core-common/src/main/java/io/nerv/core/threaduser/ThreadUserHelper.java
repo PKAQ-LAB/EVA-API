@@ -18,19 +18,19 @@ public class ThreadUserHelper {
     private static final ThreadLocal<ThreadUser> userThreadLocal = new TransmittableThreadLocal<>();
 
     /**
+     * 获取当前登录用户方法
+     */
+    public static ThreadUser getCurrentUser() {
+        return userThreadLocal.get();
+    }
+
+    /**
      * 添加当前登录用户方法  在拦截器方法执行前调用设置获取用户
      *
      * @param user
      */
     public static void setCurrentUser(ThreadUser user) {
         userThreadLocal.set(user);
-    }
-
-    /**
-     * 获取当前登录用户方法
-     */
-    public static ThreadUser getCurrentUser() {
-        return userThreadLocal.get();
     }
 
     /**

@@ -21,7 +21,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -44,30 +43,20 @@ import java.util.List;
 @EnableMethodSecurity()
 public class WebSecurityConfig {
 
+    private final EvaConfig evaConfig;
+    private final UrlAuthenticationSuccessHandler urlAuthenticationSuccessHandler;
+    private final UrlAuthenticationFailureHandler urlAuthenticationFailureHandler;
+    private final UrlLogoutSuccessHandler urlLogoutSuccessHandler;
+    private final UrlAccessDeniedHandler urlAccessDeniedHandler;
+    private final UnauthorizedHandler unauthorizedHandler;
+    private final AuthenticationConfiguration authenticationConfiguration;
+    private final JwtAuthFilter jwtAuthFilter;
     @Value("${eva.security.anonymous}")
     private String[] anonymous;
-
     @Value("${eva.security.webstatic}")
     private String[] webstatic;
-
-    private final EvaConfig evaConfig;
-
-    private final UrlAuthenticationSuccessHandler urlAuthenticationSuccessHandler;
-
     @Autowired(required = false)
     private DynamiclAccessDecisionManager urlAccessDecisionManager;
-
-    private final UrlAuthenticationFailureHandler urlAuthenticationFailureHandler;
-
-    private final UrlLogoutSuccessHandler urlLogoutSuccessHandler;
-
-    private final UrlAccessDeniedHandler urlAccessDeniedHandler;
-
-    private final UnauthorizedHandler unauthorizedHandler;
-
-    private final AuthenticationConfiguration authenticationConfiguration;
-
-    private final JwtAuthFilter jwtAuthFilter;
 
     /**
      * 跨域配置
@@ -101,22 +90,22 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain httpSecurityConfigure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.cors(Customizer.withDefaults())
-                    // 关闭csrf 由于使用的是JWT，我们这里不需要csrf
-                    .csrf(AbstractHttpConfigurer::disable)
-                    .headers(header -> {
-                        //允许加载iframe内容 X-Frame-Options
-                        header.frameOptions(frame -> {
-                            frame.disable();
-                            frame.sameOrigin();
-                        });
-                        header.cacheControl(Customizer.withDefaults());
-                        // 适配IE
-                        header.addHeaderWriter(new StaticHeadersWriter("P3P", "CP='CAO IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'"));
-                        header.xssProtection(Customizer.withDefaults());
-                    })
-                    // 基于token，所以不需要session
-                    .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                    .authorizeHttpRequests(Customizer.withDefaults());
+                // 关闭csrf 由于使用的是JWT，我们这里不需要csrf
+                .csrf(AbstractHttpConfigurer::disable)
+                .headers(header -> {
+                    //允许加载iframe内容 X-Frame-Options
+                    header.frameOptions(frame -> {
+                        frame.disable();
+                        frame.sameOrigin();
+                    });
+                    header.cacheControl(Customizer.withDefaults());
+                    // 适配IE
+                    header.addHeaderWriter(new StaticHeadersWriter("P3P", "CP='CAO IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'"));
+                    header.xssProtection(Customizer.withDefaults());
+                })
+                // 基于token，所以不需要session
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(Customizer.withDefaults());
 
         // 允许匿名访问的url
         httpSecurity.authorizeHttpRequests(auth -> auth.requestMatchers(anonymous).permitAll());
@@ -133,7 +122,7 @@ public class WebSecurityConfig {
 
         httpSecurity.exceptionHandling(ex ->
                 ex.authenticationEntryPoint(unauthorizedHandler)
-                  .accessDeniedHandler(urlAccessDeniedHandler));
+                        .accessDeniedHandler(urlAccessDeniedHandler));
 
         httpSecurity
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

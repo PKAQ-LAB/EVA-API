@@ -25,6 +25,10 @@ public class LicenseBooter implements CommandLineRunner {
     @Autowired
     private LicenseVerify licenseVerify;
 
+    public static void main(String[] args) {
+        SpringApplication.run(LicenseBooter.class, args);
+    }
+
     @Override
     public void run(String... args) throws Exception {
         log.info(" ---- License Application Started ---- ");
@@ -35,10 +39,5 @@ public class LicenseBooter implements CommandLineRunner {
 //            log.error("授权已过期, 请更新授权文件");
 //            Runtime.getRuntime().halt(1);
 //        }
-    }
-
-
-    public static void main(String[] args) {
-        SpringApplication.run(LicenseBooter.class, args);
     }
 }

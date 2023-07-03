@@ -2,7 +2,7 @@
 //
 //import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 //import com.baomidou.mybatisplus.extension.plugins.inner.DataPermissionInterceptor;
-//import io.nerv.properties.EvaConfig;
+//import io.nerv.core.properties.EvaConfig;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 //import org.springframework.context.annotation.Bean;

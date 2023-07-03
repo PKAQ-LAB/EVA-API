@@ -51,7 +51,7 @@
         select *
         from sys_organization
         where parent_ID = #{id, jdbcType=VARCHAR}
-          and deleted = '0000'
+        and deleted = '0000'
         order by orders asc
     </select>
     <!-- 根据ID查询-->
@@ -59,14 +59,14 @@
         select *
         from sys_organization org
         where org.id = (select parent_id from sys_organization og where og.id = #{id, jdbcType=VARCHAR})
-          and deleted = '0000'
+        and deleted = '0000'
     </select>
 
     <select id="countPrantLeaf" resultType="int">
         select count(id)
         from sys_organization
         where parent_ID = #{id, jdbcType=VARCHAR}
-          and deleted = '0000'
+        and deleted = '0000'
     </select>
     <!-- 切换可用状态 -->
     <update id="switchStatus">
