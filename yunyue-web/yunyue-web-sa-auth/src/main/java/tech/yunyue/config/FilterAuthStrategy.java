@@ -38,9 +38,7 @@ public class FilterAuthStrategy implements SaFilterAuthStrategy {
             //当前资源是否需要鉴权
             SaRouter.match(evaConfig.getSecurity().getPermit()).stop();
             //权限验证
-            if (!evaConfig.getResourcePermission().isEnable()) return;
-            boolean granted = StpUtil.hasPermission(SaHolder.getRequest().getRequestPath());
-            if (!granted) {
+            if (evaConfig.getResourcePermission().isEnable() && !StpUtil.hasPermission(ThreadUserHelper.getUserId(), SaHolder.getRequest().getRequestPath())) {
                 BizCodeEnum.PERMISSION_DENY.newException();
             }
         });
