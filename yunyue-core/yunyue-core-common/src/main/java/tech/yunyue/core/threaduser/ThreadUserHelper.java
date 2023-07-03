@@ -87,16 +87,16 @@ public class ThreadUserHelper {
      */
     public static Map<String, ThreadUser.GrantedRoles> getUsetGrantedRoles() {
         return Optional.ofNullable(userThreadLocal.get())
-                .map(i -> Optional.ofNullable(i.getRolesMap()).orElse(null)).orElse(null);
+                .map(ThreadUser::getRolesMap).orElse(null);
     }
     /**
-     * 获取角色
+     * 获取角色code
      *
      * @return
      */
     public static String[] getUserRoles() {
         return Optional.ofNullable(getUsetGrantedRoles())
-                .map(i -> i.keySet().stream().toArray(String[]::new)).orElse(null);
+                .map(m -> m.values().stream().map(ThreadUser.GrantedRoles::getCode).toArray(String[]::new)).orElse(null);
     }
 
     /**
@@ -105,15 +105,21 @@ public class ThreadUserHelper {
      * @return
      */
     public static String[] getUserRolesEx() {
-        return Optional.ofNullable(getUsetGrantedRoles())
-                .map(i -> i.keySet().stream().toArray(String[]::new)).orElseThrow(() -> new BizException(BizCodeEnum.ACCOUNT_NOT_EXIST));
+        return Optional.ofNullable(getUserRoles()).orElseThrow(() -> new BizException(BizCodeEnum.ACCOUNT_NOT_EXIST));
     }
     /**
-     * 获取角色的数据权限类型
+     * 获取用户的数据权限类型
      */
     public static List<ThreadUser.GrantedRoles> getUsetGrantedRoleList() {
         return new ArrayList<>(Optional.ofNullable(getUsetGrantedRoles())
                 .map(Map::values).orElse(Collections.emptyList()));
+    }
+    /**
+     * 获取用户的角色id
+     */
+    public static List<String> getRoleIdsList() {
+        return Optional.ofNullable(getUsetGrantedRoles())
+                .map(m -> m.keySet().stream().toList()).orElse(null);
     }
 
     /**

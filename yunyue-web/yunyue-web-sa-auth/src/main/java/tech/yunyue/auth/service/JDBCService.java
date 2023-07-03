@@ -51,7 +51,7 @@ public class JDBCService {
      */
     public List<Map<String, Object>> getRoleById(String userId){
         try{
-            String sql = "SELECT SR.NAME, SR.CODE, IFNULL(DATA_PERMISSION_TYPE, '0000') DATA_PERMISSION_TYPE, DATA_PERMISSION_DEPTID " +
+            String sql = "SELECT SR.ID, SR.NAME, SR.CODE, IFNULL(DATA_PERMISSION_TYPE, '0000') DATA_PERMISSION_TYPE, DATA_PERMISSION_DEPTID " +
                     "FROM SYS_ROLE SR, SYS_ROLE_USER SRU " +
                     "WHERE SR.ID = SRU.ROLE_ID  and SR.LOCKED != '0001' AND USER_ID=?";
             return this.jdbcTemplate.queryForList(sql, userId );
@@ -62,17 +62,17 @@ public class JDBCService {
     /**
      * 根据角色名称查询其拥有的资源路径
      */
-    public List<String>  listRoleNamesWithPath(String roleName){
+    public List<String>  listRoleNamesWithPath(String roleId){
         try{
             String sql="SELECT REPLACE(CONCAT(IFNULL(GROUP_CONCAT(B.PATH ORDER BY FIND_IN_SET( B.ID, A.PATH_ID)),''),',',ANY_VALUE(A.PATH)),',','') AS PATH " +
                     "FROM ( " +
                     "SELECT DISTINCT  CONCAT(M.ID,',',MR.ID) ID,M.PATH_ID, REPLACE(CONCAT(M.PATH,'/',MR.RESOURCE_URL),'//','/') PATH " +
                     "FROM SYS_MODULE_RESOURCES MR, SYS_ROLE_MODULE RM, SYS_MODULE M, SYS_ROLE R " +
                     "WHERE RM.MODULE_ID = M.ID AND RM.ROLE_ID = R.ID AND M.ID = MR.MODULE_ID AND RM.RESOURCE_ID = MR.ID AND M.ISLEAF = '1' " +
-                    "AND R.CODE = ? )A " +
+                    "AND R.ID = ? )A " +
                     "LEFT JOIN SYS_MODULE B ON FIND_IN_SET( B.ID, A.PATH_ID) " +
                     "GROUP BY A.ID";
-            return this.jdbcTemplate.queryForList(sql, String.class, roleName);
+            return this.jdbcTemplate.queryForList(sql, String.class, roleId);
         }catch (EmptyResultDataAccessException e){
             return Collections.emptyList();
         }

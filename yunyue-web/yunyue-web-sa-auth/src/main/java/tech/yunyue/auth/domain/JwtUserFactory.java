@@ -37,7 +37,7 @@ public final class JwtUserFactory {
     public static Map<String, ThreadUser.GrantedRoles> mapToGrantedAuthorities(List<Map<String, Object>> roleList) {
         Map<String, ThreadUser.GrantedRoles> roles = roleList.stream()
                 .collect(Collectors.toMap(
-                        o->StrUtil.toStringOrNull(o.get("CODE")),
+                        o->StrUtil.toStringOrNull(o.get("ID")),
                         o->new ThreadUser.GrantedRoles(
                                 StrUtil.toStringOrNull(o.get("NAME")),
                                 StrUtil.toStringOrNull(o.get("CODE")),

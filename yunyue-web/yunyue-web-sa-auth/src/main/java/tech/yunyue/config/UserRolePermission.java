@@ -41,15 +41,15 @@ public class UserRolePermission implements StpInterface {
         if (CollectionUtil.isEmpty(roleList)) return Collections.emptyList();
         // 根据用户角色获取所有可访问资源路径
         Set<String> permissionList = new HashSet<>();
-        roleList.forEach(role -> {
-            String key = CommonConstant.REDIS_ROLES_PERMISSION_PREFIX_KEY+role;
+        roleList.forEach(roleId -> {
+            String key = CommonConstant.REDIS_ROLES_PERMISSION_PREFIX_KEY+roleId;
             String redisStr = redisUtil.get(key);
             if (StringUtils.isEmpty(redisStr)) {
                 synchronized (key.intern()) {
                     redisStr = redisUtil.get(key);
                     if(StringUtils.isEmpty(redisStr)){
-                        //查数据库
-                        redisStr = JsonUtil.toJson(this.jdbcService.listRoleNamesWithPath(role));
+                        //通过角色id查询查数据库
+                        redisStr = JsonUtil.toJson(this.jdbcService.listRoleNamesWithPath(roleId));
                         redisUtil.set(key, redisStr);
                     }
                 }
@@ -60,7 +60,7 @@ public class UserRolePermission implements StpInterface {
     }
 
     /**
-     * 返回一个账号所拥有的角色标识集合
+     * 返回一个账号所拥有的角色id集合
      * @param loginId  账号id
      * @param loginType 账号类型
      * @return
@@ -68,9 +68,9 @@ public class UserRolePermission implements StpInterface {
     @Override
     public List<String> getRoleList(Object loginId, String loginType) {
         //从ThreadUserHelper取
-        String[] roleArr= ThreadUserHelper.getUserRoles();
-        if (roleArr != null) {
-            return Arrays.stream(roleArr).toList();
+        List<String> roleList= ThreadUserHelper.getRoleIdsList();
+        if (roleList != null) {
+            return roleList;
         }
         //从redis中取 用户可能没有角色 所以只需要判断是否为null
         SaTokenDao dao = StpUtil.getStpLogic().getSaTokenDao();
@@ -78,7 +78,7 @@ public class UserRolePermission implements StpInterface {
         if (Objects.isNull(roles)){
             // 查询数据库且将用户角色保存到redis中
             roles = JwtUserFactory.mapToGrantedAuthorities(this.jdbcService.getRoleById((String)loginId));
-            dao.setObject(CommonConstant.REDIS_USER_ROLES_PREFIX_KEY+loginId,roles,StpUtil.getTokenTimeout());
+            dao.setObject(CommonConstant.REDIS_USER_ROLES_PREFIX_KEY+loginId, roles, StpUtil.getTokenTimeout());
         }
         return roles.keySet().stream().toList();
     }
