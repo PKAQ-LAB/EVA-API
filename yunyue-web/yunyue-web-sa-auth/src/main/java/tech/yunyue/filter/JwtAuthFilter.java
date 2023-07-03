@@ -1,6 +1,7 @@
 package tech.yunyue.filter;
 
 import cn.dev33.satoken.dao.SaTokenDao;
+import cn.dev33.satoken.error.SaErrorCode;
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.stp.SaLoginConfig;
@@ -18,6 +19,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import tech.yunyue.auth.domain.JwtUserFactory;
+import tech.yunyue.auth.service.JDBCService;
 import tech.yunyue.core.constant.CommonConstant;
 import tech.yunyue.core.enums.BizCodeEnum;
 import tech.yunyue.core.mvc.vo.Response;
@@ -40,8 +43,8 @@ import java.util.*;
 @RequiredArgsConstructor
 @Order(SaTokenConsts.ASSEMBLY_ORDER)
 public class JwtAuthFilter extends OncePerRequestFilter {
-
     private final EvaConfig evaConfig;
+    private final JDBCService jdbcService;
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request){
@@ -72,11 +75,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 var newToken = dao.get(authToken);
                 if(StrUtil.isNotBlank(newToken)) {
                     isReplace = true;
+                    authToken = newToken;
                 }
 
                 //验证token 是否合法
-                uid = (String) (isReplace ? StpUtil.getLoginIdByToken(newToken) : StpUtil.getLoginId());
-                account = (String) (isReplace ? StpUtil.getExtra(newToken,"account") : StpUtil.getExtra("account"));
+                uid = getLoginId(authToken);
+                account = (String) StpUtil.getExtra(authToken,"account");
 
                 //判断token是否临期且不存在上一个临期token  就刷新token
                 long timeout = StpUtil.getTokenTimeout();
@@ -100,13 +104,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 }
                 isvalid = true;
             } catch (NotLoginException e) {
-				// tokne过期 返回401
+				// token过期 返回401
                 try (PrintWriter printWriter = response.getWriter()) {
                     response.setStatus(HttpStatus.UNAUTHORIZED.value());
                     response.setCharacterEncoding("UTF-8");
                     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-                    printWriter.write(JsonUtil.toJson(new Response().failure(BizCodeEnum.LOGIN_EXPIRED)));
+                    printWriter.write(JsonUtil.toJson(new Response<>().failure(BizCodeEnum.LOGIN_EXPIRED)));
                     printWriter.flush();
                 }
                 return;
@@ -115,25 +119,65 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         //把登录用户信息存到ThreadUser中
         if (isvalid) {
-            Map<String, ThreadUser.GrantedRoles> rolesMap = (Map<String, ThreadUser.GrantedRoles>)dao.getObject(CommonConstant.REDIS_USER_ROLES_PREFIX_KEY+uid);
-            logger.info("checking authentication ：" + account);
-            if (StrUtil.isNotBlank(account)) {
-                var userStr = Optional.ofNullable((String)dao.getObject(CommonConstant.REDIS_USER_INFO_PREFIX_KEY+uid)).orElse("{}");
-                ThreadUser currentUser = JSONUtil.toBean(userStr, ThreadUser.class);
-                currentUser.setUserId(uid)
-                        .setUserName(account)
-                        .setRolesMap(rolesMap)
-                        .setModuleId(RequestUtil.getModuleId(request));
+            var userStr = Optional.ofNullable((String)dao.getObject(CommonConstant.REDIS_USER_INFO_PREFIX_KEY+uid)).orElse("{}");
+            ThreadUser currentUser = JSONUtil.toBean(userStr, ThreadUser.class);
+            currentUser.setUserId(uid)
+                    .setUserName(account)
+                    .setRolesMap(getUserRoles(uid))
+                    .setModuleId(RequestUtil.getModuleId(request));
 
-                //启用租户则设置租户id
-                if(evaConfig.getTenant().isEnable()) {
-                    currentUser.setTenantId(TenantUtil.getTenantId(uid))
-                            .setCompanyTenantId(TenantUtil.getComTenantId(uid));
-                }
-                ThreadUserHelper.setCurrentUser(currentUser);
+            //启用租户则设置租户id
+            if(evaConfig.getTenant().isEnable()) {
+                currentUser.setTenantId(TenantUtil.getTenantId(uid))
+                        .setCompanyTenantId(TenantUtil.getComTenantId(uid));
             }
+            ThreadUserHelper.setCurrentUser(currentUser);
         }
 
         chain.doFilter(request, response);
+    }
+
+    /**
+     * 获取当前会话账号id, 如果未登录，则抛出异常
+     * @return 账号id
+     */
+    private String getLoginId(String tokenValue) {
+        String loginType = StpUtil.getLoginType();
+        // 查找此token对应loginId, 如果找不到则抛出：无效token
+        String loginId = (String) StpUtil.getLoginIdByToken(tokenValue);
+        if(loginId == null) {
+            throw NotLoginException.newInstance(loginType, NotLoginException.INVALID_TOKEN, tokenValue).setCode(SaErrorCode.CODE_11012);
+        }
+        // 如果是已经过期，则抛出：已经过期
+        if(loginId.equals(NotLoginException.TOKEN_TIMEOUT)) {
+            throw NotLoginException.newInstance(loginType, NotLoginException.TOKEN_TIMEOUT, tokenValue).setCode(SaErrorCode.CODE_11013);
+        }
+        // 如果是已经被顶替下去了, 则抛出：已被顶下线
+        if(loginId.equals(NotLoginException.BE_REPLACED)) {
+            throw NotLoginException.newInstance(loginType, NotLoginException.BE_REPLACED, tokenValue).setCode(SaErrorCode.CODE_11014);
+        }
+        // 如果是已经被踢下线了, 则抛出：已被踢下线
+        if(loginId.equals(NotLoginException.KICK_OUT)) {
+            throw NotLoginException.newInstance(loginType, NotLoginException.KICK_OUT, tokenValue).setCode(SaErrorCode.CODE_11015);
+        }
+        // 至此，返回loginId
+        return loginId;
+    }
+
+    /**
+     * 获取当前登录用户的角色
+     * @param uid 账号id
+     * @return 角色列表
+     */
+    private Map<String, ThreadUser.GrantedRoles> getUserRoles(String uid){
+        SaTokenDao dao = StpUtil.getStpLogic().getSaTokenDao();
+        Map<String, ThreadUser.GrantedRoles>  roles = (Map<String, ThreadUser.GrantedRoles>)dao.getObject(CommonConstant.REDIS_USER_ROLES_PREFIX_KEY+uid);
+        if (Objects.isNull(roles)){
+            // 查询数据库且将用户角色保存到redis中
+            roles = JwtUserFactory.mapToGrantedAuthorities(this.jdbcService.getRoleById(uid));
+            // 用户角色的存储时间设置为30天
+            dao.setObject(CommonConstant.REDIS_USER_ROLES_PREFIX_KEY+uid, roles, evaConfig.getJwt().getBravoTtl());
+        }
+        return roles;
     }
 }
