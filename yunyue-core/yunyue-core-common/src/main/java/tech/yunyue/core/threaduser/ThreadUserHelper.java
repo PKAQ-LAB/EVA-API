@@ -160,7 +160,7 @@ public class ThreadUserHelper {
     /**
      * 获取部门id
      */
-    public static String getDeptId() {
+    public static String getOrgId() {
         return Optional.ofNullable(userThreadLocal.get())
                 .map(ThreadUser::getDeptId).orElse("");
     }

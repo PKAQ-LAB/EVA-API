@@ -100,7 +100,7 @@ public class MybatisPlusDataPermissionHandler implements MultiDataPermissionHand
         StringBuilder permissionSql = new StringBuilder(" ( ");
         AtomicReference<Boolean> isAll = new AtomicReference<>(false);
 
-        var depId = ThreadUserHelper.getDeptId();
+        var depId = ThreadUserHelper.getOrgId();
         var postId = ThreadUserHelper.getPostId();
         var uId = ThreadUserHelper.getUserId();
         dataPermission.stream().anyMatch(item ->{
