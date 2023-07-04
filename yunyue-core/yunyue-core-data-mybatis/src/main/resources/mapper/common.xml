@@ -3,7 +3,6 @@
 <mapper namespace="common">
     <resultMap id="resultMap" type="tech.yunyue.core.mybatis.mvc.entity.mybatis.StdEntity" extends="resultNoTenantMap">
         <result column="TENANT_ID" jdbcType="VARCHAR" property="tenantId"/>
-        <result column="COMPANY_TENANT_ID" jdbcType="VARCHAR" property="companyTenantId"/>
     </resultMap>
     <resultMap id="resultNoTenantMap" type="tech.yunyue.core.mybatis.mvc.entity.mybatis.StdEntity">
         <id column="ID" jdbcType="VARCHAR" property="id"/>

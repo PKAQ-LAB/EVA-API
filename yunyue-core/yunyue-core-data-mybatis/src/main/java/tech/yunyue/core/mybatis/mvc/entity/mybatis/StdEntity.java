@@ -38,15 +38,9 @@ public abstract class StdEntity implements Entity {
     @TableField(fill = FieldFill.INSERT)
     private String deleted;
 
-    /** 集团租户号 */
-    @Schema(description = "集团id 集团数据隔离")
+    @Schema(description = "租户id")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String tenantId;
-
-    /** 公司租户号 */
-    @Schema(description = "公司id 公司数据隔离")
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private String companyTenantId;
 
     @Schema(description = "创建人岗位ID")
     @TableField(fill = FieldFill.INSERT, jdbcType = JdbcType.VARCHAR)
