@@ -67,7 +67,7 @@ public class ThreadUserHelper {
      */
     public static String getUserName() {
         return Optional.ofNullable(userThreadLocal.get())
-                .map(ThreadUser::getUserName).orElse(null);
+                .map(ThreadUser::getName).orElse(null);
     }
 
     /**
@@ -77,7 +77,15 @@ public class ThreadUserHelper {
      */
     public static String getUserNameEx() {
         return Optional.ofNullable(userThreadLocal.get())
-                .map(ThreadUser::getUserName).orElseThrow(() -> new BizException(BizCodeEnum.ACCOUNT_NOT_EXIST));
+                .map(ThreadUser::getName).orElseThrow(() -> new BizException(BizCodeEnum.ACCOUNT_NOT_EXIST));
+    }
+
+    /**
+     * 获取用户account
+     */
+    public static String getAccount() {
+        return Optional.ofNullable(userThreadLocal.get())
+                .map(ThreadUser::getAccount).orElse(null);
     }
 
     /**

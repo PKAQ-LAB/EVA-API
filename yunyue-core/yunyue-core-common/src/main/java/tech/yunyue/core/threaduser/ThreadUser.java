@@ -16,8 +16,10 @@ import java.util.Map;
 public class ThreadUser implements Serializable {
     // 用户id
     private String userId;
+    // 用户账号
+    private String account;
     // 用户名称
-    private String userName;
+    private String name;
     // 用户拥有的角色以及角色的数据权限类型
     private Map<String, GrantedRoles> rolesMap;
     // 用户拥有的数据权限

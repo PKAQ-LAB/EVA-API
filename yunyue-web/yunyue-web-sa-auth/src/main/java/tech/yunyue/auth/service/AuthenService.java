@@ -54,23 +54,23 @@ public class AuthenService {
         JwtUserDetail user = retrieveUser(username);
         boolean matches = BCrypt.checkpw(password, user.getPassword());
         if (!matches) {
-            recordFail(user.getUsername());
+            recordFail(user.getAccount());
             BizCodeEnum.ACCOUNT_OR_PWD_ERROR.newException();
         }
         //登录成功 删除记录失败记录的集合
-        redisUtil.delete(CommonConstant.REDIS_USER_LOGIN_FAIL_KEY + user.getUsername());
+        redisUtil.delete(CommonConstant.REDIS_USER_LOGIN_FAIL_KEY + user.getAccount());
 
         //生成access_token 6小时
         HttpServletRequest request = (HttpServletRequest)SaHolder.getRequest().getSource();
         saTokenConfig.setTokenName(CommonConstant.ACCESS_TOKEN_KEY);
         StpUtil.login(user.getId(), SaLoginConfig.setExtra("userId", user.getId())
-                .setExtra("account", user.getUsername())
+                .setExtra("account", user.getAccount())
                 .setExtra("version",RequestUtil.getVersion(request))
                 .setDevice(RequestUtil.getDeivce(request)));
         //生成refresh_token 30天
         saTokenConfig.setTokenName(CommonConstant.REFRESH_TOKEN_KEY);
         StpUtil.login(user.getId(),SaLoginConfig.setExtra("userId", user.getId())
-                .setExtra("account", user.getUsername())
+                .setExtra("account", user.getAccount())
                 .setExtra("version",RequestUtil.getVersion(request))
                 .setDevice(RequestUtil.getDeivce(request))
                 .setTimeout(evaConfig.getJwt().getBravoTtl()));
@@ -93,7 +93,7 @@ public class AuthenService {
         log.info(bizLogEntity.toString());
         BizLogUtil.sava(bizLogEntity);
 
-        return new Response().success(BizCodeEnum.LOGIN_SUCCESS_WELCOME, user.getUsername());
+        return new Response().success(BizCodeEnum.LOGIN_SUCCESS_WELCOME, user.getAccount());
     }
 
     /**

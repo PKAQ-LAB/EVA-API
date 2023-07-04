@@ -65,8 +65,4 @@ public class JwtUserDetail{
      * 权限集合
      **/
     private final Map<String, ThreadUser.GrantedRoles> authorities;
-
-    public String getUsername() {
-        return this.account;
-    }
 }

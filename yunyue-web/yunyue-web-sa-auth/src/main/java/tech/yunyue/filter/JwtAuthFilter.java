@@ -124,7 +124,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             var userStr = Optional.ofNullable((String)dao.getObject(CommonConstant.REDIS_USER_INFO_PREFIX_KEY+uid)).orElse("{}");
             ThreadUser currentUser = JSONUtil.toBean(userStr, ThreadUser.class);
             currentUser.setUserId(uid)
-                    .setUserName(account)
+                    .setAccount(account)
                     .setRolesMap(getUserRoles(uid))
                     .setModuleId(RequestUtil.getModuleId(request));
 
