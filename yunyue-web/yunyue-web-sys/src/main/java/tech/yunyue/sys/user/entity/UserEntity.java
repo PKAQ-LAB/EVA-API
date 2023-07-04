@@ -87,7 +87,7 @@ public class UserEntity extends StdEntity {
     private String weixin_id;
 
     @Schema(description = "所属岗位")
-    private String postId;
+    private String uPostId;
 
     @Schema(description = "所属岗位名称")
     private String postName;
