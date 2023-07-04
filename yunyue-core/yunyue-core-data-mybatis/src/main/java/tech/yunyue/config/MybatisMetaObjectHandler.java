@@ -20,8 +20,12 @@ public class MybatisMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {
         log.debug("start insert fill ....");
-        this.strictInsertFill(metaObject, "createBy", String.class, ThreadUserHelper.getUserId());
-        this.strictInsertFill(metaObject, "modifyBy", String.class, ThreadUserHelper.getUserId());
+        this.strictInsertFill(metaObject, "postId", String.class, ThreadUserHelper.getPostId());
+        this.strictInsertFill(metaObject, "orgId", String.class, ThreadUserHelper.getOrgId());
+        this.strictInsertFill(metaObject, "createId", String.class, ThreadUserHelper.getUserId());
+        this.strictInsertFill(metaObject, "modifyId", String.class, ThreadUserHelper.getUserId());
+        this.strictInsertFill(metaObject, "createBy", String.class, ThreadUserHelper.getUserName());
+        this.strictInsertFill(metaObject, "modifyBy", String.class, ThreadUserHelper.getUserName());
         this.strictInsertFill(metaObject, "gmtCreate", LocalDateTime.class, LocalDateTime.now());
         this.strictInsertFill(metaObject, "gmtModify", LocalDateTime.class, LocalDateTime.now());
         this.strictInsertFill(metaObject, "deleted", String.class, DeleteEnumm.NOT_DELETE.getCode());
@@ -30,7 +34,8 @@ public class MybatisMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void updateFill(MetaObject metaObject) {
         log.debug("start update fill ....");
-        this.strictUpdateFill(metaObject, "modifyBy", String.class, ThreadUserHelper.getUserId());
+        this.strictUpdateFill(metaObject, "modifyId", String.class, ThreadUserHelper.getUserId());
+        this.strictUpdateFill(metaObject, "modifyBy", String.class, ThreadUserHelper.getUserName());
         this.strictUpdateFill(metaObject, "gmtModify", LocalDateTime.class, LocalDateTime.now());
     }
 }

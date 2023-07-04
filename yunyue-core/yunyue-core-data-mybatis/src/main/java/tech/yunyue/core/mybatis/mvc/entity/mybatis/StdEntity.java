@@ -26,31 +26,13 @@ public abstract class StdEntity implements Entity {
     @TableField(jdbcType = JdbcType.VARCHAR)
     private String id;
 
-    @Schema(description = "创建人")
-    @TableField(fill = FieldFill.INSERT, jdbcType = JdbcType.VARCHAR)
-    private String createBy;
+    @Schema(description = "备注")
+    private String remark;
 
-    @Schema(description = "创建时间")
-    @TableField(fill = FieldFill.INSERT)
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    private LocalDateTime gmtCreate;
+    @Schema(description = "乐观锁")
+    @Version
+    private Integer revision;
 
-    @Schema(description = "修改人")
-    @TableField(fill = FieldFill.INSERT_UPDATE, jdbcType = JdbcType.VARCHAR)
-    private String modifyBy;
-
-    @Schema(description = "修改时间")
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    private LocalDateTime gmtModify;
-
-    /** 逻辑删除 */
     @Schema(description = "逻辑删除 (0000-未删除、0001-删除)")
     @TableLogic
     @TableField(fill = FieldFill.INSERT)
@@ -66,11 +48,51 @@ public abstract class StdEntity implements Entity {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String companyTenantId;
 
-    /** 乐观锁 */
-    @Schema(description = "乐观锁")
-    @Version
-    private Integer revision;
+    @Schema(description = "创建人岗位ID")
+    @TableField(fill = FieldFill.INSERT, jdbcType = JdbcType.VARCHAR)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String postId;
 
-    @Schema(description = "备注")
-    private String remark;
+    @Schema(description = "创建人部门ID")
+    @TableField(fill = FieldFill.INSERT, jdbcType = JdbcType.VARCHAR)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String orgId;
+
+    @Schema(description = "创建人ID")
+    @TableField(fill = FieldFill.INSERT, jdbcType = JdbcType.VARCHAR)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String createId;
+
+    @Schema(description = "创建人")
+    @TableField(fill = FieldFill.INSERT, jdbcType = JdbcType.VARCHAR)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String createBy;
+
+    @Schema(description = "创建时间")
+    @TableField(fill = FieldFill.INSERT)
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private LocalDateTime gmtCreate;
+
+    @Schema(description = "修改人ID")
+    @TableField(fill = FieldFill.INSERT_UPDATE, jdbcType = JdbcType.VARCHAR)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String modifyId;
+
+    @Schema(description = "修改人")
+    @TableField(fill = FieldFill.INSERT_UPDATE, jdbcType = JdbcType.VARCHAR)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String modifyBy;
+
+    @Schema(description = "修改时间")
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private LocalDateTime gmtModify;
 }

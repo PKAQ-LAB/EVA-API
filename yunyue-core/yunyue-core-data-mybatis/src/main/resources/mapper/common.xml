@@ -6,13 +6,17 @@
         <result column="COMPANY_TENANT_ID" jdbcType="VARCHAR" property="companyTenantId"/>
     </resultMap>
     <resultMap id="resultNoTenantMap" type="tech.yunyue.core.mybatis.mvc.entity.mybatis.StdEntity">
-        <id column="ID" property="id"/>
-        <result column="REMARK" property="remark"/>
-        <result column="GMT_CREATE" property="gmtCreate"/>
-        <result column="GMT_MODIFY" property="gmtModify"/>
-        <result column="CREATE_BY" property="createBy"/>
-        <result column="MODIFY_BY" property="modifyBy"/>
+        <id column="ID" jdbcType="VARCHAR" property="id"/>
+        <result column="REMARK" jdbcType="VARCHAR" property="remark"/>
+        <result column="REVISION" jdbcType="INTEGER" property="revision"/>
         <result column="DELETED" jdbcType="VARCHAR" property="deleted"/>
-        <result column="REVISION" jdbcType="VARCHAR" property="revision"/>
+        <result column="POST_ID" jdbcType="VARCHAR" property="postId"/>
+        <result column="ORG_ID" jdbcType="VARCHAR" property="orgId"/>
+        <result column="CREATE_ID" jdbcType="VARCHAR" property="createId"/>
+        <result column="CREATE_BY" jdbcType="VARCHAR" property="createBy"/>
+        <result column="GMT_CREATE" jdbcType="TIMESTAMP" property="gmtCreate"/>
+        <result column="MODIFY_ID" jdbcType="VARCHAR" property="modifyId"/>
+        <result column="MODIFY_BY" jdbcType="VARCHAR" property="modifyBy"/>
+        <result column="GMT_MODIFY" jdbcType="TIMESTAMP" property="gmtModify"/>
     </resultMap>
 </mapper>
