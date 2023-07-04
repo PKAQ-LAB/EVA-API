@@ -76,6 +76,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 if(StrUtil.isNotBlank(newToken)) {
                     isReplace = true;
                     authToken = newToken;
+                    //把新token写到cookie中
+                    StpUtil.getStpLogic().setTokenValueToCookie(authToken, (int) evaConfig.getJwt().getAlphaTtl());
                 }
 
                 //验证token 是否合法
