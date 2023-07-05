@@ -12,6 +12,7 @@ import tech.yunyue.core.threaduser.ThreadUserHelper;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * 租户插件
@@ -27,7 +28,7 @@ public class CompanyTenantLineHandler implements TenantLineHandler {
      */
     @Override
     public Expression getTenantId() {
-        return new StringValue(ThreadUserHelper.getTenantId());
+        return new StringValue(Optional.ofNullable(ThreadUserHelper.getTenantId()).orElse(""));
     }
 
     /**
