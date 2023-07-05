@@ -22,14 +22,10 @@ public class Tenant {
      */
     private String defaultTenantId="0";
     /**
-     * 集团租户字段名  一定存在
+     * 租户字段名
      */
     private String tenantId = "TENANT_ID";
 
-    /**
-     * 公司租户字段名
-     */
-    private String comTenantId = "COMPANY_TENANT_ID";
     /**
      * 不需要拼接租户字段的表
      * <p>

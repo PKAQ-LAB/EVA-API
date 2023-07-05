@@ -146,23 +146,13 @@ public class ThreadUserHelper {
     }
 
     /**
-     * 获取集团租户号 所有用户都有
+     * 获取租户号
      *
      * @return
      */
     public static String getTenantId() {
         return Optional.ofNullable(userThreadLocal.get())
                 .map(ThreadUser::getTenantId).orElse(null);
-    }
-
-    /**
-     * 获取公司租户号  集团用户无
-     *
-     * @return
-     */
-    public static String getComTenantId() {
-        return Optional.ofNullable(userThreadLocal.get())
-                .map(ThreadUser::getCompanyTenantId).orElse(null);
     }
 
     /**
@@ -179,14 +169,6 @@ public class ThreadUserHelper {
     public static String getPostId() {
         return Optional.ofNullable(userThreadLocal.get())
                 .map(ThreadUser::getPostId).orElse("");
-    }
-
-    /**
-     * 返回当前用户的组织id 即公司用户返回公司id  集团用户返回集团id
-     * @return
-     */
-    public static String getOrgTenantId() {
-        return Optional.ofNullable(getComTenantId()).orElse(getTenantId());
     }
 
     /**

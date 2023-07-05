@@ -49,10 +49,9 @@ public class JwtUserDetail{
      * 用户昵称
      **/
     private String nickName;
-    /** 集团租户号 */
+    /** 租户号 */
     private String tenantId;
-    /** 公司租户号 */
-    private String companyTenantId;
+
     /**
      * 岗位id
      **/

@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import tech.yunyue.core.properties.EvaConfig;
-import tech.yunyue.handler.GroupTenantLineHandler;
 import tech.yunyue.handler.CompanyTenantLineHandler;
 import tech.yunyue.interceptor.DataPermissionInterceptor;
 import tech.yunyue.interceptor.TenantLineInnerInterceptor;
@@ -29,9 +28,7 @@ import java.util.Properties;
 @EnableTransactionManagement
 public class MybatisPlusConfig {
     @Autowired
-    GroupTenantLineHandler groupTenantLineHandler;
-    @Autowired
-    CompanyTenantLineHandler companyTenantLineHandler;
+    CompanyTenantLineHandler tenantLineHandler;
     @Autowired
     EvaConfig evaConfig;
     @Autowired(required = false)
@@ -46,8 +43,7 @@ public class MybatisPlusConfig {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
         //多租户插件
         if(evaConfig.getTenant().isEnable()){
-            interceptor.addInnerInterceptor(new TenantLineInnerInterceptor(groupTenantLineHandler));
-            interceptor.addInnerInterceptor(new TenantLineInnerInterceptor(companyTenantLineHandler));
+            interceptor.addInnerInterceptor(new TenantLineInnerInterceptor(tenantLineHandler));
         }
         //数据权限插件
         if(Objects.nonNull(dataPermissionHandler)) {

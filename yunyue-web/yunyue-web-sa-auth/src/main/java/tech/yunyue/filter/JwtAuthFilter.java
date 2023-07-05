@@ -130,8 +130,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             //启用租户则设置租户id
             if(evaConfig.getTenant().isEnable()) {
-                currentUser.setTenantId(TenantUtil.getTenantId(uid))
-                        .setCompanyTenantId(TenantUtil.getComTenantId(uid));
+                currentUser.setTenantId(TenantUtil.getTenantId(uid));
             }
             ThreadUserHelper.setCurrentUser(currentUser);
         }

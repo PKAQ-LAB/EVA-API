@@ -38,19 +38,11 @@ public class TenantUtil {
     }
 
     /**
-     * 获取集团id
+     * 获取租户id
      */
     public static String getTenantId(String uid) {
         JwtUserDetail userEntity = getUserEntity(uid);
         return userEntity.getTenantId();
-    }
-
-    /**
-     * 获取公司id
-     */
-    public static String getComTenantId(String uid) {
-        JwtUserDetail userEntity = getUserEntity(uid);
-        return userEntity.getCompanyTenantId();
     }
 
     /**
