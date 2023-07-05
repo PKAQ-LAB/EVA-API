@@ -68,7 +68,7 @@ public interface CommonConstant {
     // 把全局资源code保存在redis中的前缀
     String REDIS_RESOURCE_CODE_PREFIX_KEY = "GLOBAL:RESOURCE:CODE:";
     // 组织类型-字典标识
-    String ORGANIZATION_TYPE_CODE = "organization_type";
+    String ORGANIZATION_TYPE_CODE = "dict_organization_type";
     // 把用户保存在redis中的前缀
     String REDIS_USER_INFO_PREFIX_KEY = "USER_INFO:";
 
