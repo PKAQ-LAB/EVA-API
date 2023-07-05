@@ -77,7 +77,11 @@ public class BizLogAdvice {
                     .setOperateType(operatorType.getCode())
                     .setClassName(className)
                     .setMethod(methodName)
-                    .setParams(args);
+                    .setParams(args)
+                    .setCreateId(ThreadUserHelper.getUserId())
+                    .setPostId(ThreadUserHelper.getPostId())
+                    .setOrgId(ThreadUserHelper.getOrgId())
+                    .setTenantId(ThreadUserHelper.getTenantId());
 
         Object result;
         try {

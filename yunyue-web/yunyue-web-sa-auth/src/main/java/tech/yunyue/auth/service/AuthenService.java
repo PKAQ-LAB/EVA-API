@@ -88,8 +88,12 @@ public class AuthenService {
                 .setOperateDatetime(DateUtil.now())
                 .setDevice(RequestUtil.getDeivce(request))
                 .setVersion(RequestUtil.getVersion(request))
-                .setOperator(user.getAccount())
-                .setOperateType("login");
+                .setOperator(user.getName())
+                .setOperateType("login")
+                .setCreateId(user.getId())
+                .setPostId(user.getPostId())
+                .setOrgId(user.getDeptId())
+                .setTenantId(user.getTenantId());
         log.info(bizLogEntity.toString());
         BizLogUtil.sava(bizLogEntity);
 
