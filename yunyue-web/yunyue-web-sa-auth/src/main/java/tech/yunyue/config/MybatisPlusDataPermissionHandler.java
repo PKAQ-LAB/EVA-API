@@ -110,36 +110,36 @@ public class MybatisPlusDataPermissionHandler implements MultiDataPermissionHand
                 isAll.set(true);
                 return true;
             }
-            var sql = "select dp_sui.id from sys_user_info dp_sui where ";
+            var sql = "";
             switch (permissionEnum){
                 //仅本部门
-                case DEPT_ONLY_LIMIT -> sql += "dp_sui.dept_id = '"+depId+"'";
+                case DEPT_ONLY_LIMIT -> sql = "ORG_ID = '"+depId+"'";
                 //本人所属部门及下属部门
-                case DEPT_AND_CHILDREN_LIMIT -> sql += "dp_sui.dept_id in (select dp_so.id from sys_organization dp_so where dp_so.id='"+depId+"' or dp_so.path like '"+depId+"%')";
+                case DEPT_AND_CHILDREN_LIMIT -> sql = "ORG_ID in (select dp_so.id from sys_organization dp_so where dp_so.id='"+depId+"' or dp_so.path like '%"+depId+"%')";
                 //指定部门
                 case DEPT_LIMIT ->{
                     String deptId = Arrays.stream(item.getDataPermissionDeptid().split(","))
                         .map(str -> "'"+str+"'")
                         .collect(Collectors.joining(","));
-                    sql += "dp_sui.dept_id in (" +deptId+ ")";
+                    sql = "ORG_ID in (" +deptId+ ")";
                 }
                 //仅本岗位
-                case POST_ONLY_LIMIT -> sql += "dp_sui.post_id = '"+postId+"'";
+                case POST_ONLY_LIMIT -> sql = "POST_ID = '"+postId+"'";
                 //本人所属岗位及下属岗位
-                case POST_AND_CHILDREN_LIMIT -> sql += "dp_sui.post_id in (select dp_sp.id from sys_post dp_sp where dp_sp.id='"+postId+"' or dp_sp.path_id like '%"+postId+",%')";
+                case POST_AND_CHILDREN_LIMIT -> sql = "POST_ID in (select dp_sp.id from sys_post dp_sp where dp_sp.id='"+postId+"' or dp_sp.path_id like '%"+postId+"%')";
                 //指定岗位
                 case POST_LIMIT ->{
                     var postIds = Arrays.stream(item.getDataPermissionDeptid().split(","))
                             .map(str -> "'"+str+"'")
                             .collect(Collectors.joining(","));
-                    sql = "dp_sui.post_id in (" +postIds+ ")";
+                    sql = "POST_ID in (" +postIds+ ")";
                 }
                 //本人创建或修改
                 case CREATOR_LIMIT ->
                         sql = " ( " + tableName + "CREATE_BY = '" + uId + "' or " + tableName + "MODIFY_BY = '" + uId + "' ) ";
             }
             if (!permissionEnum.equals(DataPermissionEnumm.CREATOR_LIMIT)) {
-                sql = " ( " + tableName + "CREATE_BY in ( " + sql + " ) OR " + tableName + "MODIFY_BY in ( " + sql + " ) ) ";
+                sql = " ( " + tableName + sql + " ) ";
             }
             permissionSql.append(sql).append(" or ");
             return false;
