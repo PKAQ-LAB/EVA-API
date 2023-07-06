@@ -411,7 +411,7 @@ public class MinIOFileUtil implements FileProvider {
      * 生成文件预览url
      */
     private String preview(String bucketName, String fileName){
-        if(!StringUtils.hasText(fileName) || StringUtils.hasText(fileName.replace(THUMBNAIL_NAME,""))) return null;
+        if(!StringUtils.hasText(fileName) || !StringUtils.hasText(fileName.replace(THUMBNAIL_NAME,""))) return null;
         try {
             // 5分钟过期
             return minioClient.getPresignedObjectUrl(
