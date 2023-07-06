@@ -120,15 +120,12 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
      * @return 分页模型类
      */
     @BizLog(operateType= BizLogEnum.QUERY,description = "分页查询记录")
-    public IPage<T> listPage(PageBo<T> pageBo) {
+    public IPage<T> listPage(PageBo pageBo, T entity) {
         LambdaQueryWrapper<T> wrapper = Wrappers.lambdaQuery();
-        wrapper.setEntity(pageBo.getParam());
+        wrapper.setEntity(entity);
         wrapper.orderByDesc(T::getGmtModify);
 
-        Page pagination = new Page();
-        pagination.setCurrent(pageBo.getPageNo());
-        pagination.setSize(pageBo.getPageSize());
-
+        Page pagination = new Page(pageBo.getPageNo(), pageBo.getPageSize());
         return this.mapper.selectPage(pagination, wrapper);
     }
 

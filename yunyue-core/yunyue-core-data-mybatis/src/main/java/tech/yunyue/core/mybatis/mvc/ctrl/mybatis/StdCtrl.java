@@ -57,9 +57,9 @@ public abstract class StdCtrl<T extends StdService<? extends BaseMapper<E>,E>, E
     @GetMapping("/list")
     @Operation(summary = "分页查询", description = "列表查询")
     @NoRepeatSubmit
-    public Response<IPage<E>> list(@Parameter(name = "condition", description = "模型对象")
-                         PageBo<E> page) {
-        return this.success(this.service.listPage(page));
+    public Response<IPage<E>> list(@Parameter(name = "page", description = "分页查询参数")PageBo page,
+                                   @Parameter(name = "condition", description = "模型对象")E entity) {
+        return this.success(this.service.listPage(page, entity));
     }
 
     @GetMapping("/listAll")
