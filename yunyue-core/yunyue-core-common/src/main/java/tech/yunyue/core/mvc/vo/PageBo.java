@@ -10,7 +10,7 @@ import java.io.Serializable;
 
 @Schema(description="分页请求参数封装")
 @Data
-public class PageBo<T> implements Serializable {
+public class PageBo implements Serializable {
 
     private static final int PAGE_NO = 1;
     private static final int PAGE_SIZE = 20;
@@ -25,7 +25,4 @@ public class PageBo<T> implements Serializable {
     @Min(value = 1, message = "每页条数最小值为 1")
     @Max(value = 100, message = "每页条数最大值为 100")
     private Integer pageSize = PAGE_SIZE;
-
-    @Schema(description = "请求参数", example = "20")
-    private T param;
 }
