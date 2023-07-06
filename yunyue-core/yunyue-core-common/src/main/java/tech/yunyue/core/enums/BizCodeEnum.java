@@ -89,6 +89,7 @@ public enum BizCodeEnum implements BizAssert {
     DICT_CODE_EXIST("字典编码已经存在", "4314"),
     ORG_TYPE_NO_EXIST("所属组织类型[{0}]没有定义，请稍后再试", "4315"),
     NO_CHANGE_ORG("不能修改所属组织", "4316"),
+    NO_TENANT_ROLE_CODE("租户角色不存在", "4317"),
 
     /**
      * 上传相关 430x ~ 432x
