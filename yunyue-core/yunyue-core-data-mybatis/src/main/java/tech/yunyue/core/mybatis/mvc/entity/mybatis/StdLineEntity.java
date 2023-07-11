@@ -3,6 +3,7 @@ package tech.yunyue.core.mybatis.mvc.entity.mybatis;
 import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.apache.ibatis.type.JdbcType;
 import tech.yunyue.core.mvc.entity.Entity;
@@ -16,7 +17,8 @@ public abstract class StdLineEntity implements Entity {
     @TableField(jdbcType = JdbcType.VARCHAR)
     private String id;
 
-    @Schema(description = "主表id")
+    @NotBlank(message = "主表ID不允许为空")
+    @Schema(description = "主表ID", requiredMode = Schema.RequiredMode.REQUIRED)
     private String mainId;
 
     @Schema(description = "租户id")
