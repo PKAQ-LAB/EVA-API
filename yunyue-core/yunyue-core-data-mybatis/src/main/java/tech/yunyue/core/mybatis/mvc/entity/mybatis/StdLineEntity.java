@@ -17,8 +17,7 @@ public abstract class StdLineEntity implements Entity {
     @TableField(jdbcType = JdbcType.VARCHAR)
     private String id;
 
-    @NotBlank(message = "主表ID不允许为空")
-    @Schema(description = "主表ID", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "主表ID")
     private String mainId;
 
     @Schema(description = "租户id")
