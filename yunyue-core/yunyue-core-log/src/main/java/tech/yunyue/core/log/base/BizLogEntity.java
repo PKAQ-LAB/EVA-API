@@ -2,7 +2,6 @@ package tech.yunyue.core.log.base;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 /**
  * 业务日志模型类
@@ -19,12 +18,10 @@ public class BizLogEntity {
     /**
      * 操作类型
      **/
-    @Field("operate_type")
     private String operateType;
     /**
      * 操作时间
      **/
-    @Field("operate_datetime")
     private String operateDatetime;
     /**
      * 操作描述
@@ -33,7 +30,6 @@ public class BizLogEntity {
     /**
      * 类名
      **/
-    @Field("class_name")
     private String className;
     /**
      * 方法名
@@ -59,22 +55,18 @@ public class BizLogEntity {
     /**
      * 创建人岗位ID
      */
-    @Field("post_id")
     private String postId;
     /**
      * 创建人部门ID
      */
-    @Field("org_id")
     private String orgId;
     /**
      * 创建人ID
      */
-    @Field("create_id")
     private String createId;
     /**
      * 租户id
      */
-    @Field("tenant_id")
     private String tenantId;
 
     @Override
