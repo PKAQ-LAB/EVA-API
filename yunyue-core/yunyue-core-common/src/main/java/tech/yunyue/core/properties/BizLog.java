@@ -18,4 +18,12 @@ public class BizLog {
      */
     private String impl = "";
 
+    /**
+     * 推送到rabbit的配置
+     */
+    @Data
+    public static class Rabbit {
+        private String exchange;
+        private String routingKey;
+    }
 }
