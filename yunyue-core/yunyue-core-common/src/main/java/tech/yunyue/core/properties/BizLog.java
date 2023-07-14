@@ -18,6 +18,7 @@ public class BizLog {
      */
     private String impl = "";
 
+    private Rabbit rabbit;
     /**
      * 推送到rabbit的配置
      */
