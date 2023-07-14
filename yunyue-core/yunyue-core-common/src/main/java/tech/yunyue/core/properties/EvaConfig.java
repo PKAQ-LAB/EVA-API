@@ -90,6 +90,12 @@ public class EvaConfig {
      */
     private long loginLockTime = 30;
 
+    /**
+     * 需要记录数据修改快照的业务表名
+     * @return
+     */
+    private String[] snapshotTableNames;
+
     public BizLog getBizlog() {
         return null == this.bizlog ? new BizLog() : bizlog;
     }
