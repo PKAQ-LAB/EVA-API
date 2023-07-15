@@ -57,6 +57,8 @@ ext {
             "aj_captcha_starter" : "com.anji-plus:spring-boot-starter-captcha:${aj_captcha}",
             //文件上传minIO
             "minio" : "io.minio:minio:${minio}",
+            // mongo
+            "mongodb" : "org.springframework.boot:spring-boot-starter-data-mongodb:${spring_boot_ver}"
 
 
     ]
