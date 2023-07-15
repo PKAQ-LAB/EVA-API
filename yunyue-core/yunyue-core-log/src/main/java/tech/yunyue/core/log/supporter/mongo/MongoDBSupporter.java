@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import tech.yunyue.core.log.base.BizLogEntity;
 import tech.yunyue.core.log.base.BizLogSupporter;
 import tech.yunyue.core.log.condition.MongoSupporterCondition;
+import tech.yunyue.core.log.constant.LogConstant;
 import tech.yunyue.core.log.supporter.mongo.entity.MongoBizLogEntity;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -27,8 +28,6 @@ import java.util.List;
 @Conditional(MongoSupporterCondition.class)
 @RequiredArgsConstructor
 public class MongoDBSupporter implements BizLogSupporter {
-    private static final String DB_NAME = "log_biz";
-    private static final String HISTORY_DB_NAME = "history_log_biz";
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final Sort sort = Sort.by(Sort.Order.desc("operate_datetime"));
     private final MongoTemplate mongoTemplate;
@@ -39,15 +38,15 @@ public class MongoDBSupporter implements BizLogSupporter {
         BeanUtil.copyProperties(bizLogEntity, mongoBizLog);
         mongoBizLog.setExpireTime(new Date());
 
-        mongoTemplate.insert(mongoBizLog, DB_NAME);
-        mongoTemplate.insert(mongoBizLog, HISTORY_DB_NAME);
+        mongoTemplate.insert(mongoBizLog, LogConstant.DB_NAME);
+        mongoTemplate.insert(mongoBizLog, LogConstant.HISTORY_DB_NAME);
     }
 
 
 
     @Override
     public List<? extends BizLogEntity> getLog() {
-        return mongoTemplate.find(new Query(), BizLogEntity.class, DB_NAME);
+        return mongoTemplate.find(new Query(), BizLogEntity.class, LogConstant.DB_NAME);
     }
 
     @Override
@@ -55,7 +54,7 @@ public class MongoDBSupporter implements BizLogSupporter {
         return mongoTemplate.find(
                 new Query(Criteria.where("operate_type").is(type)).with(sort),
                 BizLogEntity.class,
-                DB_NAME);
+                LogConstant.DB_NAME);
     }
 
     @Override
@@ -64,7 +63,7 @@ public class MongoDBSupporter implements BizLogSupporter {
         return mongoTemplate.find(
                 new Query(criteria).with(sort),
                 BizLogEntity.class,
-                DB_NAME);
+                LogConstant.DB_NAME);
     }
 
     @Override
@@ -76,18 +75,18 @@ public class MongoDBSupporter implements BizLogSupporter {
         return mongoTemplate.find(
                 new Query(criteria).with(sort),
                 BizLogEntity.class,
-                DB_NAME);
+                LogConstant.DB_NAME);
     }
 
     @Override
     public void cleanAll() {
-        mongoTemplate.dropCollection(DB_NAME);
+        mongoTemplate.dropCollection(LogConstant.DB_NAME);
     }
 
     @Override
     public void cleanBefore(Date dateTime) {
         Criteria criteria = Criteria.where("operate_datetime").gte(dateFormat.format(dateTime));
-        mongoTemplate.remove(new Query(criteria), DB_NAME);
+        mongoTemplate.remove(new Query(criteria), LogConstant.DB_NAME);
     }
 
     @Override
@@ -96,7 +95,7 @@ public class MongoDBSupporter implements BizLogSupporter {
                 Criteria.where("operate_datetime").gte(dateFormat.format(begin)),
                 Criteria.where("operate_datetime").lte(dateFormat.format(end))
         );
-        mongoTemplate.remove(new Query(criteria), DB_NAME);
+        mongoTemplate.remove(new Query(criteria), LogConstant.DB_NAME);
     }
 
     @Override
