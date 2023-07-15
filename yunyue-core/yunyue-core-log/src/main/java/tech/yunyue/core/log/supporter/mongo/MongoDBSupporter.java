@@ -27,6 +27,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MongoDBSupporter implements BizLogSupporter {
     private static final String DB_NAME = "log_biz";
+    private static final String HISTORY_DB_NAME = "history_log_biz";
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final Sort sort = Sort.by(Sort.Order.desc("operate_datetime"));
     private final MongoTemplate mongoTemplate;
@@ -34,6 +35,7 @@ public class MongoDBSupporter implements BizLogSupporter {
     @Override
     public void save(BizLogEntity bizLogEntity) {
         mongoTemplate.insert(bizLogEntity, DB_NAME);
+        mongoTemplate.insert(bizLogEntity, HISTORY_DB_NAME);
     }
 
 
