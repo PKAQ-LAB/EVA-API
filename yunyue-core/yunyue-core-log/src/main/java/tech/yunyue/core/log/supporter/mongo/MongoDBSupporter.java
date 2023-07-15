@@ -1,5 +1,6 @@
 package tech.yunyue.core.log.supporter.mongo;
 
+import cn.hutool.core.bean.BeanUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.data.domain.Sort;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Component;
 import tech.yunyue.core.log.base.BizLogEntity;
 import tech.yunyue.core.log.base.BizLogSupporter;
 import tech.yunyue.core.log.condition.MongoSupporterCondition;
-
+import tech.yunyue.core.log.supporter.mongo.entity.MongoBizLogEntity;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -33,9 +34,13 @@ public class MongoDBSupporter implements BizLogSupporter {
     private final MongoTemplate mongoTemplate;
 
     @Override
-    public void save(BizLogEntity bizLogEntity) {
-        mongoTemplate.insert(bizLogEntity, DB_NAME);
-        mongoTemplate.insert(bizLogEntity, HISTORY_DB_NAME);
+    public void save(BizLogEntity bizLogEntity){
+        MongoBizLogEntity mongoBizLog = new MongoBizLogEntity();
+        BeanUtil.copyProperties(bizLogEntity, mongoBizLog);
+        mongoBizLog.setExpireTime(new Date());
+
+        mongoTemplate.insert(mongoBizLog, DB_NAME);
+        mongoTemplate.insert(mongoBizLog, HISTORY_DB_NAME);
     }
 
 
