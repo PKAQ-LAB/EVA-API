@@ -8,6 +8,8 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * Mybatis Plus 自动填充策略实现类
@@ -37,5 +39,17 @@ public class MybatisMetaObjectHandler implements MetaObjectHandler {
         this.strictUpdateFill(metaObject, "modifyId", String.class, ThreadUserHelper.getUserId());
         this.strictUpdateFill(metaObject, "modifyBy", String.class, ThreadUserHelper.getUserName());
         this.strictUpdateFill(metaObject, "gmtModify", LocalDateTime.class, LocalDateTime.now());
+    }
+
+    /**
+     * 不管是否有值 都填充
+     */
+    @Override
+    public MetaObjectHandler strictFillStrategy(MetaObject metaObject, String fieldName, Supplier<?> fieldVal) {
+            Object obj = fieldVal.get();
+            if (Objects.nonNull(obj)) {
+                metaObject.setValue(fieldName, obj);
+            }
+        return this;
     }
 }
