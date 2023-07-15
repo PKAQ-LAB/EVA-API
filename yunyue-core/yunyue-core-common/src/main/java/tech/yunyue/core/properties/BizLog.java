@@ -18,13 +18,14 @@ public class BizLog {
      */
     private String impl = "";
 
-    private Rabbit rabbit;
+    private Rabbit rabbit = new Rabbit();
     /**
      * 推送到rabbit的配置
      */
     @Data
     public static class Rabbit {
-        private String exchange;
-        private String routingKey;
+        private String binExchange = "maxwell";
+        private String bizExchange = "xmc.log";
+        private String bizRoutingKey = "log";
     }
 }
