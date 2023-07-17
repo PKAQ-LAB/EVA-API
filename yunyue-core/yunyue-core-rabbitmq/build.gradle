@@ -1,0 +1,12 @@
+if (project.file('../../publish.gradle').exists()) {
+    apply from: '../../publish.gradle'
+}
+project.archivesBaseName = 'yunyue-core-rabbitmq'
+project.description = "tool for rabbimq"
+
+dependencies {
+    implementation project(":yunyue-core:yunyue-core-common"),
+                   project(":yunyue-core:yunyue-core-log"),
+                    "${lib.rabbitmq}",
+                    "${lib.mongodb}"
+}

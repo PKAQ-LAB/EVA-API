@@ -1,6 +1,5 @@
 rootProject.name = 'yunyue'
 
-include ':yunyue-web:yunyue-web-sys'
 include ':yunyue-web:yunyue-web-sa-auth'
 
 include ':yunyue-core:yunyue-core-log'
@@ -10,5 +9,6 @@ include ':yunyue-core:yunyue-core-data-mybatis'
 include ':yunyue-core:yunyue-core-web'
 include ':yunyue-core:yunyue-core-upload'
 include ':yunyue-core:yunyue-core-websocket'
+include ':yunyue-core:yunyue-core-rabbitmq'
 
 
