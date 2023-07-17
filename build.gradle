@@ -58,7 +58,9 @@ ext {
             //文件上传minIO
             "minio" : "io.minio:minio:${minio}",
             // mongo
-            "mongodb" : "org.springframework.boot:spring-boot-starter-data-mongodb:${spring_boot_ver}"
+            "mongodb" : "org.springframework.boot:spring-boot-starter-data-mongodb:${spring_boot_ver}",
+            // mq
+            "rabbitmq" : "org.springframework.boot:spring-boot-starter-amqp:${spring_boot_ver}"
 
 
     ]
