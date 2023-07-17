@@ -6,10 +6,10 @@ import net.sf.jsqlparser.expression.StringValue;
 import net.sf.jsqlparser.schema.Column;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import tech.yunyue.core.properties.EvaConfig;
 import tech.yunyue.core.threaduser.ThreadUserHelper;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -54,10 +54,10 @@ public class CompanyTenantLineHandler implements TenantLineHandler {
         //处理匿名请求的接口
         if(Objects.isNull(ThreadUserHelper.getUserId())) return true;
 
-        String[] tableNames = evaConfig.getTenant().getIgnoreTables();
-        if(null == tableNames || tableNames.length == 0) return false;
+        List<String> tableNames = evaConfig.getTenant().getIgnoreTables();
+        if(CollectionUtils.isEmpty(tableNames)) return false;
         //返回true就不拼接
-        return Arrays.stream(tableNames).anyMatch(((name) -> name.equalsIgnoreCase(tableName)));
+        return tableNames.stream().anyMatch(((name) -> name.equalsIgnoreCase(tableName)));
     }
 
     /**
