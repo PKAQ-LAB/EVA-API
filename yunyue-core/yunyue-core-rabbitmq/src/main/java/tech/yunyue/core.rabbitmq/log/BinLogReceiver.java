@@ -1,5 +1,6 @@
 package tech.yunyue.core.rabbitmq.log;
 
+import cn.hutool.core.collection.CollectionUtil;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 import tech.yunyue.core.log.base.BinLogEntity;
 import tech.yunyue.core.log.enums.BinLogTypeEnum;
+import tech.yunyue.core.properties.BizLog;
 import tech.yunyue.core.properties.EvaConfig;
 
 import java.util.*;
@@ -30,9 +32,10 @@ public class BinLogReceiver {
      */
     @RabbitHandler
     public void process(BinLogEntity maxwellData) {
+        BizLog log = evaConfig.getBizlog();
         // 只处理需要保存快照的表
-        if (Objects.isNull(evaConfig.getSnapshotTableNames()) ||
-                !Arrays.stream(evaConfig.getSnapshotTableNames()).allMatch(e->e.equals(maxwellData.getTable()))) return;
+        if (CollectionUtil.isEmpty(log.getSnapshotTableNames()) ||
+                !log.getSnapshotTableNames().stream().allMatch(e->e.equals(maxwellData.getTable()))) return;
         // 只处理新增和修改
         Optional<BinLogTypeEnum> optionalType = BinLogTypeEnum.getEnumByType(maxwellData.getType());
         if(optionalType.isEmpty()) return;

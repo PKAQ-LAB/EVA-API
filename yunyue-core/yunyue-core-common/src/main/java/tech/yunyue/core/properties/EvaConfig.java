@@ -6,6 +6,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.List;
+
 /**
  * 业务日志配置读取类
  *
@@ -89,12 +91,6 @@ public class EvaConfig {
      * 限制用户登录分钟数
      */
     private long loginLockTime = 30;
-
-    /**
-     * 需要记录数据修改快照的业务表名
-     * @return
-     */
-    private String[] snapshotTableNames;
 
     public BizLog getBizlog() {
         return null == this.bizlog ? new BizLog() : bizlog;
