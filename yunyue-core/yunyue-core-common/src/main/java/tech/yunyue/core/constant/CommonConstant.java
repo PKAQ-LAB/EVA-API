@@ -47,6 +47,10 @@ public interface CommonConstant {
     String CACHE_DICTDATA = "dictdata";
     // token缓存
     String CACHE_TOKEN = "token";
+    // 系统管理缓存
+    String CACHE_SYSDATA = "sysdata";
+    // 用户信息缓存
+    String CACHE_USERDATA ="userdata";
     //业务用
     String UNKNOWN = "unknown";
     // 请求来源设备类型
@@ -64,7 +68,7 @@ public interface CommonConstant {
     // 锁定标记：用户限制登录30分钟key
     String REDIS_USER_NO_LOGIN_KEY = "USER:NO:LOGIN:";
     // 黑名单数据
-    String CACHE_BLACKDATA = "blackdata";
+    String BLACKDATA_KEY = "blackdata";
     // 把全局资源code保存在redis中的前缀
     String REDIS_RESOURCE_CODE_PREFIX_KEY = "GLOBAL:RESOURCE:CODE:";
     // 组织类型-字典标识
