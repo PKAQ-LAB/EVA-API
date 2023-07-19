@@ -71,34 +71,6 @@ public class RedisConfiguration {
         return redisTemplate;
     }
 
-    private RedisSerializer getValueSerializer(){
-        // 指定相应的序列化方案
-        GenericJackson2JsonRedisSerializer valueSerializer = new GenericJackson2JsonRedisSerializer();
-        // 通过反射获取Mapper对象, 增加一些配置, 增强兼容性
-        try {
-            Field field = GenericJackson2JsonRedisSerializer.class.getDeclaredField("mapper");
-            field.setAccessible(true);
-            ObjectMapper objectMapper = (ObjectMapper) field.get(valueSerializer);
-            // 配置[忽略未知字段]
-            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            // 配置[时间类型转换]
-            JavaTimeModule timeModule = new JavaTimeModule();
-            // LocalDateTime序列化与反序列化
-            timeModule.addSerializer(new LocalDateTimeSerializer(DATE_TIME_FORMATTER));
-            timeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DATE_TIME_FORMATTER));
-            // LocalDate序列化与反序列化
-            timeModule.addSerializer(new LocalDateSerializer(DATE_FORMATTER));
-            timeModule.addDeserializer(LocalDate.class, new LocalDateDeserializer(DATE_FORMATTER));
-            // LocalTime序列化与反序列化
-            timeModule.addSerializer(new LocalTimeSerializer(TIME_FORMATTER));
-            timeModule.addDeserializer(LocalTime.class, new LocalTimeDeserializer(TIME_FORMATTER));
-            objectMapper.registerModule(timeModule);
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-        }
-        return valueSerializer;
-    }
-
     @Bean
     public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
         log.debug("初始化 redis 緩存 --- --- --- -->");
@@ -139,11 +111,39 @@ public class RedisConfiguration {
                 //设置key序列化器
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
                 //设置value序列化器
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer((new Jackson2JsonRedisSerializer(Object.class))));
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(getValueSerializer()));
 
         log.debug("自定义RedisCacheManager加载完成");
 
         return redisCacheConfiguration;
+    }
+
+    private RedisSerializer getValueSerializer(){
+        // 指定相应的序列化方案
+        GenericJackson2JsonRedisSerializer valueSerializer = new GenericJackson2JsonRedisSerializer();
+        // 通过反射获取Mapper对象, 增加一些配置, 增强兼容性
+        try {
+            Field field = GenericJackson2JsonRedisSerializer.class.getDeclaredField("mapper");
+            field.setAccessible(true);
+            ObjectMapper objectMapper = (ObjectMapper) field.get(valueSerializer);
+            // 配置[忽略未知字段]
+            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            // 配置[时间类型转换]
+            JavaTimeModule timeModule = new JavaTimeModule();
+            // LocalDateTime序列化与反序列化
+            timeModule.addSerializer(new LocalDateTimeSerializer(DATE_TIME_FORMATTER));
+            timeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DATE_TIME_FORMATTER));
+            // LocalDate序列化与反序列化
+            timeModule.addSerializer(new LocalDateSerializer(DATE_FORMATTER));
+            timeModule.addDeserializer(LocalDate.class, new LocalDateDeserializer(DATE_FORMATTER));
+            // LocalTime序列化与反序列化
+            timeModule.addSerializer(new LocalTimeSerializer(TIME_FORMATTER));
+            timeModule.addDeserializer(LocalTime.class, new LocalTimeDeserializer(TIME_FORMATTER));
+            objectMapper.registerModule(timeModule);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+        return valueSerializer;
     }
 
 }
