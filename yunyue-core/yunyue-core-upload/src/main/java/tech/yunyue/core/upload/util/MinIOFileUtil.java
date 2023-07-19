@@ -13,7 +13,6 @@ import io.minio.*;
 import io.minio.http.Method;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import tech.yunyue.core.enums.BizCodeEnum;
 import tech.yunyue.core.exception.BizException;
 import tech.yunyue.core.properties.EvaConfig;
@@ -41,7 +40,6 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Component
 @Conditional(MinIOCondition.class)
-@ConditionalOnMissingBean(Upload.MinIO.class)
 @RequiredArgsConstructor
 public class MinIOFileUtil implements FileProvider {
     private final EvaConfig evaConfig;
@@ -59,6 +57,9 @@ public class MinIOFileUtil implements FileProvider {
     @PostConstruct
     public void init() {
         Upload.MinIO minIo = evaConfig.getUpload().getMinIo();
+        if (Objects.isNull(minIo)) {
+            throw new BizException("请配置eva.upload.minio");
+        }
         if (!StringUtils.hasText(minIo.getUrl())) {
             throw new BizException("请配置eva.upload.minio.url");
         }
