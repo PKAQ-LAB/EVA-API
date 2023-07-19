@@ -1,5 +1,8 @@
 package tech.yunyue.core.upload.job;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.context.annotation.Conditional;
+import tech.yunyue.core.upload.condition.TempFileCleanTaskCondition;
 import tech.yunyue.core.upload.util.FileProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +26,8 @@ import java.time.Duration;
  */
 @Slf4j
 @Configuration
+@ConditionalOnBean(FileProvider.class)
+@Conditional(TempFileCleanTaskCondition.class)
 @EnableScheduling
 @RequiredArgsConstructor
 public class TempFileCleanTask implements SchedulingConfigurer {
