@@ -1,16 +1,17 @@
 package tech.yunyue.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CachingConfigurerSupport;
+import org.springframework.cache.annotation.CachingConfigurer;
 import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.Configuration;
 
 @Slf4j
 @Configuration
-public class CacheConfiguration extends CachingConfigurerSupport {
+public class CacheConfiguration implements CachingConfigurer {
     /*
      * 定义缓存数据 key 生成策略的bean 包名+类名+方法名+所有参数
      */
+    @Override
     public KeyGenerator keyGenerator() {
         return (o, method, objects) -> {
             //格式化缓存key字符串
