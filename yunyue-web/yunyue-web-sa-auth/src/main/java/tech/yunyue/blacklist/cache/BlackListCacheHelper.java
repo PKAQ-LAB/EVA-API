@@ -5,12 +5,8 @@ import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.caffeine.CaffeineCache;
-import org.springframework.data.redis.cache.RedisCache;
 import org.springframework.stereotype.Component;
-import tech.yunyue.core.cache.util.RedisUtil;
 import tech.yunyue.core.constant.CommonConstant;
-import tech.yunyue.core.util.json.JsonUtil;
 
 import java.util.*;
 
@@ -21,24 +17,13 @@ import java.util.*;
 @Component
 public class BlackListCacheHelper {
     private Cache cache;
-    private final RedisUtil redisUtil;
 
     @Autowired
-    public BlackListCacheHelper(CacheManager cacheManager, RedisUtil redisUtil) {
-        this.cache = cacheManager.getCache(CommonConstant.CACHE_BLACKDATA);
-        this.redisUtil = redisUtil;
+    public BlackListCacheHelper(CacheManager cacheManager) {
+        this.cache = cacheManager.getCache(CommonConstant.CACHE_SYSDATA);
     }
     public List<String> getAll() {
-        String jsonStr="";
-        if (this.cache instanceof CaffeineCache) {
-            CaffeineCache caffeineCache = (CaffeineCache) this.cache;
-            jsonStr = (String) caffeineCache.getNativeCache().getIfPresent(CommonConstant.CACHE_BLACKDATA);
-        }
-
-        if (this.cache instanceof RedisCache) {
-            jsonStr = cache.get(CommonConstant.CACHE_BLACKDATA,String.class);
-        }
-        return JsonUtil.parseArray(jsonStr, String.class);
+        return cache.get(CommonConstant.BLACKDATA_KEY,List.class);
     }
 
     /**
@@ -79,6 +64,6 @@ public class BlackListCacheHelper {
         if(CollectionUtil.isEmpty(list)){
             list = CollectionUtil.newArrayList();
         }
-        this.cache.put(CommonConstant.CACHE_BLACKDATA, JsonUtil.toJson(list));
+        this.cache.put(CommonConstant.BLACKDATA_KEY, list);
     }
 }
