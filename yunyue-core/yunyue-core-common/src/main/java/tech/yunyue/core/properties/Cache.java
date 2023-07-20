@@ -34,7 +34,7 @@ public class Cache {
         /**
          * 缓存过期时间
          **/
-        private int secondsToExpire = 100;
+        private long secondsToExpire = 100;
 
         /*** 使用描述创建缓存 ***/
         private String spec;
