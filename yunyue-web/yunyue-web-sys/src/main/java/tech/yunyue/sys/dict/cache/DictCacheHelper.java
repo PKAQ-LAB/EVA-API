@@ -1,5 +1,7 @@
 package tech.yunyue.sys.dict.cache;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import tech.yunyue.core.cache.util.RedisUtil;
 import tech.yunyue.core.constant.CommonConstant;
 import tech.yunyue.core.util.json.JsonUtil;
@@ -31,6 +33,7 @@ public class DictCacheHelper {
         this.redisUtil = redisUtil;
     }
 
+    @Cacheable(cacheNames = CommonConstant.CACHE_DICTDATA, key = CommonConstant.SYS_ALL_DICT_KEY)
     public Map<?, ?> getAll() {
         if (this.cache instanceof CaffeineCache) {
             CaffeineCache caffeineCache = (CaffeineCache) this.cache;
@@ -73,12 +76,13 @@ public class DictCacheHelper {
         return value;
     }
 
-
+    @CacheEvict(cacheNames = CommonConstant.CACHE_DICTDATA, key = CommonConstant.SYS_ALL_DICT_KEY)
     public void remove(String code) {
         this.cache.evict(code);
     }
 
 
+    @CacheEvict(cacheNames = CommonConstant.CACHE_DICTDATA, key = CommonConstant.SYS_ALL_DICT_KEY)
     public void remove(String code, String key) {
         Map<String, String> itemMap = this.get(code);
         if (null != itemMap) {
@@ -86,12 +90,12 @@ public class DictCacheHelper {
         }
     }
 
-
+    @CacheEvict(cacheNames = CommonConstant.CACHE_DICTDATA, key = CommonConstant.SYS_ALL_DICT_KEY)
     public void removeAll() {
         this.cache.clear();
     }
 
-
+    @CacheEvict(cacheNames = CommonConstant.CACHE_DICTDATA, key = CommonConstant.SYS_ALL_DICT_KEY)
     public void update(String code, String key, String value) {
         Map<String, String> itemMap = this.get(code);
         if (null != itemMap) {
@@ -100,17 +104,17 @@ public class DictCacheHelper {
         }
     }
 
-
+    @CacheEvict(cacheNames = CommonConstant.CACHE_DICTDATA, key = CommonConstant.SYS_ALL_DICT_KEY)
     public void update(String code, LinkedHashMap<String, String> item) {
         this.cachePut(code, item);
     }
 
-
+    @CacheEvict(cacheNames = CommonConstant.CACHE_DICTDATA, key = CommonConstant.SYS_ALL_DICT_KEY)
     public void add(String code, LinkedHashMap<String, String> item) {
         this.cachePut(code, item);
     }
 
-
+    @CacheEvict(cacheNames = CommonConstant.CACHE_DICTDATA, key = CommonConstant.SYS_ALL_DICT_KEY)
     public void add(String code, String key, String value) {
         this.update(code, key, value);
     }

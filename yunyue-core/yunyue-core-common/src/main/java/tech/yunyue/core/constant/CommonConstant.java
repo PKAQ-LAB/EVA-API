@@ -45,6 +45,8 @@ public interface CommonConstant {
     String CACHE_BIZDATA = "bizdata";
     //字典数据
     String CACHE_DICTDATA = "dictdata";
+    //系统所有字典map
+    String SYS_ALL_DICT_KEY = "'sys:all:dict'";
     // token缓存
     String CACHE_TOKEN = "token";
     // 系统管理缓存
