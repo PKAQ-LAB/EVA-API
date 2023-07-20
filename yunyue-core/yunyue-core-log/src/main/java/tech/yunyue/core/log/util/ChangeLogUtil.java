@@ -36,20 +36,19 @@ public class ChangeLogUtil {
        return tsList;
     }
 
-    public static JSONObject getChangeById(String collectionName, String mid, String id){
+    public static JSONObject getChangeById(String collectionName, String mid){
         JSONObject json = new JSONObject();
         ObjectId objectId = new ObjectId(mid);
-        // 根据mid查出包括本次之前的所有修改
-        var match = Aggregation.match(Criteria.where("ID").is(id).and("_id").lte(objectId));
-        var merge = ObjectOperators.MergeObjects.merge(Aggregation.ROOT);
-        var group = Aggregation.group("$ID").and("merge",merge);
-        var thisRecord = mongoTemplate.aggregate(Aggregation.newAggregation(match,group), collectionName, Document.class);
-        json.set("this", formatDucument(thisRecord));
+        // 根据mid查出本次的修改
+        Document newObj = transformDucument(mongoTemplate.findById(objectId, Document.class, collectionName));
+        json.set("new", newObj);
 
         // 查出本次之前的所有修改
-        match = Aggregation.match(Criteria.where("ID").is(id).and("_id").lt(objectId));
+        var match = Aggregation.match(Criteria.where("ID").is(newObj.getString("id")).and("_id").lt(objectId));
+        var merge = ObjectOperators.MergeObjects.merge(Aggregation.ROOT);
+        var group = Aggregation.group("$ID").and("merge",merge);
         var lastRecord = mongoTemplate.aggregate(Aggregation.newAggregation(match,group), collectionName, Document.class);
-        json.set("last", formatDucument(lastRecord));
+        json.set("old", formatDucument(lastRecord));
         return json;
     }
 
