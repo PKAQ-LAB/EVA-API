@@ -37,6 +37,7 @@ public class JDBCService {
         return Collections.emptyMap();
     }
 
+    // 因为用户登录时存的是jsonStirng 所以这边也存string
     @Cacheable(cacheNames = CommonConstant.CACHE_USERDATA, key = "'"+ CommonConstant.REDIS_USER_INFO_PREFIX_KEY + "'" + "+#userId")
     public String loadUserById(String userId){
         return JsonUtil.toJson(JwtUserFactory.create(loadUserMapById(userId), Collections.emptyMap()));
