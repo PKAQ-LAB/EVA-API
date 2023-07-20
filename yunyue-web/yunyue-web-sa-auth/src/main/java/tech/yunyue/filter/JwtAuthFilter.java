@@ -19,9 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import tech.yunyue.auth.domain.JwtUserFactory;
 import tech.yunyue.auth.service.JDBCService;
-import tech.yunyue.core.constant.CommonConstant;
 import tech.yunyue.core.enums.BizCodeEnum;
 import tech.yunyue.core.mvc.vo.Response;
 import tech.yunyue.core.properties.EvaConfig;
@@ -34,7 +32,6 @@ import tech.yunyue.util.TenantUtil;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.*;
 
 /**
  * @author PKAQ
@@ -121,11 +118,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         //把登录用户信息存到ThreadUser中
         if (isvalid) {
-            var userStr = Optional.ofNullable((String)dao.getObject(CommonConstant.REDIS_USER_INFO_PREFIX_KEY+uid)).orElse("{}");
-            ThreadUser currentUser = JSONUtil.toBean(userStr, ThreadUser.class);
+            ThreadUser currentUser = JSONUtil.toBean(this.jdbcService.loadUserById(uid), ThreadUser.class);
             currentUser.setUserId(uid)
                     .setAccount(account)
-                    .setRolesMap(getUserRoles(uid))
+                    .setRolesMap(this.jdbcService.getRoleById(uid))
                     .setModuleId(RequestUtil.getModuleId(request));
 
             //启用租户则设置租户id
@@ -163,22 +159,5 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
         // 至此，返回loginId
         return loginId;
-    }
-
-    /**
-     * 获取当前登录用户的角色
-     * @param uid 账号id
-     * @return 角色列表
-     */
-    private Map<String, ThreadUser.GrantedRoles> getUserRoles(String uid){
-        SaTokenDao dao = StpUtil.getStpLogic().getSaTokenDao();
-        Map<String, ThreadUser.GrantedRoles>  roles = (Map<String, ThreadUser.GrantedRoles>)dao.getObject(CommonConstant.REDIS_USER_ROLES_PREFIX_KEY+uid);
-        if (Objects.isNull(roles)){
-            // 查询数据库且将用户角色保存到redis中
-            roles = JwtUserFactory.mapToGrantedAuthorities(this.jdbcService.getRoleById(uid));
-            // 用户角色的存储时间设置为30天
-            dao.setObject(CommonConstant.REDIS_USER_ROLES_PREFIX_KEY+uid, roles, evaConfig.getJwt().getBravoTtl());
-        }
-        return roles;
     }
 }

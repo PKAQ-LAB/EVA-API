@@ -11,6 +11,7 @@ import cn.hutool.core.util.StrUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tech.yunyue.core.cache.util.RedisUtil;
@@ -36,6 +37,7 @@ public class AuthenService {
     private final EvaConfig evaConfig;
     private final RedisUtil redisUtil;
     private final JDBCService jdbcService;
+    private final CacheManager cacheManager;
 
     /**
      * 登录
@@ -76,12 +78,8 @@ public class AuthenService {
                 .setTimeout(evaConfig.getJwt().getBravoTtl()));
         saTokenConfig.setTokenName(CommonConstant.ACCESS_TOKEN_KEY); //改回来
 
-        // 将用户角色保存到redis中
-        SaTokenDao redisDao = StpUtil.getStpLogic().getSaTokenDao();
-        redisDao.setObject(CommonConstant.REDIS_USER_ROLES_PREFIX_KEY+user.getId(), user.getAuthorities(), evaConfig.getJwt().getBravoTtl());
-        // 将用户信息保存到redis中
-        redisUtil.setForTimeMIN(CommonConstant.REDIS_USER_INFO_PREFIX_KEY+user.getId(), JsonUtil.toJson(user), evaConfig.getJwt().getBravoTtl() / 60);
-
+        // 将用户信息保存到缓存中  因为JwtUserDetail没有默认无参构造函数 无法序列化成对象 所以转为json string存
+        cacheManager.getCache(CommonConstant.CACHE_USERDATA).put(CommonConstant.REDIS_USER_INFO_PREFIX_KEY+user.getId(), JsonUtil.toJson(user));
         //登录日志
         BizLogEntity bizLogEntity = new BizLogEntity();
         bizLogEntity.setDescription(user.getAccount() + " 登录了系统")
@@ -146,8 +144,8 @@ public class AuthenService {
         var userMap = this.jdbcService.loadUserByUsername(account);
         BizCodeEnum.ACCOUNT_NOT_EXIST.assertNotBlank(userMap);
         // 查询用户拥有的角色
-        var roleList = this.jdbcService.getRoleById(StrUtil.toStringOrNull(userMap.get("ID")));
-        return JwtUserFactory.create(userMap, roleList);
+        var roleMap = this.jdbcService.getRoleById(StrUtil.toStringOrNull(userMap.get("ID")));
+        return JwtUserFactory.create(userMap, roleMap);
     }
 
     /**

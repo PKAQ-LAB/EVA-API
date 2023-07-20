@@ -16,7 +16,7 @@ public final class JwtUserFactory {
     private JwtUserFactory() {
     }
 
-    public static JwtUserDetail create(Map<String, Object> userMap,List<Map<String, Object>> roleList) {
+    public static JwtUserDetail create(Map<String, Object> userMap,Map<String, ThreadUser.GrantedRoles> rolesMap) {
         return new JwtUserDetail(
                 StrUtil.toStringOrNull(userMap.get("ID")),
                 StrUtil.toStringOrNull(userMap.get("ACCOUNT")),
@@ -29,7 +29,7 @@ public final class JwtUserFactory {
                 StrUtil.toStringOrNull(userMap.get("TENANT_ID")),
                 StrUtil.toStringOrNull(userMap.get("U_POST_ID")),
                 StrUtil.toStringOrNull(userMap.get("POST_NAME")),
-                mapToGrantedAuthorities(roleList)
+                rolesMap
         );
     }
 

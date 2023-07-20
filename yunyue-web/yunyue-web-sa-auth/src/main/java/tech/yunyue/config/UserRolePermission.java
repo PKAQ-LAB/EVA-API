@@ -1,19 +1,12 @@
 package tech.yunyue.config;
 
-import cn.dev33.satoken.dao.SaTokenDao;
 import cn.dev33.satoken.stp.StpInterface;
-import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
-import tech.yunyue.auth.domain.JwtUserFactory;
 import tech.yunyue.auth.service.JDBCService;
-import tech.yunyue.core.cache.util.RedisUtil;
-import tech.yunyue.core.constant.CommonConstant;
 import tech.yunyue.core.threaduser.ThreadUser;
 import tech.yunyue.core.threaduser.ThreadUserHelper;
-import tech.yunyue.core.util.json.JsonUtil;
 
 import java.util.*;
 
@@ -26,8 +19,6 @@ import java.util.*;
 @RequiredArgsConstructor
 public class UserRolePermission implements StpInterface {
     private final JDBCService jdbcService;
-    private final RedisUtil redisUtil;
-
     /**
      * 返回一个账号所拥有的权限码集合
      * @param loginId  账号id
@@ -41,21 +32,7 @@ public class UserRolePermission implements StpInterface {
         if (CollectionUtil.isEmpty(roleList)) return Collections.emptyList();
         // 根据用户角色获取所有可访问资源路径
         Set<String> permissionList = new HashSet<>();
-        roleList.forEach(roleId -> {
-            String key = CommonConstant.REDIS_ROLES_PERMISSION_PREFIX_KEY+roleId;
-            String redisStr = redisUtil.get(key);
-            if (StringUtils.isEmpty(redisStr)) {
-                synchronized (key.intern()) {
-                    redisStr = redisUtil.get(key);
-                    if(StringUtils.isEmpty(redisStr)){
-                        //通过角色id查询查数据库
-                        redisStr = JsonUtil.toJson(this.jdbcService.listRoleNamesWithPath(roleId));
-                        redisUtil.set(key, redisStr);
-                    }
-                }
-            }
-            permissionList.addAll(JsonUtil.parseArray(redisStr, String.class));
-        });
+        roleList.forEach(roleId -> permissionList.addAll(this.jdbcService.listRoleNamesWithPath(roleId)));
         return new ArrayList<>(permissionList);
     }
 
@@ -72,14 +49,7 @@ public class UserRolePermission implements StpInterface {
         if (roleList != null) {
             return roleList;
         }
-        //从redis中取 用户可能没有角色 所以只需要判断是否为null
-        SaTokenDao dao = StpUtil.getStpLogic().getSaTokenDao();
-        Map<String, ThreadUser.GrantedRoles> roles = (Map<String, ThreadUser.GrantedRoles>)dao.getObject(CommonConstant.REDIS_USER_ROLES_PREFIX_KEY+loginId);
-        if (Objects.isNull(roles)){
-            // 查询数据库且将用户角色保存到redis中
-            roles = JwtUserFactory.mapToGrantedAuthorities(this.jdbcService.getRoleById((String)loginId));
-            dao.setObject(CommonConstant.REDIS_USER_ROLES_PREFIX_KEY+loginId, roles, StpUtil.getTokenTimeout());
-        }
+        Map<String, ThreadUser.GrantedRoles> roles = this.jdbcService.getRoleById((String)loginId);
         return roles.keySet().stream().toList();
     }
 }

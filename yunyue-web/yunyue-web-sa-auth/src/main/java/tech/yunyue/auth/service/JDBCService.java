@@ -2,10 +2,15 @@ package tech.yunyue.auth.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import tech.yunyue.auth.domain.JwtUserFactory;
+import tech.yunyue.core.constant.CommonConstant;
 import tech.yunyue.core.enums.BizCodeEnum;
+import tech.yunyue.core.threaduser.ThreadUser;
+import tech.yunyue.core.util.json.JsonUtil;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,10 +37,15 @@ public class JDBCService {
         return Collections.emptyMap();
     }
 
+    @Cacheable(cacheNames = CommonConstant.CACHE_USERDATA, key = "'"+ CommonConstant.REDIS_USER_INFO_PREFIX_KEY + "'" + "+#userId")
+    public String loadUserById(String userId){
+        return JsonUtil.toJson(JwtUserFactory.create(loadUserMapById(userId), Collections.emptyMap()));
+    }
+
     /**
      * 根据id查询用户
      */
-    public Map<String, Object> loadUserById(String userId){
+    private Map<String, Object> loadUserMapById(String userId){
         try {
             String sql = "SELECT ID,ACCOUNT,PASSWORD,LOCKED,DEPT_ID,DEPT_NAME,NAME,NICK_NAME,TENANT_ID,U_POST_ID,POST_NAME " +
                     "FROM SYS_USER_INFO SU " +
@@ -46,10 +56,18 @@ public class JDBCService {
         }
         return Collections.emptyMap();
     }
+
+    /**
+     * 查询用户拥有的角色 并转成ThreadUser.GrantedRoles对象 且缓存在redis中
+     */
+    @Cacheable(cacheNames = CommonConstant.CACHE_USERDATA, key = "'"+ CommonConstant.REDIS_USER_ROLES_PREFIX_KEY + "'" + "+#userId")
+    public Map<String, ThreadUser.GrantedRoles> getRoleById(String userId){
+        return JwtUserFactory.mapToGrantedAuthorities(getRoleMapById(userId));
+    }
     /**
      * 查询用户拥有的角色 包括角色的数据权限类型
      */
-    public List<Map<String, Object>> getRoleById(String userId){
+    private List<Map<String, Object>> getRoleMapById(String userId){
         try{
             String sql = "SELECT SR.ID, SR.NAME, SR.CODE, IFNULL(DATA_PERMISSION_TYPE, '0000') DATA_PERMISSION_TYPE, DATA_PERMISSION_DEPTID " +
                     "FROM SYS_ROLE SR, SYS_ROLE_USER SRU " +
@@ -62,6 +80,7 @@ public class JDBCService {
     /**
      * 根据角色名称查询其拥有的资源路径
      */
+    @Cacheable(cacheNames = CommonConstant.CACHE_SYSDATA, key = "'"+ CommonConstant.REDIS_ROLES_PERMISSION_PREFIX_KEY + "'" + "+#roleId")
     public List<String>  listRoleNamesWithPath(String roleId){
         try{
             String sql="SELECT REPLACE(CONCAT(IFNULL(GROUP_CONCAT(B.PATH ORDER BY FIND_IN_SET( B.ID, A.PATH_ID)),''),',',ANY_VALUE(A.PATH)),',','') AS PATH " +
