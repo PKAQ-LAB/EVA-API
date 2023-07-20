@@ -6,6 +6,8 @@ import cn.dev33.satoken.listener.SaTokenListenerForSimple;
 import cn.dev33.satoken.stp.SaLoginConfig;
 import cn.dev33.satoken.stp.StpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import tech.yunyue.core.constant.CommonConstant;
@@ -20,6 +22,8 @@ import java.util.List;
 public class SaTokenListener extends SaTokenListenerForSimple {
     @Autowired
     SaTokenConfig saTokenConfig;
+    @Autowired
+    CacheManager cacheManager;
 
     /**
      * 用户token过期 但是ActivityTimeout还没到期 直接生成一个新token
@@ -52,11 +56,11 @@ public class SaTokenListener extends SaTokenListenerForSimple {
             saTokenConfig.setTokenName(CommonConstant.REFRESH_TOKEN_KEY);
             StpUtil.logout(id);
             saTokenConfig.setTokenName(CommonConstant.ACCESS_TOKEN_KEY); //改回来
-            // 删除redis中用户角色
-            SaTokenDao dao = StpUtil.getStpLogic().getSaTokenDao();
-            dao.deleteObject(CommonConstant.REDIS_USER_ROLES_PREFIX_KEY+id);
-            // 删除redis中的用户信息
-            dao.delete(CommonConstant.REDIS_USER_INFO_PREFIX_KEY+id);
+            Cache cache = cacheManager.getCache(CommonConstant.CACHE_USERDATA);
+            // 删除缓存中用户角色
+            cache.evict(CommonConstant.REDIS_USER_ROLES_PREFIX_KEY+id);
+            // 删除缓存中的用户信息
+            cache.evict(CommonConstant.REDIS_USER_INFO_PREFIX_KEY+id);
         });
     }
 }
