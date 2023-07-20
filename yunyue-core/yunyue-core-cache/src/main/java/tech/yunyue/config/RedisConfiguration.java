@@ -64,8 +64,12 @@ public class RedisConfiguration {
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         //key序列化
         redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
         //value序列化
         redisTemplate.setValueSerializer(getValueSerializer());
+        redisTemplate.setHashValueSerializer(getValueSerializer());
+        redisTemplate.setDefaultSerializer(getValueSerializer());
 
         redisTemplate.afterPropertiesSet();
         return redisTemplate;
