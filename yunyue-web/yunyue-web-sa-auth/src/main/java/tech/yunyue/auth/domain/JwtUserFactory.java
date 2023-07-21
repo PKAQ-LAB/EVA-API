@@ -20,6 +20,7 @@ public final class JwtUserFactory {
         return new JwtUserDetail(
                 StrUtil.toStringOrNull(userMap.get("ID")),
                 StrUtil.toStringOrNull(userMap.get("ACCOUNT")),
+                StrUtil.toStringOrNull(userMap.get("TEL")),
                 StrUtil.toStringOrNull(userMap.get("PASSWORD")),
                 LockEnumm.LOCK.getCode().equals(StrUtil.toStringOrNull(userMap.get("LOCKED"))),
                 StrUtil.toStringOrNull(userMap.get("DEPT_ID")),

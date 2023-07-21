@@ -87,6 +87,13 @@ public class ThreadUserHelper {
         return Optional.ofNullable(userThreadLocal.get())
                 .map(ThreadUser::getAccount).orElse(null);
     }
+    /**
+     * 获取用户手机号
+     */
+    public static String getTel() {
+        return Optional.ofNullable(userThreadLocal.get())
+                .map(ThreadUser::getTel).orElse(null);
+    }
 
     /**
      * 获取角色以及角色的数据权限类型

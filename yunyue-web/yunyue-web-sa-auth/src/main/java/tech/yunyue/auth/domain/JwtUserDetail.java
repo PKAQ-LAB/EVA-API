@@ -25,6 +25,10 @@ public class JwtUserDetail{
      **/
     private final String account;
     /**
+     * 用户手机号
+     **/
+    private final String tel;
+    /**
      * 密码
      **/
     @JsonIgnore
