@@ -48,7 +48,7 @@ public class AuthenService {
         String key = CommonConstant.REDIS_USER_NO_LOGIN_KEY + username;
         if(StringUtils.hasLength(redisUtil.get(key))){
             //计算剩余分钟数
-            Long minutes =  redisUtil.getExpire(CommonConstant.REDIS_USER_NO_LOGIN_KEY + username) / 60 ;
+            Long minutes =  redisUtil.getExpire(key) / 60 ;
             BizCodeEnum.LOGIN_FAIL_COUNT_LOCKED.newException(minutes+1);
         }
 
@@ -56,7 +56,7 @@ public class AuthenService {
         JwtUserDetail user = retrieveUser(username);
         boolean matches = BCrypt.checkpw(password, user.getPassword());
         if (!matches) {
-            recordFail(user.getAccount());
+            recordFail(user.getAccount(), user.getTel());
             BizCodeEnum.ACCOUNT_OR_PWD_ERROR.newException();
         }
         //登录成功 删除记录失败记录的集合
@@ -102,16 +102,17 @@ public class AuthenService {
      * 记录用户失败次数 并判断是否30分钟内连续失败5次
      * @param username 用户名
      */
-    private void recordFail(String username) {
-        synchronized (username.intern()) {
+    private void recordFail(String account, String tel) {
+        synchronized (account.intern()) {
             Long now = System.currentTimeMillis();
-            String key = CommonConstant.REDIS_USER_LOGIN_FAIL_KEY + username;
+            String key = CommonConstant.REDIS_USER_LOGIN_FAIL_KEY + account;
             //当前失败时间从左入栈
             Long listSize = redisUtil.leftPush(key,now);
             int maxCount = evaConfig.getLoginFailureCount();
             // 集合的数量大等于5 且当前时间-往后数第五个时间 < 30分钟 则保存该用户限制登录标记
             if (listSize >= maxCount && now - (Long)redisUtil.popIndex(key,maxCount-1) < evaConfig.getLoginFailureTime()){
-                redisUtil.setForTimeMIN(CommonConstant.REDIS_USER_NO_LOGIN_KEY + username,"true",evaConfig.getLoginLockTime());
+                redisUtil.setForTimeMIN(CommonConstant.REDIS_USER_NO_LOGIN_KEY + account,"true",evaConfig.getLoginLockTime());
+                redisUtil.setForTimeMIN(CommonConstant.REDIS_USER_NO_LOGIN_KEY + tel,"true",evaConfig.getLoginLockTime());
                 redisUtil.delete(key);
                 BizCodeEnum.LOGIN_FAIL_COUNT_LOCKED.newException(evaConfig.getLoginLockTime());
             }else{
