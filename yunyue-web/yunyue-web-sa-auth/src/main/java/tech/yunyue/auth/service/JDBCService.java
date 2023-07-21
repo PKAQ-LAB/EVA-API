@@ -29,7 +29,7 @@ public class JDBCService {
         try {
             String sql = "SELECT ID,ACCOUNT,PASSWORD,LOCKED,DEPT_ID,DEPT_NAME,NAME,NICK_NAME,TENANT_ID,U_POST_ID,POST_NAME " +
                     "FROM SYS_USER_INFO SU " +
-                    "WHERE  DELETED = '0000' AND (SU.ACCOUNT = ? OR SU.TEL = ? OR SU.EMAIL = ? )";
+                    "WHERE  DELETED = '0000' AND (SU.ACCOUNT = ? OR SU.TEL = ?)";
             return this.jdbcTemplate.queryForMap(sql, account, account, account);
         }catch (EmptyResultDataAccessException e){
             BizCodeEnum.ACCOUNT_NOT_EXIST.newException();
