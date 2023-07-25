@@ -82,5 +82,7 @@ public interface CommonConstant {
     String BIZ_DICT_CODE = "biz";
     //踢出用户事件
     String KICK_USER_EVENT = "kick_user_event";
+    // mongo历史记录表的唯一标识 不一定每张表都用id做标识字段
+    String MONGO_HISTORY_TABLE_MARK = "mongo_mark_id";
 
 }
