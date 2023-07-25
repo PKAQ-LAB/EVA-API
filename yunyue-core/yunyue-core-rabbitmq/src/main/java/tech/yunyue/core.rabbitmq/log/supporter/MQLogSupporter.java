@@ -95,6 +95,6 @@ public class MQLogSupporter implements BizLogSupporter {
 
     private void convertAndSend(BizLogEntity bizLogEntity){
         BizLog.Rabbit rabbit = evaConfig.getBizlog().getRabbit();
-        rabbitTemplate.convertAndSend(rabbit.getBizExchange(), rabbit.getBizRoutingKey(), bizLogEntity);
+        rabbitTemplate.convertAndSend(rabbit.getExchange(), rabbit.getRoutingKey(), bizLogEntity);
     }
 }

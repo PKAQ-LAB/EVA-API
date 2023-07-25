@@ -69,6 +69,6 @@ public class MQErrorLogSupporter implements ErrorLogSupporter {
 
     private void convertAndSend(ErrorlogEntity errorlogEntity){
         ErrorLog.Rabbit rabbit = evaConfig.getErrorLog().getRabbit();
-        rabbitTemplate.convertAndSend(rabbit.getBizExchange(), rabbit.getBizRoutingKey(), errorlogEntity);
+        rabbitTemplate.convertAndSend(rabbit.getExchange(), rabbit.getRoutingKey(), errorlogEntity);
     }
 }
