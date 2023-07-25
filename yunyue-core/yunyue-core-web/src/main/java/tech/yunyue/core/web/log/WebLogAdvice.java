@@ -1,13 +1,18 @@
 package tech.yunyue.core.web.log;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.exceptions.ExceptionUtil;
+import org.springframework.context.ApplicationEventPublisher;
+import tech.yunyue.core.log.base.ErrorlogEntity;
+import tech.yunyue.core.log.events.ErrorLogEvent;
+import tech.yunyue.core.threaduser.ThreadUserHelper;
+import tech.yunyue.core.util.json.JsonUtil;
 import tech.yunyue.core.web.util.IpUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
@@ -27,6 +32,7 @@ import java.util.Arrays;
 @Slf4j
 @RequiredArgsConstructor
 public class WebLogAdvice {
+    private final ApplicationEventPublisher eventPublisher;
     /**
      * 定义一个切入点.
      * ~ 第一个 * 代表任意修饰符及任意返回值.
@@ -41,9 +47,9 @@ public class WebLogAdvice {
     public void webLog() {
     }
 
-    private void print(JoinPoint joinPoint) {
+    private ErrorlogEntity print(JoinPoint joinPoint) {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-
+        ErrorlogEntity errorlogEntity = new ErrorlogEntity();
         if (null != attributes) {
             HttpServletRequest request = attributes.getRequest();
             var ip = IpUtil.getIPAddress(request);
@@ -60,18 +66,37 @@ public class WebLogAdvice {
             log.debug("CLASS_NAME : " + className);
             log.debug("CLASS_METHOD : " + methodName);
             log.debug("ARGS : " + Arrays.toString(joinPoint.getArgs()));
+            errorlogEntity.setIp(ip)
+                    .setClassName(className)
+                    .setMethod(methodName)
+                    .setParams(JsonUtil.toJson(joinPoint.getArgs()));
         }
+        return errorlogEntity;
     }
 
     @Around("webLog()")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
-
         //记录开始时间
         long beginTime = System.currentTimeMillis();
 
-        this.print(joinPoint);
+        ErrorlogEntity logEntity = this.print(joinPoint);
         //执行方法
-        Object result = joinPoint.proceed();
+        Object result = null;
+        try {
+            result = joinPoint.proceed();
+        }catch (Throwable ex) {
+            // 记录异常日志
+            logEntity.setRequestTime(DateUtil.now())
+                    .setLoginUser(ThreadUserHelper.getUserName())
+                    .setCreateId(ThreadUserHelper.getUserId())
+                    .setPostId(ThreadUserHelper.getPostId())
+                    .setOrgId(ThreadUserHelper.getOrgId())
+                    .setTenantId(ThreadUserHelper.getTenantId())
+                    .setExDesc(ExceptionUtil.stacktraceToString(ex))
+                    .setSpendTime(String.valueOf(System.currentTimeMillis() - beginTime));
+            eventPublisher.publishEvent(new ErrorLogEvent(logEntity));
+            throw ex;
+        }
         //执行时长(毫秒)
         long time = System.currentTimeMillis() - beginTime;
 
@@ -80,20 +105,6 @@ public class WebLogAdvice {
         log.debug("SPEND TIME : " + time);
         log.debug("---------------------------start---------------------------");
         return result;
-        //记录日志
-    }
-
-    /**
-     * 记录异常日志
-     *
-     * @param joinPoint
-     * @param ex
-     */
-    @AfterThrowing(pointcut = "webLog()", throwing = "ex")
-    public void doWhenThrowing(JoinPoint joinPoint, Throwable ex) {
-        String jsontStack = ExceptionUtil.stacktraceToString(ex);
-        log.error(jsontStack);
-        this.print(joinPoint);
     }
 }
 

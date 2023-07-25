@@ -5,6 +5,7 @@ project.archivesBaseName = 'yunyue-core-web'
 project.description='yunyue web support with all base modules'
 
 dependencies {
+    implementation project(":yunyue-core:yunyue-core-log")
 
     api("${lib.web}"){
         exclude module: 'spring-boot-starter-tomcat'
