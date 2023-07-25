@@ -8,5 +8,6 @@ dependencies {
     implementation  project(":yunyue-core:yunyue-core-common"),
                     "${lib.jdbc}",
                     "${lib.springdoc}",
-                    "${lib.mongodb}"
+                    "${lib.mongodb}",
+                    "${lib.mybatisPlus}"
 }
