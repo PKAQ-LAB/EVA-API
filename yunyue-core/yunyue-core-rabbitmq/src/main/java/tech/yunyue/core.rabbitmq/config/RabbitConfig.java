@@ -1,14 +1,13 @@
 package tech.yunyue.core.rabbitmq.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
-import org.springframework.amqp.support.converter.MessageConversionException;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
@@ -30,7 +29,10 @@ public class RabbitConfig {
         return new Jackson2JsonMessageConverter();
     }
 
-    // 用mq的日志代理对象替换原有日志处理对象
+    /**
+     * 用mq的日志代理对象替换原有日志处理对象
+     */
+    @ConditionalOnProperty(name = "eva.bizlog.mq-enabled", havingValue = "true")
     @Bean
     public Object rabbitLogSupporter(DefaultListableBeanFactory beanFactory,
                                      BizLogSupporter bizLogSupporter,

@@ -25,6 +25,8 @@ public class BizLog {
      */
     private List<String> snapshotTableNames;
 
+    //是否推送到mq
+    private boolean mqEnabled = false;
     private Rabbit rabbit = new Rabbit();
     /**
      * 推送到rabbit的配置
