@@ -13,6 +13,7 @@ import tech.yunyue.core.properties.BizLog;
 import tech.yunyue.core.properties.EvaConfig;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 快照日志消息消费者
@@ -21,6 +22,7 @@ import java.util.*;
 @ConditionalOnClass(org.springframework.data.mongodb.core.MongoTemplate.class)
 @RabbitListener(queues = "snapshot.record")
 public class BinLogReceiver {
+    private final String MODIFY_FIELD = "MODIFY_BY";
     @Autowired
     EvaConfig evaConfig;
     @Autowired
@@ -41,15 +43,21 @@ public class BinLogReceiver {
         if(optionalType.isEmpty()) return;
 
         String collectionName = maxwellData.getTable();
-        Map<String, Object> map = maxwellData.getData();
+        Map<String, Object> map = toUpperCaseKeyMap(maxwellData.getData());
+        Map<String, Object> oldMap = toUpperCaseKeyMap(maxwellData.getOld());
         if (optionalType.get().equals(BinLogTypeEnum.UPDATE)) {
             // 修改则保存修改新值  新值在data中  修改的key在old中
-            map = maxwellData.getOld();
-            map.put("ID", "");
-            Map<String, Object> temp = new HashMap<>(map.size());
-            map.forEach((k, v) -> temp.put(k, maxwellData.getData().get(k)));
-            map = temp;
+            oldMap.put("ID", "");
+            if (!oldMap.containsKey(MODIFY_FIELD)) oldMap.put(MODIFY_FIELD, "");
+            oldMap = oldMap.entrySet().stream().collect(Collectors.toMap(e -> e.getKey(), e -> map.get(e.getKey()),(k1,k2) -> k2));
+            mongoTemplate.insert(oldMap, collectionName);
+            return;
         }
         mongoTemplate.insert(map, collectionName);
     }
+
+    private Map<String, Object> toUpperCaseKeyMap(Map<String, Object> map) {
+        return map.entrySet().stream().collect(Collectors.toMap(e-> e.getKey().toUpperCase(), e->e.getValue(), (k1,k2) -> k2));
+    }
+
 }
