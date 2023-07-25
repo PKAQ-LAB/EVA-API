@@ -5,7 +5,7 @@ import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import tech.yunyue.core.mvc.vo.DateRangeVo;
 import tech.yunyue.core.mvc.vo.Response;
-import tech.yunyue.core.mybatis.exception.entity.ErrorlogEntity;
+import tech.yunyue.core.mybatis.exception.entity.MybatisErrorlogEntity;
 import tech.yunyue.core.mybatis.exception.mapper.ErrorlogMapper;
 import tech.yunyue.core.mybatis.mvc.util.Page;
 import io.swagger.v3.oas.annotations.Operation;
@@ -47,7 +47,7 @@ public class ErrorCtrl {
                          @Parameter(name = "pageNo", description = "页码") Integer pageNo,
                          @Parameter(name = "pageCount", description = "条数") Integer pageCount) throws SQLException {
 
-        QueryWrapper<ErrorlogEntity> wrapper = new QueryWrapper<>();
+        QueryWrapper<MybatisErrorlogEntity> wrapper = new QueryWrapper<>();
 
         Date begin = dateRange.getBegin();
         Date end = dateRange.getEnd();
