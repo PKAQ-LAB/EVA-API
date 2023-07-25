@@ -8,4 +8,7 @@ public interface LogConstant {
     String TRANSACTIONAL_LOG = "TRANSACTIONAL-BIZ-LOG";
     String DB_NAME = "log_biz";
     String HISTORY_DB_NAME = "history_log_biz";
+    String ERROR_DB_NAME = "log_error";
+    String LOG_DATE_FIELD = "operate_datetime";
+    String ERROR_LOG_DATE_FIELD = "request_time";
 }
