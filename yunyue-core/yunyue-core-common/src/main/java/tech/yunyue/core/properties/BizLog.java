@@ -2,8 +2,6 @@ package tech.yunyue.core.properties;
 
 import lombok.Data;
 
-import java.util.List;
-
 /**
  * 业务日志配置读取类
  *
@@ -19,11 +17,6 @@ public class BizLog {
      * 实现类
      */
     private String impl = "";
-    /**
-     * 需要记录数据修改快照的业务表名
-     * @return
-     */
-    private List<String> snapshotTableNames;
 
     //是否推送到mq
     private boolean mqEnabled = false;
@@ -33,8 +26,7 @@ public class BizLog {
      */
     @Data
     public static class Rabbit {
-        private String binExchange = "maxwell";
-        private String bizExchange = "xmc.log";
-        private String bizRoutingKey = "log";
+        private String exchange = "xmc.log";
+        private String routingKey = "log";
     }
 }

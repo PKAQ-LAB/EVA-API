@@ -27,7 +27,7 @@ public class ErrorLog {
      */
     @Data
     public static class Rabbit {
-        private String bizExchange = "xmc.errorlog";
-        private String bizRoutingKey = "errorlog";
+        private String exchange = "xmc.errorlog";
+        private String routingKey = "errorlog";
     }
 }
