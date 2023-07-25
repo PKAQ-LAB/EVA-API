@@ -18,7 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import tech.yunyue.core.enums.BizCodeEnum;
 import tech.yunyue.core.exception.BizException;
-import tech.yunyue.core.web.util.RequestUtil;
+import tech.yunyue.core.web.util.IpUtil;
 import tech.yunyue.blacklist.cache.BlackListCacheHelper;
 
 import java.io.IOException;
@@ -43,7 +43,7 @@ public class BlackIpFilter extends OncePerRequestFilter {
         injectReqRes(request, response);
 
         //IP黑名单过滤
-        String ip = RequestUtil.getIpAddr(request);
+        String ip = IpUtil.getIPAddress(request);
         if(blackListCache.getAll().contains(ip)){
             resolver.resolveException(request, response, null, new BizException(BizCodeEnum.BLACK_IP_DENY,ip));
             return;
