@@ -17,4 +17,17 @@ public class ErrorLog {
      * 实现类
      */
     private String impl = "";
+    /**
+     * 是否推送到mq
+     */
+    private boolean mqEnabled = false;
+    private Rabbit rabbit = new Rabbit();
+    /**
+     * 推送到mq的配置
+     */
+    @Data
+    public static class Rabbit {
+        private String bizExchange = "xmc.errorlog";
+        private String bizRoutingKey = "errorlog";
+    }
 }

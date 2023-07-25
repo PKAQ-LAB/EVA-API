@@ -12,7 +12,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 import tech.yunyue.core.log.base.BizLogSupporter;
+import tech.yunyue.core.log.base.ErrorLogSupporter;
 import tech.yunyue.core.properties.EvaConfig;
+import tech.yunyue.core.rabbitmq.log.supporter.MQErrorLogSupporter;
 import tech.yunyue.core.rabbitmq.log.supporter.MQLogSupporter;
 import tech.yunyue.core.util.StringPool;
 
@@ -40,6 +42,23 @@ public class RabbitConfig {
         String className = AopUtils.getTargetClass(bizLogSupporter).getName();
         String beanName = StringUtils.uncapitalize(className.substring(className.lastIndexOf(StringPool.DOT)+1));
         MQLogSupporter rabbitLogSupporter = new MQLogSupporter(bizLogSupporter, rabbitTemplate, evaConfig);
+        //替换bean 先删除再注册同名bean
+        beanFactory.removeBeanDefinition(beanName);
+        beanFactory.registerSingleton(beanName,rabbitLogSupporter);
+        return new Object();
+    }
+
+    /**
+     * 用mq的日志代理对象替换原有错误日志处理对象
+     */
+    @ConditionalOnProperty(name = "eva.errorlog.mq-enabled", havingValue = "true")
+    @Bean
+    public Object rabbitErrorLogSupporter(DefaultListableBeanFactory beanFactory,
+                                          ErrorLogSupporter errorLogSupporter,
+                                          RabbitTemplate rabbitTemplate) {
+        String className = AopUtils.getTargetClass(errorLogSupporter).getName();
+        String beanName = StringUtils.uncapitalize(className.substring(className.lastIndexOf(StringPool.DOT)+1));
+        MQErrorLogSupporter rabbitLogSupporter = new MQErrorLogSupporter(errorLogSupporter, rabbitTemplate, evaConfig);
         //替换bean 先删除再注册同名bean
         beanFactory.removeBeanDefinition(beanName);
         beanFactory.registerSingleton(beanName,rabbitLogSupporter);
