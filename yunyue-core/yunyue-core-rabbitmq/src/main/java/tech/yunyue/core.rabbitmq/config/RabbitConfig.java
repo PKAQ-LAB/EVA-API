@@ -12,12 +12,10 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
-import tech.yunyue.core.log.base.BinLogEntity;
 import tech.yunyue.core.log.base.BizLogSupporter;
 import tech.yunyue.core.properties.EvaConfig;
 import tech.yunyue.core.rabbitmq.log.supporter.MQLogSupporter;
 import tech.yunyue.core.util.StringPool;
-import tech.yunyue.core.util.json.JsonUtil;
 
 @Configuration
 @Slf4j
@@ -29,18 +27,7 @@ public class RabbitConfig {
     // 序列化
     @Bean
     public MessageConverter messageConverter() {
-        return new Jackson2JsonMessageConverter(){
-            @Override
-            public Object fromMessage(Message message) throws MessageConversionException {
-                // 处理maxwell发送的rabbit消息
-                String binlogChannelName = evaConfig.getBizlog().getRabbit().getBinExchange();
-                if(message.getMessageProperties().getReceivedExchange().equals(binlogChannelName)) {
-                    String msg = new String(message.getBody());
-                    return JsonUtil.parse(msg, BinLogEntity.class);
-                }
-                return super.fromMessage(message);
-            }
-        };
+        return new Jackson2JsonMessageConverter();
     }
 
     // 用mq的日志代理对象替换原有日志处理对象
