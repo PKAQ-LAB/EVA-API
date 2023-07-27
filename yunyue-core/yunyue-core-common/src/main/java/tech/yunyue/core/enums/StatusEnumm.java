@@ -12,8 +12,8 @@ public enum StatusEnumm implements BizCode {
     /**
      * 可用
      */
-    ENABLE("正常", "0001"),
-    UNABLE("不可用", "0000");
+    ENABLE("正常", "0000"),
+    UNABLE("不可用", "0001");
 
     /**
      * 名称
