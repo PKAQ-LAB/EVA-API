@@ -13,9 +13,6 @@ public class FileSupporterCondition implements Condition {
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
         String impl = context.getEnvironment().getProperty("eva.bizlog.impl");
-        String enabled = context.getEnvironment().getProperty("eva.bizlog.enabled");
-
-        return "true".equalsIgnoreCase(enabled)
-                && supporterStr.equalsIgnoreCase(impl);
+        return supporterStr.equalsIgnoreCase(impl);
     }
 }

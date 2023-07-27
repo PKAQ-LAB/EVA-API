@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import tech.yunyue.core.log.annotation.BizLog;
 import tech.yunyue.core.log.base.BizLogEntity;
 import tech.yunyue.core.log.base.BizLogEnum;
-import tech.yunyue.core.log.condition.BizlogSupporterCondition;
 import tech.yunyue.core.log.constant.LogConstant;
 import tech.yunyue.core.log.events.BizLogEvent;
 import tech.yunyue.core.threaduser.ThreadUserHelper;
@@ -21,7 +20,6 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
@@ -36,7 +34,6 @@ import java.util.*;
 @Slf4j
 @Aspect
 @Component
-@Conditional(BizlogSupporterCondition.class)
 @RequiredArgsConstructor
 public class BizLogAdvice {
     private final ApplicationEventPublisher eventPublisher;
