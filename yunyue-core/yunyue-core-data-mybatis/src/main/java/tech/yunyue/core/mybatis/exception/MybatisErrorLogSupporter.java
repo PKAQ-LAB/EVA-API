@@ -20,7 +20,7 @@ import java.util.List;
  */
 @Slf4j
 @Component
-@ConditionalOnExpression("${eva.errorlog.enabled}&&'mybatis'.equals('${eva.errorlog.impl}')")
+@ConditionalOnExpression("'mybatis'.equals('${eva.errorlog.impl}')")
 @RequiredArgsConstructor
 public class MybatisErrorLogSupporter implements ErrorLogSupporter {
 

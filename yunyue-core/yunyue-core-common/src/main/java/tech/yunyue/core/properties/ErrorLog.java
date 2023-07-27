@@ -10,10 +10,6 @@ import lombok.Data;
 @Data
 public class ErrorLog {
     /**
-     * 是否启用
-     */
-    private boolean enabled = false;
-    /**
      * 实现类
      */
     private String impl = "";

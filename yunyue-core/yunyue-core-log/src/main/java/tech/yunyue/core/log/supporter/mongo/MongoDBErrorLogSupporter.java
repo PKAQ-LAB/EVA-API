@@ -23,7 +23,7 @@ import java.util.List;
  */
 @Component
 @ConditionalOnClass(MongoTemplate.class)
-@ConditionalOnExpression("${eva.errorlog.enabled}&&'mongo'.equals('${eva.errorlog.impl}')")
+@ConditionalOnExpression("'mongo'.equals('${eva.errorlog.impl}')")
 @RequiredArgsConstructor
 public class MongoDBErrorLogSupporter implements ErrorLogSupporter {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
