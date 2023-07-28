@@ -1,28 +1,33 @@
 package tech.yunyue.core.rabbitmq.log.supporter;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import tech.yunyue.core.log.base.BizLogEntity;
-import tech.yunyue.core.log.base.BizLogSupporter;
-import tech.yunyue.core.log.constant.LogConstant;
-import tech.yunyue.core.log.events.BizLogEvent;
-import tech.yunyue.core.properties.BizLog;
-import tech.yunyue.core.properties.EvaConfig;
+import tech.yunyue.core.log.base.LogEntity;
+import tech.yunyue.core.log.base.LogSupporter;
+import tech.yunyue.core.log.events.LogEvent;
 
+import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
-@RequiredArgsConstructor
-public class MQLogSupporter implements BizLogSupporter {
-    private final BizLogSupporter logSupporter;
+public class MQLogSupporter<T extends LogEntity, E extends LogEvent> implements LogSupporter<T,E> {
+    private final LogSupporter<T,E> logSupporter;
     private final RabbitTemplate rabbitTemplate;
-    private final EvaConfig evaConfig;
+    private final String exchange;
+    private final String routingKey;
 
+    public MQLogSupporter(RabbitTemplate rabbitTemplate, LogSupporter<T,E> logSupporter, String exchange, String routingKey){
+        this.rabbitTemplate = rabbitTemplate;
+        this.logSupporter = logSupporter;
+        this.exchange = exchange;
+        this.routingKey = routingKey;
+    }
     @Override
-    public void save(BizLogEntity bizLogEntity) {
-        this.logSupporter.save(bizLogEntity);
+    public Type[] getRealTE() {
+        return logSupporter.getRealTE();
+    }
+    @Override
+    public void save(T t) {
+        this.logSupporter.save(t);
     }
 
     /**
@@ -30,13 +35,9 @@ public class MQLogSupporter implements BizLogSupporter {
      * @param event
      */
     @Override
-    public void listenerCommit(BizLogEvent event) {
-        Map<String, Object> source = (Map<String, Object>) event.getSource();
-        BizLogEntity logEntity = (BizLogEntity) source.get(LogConstant.TRANSACTIONAL_LOG);
-        if(Objects.isNull(logEntity)){
-            logEntity =  (BizLogEntity) source.get(LogConstant.EVENT_LOG);
-        }
-        this.convertAndSend(logEntity);
+    public void listenerCommit(E event) {
+        T entity = (T) event.getSource();
+        if(checkMatch(event)) this.convertAndSend(entity);
     }
 
     /**
@@ -44,32 +45,28 @@ public class MQLogSupporter implements BizLogSupporter {
      * @param event
      */
     @Override
-    public void listenerRollbask(BizLogEvent event) {
-        Map<String, Object> source = (Map<String, Object>) event.getSource();
-        BizLogEntity logEntity = (BizLogEntity) source.get(LogConstant.TRANSACTIONAL_LOG);
-        if(Objects.nonNull(logEntity)){
-            logEntity.setDescription("【操作失败】"+logEntity.getDescription());
-            this.convertAndSend(logEntity);
-        }
+    public void listenerRollbask(E event) {
+        T entity = (T) event.getSource();
+        if(checkMatch(event)) this.convertAndSend(entity);
     }
 
     @Override
-    public List<? extends BizLogEntity> getLog() {
+    public List<? extends T> getLog() {
         return logSupporter.getLog();
     }
 
     @Override
-    public List<? extends BizLogEntity> getLogByType(String type) {
+    public List<? extends T> getLogByType(String type) {
         return logSupporter.getLogByType(type);
     }
 
     @Override
-    public List<? extends BizLogEntity> getLogAfter(Date dateTime) {
+    public List<? extends T> getLogAfter(Date dateTime) {
         return logSupporter.getLogAfter(dateTime);
     }
 
     @Override
-    public List<? extends BizLogEntity> getLogBetween(Date begin, Date end) {
+    public List<? extends T> getLogBetween(Date begin, Date end) {
         return logSupporter.getLogBetween(begin, end);
     }
 
@@ -93,8 +90,7 @@ public class MQLogSupporter implements BizLogSupporter {
         logSupporter.print();
     }
 
-    private void convertAndSend(BizLogEntity bizLogEntity){
-        BizLog.Rabbit rabbit = evaConfig.getBizlog().getRabbit();
-        rabbitTemplate.convertAndSend(rabbit.getExchange(), rabbit.getRoutingKey(), bizLogEntity);
+    private void convertAndSend(T t){
+        rabbitTemplate.convertAndSend(this.exchange, this.routingKey, t);
     }
 }
