@@ -15,5 +15,5 @@ public class MongoBizLogEntity extends BizLogEntity {
     /**
      * mongo TTL索引使用
      **/
-    private Date expireTime;
+    private Date expireTime = new Date();
 }
