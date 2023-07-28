@@ -10,6 +10,8 @@ import tech.yunyue.core.log.base.LogEntity;
 import tech.yunyue.core.log.base.LogSupporter;
 import tech.yunyue.core.log.events.LogEvent;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -22,25 +24,31 @@ import java.util.List;
 public class MongoDBSupporter<T extends LogEntity, E extends LogEvent> implements LogSupporter<T,E> {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private MongoTemplate mongoTemplate;
-    private Class<T> t;
-    private static String DB_NAME;
-    private static String HISTORY_DB_NAME;
-    private static String DATE_TIME_FIELD;
+    private Class clazz;
+    private String dbName;
+    private String historyDbName;
+    private String dateTimeField;
     private Sort sort;
-    public MongoDBSupporter(MongoTemplate mongoTemplate, Class<T> t, String orderField, String dbName, String hisDBName){
+    private Type[] realTE;
+    public MongoDBSupporter(TypeToken<MongoDBSupporter<T,E>> typeToken, MongoTemplate mongoTemplate, String orderField, String dbName, String hisDBName){
         this.mongoTemplate = mongoTemplate;
-        this.t= t;
-        DB_NAME = dbName;
-        HISTORY_DB_NAME = hisDBName;
-        DATE_TIME_FIELD = orderField;
+        this.dbName = dbName;
+        this.historyDbName = hisDBName;
+        this.dateTimeField = orderField;
         sort = Sort.by(Sort.Order.desc(orderField));
+        this.realTE = ((ParameterizedType) typeToken.getType()).getActualTypeArguments();
+        this.clazz = (Class)realTE[0];
+    }
+    @Override
+    public Type[] getRealTE() {
+        return realTE;
     }
     @Override
     public void save(T t){
         var  mongoObj = getActualTObj(t);
-        mongoTemplate.insert(mongoObj, DB_NAME);
-        if (StringUtils.isNotEmpty(HISTORY_DB_NAME)) {
-            mongoTemplate.insert(mongoObj, HISTORY_DB_NAME);
+        mongoTemplate.insert(mongoObj, dbName);
+        if (StringUtils.isNotEmpty(this.historyDbName)) {
+            mongoTemplate.insert(mongoObj, this.historyDbName);
         }
     }
 
@@ -48,56 +56,56 @@ public class MongoDBSupporter<T extends LogEntity, E extends LogEvent> implement
 
     @Override
     public List<T> getLog() {
-        return mongoTemplate.find(new Query(), t, DB_NAME);
+        return mongoTemplate.find(new Query(), clazz, this.dbName);
     }
 
     @Override
     public List<T> getLogByType(String type) {
         return mongoTemplate.find(
                 new Query(Criteria.where("operate_type").is(type)).with(sort),
-                t,
-                DB_NAME);
+                clazz,
+                this.dbName);
     }
 
     @Override
     public List<T> getLogAfter(Date dateTime) {
-        Criteria criteria = Criteria.where(DATE_TIME_FIELD).gte(dateFormat.format(dateTime));
+        Criteria criteria = Criteria.where(this.dateTimeField).gte(dateFormat.format(dateTime));
         return mongoTemplate.find(
                 new Query(criteria).with(sort),
-                t,
-                DB_NAME);
+                clazz,
+                this.dbName);
     }
 
     @Override
     public List<T> getLogBetween(Date begin, Date end) {
         Criteria criteria = new Criteria().andOperator(
-                Criteria.where(DATE_TIME_FIELD).gte(dateFormat.format(begin)),
-                Criteria.where(DATE_TIME_FIELD).lte(dateFormat.format(end))
+                Criteria.where(this.dateTimeField).gte(dateFormat.format(begin)),
+                Criteria.where(this.dateTimeField).lte(dateFormat.format(end))
         );
         return mongoTemplate.find(
                 new Query(criteria).with(sort),
-                t,
-                DB_NAME);
+                clazz,
+                this.dbName);
     }
 
     @Override
     public void cleanAll() {
-        mongoTemplate.dropCollection(DB_NAME);
+        mongoTemplate.dropCollection(this.dbName);
     }
 
     @Override
     public void cleanBefore(Date dateTime) {
-        Criteria criteria = Criteria.where(DATE_TIME_FIELD).gte(dateFormat.format(dateTime));
-        mongoTemplate.remove(new Query(criteria), DB_NAME);
+        Criteria criteria = Criteria.where(this.dateTimeField).gte(dateFormat.format(dateTime));
+        mongoTemplate.remove(new Query(criteria), this.dbName);
     }
 
     @Override
     public void cleanBetween(Date begin, Date end) {
         Criteria criteria = new Criteria().andOperator(
-                Criteria.where(DATE_TIME_FIELD).gte(dateFormat.format(begin)),
-                Criteria.where(DATE_TIME_FIELD).lte(dateFormat.format(end))
+                Criteria.where(this.dateTimeField).gte(dateFormat.format(begin)),
+                Criteria.where(this.dateTimeField).lte(dateFormat.format(end))
         );
-        mongoTemplate.remove(new Query(criteria), DB_NAME);
+        mongoTemplate.remove(new Query(criteria), this.dbName);
     }
 
     @Override

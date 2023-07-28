@@ -1,5 +1,6 @@
 package tech.yunyue.core.mybatis.log;
 
+import com.nimbusds.jose.shaded.gson.reflect.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
@@ -32,7 +33,7 @@ public class MybatisLogConfig implements LogConfig {
     @Bean
     public LogSupporter<MybatisBizLogEntity, BizLogEvent> bizLogSupporter() {
         BizLog bizLog = evaConfig.getBizlog();
-        return new MybatisLogSupporter<MybatisBizLogEntity, BizLogEvent>(bizLogMapper, bizLog.getDateField()){};
+        return new MybatisLogSupporter<>(new TypeToken<MybatisLogSupporter<MybatisBizLogEntity, BizLogEvent>>(){}, bizLogMapper, bizLog.getDateField());
     }
 
     @Override
@@ -40,6 +41,6 @@ public class MybatisLogConfig implements LogConfig {
     @Bean
     public LogSupporter<MybatisErrorlogEntity, ErrorLogEvent> errorLogSupporter() {
         ErrorLog errorLog = evaConfig.getErrorLog();
-        return new MybatisLogSupporter<MybatisErrorlogEntity, ErrorLogEvent>(errorLogMapper, errorLog.getDateField()){};
+        return new MybatisLogSupporter<>(new TypeToken<MybatisLogSupporter<MybatisErrorlogEntity, ErrorLogEvent>>(){}, errorLogMapper, errorLog.getDateField());
     }
 }

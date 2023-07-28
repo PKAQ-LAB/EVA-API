@@ -9,6 +9,7 @@ import tech.yunyue.core.log.events.LogEvent;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -20,6 +21,11 @@ import java.util.Objects;
  */
 public interface LogSupporter<T extends LogEntity, E extends LogEvent> {
 
+    /**
+     * 得到真正的T和E的type
+     * @return
+     */
+    Type[] getRealTE();
     /**
      * 保存日志
      */
@@ -45,13 +51,6 @@ public interface LogSupporter<T extends LogEntity, E extends LogEvent> {
     @TransactionalEventListener(phase=TransactionPhase.AFTER_COMMIT,fallbackExecution=true)
     @Async("log_task")
     default void listenerCommit(E event) {
-//        Map<String, Object> source = (Map<String, Object>) event.getSource();
-//        T logEntity = (T) source.get(LogConstant.TRANSACTIONAL_LOG);
-//        if(Objects.isNull(logEntity)){
-//            logEntity =  (T) source.get(LogConstant.EVENT_LOG);
-//        }
-//        this.save(logEntity);
-//        if()
         // 接收的类型匹配才进行保存操作
         if(checkMatch(event))  this.save( (T) event.getSource());
     }
@@ -63,12 +62,6 @@ public interface LogSupporter<T extends LogEntity, E extends LogEvent> {
     @TransactionalEventListener(phase= TransactionPhase.AFTER_ROLLBACK)
     @Async("log_task")
      default void listenerRollbask(E event) {
-//        Map<String, Object> source = (Map<String, Object>) event.getSource();
-//        T logEntity = (T) source.get(LogConstant.TRANSACTIONAL_LOG);
-//        if(Objects.nonNull(logEntity)){
-//            logEntity.setDescription("【操作失败】"+logEntity.getDescription());
-//            this.save(logEntity);
-//        }
         T logEntity = (T) event.getSource();
         if(Objects.nonNull(logEntity)){
             try {
@@ -88,25 +81,16 @@ public interface LogSupporter<T extends LogEntity, E extends LogEvent> {
 
     private boolean checkMatch(E event) {
         try {
-            var actualTypeArguments = ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments();
-            var actualTypeE = actualTypeArguments[1].getTypeName();
+            var actualTypeE = getRealTE()[1].getTypeName();
             var parameE = event.getClass().getName();
             return actualTypeE.contains(parameE);
         } catch (Exception ignored){}
         return false;
     }
 
-    default Class getActualTClass() {
-        try {
-            var actualTypeArguments = ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments();
-            return (Class)actualTypeArguments[0];
-        } catch (Exception ignored){}
-        return null;
-    }
     default Object getActualTObj(T t) {
         try {
-            var actualTypeArguments = ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments();
-            var clazz = (Class)actualTypeArguments[0];
+            var clazz = (Class)getRealTE()[0];
             var actualObj = clazz.getDeclaredConstructor().newInstance();
             BeanUtil.copyProperties(t, actualObj);
             return actualObj;

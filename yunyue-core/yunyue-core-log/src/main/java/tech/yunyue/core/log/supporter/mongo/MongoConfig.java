@@ -1,5 +1,6 @@
 package tech.yunyue.core.log.supporter.mongo;
 
+import com.nimbusds.jose.shaded.gson.reflect.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -25,12 +26,12 @@ public class MongoConfig implements LogConfig {
     MongoTemplate mongoTemplate;
 
 
-    @ConditionalOnExpression("'mongo'.equals('${eva.biz.impl}')")
+    @ConditionalOnExpression("'mongo'.equals('${eva.bizlog.impl}')")
     @Bean
     @Override
     public LogSupporter<MongoBizLogEntity, BizLogEvent> bizLogSupporter(){
         BizLog bizLog = evaConfig.getBizlog();
-        return new MongoDBSupporter<MongoBizLogEntity, BizLogEvent>(mongoTemplate, MongoBizLogEntity.class, bizLog.getDateField(), bizLog.getDbName(), bizLog.getHisDBName()){};
+        return new MongoDBSupporter<>(new TypeToken<MongoDBSupporter<MongoBizLogEntity, BizLogEvent>>(){}, mongoTemplate, bizLog.getDateField(), bizLog.getDbName(), bizLog.getHisDBName());
     }
 
     @ConditionalOnExpression("'mongo'.equals('${eva.errorlog.impl}')")
@@ -38,7 +39,7 @@ public class MongoConfig implements LogConfig {
     @Override
     public LogSupporter<MongoErrorLogEntity, ErrorLogEvent> errorLogSupporter(){
         ErrorLog errorLog = evaConfig.getErrorLog();
-        return new MongoDBSupporter<MongoErrorLogEntity, ErrorLogEvent>(mongoTemplate, MongoErrorLogEntity.class, errorLog.getDateField(), errorLog.getDbName(), errorLog.getHisDBName()){};
+        return new MongoDBSupporter<>(new TypeToken<MongoDBSupporter<MongoErrorLogEntity, ErrorLogEvent>>(){}, mongoTemplate, errorLog.getDateField(), errorLog.getDbName(), errorLog.getHisDBName());
     }
 
     //todo  登录登出日志

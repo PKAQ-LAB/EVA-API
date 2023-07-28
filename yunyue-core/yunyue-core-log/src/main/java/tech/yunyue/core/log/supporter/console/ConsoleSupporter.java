@@ -1,10 +1,14 @@
 package tech.yunyue.core.log.supporter.console;
 
+import com.nimbusds.jose.shaded.gson.reflect.TypeToken;
 import tech.yunyue.core.log.base.LogEntity;
 import tech.yunyue.core.log.base.LogSupporter;
 import lombok.extern.slf4j.Slf4j;
 import tech.yunyue.core.log.events.LogEvent;
+import tech.yunyue.core.log.supporter.mongo.MongoDBSupporter;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.List;
 
@@ -16,6 +20,16 @@ import java.util.List;
 @Slf4j
 public class ConsoleSupporter<T extends LogEntity, E extends LogEvent<T>> implements LogSupporter<T,E>{
     private T t;
+    private Type[] realTE;
+
+    ConsoleSupporter(TypeToken<ConsoleSupporter<T,E>> typeToken){
+        this.realTE = ((ParameterizedType) typeToken.getType()).getActualTypeArguments();
+    }
+
+    @Override
+    public Type[] getRealTE() {
+        return realTE;
+    }
 
     @Override
     public void save(T t) {

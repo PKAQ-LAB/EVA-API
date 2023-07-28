@@ -2,10 +2,14 @@ package tech.yunyue.core.mybatis.log;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.nimbusds.jose.shaded.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
 import tech.yunyue.core.log.base.LogEntity;
 import tech.yunyue.core.log.base.LogSupporter;
 import tech.yunyue.core.log.events.LogEvent;
+
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.List;
 
@@ -18,10 +22,17 @@ import java.util.List;
 public class MybatisLogSupporter<T extends LogEntity, E extends LogEvent> implements LogSupporter<T,E> {
 
     private BaseMapper mapper;
-    private static String DATE_TIME_FIELD;
-    public MybatisLogSupporter(BaseMapper<T> mapper, String orderField) {
+    private String dateTimeField;
+    private Type[] realTE;
+    public MybatisLogSupporter(TypeToken<MybatisLogSupporter<T,E>> typeToken, BaseMapper<T> mapper, String orderField) {
         this.mapper = mapper;
-        DATE_TIME_FIELD = orderField;
+        this.dateTimeField = orderField;
+        this.realTE = ((ParameterizedType) typeToken.getType()).getActualTypeArguments();
+    }
+
+    @Override
+    public Type[] getRealTE() {
+        return realTE;
     }
 
     @Override
@@ -46,7 +57,7 @@ public class MybatisLogSupporter<T extends LogEntity, E extends LogEvent> implem
     public List<T> getLogAfter(Date dateTime) {
 
         QueryWrapper<T> wrapper = new QueryWrapper<>();
-        wrapper.ge(DATE_TIME_FIELD, dateTime);
+        wrapper.ge(this.dateTimeField, dateTime);
 
         return this.mapper.selectList(wrapper);
     }
@@ -55,7 +66,7 @@ public class MybatisLogSupporter<T extends LogEntity, E extends LogEvent> implem
     public List<T> getLogBetween(Date begin, Date end) {
 
         QueryWrapper<T> wrapper = new QueryWrapper<>();
-        wrapper.between(DATE_TIME_FIELD, begin, end);
+        wrapper.between(this.dateTimeField, begin, end);
 
         return this.mapper.selectList(wrapper);
     }
@@ -68,7 +79,7 @@ public class MybatisLogSupporter<T extends LogEntity, E extends LogEvent> implem
     @Override
     public void cleanBefore(Date dateTime) {
         QueryWrapper<T> wrapper = new QueryWrapper<>();
-        wrapper.le(DATE_TIME_FIELD, dateTime);
+        wrapper.le(this.dateTimeField, dateTime);
 
         this.mapper.delete(wrapper);
     }
@@ -76,7 +87,7 @@ public class MybatisLogSupporter<T extends LogEntity, E extends LogEvent> implem
     @Override
     public void cleanBetween(Date begin, Date end) {
         QueryWrapper<T> wrapper = new QueryWrapper<>();
-        wrapper.between(DATE_TIME_FIELD, begin, end);
+        wrapper.between(this.dateTimeField, begin, end);
 
         this.mapper.delete(wrapper);
     }

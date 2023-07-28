@@ -1,11 +1,14 @@
 package tech.yunyue.core.log.supporter.jdbc;
 
+import com.nimbusds.jose.shaded.gson.reflect.TypeToken;
 import tech.yunyue.core.log.base.LogEntity;
 import tech.yunyue.core.log.base.LogSupporter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import tech.yunyue.core.log.events.LogEvent;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.List;
 
@@ -16,14 +19,19 @@ import java.util.List;
  */
 public class JdbcSupporter<T extends LogEntity, E extends LogEvent<T>> implements LogSupporter<T,E> {
     private T bizLogEntity;
+    private JdbcTemplate jdbcTemplate;
+    private Type[] realTE;
 
-    public JdbcSupporter(T bizLogEntity) {
+    public JdbcSupporter(TypeToken<JdbcSupporter<T,E>> typeToken, JdbcTemplate jdbcTemplate, T bizLogEntity) {
         this.bizLogEntity = bizLogEntity;
+        this.jdbcTemplate = jdbcTemplate;
+        this.realTE = ((ParameterizedType) typeToken.getType()).getActualTypeArguments();
     }
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
+    @Override
+    public Type[] getRealTE() {
+        return realTE;
+    }
     @Override
     public void save(T t) {
         String sql = "";
