@@ -13,6 +13,18 @@ public class BizLog {
      * 实现类
      */
     private String impl = "";
+    /**
+     * 数据表名
+     */
+    private String dbName = "log_biz";
+    /**
+     * 历史数据表名
+     */
+    private String hisDBName = "history_log_biz";
+    /**
+     * 操作时间字段
+     */
+    private String dateField = "operate_datetime";
 
     //是否推送到mq
     private boolean mqEnabled = false;

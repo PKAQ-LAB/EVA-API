@@ -32,10 +32,7 @@ public class BizLogUtil {
      * @param bizLogEntity
      */
     public static void sava(BizLogEntity bizLogEntity){
-        Map<String,Object> map = new HashMap<>(1);
-        map.put(LogConstant.TRANSACTIONAL_LOG,bizLogEntity);
-        BizLogEvent bizLogEvent = new BizLogEvent(map);
-        eventPublisher.publishEvent(bizLogEvent);
+        eventPublisher.publishEvent(new BizLogEvent(bizLogEntity));
     }
 
     @PostConstruct

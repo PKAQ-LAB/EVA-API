@@ -1,0 +1,33 @@
+package tech.yunyue.core.log.supporter.console;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
+import org.springframework.context.annotation.Configuration;
+import tech.yunyue.core.log.base.BizLogEntity;
+import tech.yunyue.core.log.base.ErrorlogEntity;
+import tech.yunyue.core.log.base.LogSupporter;
+import tech.yunyue.core.log.condition.DefaultErrorLogSupporterCondition;
+import tech.yunyue.core.log.condition.DefaultSupporterCondition;
+import tech.yunyue.core.log.config.LogConfig;
+import tech.yunyue.core.log.events.BizLogEvent;
+import tech.yunyue.core.log.events.ErrorLogEvent;
+
+@Configuration
+public class ConsoleLogConfig implements LogConfig {
+
+    @Conditional(DefaultSupporterCondition.class)
+    @Bean
+    @Override
+    public LogSupporter<BizLogEntity, BizLogEvent> bizLogSupporter(){
+        // 为了拿到实际事件类型 否则多个LogSupporter都会触发事件 会保存多次
+        return new ConsoleSupporter<BizLogEntity, BizLogEvent>(){};
+    }
+
+    @Conditional(DefaultErrorLogSupporterCondition.class)
+    @Bean
+    public LogSupporter<ErrorlogEntity, ErrorLogEvent> errorLogSupporter(){
+        return new ConsoleSupporter<ErrorlogEntity, ErrorLogEvent>(){};
+    }
+
+    //todo  登录登出日志
+}

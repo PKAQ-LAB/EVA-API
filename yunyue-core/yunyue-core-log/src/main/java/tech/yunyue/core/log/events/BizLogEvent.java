@@ -1,17 +1,16 @@
 package tech.yunyue.core.log.events;
 
-import org.springframework.context.ApplicationEvent;
+import tech.yunyue.core.log.base.BizLogEntity;
 
-import java.util.Map;
 
 /**
  * 系统日志事件
  *
  * @author PKAQ
  */
-public class BizLogEvent extends ApplicationEvent {
+public class BizLogEvent extends LogEvent<BizLogEntity> {
 
-    public BizLogEvent(Map<String, Object> source) {
-        super(source);
+    public BizLogEvent(BizLogEntity entity) {
+        super(entity);
     }
 }

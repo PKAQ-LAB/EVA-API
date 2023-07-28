@@ -10,7 +10,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-public class BizLogEntity {
+public class BizLogEntity extends LogEntity{
     /**
      * 操作人
      **/

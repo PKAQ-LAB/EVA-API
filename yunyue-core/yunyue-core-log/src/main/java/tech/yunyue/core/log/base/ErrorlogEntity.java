@@ -8,7 +8,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-public class ErrorlogEntity {
+public class ErrorlogEntity extends LogEntity{
     /**
      * 请求时间
      **/

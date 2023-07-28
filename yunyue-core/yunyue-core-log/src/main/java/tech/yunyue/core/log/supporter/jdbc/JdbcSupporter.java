@@ -1,27 +1,23 @@
 package tech.yunyue.core.log.supporter.jdbc;
 
-import tech.yunyue.core.log.base.BizLogEntity;
-import tech.yunyue.core.log.base.BizLogSupporter;
-import tech.yunyue.core.log.constant.LogConstant;
-import tech.yunyue.core.log.events.BizLogEvent;
+import tech.yunyue.core.log.base.LogEntity;
+import tech.yunyue.core.log.base.LogSupporter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.event.EventListener;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.scheduling.annotation.Async;
+import tech.yunyue.core.log.events.LogEvent;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 基于数据库的日志持久话类
  *
  * @author PKAQ
  */
-public class JdbcSupporter implements BizLogSupporter {
-    private BizLogEntity bizLogEntity;
+public class JdbcSupporter<T extends LogEntity, E extends LogEvent<T>> implements LogSupporter<T,E> {
+    private T bizLogEntity;
 
-    public JdbcSupporter(BizLogEntity bizLogEntity) {
+    public JdbcSupporter(T bizLogEntity) {
         this.bizLogEntity = bizLogEntity;
     }
 
@@ -29,41 +25,28 @@ public class JdbcSupporter implements BizLogSupporter {
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    public void save(BizLogEntity entity) {
+    public void save(T t) {
         String sql = "";
         this.jdbcTemplate.execute(sql);
     }
 
-    /**
-     * 日志保存
-     *
-     * @param event
-     */
-    @Async
-    @EventListener(value = BizLogEvent.class)
-    public void listener(BizLogEvent event) {
-        Map<String, Object> source = (Map<String, Object>) event.getSource();
-        BizLogEntity errorEntity = (BizLogEntity) source.get(LogConstant.EVENT_LOG);
-        this.save(errorEntity);
-    }
-
     @Override
-    public List<BizLogEntity> getLog() {
+    public List<T> getLog() {
         return null;
     }
 
     @Override
-    public List<BizLogEntity> getLogByType(String type) {
+    public List<T> getLogByType(String type) {
         return null;
     }
 
     @Override
-    public List<BizLogEntity> getLogAfter(Date dateTime) {
+    public List<T> getLogAfter(Date dateTime) {
         return null;
     }
 
     @Override
-    public List<BizLogEntity> getLogBetween(Date begin, Date end) {
+    public List<T> getLogBetween(Date begin, Date end) {
         return null;
     }
 

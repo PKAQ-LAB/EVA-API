@@ -99,10 +99,7 @@ public class BizLogAdvice {
             }
             bizLogEntity.setDescription(MessageFormat.format(description, formatArgs));
             //触发事件 使用事务监听器异步保存操作记录
-            Map<String,Object> map = new HashMap<>(1);
-            map.put(isTransactional ? LogConstant.TRANSACTIONAL_LOG : LogConstant.EVENT_LOG,bizLogEntity);
-            BizLogEvent bizLogEvent = new BizLogEvent(map);
-            eventPublisher.publishEvent(bizLogEvent);
+            eventPublisher.publishEvent(new BizLogEvent(bizLogEntity));
         }
         return result;
     }

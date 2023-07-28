@@ -14,6 +14,18 @@ public class ErrorLog {
      */
     private String impl = "";
     /**
+     * 数据表名
+     */
+    private String dbName = "log_error";
+    /**
+     * 历史数据表名
+     */
+    private String hisDBName;
+    /**
+     * 操作时间字段
+     */
+    private String dateField = "request_time";
+    /**
      * 是否推送到mq
      */
     private boolean mqEnabled = false;

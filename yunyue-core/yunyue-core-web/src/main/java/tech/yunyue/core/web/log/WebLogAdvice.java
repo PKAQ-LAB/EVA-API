@@ -69,7 +69,7 @@ public class WebLogAdvice {
             errorlogEntity.setIp(ip)
                     .setClassName(className)
                     .setMethod(methodName)
-                    .setParams(JsonUtil.toJson(joinPoint.getArgs()));
+                    .setParams(Arrays.toString(joinPoint.getArgs()));
         }
         return errorlogEntity;
     }
