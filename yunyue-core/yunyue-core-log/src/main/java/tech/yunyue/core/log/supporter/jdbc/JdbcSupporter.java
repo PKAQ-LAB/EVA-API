@@ -20,7 +20,7 @@ import java.util.List;
 public class JdbcSupporter<T extends LogEntity, E extends LogEvent<T>> implements LogSupporter<T,E> {
     private T bizLogEntity;
     private JdbcTemplate jdbcTemplate;
-    private Type[] realTE;
+    private final Type[] realTE;
 
     public JdbcSupporter(TypeToken<JdbcSupporter<T,E>> typeToken, JdbcTemplate jdbcTemplate, T bizLogEntity) {
         this.bizLogEntity = bizLogEntity;

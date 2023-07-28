@@ -23,13 +23,13 @@ import java.util.List;
  */
 public class MongoDBSupporter<T extends LogEntity, E extends LogEvent> implements LogSupporter<T,E> {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private MongoTemplate mongoTemplate;
-    private Class clazz;
-    private String dbName;
-    private String historyDbName;
-    private String dateTimeField;
-    private Sort sort;
-    private Type[] realTE;
+    private final MongoTemplate mongoTemplate;
+    private final Class clazz;
+    private final String dbName;
+    private final String historyDbName;
+    private final String dateTimeField;
+    private final Sort sort;
+    private final Type[] realTE;
     public MongoDBSupporter(TypeToken<MongoDBSupporter<T,E>> typeToken, MongoTemplate mongoTemplate, String orderField, String dbName, String hisDBName){
         this.mongoTemplate = mongoTemplate;
         this.dbName = dbName;

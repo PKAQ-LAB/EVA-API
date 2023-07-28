@@ -20,10 +20,9 @@ import java.util.List;
  */
 @Slf4j
 public class MybatisLogSupporter<T extends LogEntity, E extends LogEvent> implements LogSupporter<T,E> {
-
-    private BaseMapper mapper;
-    private String dateTimeField;
-    private Type[] realTE;
+    private final BaseMapper mapper;
+    private final String dateTimeField;
+    private final Type[] realTE;
     public MybatisLogSupporter(TypeToken<MybatisLogSupporter<T,E>> typeToken, BaseMapper<T> mapper, String orderField) {
         this.mapper = mapper;
         this.dateTimeField = orderField;

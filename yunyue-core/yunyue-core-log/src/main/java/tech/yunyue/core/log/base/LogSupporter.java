@@ -8,7 +8,6 @@ import org.springframework.transaction.event.TransactionalEventListener;
 import tech.yunyue.core.log.events.LogEvent;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.List;
@@ -79,7 +78,7 @@ public interface LogSupporter<T extends LogEntity, E extends LogEvent> {
 
     }
 
-    private boolean checkMatch(E event) {
+    default boolean checkMatch(E event) {
         try {
             var actualTypeE = getRealTE()[1].getTypeName();
             var parameE = event.getClass().getName();
