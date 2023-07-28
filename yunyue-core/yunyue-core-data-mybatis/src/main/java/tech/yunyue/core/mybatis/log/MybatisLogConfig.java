@@ -1,4 +1,4 @@
-package tech.yunyue.core.mybatis;
+package tech.yunyue.core.mybatis.log;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -10,10 +10,10 @@ import tech.yunyue.core.log.condition.MybatisSupporterCondition;
 import tech.yunyue.core.log.config.LogConfig;
 import tech.yunyue.core.log.events.BizLogEvent;
 import tech.yunyue.core.log.events.ErrorLogEvent;
-import tech.yunyue.core.mybatis.exception.entity.MybatisErrorlogEntity;
-import tech.yunyue.core.mybatis.exception.mapper.ErrorlogMapper;
-import tech.yunyue.core.mybatis.log.entity.MybatisBizLogEntity;
-import tech.yunyue.core.mybatis.log.mapper.MybatisSupporterMapper;
+import tech.yunyue.core.mybatis.log.error.entity.MybatisErrorlogEntity;
+import tech.yunyue.core.mybatis.log.error.mapper.ErrorlogMapper;
+import tech.yunyue.core.mybatis.log.biz.entity.MybatisBizLogEntity;
+import tech.yunyue.core.mybatis.log.biz.mapper.MybatisSupporterMapper;
 import tech.yunyue.core.properties.BizLog;
 import tech.yunyue.core.properties.ErrorLog;
 import tech.yunyue.core.properties.EvaConfig;

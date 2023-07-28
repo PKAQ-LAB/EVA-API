@@ -1,7 +1,7 @@
-package tech.yunyue.core.mybatis.exception.mapper;
+package tech.yunyue.core.mybatis.log.error.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import tech.yunyue.core.mybatis.exception.entity.MybatisErrorlogEntity;
+import tech.yunyue.core.mybatis.log.error.entity.MybatisErrorlogEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 

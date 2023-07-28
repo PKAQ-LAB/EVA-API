@@ -1,4 +1,4 @@
-package tech.yunyue.core.mybatis;
+package tech.yunyue.core.mybatis.log;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;

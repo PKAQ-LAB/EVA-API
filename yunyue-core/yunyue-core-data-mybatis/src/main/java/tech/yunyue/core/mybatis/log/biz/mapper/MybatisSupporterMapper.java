@@ -1,7 +1,7 @@
-package tech.yunyue.core.mybatis.log.mapper;
+package tech.yunyue.core.mybatis.log.biz.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import tech.yunyue.core.mybatis.log.entity.MybatisBizLogEntity;
+import tech.yunyue.core.mybatis.log.biz.entity.MybatisBizLogEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
