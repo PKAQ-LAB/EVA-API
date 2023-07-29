@@ -71,9 +71,11 @@ public class BizLogEntity extends LogEntity{
 
     @Override
     public String toString() {
-        return  "用户登录了系统：[" +
-                "登录用户 ='" + operator + '\'' +
-                ", 登录时间 ='" + operateDatetime + '\'' +
+        return  "用户操作了系统：[" +
+                "操作用户 ='" + operator + '\'' +
+                ", 操作类型 ='" + operateType + '\'' +
+                ", 操作描述 ='" + description + '\'' +
+                ", 操作时间 ='" + operateDatetime + '\'' +
                 ", 设备类型 ='" + device + '\'' +
                 ", 版本 ='" + version + '\'' +
                 ']';
