@@ -7,6 +7,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 业务日志配置读取类
@@ -31,9 +32,13 @@ public class EvaConfig {
      **/
     private BizLog bizlog;
     /**
-     * 业务日志配置
+     * 错误日志配置
      **/
     private ErrorLog errorLog;
+    /**
+     * 登录/登出日志配置
+     **/
+    private LoginLog loginLog;
     /**
      * 文件上传配置
      **/
@@ -58,10 +63,6 @@ public class EvaConfig {
      * 资源权限配置
      **/
     private ResourcePermission resourcePermission;
-    /**
-     * 是否启用license 授权机制
-     **/
-    private License license;
     /**
      * 缓存配置
      **/
@@ -93,40 +94,40 @@ public class EvaConfig {
     private long loginLockTime = 30;
 
     public BizLog getBizlog() {
-        return null == this.bizlog ? new BizLog() : bizlog;
+        return Optional.ofNullable(bizlog).orElse(new BizLog());
     }
 
     public ErrorLog getErrorLog() {
-        return null == this.errorLog ? new ErrorLog() : errorLog;
+        return Optional.ofNullable(errorLog).orElse(new ErrorLog());
     }
 
     public Upload getUpload() {
-        return null == this.upload ? new Upload() : upload;
+        return Optional.ofNullable(upload).orElse(new Upload());
     }
 
     public Jwt getJwt() {
-        return null == this.jwt ? new Jwt() : jwt;
+        return Optional.ofNullable(jwt).orElse(new Jwt());
     }
 
     public Cookie getCookie() {
-        return null == this.cookie ? new Cookie() : cookie;
+        return Optional.ofNullable(cookie).orElse(new Cookie());
     }
 
     public DataPermission getDataPermission() {
-        return null == this.dataPermission ? new DataPermission() : dataPermission;
+        return Optional.ofNullable(dataPermission).orElse(new DataPermission());
     }
 
     public ResourcePermission getResourcePermission() {
-        return null == resourcePermission ? new ResourcePermission() : resourcePermission;
-    }
-
-    public License getLicense() {
-        return null == license ? new License() : license;
+        return Optional.ofNullable(resourcePermission).orElse(new ResourcePermission());
     }
 
     public Cache getCache() {
-        return null == cache ? new Cache() : cache;
+        return Optional.ofNullable(cache).orElse(new Cache());
     }
 
-    public Tenant getTenant() { return null == tenant ? new Tenant() : tenant; }
+    public Tenant getTenant() { return Optional.ofNullable(tenant).orElse(new Tenant()); }
+
+    public LoginLog getLoginLog() {
+        return Optional.ofNullable(loginLog).orElse(new LoginLog());
+    }
 }
