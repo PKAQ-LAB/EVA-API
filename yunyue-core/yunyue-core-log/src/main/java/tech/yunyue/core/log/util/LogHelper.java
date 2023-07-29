@@ -19,9 +19,9 @@ public class LogHelper {
     @Autowired
     ApplicationEventPublisher publisher;
     private static ApplicationEventPublisher eventPublisher;
-    public static LogSupporter bizLogSupporter;
-    public static LogSupporter errorLogSupporter;
-    public static LogSupporter lopginLogSupporter;
+    private static LogSupporter bizLogSupporter;
+    private static LogSupporter errorLogSupporter;
+    private static LogSupporter lopginLogSupporter;
     @PostConstruct
     public void init(){
         bizLogSupporter = SpringUtil.getBean(LogConfig.BIZ_LOG_NAME);
@@ -38,5 +38,15 @@ public class LogHelper {
     }
     public static void save(LoginlogEntity loginlogEntity){
         eventPublisher.publishEvent(new LoginLogEvent(loginlogEntity));
+    }
+
+    public static LogSupporter getBizLogSupporter(){
+        return bizLogSupporter;
+    }
+    public static LogSupporter getErrorLogSupporter(){
+        return errorLogSupporter;
+    }
+    public static LogSupporter getLopginLogSupporter(){
+        return lopginLogSupporter;
     }
 }

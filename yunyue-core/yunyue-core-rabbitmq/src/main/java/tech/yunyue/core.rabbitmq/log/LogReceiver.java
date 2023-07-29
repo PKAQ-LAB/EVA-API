@@ -24,7 +24,7 @@ public class LogReceiver {
     @RabbitListener(queues = "bizlog")
     public void process(BizLogEntity bizLogEntity) {
         // 保存到数据库中
-        LogHelper.bizLogSupporter.save(bizLogEntity);
+        LogHelper.getBizLogSupporter().save(bizLogEntity);
     }
 
     /**
@@ -34,7 +34,7 @@ public class LogReceiver {
     @RabbitHandler
     public void process(ErrorlogEntity errorlogEntity) {
         // 保存到数据库中
-        LogHelper.errorLogSupporter.save(errorlogEntity);
+        LogHelper.getErrorLogSupporter().save(errorlogEntity);
     }
 
     /**
@@ -44,6 +44,6 @@ public class LogReceiver {
     @RabbitHandler
     public void process(LoginlogEntity loginlogEntity) {
         // 保存到数据库中
-        LogHelper.lopginLogSupporter.save(loginlogEntity);
+        LogHelper.getLopginLogSupporter().save(loginlogEntity);
     }
 }
