@@ -5,12 +5,15 @@ import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.exception.SaTokenException;
 import cn.dev33.satoken.stp.SaLoginConfig;
 import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.extra.spring.SpringUtil;
+import cn.hutool.json.JSONUtil;
 import com.anji.captcha.model.common.ResponseModel;
 import com.anji.captcha.model.vo.CaptchaVO;
 import com.anji.captcha.service.CaptchaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,13 +22,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import tech.yunyue.auth.service.JDBCService;
 import tech.yunyue.core.constant.CommonConstant;
 import tech.yunyue.core.enums.BizCodeEnum;
 import tech.yunyue.core.event.BizEvent;
+import tech.yunyue.core.log.base.LoginlogEntity;
+import tech.yunyue.core.log.util.LogHelper;
 import tech.yunyue.core.mvc.vo.Response;
 import tech.yunyue.core.properties.EvaConfig;
+import tech.yunyue.core.threaduser.ThreadUser;
 import tech.yunyue.core.util.json.JsonUtil;
 import tech.yunyue.auth.service.AuthenService;
+import tech.yunyue.core.web.util.RequestUtil;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -44,6 +52,7 @@ public class AuthenCtrl {
     private final SaTokenConfig saTokenConfig;
     private final CaptchaService captchaService;
     private final ApplicationEventPublisher publisher;
+    private final JDBCService jdbcService;
 
     /**
      * 登录认证
@@ -81,7 +90,7 @@ public class AuthenCtrl {
      */
     @PostMapping("/logout")
     @Operation(summary = "登出")
-    public Response<String> logout() {
+    public Response<String> logout(HttpServletRequest request) {
         String userId = null;
         try {
             // 通过refresh_token得到用户id
@@ -92,7 +101,24 @@ public class AuthenCtrl {
             saTokenConfig.setTokenName(CommonConstant.ACCESS_TOKEN_KEY); //改回来
         }
         // 发布踢出用户事件 登出用户
-        if (Objects.nonNull(userId)) publisher.publishEvent(new BizEvent(CommonConstant.KICK_USER_EVENT,Collections.singletonList(userId)));
+        if (Objects.nonNull(userId)) {
+            publisher.publishEvent(new BizEvent(CommonConstant.KICK_USER_EVENT,Collections.singletonList(userId)));
+
+            //登出日志
+            ThreadUser currentUser = JSONUtil.toBean(this.jdbcService.loadUserById(userId), ThreadUser.class);
+            LoginlogEntity loginlog = new LoginlogEntity()
+                    .setOperateDatetime(DateUtil.now())
+                    .setDevice(RequestUtil.getDeivce(request))
+                    .setVersion(RequestUtil.getVersion(request))
+                    .setOperator(currentUser.getAccount())
+                    .setOperatorName(currentUser.getName())
+                    .setOperateType("logout")
+                    .setCreateId(userId)
+                    .setPostId(currentUser.getPostId())
+                    .setOrgId(currentUser.getDeptId())
+                    .setTenantId(currentUser.getTenantId());
+            LogHelper.save(loginlog);
+        }
         return new Response<String>().success("",BizCodeEnum.LOGINOUT_SUCCESS);
     }
 

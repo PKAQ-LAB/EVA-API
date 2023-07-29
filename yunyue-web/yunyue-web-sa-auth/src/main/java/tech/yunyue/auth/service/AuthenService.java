@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tech.yunyue.core.cache.util.RedisUtil;
 import tech.yunyue.core.constant.CommonConstant;
-import tech.yunyue.core.log.base.BizLogEntity;
+import tech.yunyue.core.log.base.LoginlogEntity;
 import tech.yunyue.core.log.util.LogHelper;
 import tech.yunyue.core.mvc.vo.Response;
 import tech.yunyue.core.properties.EvaConfig;
@@ -28,7 +28,6 @@ import tech.yunyue.core.enums.BizCodeEnum;
 /**
  * 校验密码
  */
-@Slf4j
 @Service
 @AllArgsConstructor
 public class AuthenService {
@@ -80,20 +79,18 @@ public class AuthenService {
         // 将用户信息保存到缓存中  因为JwtUserDetail没有默认无参构造函数 无法序列化成对象 所以转为json string存
         cacheManager.getCache(CommonConstant.CACHE_USERDATA).put(CommonConstant.REDIS_USER_INFO_PREFIX_KEY+user.getId(), JsonUtil.toJson(user));
         //登录日志
-        BizLogEntity bizLogEntity = new BizLogEntity();
-        bizLogEntity.setDescription(user.getAccount() + " 登录了系统")
-                .setOperateDatetime(DateUtil.now())
+        LoginlogEntity loginlog = new LoginlogEntity();
+        loginlog.setOperateDatetime(DateUtil.now())
                 .setDevice(RequestUtil.getDeivce(request))
                 .setVersion(RequestUtil.getVersion(request))
-                .setOperator(user.getName())
+                .setOperator(user.getAccount())
+                .setOperatorName(user.getName())
                 .setOperateType("login")
                 .setCreateId(user.getId())
                 .setPostId(user.getPostId())
                 .setOrgId(user.getDeptId())
                 .setTenantId(user.getTenantId());
-        log.info(bizLogEntity.toString());
-        LogHelper.save(bizLogEntity);
-
+        LogHelper.save(loginlog);
         return new Response().success(BizCodeEnum.LOGIN_SUCCESS_WELCOME, user.getAccount());
     }
 
