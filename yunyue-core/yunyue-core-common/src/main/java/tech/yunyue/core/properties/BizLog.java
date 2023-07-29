@@ -35,6 +35,6 @@ public class BizLog {
     @Data
     public static class Rabbit {
         private String exchange = "xmc.log";
-        private String routingKey = "log";
+        private String routingKey = "biz";
     }
 }
