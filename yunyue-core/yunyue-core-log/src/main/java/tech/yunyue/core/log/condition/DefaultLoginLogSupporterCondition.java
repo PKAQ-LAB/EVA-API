@@ -1,0 +1,14 @@
+package tech.yunyue.core.log.condition;
+
+import org.springframework.context.annotation.Condition;
+import org.springframework.context.annotation.ConditionContext;
+import org.springframework.core.type.AnnotatedTypeMetadata;
+
+public class DefaultLoginLogSupporterCondition implements Condition {
+
+    @Override
+    public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+        String impl = context.getEnvironment().getProperty("eva.loginlog.impl");
+        return null == impl || impl.trim().length() < 1 || "console".equalsIgnoreCase(impl);
+    }
+}
