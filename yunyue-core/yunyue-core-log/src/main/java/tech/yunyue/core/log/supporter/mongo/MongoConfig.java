@@ -11,11 +11,14 @@ import tech.yunyue.core.log.base.LogSupporter;
 import tech.yunyue.core.log.config.LogConfig;
 import tech.yunyue.core.log.events.BizLogEvent;
 import tech.yunyue.core.log.events.ErrorLogEvent;
+import tech.yunyue.core.log.events.LoginLogEvent;
 import tech.yunyue.core.log.supporter.mongo.entity.MongoBizLogEntity;
 import tech.yunyue.core.log.supporter.mongo.entity.MongoErrorLogEntity;
+import tech.yunyue.core.log.supporter.mongo.entity.MongoLoginLogEntity;
 import tech.yunyue.core.properties.BizLog;
 import tech.yunyue.core.properties.ErrorLog;
 import tech.yunyue.core.properties.EvaConfig;
+import tech.yunyue.core.properties.LoginLog;
 
 @Configuration
 @ConditionalOnClass(org.springframework.data.mongodb.core.MongoTemplate.class)
@@ -42,5 +45,11 @@ public class MongoConfig implements LogConfig {
         return new MongoDBSupporter<>(new TypeToken<MongoDBSupporter<MongoErrorLogEntity, ErrorLogEvent>>(){}, mongoTemplate, errorLog.getDateField(), errorLog.getDbName(), errorLog.getHisDBName());
     }
 
-    //todo  登录登出日志
+    @ConditionalOnExpression("'mongo'.equals('${eva.loginlog.impl}')")
+    @Bean
+    @Override
+    public LogSupporter<MongoLoginLogEntity, LoginLogEvent> loginLogSupporter(){
+        LoginLog loginLog = evaConfig.getLoginLog();
+        return new MongoDBSupporter<>(new TypeToken<MongoDBSupporter<MongoLoginLogEntity, LoginLogEvent>>(){}, mongoTemplate, loginLog.getDateField(), loginLog.getDbName(), loginLog.getHisDBName());
+    }
 }
