@@ -2,7 +2,6 @@ package tech.yunyue.auth.service;
 
 import cn.dev33.satoken.config.SaTokenConfig;
 import cn.dev33.satoken.context.SaHolder;
-import cn.dev33.satoken.dao.SaTokenDao;
 import cn.dev33.satoken.secure.BCrypt;
 import cn.dev33.satoken.stp.SaLoginConfig;
 import cn.dev33.satoken.stp.StpUtil;
@@ -17,7 +16,7 @@ import org.springframework.util.StringUtils;
 import tech.yunyue.core.cache.util.RedisUtil;
 import tech.yunyue.core.constant.CommonConstant;
 import tech.yunyue.core.log.base.BizLogEntity;
-import tech.yunyue.core.log.util.BizLogUtil;
+import tech.yunyue.core.log.util.LogHelper;
 import tech.yunyue.core.mvc.vo.Response;
 import tech.yunyue.core.properties.EvaConfig;
 import tech.yunyue.core.util.json.JsonUtil;
@@ -93,7 +92,7 @@ public class AuthenService {
                 .setOrgId(user.getDeptId())
                 .setTenantId(user.getTenantId());
         log.info(bizLogEntity.toString());
-        BizLogUtil.sava(bizLogEntity);
+        LogHelper.save(bizLogEntity);
 
         return new Response().success(BizCodeEnum.LOGIN_SUCCESS_WELCOME, user.getAccount());
     }

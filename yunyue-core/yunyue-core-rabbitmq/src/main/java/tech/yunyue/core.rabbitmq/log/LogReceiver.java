@@ -8,8 +8,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 import tech.yunyue.core.log.base.BizLogEntity;
 import tech.yunyue.core.log.base.ErrorlogEntity;
-import tech.yunyue.core.log.base.LogSupporter;
-import tech.yunyue.core.log.config.LogConfig;
+import tech.yunyue.core.log.util.LogHelper;
 
 /**
  * 业务日志接收器
@@ -17,14 +16,6 @@ import tech.yunyue.core.log.config.LogConfig;
 @ConditionalOnExpression("${eva.bizlog.mq-enabled:false} || ${eva.errorlog.mq-enabled:false}")
 @Component
 public class LogReceiver {
-    LogSupporter bizLogSupporter;
-    LogSupporter errorLogSupporter;
-    @PostConstruct
-    public void init(){
-        bizLogSupporter = SpringUtil.getBean(LogConfig.BIZ_LOG_NAME);
-        errorLogSupporter = SpringUtil.getBean(LogConfig.ERROR_LOG_NAME);
-    }
-
     /**
      * 操作日志
      */
@@ -32,7 +23,7 @@ public class LogReceiver {
     @RabbitListener(queues = "bizlog")
     public void process(BizLogEntity bizLogEntity) {
         // 保存到数据库中
-        bizLogSupporter.save(bizLogEntity);
+        LogHelper.save(bizLogEntity);
     }
 
     /**
@@ -42,6 +33,6 @@ public class LogReceiver {
     @RabbitHandler
     public void process(ErrorlogEntity errorlogEntity) {
         // 保存到数据库中
-        errorLogSupporter.save(errorlogEntity);
+        LogHelper.save(errorlogEntity);
     }
 }
