@@ -17,6 +17,7 @@ public class BizException extends RuntimeException {
      * 消息枚举
      */
     private BizCode bizCode;
+    private Object[] args;
 
     public BizException(String msg) {
         super(msg);
@@ -29,11 +30,13 @@ public class BizException extends RuntimeException {
 
     public BizException(BizCode bizCode, Throwable cause, Object... args) {
         super(MessageFormat.format(bizCode.getMsg(), args), cause);
+        this.args = args;
         this.bizCode = bizCode;
     }
 
     public BizException(BizCode bizCode, Object... args) {
         super(MessageFormat.format(bizCode.getMsg(), args));
+        this.args = args;
         this.bizCode = bizCode;
     }
 }

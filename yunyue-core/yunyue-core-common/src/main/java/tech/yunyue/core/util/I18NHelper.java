@@ -41,16 +41,12 @@ public class I18NHelper {
         return new Response().failure(code, message);
     }
 
-    public Response getMessage(BizCode e, String defaultMsg) {
+    public Response getMessage(BizCode e, Object[] args) {
+        var defaultMsg = MessageFormat.format(e.getMsg(), args);
+        String message = evaConfig.isI18n() ? this.getMessage(e.toString(), args, defaultMsg) : defaultMsg;
 
-        String code = e.getCode();
-        String message = evaConfig.isI18n() ? this.getMessage(e.toString(), e.getMsg()) : defaultMsg;
-
-        if (message == null || message.isEmpty()) {
-            message = defaultMsg;
-        }
-
-        message = MessageFormat.format("[{0}] {1}", e.getCode(), message);
+        var code = e.getCode();
+        message = MessageFormat.format("[{0}] {1}", code, message);
 
         return new Response().failure(code, message);
     }
