@@ -38,24 +38,17 @@ public class HistoryUtil<T> {
      * @param entity
      */
     public void sava(T entity) {
-        Class clazz = entity.getClass();
-        TableName tableName = (TableName) clazz.getAnnotation(TableName.class);
-        HistoryLog historyLog = (HistoryLog) clazz.getAnnotation(HistoryLog.class);
-        // 需要把错误抛给业务 所以该方法不能是异步
-        if (tableName == null && historyLog == null) {
-            BizCodeEnum.CAN_NOT_INSERT_HISTORY.newException(entity.getClass());
-        }
+        Class clazz = Optional.ofNullable(entity).orElseThrow(BizCodeEnum.HISTORY_LOG_CAN_NOT_NULL::newException).getClass();
+        var tableName = getTableName(clazz);
         // 同类调用异步方法不生效 使用当前类的代理对象调用
-        getSelf().save(tableName, historyLog, entity);
+        getSelf().save(tableName, (HistoryLog) clazz.getAnnotation(HistoryLog.class), entity);
     }
 
     /**
      * 把数据快照异步插入mongo
      */
     @Async("log_task")
-    protected void save(TableName tableName, HistoryLog historyLog, T entity) {
-        // mongo的表名
-        String collectionName = Optional.ofNullable(historyLog).map(HistoryLog::value).orElse(tableName.value());
+    protected void save(String tableName, HistoryLog historyLog, T entity) {
         // 在mongo表中设置mongo_mark_id字段 做为该表的数据标识
         // 因为有的实体类没有id属性 可以用别的唯一属性作为标识 不管用什么做标识 在mongo中就映射到mongo_mark_id属性上
         JSONObject object = JSONUtil.parseObj(entity);
@@ -64,7 +57,17 @@ public class HistoryUtil<T> {
             markName = historyLog.mark();
         }
         object.set(CommonConstant.MONGO_HISTORY_TABLE_MARK, object.get(markName));
-        mongoTemplate.save(object, collectionName);
+        mongoTemplate.save(object, tableName);
+    }
+
+    /**
+     * 根据数据id返回该条数据所有的修改记录 key是mongo表中的id 比较数据时需要该id
+     * @param id  需要查询历史快照的数据的标识 在@HistoryLog注解中以什么字段为标识则传什么 默认为id
+     * @param clazz 需要转换的数据类型  有@TableName或者@HistoryLog标识表名
+     * @return 有序map
+     */
+    public static <T> LinkedHashMap<String, T> getModifyRecords(String id, Class<T> clazz){
+        return getModifyRecords(getTableName(clazz), id, clazz);
     }
 
     /**
@@ -79,6 +82,14 @@ public class HistoryUtil<T> {
         return list.stream().collect(Collectors.toMap(e -> e.get("_id").toString(), e -> JSONUtil.toBean(JSONUtil.parseObj(e), clazz), (k1,k2)->k2, LinkedHashMap::new ));
     }
 
+    /**
+     * 返回mid对应的修改记录和前一次修改记录  new对应本次  old对应前一次
+     * @param mid mongo中的id
+     * @param clazz 需要转换的数据类型 有@TableName或者@HistoryLog标识表名
+     */
+    public static <T> Map<String,T> contrastLast(String mid, Class<T> clazz){
+        return contrastLast(getTableName(clazz), mid, clazz);
+    }
     /**
      * 返回mid对应的修改记录和前一次修改记录  new对应本次  old对应前一次
      * @param collectionName 集合名称
@@ -102,6 +113,15 @@ public class HistoryUtil<T> {
 
     /**
      * 根据mid返回对应的修改记录
+     * @param mid mongo中的id
+     * @param clazz 需要转换的数据类型 有@TableName或者@HistoryLog标识表名
+     */
+    public static <T> T getById(String mid, Class<T> clazz){
+        return getById(getTableName(clazz), mid, clazz);
+    }
+
+    /**
+     * 根据mid返回对应的修改记录
      * @param collectionName 集合名称
      * @param mid mongo中的id
      * @param clazz 需要转换的数据类型
@@ -117,5 +137,14 @@ public class HistoryUtil<T> {
             self = SpringUtil.getBean(HistoryUtil.class);
         }
         return self;
+    }
+
+    private static String getTableName(Class clazz) {
+        TableName tableName = (TableName) clazz.getAnnotation(TableName.class);
+        HistoryLog historyLog = (HistoryLog) clazz.getAnnotation(HistoryLog.class);
+        if (tableName == null && historyLog == null) {
+            BizCodeEnum.CAN_NOT_INSERT_HISTORY.newException(clazz);
+        }
+        return Optional.ofNullable(historyLog).map(HistoryLog::value).orElse(tableName.value());
     }
 }

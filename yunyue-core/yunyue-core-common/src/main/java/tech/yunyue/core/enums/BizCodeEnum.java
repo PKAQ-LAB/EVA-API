@@ -90,6 +90,7 @@ public enum BizCodeEnum implements BizAssert {
     ORG_TYPE_NO_EXIST("所属组织类型[{0}]没有定义，请稍后再试", "4315"),
     NO_CHANGE_ORG("不能修改所属组织", "4316"),
     CAN_NOT_INSERT_HISTORY("无法插入历史快照，[{0}]没有使用@TableName/@HistoryLog指定表名", "4319"),
+    HISTORY_LOG_CAN_NOT_NULL("历史快照类不能为空", "4320"),
 
     /**
      * 上传相关 430x ~ 432x
