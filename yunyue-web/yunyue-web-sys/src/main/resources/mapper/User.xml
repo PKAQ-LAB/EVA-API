@@ -19,6 +19,7 @@
         <result column="LOCKED" jdbcType="TINYINT" property="locked"/>
         <result column="DEPT_NAME" jdbcType="TINYINT" property="deptName"/>
         <result column="POST_ID" jdbcType="VARCHAR" property="postId"/>
+        <result column="U_POST_ID" jdbcType="VARCHAR" property="uPostId"/>
         <result column="POST_NAME" jdbcType="VARCHAR" property="postName"/>
     </resultMap>
     <!-- 获取包含权限列表的用户信息-->
