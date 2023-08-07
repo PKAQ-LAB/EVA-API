@@ -2,14 +2,14 @@ package tech.yunyue.core.log.pointcut;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.exceptions.UtilException;
+import cn.hutool.core.util.ReflectUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.transaction.annotation.Transactional;
 import tech.yunyue.core.log.annotation.BizLog;
 import tech.yunyue.core.log.base.BizLogEntity;
 import tech.yunyue.core.log.base.BizLogEnum;
-import tech.yunyue.core.log.constant.LogConstant;
 import tech.yunyue.core.log.events.BizLogEvent;
 import tech.yunyue.core.threaduser.ThreadUserHelper;
 import tech.yunyue.core.util.json.JsonUtil;
@@ -22,7 +22,6 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Field;
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -156,7 +155,7 @@ public class BizLogAdvice {
                         var obj = args[k];
                         try {
                             formatArgs[index] = getFieldValue(obj,n);
-                        } catch (NoSuchFieldException | IllegalAccessException e) {
+                        } catch (UtilException e) {
                             formatArgs[index] = "";
                             log.error("根据方法实参构造格式化参数异常:" + e.getMessage());
                         }
@@ -187,7 +186,7 @@ public class BizLogAdvice {
                 if (!formatResult.equalsIgnoreCase(k)) {
                     try {
                         value = getFieldValue(result,k);
-                    } catch (NoSuchFieldException | IllegalAccessException e) {
+                    } catch (UtilException e) {
                         value = "";
                         log.error("根据返回对象构造格式化参数异常:" + e.getMessage());
                     }
@@ -224,18 +223,8 @@ public class BizLogAdvice {
      * @param param 属性名
      * @return 属性值
      */
-    private Object getFieldValue(Object object, String param) throws NoSuchFieldException, IllegalAccessException  {
-        Class objClass = object.getClass();
-        Class superClass = objClass.getSuperclass();
-        //当前类属性在前 超类属性在后
-        Field [] fields = objClass.getDeclaredFields();
-        while (superClass != null) {
-            fields = ArrayUtil.addAll(fields, superClass.getDeclaredFields());
-            superClass = superClass.getSuperclass();
-        }
-        Field field = Arrays.stream(fields).filter(f -> f.getName().equals(param)).findFirst().get();
-        field.setAccessible(true);
-        return field.get(object);
+    private Object getFieldValue(Object object, String param) {
+        return ReflectUtil.getFieldValue(object, param);
     }
 }
 
