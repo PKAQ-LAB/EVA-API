@@ -56,4 +56,15 @@ public class RequestUtil {
         String moduleId = request.getHeader(CommonConstant.MODULE_ID);
         return StrUtil.isBlank(moduleId) ? "" : moduleId;
     }
+
+    /**
+     * 获取请求模块code
+     *
+     * @param request
+     * @return
+     */
+    public static String getModuleCode(HttpServletRequest request) {
+        String mcdoe = request.getHeader(CommonConstant.MODULE_CODE);
+        return StrUtil.isBlank(mcdoe) ? "" : mcdoe;
+    }
 }

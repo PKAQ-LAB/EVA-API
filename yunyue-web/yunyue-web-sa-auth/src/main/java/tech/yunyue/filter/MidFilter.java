@@ -37,8 +37,8 @@ public class MidFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         var security = evaConfig.getSecurity();
         String[] noMidPaths = ArrayUtil.addAll(security.getNoMid(),security.getAnonymous());
-        String mid = RequestUtil.getModuleId(request);
-        if(StrUtil.isEmpty(mid) && !SaRouter.match(noMidPaths).isHit()){
+        String mcode = RequestUtil.getModuleCode(request);
+        if(StrUtil.isEmpty(mcode) && !SaRouter.match(noMidPaths).isHit()){
             resolver.resolveException(request, response, null, new BizException(BizCodeEnum.MID_DENY));
             return;
         }

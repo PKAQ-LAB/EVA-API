@@ -188,4 +188,14 @@ public class ThreadUserHelper {
                 .map(ThreadUser::getModuleId).orElse("");
     }
 
+    /**
+     * 当前用户操作的模块code
+     *
+     * @return
+     */
+    public static String getMcode() {
+        return Optional.ofNullable(userThreadLocal.get())
+                .map(ThreadUser::getModuleCode).orElse("");
+    }
+
 }

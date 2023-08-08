@@ -61,6 +61,8 @@ public interface CommonConstant {
     String VERSION = "version";
     // 用户操作的模块id请求头
     String MODULE_ID = "mid";
+    // 用户操作的模块code请求头
+    String MODULE_CODE = "mcode";
     // 把用户角色保存在redis中的前缀
     String REDIS_USER_ROLES_PREFIX_KEY = "USER_ROLES:";
     // 把全局角色-权限保存在redis中的前缀

@@ -28,6 +28,7 @@ public class RequestFilter extends OncePerRequestFilter {
         if(Objects.isNull(tu)){
             tu = new ThreadUser();
             tu.setModuleId(RequestUtil.getModuleId(request));
+            tu.setModuleCode(RequestUtil.getModuleCode(request));
             ThreadUserHelper.setCurrentUser(tu);
         }
         filterChain.doFilter(request, response);
