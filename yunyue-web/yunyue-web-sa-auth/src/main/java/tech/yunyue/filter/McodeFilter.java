@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
-import tech.yunyue.core.constant.CommonConstant;
 import tech.yunyue.core.enums.BizCodeEnum;
 import tech.yunyue.core.exception.BizException;
 import tech.yunyue.core.properties.EvaConfig;
@@ -22,11 +21,11 @@ import tech.yunyue.core.web.util.RequestUtil;
 import java.io.IOException;
 
 /**
- * 校验请求头中是否携带mid
+ * 校验请求头中是否携带mcode
  */
 @Component
 @RequiredArgsConstructor
-public class MidFilter extends OncePerRequestFilter {
+public class McodeFilter extends OncePerRequestFilter {
     @Autowired
     EvaConfig evaConfig;
     @Autowired
@@ -36,9 +35,9 @@ public class MidFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         var security = evaConfig.getSecurity();
-        String[] noMidPaths = ArrayUtil.addAll(security.getNoMid(),security.getAnonymous());
+        String[] noMcodePaths = ArrayUtil.addAll(security.getNoMcode(),security.getAnonymous());
         String mcode = RequestUtil.getModuleCode(request);
-        if(StrUtil.isEmpty(mcode) && !SaRouter.match(noMidPaths).isHit()){
+        if(StrUtil.isEmpty(mcode) && !SaRouter.match(noMcodePaths).isHit()){
             resolver.resolveException(request, response, null, new BizException(BizCodeEnum.MID_DENY));
             return;
         }
