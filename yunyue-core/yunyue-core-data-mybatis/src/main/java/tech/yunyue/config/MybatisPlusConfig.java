@@ -14,6 +14,7 @@ import tech.yunyue.core.properties.EvaConfig;
 import tech.yunyue.handler.CompanyTenantLineHandler;
 import tech.yunyue.interceptor.DataPermissionInterceptor;
 import tech.yunyue.interceptor.TenantLineInnerInterceptor;
+import tech.yunyue.interceptor.GlobalParamsInterceptor;
 
 import java.util.Objects;
 import java.util.Properties;
@@ -44,6 +45,7 @@ public class MybatisPlusConfig {
         //多租户插件
         if(evaConfig.getTenant().isEnable()){
             interceptor.addInnerInterceptor(new TenantLineInnerInterceptor(tenantLineHandler));
+            interceptor.addInnerInterceptor(new GlobalParamsInterceptor());
         }
         //数据权限插件
         if(Objects.nonNull(dataPermissionHandler)) {
