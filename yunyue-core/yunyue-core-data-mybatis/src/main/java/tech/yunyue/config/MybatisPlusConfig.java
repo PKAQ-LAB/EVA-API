@@ -45,7 +45,6 @@ public class MybatisPlusConfig {
         //多租户插件
         if(evaConfig.getTenant().isEnable()){
             interceptor.addInnerInterceptor(new TenantLineInnerInterceptor(tenantLineHandler));
-            interceptor.addInnerInterceptor(new GlobalParamsInterceptor());
         }
         //数据权限插件
         if(Objects.nonNull(dataPermissionHandler)) {
@@ -54,6 +53,15 @@ public class MybatisPlusConfig {
         //分页插件
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
         return interceptor;
+    }
+
+    /**
+     * 动态添加mybatis参数的拦截器
+     * @return
+     */
+    @Bean
+    public GlobalParamsInterceptor globalParamsInterceptor(){
+        return new GlobalParamsInterceptor();
     }
 
     /**
