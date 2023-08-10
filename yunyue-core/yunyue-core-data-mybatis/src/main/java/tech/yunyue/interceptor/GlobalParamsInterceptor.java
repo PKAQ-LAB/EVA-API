@@ -40,6 +40,7 @@ public class GlobalParamsInterceptor implements InnerInterceptor {
      * @param boundSql
      */
     protected void addParameter(BoundSql boundSql) {
-        boundSql.setAdditionalParameter("tenant", ThreadUserHelper.getTenantId());
+        if (boundSql != null) boundSql.setAdditionalParameter("tenant", ThreadUserHelper.getTenantId());
+
     }
 }
