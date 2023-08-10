@@ -2,15 +2,18 @@ package tech.yunyue.config;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.extension.plugins.handler.MultiDataPermissionHandler;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.plugins.handler.DataPermissionHandler;
 import lombok.SneakyThrows;
-import net.sf.jsqlparser.expression.Alias;
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-import net.sf.jsqlparser.schema.Table;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import tech.yunyue.core.annotation.DatapermissionTable;
 import tech.yunyue.core.annotation.Ignore;
 import tech.yunyue.core.enums.DataPermissionEnumm;
 import tech.yunyue.core.properties.EvaConfig;
@@ -18,9 +21,9 @@ import tech.yunyue.core.threaduser.ThreadUser;
 import tech.yunyue.core.threaduser.ThreadUserHelper;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -28,7 +31,7 @@ import java.util.stream.Collectors;
  * 数据权限拦截插件
  */
 @Component
-public class MybatisPlusDataPermissionHandler implements MultiDataPermissionHandler {
+public class MybatisPlusDataPermissionHandler implements DataPermissionHandler {
     @Autowired
     private EvaConfig evaConfig;
 
@@ -36,59 +39,64 @@ public class MybatisPlusDataPermissionHandler implements MultiDataPermissionHand
         super();
     }
 
+
     @SneakyThrows
     @Override
-    public Expression getSqlSegment(Table table, Expression where, String mappedStatementId) {
+    public Expression getSqlSegment(Expression where, String mappedStatementId) {
         //  未启用数据权限控制 直接返回
         if (null == evaConfig.getDataPermission() || !evaConfig.getDataPermission().isEnable()) {
-            return null;
+            return where;
         }
         // 是否为排除的语句 通过配置文件或@Ignore注解
-        if (this.isIgnored(mappedStatementId) || this.isExcluded(mappedStatementId) || this.isExcluded(table)){
-            return null;
+        if (this.isIgnored(mappedStatementId) || this.isExcludedStatementId(mappedStatementId) || this.isExcludedTable(mappedStatementId)){
+            return where;
         }
+        // 获得当前请求所需角色的数据权限
+        String permissionSQL = permissionSql(getDatapermissionTableName(mappedStatementId));
+        // 根据权限拼接查询语句
+        if (StrUtil.isNotBlank(permissionSQL)){
+            return new AndExpression(where, CCJSqlParserUtil.parseCondExpression(permissionSQL));
+        }
+        return where;
+    }
+
+
+    public static String permissionSql(String tableName){
         var roles = ThreadUserHelper.getUsetGrantedRoleList();
         // 用户没有角色 不返回数据
         if(CollectionUtil.isEmpty(roles)){
-            return CCJSqlParserUtil.parseCondExpression(String.valueOf(Boolean.FALSE));
+            return "false";
         }
-        // 获得当前请求所需角色的数据权限
-        String permissionSQL = this.permissionSql(roles, getAliasColumn(table));
-        // 根据权限拼接查询语句
-        if (StrUtil.isNotBlank(permissionSQL)){
-            return CCJSqlParserUtil.parseCondExpression(permissionSQL);
+        // 表名不为空时 加上.
+        if (StringUtils.isNoneBlank(tableName)){
+            tableName += StrUtil.DOT;
         }
-        return null;
+        return permissionSql(roles, tableName);
     }
 
     /**
-     * 判断是否存在忽略注解
-     * @param statementId
-     * @return
+     * @return 判断是否存在忽略注解
      */
     public boolean isIgnored(String statementId) throws ClassNotFoundException {
         var method = getMethod(statementId);;
         return method == null || method.getAnnotation(Ignore.class) != null;
     }
     /**
-     * 判断是否为排除不过滤的语句
-     * @param statementId
-     * @return
+     * @return 判断是否为排除不过滤的语句
      */
-    public boolean isExcluded(String statementId){
+    public boolean isExcludedStatementId(String statementId){
         List<String> excludeTables = evaConfig.getDataPermission().getExcludeStatements();
         return CollUtil.isNotEmpty(excludeTables)
                 && excludeTables.stream().anyMatch(statementId::equals);
     }
     /**
-     * 判断是否为排除不过滤的表
-     * @param table
-     * @return
+     * @return 判断是否为排除不过滤的表  只能解决单表查询
      */
-    public boolean isExcluded(Table table){
+    public boolean isExcludedTable(String statementId){
+        String name = getTableName(statementId);
         List<String> excludeTables = evaConfig.getDataPermission().getExcludeTables();
         return CollUtil.isNotEmpty(excludeTables)
-                && excludeTables.stream().anyMatch(table.getName()::equals);
+                && excludeTables.stream().anyMatch(name::equals);
     }
 
     /**
@@ -96,7 +104,7 @@ public class MybatisPlusDataPermissionHandler implements MultiDataPermissionHand
      * @param dataPermission
      * @return
      */
-    public String permissionSql(List<ThreadUser.GrantedRoles> dataPermission, String tableName){
+    public static String permissionSql(List<ThreadUser.GrantedRoles> dataPermission, String tableName){
         StringBuilder permissionSql = new StringBuilder(" ( ");
         AtomicReference<Boolean> isAll = new AtomicReference<>(false);
 
@@ -146,7 +154,7 @@ public class MybatisPlusDataPermissionHandler implements MultiDataPermissionHand
         });
         //存在拥有全部权限的角色 不添加数据权限sql
         if (isAll.get()){
-            return "";
+            return "true";
         }
         permissionSql.delete(permissionSql.lastIndexOf(" or "), permissionSql.length()-1);
         permissionSql.append(" ) ");
@@ -157,35 +165,47 @@ public class MybatisPlusDataPermissionHandler implements MultiDataPermissionHand
     /**
      * mapper接口类
      */
-    public Class getClass(String statementId) throws ClassNotFoundException {
+    private Class getClass(String statementId) throws ClassNotFoundException {
         String className = statementId.substring(0,statementId.lastIndexOf("."));
         return Class.forName(className);
     }
 
     /**
-     * 调用的方法
+     * statement接口方法
      */
-    public Method getMethod(String statementId) throws ClassNotFoundException {
+    private Method getMethod(String statementId) throws ClassNotFoundException {
         Class clazz = getClass(statementId);
         // 判断类注解
         if (null == clazz || clazz.getAnnotation(Ignore.class) != null){
             return null;
         }
-
-        // 判断方法注解
-        Method[] ms = clazz.getMethods();
-        String methedName= statementId.substring(statementId.lastIndexOf(".") + 1);
-        return Arrays.stream(ms).filter(item ->  methedName.equals(item.getName())).findFirst().get();
+        return ReflectUtil.getMethodByName(clazz, statementId.substring(statementId.lastIndexOf(".") + 1));
     }
 
     /**
-     * 租户字段别名设置
-     * <p>tenantId 或 tableAlias.tenantId</p>
-     *
-     * @param table 表对象
-     * @return 字段
+     * @return 得到TableName的注解值
      */
-    protected String getAliasColumn(Table table) {
-        return Optional.ofNullable(table.getAlias()).orElse(new Alias(table.getName())).getName() + StrUtil.DOT;
+    private String getTableName(String statementId) {
+        try {
+            var mapper = getClass(statementId);
+            var mapperTypes  = mapper.getGenericInterfaces();
+            var type =(ParameterizedType) mapperTypes[0];
+            var entity = Class.forName(type.getActualTypeArguments()[0].getTypeName());
+           return entity.getAnnotation(TableName.class).value();
+        }catch (Exception e){
+            return "";
+        }
     }
+
+    /**
+     * @return statement接口上的DatapermissionTable注解值
+     */
+    private String getDatapermissionTableName(String statementId) {
+        try {
+            return getMethod(statementId).getAnnotation(DatapermissionTable.class).value();
+        }catch (Exception ignored){
+            return "";
+        }
+    }
+
 }

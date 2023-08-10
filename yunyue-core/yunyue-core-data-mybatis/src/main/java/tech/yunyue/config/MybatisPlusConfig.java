@@ -2,7 +2,6 @@ package tech.yunyue.config;
 
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.handler.DataPermissionHandler;
-import com.baomidou.mybatisplus.extension.plugins.inner.DataPermissionInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
@@ -15,6 +14,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import tech.yunyue.core.properties.EvaConfig;
 import tech.yunyue.handler.CompanyTenantLineHandler;
 import tech.yunyue.interceptor.GlobalParamsInterceptor;
+import tech.yunyue.interceptor.MyDataPermissionInterceptor;
 
 import java.util.Objects;
 import java.util.Properties;
@@ -48,7 +48,7 @@ public class MybatisPlusConfig {
         }
         //数据权限插件
         if(Objects.nonNull(dataPermissionHandler)) {
-            interceptor.addInnerInterceptor(new DataPermissionInterceptor(dataPermissionHandler));
+            interceptor.addInnerInterceptor(new MyDataPermissionInterceptor(dataPermissionHandler));
         }
         //分页插件
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor());

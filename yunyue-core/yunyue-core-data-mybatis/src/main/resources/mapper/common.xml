@@ -18,4 +18,15 @@
         <result column="MODIFY_BY" jdbcType="VARCHAR" property="modifyBy"/>
         <result column="GMT_MODIFY" jdbcType="TIMESTAMP" property="gmtModify"/>
     </resultMap>
+
+    <sql id="andDataPermissionSql">
+        <bind name="alias" value="'${alias}'" />
+        and ${@tech.yunyue.config.MybatisPlusDataPermissionHandler@permissionSql(alias)}
+    </sql>
+
+    <!--$才能拿到property中的value  #拿到的是mapper接口的参数  但是$中不能包含$ 所以使用bind绑定在当前环境 -->
+    <sql id="whereDataPermissionSql">
+        <bind name="alias" value="'${alias}'" />
+        where ${@tech.yunyue.config.MybatisPlusDataPermissionHandler@permissionSql(alias)}
+    </sql>
 </mapper>
