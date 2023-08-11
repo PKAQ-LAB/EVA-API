@@ -12,7 +12,7 @@ public class KafkaSupporterCondition implements Condition {
 
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        String impl = context.getEnvironment().getProperty("eva.bizlog.impl");
+        String impl = context.getEnvironment().getProperty("eva.syslog.impl");
         return supporterStr.equalsIgnoreCase(impl);
     }
 }

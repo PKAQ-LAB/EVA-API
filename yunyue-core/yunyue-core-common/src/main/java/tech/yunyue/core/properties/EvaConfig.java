@@ -1,12 +1,10 @@
 package tech.yunyue.core.properties;
 
-import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -28,17 +26,9 @@ public class EvaConfig {
      **/
     private boolean norepeatCheck;
     /**
-     * 业务日志配置
+     * 系统日志配置
      **/
-    private BizLog bizlog;
-    /**
-     * 错误日志配置
-     **/
-    private ErrorLog errorLog;
-    /**
-     * 登录/登出日志配置
-     **/
-    private LoginLog loginLog;
+    private SysLog syslog;
     /**
      * 文件上传配置
      **/
@@ -93,13 +83,10 @@ public class EvaConfig {
      */
     private long loginLockTime = 30;
 
-    public BizLog getBizlog() {
-        return Optional.ofNullable(bizlog).orElse(new BizLog());
+    public SysLog getSyslog() {
+        return Optional.ofNullable(syslog).orElse(new SysLog());
     }
 
-    public ErrorLog getErrorLog() {
-        return Optional.ofNullable(errorLog).orElse(new ErrorLog());
-    }
 
     public Upload getUpload() {
         return Optional.ofNullable(upload).orElse(new Upload());
@@ -127,7 +114,4 @@ public class EvaConfig {
 
     public Tenant getTenant() { return Optional.ofNullable(tenant).orElse(new Tenant()); }
 
-    public LoginLog getLoginLog() {
-        return Optional.ofNullable(loginLog).orElse(new LoginLog());
-    }
 }

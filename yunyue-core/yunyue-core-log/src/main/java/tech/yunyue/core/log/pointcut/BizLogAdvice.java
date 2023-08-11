@@ -213,7 +213,9 @@ public class BizLogAdvice {
             if(!Objects.isNull(value)){
                 return BizLogEnum.UPDATE;
             }
-        }catch (Exception ignored){}
+        }catch (Exception ignored){
+            // 无法判断新增/修改 默认新增
+        }
         return BizLogEnum.CREATE;
     }
 

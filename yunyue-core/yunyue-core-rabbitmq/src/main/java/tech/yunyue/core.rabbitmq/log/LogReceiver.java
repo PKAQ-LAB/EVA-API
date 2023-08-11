@@ -1,7 +1,5 @@
 package tech.yunyue.core.rabbitmq.log;
 
-import cn.hutool.extra.spring.SpringUtil;
-import jakarta.annotation.PostConstruct;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -14,7 +12,7 @@ import tech.yunyue.core.log.util.LogHelper;
 /**
  * 业务日志接收器
  */
-@ConditionalOnExpression("${eva.bizlog.mq-enabled:false} || ${eva.errorlog.mq-enabled:false}")
+@ConditionalOnExpression("${eva.syslog.mq-enabled:false}")
 @Component
 public class LogReceiver {
     /**
