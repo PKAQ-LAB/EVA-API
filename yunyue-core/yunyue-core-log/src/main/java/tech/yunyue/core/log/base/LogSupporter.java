@@ -1,12 +1,14 @@
 package tech.yunyue.core.log.base;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 import tech.yunyue.core.log.events.LogEvent;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.Date;
@@ -65,11 +67,11 @@ public interface LogSupporter<T extends LogEntity, E extends LogEvent> {
         if(Objects.nonNull(logEntity)){
             try {
                 // 给日志的描述加上失败标记
-                Field field = logEntity.getClass().getField("description");
-                field.setAccessible(true);
-                String des = StrUtil.toStringOrNull(field.get(logEntity));
+                Field field = ReflectUtil.getField(logEntity.getClass(),"description");
+                String des = StrUtil.toStringOrNull(ReflectUtil.getFieldValue(logEntity, field));
                 field.set(logEntity, "【操作失败】"+ des);
             } catch (Exception ignored){
+                // 设置参数失败，不处理
             } finally {
                 // 接收的类型匹配才进行保存操作
                 if (checkMatch(event))  this.save(logEntity);
@@ -83,8 +85,9 @@ public interface LogSupporter<T extends LogEntity, E extends LogEvent> {
             var actualTypeE = getRealTE()[1].getTypeName();
             var parameE = event.getClass().getName();
             return actualTypeE.contains(parameE);
-        } catch (Exception ignored){}
-        return false;
+        } catch (Exception ignored){
+            return false;
+        }
     }
 
     default Object getActualTObj(T t) {
@@ -93,8 +96,9 @@ public interface LogSupporter<T extends LogEntity, E extends LogEvent> {
             var actualObj = clazz.getDeclaredConstructor().newInstance();
             BeanUtil.copyProperties(t, actualObj);
             return actualObj;
-        } catch (Exception ignored){}
-        return null;
+        } catch (Exception ignored){
+            return null;
+        }
     }
 
     /**

@@ -97,6 +97,7 @@ public class AuthenCtrl {
             saTokenConfig.setTokenName(CommonConstant.REFRESH_TOKEN_KEY);
             userId = (String) StpUtil.getLoginId();
         } catch (SaTokenException ignored){
+            // 用户登录失效时，会抛异常 不处理
         } finally {
             saTokenConfig.setTokenName(CommonConstant.ACCESS_TOKEN_KEY); //改回来
         }

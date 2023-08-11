@@ -15,6 +15,7 @@
  */
 package tech.yunyue.interceptor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.StatementHandler;
@@ -42,6 +43,7 @@ import java.util.*;
         @Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class, CacheKey.class, BoundSql.class}),
     }
 )
+@Slf4j
 public class GlobalParamsInterceptor implements Interceptor {
 
     @Override
@@ -75,11 +77,6 @@ public class GlobalParamsInterceptor implements Interceptor {
         }
         return target;
     }
-    @Override
-    public void setProperties(Properties properties) {
-        System.out.println(properties);
-    }
-
     /**
      * boundSql中新增参数
      */
@@ -95,7 +92,10 @@ public class GlobalParamsInterceptor implements Interceptor {
     protected void addParameter(Object parameter) {
         try{
             ((Map)parameter).putAll(paramMap());
-        }catch (Exception ignored){}
+        }catch (Exception e){
+            // 添加参数失败
+            log.error("mybatis全局添加参数失败：" + e.getMessage());
+        }
     }
 
     /**
