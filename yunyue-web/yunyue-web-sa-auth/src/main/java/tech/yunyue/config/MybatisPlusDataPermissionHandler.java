@@ -2,6 +2,7 @@ package tech.yunyue.config;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -54,7 +55,7 @@ public class MybatisPlusDataPermissionHandler implements DataPermissionHandler {
         // 获得当前请求所需角色的数据权限
         String permissionSQL = permissionSql(getDatapermissionTableName(mappedStatementId));
         // 根据权限拼接查询语句
-        if (StrUtil.isNotBlank(permissionSQL)){
+        if (StrUtil.isNotBlank(permissionSQL) && !ObjectUtil.equal(permissionSQL, "true")){
             return new AndExpression(where, CCJSqlParserUtil.parseCondExpression(permissionSQL));
         }
         return where;
