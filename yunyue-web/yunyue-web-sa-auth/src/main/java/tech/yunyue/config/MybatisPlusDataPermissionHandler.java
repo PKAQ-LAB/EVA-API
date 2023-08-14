@@ -56,7 +56,8 @@ public class MybatisPlusDataPermissionHandler implements DataPermissionHandler {
         String permissionSQL = permissionSql(getDatapermissionTableName(mappedStatementId));
         // 根据权限拼接查询语句
         if (StrUtil.isNotBlank(permissionSQL) && !ObjectUtil.equal(permissionSQL, "true")){
-            return new AndExpression(where, CCJSqlParserUtil.parseCondExpression(permissionSQL));
+            var dataExpression = CCJSqlParserUtil.parseCondExpression(permissionSQL);
+            return where == null ? dataExpression : new AndExpression(where, dataExpression);
         }
         return where;
     }
