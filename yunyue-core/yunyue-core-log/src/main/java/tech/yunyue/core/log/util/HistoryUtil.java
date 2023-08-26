@@ -1,5 +1,6 @@
 package tech.yunyue.core.log.util;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
@@ -13,9 +14,10 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import tech.yunyue.core.constant.CommonConstant;
 import tech.yunyue.core.enums.BizCodeEnum;
 import tech.yunyue.core.log.annotation.HistoryLog;
+import tech.yunyue.core.log.constant.LogConstant;
+import tech.yunyue.core.threaduser.ThreadUserHelper;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -56,7 +58,9 @@ public class HistoryUtil<T> {
         if (historyLog != null) {
             markName = historyLog.mark();
         }
-        object.set(CommonConstant.MONGO_HISTORY_TABLE_MARK, object.get(markName));
+        object.set(LogConstant.MONGO_HISTORY_TABLE_MARK, object.get(markName));
+        object.set(LogConstant.MONGO_CREATE_TIME, DateUtil.now());
+        object.set(LogConstant.MONGO_CREATE_NAME, Optional.ofNullable(ThreadUserHelper.getUserName()).orElse(ThreadUserHelper.getAccount()));
         mongoTemplate.save(object, tableName);
     }
 
@@ -66,8 +70,8 @@ public class HistoryUtil<T> {
      * @param clazz 需要转换的数据类型  有@TableName或者@HistoryLog标识表名
      * @return 有序map
      */
-    public static <T> LinkedHashMap<String, T> getModifyRecords(String id, Class<T> clazz){
-        return getModifyRecords(getTableName(clazz), id, clazz);
+    public static <T> LinkedHashMap<String, JSONObject> getModifyRecords(String id, Class<T> clazz){
+        return getModifyRecords(getTableName(clazz), id);
     }
 
     /**
@@ -77,9 +81,12 @@ public class HistoryUtil<T> {
      * @param clazz 需要转换的数据类型
      * @return 有序map
      */
-    public static <T> LinkedHashMap<String, T> getModifyRecords(String collectionName, String id, Class<T> clazz){
-        var list = mongoTemplate.find(Query.query(Criteria.where(CommonConstant.MONGO_HISTORY_TABLE_MARK).is(id)).with(sort), Map.class, collectionName);
-        return list.stream().collect(Collectors.toMap(e -> e.get("_id").toString(), e -> JSONUtil.toBean(JSONUtil.parseObj(e), clazz), (k1,k2)->k2, LinkedHashMap::new ));
+    public static LinkedHashMap<String, JSONObject> getModifyRecords(String collectionName, String id){
+        var query = Query.query(Criteria.where(LogConstant.MONGO_HISTORY_TABLE_MARK).is(id)).with(sort);
+        query.fields().include(LogConstant.MONGO_HISTORY_TABLE_MARK,LogConstant.MONGO_CREATE_TIME,LogConstant.MONGO_CREATE_NAME);
+        var list = mongoTemplate
+                .find(query, Map.class, collectionName);
+        return list.stream().collect(Collectors.toMap(e -> e.get("_id").toString(), e -> JSONUtil.toBean(JSONUtil.parseObj(e), JSONObject.class), (k1,k2)->k2, LinkedHashMap::new ));
     }
 
     /**
@@ -103,8 +110,8 @@ public class HistoryUtil<T> {
         var obj = mongoTemplate.findById(objectId, JSONObject.class, collectionName);
         if (obj != null) {
             map.put("new", JSONUtil.toBean(obj, clazz));
-            String id = String.valueOf(obj.get(CommonConstant.MONGO_HISTORY_TABLE_MARK));
-            Query query = Query.query(Criteria.where(CommonConstant.MONGO_HISTORY_TABLE_MARK).is(id).and("_id").lt(objectId)).with(sort).limit(1);
+            String id = String.valueOf(obj.get(LogConstant.MONGO_HISTORY_TABLE_MARK));
+            Query query = Query.query(Criteria.where(LogConstant.MONGO_HISTORY_TABLE_MARK).is(id).and("_id").lt(objectId)).with(sort).limit(1);
             obj = mongoTemplate.findOne(query, JSONObject.class, collectionName);
             map.put("old", JSONUtil.toBean(obj, clazz));
         }

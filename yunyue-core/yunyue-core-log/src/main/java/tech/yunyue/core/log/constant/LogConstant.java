@@ -23,6 +23,12 @@ public interface LogConstant {
     String LOGIN_DB_NAME = "log_login";
     String LOGIN_HISTORY_DB_NAME = "history_log_login";
     String LOGIN_LOG_ROUTINGKEY = "loginlog";
+    // mongo历史记录表的唯一标识 不一定每张表都用id做标识字段
+    String MONGO_HISTORY_TABLE_MARK = "m_mark_id";
+    // mongo历史记录表的创建时间
+    String MONGO_CREATE_TIME = "mCreateTime";
+    // mongo历史记录表的创建人
+    String MONGO_CREATE_NAME = "mCreateName";
 
 
 }
