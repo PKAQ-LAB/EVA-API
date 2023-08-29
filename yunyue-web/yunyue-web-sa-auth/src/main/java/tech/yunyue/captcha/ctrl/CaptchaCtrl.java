@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import tech.yunyue.core.mvc.ctrl.Ctrl;
 
 /**
  * 复制于com.anji.captcha.controller.CaptchaController<br/>
@@ -27,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/captcha")
 @Tag(name = "验证码")
 @Slf4j
-public class CaptchaCtrl {
+public class CaptchaCtrl extends Ctrl {
 
     @Autowired
     private CaptchaService captchaService;
