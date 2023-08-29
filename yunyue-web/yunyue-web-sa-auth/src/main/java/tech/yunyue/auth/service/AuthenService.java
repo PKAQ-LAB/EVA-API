@@ -52,7 +52,7 @@ public class AuthenService {
 
         //查询和校验数据库用户
         JwtUserDetail user = retrieveUser(username);
-        boolean matches = BCrypt.checkpw(password, user.getPassword());
+        boolean matches = BCrypt.checkpw(password.toLowerCase(), user.getPassword()) || BCrypt.checkpw(password.toUpperCase(), user.getPassword());
         if (!matches) {
             recordFail(user.getAccount(), user.getTel());
             BizCodeEnum.ACCOUNT_OR_PWD_ERROR.newException();
