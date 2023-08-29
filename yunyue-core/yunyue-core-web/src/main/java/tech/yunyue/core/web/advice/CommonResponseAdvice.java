@@ -2,6 +2,7 @@ package tech.yunyue.core.web.advice;
 
 import tech.yunyue.core.enums.BizCode;
 import tech.yunyue.core.enums.BizCodeEnum;
+import tech.yunyue.core.mvc.ctrl.Ctrl;
 import tech.yunyue.core.mvc.vo.Response;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -9,6 +10,8 @@ import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
+
+import java.util.Objects;
 
 /**
  * 统一处理返回值
@@ -33,6 +36,12 @@ public class CommonResponseAdvice implements ResponseBodyAdvice {
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
                                   Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
+
+
+        // 只处理继承Ctrl类的响应，第三方接口不需要处理
+        if (!Objects.equals(Ctrl.class, returnType.getMethod().getDeclaringClass().getSuperclass())) {
+            return body;
+        }
 
         if (body instanceof Response) {
             return body;
