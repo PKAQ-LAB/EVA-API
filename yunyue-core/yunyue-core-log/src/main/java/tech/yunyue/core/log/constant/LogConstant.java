@@ -29,6 +29,8 @@ public interface LogConstant {
     String MONGO_CREATE_TIME = "mCreateTime";
     // mongo历史记录表的创建人
     String MONGO_CREATE_NAME = "mCreateName";
+    // mongo TTL索引使用
+    String MONGO_EXPIRE_TIME = "m_expire_time";
 
 
 }

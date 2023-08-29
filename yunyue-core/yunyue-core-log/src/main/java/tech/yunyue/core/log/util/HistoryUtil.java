@@ -61,6 +61,7 @@ public class HistoryUtil<T> {
         object.set(LogConstant.MONGO_HISTORY_TABLE_MARK, object.get(markName));
         object.set(LogConstant.MONGO_CREATE_TIME, DateUtil.now());
         object.set(LogConstant.MONGO_CREATE_NAME, Optional.ofNullable(ThreadUserHelper.getUserName()).orElse(ThreadUserHelper.getAccount()));
+        object.set(LogConstant.MONGO_EXPIRE_TIME, new Date());
         mongoTemplate.save(object, tableName);
     }
 
@@ -70,7 +71,7 @@ public class HistoryUtil<T> {
      * @param clazz 需要转换的数据类型  有@TableName或者@HistoryLog标识表名
      * @return 有序map
      */
-    public static <T> LinkedHashMap<String, JSONObject> getModifyRecords(String id, Class<T> clazz){
+    public static <T> List<JSONObject> getModifyRecords(String id, Class<T> clazz){
         return getModifyRecords(getTableName(clazz), id);
     }
 
@@ -81,12 +82,16 @@ public class HistoryUtil<T> {
      * @param clazz 需要转换的数据类型
      * @return 有序map
      */
-    public static LinkedHashMap<String, JSONObject> getModifyRecords(String collectionName, String id){
+    public static List<JSONObject> getModifyRecords(String collectionName, String id){
         var query = Query.query(Criteria.where(LogConstant.MONGO_HISTORY_TABLE_MARK).is(id)).with(sort);
         query.fields().include(LogConstant.MONGO_HISTORY_TABLE_MARK,LogConstant.MONGO_CREATE_TIME,LogConstant.MONGO_CREATE_NAME);
         var list = mongoTemplate
                 .find(query, Map.class, collectionName);
-        return list.stream().collect(Collectors.toMap(e -> e.get("_id").toString(), e -> JSONUtil.toBean(JSONUtil.parseObj(e), JSONObject.class), (k1,k2)->k2, LinkedHashMap::new ));
+        return list.stream().map(e->{
+            e.put("mid",e.get("_id").toString());
+            e.remove("_id");
+            return JSONUtil.toBean(JSONUtil.parseObj(e), JSONObject.class);
+        }).toList();
     }
 
     /**
