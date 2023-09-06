@@ -1,6 +1,5 @@
 package tech.yunyue.core.upload.ctrl;
 
-import cn.hutool.core.map.MapUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.Map;
 
 /**
  * 文件Ctrl
@@ -35,7 +35,8 @@ public class FileCtrl {
     @PostMapping("/upload")
     public Response upload(MultipartFile file) throws Exception {
         String filePath = fileProvider.upload(file, "");
-        return new Response().success(MapUtil.of("pname", filePath));
+        String previewUrl = fileProvider.previewTemp(filePath);
+        return new Response().success(Map.of( "pname", filePath, "previewUrl", previewUrl));
     }
 
     /**
