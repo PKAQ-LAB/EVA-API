@@ -1,14 +1,19 @@
 package tech.yunyue.core.upload.ctrl;
 
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.map.MapUtil;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import tech.yunyue.core.mvc.vo.Response;
 import tech.yunyue.core.upload.enumm.MinIOBucketEnum;
 import tech.yunyue.core.upload.util.FileProvider;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -36,8 +41,14 @@ public class FileCtrl {
     @PostMapping("/upload")
     public Response upload(MultipartFile file) throws Exception {
         String filePath = fileProvider.upload(file);
-        String previewUrl = fileProvider.preview(filePath, MinIOBucketEnum.TEMP);
-        return new Response().success(Map.of("pname", filePath, "previewUrl", previewUrl));
+        Map<String, String> result = MapUtil.of("pname", filePath);
+
+        // 是图片就返回预览链接
+        boolean isPic = FileProvider.SUFFIXSTR.contains(FileUtil.extName(filePath));
+        if (isPic) {
+            result.put("previewUrl", fileProvider.preview(filePath, MinIOBucketEnum.TEMP));
+        }
+        return new Response().success(result);
     }
 
     /**

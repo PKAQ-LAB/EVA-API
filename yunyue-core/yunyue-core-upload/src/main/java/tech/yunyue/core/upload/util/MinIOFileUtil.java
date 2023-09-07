@@ -506,10 +506,9 @@ public class MinIOFileUtil implements FileProvider {
      * 判断文件是否为图片
      */
     private boolean isPicture(MultipartFile file) {
-        String suffixStr = ".bmp .dib .gif .jfif .jpe .jpeg .jpg .png .tif .tiff .ico";
         try {
             String fileType = FileTypeUtil.getType(file.getInputStream());
-            return Objects.nonNull(fileType) && suffixStr.contains(fileType);
+            return Objects.nonNull(fileType) && SUFFIXSTR.contains(fileType);
         } catch (Exception e) {
             return false;
         }

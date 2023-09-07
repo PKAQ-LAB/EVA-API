@@ -12,6 +12,8 @@ import java.util.List;
  * 文件上传下载接口
  */
 public interface FileProvider {
+    // 图片常见后缀
+    String SUFFIXSTR = ".bmp .dib .gif .jfif .jpe .jpeg .jpg .png .tif .tiff .ico";
 
     /**
      * 上传文件到临时目录，按文件类型/YYYYMM结构存储文件
