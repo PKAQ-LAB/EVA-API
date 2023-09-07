@@ -13,29 +13,25 @@ import io.minio.*;
 import io.minio.http.Method;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 import tech.yunyue.core.enums.BizCodeEnum;
 import tech.yunyue.core.exception.BizException;
 import tech.yunyue.core.properties.EvaConfig;
 import tech.yunyue.core.properties.Upload;
 import tech.yunyue.core.upload.condition.MinIOCondition;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
+import tech.yunyue.core.upload.enumm.MinIOBucketEnum;
+
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
  * 文件上传工具类 - 使用MinIO
- * <br/> 存储桶名称的长度必须介于 3（分钟）到 63（最大）个字符之间。
- * <br/> 存储桶名称只能由小写字母、数字、点 （.） 和连字符组成 (-).
- * <br/> 存储桶名称必须以字母或数字开头和结尾。
- * <br/> 存储桶名称不得包含两个相邻的句点。
- * <br/> 存储桶名称不得格式化为 IP 地址（例如， 192.168.5.4).
  */
 @Slf4j
 @Component
@@ -46,8 +42,6 @@ public class MinIOFileUtil implements FileProvider {
     private static MinioClient minioClient;
     //缩略图前缀
     private static final String THUMBNAIL_NAME = "thumbnail_";
-    private static final String TEMP = "temp";
-    private static final String STORAGE = "storage";
     private static final String IMAGE = "images";
     private static final Snowflake snowflake = IdUtil.getSnowflake(16, 18);
 
@@ -77,47 +71,116 @@ public class MinIOFileUtil implements FileProvider {
 
         //创建存储桶 默认存储桶是私有的 只能通过外链访问 最长7天
         //新增存储桶images文件夹的策略 改成readonly即可实现通过链接访问图片 但是访问不了该桶内别的文件
-        createBucket(TEMP);
-        createBucket(STORAGE);
+        Arrays.stream(MinIOBucketEnum.values()).forEach(bucket -> {
+            createBucket(bucket.getBucketName());
+        });
     }
+
     @Bean
     public MinioClient minioClient() {
         return minioClient;
     }
 
     /**
-     * 文件上传 默认上传到配置的tmp目录
+     * 创建桶
+     */
+    private void createBucket(String bucketName) {
+        try {
+            if (!bucketExists(bucketName))
+                minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
+        } catch (Exception e) {
+            log.error("创建桶[{}]失败：[{}]", bucketName, e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 查看存储桶是否存在
+     */
+    private boolean bucketExists(String bucketName) {
+        try {
+            return minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+    /**
+     * 上传文件到temp
      * 按文件类型/YYYYMM结构存储文件
+     *
      * @param file
-     * @return
+     * @return 生成的文件目录+保存的文件名
      */
     @Override
-    public String upload(MultipartFile file, String path) throws Exception {
+    public String upload(MultipartFile file) {
         // 上传文件名
         String fileName = file.getOriginalFilename();
-        // 后缀名
-        String suffixName = FileUtil.extName(fileName);
-        // 存储后返回的信息
-        String newFileName = "";
-
-        boolean isPic = isPicture(file);
-        String fileType =isPic ? IMAGE : FileTypeUtil.getType(file.getInputStream(), fileName);
-        String times = DateUtil.format(new Date(),"yyyyMM");
-        String day = DateUtil.format(new Date(), "dd");
-        String dirName = fileType + "/" + times + "/" + day+ "/";
-
-        if (CharSequenceUtil.isNotEmpty(fileName)) {
-            //非图片文件名 xxxxx:原名
-            newFileName = snowflake.nextIdStr() + (isPic ? "." + suffixName : ":" + fileName);
-        } else {
+        if (CharSequenceUtil.isBlank(fileName)) {
             log.error(BizCodeEnum.FILEIO_ERROR.getMsg());
             throw new BizException(BizCodeEnum.FILENAME_ERROR);
         }
+        // 后缀名
+        String suffixName = FileUtil.extName(fileName);
+
+        boolean isPic = isPicture(file);
+        String fileType = getFileType(file);
+        String times = DateUtil.format(new Date(), "yyyyMM");
+        String day = DateUtil.format(new Date(), "dd");
+        String dirName = fileType + "/" + times + "/" + day + "/";
+        //非图片文件名 xxxxx:原名
+        String newFileName = snowflake.nextIdStr() + (isPic ? "." + suffixName : ":" + fileName);
+
+        return uploadFile(file, MinIOBucketEnum.TEMP, dirName + newFileName);
+    }
+
+    /**
+     * 上传文件到临时捅的path目录下
+     *
+     * @param file 文件
+     * @param path 目录
+     * @return path+文件原名
+     */
+    @Override
+    public String upload(MultipartFile file, String path) {
+        return upload(file, MinIOBucketEnum.TEMP, path);
+    }
+
+    /**
+     * 上传文件到target的path目录下
+     *
+     * @param file   文件
+     * @param target 桶名
+     * @param path   目录
+     * @return 目录+文件原名
+     * @throws Exception
+     */
+    @Override
+    public String upload(MultipartFile file, MinIOBucketEnum target, String path) {
+        // 上传文件名
+        String fileName = file.getOriginalFilename();
+        fileName = new StringBuilder().append("/").append(path.replaceAll("^/|/$", "")).append("/").append(fileName).toString();
+        return uploadFile(file, target, fileName);
+    }
+
+    /**
+     * 上传文件到目标桶，并且指定文件名
+     *
+     * @param file     文件流
+     * @param target   目标桶
+     * @param fileName 文件名
+     * @return 文件名
+     */
+    private String uploadFile(MultipartFile file, MinIOBucketEnum target, String fileName) {
+        // 后缀名
+        String suffixName = FileUtil.extName(fileName);
         // 判断上传文件是否符合格式
         if (evaConfig.getUpload().getAllowSuffixName().toLowerCase().contains(suffixName)) {
             //上传
             try {
-                newFileName = uploadObject(file.getInputStream(), TEMP, dirName + newFileName, false, file.getContentType());
+                fileName = uploadObject(file.getInputStream(), target, fileName, false, file.getContentType());
             } catch (IOException e) {
                 log.error(e.getMessage());
                 throw new BizException(BizCodeEnum.FILEIO_ERROR);
@@ -126,42 +189,65 @@ public class MinIOFileUtil implements FileProvider {
             log.error(BizCodeEnum.FILETYPE_NOT_SUPPORTED.getMsg());
             throw new BizException(BizCodeEnum.FILETYPE_NOT_SUPPORTED);
         }
-        return newFileName;
+        return fileName;
     }
 
-
     /**
-     * 将文件从缓存目录移动到storage目录
+     * 将文件从临时目录转移到持久目录 并删除源文件
      *
-     * @param filenames
+     * @param filenames 需要转移的文件名
      * @return
      */
     @Override
     public List<String> storage(String... filenames) {
-        for (String fileName : filenames) {
-            try {
-                minioClient.copyObject(
-                        CopyObjectArgs.builder()
-                                .bucket(STORAGE)
-                                .object(fileName)
-                                .source(CopySource.builder()
-                                        .bucket(TEMP)
-                                        .object(fileName)
-                                        .build())
-                                .build());
-
-                //删除临时桶的文件
-                removeMinio(TEMP, fileName);
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
+        storage(MinIOBucketEnum.TEMP, MinIOBucketEnum.STORAGE, filenames);
         return List.of(filenames);
     }
 
     /**
-     * 将文件从缓存目录移动到storage目录 如果是图片则根据配置的长宽生成缩略图
+     * 将文件从临时目录转移到目标桶 并删除源文件
+     *
+     * @param target    目标桶
+     * @param filenames 需要转移的文件名
+     */
+    @Override
+    public void storage(MinIOBucketEnum target, String... filenames) {
+        storage(MinIOBucketEnum.TEMP, target, filenames);
+    }
+
+    /**
+     * 将文件从源桶转移到目标桶 并删除源文件
+     *
+     * @param source    源桶
+     * @param target    目标桶
+     * @param filenames 文件名
+     */
+    @Override
+    public void storage(MinIOBucketEnum source, MinIOBucketEnum target, String... filenames) {
+        for (String fileName : filenames) {
+            try {
+                minioClient.copyObject(
+                        CopyObjectArgs.builder()
+                                .bucket(target.getBucketName())
+                                .object(fileName)
+                                .source(CopySource.builder()
+                                        .bucket(source.getBucketName())
+                                        .object(fileName)
+                                        .build())
+                                .build());
+
+                //删除源桶的文件
+                delete(source, fileName);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * 将文件从临时目录移动到持久目录 是图片则根据配置的长宽生成缩略图 300*300
+     *
+     * @param filenames 文件名
      */
     @Override
     public void storageWithThumbnail(String... filenames) {
@@ -170,7 +256,21 @@ public class MinIOFileUtil implements FileProvider {
     }
 
     /**
-     * 将文件从缓存目录移动到storage目录 如果是图片则按长宽生成缩略图
+     * 将文件从缓存目录移动到storage目录 是图片则按比例生成缩略图
+     *
+     * @param scale
+     * @param filenames
+     */
+    @Override
+    public void storageWithThumbnail(float scale, String... filenames) {
+        storageWithThumbnail(scale, 0, 0, filenames);
+    }
+
+
+    /**
+     * 将文件从缓存目录移动到storage目录 是图片则按长宽生成缩略图
+     *
+     * @param filenames
      */
     @Override
     public void storageWithThumbnail(int width, int height, String... filenames) {
@@ -178,18 +278,11 @@ public class MinIOFileUtil implements FileProvider {
     }
 
     /**
-     * 将文件从缓存目录移动到storage目录 如果是图片则按比例生成缩略图
-     */
-    @Override
-    public void storageWithThumbnail(float scale, String... filenames) {
-        storageWithThumbnail(scale,0,0,filenames);
-    }
-
-    /**
      * 将文件从缓存目录移动到storage目录 如果是图片则按比例/长宽生成缩略图
-     * @param scale 缩放比例 Float.NaN时按长宽缩放
-     * @param width 宽
-     * @param height 长
+     *
+     * @param scale     缩放比例 Float.NaN时按长宽缩放
+     * @param width     宽
+     * @param height    长
      * @param filenames 文件名
      */
     private void storageWithThumbnail(float scale, int width, int height, String... filenames) {
@@ -198,18 +291,18 @@ public class MinIOFileUtil implements FileProvider {
                 .filter(fileName -> Objects.nonNull(this.storage(fileName)))
                 .filter(fileName -> fileName.startsWith(IMAGE + "/"))
                 .forEach(fileName -> {
-                    try (GetObjectResponse in = minioClient.getObject(GetObjectArgs.builder().bucket(STORAGE).object(fileName).build())) {
+                    try (GetObjectResponse in = minioClient.getObject(GetObjectArgs.builder().bucket(MinIOBucketEnum.STORAGE.getBucketName()).object(fileName).build())) {
                         ByteArrayOutputStream outThumbnail = new ByteArrayOutputStream();
 
                         // 缩放后默认变成jpeg格式 用原来的后缀也能打开
-                        if(Float.isNaN(scale)) {
+                        if (Float.isNaN(scale)) {
                             ImgUtil.write(ImgUtil.scale(ImgUtil.read(in), width, height), FileUtil.extName(fileName), outThumbnail);
-                        }else{
+                        } else {
                             ImgUtil.scale(in, outThumbnail, scale);
                         }
                         // 缩略图的路径要与原图路径一致 所以不能根据当前时间生成文件夹
                         var name = fileName.substring(fileName.lastIndexOf("/") + 1);
-                        uploadObject(new ByteArrayInputStream(outThumbnail.toByteArray()), STORAGE,
+                        uploadObject(new ByteArrayInputStream(outThumbnail.toByteArray()), MinIOBucketEnum.STORAGE,
                                 fileName.replace(name, THUMBNAIL_NAME + name),
                                 false,
                                 "image/" + FileUtil.extName(fileName));
@@ -245,17 +338,56 @@ public class MinIOFileUtil implements FileProvider {
 
     /**
      * 从持久目录删除文件
+     *
+     * @param fileName 文件名
      */
     @Override
     public void delFromStorage(String fileName) {
         // 删除原文件
-        removeMinio(STORAGE, fileName);
+        delete(MinIOBucketEnum.STORAGE, fileName);
         // 删除缩略图 不存在也不会报错
         String name = fileName.substring(fileName.lastIndexOf("/") + 1);
-        removeMinio(STORAGE, fileName.replace(name, THUMBNAIL_NAME + name));
+        delete(MinIOBucketEnum.STORAGE, fileName.replace(name, THUMBNAIL_NAME + name));
 
     }
 
+    /**
+     * 从指定桶删除文件
+     *
+     * @param fileName 文件名
+     */
+    @Override
+    public void delete(MinIOBucketEnum target, String fileName) {
+        try {
+            minioClient.removeObject(RemoveObjectArgs.builder().bucket(target.getBucketName()).object(fileName).build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 从持久目录删除文件（逻辑删除，转移到归档桶）
+     *
+     * @param fileName 文件名
+     */
+    @Override
+    public void deleteLogic(String fileName) {
+        deleteLogic(MinIOBucketEnum.STORAGE, fileName);
+    }
+
+    /**
+     * 从source删除文件（逻辑删除，转移到归档桶）
+     *
+     * @param fileName 文件名
+     */
+    @Override
+    public void deleteLogic(MinIOBucketEnum source, String fileName) {
+        // 归档并删除源文件
+        storage(source, MinIOBucketEnum.ARCHIVE, fileName);
+        // 删除缩略图 不存在也不会报错
+        String name = fileName.substring(fileName.lastIndexOf("/") + 1);
+        delete(source, fileName.replace(name, THUMBNAIL_NAME + name));
+    }
 
     /**
      * 清除当前时间-2小时前的缓存图片
@@ -266,77 +398,31 @@ public class MinIOFileUtil implements FileProvider {
     }
 
     /**
-     * 默认从持久桶下载
+     * 从持久桶下载文件
+     *
+     * @param fileName 文件名
+     * @param out      输出流
      */
     @Override
     public void downLoad(String fileName, OutputStream out) {
-        try (GetObjectResponse in = minioClient.getObject(GetObjectArgs.builder().bucket(STORAGE).object(fileName).build())) {
+        downLoad(fileName, out, MinIOBucketEnum.STORAGE);
+    }
+
+    /**
+     * 从目标桶下载文件
+     *
+     * @param fileName 文件名
+     * @param target   桶名
+     * @param out      输出流
+     */
+    @Override
+    public void downLoad(String fileName, OutputStream out, MinIOBucketEnum target) {
+        try (GetObjectResponse in = minioClient.getObject(GetObjectArgs.builder().bucket(target.getBucketName()).object(fileName).build())) {
             IoUtil.copy(in, out, NioUtil.DEFAULT_BUFFER_SIZE);
             out.flush();
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-    /**
-     * 查看存储桶是否存在
-     */
-    public boolean bucketExists(String bucketName) {
-        try {
-            return minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    /**
-     * 创建桶
-     */
-    public void createBucket(String bucketName) {
-        try {
-            if (!bucketExists(bucketName))
-                minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
-        } catch (Exception e) {
-            log.error("创建桶[{}]失败：[{}]", bucketName, e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 以流的方式上传文件到持久桶</br>
-     * 文件名：文件夹路径+文件名
-     *
-     * @param in       文件流
-     * @param fileName 文件名
-     * @return
-     */
-    public String uploadObject(InputStream in, String fileName) {
-        try {
-            //上传
-            uploadObject(in, fileName, fileName, true, MediaType.APPLICATION_OCTET_STREAM_VALUE);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return fileName;
-    }
-
-    /**
-     * 以流的方式上传文件</br>
-     * 文件名：文件夹路径+文件名
-     *
-     * @param in         文件流
-     * @param bucketName 存储桶名
-     * @param fileName   文件名
-     * @return
-     */
-    public String uploadObject(InputStream in, String bucketName, String fileName) {
-        try {
-            //上传
-            uploadObject(in, bucketName, fileName, true,  MediaType.APPLICATION_OCTET_STREAM_VALUE);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return fileName;
     }
 
     /**
@@ -344,18 +430,18 @@ public class MinIOFileUtil implements FileProvider {
      * 文件名：文件夹路径+文件名
      *
      * @param in          文件流
-     * @param bucketName  存储桶名
+     * @param bucketEnum  存储桶名
      * @param fileName    文件名
      * @param formatName  是否需要格式化文件名 即把文件名格式化成：文件夹名/文件名
      * @param contentType 文件的类型
      * @return
      */
-    public String uploadObject(InputStream in, String bucketName, String fileName, boolean formatName, String contentType) {
+    public String uploadObject(InputStream in, MinIOBucketEnum bucketEnum, String fileName, boolean formatName, String contentType) {
         try {
             fileName = !formatName ? fileName : DateUtil.format(new Date(), "yyyyMM") + "/" + DateUtil.format(new Date(), "dd") + "/" + fileName;
             //上传
             minioClient.putObject(
-                    PutObjectArgs.builder().bucket(bucketName).object(fileName).stream(
+                    PutObjectArgs.builder().bucket(bucketEnum.getBucketName()).object(fileName).stream(
                                     in, in.available(), -1)
                             .contentType(contentType)
                             .build());
@@ -367,58 +453,46 @@ public class MinIOFileUtil implements FileProvider {
     }
 
     /**
-     * 删除文件
-     */
-    public void removeMinio(String bucketName, String fileName) {
-        try {
-            minioClient.removeObject(RemoveObjectArgs.builder().bucket(bucketName).object(fileName).build());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 设置桶的权限
-     */
-    public void setBucketPolicy(String bucketName, String policyJson) {
-        try {
-            minioClient.setBucketPolicy(
-                    SetBucketPolicyArgs.builder().bucket(bucketName).config(policyJson).build());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
+     * 查看持久桶中该文件的缩略图
+     *
      * @param fileName 文件名
-     * @return 根据文件名称 生成临时桶的预览url
+     * @return 文件的缩略图预览url
      */
-    public String previewTemp(String fileName){
-            return preview(TEMP,fileName);
-    }
-    /**
-     * @param isThumbnail 是否生成缩略图的预览url
-     * @param fileName 文件名
-     * @return 根据文件名称 生成持久桶缩略图/原图的预览url
-     */
-    public String preview(Boolean isThumbnail, String fileName){
+    @Override
+    public String previewThumbnail(String fileName) {
         fileName = Optional.ofNullable(fileName).orElse("");
         var name = fileName.substring(fileName.lastIndexOf("/") + 1);
-        fileName = isThumbnail ? fileName.replace(name, THUMBNAIL_NAME + name) : fileName;
-        return preview(STORAGE,fileName);
+        fileName = fileName.replace(name, THUMBNAIL_NAME + name);
+        return preview(fileName, MinIOBucketEnum.STORAGE);
     }
 
     /**
-     * 生成文件预览url
+     * 预览持久桶中的文件
+     *
+     * @param fileName 文件名
+     * @return 文件的预览url
      */
-    private String preview(String bucketName, String fileName){
-        if(!StringUtils.hasText(fileName) || !StringUtils.hasText(fileName.replace(THUMBNAIL_NAME,""))) return null;
+    @Override
+    public String preview(String fileName) {
+        return preview(fileName, MinIOBucketEnum.STORAGE);
+    }
+
+    /**
+     * 预览目标桶的文件
+     *
+     * @param fileName 文件名
+     * @param target   目标桶
+     * @return 文件的预览url
+     */
+    @Override
+    public String preview(String fileName, MinIOBucketEnum target) {
+        if (CharSequenceUtil.isBlank(fileName)) return null;
         try {
             // 5分钟过期
             return minioClient.getPresignedObjectUrl(
                     GetPresignedObjectUrlArgs.builder()
                             .method(Method.GET)
-                            .bucket(bucketName)
+                            .bucket(target.getBucketName())
                             .object(fileName)
                             .expiry(5, TimeUnit.MINUTES)
                             .build());
@@ -431,9 +505,29 @@ public class MinIOFileUtil implements FileProvider {
     /**
      * 判断文件是否为图片
      */
-    private boolean isPicture(MultipartFile file) throws IOException {
+    private boolean isPicture(MultipartFile file) {
         String suffixStr = ".bmp .dib .gif .jfif .jpe .jpeg .jpg .png .tif .tiff .ico";
-        String fileType = FileTypeUtil.getType(file.getInputStream());
-        return Objects.nonNull(fileType) && suffixStr.contains(fileType);
+        try {
+            String fileType = FileTypeUtil.getType(file.getInputStream());
+            return Objects.nonNull(fileType) && suffixStr.contains(fileType);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * 得到文件类型
+     *
+     * @param file 文件
+     * @return
+     */
+    private String getFileType(MultipartFile file) {
+        String fileName = file.getOriginalFilename();
+        boolean isPic = isPicture(file);
+        try {
+            return isPic ? IMAGE : FileTypeUtil.getType(file.getInputStream(), fileName);
+        } catch (Exception e) {
+            return FileUtil.extName(fileName);
+        }
     }
 }
