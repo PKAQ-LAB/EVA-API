@@ -1,6 +1,7 @@
 package io.nerv.core.util.json;
 
 import cn.hutool.core.date.DatePattern;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -24,6 +25,7 @@ public class JacksonObjectMapper extends ObjectMapper {
         super();
         //设置地点为中国
         super.setLocale(CHINA);
+
         //去掉默认的时间戳格式
         super.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         //设置为中国上海时区

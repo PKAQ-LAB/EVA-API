@@ -41,18 +41,15 @@ ext {
            // 文档聚合
            "springdoc" : "org.springdoc:springdoc-openapi-starter-webmvc-api:${springdoc}",
            "springdocui" : "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springdoc}",
-           // swagger
-           "knife4j_ui" : "com.github.xiaoymin:knife4j-openapi3-ui:${knife4j}",
             // jwt
            "jwt": "com.nimbusds:nimbus-jose-jwt:${jwt}",
             // 线程增强
            "ttl": "com.alibaba:transmittable-thread-local:${ttl}",
            // websocket
            "websocket": "org.springframework.boot:spring-boot-starter-websocket",
-            // bootAdmin
-           "bootAdminServer" : "de.codecentric:spring-boot-admin-starter-server:${boot_admin}",
-           "bootAdmin" : "de.codecentric:spring-boot-admin-starter-client:${boot_admin}",
            "devTools" : "org.springframework.boot:spring-boot-devtools",
+           "actuator" : "org.springframework.boot:spring-boot-starter-actuator",
+           "prometheus" : "io.micrometer:micrometer-registry-prometheus:1.11.3",
            //文件上传minIO
            "minio" : "io.minio:minio:${minio}"
     ]
@@ -67,7 +64,6 @@ subprojects {
     apply plugin: 'java-library'
 	apply plugin: 'maven-publish'
     apply plugin: 'signing'
-	apply plugin: 'idea'
 
     apply plugin: 'io.spring.dependency-management'
 

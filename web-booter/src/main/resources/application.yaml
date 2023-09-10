@@ -165,3 +165,15 @@ eva:
     license: /license/license.lic
     # 项目的唯一识别码
     subject: eva
+management:
+  endpoints:
+    web:
+      exposure:
+        include: 'prometheus'
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  endpoint:
+    prometheus:
+      enabled: true

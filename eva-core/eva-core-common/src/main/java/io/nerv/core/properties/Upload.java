@@ -7,7 +7,7 @@ import lombok.Data;
  */
 @Data
 public class Upload {
-    private final MinIo minIo;
+    private MinIo minIo;
     // 使用的存储类型
     private String type;
     // 上传存储临时路径

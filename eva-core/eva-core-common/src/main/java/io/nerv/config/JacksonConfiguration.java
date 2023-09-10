@@ -21,7 +21,8 @@ public class JacksonConfiguration {
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         ObjectMapper mapper = new ObjectMapper();
         mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
-        mapper.setSerializationInclusion(JsonInclude.Include.ALWAYS);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+
         // 忽略类中未知属性
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         converter.setObjectMapper(mapper);

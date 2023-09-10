@@ -30,13 +30,13 @@ dependencies {
 
     api     project(":eva-core:eva-core-web"),
             project(":eva-core:eva-core-data-mybatis"),
-            project(":eva-web:eva-web-auth"),
+//             project(":eva-web:eva-web-auth"),
             "${lib.mysql}"
 
-    implementation "${lib.bootAdmin}",
-                   "${lib.devTools}",
-                   "${lib.springdocui}",
-                   "${lib.knife4j_ui}"
+    implementation "${lib.springdocui}",
+                   "${lib.prometheus}",
+                   "${lib.actuator}"
+//                    "${lib.devTools}"
 
 
 }
