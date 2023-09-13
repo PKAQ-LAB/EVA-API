@@ -18,6 +18,8 @@ import tech.yunyue.core.upload.util.FileProvider;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 文件Ctrl
@@ -74,6 +76,14 @@ public class FileCtrl {
      */
     @GetMapping("/preview")
     public Response<String> preview(String fileName) {
+        // 前端传来的fileName可能是缩略图的预览url,需要处理一下得到真正的文件名  http://127.0.0.1:9000/storage/images/202309/11/thumbnail_1701044951689003008.jpg?X-Amz-Algorithm=AW...
+        // 使用正则表达式匹配并提取所需部分
+        String pattern = "/storage([^?]+)thumbnail_([^?]+)\\?";
+        Pattern regex = Pattern.compile(pattern);
+        Matcher matcher = regex.matcher(fileName);
+        if (matcher.find()) {
+            fileName = matcher.group(1)+ matcher.group(2);
+        }
         return new Response<String>().success(fileProvider.preview(fileName));
     }
 
