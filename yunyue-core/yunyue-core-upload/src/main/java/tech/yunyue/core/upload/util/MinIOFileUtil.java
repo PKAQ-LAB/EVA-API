@@ -14,6 +14,7 @@ import io.minio.http.Method;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
@@ -39,17 +40,18 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class MinIOFileUtil implements FileProvider {
     private final EvaConfig evaConfig;
-    private static MinioClient minioClient;
+    @Autowired
+    private MinioClient minioClient;
     //缩略图前缀
     private static final String THUMBNAIL_NAME = "thumbnail_";
     private static final String IMAGE = "images";
     private static final Snowflake snowflake = IdUtil.getSnowflake(16, 18);
 
     /**
-     * 初始化MinioClient和存储桶
+     * 创建MinioClient
      */
-    @PostConstruct
-    public void init() {
+    @Bean
+    public MinioClient minioClient() {
         Upload.MinIO minIo = evaConfig.getUpload().getMinIo();
         if (Objects.isNull(minIo)) {
             throw new BizException("请配置eva.upload.minio");
@@ -64,21 +66,20 @@ public class MinIOFileUtil implements FileProvider {
             throw new BizException("请配置eva.upload.minio.secret");
         }
         //初始化MinioClient
-        minioClient = MinioClient.builder()
+        return MinioClient.builder()
                 .endpoint(minIo.getUrl())
                 .credentials(minIo.getAccess(), minIo.getSecret())
                 .build();
-
-        //创建存储桶 默认存储桶是私有的 只能通过外链访问 最长7天
-        //新增存储桶images文件夹的策略 改成readonly即可实现通过链接访问图片 但是访问不了该桶内别的文件
-        Arrays.stream(MinIOBucketEnum.values()).forEach(bucket -> {
-            createBucket(bucket.getBucketName());
-        });
     }
 
-    @Bean
-    public MinioClient minioClient() {
-        return minioClient;
+    /**
+     * 初始化文件桶
+     */
+    @PostConstruct
+    public void init() {
+        //创建存储桶 默认存储桶是私有的 只能通过外链访问 最长7天
+        //新增存储桶images文件夹的策略 改成readonly即可实现通过链接访问图片 但是访问不了该桶内别的文件
+        Arrays.stream(MinIOBucketEnum.values()).forEach(bucket -> createBucket(bucket.getBucketName()));
     }
 
     /**
@@ -86,8 +87,9 @@ public class MinIOFileUtil implements FileProvider {
      */
     private void createBucket(String bucketName) {
         try {
-            if (!bucketExists(bucketName))
+            if (!bucketExists(bucketName)) {
                 minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
+            }
         } catch (Exception e) {
             log.error("创建桶[{}]失败：[{}]", bucketName, e.getMessage());
             e.printStackTrace();
@@ -127,9 +129,8 @@ public class MinIOFileUtil implements FileProvider {
 
         boolean isPic = isPicture(file);
         String fileType = getFileType(file);
-        String times = DateUtil.format(new Date(), "yyyyMM");
-        String day = DateUtil.format(new Date(), "dd");
-        String dirName = fileType + "/" + times + "/" + day + "/";
+
+        String dirName = "%s/%s/".formatted(fileType, DateUtil.format(new Date(), "yyyyMM/dd"));
         //非图片文件名 xxxxx:原名
         String newFileName = snowflake.nextIdStr() + (isPic ? "." + suffixName : ":" + fileName);
 
@@ -161,7 +162,7 @@ public class MinIOFileUtil implements FileProvider {
     public String upload(MultipartFile file, MinIOBucketEnum target, String path) {
         // 上传文件名
         String fileName = file.getOriginalFilename();
-        fileName = new StringBuilder().append("/").append(path.replaceAll("^/|/$", "")).append("/").append(fileName).toString();
+        fileName = "/%s/%s".formatted(path.replaceAll("^/|/$", ""), fileName);
         return uploadFile(file, target, fileName);
     }
 
@@ -438,11 +439,11 @@ public class MinIOFileUtil implements FileProvider {
      */
     public String uploadObject(InputStream in, MinIOBucketEnum bucketEnum, String fileName, boolean formatName, String contentType) {
         try {
-            fileName = !formatName ? fileName : DateUtil.format(new Date(), "yyyyMM") + "/" + DateUtil.format(new Date(), "dd") + "/" + fileName;
+            fileName = !formatName ? fileName : "%s/%s".formatted(DateUtil.format(new Date(), "yyyyMM/dd"), fileName);
             //上传
             minioClient.putObject(
-                    PutObjectArgs.builder().bucket(bucketEnum.getBucketName()).object(fileName).stream(
-                                    in, in.available(), -1)
+                    PutObjectArgs.builder()
+                            .bucket(bucketEnum.getBucketName()).object(fileName).stream(in, in.available(), -1)
                             .contentType(contentType)
                             .build());
             in.close();
@@ -486,7 +487,9 @@ public class MinIOFileUtil implements FileProvider {
      */
     @Override
     public String preview(String fileName, MinIOBucketEnum target) {
-        if (CharSequenceUtil.isBlank(fileName)) return null;
+        if (CharSequenceUtil.isBlank(fileName)) {
+            return null;
+        }
         try {
             // 5分钟过期
             return minioClient.getPresignedObjectUrl(
