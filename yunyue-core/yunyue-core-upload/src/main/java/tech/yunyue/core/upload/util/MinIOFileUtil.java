@@ -501,20 +501,11 @@ public class MinIOFileUtil implements FileProvider {
     }
 
     private String parsePreviewUrlToFileName(MinIOBucketEnum bucketEnum, String previewUrl) {
-        if (!previewUrl.startsWith("http")) {
-            return previewUrl;
-        }
-        String thumbnailPattern = "/%s([^?]+)%s([^?]+)\\\\?".formatted(bucketEnum.getBucketName(), THUMBNAIL_NAME);
-        String sourcePattern = "/%s([^?]+)\\\\?".formatted(bucketEnum.getBucketName());
+        String thumbnailPattern = "^http[^?]+/%s/([^?]+)%s([^?]+)\\\\?".formatted(bucketEnum.getBucketName(), THUMBNAIL_NAME);
         // 缩略图的预览url
         Matcher matcher = Pattern.compile(thumbnailPattern).matcher(previewUrl);
         if (matcher.find()) {
             return matcher.group(1) + matcher.group(2);
-        }
-        // 原图的预览url
-        matcher = Pattern.compile(sourcePattern).matcher(previewUrl);
-        if (matcher.find()) {
-            return matcher.group(1);
         }
         return previewUrl;
     }
