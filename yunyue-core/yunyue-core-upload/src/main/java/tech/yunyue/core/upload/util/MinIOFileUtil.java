@@ -9,21 +9,19 @@ import cn.hutool.core.io.NioUtil;
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import io.minio.*;
 import io.minio.http.Method;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import tech.yunyue.core.enums.BizCodeEnum;
 import tech.yunyue.core.exception.BizException;
 import tech.yunyue.core.properties.EvaConfig;
-import tech.yunyue.core.properties.Upload;
 import tech.yunyue.core.upload.condition.MinIOCondition;
 import tech.yunyue.core.upload.enumm.MinIOBucketEnum;
 
@@ -40,37 +38,12 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class MinIOFileUtil implements FileProvider {
     private final EvaConfig evaConfig;
-    @Autowired
-    private MinioClient minioClient;
+    private final MinioClient minioClient;
+    public FileProvider self;
     //缩略图前缀
     private static final String THUMBNAIL_NAME = "thumbnail_";
     private static final String IMAGE = "images";
     private static final Snowflake snowflake = IdUtil.getSnowflake(16, 18);
-
-    /**
-     * 创建MinioClient
-     */
-    @Bean
-    public MinioClient minioClient() {
-        Upload.MinIO minIo = evaConfig.getUpload().getMinIo();
-        if (Objects.isNull(minIo)) {
-            throw new BizException("请配置eva.upload.minio");
-        }
-        if (!StringUtils.hasText(minIo.getUrl())) {
-            throw new BizException("请配置eva.upload.minio.url");
-        }
-        if (!StringUtils.hasText(minIo.getAccess())) {
-            throw new BizException("请配置eva.upload.minio.access");
-        }
-        if (!StringUtils.hasText(minIo.getSecret())) {
-            throw new BizException("请配置eva.upload.minio.secret");
-        }
-        //初始化MinioClient
-        return MinioClient.builder()
-                .endpoint(minIo.getUrl())
-                .credentials(minIo.getAccess(), minIo.getSecret())
-                .build();
-    }
 
     /**
      * 初始化文件桶
@@ -201,7 +174,7 @@ public class MinIOFileUtil implements FileProvider {
      */
     @Override
     public List<String> storage(String... filenames) {
-        storage(MinIOBucketEnum.TEMP, MinIOBucketEnum.STORAGE, filenames);
+        getSelf().storage(MinIOBucketEnum.TEMP, MinIOBucketEnum.STORAGE, filenames);
         return List.of(filenames);
     }
 
@@ -211,6 +184,7 @@ public class MinIOFileUtil implements FileProvider {
      * @param target    目标桶
      * @param filenames 需要转移的文件名
      */
+    @Async("file_task")
     @Override
     public void storage(MinIOBucketEnum target, String... filenames) {
         storage(MinIOBucketEnum.TEMP, target, filenames);
@@ -223,6 +197,7 @@ public class MinIOFileUtil implements FileProvider {
      * @param target    目标桶
      * @param filenames 文件名
      */
+    @Async("file_task")
     @Override
     public void storage(MinIOBucketEnum source, MinIOBucketEnum target, String... filenames) {
         for (String fileName : filenames) {
@@ -250,6 +225,7 @@ public class MinIOFileUtil implements FileProvider {
      *
      * @param filenames 文件名
      */
+    @Async("file_task")
     @Override
     public void storageWithThumbnail(String... filenames) {
         var upload = evaConfig.getUpload();
@@ -262,6 +238,7 @@ public class MinIOFileUtil implements FileProvider {
      * @param scale
      * @param filenames
      */
+    @Async("file_task")
     @Override
     public void storageWithThumbnail(float scale, String... filenames) {
         storageWithThumbnail(scale, 0, 0, filenames);
@@ -273,6 +250,7 @@ public class MinIOFileUtil implements FileProvider {
      *
      * @param filenames
      */
+    @Async("file_task")
     @Override
     public void storageWithThumbnail(int width, int height, String... filenames) {
         storageWithThumbnail(Float.NaN, width, height, filenames);
@@ -342,6 +320,7 @@ public class MinIOFileUtil implements FileProvider {
      *
      * @param fileName 文件名
      */
+    @Async("file_task")
     @Override
     public void delFromStorage(String fileName) {
         // 删除原文件
@@ -357,6 +336,7 @@ public class MinIOFileUtil implements FileProvider {
      *
      * @param fileName 文件名
      */
+    @Async("file_task")
     @Override
     public void delete(MinIOBucketEnum target, String fileName) {
         try {
@@ -371,6 +351,7 @@ public class MinIOFileUtil implements FileProvider {
      *
      * @param fileName 文件名
      */
+    @Async("file_task")
     @Override
     public void deleteLogic(String fileName) {
         deleteLogic(MinIOBucketEnum.STORAGE, fileName);
@@ -381,6 +362,7 @@ public class MinIOFileUtil implements FileProvider {
      *
      * @param fileName 文件名
      */
+    @Async("file_task")
     @Override
     public void deleteLogic(MinIOBucketEnum source, String fileName) {
         // 归档并删除源文件
@@ -531,5 +513,12 @@ public class MinIOFileUtil implements FileProvider {
         } catch (Exception e) {
             return FileUtil.extName(fileName);
         }
+    }
+
+    FileProvider getSelf() {
+        if (self == null) {
+            self = SpringUtil.getBean(FileProvider.class);
+        }
+        return self;
     }
 }
