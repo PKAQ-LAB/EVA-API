@@ -166,9 +166,9 @@ public interface FileProvider {
     /**
      * 从目标桶下载文件
      *
-     * @param fileName   文件名
-     * @param target 桶名
-     * @param out        输出流
+     * @param fileName 文件名
+     * @param target   桶名
+     * @param out      输出流
      */
     default void downLoad(String fileName, OutputStream out, MinIOBucketEnum target) {
     }
@@ -202,5 +202,15 @@ public interface FileProvider {
      */
     default String preview(String fileName, MinIOBucketEnum target) {
         return "";
+    }
+
+    /**
+     * 根据图片的预览链接返回源文件名
+     *
+     * @param previewUrl 持久桶的预览连接或者源文件名
+     * @return 原文件名
+     */
+    default String parsePreviewUrlToFileName(String previewUrl) {
+        return previewUrl;
     }
 }

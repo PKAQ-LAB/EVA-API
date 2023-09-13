@@ -28,6 +28,8 @@ import tech.yunyue.core.upload.enumm.MinIOBucketEnum;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 文件上传工具类 - 使用MinIO
@@ -485,6 +487,36 @@ public class MinIOFileUtil implements FileProvider {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * 根据图片的预览链接返回源文件名
+     *
+     * @param previewUrl 持久桶的预览连接或者源文件名
+     * @return 原文件名
+     */
+    @Override
+    public String parsePreviewUrlToFileName(String previewUrl) {
+        return parsePreviewUrlToFileName(MinIOBucketEnum.STORAGE, previewUrl);
+    }
+
+    private String parsePreviewUrlToFileName(MinIOBucketEnum bucketEnum, String previewUrl) {
+        if (!previewUrl.startsWith("http")) {
+            return previewUrl;
+        }
+        String thumbnailPattern = "/%s([^?]+)%s([^?]+)\\\\?".formatted(bucketEnum.getBucketName(), THUMBNAIL_NAME);
+        String sourcePattern = "/%s([^?]+)\\\\?".formatted(bucketEnum.getBucketName());
+        // 缩略图的预览url
+        Matcher matcher = Pattern.compile(thumbnailPattern).matcher(previewUrl);
+        if (matcher.find()) {
+            return matcher.group(1) + matcher.group(2);
+        }
+        // 原图的预览url
+        matcher = Pattern.compile(sourcePattern).matcher(previewUrl);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return previewUrl;
     }
 
     /**
