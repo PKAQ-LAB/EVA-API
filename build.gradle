@@ -50,10 +50,8 @@ ext {
             // sa-token
             "sa_token_starter" : "cn.dev33:sa-token-spring-boot3-starter:${sa_token}",
             "sa_token_redis" : "cn.dev33:sa-token-dao-redis-jackson:${sa_token}",
-            "commons_pool" : "org.apache.commons:commons-pool2",
             "sa_token_jwt" : "cn.dev33:sa-token-jwt:${sa_token}",
             //行为验证码AJ-Captcha
-            "aj_captcha" : "com.anji-plus:captcha:${aj_captcha}",
             "aj_captcha_starter" : "com.anji-plus:spring-boot-starter-captcha:${aj_captcha}",
             //文件上传minIO
             "minio" : "io.minio:minio:${minio}",
@@ -87,11 +85,11 @@ subprojects {
             mavenBom "${lib.boot}"
         }
     }
-    
+
     tasks.withType(JavaCompile) {
         options.encoding = "UTF-8"
     }
-	
+
 	tasks.withType(Javadoc) {
         options.encoding = "UTF-8"
 		options.addStringOption('Xdoclint:none', '-quiet')
