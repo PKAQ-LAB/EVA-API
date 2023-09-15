@@ -9,6 +9,7 @@ import cn.hutool.core.io.NioUtil;
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import io.minio.*;
 import io.minio.http.Method;
 import jakarta.annotation.PostConstruct;
@@ -173,10 +174,9 @@ public class MinIOFileUtil implements FileProvider {
      * @param filenames 需要转移的文件名
      * @return
      */
-    @Async("file_task")
     @Override
     public List<String> storage(String... filenames) {
-        storage(MinIOBucketEnum.TEMP, MinIOBucketEnum.STORAGE, filenames);
+        getSelf().storage(MinIOBucketEnum.TEMP, MinIOBucketEnum.STORAGE, filenames);
         return List.of(filenames);
     }
 
@@ -536,5 +536,12 @@ public class MinIOFileUtil implements FileProvider {
         } catch (Exception e) {
             return FileUtil.extName(fileName);
         }
+    }
+
+    FileProvider getSelf() {
+        if (self == null) {
+            self = SpringUtil.getBean(FileProvider.class);
+        }
+        return self;
     }
 }
