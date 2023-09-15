@@ -269,8 +269,10 @@ public class MinIOFileUtil implements FileProvider {
     private void storageWithThumbnail(float scale, int width, int height, String... filenames) {
         //保存到持久桶中 如果是图片则生成缩略图并保存
         Arrays.stream(filenames)
-                .filter(fileName -> Objects.nonNull(this.storage(fileName)))
-                .filter(fileName -> fileName.startsWith(IMAGE + "/"))
+                .filter(fileName -> {
+                    this.storage(MinIOBucketEnum.TEMP, fileName);
+                    return fileName.startsWith(IMAGE + "/");
+                })
                 .forEach(fileName -> {
                     try (GetObjectResponse in = minioClient.getObject(GetObjectArgs.builder().bucket(MinIOBucketEnum.STORAGE.getBucketName()).object(fileName).build())) {
                         ByteArrayOutputStream outThumbnail = new ByteArrayOutputStream();
