@@ -12,6 +12,9 @@ import tech.yunyue.core.upload.condition.MinIOCondition;
 
 import java.util.Objects;
 
+/**
+ * @author
+ */
 @Conditional(MinIOCondition.class)
 @Configuration
 public class MinIOConfig {

@@ -26,8 +26,6 @@ ext {
            // web
            "web" : "org.springframework.boot:spring-boot-starter-web",
            "undertow" : "org.springframework.boot:spring-boot-starter-undertow",
-            // test
-           "test" : "org.springframework.boot:spring-boot-starter-test",
            // hutool
            "hutool" : "cn.hutool:hutool-all:${hutool}",
            // mybatis
@@ -44,9 +42,6 @@ ext {
            // websocket
            "websocket": "org.springframework.boot:spring-boot-starter-websocket",
             // bootAdmin
-           "bootAdminServer" : "de.codecentric:spring-boot-admin-starter-server:${boot_admin}",
-           "bootAdmin" : "de.codecentric:spring-boot-admin-starter-client:${boot_admin}",
-           "devTools" : "org.springframework.boot:spring-boot-devtools",
             // sa-token
             "sa_token_starter" : "cn.dev33:sa-token-spring-boot3-starter:${sa_token}",
             "sa_token_redis" : "cn.dev33:sa-token-dao-redis-jackson:${sa_token}",

@@ -9,6 +9,7 @@ import cn.hutool.core.io.NioUtil;
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import io.minio.*;
 import io.minio.http.Method;
@@ -58,6 +59,18 @@ public class MinIOFileUtil implements FileProvider {
     }
 
     /**
+     * 查看存储桶是否存在
+     */
+    private boolean bucketExists(String bucketName) {
+        try {
+            return minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
+        } catch (Exception e) {
+            log.error("BucketExists ERROR : ", e);
+            return false;
+        }
+    }
+
+    /**
      * 创建桶
      */
     private void createBucket(String bucketName) {
@@ -67,22 +80,42 @@ public class MinIOFileUtil implements FileProvider {
             }
         } catch (Exception e) {
             log.error("创建桶[{}]失败：[{}]", bucketName, e.getMessage());
-            e.printStackTrace();
         }
     }
 
     /**
-     * 查看存储桶是否存在
+     * 判断文件是否存在
+     *
+     * @param bucketName 存储桶
+     * @param objectName 对象
+     * @return true：存在
      */
-    private boolean bucketExists(String bucketName) {
+    public boolean objectExist(String bucketName, String objectName) {
+        boolean exist = true;
         try {
-            return minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
+            minioClient
+                    .statObject(StatObjectArgs.builder().bucket(bucketName).object(objectName).build());
         } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+            exist = false;
         }
+        return exist;
     }
 
+    /**
+     * 判断文件类型
+     *
+     * @param file 文件
+     * @return
+     */
+    private String getFileType(MultipartFile file) {
+        String fileName = file.getOriginalFilename();
+        try {
+            String fileType = FileTypeUtil.getType(file.getInputStream(), fileName);
+            return fileType.equals(IMAGE)? IMAGE : fileType;
+        } catch (Exception e) {
+            return FileUtil.extName(fileName);
+        }
+    }
 
     /**
      * 上传文件到temp
@@ -102,14 +135,13 @@ public class MinIOFileUtil implements FileProvider {
         // 后缀名
         String suffixName = FileUtil.extName(fileName);
 
-        boolean isPic = isPicture(file);
         String fileType = getFileType(file);
 
-        String dirName = "%s/%s/".formatted(fileType, DateUtil.format(new Date(), "yyyyMM/dd"));
+        String path = "%s/%s/".formatted(fileType, DateUtil.format(new Date(), "yyyyMM/dd"));
         //非图片文件名 xxxxx:原名
-        String newFileName = snowflake.nextIdStr() + (isPic ? "." + suffixName : ":" + fileName);
+        String newFileName = snowflake.nextIdStr() + (IMAGE.equals(fileType) ? "." + suffixName : ":" + fileName);
 
-        return uploadFile(file, MinIOBucketEnum.TEMP, dirName + newFileName);
+        return uploadFile(file, MinIOBucketEnum.TEMP, path + newFileName);
     }
 
     /**
@@ -153,7 +185,11 @@ public class MinIOFileUtil implements FileProvider {
         // 后缀名
         String suffixName = FileUtil.extName(fileName);
         // 判断上传文件是否符合格式
-        if (evaConfig.getUpload().getAllowSuffixName().toLowerCase().contains(suffixName)) {
+        String typeLimit = evaConfig.getUpload().getAllowSuffixName().toLowerCase();
+
+        if (CharSequenceUtil.isNotBlank(typeLimit) &&
+            !"*".equals(typeLimit) &&
+            typeLimit.contains(suffixName)) {
             //上传
             try {
                 fileName = uploadObject(file.getInputStream(), target, fileName, false, file.getContentType());
@@ -510,34 +546,6 @@ public class MinIOFileUtil implements FileProvider {
             return matcher.group(1) + matcher.group(2);
         }
         return previewUrl;
-    }
-
-    /**
-     * 判断文件是否为图片
-     */
-    private boolean isPicture(MultipartFile file) {
-        try {
-            String fileType = FileTypeUtil.getType(file.getInputStream());
-            return Objects.nonNull(fileType) && SUFFIXSTR.contains(fileType);
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    /**
-     * 得到文件类型
-     *
-     * @param file 文件
-     * @return
-     */
-    private String getFileType(MultipartFile file) {
-        String fileName = file.getOriginalFilename();
-        boolean isPic = isPicture(file);
-        try {
-            return isPic ? IMAGE : FileTypeUtil.getType(file.getInputStream(), fileName);
-        } catch (Exception e) {
-            return FileUtil.extName(fileName);
-        }
     }
 
     FileProvider getSelf() {
