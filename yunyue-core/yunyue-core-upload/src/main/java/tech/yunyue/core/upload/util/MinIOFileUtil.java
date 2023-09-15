@@ -270,7 +270,7 @@ public class MinIOFileUtil implements FileProvider {
         //保存到持久桶中 如果是图片则生成缩略图并保存
         Arrays.stream(filenames)
                 .filter(fileName -> {
-                    this.storage(MinIOBucketEnum.TEMP, fileName);
+                    this.storage(MinIOBucketEnum.STORAGE, fileName);
                     return fileName.startsWith(IMAGE + "/");
                 })
                 .forEach(fileName -> {
