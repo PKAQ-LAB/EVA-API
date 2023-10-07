@@ -13,7 +13,7 @@ import tech.yunyue.core.mvc.entity.Entity;
  */
 @Data
 public abstract class StdLineEntity implements Entity {
-    @TableId(type = IdType.ASSIGN_UUID)
+    @TableId(type = IdType.ASSIGN_ID)
     @TableField(jdbcType = JdbcType.VARCHAR)
     private String id;
 

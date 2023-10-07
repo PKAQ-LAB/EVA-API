@@ -17,6 +17,6 @@ import tech.yunyue.core.log.base.ErrorlogEntity;
 @TableName("log_error")
 @EqualsAndHashCode(callSuper = true)
 public class MybatisErrorlogEntity  extends ErrorlogEntity {
-    @TableId(type = IdType.ASSIGN_UUID)
+    @TableId(type = IdType.ASSIGN_ID)
     private String id;
 }

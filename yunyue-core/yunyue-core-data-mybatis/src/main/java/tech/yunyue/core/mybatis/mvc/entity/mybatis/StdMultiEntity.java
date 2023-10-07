@@ -19,7 +19,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 public abstract class StdMultiEntity<T> extends StdEntity {
 
-    @TableId(type = IdType.ASSIGN_UUID)
+    @TableId(type = IdType.ASSIGN_ID)
     @TableField(jdbcType = JdbcType.VARCHAR)
     private String id;
 

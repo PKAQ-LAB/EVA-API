@@ -16,6 +16,6 @@ import tech.yunyue.core.log.base.LoginlogEntity;
 @TableName("log_login")
 @EqualsAndHashCode(callSuper = true)
 public class MybatisLoginLogEntity extends LoginlogEntity {
-    @TableId(type = IdType.ASSIGN_UUID)
+    @TableId(type = IdType.ASSIGN_ID)
     private String id;
 }

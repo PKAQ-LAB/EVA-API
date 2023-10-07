@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
  */
 @Data
 public abstract class StdEntity implements Entity {
-    @TableId(type = IdType.ASSIGN_UUID)
+    @TableId(type = IdType.ASSIGN_ID)
     @TableField(jdbcType = JdbcType.VARCHAR)
     private String id;
 

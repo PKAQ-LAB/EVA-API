@@ -18,6 +18,6 @@ import org.apache.ibatis.type.Alias;
 @TableName("log_biz")
 @EqualsAndHashCode(callSuper = true)
 public class MybatisBizLogEntity extends BizLogEntity {
-    @TableId(type = IdType.ASSIGN_UUID)
+    @TableId(type = IdType.ASSIGN_ID)
     private String id;
 }
