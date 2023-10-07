@@ -221,6 +221,9 @@ public class JsonUtil {
     public static <T> T toPojo(Map fromValue, Class<T> toValueType) {
         return objectMapper.convertValue(fromValue, toValueType);
     }
+    public static <T> T toPojo(Map fromValue, TypeReference<T> toValueTypeRef) {
+        return objectMapper.convertValue(fromValue, toValueTypeRef);
+    }
 
     /**
      * 将json字符串转成 JsonNode
