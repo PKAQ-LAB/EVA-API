@@ -9,7 +9,6 @@ import cn.hutool.core.io.NioUtil;
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import io.minio.*;
 import io.minio.http.Method;
@@ -27,7 +26,10 @@ import tech.yunyue.core.upload.condition.MinIOCondition;
 import tech.yunyue.core.upload.enumm.MinIOBucketEnum;
 
 import java.io.*;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -111,7 +113,7 @@ public class MinIOFileUtil implements FileProvider {
         String fileName = file.getOriginalFilename();
         try {
             String fileType = FileTypeUtil.getType(file.getInputStream(), fileName);
-            return fileType.equals(IMAGE)? IMAGE : fileType;
+            return SUFFIXSTR.contains(fileType) ? IMAGE : fileType;
         } catch (Exception e) {
             return FileUtil.extName(fileName);
         }
