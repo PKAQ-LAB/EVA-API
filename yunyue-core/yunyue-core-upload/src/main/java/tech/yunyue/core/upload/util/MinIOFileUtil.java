@@ -29,7 +29,6 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -190,8 +189,8 @@ public class MinIOFileUtil implements FileProvider {
         String typeLimit = evaConfig.getUpload().getAllowSuffixName().toLowerCase();
 
         if (CharSequenceUtil.isNotBlank(typeLimit) &&
-            !"*".equals(typeLimit) &&
-            typeLimit.contains(suffixName)) {
+                !"*".equals(typeLimit) &&
+                typeLimit.contains(suffixName)) {
             //上传
             try {
                 fileName = uploadObject(file.getInputStream(), target, fileName, false, file.getContentType());
@@ -485,7 +484,9 @@ public class MinIOFileUtil implements FileProvider {
      */
     @Override
     public String previewThumbnail(String fileName) {
-        fileName = Optional.ofNullable(fileName).orElse("");
+        if (CharSequenceUtil.isBlank(fileName)) {
+            return null;
+        }
         var name = fileName.substring(fileName.lastIndexOf("/") + 1);
         fileName = fileName.replace(name, THUMBNAIL_NAME + name);
         return preview(fileName, MinIOBucketEnum.STORAGE);
