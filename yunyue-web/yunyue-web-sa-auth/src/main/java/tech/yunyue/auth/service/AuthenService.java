@@ -63,17 +63,14 @@ public class AuthenService {
         //生成access_token 6小时
         HttpServletRequest request = (HttpServletRequest)SaHolder.getRequest().getSource();
         saTokenConfig.setTokenName(CommonConstant.ACCESS_TOKEN_KEY);
-        StpUtil.login(user.getId(), SaLoginConfig.setExtra("userId", user.getId())
+        var model = SaLoginConfig.setExtra("userId", user.getId())
                 .setExtra("account", user.getAccount())
                 .setExtra("version",RequestUtil.getVersion(request))
-                .setDevice(RequestUtil.getDeivce(request)));
+                .setDevice(RequestUtil.getDeivce(request));
+        StpUtil.login(user.getId(), model);
         //生成refresh_token 30天
         saTokenConfig.setTokenName(CommonConstant.REFRESH_TOKEN_KEY);
-        StpUtil.login(user.getId(),SaLoginConfig.setExtra("userId", user.getId())
-                .setExtra("account", user.getAccount())
-                .setExtra("version",RequestUtil.getVersion(request))
-                .setDevice(RequestUtil.getDeivce(request))
-                .setTimeout(evaConfig.getJwt().getBravoTtl()));
+        StpUtil.login(user.getId(),model.setTimeout(evaConfig.getJwt().getBravoTtl()));
         saTokenConfig.setTokenName(CommonConstant.ACCESS_TOKEN_KEY); //改回来
 
         // 将用户信息保存到缓存中  因为JwtUserDetail没有默认无参构造函数 无法序列化成对象 所以转为json string存
