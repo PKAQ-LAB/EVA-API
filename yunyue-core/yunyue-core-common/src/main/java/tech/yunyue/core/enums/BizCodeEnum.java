@@ -54,6 +54,8 @@ public enum BizCodeEnum implements BizAssert {
     ACCOUNT_ALREADY_EXIST("账号名已存在", "4110"),
     LOGIN_FAIL_COUNT_LOCKED("登录验证失败次数过多，请[{0}]分钟后再试", "4107"),
     LOGIN_CAPTCHA_FAIL("验证失败，请重试", "4108"),
+    LOGIN_REPLACED("您的账号在另一地点登录, 您已被迫下线", "4111"),
+
 
     /**
      * 权限相关 420x

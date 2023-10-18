@@ -6,6 +6,7 @@ import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.stp.SaLoginConfig;
 import cn.dev33.satoken.stp.StpUtil;
+import cn.dev33.satoken.util.SaFoxUtil;
 import cn.dev33.satoken.util.SaTokenConsts;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
@@ -31,6 +32,9 @@ import tech.yunyue.core.web.util.RequestUtil;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Map;
+
+import static cn.dev33.satoken.exception.NotLoginException.*;
 
 /**
  * @author PKAQ
@@ -107,8 +111,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     response.setStatus(HttpStatus.UNAUTHORIZED.value());
                     response.setCharacterEncoding("UTF-8");
                     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-
-                    printWriter.write(JsonUtil.toJson(new Response<>().failure(BizCodeEnum.LOGIN_EXPIRED)));
+                    // 需要单独提示的登录异常
+                    var otherExceptionMap = Map.of(
+                            BE_REPLACED, BizCodeEnum.LOGIN_REPLACED
+                    );
+                    printWriter.write(JsonUtil.toJson(new Response<>().failure(otherExceptionMap.getOrDefault(e.getType(), BizCodeEnum.LOGIN_EXPIRED))));
                     printWriter.flush();
                 }
                 return;
@@ -120,6 +127,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             ThreadUser currentUser = JSONUtil.toBean(this.jdbcService.loadUserById(uid), ThreadUser.class);
             currentUser.setUserId(uid)
                     .setAccount(account)
+//                    .setName()
                     .setRolesMap(this.jdbcService.getRoleById(uid))
                     .setModuleId(RequestUtil.getModuleId(request))
                     .setModuleCode(RequestUtil.getModuleCode(request));
@@ -142,21 +150,23 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private String getLoginId(String tokenValue) {
         String loginType = StpUtil.getLoginType();
         // 查找此token对应loginId, 如果找不到则抛出：无效token
-        String loginId = (String) StpUtil.getLoginIdByToken(tokenValue);
-        if (loginId == null) {
-            throw NotLoginException.newInstance(loginType, NotLoginException.INVALID_TOKEN, tokenValue).setCode(SaErrorCode.CODE_11012);
+        String loginId = StpUtil.getStpLogic().getLoginIdNotHandle(tokenValue);
+        if (SaFoxUtil.isEmpty(loginId)) {
+            throw NotLoginException.newInstance(loginType, INVALID_TOKEN, INVALID_TOKEN_MESSAGE, tokenValue).setCode(SaErrorCode.CODE_11012);
         }
-        // 如果是已经过期，则抛出：已经过期
+        // 4、如果这个 token 指向的是值是：过期标记，则抛出：token 已过期
         if (loginId.equals(NotLoginException.TOKEN_TIMEOUT)) {
-            throw NotLoginException.newInstance(loginType, NotLoginException.TOKEN_TIMEOUT, tokenValue).setCode(SaErrorCode.CODE_11013);
+            throw NotLoginException.newInstance(loginType, TOKEN_TIMEOUT, TOKEN_TIMEOUT_MESSAGE, tokenValue).setCode(SaErrorCode.CODE_11013);
         }
-        // 如果是已经被顶替下去了, 则抛出：已被顶下线
+
+        // 5、如果这个 token 指向的是值是：被顶替标记，则抛出：token 已被顶下线
         if (loginId.equals(NotLoginException.BE_REPLACED)) {
-            throw NotLoginException.newInstance(loginType, NotLoginException.BE_REPLACED, tokenValue).setCode(SaErrorCode.CODE_11014);
+            throw NotLoginException.newInstance(loginType, BE_REPLACED, BE_REPLACED_MESSAGE, tokenValue).setCode(SaErrorCode.CODE_11014);
         }
-        // 如果是已经被踢下线了, 则抛出：已被踢下线
+
+        // 6、如果这个 token 指向的是值是：被踢下线标记，则抛出：token 已被踢下线
         if (loginId.equals(NotLoginException.KICK_OUT)) {
-            throw NotLoginException.newInstance(loginType, NotLoginException.KICK_OUT, tokenValue).setCode(SaErrorCode.CODE_11015);
+            throw NotLoginException.newInstance(loginType, KICK_OUT, KICK_OUT_MESSAGE, tokenValue).setCode(SaErrorCode.CODE_11015);
         }
         // 至此，返回loginId
         return loginId;
