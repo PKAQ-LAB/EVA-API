@@ -28,14 +28,12 @@ import tech.yunyue.core.constant.CommonConstant;
 import tech.yunyue.core.enums.BizCodeEnum;
 import tech.yunyue.core.event.BizEvent;
 import tech.yunyue.core.log.base.LoginlogEntity;
-import tech.yunyue.core.log.util.HistoryUtil;
 import tech.yunyue.core.log.util.LogHelper;
 import tech.yunyue.core.mvc.vo.Response;
 import tech.yunyue.core.properties.EvaConfig;
 import tech.yunyue.core.threaduser.ThreadUser;
 import tech.yunyue.core.util.json.JsonUtil;
 import tech.yunyue.core.web.util.RequestUtil;
-import tech.yunyue.sys.module.entity.ModuleEntityStd;
 
 import java.io.IOException;
 import java.io.PrintWriter;
