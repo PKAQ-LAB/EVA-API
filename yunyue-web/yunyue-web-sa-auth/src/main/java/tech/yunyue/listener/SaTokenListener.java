@@ -25,19 +25,6 @@ public class SaTokenListener extends SaTokenListenerForSimple {
     @Autowired
     CacheManager cacheManager;
 
-    /**
-     * 用户token过期 但是ActivityTimeout还没到期 直接生成一个新token
-     * 会触发被顶下线的事件 在该事件中删掉旧token的一切信息
-     * @param loginType 账号类别
-     * @param loginId 账号id
-     * @param tokenValue token值
-     */
-    @Override
-    public void doReplaced(String loginType, Object loginId, String tokenValue) {
-        // 删掉旧token的一切缓存
-        StpUtil.logoutByTokenValue(tokenValue);
-    }
-
 
     /**
      * 监听踢出用户事件 并根据id踢出用户
