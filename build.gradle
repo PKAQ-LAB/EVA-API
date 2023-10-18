@@ -44,7 +44,7 @@ ext {
             // bootAdmin
             // sa-token
             "sa_token_starter" : "cn.dev33:sa-token-spring-boot3-starter:${sa_token}",
-            "sa_token_redis" : "cn.dev33:sa-token-dao-redis-jackson:${sa_token}",
+            "sa_token_redis" : "cn.dev33:sa-token-redis-jackson:${sa_token}",
             "sa_token_jwt" : "cn.dev33:sa-token-jwt:${sa_token}",
             //行为验证码AJ-Captcha
             "aj_captcha_starter" : "com.anji-plus:spring-boot-starter-captcha:${aj_captcha}",
