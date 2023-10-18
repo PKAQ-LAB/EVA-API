@@ -89,8 +89,7 @@ public class SaTokenConfigure{
         Jwt jwt = evaConfig.getJwt();
         SaTokenConfig config = new SaTokenConfig();
         config.setTokenName(CommonConstant.ACCESS_TOKEN_KEY);//token名称 (同时也是cookie名称)
-        //token通过heard头传递过来的 则可以加 否则从cookie中获取到token之后会判断前缀 没有前缀则无效 但是satoken存在cookie中时 不存前缀！
-//        config.setTokenPrefix(jwt.getTokenHead());
+//        config.setIsWriteHeader(true); 先不写到响应头中
         config.setIsShare(false);
         config.setIsConcurrent(evaConfig.getConcurrent());
 //       过期策略
@@ -99,7 +98,7 @@ public class SaTokenConfigure{
         // token风格
         config.setTokenStyle("uuid");
         // jwt秘钥
-        config.setJwtSecretKey(jwt.getSign());
+        config.setJwtSecretKey(jwt.getSecert());
         return config;
     }
 
