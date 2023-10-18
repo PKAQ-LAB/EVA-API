@@ -22,18 +22,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import tech.yunyue.auth.service.AuthenService;
 import tech.yunyue.auth.service.JDBCService;
 import tech.yunyue.core.constant.CommonConstant;
 import tech.yunyue.core.enums.BizCodeEnum;
 import tech.yunyue.core.event.BizEvent;
 import tech.yunyue.core.log.base.LoginlogEntity;
+import tech.yunyue.core.log.util.HistoryUtil;
 import tech.yunyue.core.log.util.LogHelper;
 import tech.yunyue.core.mvc.vo.Response;
 import tech.yunyue.core.properties.EvaConfig;
 import tech.yunyue.core.threaduser.ThreadUser;
 import tech.yunyue.core.util.json.JsonUtil;
-import tech.yunyue.auth.service.AuthenService;
 import tech.yunyue.core.web.util.RequestUtil;
+import tech.yunyue.sys.module.entity.ModuleEntityStd;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -60,13 +62,13 @@ public class AuthenCtrl {
 
     @PostMapping(value = "/login")
     @Operation(summary = "登录")
-    public Response login(@RequestBody Map<String,String> params) {
+    public Response login(@RequestBody Map<String, String> params) {
         //验证码二次校验
         String captchaVerification = params.get("captchaVerification");
         CaptchaVO captchaVO = new CaptchaVO();
         captchaVO.setCaptchaVerification(captchaVerification);
         ResponseModel response = captchaService.verification(captchaVO);
-        if(!response.isSuccess() && "prod".equals(SpringUtil.getActiveProfile())) {
+        if (!response.isSuccess() && "prod".equals(SpringUtil.getActiveProfile())) {
             BizCodeEnum.LOGIN_CAPTCHA_FAIL.newException();
             log.error("验证失败：" + response.getRepMsg());
         }
@@ -86,6 +88,7 @@ public class AuthenCtrl {
      * 1、如果不需要登录，那么在调用接口的时候就需要把token传过来，且系统不校验token有效性，此时如果系统被攻击，不停的大量发送token，最后会把redis充爆
      * 2、如果调用退出接口必须登录，那么系统会调用token校验有效性，refresh_token通过参数传过来加入黑名单
      * 综上：选择调用退出接口需要登录的方式
+     *
      * @return
      */
     @PostMapping("/logout")
@@ -96,14 +99,18 @@ public class AuthenCtrl {
             // 通过refresh_token得到用户id
             saTokenConfig.setTokenName(CommonConstant.REFRESH_TOKEN_KEY);
             userId = (String) StpUtil.getLoginId();
-        } catch (SaTokenException ignored){
+        } catch (SaTokenException ignored) {
             // 用户登录失效时，会抛异常 不处理
         } finally {
             saTokenConfig.setTokenName(CommonConstant.ACCESS_TOKEN_KEY); //改回来
         }
         // 发布踢出用户事件 登出用户
         if (Objects.nonNull(userId)) {
-            publisher.publishEvent(new BizEvent(CommonConstant.KICK_USER_EVENT,Collections.singletonList(userId)));
+
+            publisher.publishEvent(new BizEvent(CommonConstant.KICK_USER_EVENT, Map.of(
+                    "ids", Collections.singletonList(userId),
+                    CommonConstant.DEVICE, RequestUtil.getDeivce(request)
+            )));
 
             //登出日志
             ThreadUser currentUser = JSONUtil.toBean(this.jdbcService.loadUserById(userId), ThreadUser.class);
@@ -120,7 +127,7 @@ public class AuthenCtrl {
                     .setTenantId(currentUser.getTenantId());
             LogHelper.save(loginlog);
         }
-        return new Response<String>().success("",BizCodeEnum.LOGINOUT_SUCCESS);
+        return new Response<String>().success("", BizCodeEnum.LOGINOUT_SUCCESS);
     }
 
     /**
@@ -140,7 +147,7 @@ public class AuthenCtrl {
         try {
             saTokenConfig.setTokenName(CommonConstant.REFRESH_TOKEN_KEY);
             userId = (String) StpUtil.getLoginId();
-        }catch (NotLoginException e){
+        } catch (NotLoginException e) {
             // token过期 返回401 用户重新登录
             try (PrintWriter printWriter = response.getWriter()) {
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -154,13 +161,13 @@ public class AuthenCtrl {
             return null;
         }
 
-        String account = (String)StpUtil.getExtra("account");
-        String version = (String)StpUtil.getExtra("version");
+        String account = (String) StpUtil.getExtra("account");
+        String version = (String) StpUtil.getExtra("version");
         String device = StpUtil.getLoginDevice();
         //重新生成refresh_token
         StpUtil.login(userId, SaLoginConfig.setExtra("userId", userId)
                 .setExtra("account", account)
-                .setExtra("version",version)
+                .setExtra("version", version)
                 .setDevice(device)
                 .setTimeout(evaConfig.getJwt().getBravoTtl()));
 
@@ -168,7 +175,7 @@ public class AuthenCtrl {
         saTokenConfig.setTokenName(CommonConstant.ACCESS_TOKEN_KEY);
         StpUtil.login(userId, SaLoginConfig.setExtra("userId", userId)
                 .setExtra("account", account)
-                .setExtra("version",version)
+                .setExtra("version", version)
                 .setDevice(device));
         return new Response<>().success();
     }
