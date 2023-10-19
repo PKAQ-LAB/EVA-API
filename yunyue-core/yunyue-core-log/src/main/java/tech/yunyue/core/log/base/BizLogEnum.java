@@ -1,8 +1,8 @@
 package tech.yunyue.core.log.base;
 
-import tech.yunyue.core.enums.BizCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import tech.yunyue.core.enums.BizCode;
 
 /**
  * 业务日志类型
@@ -33,7 +33,15 @@ public enum BizLogEnum implements BizCode {
      * 新增或更新操作<br/>
      * 与{@link tech.yunyue.core.log.annotation.BizLog#distinguishParam}搭配使用
      **/
-    CREATE_UPDATE("新增/更新", "CR");
+    CREATE_UPDATE("新增/更新", "CR"),
+    /**
+     * 导入
+     */
+    IMPORT("导入", "I"),
+    /**
+     * 导出
+     */
+    EXPORT("导出", "E");
 
     /**
      * 名称
