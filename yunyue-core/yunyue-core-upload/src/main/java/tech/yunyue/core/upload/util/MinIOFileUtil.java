@@ -8,6 +8,7 @@ import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.io.NioUtil;
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.text.CharSequenceUtil;
+import cn.hutool.core.text.StrPool;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import io.minio.*;
@@ -18,18 +19,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.util.unit.DataSize;
 import org.springframework.web.multipart.MultipartFile;
 import tech.yunyue.core.enums.BizCodeEnum;
-import tech.yunyue.core.exception.BizException;
 import tech.yunyue.core.properties.EvaConfig;
 import tech.yunyue.core.upload.condition.MinIOCondition;
 import tech.yunyue.core.upload.enumm.MinIOBucketEnum;
 
 import java.io.*;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,19 +44,30 @@ public class MinIOFileUtil implements FileProvider {
     private final EvaConfig evaConfig;
     private final MinioClient minioClient;
     public FileProvider self;
-    //缩略图前缀
+    // 缩略图前缀
     private static final String THUMBNAIL_NAME = "thumbnail_";
     private static final String IMAGE = "images";
     private static final Snowflake snowflake = IdUtil.getSnowflake(16, 18);
+    private static final Map<String, DataSize> SUFFIX_MAX_SIZE_MAP = new HashMap<>();
 
     /**
      * 初始化文件桶
      */
     @PostConstruct
     public void init() {
-        //创建存储桶 默认存储桶是私有的 只能通过外链访问 最长7天
-        //新增存储桶images文件夹的策略 改成readonly即可实现通过链接访问图片 但是访问不了该桶内别的文件
+        // 创建存储桶 默认存储桶是私有的 只能通过外链访问 最长7天
+        // 新增存储桶images文件夹的策略 改成readonly即可实现通过链接访问图片 但是访问不了该桶内别的文件
         Arrays.stream(MinIOBucketEnum.values()).forEach(bucket -> createBucket(bucket.getBucketName()));
+
+        // 初始化后缀限制的文件大小  系统配置的好几个后缀对应一个限制长度，拆分成每个后缀对应一个限制长度
+        var sysMap = evaConfig.getUpload().getSuffixMaxSize();
+        Optional.ofNullable(sysMap).ifPresent(map -> {
+            map.forEach((key, value) -> {
+                for (String suffix : key.split(",")) {
+                    SUFFIX_MAX_SIZE_MAP.put(suffix.trim(),value);
+                }
+            });
+        });
     }
 
     /**
@@ -131,7 +142,7 @@ public class MinIOFileUtil implements FileProvider {
         String fileName = file.getOriginalFilename();
         if (CharSequenceUtil.isBlank(fileName)) {
             log.error(BizCodeEnum.FILEIO_ERROR.getMsg());
-            throw new BizException(BizCodeEnum.FILENAME_ERROR);
+            BizCodeEnum.FILENAME_ERROR.newException();
         }
         // 后缀名
         String suffixName = FileUtil.extName(fileName);
@@ -139,7 +150,7 @@ public class MinIOFileUtil implements FileProvider {
         String fileType = getFileType(file);
 
         String path = "%s/%s/".formatted(fileType, DateUtil.format(new Date(), "yyyyMM/dd"));
-        //非图片文件名 xxxxx:原名
+        // 非图片文件名 xxxxx:原名
         String newFileName = snowflake.nextIdStr() + (IMAGE.equals(fileType) ? "." + suffixName : ":" + fileName);
 
         return uploadFile(file, MinIOBucketEnum.TEMP, path + newFileName);
@@ -183,24 +194,35 @@ public class MinIOFileUtil implements FileProvider {
      * @return 文件名
      */
     private String uploadFile(MultipartFile file, MinIOBucketEnum target, String fileName) {
+        var uploadConfig = evaConfig.getUpload();
         // 后缀名
         String suffixName = FileUtil.extName(fileName);
         // 判断上传文件是否符合格式
-        String typeLimit = evaConfig.getUpload().getAllowSuffixName().toLowerCase();
-
-        if (CharSequenceUtil.isNotBlank(typeLimit) &&
+        String typeLimit = uploadConfig.getAllowSuffixName().toLowerCase();
+        // 判断文件大小是否符合系统配置大小
+        AtomicBoolean isSizeValid = new AtomicBoolean(false);
+        Optional.ofNullable(SUFFIX_MAX_SIZE_MAP.get(StrPool.DOT+suffixName)).ifPresent(sysMaxSize -> {
+            var fileSize = DataSize.ofBytes(file.getSize());
+            if (fileSize.compareTo(sysMaxSize) > 0) {
+                BizCodeEnum.FILE_SIZE_EXCEEDS_LIMIT.newException();
+            }
+            isSizeValid.set(true);
+        });
+        // 处理文件上传逻辑，例如保存文件到服务器
+        if (isSizeValid.get() &&
+                CharSequenceUtil.isNotBlank(typeLimit) &&
                 !"*".equals(typeLimit) &&
                 typeLimit.contains(suffixName)) {
-            //上传
+            // 上传
             try {
                 fileName = uploadObject(file.getInputStream(), target, fileName, false, file.getContentType());
             } catch (IOException e) {
                 log.error(e.getMessage());
-                throw new BizException(BizCodeEnum.FILEIO_ERROR);
+                BizCodeEnum.FILEIO_ERROR.newException();
             }
         } else {
             log.error(BizCodeEnum.FILETYPE_NOT_SUPPORTED.getMsg());
-            throw new BizException(BizCodeEnum.FILETYPE_NOT_SUPPORTED);
+            BizCodeEnum.FILETYPE_NOT_SUPPORTED.newException();
         }
         return fileName;
     }
@@ -251,7 +273,7 @@ public class MinIOFileUtil implements FileProvider {
                                         .build())
                                 .build());
 
-                //删除源桶的文件
+                // 删除源桶的文件
                 delete(source, fileName);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -304,7 +326,7 @@ public class MinIOFileUtil implements FileProvider {
      * @param filenames 文件名
      */
     private void storageWithThumbnail(float scale, int width, int height, String... filenames) {
-        //保存到持久桶中 如果是图片则生成缩略图并保存
+        // 保存到持久桶中 如果是图片则生成缩略图并保存
         Arrays.stream(filenames)
                 .filter(fileName -> {
                     this.storage(MinIOBucketEnum.STORAGE, fileName);
@@ -463,7 +485,7 @@ public class MinIOFileUtil implements FileProvider {
     public String uploadObject(InputStream in, MinIOBucketEnum bucketEnum, String fileName, boolean formatName, String contentType) {
         try {
             fileName = !formatName ? fileName : "%s/%s".formatted(DateUtil.format(new Date(), "yyyyMM/dd"), fileName);
-            //上传
+            // 上传
             minioClient.putObject(
                     PutObjectArgs.builder()
                             .bucket(bucketEnum.getBucketName()).object(fileName).stream(in, in.available(), -1)

@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface FileProvider {
     // 图片常见后缀
-    String SUFFIXSTR = ".bmp .dib .gif .jfif .jpe .jpeg .jpg .png .tif .tiff .ico";
+    String SUFFIXSTR = ".bmp .dib .gif .jfif .jpe .jpeg .jpg .png .tif .tiff .ico .webp .svg .raw .psd";
 
     /**
      * 上传文件到临时目录，按文件类型/YYYYMM结构存储文件

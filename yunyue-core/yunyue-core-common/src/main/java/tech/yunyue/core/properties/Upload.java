@@ -1,6 +1,9 @@
 package tech.yunyue.core.properties;
 
 import lombok.Data;
+import org.springframework.util.unit.DataSize;
+
+import java.util.Map;
 
 /**
  * 文件上传配置类
@@ -21,6 +24,9 @@ public class Upload {
 
     // DFS服务器地址
     private String serverUrl;
+
+    // 不同后缀文件的大小限制
+    private Map<String, DataSize> suffixMaxSize;
 
     // 图片缩略长宽
     private int scaleWidth = 300;

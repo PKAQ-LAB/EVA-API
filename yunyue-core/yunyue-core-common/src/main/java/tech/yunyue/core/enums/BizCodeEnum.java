@@ -101,6 +101,7 @@ public enum BizCodeEnum implements BizAssert {
     FILENAME_ERROR("文件名称错误", "4307"),
     FILESAVE_ERROR("文件保存失败", "4308"),
     FILETYPE_NOT_SUPPORTED("不支持的文件格式", "4309"),
+    FILE_SIZE_EXCEEDS_LIMIT("文件大小超出限制", "4310"),
 
     /** 三方调用 **/
     /**
