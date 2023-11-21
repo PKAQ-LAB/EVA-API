@@ -286,7 +286,6 @@ public class MinIOFileUtil implements FileProvider {
      *
      * @param filenames 文件名
      */
-    @Async("file_task")
     @Override
     public void storageWithThumbnail(String... filenames) {
         var upload = evaConfig.getUpload();
@@ -311,7 +310,6 @@ public class MinIOFileUtil implements FileProvider {
      *
      * @param filenames
      */
-    @Async("file_task")
     @Override
     public void storageWithThumbnail(int width, int height, String... filenames) {
         storageWithThumbnail(Float.NaN, width, height, filenames);
