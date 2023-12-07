@@ -21,12 +21,12 @@ public class LogHelper {
     private static ApplicationEventPublisher eventPublisher;
     private static LogSupporter bizLogSupporter;
     private static LogSupporter errorLogSupporter;
-    private static LogSupporter lopginLogSupporter;
+    private static LogSupporter loginLogSupporter;
     @PostConstruct
     public void init(){
         bizLogSupporter = SpringUtil.getBean(LogConfig.BIZ_LOG_NAME);
         errorLogSupporter = SpringUtil.getBean(LogConfig.ERROR_LOG_NAME);
-        lopginLogSupporter = SpringUtil.getBean(LogConfig.LOGIN_LOG_NAME);
+        loginLogSupporter = SpringUtil.getBean(LogConfig.LOGIN_LOG_NAME);
         eventPublisher = publisher;
     }
 
@@ -46,7 +46,7 @@ public class LogHelper {
     public static LogSupporter getErrorLogSupporter(){
         return errorLogSupporter;
     }
-    public static LogSupporter getLopginLogSupporter(){
-        return lopginLogSupporter;
+    public static LogSupporter getLoginLogSupporter(){
+        return loginLogSupporter;
     }
 }

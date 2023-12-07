@@ -42,6 +42,6 @@ public class LogReceiver {
     @RabbitHandler
     public void process(LoginlogEntity loginlogEntity) {
         // 保存到数据库中
-        LogHelper.getLopginLogSupporter().save(loginlogEntity);
+        LogHelper.getLoginLogSupporter().save(loginlogEntity);
     }
 }
