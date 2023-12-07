@@ -7,6 +7,7 @@ project.description = "tool for rabbimq"
 dependencies {
     implementation project(":yunyue-core:yunyue-core-common"),
                    project(":yunyue-core:yunyue-core-log"),
-                   "${lib.mongodb}"
+                   "${lib.mongodb}",
+                   "${lib.mybatisPlus}"
     api "${lib.rabbitmq}"
 }
