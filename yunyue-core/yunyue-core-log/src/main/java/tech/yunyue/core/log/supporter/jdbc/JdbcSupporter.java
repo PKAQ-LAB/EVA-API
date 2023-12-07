@@ -1,10 +1,12 @@
 package tech.yunyue.core.log.supporter.jdbc;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.nimbusds.jose.shaded.gson.reflect.TypeToken;
 import tech.yunyue.core.log.base.LogEntity;
 import tech.yunyue.core.log.base.LogSupporter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import tech.yunyue.core.log.base.bo.LogQueryBo;
 import tech.yunyue.core.log.events.LogEvent;
 
 import java.lang.reflect.ParameterizedType;
@@ -40,6 +42,16 @@ public class JdbcSupporter<T extends LogEntity, E extends LogEvent<T>> implement
 
     @Override
     public List<T> getLog() {
+        return null;
+    }
+
+    @Override
+    public T getLogById(String id) {
+        return null;
+    }
+
+    @Override
+    public IPage<T> getLogByQuery(LogQueryBo queryBo) {
         return null;
     }
 

@@ -1,27 +1,33 @@
 package tech.yunyue.core.log.supporter.mongo;
 
+import cn.hutool.core.text.CharSequenceUtil;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.nimbusds.jose.shaded.gson.reflect.TypeToken;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import tech.yunyue.core.log.base.LogEntity;
-import tech.yunyue.core.log.base.LogSupporter;
+import tech.yunyue.core.log.base.*;
+import tech.yunyue.core.log.base.bo.LogQueryBo;
 import tech.yunyue.core.log.events.LogEvent;
+import tech.yunyue.core.threaduser.ThreadUserHelper;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * 基于MongoDB的日志持久化类
  *
  * @author PKAQ
  */
-public class MongoDBSupporter<T extends LogEntity, E extends LogEvent> implements LogSupporter<T,E> {
+public class MongoDBSupporter<T extends LogEntity, E extends LogEvent> implements LogSupporter<T, E> {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private final MongoTemplate mongoTemplate;
     private final Class clazz;
@@ -30,22 +36,25 @@ public class MongoDBSupporter<T extends LogEntity, E extends LogEvent> implement
     private final String dateTimeField;
     private final Sort sort;
     private final Type[] realTE;
-    public MongoDBSupporter(TypeToken<MongoDBSupporter<T,E>> typeToken, MongoTemplate mongoTemplate, String orderField, String dbName, String hisDBName){
+
+    public MongoDBSupporter(TypeToken<MongoDBSupporter<T, E>> typeToken, MongoTemplate mongoTemplate, String orderField, String dbName, String hisDBName) {
         this.mongoTemplate = mongoTemplate;
         this.dbName = dbName;
         this.historyDbName = hisDBName;
         this.dateTimeField = orderField;
         sort = Sort.by(Sort.Order.desc(orderField));
         this.realTE = ((ParameterizedType) typeToken.getType()).getActualTypeArguments();
-        this.clazz = (Class)realTE[0];
+        this.clazz = (Class) realTE[0];
     }
+
     @Override
     public Type[] getRealTE() {
         return realTE;
     }
+
     @Override
-    public void save(T t){
-        var  mongoObj = getActualTObj(t);
+    public void save(T t) {
+        var mongoObj = getActualTObj(t);
         mongoTemplate.insert(mongoObj, dbName);
         if (StringUtils.isNotEmpty(this.historyDbName)) {
             mongoTemplate.insert(mongoObj, this.historyDbName);
@@ -53,10 +62,88 @@ public class MongoDBSupporter<T extends LogEntity, E extends LogEvent> implement
     }
 
 
-
     @Override
     public List<T> getLog() {
         return mongoTemplate.find(new Query(), clazz, this.dbName);
+    }
+
+    @Override
+    public T getLogById(String id) {
+        return (T) mongoTemplate.findById(id, clazz, this.dbName);
+    }
+
+    @Override
+    public IPage<T> getLogByQuery(LogQueryBo<T> queryBo) {
+        // 总数
+        long totalCount;
+
+        // 构造查询条件
+        Query query = new Query();
+        List<Criteria> list = new ArrayList<>();
+        if (CharSequenceUtil.isNotBlank(ThreadUserHelper.getTenantId())) {
+            list.add(Criteria.where("tenant_id").is(ThreadUserHelper.getTenantId()));
+        }
+
+        // 是否存在查询条件
+        if (!list.isEmpty() || Objects.nonNull(queryBo.getBegin()) || Objects.nonNull(queryBo.getEnd()) || Objects.nonNull(queryBo.getLogEntity())) {
+            Optional.ofNullable(queryBo.getBegin()).ifPresent(begin -> list.add(Criteria.where(dateTimeField).gte(dateFormat.format(begin))));
+            Optional.ofNullable(queryBo.getEnd()).ifPresent(end -> list.add(Criteria.where(dateTimeField).lte(dateFormat.format(end))));
+            Optional.ofNullable(queryBo.getLogEntity()).ifPresent(logEntity -> {
+                if (logEntity instanceof BizLogEntity log) {
+                    addEqCriteria("operate_type", log.getOperateType(), list);
+                    addLikeCriteria("operator", log.getOperator(), list);
+                    addLikeCriteria("class_name", log.getClassName(), list);
+                    addLikeCriteria("method", log.getMethod(), list);
+                    addLikeCriteria("device", log.getDevice(), list);
+                    addLikeCriteria("version", log.getVersion(), list);
+                } else if (logEntity instanceof ErrorlogEntity log) {
+                    addLikeCriteria("ip", log.getIp(), list);
+                    addLikeCriteria("class_name", log.getClassName(), list);
+                    addLikeCriteria("method", log.getMethod(), list);
+                    addLikeCriteria("login_user", log.getLoginUser(), list);
+                } else if (logEntity instanceof LoginlogEntity log) {
+                    addEqCriteria("operate_type", log.getOperateType(), list);
+                    addLikeCriteria("operator", log.getOperator(), list);
+                    addLikeCriteria("device", log.getDevice(), list);
+                    addLikeCriteria("version", log.getVersion(), list);
+                }
+            });
+            query.addCriteria(new Criteria().andOperator(list));
+            // 查询总数，当查询条件不为空时用countDocuments统计数量，并给dts加索引以优化查询速度
+            totalCount = mongoTemplate.count(query, this.dbName);
+        } else {
+            // 查询总数，当查询条件为空时用estimatedDocumentCount统计数量以优化查询速度
+            totalCount = mongoTemplate.getCollection(this.dbName).estimatedDocumentCount();
+        }
+
+        // 增加分页条件
+        query.with(PageRequest.of(queryBo.getPageNo(), queryBo.getPageSize()));
+        // 排序
+        query.with(sort);
+        // 构造分页返回
+        IPage<T> pageVo = new Page<>();
+        BeanUtils.copyProperties(queryBo, pageVo);
+        pageVo.setRecords(mongoTemplate.find(query, clazz, this.dbName));
+        pageVo.setTotal(totalCount);
+        return pageVo;
+    }
+
+    /**
+     * 如果value不为空 则往集合中添加一个key=value的Criteria
+     */
+    private void addEqCriteria(String key, String value, List<Criteria> list) {
+        if (CharSequenceUtil.isNotBlank(value)) {
+            list.add(Criteria.where(key).is(value));
+        }
+    }
+
+    /**
+     * 如果value不为空 则往集合中添加一个key like %value%的Criteria
+     */
+    private void addLikeCriteria(String key, String value, List<Criteria> list) {
+        if (CharSequenceUtil.isNotBlank(value)) {
+            list.add(Criteria.where(key).regex(Pattern.compile(value, Pattern.CASE_INSENSITIVE)));
+        }
     }
 
     @Override

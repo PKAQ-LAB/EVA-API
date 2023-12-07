@@ -3,9 +3,11 @@ package tech.yunyue.core.log.base;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
+import tech.yunyue.core.log.base.bo.LogQueryBo;
 import tech.yunyue.core.log.events.LogEvent;
 
 import java.io.File;
@@ -36,6 +38,16 @@ public interface LogSupporter<T extends LogEntity, E extends LogEvent> {
      * 获取日志
      */
     List<? extends T> getLog();
+
+    /**
+     * 获取日志详情
+     */
+    T  getLogById(String id);
+
+    /**
+     * 根据查询条件获取分页日志列表
+     */
+    IPage<T> getLogByQuery(LogQueryBo<T> queryBo);
 
     /**
      * 获取指定操作类型的日志

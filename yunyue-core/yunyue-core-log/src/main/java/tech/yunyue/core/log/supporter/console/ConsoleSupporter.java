@@ -1,9 +1,11 @@
 package tech.yunyue.core.log.supporter.console;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.nimbusds.jose.shaded.gson.reflect.TypeToken;
 import tech.yunyue.core.log.base.LogEntity;
 import tech.yunyue.core.log.base.LogSupporter;
 import lombok.extern.slf4j.Slf4j;
+import tech.yunyue.core.log.base.bo.LogQueryBo;
 import tech.yunyue.core.log.events.LogEvent;
 import tech.yunyue.core.log.supporter.mongo.MongoDBSupporter;
 
@@ -39,6 +41,16 @@ public class ConsoleSupporter<T extends LogEntity, E extends LogEvent<T>> implem
 
     @Override
     public List<T> getLog() {
+        return null;
+    }
+
+    @Override
+    public T getLogById(String id) {
+        return null;
+    }
+
+    @Override
+    public IPage<T> getLogByQuery(LogQueryBo queryBo) {
         return null;
     }
 
