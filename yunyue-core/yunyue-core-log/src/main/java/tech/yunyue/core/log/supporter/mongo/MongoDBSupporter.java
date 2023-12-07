@@ -19,7 +19,10 @@ import tech.yunyue.core.threaduser.ThreadUserHelper;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 /**
@@ -80,49 +83,47 @@ public class MongoDBSupporter<T extends LogEntity, E extends LogEvent> implement
         // 构造查询条件
         Query query = new Query();
         List<Criteria> list = new ArrayList<>();
+        // 租户
         if (CharSequenceUtil.isNotBlank(ThreadUserHelper.getTenantId())) {
             list.add(Criteria.where("tenant_id").is(ThreadUserHelper.getTenantId()));
         }
-
-        // 是否存在查询条件
-        if (!list.isEmpty() || Objects.nonNull(queryBo.getBegin()) || Objects.nonNull(queryBo.getEnd()) || Objects.nonNull(queryBo.getLogEntity())) {
-            Optional.ofNullable(queryBo.getBegin()).ifPresent(begin -> list.add(Criteria.where(dateTimeField).gte(dateFormat.format(begin))));
-            Optional.ofNullable(queryBo.getEnd()).ifPresent(end -> list.add(Criteria.where(dateTimeField).lte(dateFormat.format(end))));
-            Optional.ofNullable(queryBo.getLogEntity()).ifPresent(logEntity -> {
-                if (logEntity instanceof BizLogEntity log) {
-                    addEqCriteria("operate_type", log.getOperateType(), list);
-                    addLikeCriteria("operator", log.getOperator(), list);
-                    addLikeCriteria("class_name", log.getClassName(), list);
-                    addLikeCriteria("method", log.getMethod(), list);
-                    addLikeCriteria("device", log.getDevice(), list);
-                    addLikeCriteria("version", log.getVersion(), list);
-                } else if (logEntity instanceof ErrorlogEntity log) {
-                    addLikeCriteria("ip", log.getIp(), list);
-                    addLikeCriteria("class_name", log.getClassName(), list);
-                    addLikeCriteria("method", log.getMethod(), list);
-                    addLikeCriteria("login_user", log.getLoginUser(), list);
-                } else if (logEntity instanceof LoginlogEntity log) {
-                    addEqCriteria("operate_type", log.getOperateType(), list);
-                    addLikeCriteria("operator", log.getOperator(), list);
-                    addLikeCriteria("device", log.getDevice(), list);
-                    addLikeCriteria("version", log.getVersion(), list);
-                }
-            });
-            query.addCriteria(new Criteria().andOperator(list));
-            // 查询总数，当查询条件不为空时用countDocuments统计数量，并给dts加索引以优化查询速度
-            totalCount = mongoTemplate.count(query, this.dbName);
-        } else {
+        // 页面查询条件
+        Optional.ofNullable(queryBo.getBegin()).ifPresent(begin -> list.add(Criteria.where(dateTimeField).gte(dateFormat.format(begin))));
+        Optional.ofNullable(queryBo.getEnd()).ifPresent(end -> list.add(Criteria.where(dateTimeField).lte(dateFormat.format(end))));
+        Optional.ofNullable(queryBo.getLogEntity()).ifPresent(logEntity -> {
+            if (logEntity instanceof BizLogEntity log) {
+                addEqCriteria("operate_type", log.getOperateType(), list);
+                addLikeCriteria("operator", log.getOperator(), list);
+                addLikeCriteria("class_name", log.getClassName(), list);
+                addLikeCriteria("method", log.getMethod(), list);
+                addLikeCriteria("device", log.getDevice(), list);
+                addLikeCriteria("version", log.getVersion(), list);
+            } else if (logEntity instanceof ErrorlogEntity log) {
+                addLikeCriteria("ip", log.getIp(), list);
+                addLikeCriteria("class_name", log.getClassName(), list);
+                addLikeCriteria("method", log.getMethod(), list);
+                addLikeCriteria("login_user", log.getLoginUser(), list);
+            } else if (logEntity instanceof LoginlogEntity log) {
+                addEqCriteria("operate_type", log.getOperateType(), list);
+                addLikeCriteria("operator", log.getOperator(), list);
+                addLikeCriteria("device", log.getDevice(), list);
+                addLikeCriteria("version", log.getVersion(), list);
+            }
+        });
+        if (list.isEmpty()) {
             // 查询总数，当查询条件为空时用estimatedDocumentCount统计数量以优化查询速度
             totalCount = mongoTemplate.getCollection(this.dbName).estimatedDocumentCount();
+        } else {
+            totalCount = mongoTemplate.count(query, this.dbName);
+            query.addCriteria(new Criteria().andOperator(list));
         }
 
         // 增加分页条件
-        query.with(PageRequest.of(queryBo.getPageNo(), queryBo.getPageSize()));
+        query.with(PageRequest.of(queryBo.getPageNo()-1, queryBo.getPageSize()));
         // 排序
         query.with(sort);
         // 构造分页返回
-        IPage<T> pageVo = new Page<>();
-        BeanUtils.copyProperties(queryBo, pageVo);
+        IPage<T> pageVo = new Page<>(queryBo.getPageNo(), queryBo.getPageSize());
         pageVo.setRecords(mongoTemplate.find(query, clazz, this.dbName));
         pageVo.setTotal(totalCount);
         return pageVo;
