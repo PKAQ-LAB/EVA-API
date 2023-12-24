@@ -4,7 +4,9 @@ package tech.yunyue.core.upload.util;
 import org.springframework.web.multipart.MultipartFile;
 import tech.yunyue.core.upload.enumm.MinIOBucketEnum;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
@@ -212,5 +214,22 @@ public interface FileProvider {
      */
     default String parsePreviewUrlToFileName(String previewUrl) {
         return previewUrl;
+    }
+
+    /**
+     * @param fileName 文件名
+     * @return 获取持久桶的文件流
+     */
+    default InputStream getFileInputStream(String fileName) {
+        return new ByteArrayInputStream(new byte[0]);
+    }
+
+    /**
+     * @param fileName 文件名
+     * @param target   目标桶
+     * @return 获取目标桶对应文件的文件流
+     */
+    default InputStream getFileInputStream(String fileName, MinIOBucketEnum target) {
+        return new ByteArrayInputStream(new byte[0]);
     }
 }

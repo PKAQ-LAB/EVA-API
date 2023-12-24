@@ -64,7 +64,7 @@ public class MinIOFileUtil implements FileProvider {
         Optional.ofNullable(sysMap).ifPresent(map -> {
             map.forEach((key, value) -> {
                 for (String suffix : key.split(",")) {
-                    SUFFIX_MAX_SIZE_MAP.put(suffix.trim(),value);
+                    SUFFIX_MAX_SIZE_MAP.put(suffix.trim(), value);
                 }
             });
         });
@@ -201,7 +201,7 @@ public class MinIOFileUtil implements FileProvider {
         String typeLimit = uploadConfig.getAllowSuffixName().toLowerCase();
         // 判断文件大小是否符合系统配置大小
         AtomicBoolean isSizeValid = new AtomicBoolean(false);
-        Optional.ofNullable(SUFFIX_MAX_SIZE_MAP.get(StrPool.DOT+suffixName)).ifPresent(sysMaxSize -> {
+        Optional.ofNullable(SUFFIX_MAX_SIZE_MAP.get(StrPool.DOT + suffixName)).ifPresent(sysMaxSize -> {
             var fileSize = DataSize.ofBytes(file.getSize());
             if (fileSize.compareTo(sysMaxSize) > 0) {
                 BizCodeEnum.FILE_SIZE_EXCEEDS_LIMIT.newException();
@@ -559,6 +559,36 @@ public class MinIOFileUtil implements FileProvider {
     @Override
     public String parsePreviewUrlToFileName(String previewUrl) {
         return parsePreviewUrlToFileName(MinIOBucketEnum.STORAGE, previewUrl);
+    }
+
+    /**
+     * @param fileName 文件名
+     * @return 获取持久桶的文件流
+     */
+    @Override
+    public InputStream getFileInputStream(String fileName) {
+        return getFileInputStream(fileName, MinIOBucketEnum.STORAGE);
+    }
+
+    /**
+     * @param fileName 文件名
+     * @param target   目标桶
+     * @return 获取目标桶对应文件的文件流
+     */
+    @Override
+    public InputStream getFileInputStream(String fileName, MinIOBucketEnum target) {
+        if (CharSequenceUtil.isBlank(fileName)) {
+            return FileProvider.super.getFileInputStream(fileName, target);
+        }
+        try {
+            return minioClient.getObject(
+                    GetObjectArgs.builder().bucket(target.getBucketName())
+                            .object(fileName)
+                            .build());
+        } catch (Exception e) {
+            log.error("获取[{}]桶[{}]文件输入流失败：[{}]", target.getBucketName(), fileName, e.getMessage());
+        }
+        return FileProvider.super.getFileInputStream(fileName, target);
     }
 
     private String parsePreviewUrlToFileName(MinIOBucketEnum bucketEnum, String previewUrl) {
