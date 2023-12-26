@@ -2,7 +2,7 @@ package tech.yunyue.core.upload.util;
 
 
 import org.springframework.web.multipart.MultipartFile;
-import tech.yunyue.core.upload.enumm.MinIOBucketEnum;
+import tech.yunyue.core.upload.enumm.IBucket;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * 文件上传下载接口
  */
-public interface FileProvider {
+public interface FileProvider<T extends IBucket> {
     // 图片常见后缀
     String SUFFIXSTR = ".bmp .dib .gif .jfif .jpe .jpeg .jpg .png .tif .tiff .ico .webp .svg .raw .psd";
 
@@ -47,7 +47,7 @@ public interface FileProvider {
      * @return path+文件名
      * @throws Exception
      */
-    default String upload(MultipartFile file, MinIOBucketEnum target, String path) {
+    default String upload(MultipartFile file, T target, String path) {
         return "";
     }
 
@@ -65,7 +65,7 @@ public interface FileProvider {
      * @param target    目标桶
      * @param filenames 需要转移的文件名
      */
-    default void storage(MinIOBucketEnum target, String... filenames) {
+    default void storage(T target, String... filenames) {
     }
 
     /**
@@ -75,7 +75,7 @@ public interface FileProvider {
      * @param target    目标桶
      * @param filenames 文件名
      */
-    default void storage(MinIOBucketEnum source, MinIOBucketEnum target, String... filenames) {
+    default void storage(T source, T target, String... filenames) {
     }
 
     /**
@@ -132,7 +132,7 @@ public interface FileProvider {
      *
      * @param fileName 文件名
      */
-    default void delete(MinIOBucketEnum target, String fileName) {
+    default void delete(T target, String fileName) {
     }
 
     /**
@@ -148,7 +148,7 @@ public interface FileProvider {
      *
      * @param fileName 文件名
      */
-    default void deleteLogic(MinIOBucketEnum source, String fileName) {
+    default void deleteLogic(T source, String fileName) {
     }
 
     /**
@@ -172,7 +172,7 @@ public interface FileProvider {
      * @param target   桶名
      * @param out      输出流
      */
-    default void downLoad(String fileName, OutputStream out, MinIOBucketEnum target) {
+    default void downLoad(String fileName, OutputStream out, T target) {
     }
 
     /**
@@ -202,7 +202,7 @@ public interface FileProvider {
      * @param target   目标桶
      * @return 文件的预览url
      */
-    default String preview(String fileName, MinIOBucketEnum target) {
+    default String preview(String fileName, T target) {
         return "";
     }
 
@@ -229,7 +229,7 @@ public interface FileProvider {
      * @param target   目标桶
      * @return 获取目标桶对应文件的文件流
      */
-    default InputStream getFileInputStream(String fileName, MinIOBucketEnum target) {
+    default InputStream getFileInputStream(String fileName, T target) {
         return new ByteArrayInputStream(new byte[0]);
     }
 }

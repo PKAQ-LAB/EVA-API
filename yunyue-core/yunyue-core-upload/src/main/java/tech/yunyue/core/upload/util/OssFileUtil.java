@@ -24,7 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import tech.yunyue.core.enums.BizCodeEnum;
 import tech.yunyue.core.properties.EvaConfig;
 import tech.yunyue.core.upload.condition.OssCondition;
-import tech.yunyue.core.upload.enumm.MinIOBucketEnum;
+import tech.yunyue.core.upload.enumm.OSSBucketEnum;
 
 
 import java.io.*;
@@ -42,7 +42,7 @@ import java.util.regex.Pattern;
 @Component
 @Conditional(OssCondition.class)
 @RequiredArgsConstructor
-public class OssFileUtil implements FileProvider {
+public class OssFileUtil implements FileProvider<OSSBucketEnum> {
 
     private final EvaConfig evaConfig;
     private final OSS ossClient ;
@@ -122,7 +122,7 @@ public class OssFileUtil implements FileProvider {
         // 非图片文件名 xxxxx:原名
         String newFileName = snowflake.nextIdStr() + (IMAGE.equals(fileType) ? "." + suffixName : ":" + fileName);
 
-        return uploadFile(file, MinIOBucketEnum.TEMP_OSS, path + newFileName);
+        return uploadFile(file, OSSBucketEnum.TEMP_OSS, path + newFileName);
     }
 
     /**
@@ -134,7 +134,7 @@ public class OssFileUtil implements FileProvider {
      */
     @Override
     public String upload(MultipartFile file, String path) {
-        return upload(file, MinIOBucketEnum.TEMP_OSS, path);
+        return upload(file, OSSBucketEnum.TEMP_OSS, path);
     }
 
     /**
@@ -147,7 +147,7 @@ public class OssFileUtil implements FileProvider {
      * @throws Exception
      */
     @Override
-    public String upload(MultipartFile file, MinIOBucketEnum target, String path) {
+    public String upload(MultipartFile file, OSSBucketEnum target, String path) {
         // 上传文件名
         String fileName = file.getOriginalFilename();
         fileName = "/%s/%s".formatted(path.replaceAll("^/|/$", ""), fileName);
@@ -162,7 +162,7 @@ public class OssFileUtil implements FileProvider {
      * @param fileName 文件名
      * @return 文件名
      */
-    private String uploadFile(MultipartFile file, MinIOBucketEnum target, String fileName) {
+    private String uploadFile(MultipartFile file, OSSBucketEnum target, String fileName) {
         var uploadConfig = evaConfig.getUpload();
         // 后缀名
         String suffixName = FileUtil.extName(fileName);
@@ -204,7 +204,7 @@ public class OssFileUtil implements FileProvider {
      */
     @Override
     public List<String> storage(String... filenames) {
-        getSelf().storage(MinIOBucketEnum.TEMP_OSS, MinIOBucketEnum.STORAGE_OSS, filenames);
+        getSelf().storage(OSSBucketEnum.TEMP_OSS, OSSBucketEnum.STORAGE_OSS, filenames);
         return List.of(filenames);
     }
 
@@ -216,8 +216,8 @@ public class OssFileUtil implements FileProvider {
      */
     @Async("file_task")
     @Override
-    public void storage(MinIOBucketEnum target, String... filenames) {
-        storage(MinIOBucketEnum.TEMP_OSS, target, filenames);
+    public void storage(OSSBucketEnum target, String... filenames) {
+        storage(OSSBucketEnum.TEMP_OSS, target, filenames);
     }
 
     /**
@@ -229,7 +229,7 @@ public class OssFileUtil implements FileProvider {
      */
     @Async("file_task")
     @Override
-    public void storage(MinIOBucketEnum source, MinIOBucketEnum target, String... filenames) {
+    public void storage(OSSBucketEnum source, OSSBucketEnum target, String... filenames) {
         for (String fileName : filenames) {
             try {
                 ossClient.copyObject(source.getBucketName(),fileName,target.getBucketName(),fileName);
@@ -286,13 +286,13 @@ public class OssFileUtil implements FileProvider {
         // 保存到持久桶中 如果是图片则生成缩略图并保存
         Arrays.stream(filenames)
                 .filter(fileName -> {
-                    this.storage(MinIOBucketEnum.STORAGE_OSS, fileName);
+                    this.storage(OSSBucketEnum.STORAGE_OSS, fileName);
                     return fileName.startsWith(IMAGE + "/");
                 })
                 .forEach(fileName -> {
                     try {
 
-                        OSSObject ossObject = ossClient.getObject(MinIOBucketEnum.STORAGE_OSS.getBucketName(),fileName);
+                        OSSObject ossObject = ossClient.getObject(OSSBucketEnum.STORAGE_OSS.getBucketName(),fileName);
                         InputStream  in = ossObject.getObjectContent();
                         ByteArrayOutputStream outThumbnail = new ByteArrayOutputStream();
 
@@ -305,7 +305,7 @@ public class OssFileUtil implements FileProvider {
                         ossObject.close();
                         // 缩略图的路径要与原图路径一致 所以不能根据当前时间生成文件夹
                         var name = fileName.substring(fileName.lastIndexOf("/") + 1);
-                        uploadObject(new ByteArrayInputStream(outThumbnail.toByteArray()), MinIOBucketEnum.STORAGE_OSS,
+                        uploadObject(new ByteArrayInputStream(outThumbnail.toByteArray()), OSSBucketEnum.STORAGE_OSS,
                                 fileName.replace(name, THUMBNAIL_NAME + name),
                                 false,
                                 "image/" + FileUtil.extName(fileName));
@@ -348,10 +348,10 @@ public class OssFileUtil implements FileProvider {
     @Override
     public void delFromStorage(String fileName) {
         // 删除原文件
-        delete(MinIOBucketEnum.STORAGE_OSS, fileName);
+        delete(OSSBucketEnum.STORAGE_OSS, fileName);
         // 删除缩略图 不存在也不会报错
         String name = fileName.substring(fileName.lastIndexOf("/") + 1);
-        delete(MinIOBucketEnum.STORAGE_OSS, fileName.replace(name, THUMBNAIL_NAME + name));
+        delete(OSSBucketEnum.STORAGE_OSS, fileName.replace(name, THUMBNAIL_NAME + name));
 
     }
 
@@ -362,7 +362,7 @@ public class OssFileUtil implements FileProvider {
      */
     @Async("file_task")
     @Override
-    public void delete(MinIOBucketEnum target, String fileName) {
+    public void delete(OSSBucketEnum target, String fileName) {
         try {
             ossClient.deleteObject(target.getBucketName(),fileName);
         } catch (Exception e) {
@@ -378,7 +378,7 @@ public class OssFileUtil implements FileProvider {
     @Async("file_task")
     @Override
     public void deleteLogic(String fileName) {
-        deleteLogic(MinIOBucketEnum.STORAGE_OSS, fileName);
+        deleteLogic(OSSBucketEnum.STORAGE_OSS, fileName);
     }
 
     /**
@@ -388,9 +388,9 @@ public class OssFileUtil implements FileProvider {
      */
     @Async("file_task")
     @Override
-    public void deleteLogic(MinIOBucketEnum source, String fileName) {
+    public void deleteLogic(OSSBucketEnum source, String fileName) {
         // 归档并删除源文件
-        storage(source, MinIOBucketEnum.ARCHIVE_OSS, fileName);
+        storage(source, OSSBucketEnum.ARCHIVE_OSS, fileName);
         // 删除缩略图 不存在也不会报错
         String name = fileName.substring(fileName.lastIndexOf("/") + 1);
         delete(source, fileName.replace(name, THUMBNAIL_NAME + name));
@@ -414,7 +414,7 @@ public class OssFileUtil implements FileProvider {
      */
     @Override
     public void downLoad(String fileName, OutputStream out) {
-        downLoad(fileName, out, MinIOBucketEnum.STORAGE_OSS);
+        downLoad(fileName, out, OSSBucketEnum.STORAGE_OSS);
     }
 
     /**
@@ -425,7 +425,7 @@ public class OssFileUtil implements FileProvider {
      * @param out      输出流
      */
     @Override
-    public void downLoad(String fileName, OutputStream out, MinIOBucketEnum target) {
+    public void downLoad(String fileName, OutputStream out, OSSBucketEnum target) {
         try {
             // ossObject包含文件所在的存储空间名称、文件名称、文件元信息以及一个输入流。
             OSSObject ossObject = ossClient.getObject(target.getBucketName(),fileName);
@@ -470,7 +470,7 @@ public class OssFileUtil implements FileProvider {
      * @param contentType 文件的类型
      * @return
      */
-    public String uploadObject(InputStream in, MinIOBucketEnum bucketEnum, String fileName, boolean formatName, String contentType) {
+    public String uploadObject(InputStream in, OSSBucketEnum bucketEnum, String fileName, boolean formatName, String contentType) {
         try {
             fileName = !formatName ? fileName : "%s/%s".formatted(DateUtil.format(new Date(), "yyyyMM/dd"), fileName);
             // 上传
@@ -509,7 +509,7 @@ public class OssFileUtil implements FileProvider {
         }
         var name = fileName.substring(fileName.lastIndexOf("/") + 1);
         fileName = fileName.replace(name, THUMBNAIL_NAME + name);
-        return preview(fileName, MinIOBucketEnum.STORAGE_OSS);
+        return preview(fileName, OSSBucketEnum.STORAGE_OSS);
     }
 
     /**
@@ -520,7 +520,7 @@ public class OssFileUtil implements FileProvider {
      */
     @Override
     public String preview(String fileName) {
-        return preview(fileName, MinIOBucketEnum.STORAGE_OSS);
+        return preview(fileName, OSSBucketEnum.STORAGE_OSS);
     }
 
     /**
@@ -531,7 +531,7 @@ public class OssFileUtil implements FileProvider {
      * @return 文件的预览url
      */
     @Override
-    public String preview(String fileName, MinIOBucketEnum target) {
+    public String preview(String fileName, OSSBucketEnum target) {
         if (CharSequenceUtil.isBlank(fileName)) {
             return null;
         }
@@ -555,10 +555,10 @@ public class OssFileUtil implements FileProvider {
      */
     @Override
     public String parsePreviewUrlToFileName(String previewUrl) {
-        return parsePreviewUrlToFileName(MinIOBucketEnum.STORAGE_OSS, previewUrl);
+        return parsePreviewUrlToFileName(OSSBucketEnum.STORAGE_OSS, previewUrl);
     }
 
-    private String parsePreviewUrlToFileName(MinIOBucketEnum bucketEnum, String previewUrl) {
+    private String parsePreviewUrlToFileName(OSSBucketEnum bucketEnum, String previewUrl) {
         String thumbnailPattern = "^http[^?]+/%s/([^?]+)%s([^?]+)\\\\?".formatted(bucketEnum.getBucketName(), THUMBNAIL_NAME);
         // 缩略图的预览url
         Matcher matcher = Pattern.compile(thumbnailPattern).matcher(previewUrl);
@@ -574,7 +574,7 @@ public class OssFileUtil implements FileProvider {
      */
     @Override
     public InputStream getFileInputStream(String fileName) {
-        return getFileInputStream(fileName, MinIOBucketEnum.STORAGE);
+        return getFileInputStream(fileName, OSSBucketEnum.STORAGE_OSS);
     }
 
     /**
@@ -583,7 +583,7 @@ public class OssFileUtil implements FileProvider {
      * @return 获取目标桶对应文件的文件流
      */
     @Override
-    public InputStream getFileInputStream(String fileName, MinIOBucketEnum target) {
+    public InputStream getFileInputStream(String fileName, OSSBucketEnum target) {
         if (CharSequenceUtil.isBlank(fileName)) {
             return FileProvider.super.getFileInputStream(fileName, target);
         }

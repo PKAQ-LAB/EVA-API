@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
 @Component
 @Conditional(MinIOCondition.class)
 @RequiredArgsConstructor
-public class MinIOFileUtil implements FileProvider {
+public class MinIOFileUtil implements FileProvider<MinIOBucketEnum> {
     private final EvaConfig evaConfig;
     private final MinioClient minioClient;
     public FileProvider self;
