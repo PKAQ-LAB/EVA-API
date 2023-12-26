@@ -10,7 +10,8 @@ dependencies {
         exclude module: 'spring-boot-starter-tomcat'
     }
     implementation "${lib.undertow}",
-                    "${lib.minio}"
+                    "${lib.minio}",
+                    "${lib.aliyun_sdk_oss}"
 
     implementation project(":yunyue-core:yunyue-core-common")
 }

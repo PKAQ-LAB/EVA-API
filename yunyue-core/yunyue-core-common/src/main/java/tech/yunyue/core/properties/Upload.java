@@ -39,4 +39,12 @@ public class Upload {
         private String access;
         private String secret;
     }
+
+    private Oss oss;
+    @Data
+    public static class Oss {
+        private String url;
+        private String access;
+        private String secret;
+    }
 }
