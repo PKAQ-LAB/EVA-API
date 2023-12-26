@@ -53,7 +53,9 @@ ext {
             // mongo
             "mongodb" : "org.springframework.boot:spring-boot-starter-data-mongodb:${spring_boot_ver}",
             // mq
-            "rabbitmq" : "org.springframework.boot:spring-boot-starter-amqp:${spring_boot_ver}"
+            "rabbitmq" : "org.springframework.boot:spring-boot-starter-amqp:${spring_boot_ver}",
+            // ali oss
+           "aliyun_sdk_oss"    : "com.aliyun.oss:aliyun-sdk-oss:${aliyun_sdk_oss}"
 
 
     ]
