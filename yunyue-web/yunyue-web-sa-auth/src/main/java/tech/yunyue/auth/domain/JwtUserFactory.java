@@ -28,6 +28,7 @@ public final class JwtUserFactory {
                 StrUtil.toStringOrNull(userMap.get("NAME")),
                 StrUtil.toStringOrNull(userMap.get("NICK_NAME")),
                 StrUtil.toStringOrNull(userMap.get("TENANT_ID")),
+                StrUtil.toStringOrNull(userMap.get("TENANT_CODE")),
                 StrUtil.toStringOrNull(userMap.get("U_POST_ID")),
                 StrUtil.toStringOrNull(userMap.get("POST_NAME")),
                 rolesMap
