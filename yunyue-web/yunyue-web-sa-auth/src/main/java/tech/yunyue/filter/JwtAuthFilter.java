@@ -127,7 +127,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             ThreadUser currentUser = JSONUtil.toBean(this.jdbcService.loadUserById(uid), ThreadUser.class);
             currentUser.setUserId(uid)
                     .setAccount(account)
-//                    .setName()
                     .setRolesMap(this.jdbcService.getRoleById(uid))
                     .setModuleId(RequestUtil.getModuleId(request))
                     .setModuleCode(RequestUtil.getModuleCode(request));
@@ -135,6 +134,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             //禁用租户设置租户id为null
             if (!evaConfig.getTenant().isEnable()) {
                 currentUser.setTenantId(null);
+                currentUser.setTenantCode(null);
             }
             ThreadUserHelper.setCurrentUser(currentUser);
         }

@@ -87,6 +87,7 @@ public class ThreadUserHelper {
         return Optional.ofNullable(userThreadLocal.get())
                 .map(ThreadUser::getAccount).orElse(null);
     }
+
     /**
      * 获取用户手机号
      */
@@ -104,6 +105,7 @@ public class ThreadUserHelper {
         return Optional.ofNullable(userThreadLocal.get())
                 .map(ThreadUser::getRolesMap).orElse(null);
     }
+
     /**
      * 获取角色code
      *
@@ -122,6 +124,7 @@ public class ThreadUserHelper {
     public static String[] getUserRolesEx() {
         return Optional.ofNullable(getUserRoles()).orElseThrow(() -> new BizException(BizCodeEnum.ACCOUNT_NOT_EXIST));
     }
+
     /**
      * 获取用户的数据权限类型
      */
@@ -129,6 +132,7 @@ public class ThreadUserHelper {
         return new ArrayList<>(Optional.ofNullable(getUsetGrantedRoles())
                 .map(Map::values).orElse(Collections.emptyList()));
     }
+
     /**
      * 获取用户的角色id
      */
@@ -160,6 +164,16 @@ public class ThreadUserHelper {
     public static String getTenantId() {
         return Optional.ofNullable(userThreadLocal.get())
                 .map(ThreadUser::getTenantId).orElse(null);
+    }
+
+    /**
+     * 获取租户code
+     *
+     * @return
+     */
+    public static String getTenantCode() {
+        return Optional.ofNullable(userThreadLocal.get())
+                .map(ThreadUser::getTenantCode).orElse(null);
     }
 
     /**

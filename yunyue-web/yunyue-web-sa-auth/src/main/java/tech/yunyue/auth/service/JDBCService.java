@@ -27,7 +27,7 @@ public class JDBCService {
      */
     public Map<String, Object> loadUserByUsername(String account) {
         try {
-            String sql = "SELECT ID,ACCOUNT,TEL,PASSWORD,LOCKED,DEPT_ID,DEPT_NAME,NAME,NICK_NAME,TENANT_ID,U_POST_ID,POST_NAME " +
+            String sql = "SELECT ID,ACCOUNT,TEL,PASSWORD,LOCKED,DEPT_ID,DEPT_NAME,NAME,NICK_NAME,TENANT_ID,TENANT_CODE,U_POST_ID,POST_NAME " +
                     "FROM SYS_USER_INFO SU " +
                     "WHERE  DELETED = '0000' AND (IF(ISNULL(SU.TENANT_ID), SU.ACCOUNT, CONCAT(ACCOUNT,'@',TENANT_CODE)) = ? OR SU.TEL = ?)";
 
@@ -49,7 +49,7 @@ public class JDBCService {
      */
     private Map<String, Object> loadUserMapById(String userId) {
         try {
-            String sql = "SELECT ID,ACCOUNT,TEL,PASSWORD,LOCKED,DEPT_ID,DEPT_NAME,NAME,NICK_NAME,TENANT_ID,U_POST_ID,POST_NAME " +
+            String sql = "SELECT ID,ACCOUNT,TEL,PASSWORD,LOCKED,DEPT_ID,DEPT_NAME,NAME,NICK_NAME,TENANT_ID,TENANT_CODE,U_POST_ID,POST_NAME " +
                     "FROM SYS_USER_INFO SU " +
                     "WHERE  DELETED = '0000' AND ID = ?";
             return this.jdbcTemplate.queryForMap(sql, userId);

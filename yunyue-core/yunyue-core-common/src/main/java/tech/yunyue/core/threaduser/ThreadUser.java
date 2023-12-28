@@ -28,6 +28,8 @@ public class ThreadUser implements Serializable {
     private String dataPermission;
     // 用户的租户id
     private String tenantId;
+    // 用户的租户code
+    private String tenantCode;
     // 当前用户操作的模块id
     private String moduleId;
     // 当前用户操作的模块code
