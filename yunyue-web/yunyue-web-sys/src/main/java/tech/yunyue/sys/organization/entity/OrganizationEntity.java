@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import tech.yunyue.core.mybatis.mvc.entity.mybatis.StdEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -33,6 +34,8 @@ public class OrganizationEntity extends StdEntity {
 
     @TableField(condition = SqlCondition.LIKE)
     @Schema(description = "编码")
+    @NotBlank(message = "编码不允许为空")
+    @Size(max = 6)
     private String code;
 
     @Schema(description = "上级节点Id")
