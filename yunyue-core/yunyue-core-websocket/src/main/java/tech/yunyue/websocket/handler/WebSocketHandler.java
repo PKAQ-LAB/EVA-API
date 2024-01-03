@@ -3,18 +3,36 @@ package tech.yunyue.websocket.handler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
+import org.springframework.web.socket.server.HandshakeInterceptor;
+import tech.yunyue.websocket.interceptor.WebSocketInterceptor;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Optional;
 
 /**
+ * WebSocket处理器的抽象基类，提供处理WebSocket连接的基本逻辑。
+ * 子类需要实现具体的业务逻辑，并通过相应的方法处理文本消息和二进制消息。
+ * 通过重写{@link #handleTextMessage(String)}和{@link #handleBinaryMessage(ByteBuffer)}方法来处理客户端的消息。
+ *
  * @author PKAQ
  */
 @Slf4j
 public abstract class WebSocketHandler extends AbstractWebSocketHandler {
 
+    /**
+     * 获取WebSocket连接的路径，由子类实现。
+     *
+     * @return WebSocket连接的路径
+     */
     public abstract String socketPath();
+
+    /**
+     * 获取用于WebSocket握手的拦截器，由子类实现。
+     *
+     * @return WebSocket拦截器，返回null则使用默认拦截器
+     */
+    public abstract WebSocketInterceptor interceptor();
 
     /**
      * socket连接成功后触发
@@ -50,6 +68,12 @@ public abstract class WebSocketHandler extends AbstractWebSocketHandler {
         });
     }
 
+    /**
+     * 处理文本消息的具体业务逻辑，由子类实现。
+     *
+     * @param payload 接收到的文本消息
+     * @return 处理后的WebSocket消息
+     */
     protected abstract WebSocketMessage<?> handleTextMessage(String payload);
 
 
@@ -72,6 +96,12 @@ public abstract class WebSocketHandler extends AbstractWebSocketHandler {
         });
     }
 
+    /**
+     * 处理二进制消息的具体业务逻辑，由子类实现。
+     *
+     * @param payload 接收到的二进制消息
+     * @return 处理后的WebSocket消息
+     */
     protected abstract WebSocketMessage<?> handleBinaryMessage(ByteBuffer payload);
 
     /**
