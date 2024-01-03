@@ -89,7 +89,7 @@ public class SaTokenConfigure{
         Jwt jwt = evaConfig.getJwt();
         SaTokenConfig config = new SaTokenConfig();
         config.setTokenName(CommonConstant.ACCESS_TOKEN_KEY);//token名称 (同时也是cookie名称)
-//        config.setIsWriteHeader(true); 先不写到响应头中
+        config.setIsWriteHeader(true);
         config.setIsShare(false);
         config.setIsConcurrent(evaConfig.getConcurrent());
 //       过期策略
