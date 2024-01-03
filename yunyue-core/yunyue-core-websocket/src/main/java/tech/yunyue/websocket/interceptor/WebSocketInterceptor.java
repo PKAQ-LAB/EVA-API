@@ -6,6 +6,8 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.http.server.ServletServerHttpRequest;
+import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHandler;
@@ -37,7 +39,7 @@ public class WebSocketInterceptor implements HandshakeInterceptor {
         Filter filter = SpringUtil.getBean(JWT_FILTER_NAME);
         try {
             // 调用jwtAuthFilter的doFilter方法，执行鉴权逻辑 不复制代码是因为该模块没有sa-token的依赖
-            filter.doFilter((ServletRequest) request, (ServletResponse) response, (request1, response1) -> {
+            filter.doFilter(((ServletServerHttpRequest) request).getServletRequest(), ((ServletServerHttpResponse) response).getServletResponse(), (request1, response1) -> {
                 // do nothing
             });
             return true;
