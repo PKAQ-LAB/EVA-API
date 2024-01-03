@@ -5,7 +5,7 @@ project.archivesBaseName = 'yunyue-core-websocket'
 project.description = "tool for websocket"
 
 dependencies {
-    implementation("${lib.websocket}"){
+    api("${lib.websocket}"){
         exclude module: 'spring-boot-starter-tomcat'
     }
 
