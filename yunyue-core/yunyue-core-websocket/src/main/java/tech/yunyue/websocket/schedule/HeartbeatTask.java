@@ -1,9 +1,9 @@
-package org.pkaq.websocket.schedule;
+package tech.yunyue.websocket.schedule;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.pkaq.websocket.handler.WebSocketSessionManager;
-import org.pkaq.websocket.service.WebSocketService;
+import tech.yunyue.websocket.handler.WebSocketSessionManager;
+import tech.yunyue.websocket.service.WebSocketService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 

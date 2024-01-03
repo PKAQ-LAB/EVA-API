@@ -1,4 +1,4 @@
-package org.pkaq.websocket.config;
+package tech.yunyue.websocket.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package org.pkaq.websocket.handler;
+package tech.yunyue.websocket.handler;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

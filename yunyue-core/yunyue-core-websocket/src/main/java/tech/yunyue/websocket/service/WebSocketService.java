@@ -1,7 +1,7 @@
-package org.pkaq.websocket.service;
+package tech.yunyue.websocket.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.pkaq.websocket.handler.WebSocketSessionManager;
+import tech.yunyue.websocket.handler.WebSocketSessionManager;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
