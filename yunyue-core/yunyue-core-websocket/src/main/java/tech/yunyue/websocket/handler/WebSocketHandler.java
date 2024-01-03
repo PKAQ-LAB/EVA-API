@@ -1,21 +1,20 @@
 package tech.yunyue.websocket.handler;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
-import org.springframework.web.socket.BinaryMessage;
-import org.springframework.web.socket.CloseStatus;
-import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Optional;
 
 /**
  * @author PKAQ
  */
-@Component
 @Slf4j
-public class WebSocketHandler extends AbstractWebSocketHandler {
+public abstract class WebSocketHandler extends AbstractWebSocketHandler {
+
+    public abstract String socketPath();
 
     /**
      * socket连接成功后触发
@@ -38,11 +37,21 @@ public class WebSocketHandler extends AbstractWebSocketHandler {
      * @param message
      */
     @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage message) {
+    public void handleTextMessage(WebSocketSession session, TextMessage message) {
         // 客户端发送普通文件信息时触发
         String payload = message.getPayload();
         log.info("【websocket消息】收到客户端消息:" + payload);
+        Optional.ofNullable(handleTextMessage(payload)).ifPresent(response -> {
+            try {
+                session.sendMessage(response);
+            } catch (IOException e) {
+                log.info("【websocket消息】回复消息失败：" + e.getMessage());
+            }
+        });
     }
+
+    protected abstract WebSocketMessage<?> handleTextMessage(String payload);
+
 
     /**
      * 客户端发送二进信息是触发
@@ -54,7 +63,16 @@ public class WebSocketHandler extends AbstractWebSocketHandler {
     protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) {
         ByteBuffer payload = message.getPayload();
         log.info("发送二进制消息:" + payload.toString());
+        Optional.ofNullable(handleBinaryMessage(payload)).ifPresent(response -> {
+            try {
+                session.sendMessage(response);
+            } catch (IOException e) {
+                log.info("【websocket消息】回复消息失败：" + e.getMessage());
+            }
+        });
     }
+
+    protected abstract WebSocketMessage<?> handleBinaryMessage(ByteBuffer payload);
 
     /**
      * 异常时触发
