@@ -4,8 +4,6 @@ import cn.dev33.satoken.error.SaErrorCode;
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaFoxUtil;
-import cn.hutool.core.text.CharSequenceUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.server.ServerHttpRequest;
@@ -21,6 +19,8 @@ import tech.yunyue.core.threaduser.ThreadUser;
 import tech.yunyue.core.threaduser.ThreadUserHelper;
 import tech.yunyue.core.web.util.RequestUtil;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import static cn.dev33.satoken.exception.NotLoginException.*;
@@ -29,7 +29,7 @@ import static cn.dev33.satoken.exception.NotLoginException.*;
  * @author 茂茂AdamEve
  * WebSocket鉴权拦截器，用于在WebSocket握手阶段执行鉴权逻辑。
  */
-@Component
+@Component("webSocketAuthInterceptor")
 @RequiredArgsConstructor
 public class WebSocketAuthInterceptor implements HandshakeInterceptor {
     private static final String AUTH_FAIL_HEARD = "X-WebSocket-Error";
@@ -51,7 +51,6 @@ public class WebSocketAuthInterceptor implements HandshakeInterceptor {
         try {
             // 从Storage、请求体、cookie中获取token
             var authToken = StpUtil.getTokenValue();
-            if (CharSequenceUtil.isBlank(authToken)) return false;
             // 验证token 是否合法
             var uid = getLoginId(authToken);
             var account = (String) StpUtil.getExtra(authToken, "account");
@@ -69,7 +68,7 @@ public class WebSocketAuthInterceptor implements HandshakeInterceptor {
             ThreadUserHelper.setCurrentUser(currentUser);
             return true;
         } catch (NotLoginException e) {
-            response.getHeaders().add(AUTH_FAIL_HEARD, StrUtil.utf8Str(e.getMessage()));
+            response.getHeaders().add(AUTH_FAIL_HEARD, URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8));
             return false;
         }
     }
