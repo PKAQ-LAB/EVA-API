@@ -11,6 +11,7 @@ import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 import tech.yunyue.websocket.handler.WebSocketHandler;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author PKAQ
@@ -30,8 +31,9 @@ public class WebSocketConfig implements WebSocketConfigurer {
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         if (CollUtil.isNotEmpty(socketHandlers)) {
             socketHandlers.forEach(handler -> {
-                registry.addHandler(handler, handler.socketPath())
-                        .addInterceptors(handler.getInterceptor())
+                var registration = registry.addHandler(handler, handler.socketPath());
+                Optional.ofNullable(handler.getInterceptor()).ifPresent(registration::addInterceptors);
+                registration
                         // 允许跨域，方便本地调试，生产建议去掉
                         .setAllowedOrigins("*");
                 //.setAllowedOriginPatterns("*")
