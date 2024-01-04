@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
+import tech.yunyue.core.threaduser.ThreadUser;
+import tech.yunyue.core.threaduser.ThreadUserHelper;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -18,6 +20,7 @@ import java.util.Optional;
  */
 @Slf4j
 public abstract class WebSocketHandler extends AbstractWebSocketHandler {
+    private static final String USER_KEY = "THREAD_USER";
 
     /**
      * 获取WebSocket连接的路径，由子类实现。
@@ -47,6 +50,8 @@ public abstract class WebSocketHandler extends AbstractWebSocketHandler {
         log.info("【有新的客户端连接了】：{}", key);
         WebSocketSessionManager.add(key, session);
         log.info("【websocket消息】有新的连接，总数为:" + WebSocketSessionManager.SESSION_POOL.size());
+        // 链接建立成功，说明已经通过鉴权，将用户信息存储在session中
+        session.getAttributes().put(USER_KEY, ThreadUserHelper.getCurrentUser());
     }
 
     /**
@@ -57,6 +62,8 @@ public abstract class WebSocketHandler extends AbstractWebSocketHandler {
      */
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) {
+        // 设置当前线程的用户
+        setCurrentUserFromSession(session);
         // 客户端发送普通文件信息时触发
         String payload = message.getPayload();
         log.info("【websocket消息】收到客户端消息:" + payload);
@@ -86,6 +93,8 @@ public abstract class WebSocketHandler extends AbstractWebSocketHandler {
      */
     @Override
     protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) {
+        // 设置当前线程的用户
+        setCurrentUserFromSession(session);
         ByteBuffer payload = message.getPayload();
         log.info("发送二进制消息:" + payload.toString());
         Optional.ofNullable(handleBinaryMessage(payload)).ifPresent(response -> {
@@ -113,9 +122,10 @@ public abstract class WebSocketHandler extends AbstractWebSocketHandler {
      */
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) {
-        // 获取当前用户
+        // 设置当前线程的用户
+        setCurrentUserFromSession(session);
+        // 获取当前链接id
         String key = session.getId();
-
         log.error("用户错误,原因:" + exception.getMessage());
         WebSocketSessionManager.removeAndClose(key);
     }
@@ -128,10 +138,21 @@ public abstract class WebSocketHandler extends AbstractWebSocketHandler {
      */
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
-
-        // 获取当前用户
+        // 设置当前线程的用户
+        setCurrentUserFromSession(session);
+        // 获取当前链接id
         String key = session.getId();
         WebSocketSessionManager.removeAndClose(key);
         log.info("【websocket消息】连接断开，总数为:" + WebSocketSessionManager.SESSION_POOL.size());
+    }
+
+
+    /**
+     * 根据WebSocketSession中的用户信息设置当前线程的用户。
+     *
+     * @param session 包含用户信息的WebSocketSession。
+     */
+    private void setCurrentUserFromSession(WebSocketSession session) {
+        ThreadUserHelper.setCurrentUser((ThreadUser) session.getAttributes().get(USER_KEY));
     }
 }
