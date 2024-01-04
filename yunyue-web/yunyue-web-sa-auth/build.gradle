@@ -9,6 +9,7 @@ dependencies {
             project(":yunyue-core:yunyue-core-log"),
             project(":yunyue-core:yunyue-core-data-mybatis"),
             project(":yunyue-core:yunyue-core-cache"),
+            project(":yunyue-core:yunyue-core-websocket"),
             "${lib.mysql}",
             "${lib.sa_token_starter}",
             "${lib.sa_token_redis}",

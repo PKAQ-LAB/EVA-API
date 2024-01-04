@@ -8,9 +8,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
+import org.springframework.web.socket.server.HandshakeInterceptor;
 import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 import tech.yunyue.websocket.handler.WebSocketHandler;
-import tech.yunyue.websocket.interceptor.WebSocketInterceptor;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +25,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Autowired
     private List<WebSocketHandler> socketHandlers;
     @Autowired
-    private WebSocketInterceptor webSocketInterceptor;
+    private HandshakeInterceptor interceptor;
 
     @Bean
     public ServerEndpointExporter serverEndpointExporter() {
@@ -37,7 +37,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
         if (CollUtil.isNotEmpty(socketHandlers)) {
             socketHandlers.forEach(handler -> {
                 registry.addHandler(handler, handler.socketPath())
-                        .addInterceptors(Optional.ofNullable(handler.interceptor()).orElse(webSocketInterceptor))
+                        .addInterceptors(Optional.ofNullable(handler.getInterceptor()).orElse(interceptor))
                         // 允许跨域，方便本地调试，生产建议去掉
                         .setAllowedOrigins("*");
                 //.setAllowedOriginPatterns("*")

@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
-import tech.yunyue.websocket.interceptor.WebSocketInterceptor;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -32,7 +31,9 @@ public abstract class WebSocketHandler extends AbstractWebSocketHandler {
      *
      * @return WebSocket拦截器，返回null则使用默认拦截器
      */
-    public abstract WebSocketInterceptor interceptor();
+    public HandshakeInterceptor getInterceptor() {
+        return null;
+    }
 
     /**
      * socket连接成功后触发
