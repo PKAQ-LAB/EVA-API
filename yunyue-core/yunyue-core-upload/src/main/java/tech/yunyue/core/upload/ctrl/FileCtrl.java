@@ -1,7 +1,5 @@
 package tech.yunyue.core.upload.ctrl;
 
-import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.map.MapUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,8 +16,6 @@ import tech.yunyue.core.upload.util.FileProvider;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * 文件Ctrl
@@ -43,13 +39,9 @@ public class FileCtrl {
     @PostMapping("/upload")
     public Response upload(MultipartFile file) throws Exception {
         String filePath = fileProvider.upload(file);
-        Map<String, String> result = MapUtil.of("pname", filePath);
-
-        // 是图片就返回预览链接
-        boolean isPic = FileProvider.SUFFIXSTR.contains(FileUtil.extName(filePath));
-        if (isPic) {
-            result.put("previewUrl", fileProvider.preview(filePath, MinIOBucketEnum.TEMP));
-        }
+        Map<String, String> result = Map.of(
+                "pname", filePath,
+                "previewUrl", fileProvider.preview(filePath, MinIOBucketEnum.TEMP));
         return new Response().success(result);
     }
 
@@ -62,7 +54,7 @@ public class FileCtrl {
         response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
         var name = fileName.substring(fileName.lastIndexOf("/") + 1);
 
-        //非图片文件返回原文件名
+        // 非图片文件返回原文件名
         if (!fileName.startsWith(IMAGE + "/")) {
             name = name.substring(name.lastIndexOf(":") + 1);
         }
