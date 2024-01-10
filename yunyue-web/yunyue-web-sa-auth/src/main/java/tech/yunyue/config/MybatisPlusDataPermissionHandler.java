@@ -1,5 +1,7 @@
 package tech.yunyue.config;
 
+import cn.dev33.satoken.context.SaHolder;
+import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.text.StrPool;
@@ -62,9 +64,8 @@ public class MybatisPlusDataPermissionHandler implements DataPermissionHandler {
         return where;
     }
 
-
     public static String permissionSql(String tableName) {
-        var roles = ThreadUserHelper.getUsetGrantedRoleList();
+        var roles = getPermissionRoles();
         // 用户没有角色 不返回数据
         if (CollUtil.isEmpty(roles)) {
             return "false";
@@ -116,7 +117,7 @@ public class MybatisPlusDataPermissionHandler implements DataPermissionHandler {
         var depId = ThreadUserHelper.getOrgId();
         var postId = ThreadUserHelper.getPostId();
         var uId = ThreadUserHelper.getUserId();
-        //用户能查看自己创建的数据
+        // 用户能查看自己创建的数据
         stringJoiner.add(String.format("%sCREATE_ID = '%s'", tableName, uId));
         dataPermission.stream().anyMatch(item -> {
             var permissionEnum = DataPermissionEnumm.getByCode(item.getDataPermissionType());
@@ -130,7 +131,7 @@ public class MybatisPlusDataPermissionHandler implements DataPermissionHandler {
             stringJoiner.add(sql);
             return false;
         });
-        //存在拥有全部权限的角色 不添加数据权限sql
+        // 存在拥有全部权限的角色 不添加数据权限sql
         if (isAll.get()) {
             return "true";
         }
@@ -140,33 +141,33 @@ public class MybatisPlusDataPermissionHandler implements DataPermissionHandler {
     private static String buildSqlForPermission(String tableName, String depId, String postId, String uId, String deptOrPostIds, DataPermissionEnumm permissionEnum) {
         var sql = "";
         switch (permissionEnum) {
-            //仅本部门
+            // 仅本部门
             case DEPT_ONLY_LIMIT -> sql = String.format("ORG_ID = '%s'", depId);
-            //本人所属部门及下属部门
+            // 本人所属部门及下属部门
             case DEPT_AND_CHILDREN_LIMIT ->
                     sql = String.format("ORG_ID in (select dp_so.id from sys_organization dp_so where dp_so.id='%s' or dp_so.path like '%%%s%%')",
                             depId, depId);
-            //指定部门
+            // 指定部门
             case DEPT_LIMIT -> {
                 String deptId = Arrays.stream(deptOrPostIds.split(","))
                         .map(id -> String.format("'%s'", id))
                         .collect(Collectors.joining(","));
                 sql = String.format("ORG_ID in (%s)", deptId);
             }
-            //仅本岗位
+            // 仅本岗位
             case POST_ONLY_LIMIT -> sql = String.format("POST_ID = '%s'", postId);
-            //本人所属岗位及下属岗位
+            // 本人所属岗位及下属岗位
             case POST_AND_CHILDREN_LIMIT ->
                     sql = String.format("POST_ID in (select dp_sp.id from sys_post dp_sp where dp_sp.id='%s' or dp_sp.path_id like '%%%s%%')",
                             postId, postId);
-            //指定岗位
+            // 指定岗位
             case POST_LIMIT -> {
                 var postIds = Arrays.stream(deptOrPostIds.split(","))
                         .map("'%s'"::formatted)
                         .collect(Collectors.joining(","));
                 sql = String.format("POST_ID in (%s)", postIds);
             }
-            //本人创建或修改
+            // 本人创建或修改
             case CREATOR_LIMIT -> sql = String.format("MODIFY_BY = '%s'", uId);
         }
         return String.format(" ( %s%s ) ", tableName, sql);
@@ -216,6 +217,22 @@ public class MybatisPlusDataPermissionHandler implements DataPermissionHandler {
         } catch (Exception ignored) {
             return "";
         }
+    }
+
+    /**
+     * @return 根据请求路径得到配置该路径的角色集合
+     */
+    private static List<ThreadUser.GrantedRoles> getPermissionRoles() {
+        var rolePermissionMap = ThreadUserHelper.getRolePermission();
+        var uri = SaHolder.getRequest().getRequestPath();
+        var rolesMap = ThreadUserHelper.getUsetGrantedRoles();
+        return CollUtil.isEmpty(rolePermissionMap) || rolePermissionMap.size() == 1 ?
+                ThreadUserHelper.getUsetGrantedRoleList() :
+                rolePermissionMap.entrySet()
+                        .stream()
+                        .filter(e -> StpUtil.getStpLogic().hasElement(e.getValue(), uri))
+                        .map(e -> rolesMap.get(e.getKey()))
+                        .toList();
     }
 
 }
