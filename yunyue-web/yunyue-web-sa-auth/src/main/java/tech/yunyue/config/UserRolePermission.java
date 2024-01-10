@@ -19,37 +19,47 @@ import java.util.*;
 @RequiredArgsConstructor
 public class UserRolePermission implements StpInterface {
     private final JDBCService jdbcService;
+
     /**
      * 返回一个账号所拥有的权限码集合
-     * @param loginId  账号id
+     *
+     * @param loginId   账号id
      * @param loginType 账号类型
      * @return
      */
     @Override
     public List<String> getPermissionList(Object loginId, String loginType) {
-        //得到用户角色
-        List<String> roleList = getRoleList(loginId,loginType);
+        // 得到用户角色
+        List<String> roleList = getRoleList(loginId, loginType);
         if (CollectionUtil.isEmpty(roleList)) return Collections.emptyList();
         // 根据用户角色获取所有可访问资源路径
         Set<String> permissionList = new HashSet<>();
-        roleList.forEach(roleId -> permissionList.addAll(this.jdbcService.listRoleNamesWithPath(roleId)));
+        Map<String, List<String>> rolePermissonMap = new HashMap<>(roleList.size());
+        roleList.forEach(roleId -> {
+            var list = this.jdbcService.listRoleNamesWithPath(roleId);
+            permissionList.addAll(list);
+            rolePermissonMap.put(roleId, list);
+        });
+        // 保存用户角色和角色拥有的权限
+        ThreadUserHelper.getCurrentUser().setRolePermissonMap(rolePermissonMap);
         return new ArrayList<>(permissionList);
     }
 
     /**
      * 返回一个账号所拥有的角色id集合
-     * @param loginId  账号id
+     *
+     * @param loginId   账号id
      * @param loginType 账号类型
      * @return
      */
     @Override
     public List<String> getRoleList(Object loginId, String loginType) {
-        //从ThreadUserHelper取
-        List<String> roleList= ThreadUserHelper.getRoleIdsList();
+        // 从ThreadUserHelper取
+        List<String> roleList = ThreadUserHelper.getRoleIdsList();
         if (roleList != null) {
             return roleList;
         }
-        Map<String, ThreadUser.GrantedRoles> roles = this.jdbcService.getRoleById((String)loginId);
+        Map<String, ThreadUser.GrantedRoles> roles = this.jdbcService.getRoleById((String) loginId);
         return roles.keySet().stream().toList();
     }
 }

@@ -212,4 +212,14 @@ public class ThreadUserHelper {
                 .map(ThreadUser::getModuleCode).orElse("");
     }
 
+    /**
+     * 得到当前用户角色和该角色拥有的所有权限
+     * 当前路径是无需资源鉴权的路径||没打开资源鉴权时，该map为null（资源鉴权时才会设置角色和其权限）
+     *
+     * @return
+     */
+    public static Map<String, List<String>> getRolePermission() {
+        return Optional.ofNullable(userThreadLocal.get()).map(ThreadUser::getRolePermissonMap).orElse(Collections.emptyMap());
+    }
+
 }

@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,6 +39,9 @@ public class ThreadUser implements Serializable {
     private String deptId;
     // 当前用户岗位id
     private String postId;
+    // 当前用户所有角色与其对应的path权限 当前路径是无需资源鉴权的路径||没打开资源鉴权时，该map为null（资源鉴权时才会设置角色和其权限）
+    private Map<String, List<String>> rolePermissonMap;
+
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
