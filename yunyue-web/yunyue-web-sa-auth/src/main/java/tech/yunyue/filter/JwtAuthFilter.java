@@ -3,6 +3,7 @@ package tech.yunyue.filter;
 import cn.dev33.satoken.dao.SaTokenDao;
 import cn.dev33.satoken.error.SaErrorCode;
 import cn.dev33.satoken.exception.NotLoginException;
+import cn.dev33.satoken.jwt.exception.SaJwtException;
 import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.stp.SaLoginConfig;
 import cn.dev33.satoken.stp.StpUtil;
@@ -76,36 +77,36 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 if (StrUtil.isNotBlank(newToken)) {
                     isReplace = true;
                     authToken = newToken;
-                    //把新token写到cookie中
+                    // 把新token写到cookie中
                     StpUtil.getStpLogic().setTokenValueToCookie(authToken, (int) evaConfig.getJwt().getAlphaTtl());
                 }
 
-                //验证token 是否合法
+                // 验证token 是否合法
                 uid = getLoginId(authToken);
                 account = (String) StpUtil.getExtra(authToken, "account");
 
-                //判断token是否临期且不存在上一个临期token  就刷新token
+                // 判断token是否临期且不存在上一个临期token  就刷新token
                 long timeout = StpUtil.getTokenTimeout();
                 if (!isReplace && timeout > 0 && timeout < jwtConfig.getThreshold()) {
-                    //多个临期token的线程同时到这边 锁住
+                    // 多个临期token的线程同时到这边 锁住
                     synchronized (authToken.intern()) {
                         // 双重监测 redis里面确实没有该token的映射 就生成一个新token
                         if (!StrUtil.isNotBlank(dao.get(authToken))) {
                             String device = StpUtil.getLoginDevice();
-                            //允许并发登录时，需手动删除临期token
+                            // 允许并发登录时，需手动删除临期token
                             if (evaConfig.getConcurrent()) StpUtil.logout(uid, device);
                             StpUtil.login(uid, SaLoginConfig
                                     .setExtra("userId", uid)
                                     .setExtra("account", account)
                                     .setExtra("version", StpUtil.getExtra("version"))
                                     .setDevice(device));
-                            //在redis中旧token映射到新token上
+                            // 在redis中旧token映射到新token上
                             dao.set(authToken, StpUtil.getTokenValue(), timeout);
                         }
                     }
                 }
                 isvalid = true;
-            } catch (NotLoginException e) {
+            } catch (NotLoginException | SaJwtException e) {
                 // token过期 返回401
                 try (PrintWriter printWriter = response.getWriter()) {
                     response.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -115,14 +116,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     var otherExceptionMap = Map.of(
                             BE_REPLACED, BizCodeEnum.LOGIN_REPLACED
                     );
-                    printWriter.write(JsonUtil.toJson(new Response<>().failure(otherExceptionMap.getOrDefault(e.getType(), BizCodeEnum.LOGIN_EXPIRED))));
+                    String type = (e instanceof NotLoginException exception) ? exception.getType() : "";
+                    printWriter.write(JsonUtil.toJson(new Response<>().failure(otherExceptionMap.getOrDefault(type, BizCodeEnum.LOGIN_EXPIRED))));
                     printWriter.flush();
                 }
                 return;
             }
         }
 
-        //把登录用户信息存到ThreadUser中
+        // 把登录用户信息存到ThreadUser中
         if (isvalid) {
             ThreadUser currentUser = JSONUtil.toBean(this.jdbcService.loadUserById(uid), ThreadUser.class);
             currentUser.setUserId(uid)
@@ -131,7 +133,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     .setModuleId(RequestUtil.getModuleId(request))
                     .setModuleCode(RequestUtil.getModuleCode(request));
 
-            //禁用租户设置租户id为null
+            // 禁用租户设置租户id为null
             if (!evaConfig.getTenant().isEnable()) {
                 currentUser.setTenantId(null);
                 currentUser.setTenantCode(null);
