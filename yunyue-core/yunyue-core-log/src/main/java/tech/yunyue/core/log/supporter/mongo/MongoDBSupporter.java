@@ -98,11 +98,13 @@ public class MongoDBSupporter<T extends LogEntity, E extends LogEvent> implement
                 addLikeCriteria("method", log.getMethod(), list);
                 addLikeCriteria("device", log.getDevice(), list);
                 addLikeCriteria("version", log.getVersion(), list);
+                addLikeCriteria("params", log.getParams(), list);
             } else if (logEntity instanceof ErrorlogEntity log) {
                 addLikeCriteria("ip", log.getIp(), list);
                 addLikeCriteria("class_name", log.getClassName(), list);
                 addLikeCriteria("method", log.getMethod(), list);
                 addLikeCriteria("login_user", log.getLoginUser(), list);
+                addLikeCriteria("params", log.getParams(), list);
             } else if (logEntity instanceof LoginlogEntity log) {
                 addEqCriteria("operate_type", log.getOperateType(), list);
                 addLikeCriteria("operator", log.getOperator(), list);
