@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.nimbusds.jose.shaded.gson.reflect.TypeToken;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -116,12 +115,12 @@ public class MongoDBSupporter<T extends LogEntity, E extends LogEvent> implement
             // 查询总数，当查询条件为空时用estimatedDocumentCount统计数量以优化查询速度
             totalCount = mongoTemplate.getCollection(this.dbName).estimatedDocumentCount();
         } else {
-            totalCount = mongoTemplate.count(query, this.dbName);
             query.addCriteria(new Criteria().andOperator(list));
+            totalCount = mongoTemplate.count(query, this.dbName);
         }
 
         // 增加分页条件
-        query.with(PageRequest.of(queryBo.getPageNo()-1, queryBo.getPageSize()));
+        query.with(PageRequest.of(queryBo.getPageNo() - 1, queryBo.getPageSize()));
         // 排序
         query.with(sort);
         // 构造分页返回
