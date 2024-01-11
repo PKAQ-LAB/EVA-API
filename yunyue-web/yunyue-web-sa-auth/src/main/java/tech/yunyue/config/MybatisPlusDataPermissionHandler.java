@@ -224,13 +224,12 @@ public class MybatisPlusDataPermissionHandler implements DataPermissionHandler {
      */
     private static List<ThreadUser.GrantedRoles> getPermissionRoles() {
         var rolePermissionMap = ThreadUserHelper.getRolePermission();
-        var uri = SaHolder.getRequest().getRequestPath();
         var rolesMap = ThreadUserHelper.getUsetGrantedRoles();
         return CollUtil.isEmpty(rolePermissionMap) || rolePermissionMap.size() == 1 ?
                 ThreadUserHelper.getUsetGrantedRoleList() :
                 rolePermissionMap.entrySet()
                         .stream()
-                        .filter(e -> StpUtil.getStpLogic().hasElement(e.getValue(), uri))
+                        .filter(e -> StpUtil.getStpLogic().hasElement(e.getValue(), SaHolder.getRequest().getRequestPath()))
                         .map(e -> rolesMap.get(e.getKey()))
                         .toList();
     }
