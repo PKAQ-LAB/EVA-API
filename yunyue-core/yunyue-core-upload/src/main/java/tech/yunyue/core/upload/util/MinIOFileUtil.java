@@ -13,9 +13,9 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import io.minio.*;
 import io.minio.http.Method;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
 @Component
 @Conditional(MinIOCondition.class)
 @RequiredArgsConstructor
-public class MinIOFileUtil implements FileProvider<MinIOBucketEnum> {
+public class MinIOFileUtil implements FileProvider<MinIOBucketEnum>, CommandLineRunner {
     private final EvaConfig evaConfig;
     private final MinioClient minioClient;
     public FileProvider self;
@@ -53,8 +53,8 @@ public class MinIOFileUtil implements FileProvider<MinIOBucketEnum> {
     /**
      * 初始化文件桶
      */
-    @PostConstruct
-    public void init() {
+    @Override
+    public void run(String... args) {
         // 创建存储桶 默认存储桶是私有的 只能通过外链访问 最长7天
         // 新增存储桶images文件夹的策略 改成readonly即可实现通过链接访问图片 但是访问不了该桶内别的文件
         Arrays.stream(MinIOBucketEnum.values()).forEach(bucket -> createBucket(bucket.getBucketName()));
