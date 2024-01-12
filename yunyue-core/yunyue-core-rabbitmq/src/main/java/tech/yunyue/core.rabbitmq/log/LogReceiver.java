@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 import tech.yunyue.core.log.base.BizLogEntity;
 import tech.yunyue.core.log.base.ErrorlogEntity;
@@ -16,6 +17,7 @@ import tech.yunyue.core.log.util.LogHelper;
 @ConditionalOnExpression("${eva.syslog.mq-enabled:false}")
 @Component
 @AllArgsConstructor
+@DependsOn("rabbitMQAutoConfiguration")
 public class LogReceiver {
     private final LogHelper logHelper;
 
