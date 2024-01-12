@@ -9,6 +9,7 @@ import org.springframework.amqp.core.Queue;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +26,7 @@ import java.util.*;
 @Configuration
 @ConfigurationProperties(prefix = "eva.rabbit")
 @EnableConfigurationProperties
-public class RabbitMQProperties {
+public class RabbitMQProperties implements CommandLineRunner {
     /**
      * Spring应用上下文环境
      */
@@ -147,8 +148,8 @@ public class RabbitMQProperties {
         return exchanges.stream().filter(e->e.getName().equals(name)).findFirst().orElse(null);
     }
 
-    @PostConstruct
-    public void init() {
+    @Override
+    public void run(String... args) {
         // 创建交换机
         createExchange();
         // 绑定队列和交换机
