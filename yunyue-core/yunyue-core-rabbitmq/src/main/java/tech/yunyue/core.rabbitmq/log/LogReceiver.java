@@ -1,5 +1,6 @@
 package tech.yunyue.core.rabbitmq.log;
 
+import lombok.AllArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -14,7 +15,10 @@ import tech.yunyue.core.log.util.LogHelper;
  */
 @ConditionalOnExpression("${eva.syslog.mq-enabled:false}")
 @Component
+@AllArgsConstructor
 public class LogReceiver {
+    private final LogHelper logHelper;
+
     /**
      * 操作日志
      */
@@ -22,7 +26,7 @@ public class LogReceiver {
     @RabbitListener(queues = "bizlog")
     public void process(BizLogEntity bizLogEntity) {
         // 保存到数据库中
-        LogHelper.getBizLogSupporter().save(bizLogEntity);
+        logHelper.getBizLogSupporter().save(bizLogEntity);
     }
 
     /**
@@ -32,7 +36,7 @@ public class LogReceiver {
     @RabbitHandler
     public void process(ErrorlogEntity errorlogEntity) {
         // 保存到数据库中
-        LogHelper.getErrorLogSupporter().save(errorlogEntity);
+        logHelper.getErrorLogSupporter().save(errorlogEntity);
     }
 
     /**
@@ -42,6 +46,6 @@ public class LogReceiver {
     @RabbitHandler
     public void process(LoginlogEntity loginlogEntity) {
         // 保存到数据库中
-        LogHelper.getLoginLogSupporter().save(loginlogEntity);
+        logHelper.getLoginLogSupporter().save(loginlogEntity);
     }
 }

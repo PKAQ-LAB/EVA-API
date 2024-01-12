@@ -1,8 +1,6 @@
 package tech.yunyue.core.log.util;
 
-import cn.hutool.extra.spring.SpringUtil;
-import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import tech.yunyue.core.log.base.BizLogEntity;
@@ -16,37 +14,43 @@ import tech.yunyue.core.log.events.LoginLogEvent;
 
 @Component
 public class LogHelper {
-    @Autowired
-    ApplicationEventPublisher publisher;
-    private static ApplicationEventPublisher eventPublisher;
-    private static LogSupporter bizLogSupporter;
-    private static LogSupporter errorLogSupporter;
-    private static LogSupporter loginLogSupporter;
-    @PostConstruct
-    public void init(){
-        bizLogSupporter = SpringUtil.getBean(LogConfig.BIZ_LOG_NAME);
-        errorLogSupporter = SpringUtil.getBean(LogConfig.ERROR_LOG_NAME);
-        loginLogSupporter = SpringUtil.getBean(LogConfig.LOGIN_LOG_NAME);
-        eventPublisher = publisher;
+    private final ApplicationEventPublisher eventPublisher;
+    private final LogSupporter bizLogSupporter;
+    private final LogSupporter errorLogSupporter;
+    private final LogSupporter loginLogSupporter;
+
+    public LogHelper(ApplicationEventPublisher eventPublisher,
+                     @Qualifier(LogConfig.BIZ_LOG_NAME) LogSupporter bizLogSupporter,
+                     @Qualifier(LogConfig.ERROR_LOG_NAME) LogSupporter errorLogSupporter,
+                     @Qualifier(LogConfig.LOGIN_LOG_NAME) LogSupporter loginLogSupporter) {
+        this.eventPublisher = eventPublisher;
+        this.bizLogSupporter = bizLogSupporter;
+        this.errorLogSupporter = errorLogSupporter;
+        this.loginLogSupporter = loginLogSupporter;
     }
 
-    public static void save(BizLogEntity bizLogEntity){
+    public void save(BizLogEntity bizLogEntity) {
         eventPublisher.publishEvent(new BizLogEvent(bizLogEntity));
     }
-    public static void save(ErrorlogEntity errorlogEntity){
+
+    public void save(ErrorlogEntity errorlogEntity) {
         eventPublisher.publishEvent(new ErrorLogEvent(errorlogEntity));
     }
-    public static void save(LoginlogEntity loginlogEntity){
+
+    public void save(LoginlogEntity loginlogEntity) {
         eventPublisher.publishEvent(new LoginLogEvent(loginlogEntity));
     }
 
-    public static LogSupporter getBizLogSupporter(){
+    public LogSupporter getBizLogSupporter() {
         return bizLogSupporter;
     }
-    public static LogSupporter getErrorLogSupporter(){
+
+    public LogSupporter getErrorLogSupporter() {
         return errorLogSupporter;
     }
-    public static LogSupporter getLoginLogSupporter(){
+
+    public LogSupporter getLoginLogSupporter() {
         return loginLogSupporter;
     }
+
 }

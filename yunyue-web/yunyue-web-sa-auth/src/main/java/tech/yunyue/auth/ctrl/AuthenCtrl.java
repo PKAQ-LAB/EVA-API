@@ -53,6 +53,7 @@ public class AuthenCtrl {
     private final CaptchaService captchaService;
     private final ApplicationEventPublisher publisher;
     private final JDBCService jdbcService;
+    private final LogHelper logHelper;
 
     /**
      * 登录认证
@@ -123,7 +124,7 @@ public class AuthenCtrl {
                     .setPostId(currentUser.getPostId())
                     .setOrgId(currentUser.getDeptId())
                     .setTenantId(currentUser.getTenantId());
-            LogHelper.save(loginlog);
+            logHelper.save(loginlog);
         }
         return new Response<String>().success("", BizCodeEnum.LOGINOUT_SUCCESS);
     }
