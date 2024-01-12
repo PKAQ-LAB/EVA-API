@@ -5,7 +5,6 @@ import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.annotation.TableName;
-import jakarta.annotation.PostConstruct;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -24,15 +23,9 @@ import java.util.*;
 @Component
 public class HistoryUtil<T> {
     @Autowired
-    MongoTemplate template;
-    public static MongoTemplate mongoTemplate;
-    public HistoryUtil self;
+    private MongoTemplate mongoTemplate;
+    private HistoryUtil self;
     public static final Sort sort = Sort.by(Sort.Direction.DESC, "_id");
-
-    @PostConstruct
-    public void init() {
-        mongoTemplate = template;
-    }
 
     /**
      * 存储历史数据到mongo中 entity对象需要有@TableName或者@HistoryLog标识表名
@@ -73,7 +66,7 @@ public class HistoryUtil<T> {
      * @param clazz 需要转换的数据类型  有@TableName或者@HistoryLog标识表名
      * @return 有序map
      */
-    public static <T> List<JSONObject> getModifyRecords(String id, Class<T> clazz) {
+    public <T> List<JSONObject> getModifyRecords(String id, Class<T> clazz) {
         return getModifyRecords(getTableName(clazz), id);
     }
 
@@ -82,10 +75,9 @@ public class HistoryUtil<T> {
      *
      * @param collectionName 集合名称
      * @param id             需要查询历史快照的数据的标识 在@HistoryLog注解中以什么字段为标识则传什么 默认为id
-     * @param clazz          需要转换的数据类型
      * @return 有序map
      */
-    public static List<JSONObject> getModifyRecords(String collectionName, String id) {
+    public List<JSONObject> getModifyRecords(String collectionName, String id) {
         var query = Query.query(Criteria.where(LogConstant.MONGO_HISTORY_TABLE_MARK).is(id)).with(sort);
         query.fields().include(LogConstant.MONGO_HISTORY_TABLE_MARK, LogConstant.MONGO_CREATE_TIME, LogConstant.MONGO_CREATE_NAME);
         var list = mongoTemplate
@@ -103,7 +95,7 @@ public class HistoryUtil<T> {
      * @param mid   mongo中的id
      * @param clazz 需要转换的数据类型 有@TableName或者@HistoryLog标识表名
      */
-    public static <T> Map<String, T> contrastLast(String mid, Class<T> clazz) {
+    public <T> Map<String, T> contrastLast(String mid, Class<T> clazz) {
         return contrastLast(getTableName(clazz), mid, clazz);
     }
 
@@ -114,7 +106,7 @@ public class HistoryUtil<T> {
      * @param mid            mongo中的id
      * @param clazz          需要转换的数据类型
      */
-    public static <T> Map<String, T> contrastLast(String collectionName, String mid, Class<T> clazz) {
+    public <T> Map<String, T> contrastLast(String collectionName, String mid, Class<T> clazz) {
         Map<String, T> map = new HashMap<>(2);
         ObjectId objectId = new ObjectId(mid);
         // 根据mid查出本次的修改  不能直接转clazz
@@ -135,7 +127,7 @@ public class HistoryUtil<T> {
      * @param mid   mongo中的id
      * @param clazz 需要转换的数据类型 有@TableName或者@HistoryLog标识表名
      */
-    public static <T> T getById(String mid, Class<T> clazz) {
+    public <T> T getById(String mid, Class<T> clazz) {
         return getById(getTableName(clazz), mid, clazz);
     }
 
@@ -146,7 +138,7 @@ public class HistoryUtil<T> {
      * @param mid            mongo中的id
      * @param clazz          需要转换的数据类型
      */
-    public static <T> T getById(String collectionName, String mid, Class<T> clazz) {
+    public <T> T getById(String collectionName, String mid, Class<T> clazz) {
         // 根据mid查出本次的修改  不能直接转clazz
         var obj = mongoTemplate.findById(new ObjectId(mid), JSONObject.class, collectionName);
         return JSONUtil.toBean(obj, clazz);
@@ -159,7 +151,7 @@ public class HistoryUtil<T> {
         return self;
     }
 
-    private static String getTableName(Class clazz) {
+    private String getTableName(Class clazz) {
         TableName tableName = (TableName) clazz.getAnnotation(TableName.class);
         HistoryLog historyLog = (HistoryLog) clazz.getAnnotation(HistoryLog.class);
         if (tableName == null && historyLog == null) {
