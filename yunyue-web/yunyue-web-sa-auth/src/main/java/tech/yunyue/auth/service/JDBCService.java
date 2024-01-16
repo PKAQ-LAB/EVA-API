@@ -87,14 +87,15 @@ public class JDBCService {
     @Cacheable(cacheNames = CommonConstant.CACHE_SYSDATA, key = "'" + CommonConstant.REDIS_ROLES_PERMISSION_PREFIX_KEY + "'" + "+#roleId")
     public List<String> listRoleNamesWithPath(String roleId) {
         try {
-            String sql = "SELECT REPLACE(CONCAT(IFNULL(GROUP_CONCAT(B.PATH ORDER BY FIND_IN_SET( B.ID, A.PATH_ID)),''),',',ANY_VALUE(A.PATH)),',','') AS PATH " +
-                    "FROM ( " +
-                    "SELECT DISTINCT  CONCAT(M.ID,',',MR.ID) ID,M.PATH_ID, REPLACE(CONCAT(M.PATH,'/',MR.RESOURCE_URL),'//','/') PATH " +
+            String sql = "SELECT DISTINCT REPLACE(CONCAT(M.AUTHEN_PATH,'/',MR.RESOURCE_URL),'//','/') PATH " +
                     "FROM SYS_MODULE_RESOURCES MR, SYS_ROLE_MODULE RM, SYS_MODULE M, SYS_ROLE R " +
-                    "WHERE RM.MODULE_ID = M.ID AND RM.ROLE_ID = R.ID AND M.ID = MR.MODULE_ID AND RM.RESOURCE_ID = MR.ID AND M.ISLEAF = '1' " +
-                    "AND R.ID = ? )A " +
-                    "LEFT JOIN SYS_MODULE B ON FIND_IN_SET( B.ID, A.PATH_ID) " +
-                    "GROUP BY A.ID";
+                    "WHERE RM.MODULE_ID = M.ID " +
+                    "AND RM.ROLE_ID = R.ID " +
+                    "AND M.ID = MR.MODULE_ID " +
+                    "AND RM.RESOURCE_ID = MR.ID " +
+                    "AND M.ISLEAF = '1' " +
+                    "AND R.ID = ?" +
+                    "AND CHAR_LENGTH(M.AUTHEN_PATH) != 0;";
             return this.jdbcTemplate.queryForList(sql, String.class, roleId);
         } catch (EmptyResultDataAccessException e) {
             return Collections.emptyList();
