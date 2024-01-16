@@ -94,7 +94,7 @@ public class JDBCService {
                     "AND M.ID = MR.MODULE_ID " +
                     "AND RM.RESOURCE_ID = MR.ID " +
                     "AND M.ISLEAF = '1' " +
-                    "AND R.ID = ?" +
+                    "AND R.ID = ? " +
                     "AND CHAR_LENGTH(M.AUTHEN_PATH) != 0;";
             return this.jdbcTemplate.queryForList(sql, String.class, roleId);
         } catch (EmptyResultDataAccessException e) {
