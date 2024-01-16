@@ -92,6 +92,8 @@ public class MongoDBSupporter<T extends LogEntity, E extends LogEvent> implement
         Optional.ofNullable(queryBo.getLogEntity()).ifPresent(logEntity -> {
             if (logEntity instanceof BizLogEntity log) {
                 addEqCriteria("operate_type", log.getOperateType(), list);
+                addEqCriteria("b_id", log.getBId(), list);
+                addEqCriteria("m_code", log.getMCode(), list);
                 addLikeCriteria("operator", log.getOperator(), list);
                 addLikeCriteria("class_name", log.getClassName(), list);
                 addLikeCriteria("method", log.getMethod(), list);
