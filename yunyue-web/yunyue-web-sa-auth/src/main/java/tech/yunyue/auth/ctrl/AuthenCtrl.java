@@ -3,6 +3,7 @@ package tech.yunyue.auth.ctrl;
 import cn.dev33.satoken.config.SaTokenConfig;
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.exception.SaTokenException;
+import cn.dev33.satoken.spring.SpringMVCUtil;
 import cn.dev33.satoken.stp.SaLoginConfig;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.date.DateUtil;
@@ -33,6 +34,7 @@ import tech.yunyue.core.mvc.vo.Response;
 import tech.yunyue.core.properties.EvaConfig;
 import tech.yunyue.core.threaduser.ThreadUser;
 import tech.yunyue.core.util.json.JsonUtil;
+import tech.yunyue.core.web.util.IpUtil;
 import tech.yunyue.core.web.util.RequestUtil;
 
 import java.io.IOException;
@@ -123,6 +125,7 @@ public class AuthenCtrl {
                     .setCreateId(userId)
                     .setPostId(currentUser.getPostId())
                     .setOrgId(currentUser.getDeptId())
+                    .setIp(IpUtil.getIPAddress(SpringMVCUtil.getRequest()))
                     .setTenantId(currentUser.getTenantId());
             logHelper.save(loginlog);
         }

@@ -43,6 +43,11 @@ public class LoginlogEntity extends LogEntity {
     @Schema(description = "应用版本")
     private String version;
     /**
+     * 请求ip
+     **/
+    @Schema(description = "请求ip")
+    private String ip;
+    /**
      * 创建人岗位ID
      */
     @Schema(description = "创建人岗位ID")
