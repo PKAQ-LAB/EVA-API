@@ -6,7 +6,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import tech.yunyue.core.log.base.ErrorlogEntity;
 import tech.yunyue.core.log.events.ErrorLogEvent;
 import tech.yunyue.core.threaduser.ThreadUserHelper;
-import tech.yunyue.core.util.json.JsonUtil;
 import tech.yunyue.core.web.util.IpUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +18,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import tech.yunyue.core.web.util.RequestUtil;
 
 import java.util.Arrays;
 
@@ -59,8 +59,8 @@ public class WebLogAdvice {
             log.debug("---------------------------start---------------------------");
             log.debug("URL : " + request.getRequestURL().toString());
             log.debug("Header: " + request.getHeaderNames());
-            log.debug("Device: " + request.getHeader("device"));
-            log.debug("Version: " + request.getHeader("version"));
+            log.debug("Device: " + RequestUtil.getDeivce(request));
+            log.debug("Version: " + RequestUtil.getVersion(request));
             log.debug("HTTP_METHOD : " + request.getMethod());
             log.debug("IP : " + ip);
             log.debug("CLASS_NAME : " + className);
