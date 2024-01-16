@@ -41,6 +41,10 @@ public class ThreadUser implements Serializable {
     private String postId;
     // 当前用户所有角色与其对应的path权限 当前路径是无需资源鉴权的路径||没打开资源鉴权时，该map为null（资源鉴权时才会设置角色和其权限）
     private Map<String, List<String>> rolePermissonMap;
+    // 当前用户的设备类型
+    private String device;
+    // 当前用户的应用版本
+    private String version;
 
     @Data
     @AllArgsConstructor

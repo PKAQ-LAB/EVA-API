@@ -131,7 +131,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     .setAccount(account)
                     .setRolesMap(this.jdbcService.getRoleById(uid))
                     .setModuleId(RequestUtil.getModuleId(request))
-                    .setModuleCode(RequestUtil.getModuleCode(request));
+                    .setModuleCode(RequestUtil.getModuleCode(request))
+                    .setDevice(RequestUtil.getDeivce(request))
+                    .setVersion(RequestUtil.getVersion(request));
 
             // 禁用租户设置租户id为null
             if (!evaConfig.getTenant().isEnable()) {

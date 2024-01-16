@@ -222,4 +222,24 @@ public class ThreadUserHelper {
         return Optional.ofNullable(userThreadLocal.get()).map(ThreadUser::getRolePermissonMap).orElse(Collections.emptyMap());
     }
 
+    /**
+     * 当前用户的设备类型
+     *
+     * @return
+     */
+    public static String getDevice() {
+        return Optional.ofNullable(userThreadLocal.get())
+                .map(ThreadUser::getDevice).orElse("");
+    }
+
+    /**
+     * 当前用户的应用版本
+     *
+     * @return
+     */
+    public static String getVersion() {
+        return Optional.ofNullable(userThreadLocal.get())
+                .map(ThreadUser::getVersion).orElse("");
+    }
+
 }
