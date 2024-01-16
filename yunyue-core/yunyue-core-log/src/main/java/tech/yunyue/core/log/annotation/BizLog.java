@@ -55,11 +55,11 @@ public @interface BizLog {
     String[] args() default {};
 
     /**
-     * 格式化日志描述的参数名
-     * @BizLog(bizId = {"id"})  取方法返回对象的id属性值
-     * @BizLog(bizId = {"this"})  取方法返回值[当返回对象是基本数据类型或者string类型时]
-     * @BizLog(bizId = {"param:0"})  取方法第一个入参的属性值
-     * @BizLog(bizId = {"param:1.id"})  取方法第一个入参的id属性值
+     * 业务日志的参数名
+     * @BizLog(bizId = "id")  取方法返回对象的id属性值
+     * @BizLog(bizId = "this")  取方法返回值[当返回对象是基本数据类型或者string类型时]
+     * @BizLog(bizId = "param:0")  取方法第一个入参的属性值
+     * @BizLog(bizId = "param:1.id")  取方法第一个入参的id属性值
      */
     String bizId() default "";
 }
