@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.exceptions.UtilException;
 import cn.hutool.core.util.ReflectUtil;
+import cn.hutool.http.HttpUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,8 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import tech.yunyue.core.log.annotation.BizLog;
 import tech.yunyue.core.log.base.BizLogEntity;
 import tech.yunyue.core.log.base.BizLogEnum;
@@ -46,6 +49,8 @@ public class BizLogAdvice {
 
     @Around("bizLog()")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
+        //记录开始时间
+        long beginTime = System.currentTimeMillis();
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         BizLog bizlog = signature.getMethod().getAnnotation(BizLog.class);
         boolean isTransactional = Objects.nonNull(signature.getMethod().getAnnotation(Transactional.class)); // 是否是事务方法
@@ -75,6 +80,9 @@ public class BizLogAdvice {
                 .setClassName(className)
                 .setMethod(methodName)
                 .setParams(args)
+                .setMCode(ThreadUserHelper.getMcode())
+                .setDevice(ThreadUserHelper.getDevice())
+                .setVersion(ThreadUserHelper.getVersion())
                 .setCreateId(ThreadUserHelper.getUserId())
                 .setPostId(ThreadUserHelper.getPostId())
                 .setOrgId(ThreadUserHelper.getOrgId())
@@ -98,6 +106,7 @@ public class BizLogAdvice {
                 processArgs(joinPoint.getArgs(), bizlog.args(), formatArgs);
             }
             bizLogEntity.setDescription(MessageFormat.format(description, formatArgs));
+            bizLogEntity.setSpendTime(String.valueOf(System.currentTimeMillis() - beginTime));
             // 触发事件 使用事务监听器异步保存操作记录
             eventPublisher.publishEvent(new BizLogEvent(bizLogEntity));
         }

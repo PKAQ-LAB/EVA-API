@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-public class BizLogEntity extends LogEntity{
+public class BizLogEntity extends LogEntity {
     /**
      * 操作人
      **/
@@ -28,10 +28,25 @@ public class BizLogEntity extends LogEntity{
     @Schema(description = "操作时间")
     private String operateDatetime;
     /**
+     * 请求耗时
+     **/
+    @Schema(description = "请求耗时")
+    private String spendTime;
+    /**
      * 操作描述
      **/
     @Schema(description = "操作描述")
     private String description;
+    /**
+     * 模块code
+     **/
+    @Schema(description = "模块code")
+    private String mCode;
+    /**
+     * 业务id
+     **/
+    @Schema(description = "业务id")
+    private String bId;
     /**
      * 类名
      **/
@@ -82,7 +97,7 @@ public class BizLogEntity extends LogEntity{
 
     @Override
     public String toString() {
-        return  "用户操作了系统：[" +
+        return "用户操作了系统：[" +
                 "操作用户 ='" + operator + '\'' +
                 ", 操作类型 ='" + operateType + '\'' +
                 ", 操作描述 ='" + description + '\'' +

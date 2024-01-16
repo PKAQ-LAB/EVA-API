@@ -11,6 +11,7 @@ import tech.yunyue.core.log.config.LogConfig;
 import tech.yunyue.core.log.events.BizLogEvent;
 import tech.yunyue.core.log.events.ErrorLogEvent;
 import tech.yunyue.core.log.events.LoginLogEvent;
+import tech.yunyue.core.threaduser.ThreadUserHelper;
 
 @Component
 public class LogHelper {
@@ -30,6 +31,13 @@ public class LogHelper {
     }
 
     public void save(BizLogEntity bizLogEntity) {
+        bizLogEntity.setMCode(ThreadUserHelper.getMcode())
+                .setDevice(ThreadUserHelper.getDevice())
+                .setVersion(ThreadUserHelper.getVersion())
+                .setCreateId(ThreadUserHelper.getUserId())
+                .setPostId(ThreadUserHelper.getPostId())
+                .setOrgId(ThreadUserHelper.getOrgId())
+                .setTenantId(ThreadUserHelper.getTenantId());
         eventPublisher.publishEvent(new BizLogEvent(bizLogEntity));
     }
 
