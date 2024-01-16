@@ -55,7 +55,7 @@ public @interface BizLog {
     String[] args() default {};
 
     /**
-     * 业务日志的参数名
+     * 业务id的参数名
      * @BizLog(bizId = "id")  取方法返回对象的id属性值
      * @BizLog(bizId = "this")  取方法返回值[当返回对象是基本数据类型或者string类型时]
      * @BizLog(bizId = "param:0")  取方法第一个入参的属性值
