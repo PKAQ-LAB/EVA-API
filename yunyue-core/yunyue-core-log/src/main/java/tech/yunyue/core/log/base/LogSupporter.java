@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
@@ -50,6 +51,13 @@ public interface LogSupporter<T extends LogEntity, E extends LogEvent> {
      * 根据查询条件获取分页日志列表
      */
     IPage<T> getLogByQuery(LogQueryBo<T> queryBo);
+
+    /**
+     * 根据查询条件获取分页日志列表, 指定返回的对象类型
+     */
+    default <U> IPage<U> getLogByQuery(LogQueryBo<T> queryBo, Class<U> uClass){
+        return new Page<>(queryBo.getPageNo(), queryBo.getPageSize());
+    }
 
     /**
      * 获取指定操作类型的日志

@@ -76,6 +76,11 @@ public class MongoDBSupporter<T extends LogEntity, E extends LogEvent> implement
 
     @Override
     public IPage<T> getLogByQuery(LogQueryBo<T> queryBo) {
+        return getLogByQuery(queryBo, clazz);
+    }
+
+    @Override
+    public <U> IPage<U> getLogByQuery(LogQueryBo<T> queryBo, Class<U> uClass) {
         // 总数
         long totalCount;
 
@@ -126,11 +131,12 @@ public class MongoDBSupporter<T extends LogEntity, E extends LogEvent> implement
         // 排序
         query.with(sort);
         // 构造分页返回
-        IPage<T> pageVo = new Page<>(queryBo.getPageNo(), queryBo.getPageSize());
-        pageVo.setRecords(mongoTemplate.find(query, clazz, this.dbName));
+        IPage<U> pageVo = new Page<>(queryBo.getPageNo(), queryBo.getPageSize());
+        pageVo.setRecords(mongoTemplate.find(query, uClass, this.dbName));
         pageVo.setTotal(totalCount);
         return pageVo;
     }
+
 
     /**
      * 如果value不为空 则往集合中添加一个key=value的Criteria
