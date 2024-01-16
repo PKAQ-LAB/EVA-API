@@ -3,8 +3,9 @@ package tech.yunyue.core.log.pointcut;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.exceptions.UtilException;
+import cn.hutool.core.text.CharSequenceUtil;
+import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ReflectUtil;
-import cn.hutool.http.HttpUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +17,6 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import tech.yunyue.core.log.annotation.BizLog;
 import tech.yunyue.core.log.base.BizLogEntity;
 import tech.yunyue.core.log.base.BizLogEnum;
@@ -49,8 +48,9 @@ public class BizLogAdvice {
 
     @Around("bizLog()")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
-        //记录开始时间
+        // 记录开始时间
         long beginTime = System.currentTimeMillis();
+
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         BizLog bizlog = signature.getMethod().getAnnotation(BizLog.class);
         boolean isTransactional = Objects.nonNull(signature.getMethod().getAnnotation(Transactional.class)); // 是否是事务方法
@@ -66,8 +66,12 @@ public class BizLogAdvice {
         var methodName = joinPoint.getSignature().getName();
         var args = JsonUtil.toJson(joinPoint.getArgs());
         // 根据方法入参设置操作描述的格式化参数 并返回需要的响应参数名
-        var formatArgs = new Object[bizlog.args().length];
-        var rMap = processArgs(joinPoint.getArgs(), bizlog.args(), formatArgs);
+        var descriptionArgs = bizlog.args();
+        if (CharSequenceUtil.isNotBlank(bizlog.bizId())) {
+            descriptionArgs = ArrayUtil.append(descriptionArgs, bizlog.bizId());
+        }
+        var formatArgs = new Object[descriptionArgs.length];
+        var rMap = processArgs(joinPoint.getArgs(), descriptionArgs, formatArgs);
         // 根据参数的某个属性是否为空来判断是新增还是修改
         var operatorType = bizlog.operateType();
         if (BizLogEnum.CREATE_UPDATE.equals(operatorType)) {
@@ -103,7 +107,10 @@ public class BizLogAdvice {
         } finally {
             // 操作类型为新增 id在新增之后才会回显到入参中 所以需要重新处理一下
             if (BizLogEnum.CREATE.equals(operatorType)) {
-                processArgs(joinPoint.getArgs(), bizlog.args(), formatArgs);
+                processArgs(joinPoint.getArgs(), descriptionArgs, formatArgs);
+            }
+            if (CharSequenceUtil.isNotBlank(bizlog.bizId())) {
+                bizLogEntity.setBId(formatArgs[formatArgs.length - 1].toString());
             }
             bizLogEntity.setDescription(MessageFormat.format(description, formatArgs));
             bizLogEntity.setSpendTime(String.valueOf(System.currentTimeMillis() - beginTime));
@@ -122,12 +129,12 @@ public class BizLogAdvice {
      *                   MessageFormat.format(bizCode.getMsg(), args)
      * @return 返回值的属性和它们在formatArgs的下标
      */
-    private Map<String, Integer> processArgs(Object args[], String[] bizArgs, Object[] formatArgs) {
+    private Map<String, List<Integer>> processArgs(Object args[], String[] bizArgs, Object[] formatArgs) {
         if (bizArgs.length == 0) return null;
 
         // format需要的方法入参/返回值的属性名和顺序
-        Map<String, Integer> pMap = new HashMap(bizArgs.length);
-        Map<String, Integer> rMap = new HashMap<>(bizArgs.length);
+        Map<String, List<Integer>> pMap = new HashMap(bizArgs.length);
+        Map<String, List<Integer>> rMap = new HashMap<>(bizArgs.length);
         // 方法的第几个参数和所需的属性
         Map<Integer, List<String>> pArgsMap = new HashMap<>(bizArgs.length);
         int i = 0;
@@ -136,15 +143,13 @@ public class BizLogAdvice {
                 // 操作描述的format值来自于方法入参
                 if (param.startsWith(formatArg)) {
                     var pValue = param.substring(formatArg.length());
-                    pMap.put(pValue, i++);
+                    pMap.computeIfAbsent(pValue, k -> new ArrayList<>()).add(i++);
 
                     // 复杂对象 0.xxx  需要第1个参数的xxx属性
                     if (pValue.length() > 1) {
                         // 第几个入参和所需的属性名
                         var key = Integer.valueOf(pValue.substring(0, 1));
-                        List<String> names = pArgsMap.getOrDefault(key, new ArrayList());
-                        names.add(pValue.substring(2));
-                        pArgsMap.put(key, names);
+                        pArgsMap.computeIfAbsent(key, k -> new ArrayList<>()).add(pValue.substring(2));
                         continue;
                     }
                     // 简单对象 0 需要第1个参数的值
@@ -152,29 +157,30 @@ public class BizLogAdvice {
                     continue;
                 }
                 // 操作描述的format值来自于方法返回值
-                rMap.put(param, i++);
+                rMap.computeIfAbsent(param, k -> new ArrayList<>()).add(i++);
             }
 
             // 根据所需入参 得到实际的值 并放在formatArgs中
             if (pMap.size() == 0) return rMap;
             // k表示 方法的入参下标  v表示这个下标对象的属性
             pArgsMap.forEach((k, v) -> {
+                String key = k.toString();
+                Object val = args[k];
                 if (v != null) {
                     for (String n : v) {
                         // 复杂对象
-                        int index = pMap.get(k + "." + n);
+                        key = "%s.%s".formatted(k, n);
                         var obj = args[k];
                         try {
-                            formatArgs[index] = getFieldValue(obj, n);
+                            val = getFieldValue(obj, n);
                         } catch (UtilException e) {
-                            formatArgs[index] = "";
+                            val = "";
                             log.error("根据方法实参构造格式化参数异常:" + e.getMessage());
                         }
                     }
-                } else {
-                    // 简单对象
-                    formatArgs[pMap.get(k.toString())] = args[k];
                 }
+                Object finalVal = val;
+                pMap.get(key).forEach(index -> formatArgs[index] = finalVal);
             });
         } catch (Exception e) {
             log.error("记录日志异常:" + e.getMessage());
@@ -190,7 +196,7 @@ public class BizLogAdvice {
      * @param rMap       format需要的方法返回值的属性名和顺序
      * @param result     方法的返回对象
      */
-    private void processResult(Object result, Map<String, Integer> rMap, Object[] formatArgs) {
+    private void processResult(Object result, Map<String, List<Integer>> rMap, Object[] formatArgs) {
         if (CollectionUtil.isEmpty(rMap)) return;
         try {
             rMap.forEach((k, v) -> {
@@ -203,7 +209,8 @@ public class BizLogAdvice {
                         log.error("根据返回对象构造格式化参数异常:" + e.getMessage());
                     }
                 }
-                formatArgs[v] = value;
+                Object finalValue = value;
+                v.forEach(index->formatArgs[index] = finalValue);
             });
         } catch (Exception e) {
             log.error("记录日志异常:" + e.getMessage());
