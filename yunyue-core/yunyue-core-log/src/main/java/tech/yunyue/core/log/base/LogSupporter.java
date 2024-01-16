@@ -10,7 +10,6 @@ import org.springframework.transaction.event.TransactionalEventListener;
 import tech.yunyue.core.log.base.bo.LogQueryBo;
 import tech.yunyue.core.log.events.LogEvent;
 
-import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.Date;
@@ -26,9 +25,11 @@ public interface LogSupporter<T extends LogEntity, E extends LogEvent> {
 
     /**
      * 得到真正的T和E的type
+     *
      * @return
      */
     Type[] getRealTE();
+
     /**
      * 保存日志
      */
@@ -42,7 +43,7 @@ public interface LogSupporter<T extends LogEntity, E extends LogEvent> {
     /**
      * 获取日志详情
      */
-    T  getLogById(String id);
+    T getLogById(String id);
 
     /**
      * 根据查询条件获取分页日志列表
@@ -61,32 +62,32 @@ public interface LogSupporter<T extends LogEntity, E extends LogEvent> {
      * 监听有事务且成功提交 或者 没有事务<br/>
      * 异步保存操作日志
      */
-    @TransactionalEventListener(phase=TransactionPhase.AFTER_COMMIT,fallbackExecution=true)
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
     @Async("log_task")
     default void listenerCommit(E event) {
         // 接收的类型匹配才进行保存操作
-        if(checkMatch(event))  this.save( (T) event.getSource());
+        if (checkMatch(event)) this.save((T) event.getSource());
     }
 
     /**
      * 监听存在事务且事务回滚的BizLogEvent事件<br/>
      * 异步保存失败操作日志
      */
-    @TransactionalEventListener(phase= TransactionPhase.AFTER_ROLLBACK)
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_ROLLBACK)
     @Async("log_task")
-     default void listenerRollbask(E event) {
+    default void listenerRollbask(E event) {
         T logEntity = (T) event.getSource();
-        if(Objects.nonNull(logEntity)){
+        if (Objects.nonNull(logEntity)) {
             try {
                 // 给日志的描述加上失败标记
-                Field field = ReflectUtil.getField(logEntity.getClass(),"description");
+                Field field = ReflectUtil.getField(logEntity.getClass(), "description");
                 String des = StrUtil.toStringOrNull(ReflectUtil.getFieldValue(logEntity, field));
-                field.set(logEntity, "【操作失败】"+ des);
-            } catch (Exception ignored){
+                field.set(logEntity, "【操作失败】" + des);
+            } catch (Exception ignored) {
                 // 设置参数失败，不处理
             } finally {
                 // 接收的类型匹配才进行保存操作
-                if (checkMatch(event))  this.save(logEntity);
+                if (checkMatch(event)) this.save(logEntity);
             }
         }
 
@@ -97,18 +98,18 @@ public interface LogSupporter<T extends LogEntity, E extends LogEvent> {
             var actualTypeE = getRealTE()[1].getTypeName();
             var parameE = event.getClass().getName();
             return actualTypeE.contains(parameE);
-        } catch (Exception ignored){
+        } catch (Exception ignored) {
             return false;
         }
     }
 
     default Object getActualTObj(T t) {
         try {
-            var clazz = (Class)getRealTE()[0];
+            var clazz = (Class) getRealTE()[0];
             var actualObj = clazz.getDeclaredConstructor().newInstance();
             BeanUtil.copyProperties(t, actualObj);
             return actualObj;
-        } catch (Exception ignored){
+        } catch (Exception ignored) {
             return null;
         }
     }
