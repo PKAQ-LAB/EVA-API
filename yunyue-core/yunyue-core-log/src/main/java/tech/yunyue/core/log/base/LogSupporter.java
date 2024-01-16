@@ -22,6 +22,7 @@ import java.util.Objects;
  * @author: S.PKAQ
  */
 public interface LogSupporter<T extends LogEntity, E extends LogEvent> {
+    String FAILURE_PREFIX = "【操作失败】";
 
     /**
      * 得到真正的T和E的type
@@ -77,17 +78,17 @@ public interface LogSupporter<T extends LogEntity, E extends LogEvent> {
     @Async("log_task")
     default void listenerRollbask(E event) {
         T logEntity = (T) event.getSource();
-        if (Objects.nonNull(logEntity)) {
+        // 接收的类型匹配才进行保存操作
+        if (checkMatch(event) && Objects.nonNull(logEntity)) {
             try {
                 // 给日志的描述加上失败标记
                 Field field = ReflectUtil.getField(logEntity.getClass(), "description");
                 String des = StrUtil.toStringOrNull(ReflectUtil.getFieldValue(logEntity, field));
-                field.set(logEntity, "【操作失败】" + des);
+                field.set(logEntity, "%s%s".formatted(FAILURE_PREFIX, des));
             } catch (Exception ignored) {
                 // 设置参数失败，不处理
             } finally {
-                // 接收的类型匹配才进行保存操作
-                if (checkMatch(event)) this.save(logEntity);
+                this.save(logEntity);
             }
         }
 

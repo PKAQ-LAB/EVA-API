@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tech.yunyue.core.log.annotation.BizLog;
 import tech.yunyue.core.log.base.BizLogEntity;
 import tech.yunyue.core.log.base.BizLogEnum;
+import tech.yunyue.core.log.base.LogSupporter;
 import tech.yunyue.core.log.events.BizLogEvent;
 import tech.yunyue.core.threaduser.ThreadUserHelper;
 import tech.yunyue.core.util.json.JsonUtil;
@@ -89,7 +90,7 @@ public class BizLogAdvice {
             processResult(result, rMap, formatArgs);
         } catch (Exception e) {
             // 无事务时操作失败不会走AFTER_ROLLBACK监听器 所以手动设置操作失败的记录
-            if (!isTransactional) description = "【操作失败】" + description;
+            if (!isTransactional) description = "%s%s".formatted(LogSupporter.FAILURE_PREFIX, description);
             throw e;
         } finally {
             // 操作类型为新增 id在新增之后才会回显到入参中 所以需要重新处理一下
