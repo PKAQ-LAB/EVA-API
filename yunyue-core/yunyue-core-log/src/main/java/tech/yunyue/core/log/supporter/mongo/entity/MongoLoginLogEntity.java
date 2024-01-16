@@ -10,6 +10,7 @@ import java.util.Date;
  */
 @Data
 public class MongoLoginLogEntity extends LoginlogEntity {
+    private String id;
     /**
      * mongo TTL索引使用
      **/

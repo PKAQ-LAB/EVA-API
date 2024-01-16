@@ -12,6 +12,7 @@ import java.util.Date;
  */
 @Data
 public class MongoBizLogEntity extends BizLogEntity {
+    private String id;
     /**
      * mongo TTL索引使用
      **/
