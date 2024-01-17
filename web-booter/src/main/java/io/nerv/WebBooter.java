@@ -1,6 +1,5 @@
 package io.nerv;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -16,10 +15,9 @@ import org.springframework.context.annotation.ComponentScan;
 @Slf4j
 @EnableCaching
 @SpringBootApplication
-@AllArgsConstructor
 @ComponentScan(basePackages = {"io.nerv.*"})
 public class WebBooter implements CommandLineRunner {
-//    private final DictService dictService;
+
 
     public static void main(String[] args) {
         SpringApplication.run(WebBooter.class, args);
@@ -27,7 +25,6 @@ public class WebBooter implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-//        dictService.init();
         log.info(" ---- WEB BOOTER STARTED ---- ");
     }
 }

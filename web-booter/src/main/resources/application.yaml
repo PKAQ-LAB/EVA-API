@@ -60,7 +60,7 @@ server:
       charset: utf-8
       enabled: true
       force: true
-  port: 9018
+  port: 9016
   #  2.3.0 新支持, 优雅关机
   shutdown: graceful
 eva:
