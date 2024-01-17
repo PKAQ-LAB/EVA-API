@@ -4,6 +4,7 @@ import lombok.Data;
 import org.springframework.util.unit.DataSize;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 文件上传配置类
@@ -32,7 +33,13 @@ public class Upload {
     private int scaleWidth = 300;
     private int scaleHeight = 300;
 
+    // 预览链接失效时间
+    private int duration = 1;
+    // 预览链接失效时间单位
+    private TimeUnit timeUnit = TimeUnit.MINUTES;
+
     private MinIO minIo;
+
     @Data
     public static class MinIO {
         private String url;
@@ -41,6 +48,7 @@ public class Upload {
     }
 
     private Oss oss;
+
     @Data
     public static class Oss {
         private String url;

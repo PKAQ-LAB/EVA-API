@@ -23,6 +23,7 @@ import org.springframework.util.unit.DataSize;
 import org.springframework.web.multipart.MultipartFile;
 import tech.yunyue.core.enums.BizCodeEnum;
 import tech.yunyue.core.properties.EvaConfig;
+import tech.yunyue.core.properties.Upload;
 import tech.yunyue.core.upload.condition.MinIOCondition;
 import tech.yunyue.core.upload.enumm.MinIOBucketEnum;
 
@@ -60,7 +61,7 @@ public class MinIOFileUtil implements FileProvider<MinIOBucketEnum>, CommandLine
         Arrays.stream(MinIOBucketEnum.values()).forEach(bucket -> createBucket(bucket.getBucketName()));
 
         // 初始化后缀限制的文件大小  系统配置的好几个后缀对应一个限制长度，拆分成每个后缀对应一个限制长度
-        var sysMap = evaConfig.getUpload().getSuffixMaxSize();
+        var sysMap = getConfig().getSuffixMaxSize();
         Optional.ofNullable(sysMap).ifPresent(map -> {
             map.forEach((key, value) -> {
                 for (String suffix : key.split(",")) {
@@ -194,7 +195,7 @@ public class MinIOFileUtil implements FileProvider<MinIOBucketEnum>, CommandLine
      * @return 文件名
      */
     private String uploadFile(MultipartFile file, MinIOBucketEnum target, String fileName) {
-        var uploadConfig = evaConfig.getUpload();
+        var uploadConfig = getConfig();
         // 后缀名
         String suffixName = FileUtil.extName(fileName);
         // 判断上传文件是否符合格式
@@ -288,7 +289,7 @@ public class MinIOFileUtil implements FileProvider<MinIOBucketEnum>, CommandLine
      */
     @Override
     public void storageWithThumbnail(String... filenames) {
-        var upload = evaConfig.getUpload();
+        var upload = getConfig();
         storageWithThumbnail(upload.getScaleWidth(), upload.getScaleHeight(), filenames);
     }
 
@@ -542,7 +543,7 @@ public class MinIOFileUtil implements FileProvider<MinIOBucketEnum>, CommandLine
                             .method(Method.GET)
                             .bucket(target.getBucketName())
                             .object(fileName)
-                            .expiry(5, TimeUnit.MINUTES)
+                            .expiry(getConfig().getDuration(), getConfig().getTimeUnit())
                             .build());
         } catch (Exception e) {
             e.printStackTrace();
@@ -606,5 +607,8 @@ public class MinIOFileUtil implements FileProvider<MinIOBucketEnum>, CommandLine
             self = SpringUtil.getBean(FileProvider.class);
         }
         return self;
+    }
+    Upload getConfig(){
+        return evaConfig.getUpload();
     }
 }
