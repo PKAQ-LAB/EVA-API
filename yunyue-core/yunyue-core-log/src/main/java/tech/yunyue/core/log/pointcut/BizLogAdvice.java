@@ -97,7 +97,7 @@ public class BizLogAdvice {
             result = joinPoint.proceed();
             var response = JsonUtil.toJson(result);
             // 查询接口不需要保存响应
-            if (!operatorType.equals(BizLogEnum.QUERY)) bizLogEntity.setResponse(response);
+            if (!operatorType.equals(BizLogEnum.QUERY) && response != null) bizLogEntity.setResponse(response);
             // 根据响应设置操作描述的格式化参数
             processResult(result, rMap, formatArgs);
         } catch (Exception e) {
@@ -210,7 +210,7 @@ public class BizLogAdvice {
                     }
                 }
                 Object finalValue = value;
-                v.forEach(index->formatArgs[index] = finalValue);
+                v.forEach(index -> formatArgs[index] = finalValue);
             });
         } catch (Exception e) {
             log.error("记录日志异常:" + e.getMessage());
