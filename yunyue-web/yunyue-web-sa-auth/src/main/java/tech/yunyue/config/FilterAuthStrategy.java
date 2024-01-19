@@ -5,17 +5,18 @@ import cn.dev33.satoken.filter.SaFilterAuthStrategy;
 import cn.dev33.satoken.fun.SaParamRetFunction;
 import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.core.collection.CollUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
+import tech.yunyue.auth.service.JDBCService;
 import tech.yunyue.core.enums.BizCodeEnum;
 import tech.yunyue.core.properties.EvaConfig;
 import tech.yunyue.core.threaduser.ThreadUserHelper;
 
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * 路由认证策略 每次请求都会执行
@@ -24,6 +25,8 @@ import java.util.Objects;
 public class FilterAuthStrategy implements SaFilterAuthStrategy {
     @Autowired
     EvaConfig evaConfig;
+    @Autowired
+    JDBCService jdbcService;
 
     @Override
     public void run(Object o) {
@@ -50,13 +53,14 @@ public class FilterAuthStrategy implements SaFilterAuthStrategy {
 
     private SaParamRetFunction<Object, Boolean> antPathMatcher() {
         return param -> {
-            var patterns = evaConfig.getSecurity().getPermit();
-            if (patterns == null) {
+            Set<String> patternSet = new HashSet<>(jdbcService.allowedResourcese());
+            patternSet.addAll(List.of(evaConfig.getSecurity().getPermit()));
+            if (CollUtil.isEmpty(patternSet)) {
                 return false;
             }
             AntPathMatcher pathMatcher = new AntPathMatcher();
             var path = SaHolder.getRequest().getRequestPath();
-            return Arrays.stream(patterns).anyMatch(pattern -> pathMatcher.match(pattern, path));
+            return patternSet.stream().anyMatch(pattern -> pathMatcher.match(pattern, path));
         };
     }
 }

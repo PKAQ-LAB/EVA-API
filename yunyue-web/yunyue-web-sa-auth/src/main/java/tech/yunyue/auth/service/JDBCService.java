@@ -101,4 +101,17 @@ public class JDBCService {
             return Collections.emptyList();
         }
     }
+
+    /**
+     * 获取系统的白名单资源
+     */
+    @Cacheable(cacheNames = CommonConstant.CACHE_SYSDATA, key = "'" + CommonConstant.REDIS_SYS_ALLOWED_RESOURCES_PREFIX_KEY + "'")
+    public List<String> allowedResourcese() {
+        try {
+            String sql = "SELECT RESOURCE_URL FROM SYS_ALLOWED_RESOURCES WHERE `STATUS` != '0001'";
+            return this.jdbcTemplate.queryForList(sql, String.class);
+        } catch (EmptyResultDataAccessException e) {
+            return Collections.emptyList();
+        }
+    }
 }
