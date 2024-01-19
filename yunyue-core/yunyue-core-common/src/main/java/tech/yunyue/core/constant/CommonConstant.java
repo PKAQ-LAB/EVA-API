@@ -79,6 +79,8 @@ public interface CommonConstant {
     String ORGANIZATION_TYPE_CODE = "dict_organization_type";
     // 把用户保存在redis中的前缀
     String REDIS_USER_INFO_PREFIX_KEY = "USER_INFO:";
+    // 把系统白名单资源路径保存在redis中的前缀
+    String REDIS_SYS_ALLOWED_RESOURCES_PREFIX_KEY = "SYS_ALLOWED_RESOURCES:";
 
     //业务字典的code
     String BIZ_DICT_CODE = "biz";
