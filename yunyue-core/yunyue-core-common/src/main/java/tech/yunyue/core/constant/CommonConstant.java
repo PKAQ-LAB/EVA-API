@@ -47,10 +47,10 @@ public interface CommonConstant {
     String CACHE_DICTDATA = "dictdata";
     //系统所有字典map
     String SYS_ALL_DICT_KEY = "'sys:all:dict'";
-    // token缓存
-    String CACHE_TOKEN = "token";
     // 系统管理缓存
     String CACHE_SYSDATA = "sysdata";
+    // 系统资源权限数据缓存
+    String CACHE_AUTHDATA = "authdata";
     // 用户信息缓存
     String CACHE_USERDATA ="userdata";
     //业务用
