@@ -84,7 +84,7 @@ public class JDBCService {
     /**
      * 根据角色名称查询其拥有的资源路径
      */
-    @Cacheable(cacheNames = CommonConstant.CACHE_SYSDATA, key = "'" + CommonConstant.REDIS_ROLES_PERMISSION_PREFIX_KEY + "'" + "+#roleId")
+    @Cacheable(cacheNames = CommonConstant.CACHE_AUTHDATA, key = "'" + CommonConstant.REDIS_ROLES_PERMISSION_PREFIX_KEY + "'" + "+#roleId")
     public List<String> listRoleNamesWithPath(String roleId) {
         try {
             String sql = "SELECT DISTINCT REPLACE(CONCAT(M.AUTHEN_PATH,'/',MR.RESOURCE_URL),'//','/') PATH " +
