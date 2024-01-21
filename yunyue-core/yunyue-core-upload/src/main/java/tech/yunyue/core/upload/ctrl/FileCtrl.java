@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import tech.yunyue.core.mvc.vo.Response;
-import tech.yunyue.core.upload.enumm.MinIOBucketEnum;
+import tech.yunyue.core.upload.enumm.BucketTypeEnum;
 import tech.yunyue.core.upload.util.FileProvider;
 
 import java.io.IOException;
@@ -41,7 +41,7 @@ public class FileCtrl {
         String filePath = fileProvider.upload(file);
         Map<String, String> result = Map.of(
                 "pname", filePath,
-                "previewUrl", fileProvider.preview(filePath, MinIOBucketEnum.TEMP));
+                "previewUrl", fileProvider.preview(filePath, BucketTypeEnum.TEMP));
         return new Response().success(result);
     }
 
