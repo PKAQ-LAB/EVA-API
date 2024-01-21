@@ -84,10 +84,10 @@ public class AuthenService {
                 .setOperator(user.getAccount())
                 .setOperatorName(user.getName())
                 .setOperateType("login")
+                .setIp(IpUtil.getIPAddress(SpringMVCUtil.getRequest()))
                 .setCreateId(user.getId())
                 .setPostId(user.getPostId())
                 .setOrgId(user.getDeptId())
-                .setIp(IpUtil.getIPAddress(SpringMVCUtil.getRequest()))
                 .setTenantId(user.getTenantId());
         logHelper.save(loginlog);
         return new Response().success(BizCodeEnum.LOGIN_SUCCESS_WELCOME, user.getAccount());

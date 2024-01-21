@@ -88,12 +88,12 @@ public class WebLogAdvice {
             // 记录异常日志
             logEntity.setRequestTime(DateUtil.now())
                     .setLoginUser(ThreadUserHelper.getUserName())
+                    .setExDesc(ExceptionUtil.stacktraceToString(ex))
+                    .setSpendTime(String.valueOf(System.currentTimeMillis() - beginTime))
                     .setCreateId(ThreadUserHelper.getUserId())
                     .setPostId(ThreadUserHelper.getPostId())
                     .setOrgId(ThreadUserHelper.getOrgId())
-                    .setTenantId(ThreadUserHelper.getTenantId())
-                    .setExDesc(ExceptionUtil.stacktraceToString(ex))
-                    .setSpendTime(String.valueOf(System.currentTimeMillis() - beginTime));
+                    .setTenantId(ThreadUserHelper.getTenantId());
             eventPublisher.publishEvent(new ErrorLogEvent(logEntity));
             throw ex;
         }

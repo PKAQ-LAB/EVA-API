@@ -47,26 +47,6 @@ public class LoginlogEntity extends LogEntity {
      **/
     @Schema(description = "请求ip")
     private String ip;
-    /**
-     * 创建人岗位ID
-     */
-    @Schema(description = "创建人岗位ID")
-    private String postId;
-    /**
-     * 创建人部门ID
-     */
-    @Schema(description = "创建人部门ID")
-    private String orgId;
-    /**
-     * 创建人ID
-     */
-    @Schema(description = "创建人ID")
-    private String createId;
-    /**
-     * 租户id
-     */
-    @Schema(description = "租户id")
-    private String tenantId;
 
     @Override
     public String toString() {

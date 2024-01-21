@@ -22,7 +22,10 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import tech.yunyue.auth.service.AuthenService;
 import tech.yunyue.auth.service.JDBCService;
 import tech.yunyue.core.constant.CommonConstant;
@@ -64,7 +67,7 @@ public class AuthenCtrl {
     @PostMapping(value = "/login")
     @Operation(summary = "登录")
     public Response login(@RequestBody Map<String, String> params) {
-        //验证码二次校验
+        // 验证码二次校验
         String captchaVerification = params.get("captchaVerification");
         CaptchaVO captchaVO = new CaptchaVO();
         captchaVO.setCaptchaVerification(captchaVerification);
@@ -74,7 +77,7 @@ public class AuthenCtrl {
             log.error("验证失败：" + response.getRepMsg());
         }
 
-        //校验账号密码
+        // 校验账号密码
         String username = params.get("username");
         String password = params.get("password");
         if (!StringUtils.hasText(username) || !StringUtils.hasText(password)) {
@@ -103,7 +106,7 @@ public class AuthenCtrl {
         } catch (SaTokenException ignored) {
             // 用户登录失效时，会抛异常 不处理
         } finally {
-            saTokenConfig.setTokenName(CommonConstant.ACCESS_TOKEN_KEY); //改回来
+            saTokenConfig.setTokenName(CommonConstant.ACCESS_TOKEN_KEY); // 改回来
         }
         // 发布踢出用户事件 登出用户
         if (Objects.nonNull(userId)) {
@@ -113,19 +116,19 @@ public class AuthenCtrl {
                     CommonConstant.DEVICE, RequestUtil.getDeivce(request)
             )));
 
-            //登出日志
+            // 登出日志
             ThreadUser currentUser = JSONUtil.toBean(this.jdbcService.loadUserById(userId), ThreadUser.class);
-            LoginlogEntity loginlog = new LoginlogEntity()
-                    .setOperateDatetime(DateUtil.now())
+            LoginlogEntity loginlog = new LoginlogEntity();
+            loginlog.setOperateDatetime(DateUtil.now())
                     .setDevice(RequestUtil.getDeivce(request))
                     .setVersion(RequestUtil.getVersion(request))
                     .setOperator(currentUser.getAccount())
                     .setOperatorName(currentUser.getName())
                     .setOperateType("logout")
+                    .setIp(IpUtil.getIPAddress(SpringMVCUtil.getRequest()))
                     .setCreateId(userId)
                     .setPostId(currentUser.getPostId())
                     .setOrgId(currentUser.getDeptId())
-                    .setIp(IpUtil.getIPAddress(SpringMVCUtil.getRequest()))
                     .setTenantId(currentUser.getTenantId());
             logHelper.save(loginlog);
         }
@@ -145,7 +148,7 @@ public class AuthenCtrl {
     @Operation(summary = "刷新token")
     public Response refreshToken(HttpServletResponse response) throws IOException {
         String userId = "";
-        //判断refresh_token是否有效
+        // 判断refresh_token是否有效
         try {
             saTokenConfig.setTokenName(CommonConstant.REFRESH_TOKEN_KEY);
             userId = (String) StpUtil.getLoginId();
@@ -159,21 +162,21 @@ public class AuthenCtrl {
                 printWriter.write(JsonUtil.toJson(new Response().failure(BizCodeEnum.LOGIN_EXPIRED)));
                 printWriter.flush();
             }
-            saTokenConfig.setTokenName(CommonConstant.ACCESS_TOKEN_KEY); //改回来
+            saTokenConfig.setTokenName(CommonConstant.ACCESS_TOKEN_KEY); // 改回来
             return null;
         }
 
         String account = (String) StpUtil.getExtra("account");
         String version = (String) StpUtil.getExtra("version");
         String device = StpUtil.getLoginDevice();
-        //重新生成refresh_token
+        // 重新生成refresh_token
         StpUtil.login(userId, SaLoginConfig.setExtra("userId", userId)
                 .setExtra("account", account)
                 .setExtra("version", version)
                 .setDevice(device)
                 .setTimeout(evaConfig.getJwt().getBravoTtl()));
 
-        //重新生成access_token
+        // 重新生成access_token
         saTokenConfig.setTokenName(CommonConstant.ACCESS_TOKEN_KEY);
         StpUtil.login(userId, SaLoginConfig.setExtra("userId", userId)
                 .setExtra("account", account)

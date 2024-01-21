@@ -78,22 +78,6 @@ public class BizLogEntity extends LogEntity {
      **/
     @Schema(description = "应用版本")
     private String version;
-    /**
-     * 创建人岗位ID
-     */
-    private String postId;
-    /**
-     * 创建人部门ID
-     */
-    private String orgId;
-    /**
-     * 创建人ID
-     */
-    private String createId;
-    /**
-     * 租户id
-     */
-    private String tenantId;
 
     @Override
     public String toString() {
