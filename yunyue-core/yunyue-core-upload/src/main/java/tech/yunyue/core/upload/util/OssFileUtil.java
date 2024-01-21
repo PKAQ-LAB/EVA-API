@@ -15,7 +15,7 @@ import com.aliyun.oss.OSSException;
 import com.aliyun.oss.model.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.CommandLineRunner;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -24,8 +24,8 @@ import org.springframework.web.multipart.MultipartFile;
 import tech.yunyue.core.enums.BizCodeEnum;
 import tech.yunyue.core.properties.EvaConfig;
 import tech.yunyue.core.upload.condition.OssCondition;
+import tech.yunyue.core.upload.enumm.BucketTypeEnum;
 import tech.yunyue.core.upload.enumm.OSSBucketEnum;
-
 
 import java.io.*;
 import java.net.URL;
@@ -42,10 +42,9 @@ import java.util.regex.Pattern;
 @Component
 @Conditional(OssCondition.class)
 @RequiredArgsConstructor
-public class OssFileUtil implements FileProvider<OSSBucketEnum>, CommandLineRunner {
-
+public class OssFileUtil implements FileProvider<OSSBucketEnum>, InitializingBean {
     private final EvaConfig evaConfig;
-    private final OSS ossClient ;
+    private final OSS ossClient;
     public FileProvider self;
     // 缩略图前缀
     private static final String THUMBNAIL_NAME = "thumbnail_";
@@ -57,7 +56,7 @@ public class OssFileUtil implements FileProvider<OSSBucketEnum>, CommandLineRunn
      * 初始化文件桶
      */
     @Override
-    public void run(String... args) {
+    public void afterPropertiesSet() {
         // 创建存储桶 默认存储桶是私有的 只能通过外链访问 最长7天
         // 新增存储桶images文件夹的策略 改成readonly即可实现通过链接访问图片 但是访问不了该桶内别的文件
         // 初始化后缀限制的文件大小  系统配置的好几个后缀对应一个限制长度，拆分成每个后缀对应一个限制长度
@@ -65,7 +64,7 @@ public class OssFileUtil implements FileProvider<OSSBucketEnum>, CommandLineRunn
         Optional.ofNullable(sysMap).ifPresent(map -> {
             map.forEach((key, value) -> {
                 for (String suffix : key.split(",")) {
-                    SUFFIX_MAX_SIZE_MAP.put(suffix.trim(),value);
+                    SUFFIX_MAX_SIZE_MAP.put(suffix.trim(), value);
                 }
             });
         });
@@ -122,7 +121,7 @@ public class OssFileUtil implements FileProvider<OSSBucketEnum>, CommandLineRunn
         // 非图片文件名 xxxxx:原名
         String newFileName = snowflake.nextIdStr() + (IMAGE.equals(fileType) ? "." + suffixName : ":" + fileName);
 
-        return uploadFile(file, OSSBucketEnum.TEMP_OSS, path + newFileName);
+        return uploadFile(file, BucketTypeEnum.TEMP, path + newFileName);
     }
 
     /**
@@ -134,7 +133,7 @@ public class OssFileUtil implements FileProvider<OSSBucketEnum>, CommandLineRunn
      */
     @Override
     public String upload(MultipartFile file, String path) {
-        return upload(file, OSSBucketEnum.TEMP_OSS, path);
+        return upload(file, BucketTypeEnum.TEMP, path);
     }
 
     /**
@@ -147,7 +146,7 @@ public class OssFileUtil implements FileProvider<OSSBucketEnum>, CommandLineRunn
      * @throws Exception
      */
     @Override
-    public String upload(MultipartFile file, OSSBucketEnum target, String path) {
+    public String upload(MultipartFile file, BucketTypeEnum target, String path) {
         // 上传文件名
         String fileName = file.getOriginalFilename();
         fileName = "/%s/%s".formatted(path.replaceAll("^/|/$", ""), fileName);
@@ -162,7 +161,7 @@ public class OssFileUtil implements FileProvider<OSSBucketEnum>, CommandLineRunn
      * @param fileName 文件名
      * @return 文件名
      */
-    private String uploadFile(MultipartFile file, OSSBucketEnum target, String fileName) {
+    private String uploadFile(MultipartFile file, BucketTypeEnum target, String fileName) {
         var uploadConfig = evaConfig.getUpload();
         // 后缀名
         String suffixName = FileUtil.extName(fileName);
@@ -170,7 +169,7 @@ public class OssFileUtil implements FileProvider<OSSBucketEnum>, CommandLineRunn
         String typeLimit = uploadConfig.getAllowSuffixName().toLowerCase();
         // 判断文件大小是否符合系统配置大小
         AtomicBoolean isSizeValid = new AtomicBoolean(false);
-        Optional.ofNullable(SUFFIX_MAX_SIZE_MAP.get(StrPool.DOT+suffixName)).ifPresent(sysMaxSize -> {
+        Optional.ofNullable(SUFFIX_MAX_SIZE_MAP.get(StrPool.DOT + suffixName)).ifPresent(sysMaxSize -> {
             var fileSize = DataSize.ofBytes(file.getSize());
             if (fileSize.compareTo(sysMaxSize) > 0) {
                 BizCodeEnum.FILE_SIZE_EXCEEDS_LIMIT.newException();
@@ -204,7 +203,7 @@ public class OssFileUtil implements FileProvider<OSSBucketEnum>, CommandLineRunn
      */
     @Override
     public List<String> storage(String... filenames) {
-        getSelf().storage(OSSBucketEnum.TEMP_OSS, OSSBucketEnum.STORAGE_OSS, filenames);
+        getSelf().storage(BucketTypeEnum.TEMP, BucketTypeEnum.STORAGE, filenames);
         return List.of(filenames);
     }
 
@@ -216,8 +215,8 @@ public class OssFileUtil implements FileProvider<OSSBucketEnum>, CommandLineRunn
      */
     @Async("file_task")
     @Override
-    public void storage(OSSBucketEnum target, String... filenames) {
-        storage(OSSBucketEnum.TEMP_OSS, target, filenames);
+    public void storage(BucketTypeEnum target, String... filenames) {
+        storage(BucketTypeEnum.TEMP, target, filenames);
     }
 
     /**
@@ -229,10 +228,10 @@ public class OssFileUtil implements FileProvider<OSSBucketEnum>, CommandLineRunn
      */
     @Async("file_task")
     @Override
-    public void storage(OSSBucketEnum source, OSSBucketEnum target, String... filenames) {
+    public void storage(BucketTypeEnum source, BucketTypeEnum target, String... filenames) {
         for (String fileName : filenames) {
             try {
-                ossClient.copyObject(source.getBucketName(),fileName,target.getBucketName(),fileName);
+                ossClient.copyObject(getBucketName(source), fileName, getBucketName(target), fileName);
                 // 删除源桶的文件
                 delete(source, fileName);
             } catch (Exception e) {
@@ -286,14 +285,14 @@ public class OssFileUtil implements FileProvider<OSSBucketEnum>, CommandLineRunn
         // 保存到持久桶中 如果是图片则生成缩略图并保存
         Arrays.stream(filenames)
                 .filter(fileName -> {
-                    this.storage(OSSBucketEnum.STORAGE_OSS, fileName);
+                    this.storage(BucketTypeEnum.STORAGE, fileName);
                     return fileName.startsWith(IMAGE + "/");
                 })
                 .forEach(fileName -> {
                     try {
 
-                        OSSObject ossObject = ossClient.getObject(OSSBucketEnum.STORAGE_OSS.getBucketName(),fileName);
-                        InputStream  in = ossObject.getObjectContent();
+                        OSSObject ossObject = ossClient.getObject(getBucketName(BucketTypeEnum.STORAGE), fileName);
+                        InputStream in = ossObject.getObjectContent();
                         ByteArrayOutputStream outThumbnail = new ByteArrayOutputStream();
 
                         // 缩放后默认变成jpeg格式 用原来的后缀也能打开
@@ -305,7 +304,7 @@ public class OssFileUtil implements FileProvider<OSSBucketEnum>, CommandLineRunn
                         ossObject.close();
                         // 缩略图的路径要与原图路径一致 所以不能根据当前时间生成文件夹
                         var name = fileName.substring(fileName.lastIndexOf("/") + 1);
-                        uploadObject(new ByteArrayInputStream(outThumbnail.toByteArray()), OSSBucketEnum.STORAGE_OSS,
+                        uploadObject(new ByteArrayInputStream(outThumbnail.toByteArray()), BucketTypeEnum.STORAGE,
                                 fileName.replace(name, THUMBNAIL_NAME + name),
                                 false,
                                 "image/" + FileUtil.extName(fileName));
@@ -348,10 +347,10 @@ public class OssFileUtil implements FileProvider<OSSBucketEnum>, CommandLineRunn
     @Override
     public void delFromStorage(String fileName) {
         // 删除原文件
-        delete(OSSBucketEnum.STORAGE_OSS, fileName);
+        delete(BucketTypeEnum.STORAGE, fileName);
         // 删除缩略图 不存在也不会报错
         String name = fileName.substring(fileName.lastIndexOf("/") + 1);
-        delete(OSSBucketEnum.STORAGE_OSS, fileName.replace(name, THUMBNAIL_NAME + name));
+        delete(BucketTypeEnum.STORAGE, fileName.replace(name, THUMBNAIL_NAME + name));
 
     }
 
@@ -362,9 +361,9 @@ public class OssFileUtil implements FileProvider<OSSBucketEnum>, CommandLineRunn
      */
     @Async("file_task")
     @Override
-    public void delete(OSSBucketEnum target, String fileName) {
+    public void delete(BucketTypeEnum target, String fileName) {
         try {
-            ossClient.deleteObject(target.getBucketName(),fileName);
+            ossClient.deleteObject(getBucketName(target), fileName);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -378,7 +377,7 @@ public class OssFileUtil implements FileProvider<OSSBucketEnum>, CommandLineRunn
     @Async("file_task")
     @Override
     public void deleteLogic(String fileName) {
-        deleteLogic(OSSBucketEnum.STORAGE_OSS, fileName);
+        deleteLogic(BucketTypeEnum.STORAGE, fileName);
     }
 
     /**
@@ -388,9 +387,9 @@ public class OssFileUtil implements FileProvider<OSSBucketEnum>, CommandLineRunn
      */
     @Async("file_task")
     @Override
-    public void deleteLogic(OSSBucketEnum source, String fileName) {
+    public void deleteLogic(BucketTypeEnum source, String fileName) {
         // 归档并删除源文件
-        storage(source, OSSBucketEnum.ARCHIVE_OSS, fileName);
+        storage(source, BucketTypeEnum.ARCHIVE, fileName);
         // 删除缩略图 不存在也不会报错
         String name = fileName.substring(fileName.lastIndexOf("/") + 1);
         delete(source, fileName.replace(name, THUMBNAIL_NAME + name));
@@ -414,7 +413,7 @@ public class OssFileUtil implements FileProvider<OSSBucketEnum>, CommandLineRunn
      */
     @Override
     public void downLoad(String fileName, OutputStream out) {
-        downLoad(fileName, out, OSSBucketEnum.STORAGE_OSS);
+        downLoad(fileName, out, BucketTypeEnum.STORAGE);
     }
 
     /**
@@ -425,10 +424,10 @@ public class OssFileUtil implements FileProvider<OSSBucketEnum>, CommandLineRunn
      * @param out      输出流
      */
     @Override
-    public void downLoad(String fileName, OutputStream out, OSSBucketEnum target) {
+    public void downLoad(String fileName, OutputStream out, BucketTypeEnum target) {
         try {
             // ossObject包含文件所在的存储空间名称、文件名称、文件元信息以及一个输入流。
-            OSSObject ossObject = ossClient.getObject(target.getBucketName(),fileName);
+            OSSObject ossObject = ossClient.getObject(getBucketName(target), fileName);
 
             // 读取文件内容。
             System.out.println("Object content:");
@@ -464,20 +463,20 @@ public class OssFileUtil implements FileProvider<OSSBucketEnum>, CommandLineRunn
      * 文件名：文件夹路径+文件名
      *
      * @param in          文件流
-     * @param bucketEnum  存储桶名
+     * @param typeEnum  存储桶类型
      * @param fileName    文件名
      * @param formatName  是否需要格式化文件名 即把文件名格式化成：文件夹名/文件名
      * @param contentType 文件的类型
      * @return
      */
-    public String uploadObject(InputStream in, OSSBucketEnum bucketEnum, String fileName, boolean formatName, String contentType) {
+    public String uploadObject(InputStream in, BucketTypeEnum typeEnum, String fileName, boolean formatName, String contentType) {
         try {
             fileName = !formatName ? fileName : "%s/%s".formatted(DateUtil.format(new Date(), "yyyyMM/dd"), fileName);
             // 上传
             // 创建PutObjectRequest对象。
             ObjectMetadata meta = new ObjectMetadata();
             meta.setContentType(contentType);
-            PutObjectRequest putObjectRequest = new PutObjectRequest(bucketEnum.getBucketName(), fileName, in,meta);
+            PutObjectRequest putObjectRequest = new PutObjectRequest(getBucketName(typeEnum), fileName, in, meta);
             // 创建PutObject请求。
             PutObjectResult result = ossClient.putObject(putObjectRequest);
         } catch (OSSException oe) {
@@ -509,7 +508,7 @@ public class OssFileUtil implements FileProvider<OSSBucketEnum>, CommandLineRunn
         }
         var name = fileName.substring(fileName.lastIndexOf("/") + 1);
         fileName = fileName.replace(name, THUMBNAIL_NAME + name);
-        return preview(fileName, OSSBucketEnum.STORAGE_OSS);
+        return preview(fileName, BucketTypeEnum.STORAGE);
     }
 
     /**
@@ -520,7 +519,7 @@ public class OssFileUtil implements FileProvider<OSSBucketEnum>, CommandLineRunn
      */
     @Override
     public String preview(String fileName) {
-        return preview(fileName, OSSBucketEnum.STORAGE_OSS);
+        return preview(fileName, BucketTypeEnum.STORAGE);
     }
 
     /**
@@ -531,14 +530,14 @@ public class OssFileUtil implements FileProvider<OSSBucketEnum>, CommandLineRunn
      * @return 文件的预览url
      */
     @Override
-    public String preview(String fileName, OSSBucketEnum target) {
+    public String preview(String fileName, BucketTypeEnum target) {
         if (CharSequenceUtil.isBlank(fileName)) {
             return null;
         }
         try {
             // 5分钟过期
             Date expiration = new Date(new Date().getTime() + 5 * 60 * 1000L);
-            URL url = ossClient.generatePresignedUrl(target.getBucketName(),fileName,expiration);
+            URL url = ossClient.generatePresignedUrl(getBucketName(target), fileName, expiration);
 
             return url.toString();
         } catch (Exception e) {
@@ -555,11 +554,11 @@ public class OssFileUtil implements FileProvider<OSSBucketEnum>, CommandLineRunn
      */
     @Override
     public String parsePreviewUrlToFileName(String previewUrl) {
-        return parsePreviewUrlToFileName(OSSBucketEnum.STORAGE_OSS, previewUrl);
+        return parsePreviewUrlToFileName(BucketTypeEnum.STORAGE, previewUrl);
     }
 
-    private String parsePreviewUrlToFileName(OSSBucketEnum bucketEnum, String previewUrl) {
-        String thumbnailPattern = "^http[^?]+/%s/([^?]+)%s([^?]+)\\\\?".formatted(bucketEnum.getBucketName(), THUMBNAIL_NAME);
+    private String parsePreviewUrlToFileName(BucketTypeEnum typeEnum, String previewUrl) {
+        String thumbnailPattern = "^http[^?]+/%s/([^?]+)%s([^?]+)\\\\?".formatted(getBucketName(typeEnum), THUMBNAIL_NAME);
         // 缩略图的预览url
         Matcher matcher = Pattern.compile(thumbnailPattern).matcher(previewUrl);
         if (matcher.find()) {
@@ -574,7 +573,7 @@ public class OssFileUtil implements FileProvider<OSSBucketEnum>, CommandLineRunn
      */
     @Override
     public InputStream getFileInputStream(String fileName) {
-        return getFileInputStream(fileName, OSSBucketEnum.STORAGE_OSS);
+        return getFileInputStream(fileName, BucketTypeEnum.STORAGE);
     }
 
     /**
@@ -583,15 +582,15 @@ public class OssFileUtil implements FileProvider<OSSBucketEnum>, CommandLineRunn
      * @return 获取目标桶对应文件的文件流
      */
     @Override
-    public InputStream getFileInputStream(String fileName, OSSBucketEnum target) {
+    public InputStream getFileInputStream(String fileName, BucketTypeEnum target) {
         if (CharSequenceUtil.isBlank(fileName)) {
             return FileProvider.super.getFileInputStream(fileName, target);
         }
         try {
-            return ossClient.getObject(target.getBucketName(),fileName).getObjectContent();
+            return ossClient.getObject(getBucketName(target), fileName).getObjectContent();
 
         } catch (Exception e) {
-            log.error("获取[{}]桶[{}]文件输入流失败：[{}]", target.getBucketName(), fileName, e.getMessage());
+            log.error("获取[{}]桶[{}]文件输入流失败：[{}]", getBucketName(target), fileName, e.getMessage());
         }
         return FileProvider.super.getFileInputStream(fileName, target);
     }
@@ -617,5 +616,12 @@ public class OssFileUtil implements FileProvider<OSSBucketEnum>, CommandLineRunn
             self = SpringUtil.getBean(FileProvider.class);
         }
         return self;
+    }
+
+    /**
+     * 根据存储桶类型得到实际的存储桶名
+     */
+    String getBucketName(BucketTypeEnum type) {
+        return type.getBucketName(OSSBucketEnum.class);
     }
 }

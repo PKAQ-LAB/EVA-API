@@ -2,6 +2,7 @@ package tech.yunyue.core.upload.util;
 
 
 import org.springframework.web.multipart.MultipartFile;
+import tech.yunyue.core.upload.enumm.BucketTypeEnum;
 import tech.yunyue.core.upload.enumm.IBucket;
 
 import java.io.ByteArrayInputStream;
@@ -47,7 +48,7 @@ public interface FileProvider<T extends IBucket> {
      * @return path+文件名
      * @throws Exception
      */
-    default String upload(MultipartFile file, T target, String path) {
+    default String upload(MultipartFile file, BucketTypeEnum target, String path) {
         return "";
     }
 
@@ -65,7 +66,7 @@ public interface FileProvider<T extends IBucket> {
      * @param target    目标桶
      * @param filenames 需要转移的文件名
      */
-    default void storage(T target, String... filenames) {
+    default void storage(BucketTypeEnum target, String... filenames) {
     }
 
     /**
@@ -75,7 +76,7 @@ public interface FileProvider<T extends IBucket> {
      * @param target    目标桶
      * @param filenames 文件名
      */
-    default void storage(T source, T target, String... filenames) {
+    default void storage(BucketTypeEnum source, BucketTypeEnum target, String... filenames) {
     }
 
     /**
@@ -132,7 +133,7 @@ public interface FileProvider<T extends IBucket> {
      *
      * @param fileName 文件名
      */
-    default void delete(T target, String fileName) {
+    default void delete(BucketTypeEnum target, String fileName) {
     }
 
     /**
@@ -148,7 +149,7 @@ public interface FileProvider<T extends IBucket> {
      *
      * @param fileName 文件名
      */
-    default void deleteLogic(T source, String fileName) {
+    default void deleteLogic(BucketTypeEnum source, String fileName) {
     }
 
     /**
@@ -172,7 +173,7 @@ public interface FileProvider<T extends IBucket> {
      * @param target   桶名
      * @param out      输出流
      */
-    default void downLoad(String fileName, OutputStream out, T target) {
+    default void downLoad(String fileName, OutputStream out, BucketTypeEnum target) {
     }
 
     /**
@@ -202,7 +203,7 @@ public interface FileProvider<T extends IBucket> {
      * @param target   目标桶
      * @return 文件的预览url
      */
-    default String preview(String fileName, T target) {
+    default String preview(String fileName, BucketTypeEnum target) {
         return "";
     }
 
@@ -229,7 +230,7 @@ public interface FileProvider<T extends IBucket> {
      * @param target   目标桶
      * @return 获取目标桶对应文件的文件流
      */
-    default InputStream getFileInputStream(String fileName, T target) {
+    default InputStream getFileInputStream(String fileName, BucketTypeEnum target) {
         return new ByteArrayInputStream(new byte[0]);
     }
 }
