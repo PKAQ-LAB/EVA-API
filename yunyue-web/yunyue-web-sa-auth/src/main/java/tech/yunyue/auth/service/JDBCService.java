@@ -108,7 +108,7 @@ public class JDBCService {
     @Cacheable(cacheNames = CommonConstant.CACHE_SYSDATA, key = "'" + CommonConstant.REDIS_SYS_ALLOWED_RESOURCES_PREFIX_KEY + "'")
     public List<String> allowedResourcese() {
         try {
-            String sql = "SELECT RESOURCE_URL FROM SYS_ALLOWED_RESOURCES WHERE `STATUS` != '0001'";
+            String sql = "SELECT RESOURCE_URL FROM SYS_ALLOWED_RESOURCES";
             return this.jdbcTemplate.queryForList(sql, String.class);
         } catch (EmptyResultDataAccessException e) {
             return Collections.emptyList();
