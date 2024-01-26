@@ -126,7 +126,7 @@ public class JDBCService {
      */
     public boolean checkTenantEffective(String tenantId) {
         try {
-            String sql = "select t.id from sys_tenant where id = ? and `STATUS` != ? and DELETED = ? and now() < EXPIRATION_DATE;";
+            String sql = "select id from sys_tenant where id = ? and `STATUS` != ? and DELETED = ? and now() < EXPIRATION_DATE;";
             var obj = this.jdbcTemplate.queryForObject(sql, String.class, tenantId, LockEnumm.LOCK.getCode(), DeleteEnumm.NOT_DELETE.getCode());
             return Objects.nonNull(obj);
         } catch (EmptyResultDataAccessException e) {
