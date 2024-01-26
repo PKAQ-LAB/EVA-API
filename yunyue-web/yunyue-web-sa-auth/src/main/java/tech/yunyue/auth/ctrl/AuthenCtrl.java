@@ -152,6 +152,11 @@ public class AuthenCtrl {
         try {
             saTokenConfig.setTokenName(CommonConstant.REFRESH_TOKEN_KEY);
             userId = (String) StpUtil.getLoginId();
+
+            // 根据用户id 校验用户所属租户是否有效 无效则抛出异常
+            if (!jdbcService.checkUserTenantEffective(userId)) {
+                throw new NotLoginException("", "", "");
+            }
         } catch (NotLoginException e) {
             // token过期 返回401 用户重新登录
             try (PrintWriter printWriter = response.getWriter()) {
@@ -165,7 +170,6 @@ public class AuthenCtrl {
             saTokenConfig.setTokenName(CommonConstant.ACCESS_TOKEN_KEY); // 改回来
             return null;
         }
-
         String account = (String) StpUtil.getExtra("account");
         String version = (String) StpUtil.getExtra("version");
         String device = StpUtil.getLoginDevice();

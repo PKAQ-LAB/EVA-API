@@ -14,7 +14,10 @@ import tech.yunyue.core.enums.LockEnumm;
 import tech.yunyue.core.threaduser.ThreadUser;
 import tech.yunyue.core.util.json.JsonUtil;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -117,13 +120,32 @@ public class JDBCService {
 
     /**
      * 检查租户是否有效 启用/未删除/到期时间大于当前时间
+     *
      * @param tenantId 租户id
      * @return
      */
     public boolean checkTenantEffective(String tenantId) {
         try {
-            String sql = "select * from sys_tenant where id = ? and `STATUS` != ? and DELETED = ? and now() < EXPIRATION_DATE;";
+            String sql = "select t.id from sys_tenant where id = ? and `STATUS` != ? and DELETED = ? and now() < EXPIRATION_DATE;";
             var obj = this.jdbcTemplate.queryForObject(sql, String.class, tenantId, LockEnumm.LOCK.getCode(), DeleteEnumm.NOT_DELETE.getCode());
+            return Objects.nonNull(obj);
+        } catch (EmptyResultDataAccessException e) {
+            return false;
+        }
+    }
+
+    /**
+     * 根据用户id检查用户所属租户是否有效 启用/未删除/到期时间大于当前时间
+     *
+     * @param userId 用户id
+     * @return
+     */
+    public boolean checkUserTenantEffective(String userId) {
+        try {
+            String sql = "select u.id from sys_user_info u left JOIN sys_tenant t on u.TENANT_ID = t.id " +
+                    "where  u.id = ? and  u.locked != ?  and u.DELETED = ? " +
+                    "and (u.TENANT_ID is null or (t.`STATUS` != ? and t.DELETED = ? and now() < t.EXPIRATION_DATE))";
+            var obj = this.jdbcTemplate.queryForObject(sql, String.class, userId, LockEnumm.LOCK.getCode(), DeleteEnumm.NOT_DELETE.getCode(), LockEnumm.LOCK.getCode(), DeleteEnumm.NOT_DELETE.getCode());
             return Objects.nonNull(obj);
         } catch (EmptyResultDataAccessException e) {
             return false;
