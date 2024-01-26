@@ -9,12 +9,12 @@ import org.springframework.stereotype.Service;
 import tech.yunyue.auth.domain.JwtUserFactory;
 import tech.yunyue.core.constant.CommonConstant;
 import tech.yunyue.core.enums.BizCodeEnum;
+import tech.yunyue.core.enums.DeleteEnumm;
+import tech.yunyue.core.enums.LockEnumm;
 import tech.yunyue.core.threaduser.ThreadUser;
 import tech.yunyue.core.util.json.JsonUtil;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -28,7 +28,7 @@ public class JDBCService {
     public Map<String, Object> loadUserByUsername(String account) {
         try {
             String sql = "SELECT ID,ACCOUNT,TEL,PASSWORD,LOCKED,DEPT_ID,DEPT_NAME,NAME,NICK_NAME,TENANT_ID,TENANT_CODE,U_POST_ID,POST_NAME " +
-                    "FROM SYS_USER_INFO SU " +
+                    "FROM SYS_USER_INFO SU  " +
                     "WHERE  DELETED = '0000' AND (IF(ISNULL(SU.TENANT_ID), SU.ACCOUNT, CONCAT(ACCOUNT,'@',TENANT_CODE)) = ? OR SU.TEL = ?)";
 
             return this.jdbcTemplate.queryForMap(sql, account, account);
@@ -112,6 +112,21 @@ public class JDBCService {
             return this.jdbcTemplate.queryForList(sql, String.class);
         } catch (EmptyResultDataAccessException e) {
             return Collections.emptyList();
+        }
+    }
+
+    /**
+     * 检查租户是否有效 启用/未删除/到期时间大于当前时间
+     * @param tenantId 租户id
+     * @return
+     */
+    public boolean checkTenantEffective(String tenantId) {
+        try {
+            String sql = "select * from sys_tenant where id = ? and `STATUS` != ? and DELETED = ? and now() < EXPIRATION_DATE;";
+            var obj = this.jdbcTemplate.queryForObject(sql, String.class, tenantId, LockEnumm.LOCK.getCode(), DeleteEnumm.NOT_DELETE.getCode());
+            return Objects.nonNull(obj);
+        } catch (EmptyResultDataAccessException e) {
+            return false;
         }
     }
 }

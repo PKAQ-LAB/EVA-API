@@ -7,6 +7,7 @@ import cn.dev33.satoken.spring.SpringMVCUtil;
 import cn.dev33.satoken.stp.SaLoginConfig;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.StrUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
@@ -121,14 +122,14 @@ public class AuthenService {
      * 查询和校验数据库用户
      */
     private JwtUserDetail retrieveUser(String username) {
-
         // 数据中中查询
         JwtUserDetail user = loadUserByUsername(username);
         // 校验用户状态
         check(user);
+        // 校验租户状态 删除/锁定/到期
+        checkTenantEffective(user.getTenantId());
         return user;
     }
-
     /**
      * 根据用户名在数据中查询用户和角色
      */
@@ -151,4 +152,15 @@ public class AuthenService {
             BizCodeEnum.ACCOUNT_LOCKED.newException();
         }
     }
+
+    /**
+     * 检查租户是否有效 启用/未删除/到期时间大于当前时间
+     * @param tenantId
+     */
+    private void checkTenantEffective(String tenantId) {
+        if (CharSequenceUtil.isNotBlank(tenantId) && !jdbcService.checkTenantEffective(tenantId)) {
+            BizCodeEnum.LOGIN_TENANT_AUTH_EXPIRED.newException();
+        }
+    }
+
 }
