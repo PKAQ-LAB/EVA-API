@@ -42,7 +42,7 @@ public class JDBCService {
     }
 
     // 因为用户登录时存的是jsonStirng 所以这边也存string
-    @Cacheable(cacheNames = CommonConstant.CACHE_USERDATA, key = "'" + CommonConstant.REDIS_USER_INFO_PREFIX_KEY + "'" + "+#userId")
+    @Cacheable(cacheNames = CommonConstant.CACHE_USERDATA, key = "'" + CommonConstant.REDIS_USER_INFO_PREFIX_KEY + "'" + "+#p0")
     public String loadUserById(String userId) {
         return JsonUtil.toJson(JwtUserFactory.create(loadUserMapById(userId), Collections.emptyMap()));
     }
@@ -65,7 +65,7 @@ public class JDBCService {
     /**
      * 查询用户拥有的角色 并转成ThreadUser.GrantedRoles对象 且缓存在redis中
      */
-    @Cacheable(cacheNames = CommonConstant.CACHE_USERDATA, key = "'" + CommonConstant.REDIS_USER_ROLES_PREFIX_KEY + "'" + "+#userId")
+    @Cacheable(cacheNames = CommonConstant.CACHE_USERDATA, key = "'" + CommonConstant.REDIS_USER_ROLES_PREFIX_KEY + "'" + "+#p0")
     public Map<String, ThreadUser.GrantedRoles> getRoleById(String userId) {
         return JwtUserFactory.mapToGrantedAuthorities(getRoleMapById(userId));
     }
@@ -87,7 +87,7 @@ public class JDBCService {
     /**
      * 根据角色名称查询其拥有的资源路径
      */
-    @Cacheable(cacheNames = CommonConstant.CACHE_AUTHDATA, key = "'" + CommonConstant.REDIS_ROLES_PERMISSION_PREFIX_KEY + "'" + "+#roleId")
+    @Cacheable(cacheNames = CommonConstant.CACHE_AUTHDATA, key = "'" + CommonConstant.REDIS_ROLES_PERMISSION_PREFIX_KEY + "'" + "+#p0")
     public List<String> listRoleNamesWithPath(String roleId) {
         try {
             String sql = "SELECT DISTINCT REPLACE(CONCAT(M.AUTHEN_PATH,'/',MR.RESOURCE_URL),'//','/') PATH " +
