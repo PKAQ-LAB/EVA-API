@@ -33,7 +33,7 @@ public abstract class StdEntity implements Entity {
     @Version
     private Integer revision;
 
-    @Schema(description = "逻辑删除 (0000-未删除、0001-删除)")
+    @Schema(description = "逻辑删除 (null-未删除、不为null-删除)")
     @TableLogic
     @TableField(fill = FieldFill.INSERT)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
