@@ -29,7 +29,7 @@ ext {
            // hutool
            "hutool" : "cn.hutool:hutool-all:${hutool}",
            // mybatis
-           "mybatisPlus" : "com.baomidou:mybatis-plus-boot-starter:${mybatis_plus_starter}",
+           "mybatisPlus" : "com.baomidou:mybatis-plus-spring-boot3-starter:${mybatis_plus_starter}",
            // 文档聚合
            "springdoc" : "org.springdoc:springdoc-openapi-starter-webmvc-api:${springdoc}",
            "springdocui" : "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springdoc}",
