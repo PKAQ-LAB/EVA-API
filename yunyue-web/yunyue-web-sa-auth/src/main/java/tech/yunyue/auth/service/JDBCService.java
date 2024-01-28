@@ -32,7 +32,7 @@ public class JDBCService {
         try {
             String sql = "SELECT ID,ACCOUNT,TEL,PASSWORD,LOCKED,DEPT_ID,DEPT_NAME,NAME,NICK_NAME,TENANT_ID,TENANT_CODE,U_POST_ID,POST_NAME " +
                     "FROM SYS_USER_INFO SU  " +
-                    "WHERE  DELETED = '0000' AND (IF(ISNULL(SU.TENANT_ID), SU.ACCOUNT, CONCAT(ACCOUNT,'@',TENANT_CODE)) = ? OR SU.TEL = ?)";
+                    "WHERE  DELETED is null AND (IF(ISNULL(SU.TENANT_ID), SU.ACCOUNT, CONCAT(ACCOUNT,'@',TENANT_CODE)) = ? OR SU.TEL = ?)";
 
             return this.jdbcTemplate.queryForMap(sql, account, account);
         } catch (EmptyResultDataAccessException e) {
@@ -54,7 +54,7 @@ public class JDBCService {
         try {
             String sql = "SELECT ID,ACCOUNT,TEL,PASSWORD,LOCKED,DEPT_ID,DEPT_NAME,NAME,NICK_NAME,TENANT_ID,TENANT_CODE,U_POST_ID,POST_NAME " +
                     "FROM SYS_USER_INFO SU " +
-                    "WHERE  DELETED = '0000' AND ID = ?";
+                    "WHERE  DELETED is null AND ID = ?";
             return this.jdbcTemplate.queryForMap(sql, userId);
         } catch (EmptyResultDataAccessException e) {
             BizCodeEnum.ACCOUNT_NOT_EXIST.newException();
@@ -126,8 +126,8 @@ public class JDBCService {
      */
     public boolean checkTenantEffective(String tenantId) {
         try {
-            String sql = "select id from sys_tenant where id = ? and `STATUS` != ? and DELETED = ? and now() < EXPIRATION_DATE;";
-            var obj = this.jdbcTemplate.queryForObject(sql, String.class, tenantId, LockEnumm.LOCK.getCode(), DeleteEnumm.NOT_DELETE.getCode());
+            String sql = "select id from sys_tenant where id = ? and `STATUS` != ? and DELETED is null and now() < EXPIRATION_DATE;";
+            var obj = this.jdbcTemplate.queryForObject(sql, String.class, tenantId, LockEnumm.LOCK.getCode());
             return Objects.nonNull(obj);
         } catch (EmptyResultDataAccessException e) {
             return false;
@@ -143,9 +143,9 @@ public class JDBCService {
     public boolean checkUserTenantEffective(String userId) {
         try {
             String sql = "select u.id from sys_user_info u left JOIN sys_tenant t on u.TENANT_ID = t.id " +
-                    "where  u.id = ? and  u.locked != ?  and u.DELETED = ? " +
-                    "and (u.TENANT_ID is null or (t.`STATUS` != ? and t.DELETED = ? and now() < t.EXPIRATION_DATE))";
-            var obj = this.jdbcTemplate.queryForObject(sql, String.class, userId, LockEnumm.LOCK.getCode(), DeleteEnumm.NOT_DELETE.getCode(), LockEnumm.LOCK.getCode(), DeleteEnumm.NOT_DELETE.getCode());
+                    "where  u.id = ? and  u.locked != ?  and u.DELETED is null " +
+                    "and (u.TENANT_ID is null or (t.`STATUS` != ? and t.DELETED is null and now() < t.EXPIRATION_DATE))";
+            var obj = this.jdbcTemplate.queryForObject(sql, String.class, userId, LockEnumm.LOCK.getCode(), LockEnumm.LOCK.getCode());
             return Objects.nonNull(obj);
         } catch (EmptyResultDataAccessException e) {
             return false;

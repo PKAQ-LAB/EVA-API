@@ -36,7 +36,12 @@ public abstract class StdEntity implements Entity {
     @Schema(description = "逻辑删除 (0000-未删除、0001-删除)")
     @TableLogic
     @TableField(fill = FieldFill.INSERT)
-    private String deleted;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private LocalDateTime deleted;
 
     @Schema(description = "租户id")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)

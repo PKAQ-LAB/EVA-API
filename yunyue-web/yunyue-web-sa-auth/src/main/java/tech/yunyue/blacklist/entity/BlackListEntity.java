@@ -9,6 +9,8 @@ import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
 import tech.yunyue.core.mybatis.mvc.entity.mybatis.StdEntity;
 
+import java.time.LocalDateTime;
+
 /**
  * 黑名单管理实体类
  */
@@ -30,7 +32,7 @@ public class BlackListEntity extends StdEntity {
 
     //覆盖父类逻辑删除字段 不关联业务 不需要逻辑删除
     @TableField(exist = false)
-    private String deleted;
+    private LocalDateTime deleted;
 
     @TableField(exist = false)
     private String tenantId;

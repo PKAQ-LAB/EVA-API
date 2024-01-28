@@ -29,4 +29,26 @@
         <bind name="alias" value="'${alias}'" />
         where ${@tech.yunyue.config.MybatisPlusDataPermissionHandler@permissionSql(alias)}
     </sql>
+
+    <sql id="deletedSQL">
+        <choose>
+            <when test="@tech.yunyue.core.enums.DeleteEnumm@NOT_DELETE.code == null">
+                is null
+            </when>
+            <otherwise>
+                = '${@tech.yunyue.core.enums.DeleteEnumm@NOT_DELETE.code}'
+            </otherwise>
+        </choose>
+    </sql>
+
+    <sql id="preFixDeletedSQL">
+        <choose>
+            <when test="@tech.yunyue.core.enums.DeleteEnumm@NOT_DELETE.code == null">
+            DELETED is null
+            </when>
+            <otherwise>
+            DELETED = '${@tech.yunyue.core.enums.DeleteEnumm@NOT_DELETE.code}'
+            </otherwise>
+        </choose>
+    </sql>
 </mapper>
