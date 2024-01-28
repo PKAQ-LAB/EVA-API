@@ -4,10 +4,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import tech.yunyue.core.mvc.vo.Response;
 import tech.yunyue.core.upload.enumm.BucketTypeEnum;
@@ -37,7 +34,7 @@ public class FileCtrl {
      * @return
      */
     @PostMapping("/upload")
-    public Response upload(MultipartFile file) throws Exception {
+    public Response upload(@RequestParam("file") MultipartFile file) throws Exception {
         String filePath = fileProvider.upload(file);
         Map<String, String> result = Map.of(
                 "pname", filePath,
@@ -49,7 +46,7 @@ public class FileCtrl {
      * 文件下载
      */
     @GetMapping("/download")
-    public void download(HttpServletResponse response, String fileName) throws IOException {
+    public void download(HttpServletResponse response, @RequestParam("fileName") String fileName) throws IOException {
         response.setCharacterEncoding("utf-8");
         response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
         var name = fileName.substring(fileName.lastIndexOf("/") + 1);
@@ -67,7 +64,7 @@ public class FileCtrl {
      * 文件预览
      */
     @GetMapping("/preview")
-    public Response<String> preview(String fileName) {
+    public Response<String> preview(@RequestParam("fileName") String fileName) {
         // 前端传来的fileName可能是缩略图的预览url,需要处理一下得到真正的文件名  http://127.0.0.1:9000/storage/images/202309/11/thumbnail_1701044951689003008.jpg?X-Amz-Algorithm=AW...
         fileName = fileProvider.parsePreviewUrlToFileName(fileName);
         return new Response<String>().success(fileProvider.preview(fileName));
