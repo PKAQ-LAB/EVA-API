@@ -91,7 +91,9 @@ public class GlobalParamsInterceptor implements Interceptor {
      */
     protected void addParameter(Object parameter) {
         try{
-            ((Map)parameter).putAll(paramMap());
+            if (parameter instanceof Map map) {
+                map.putAll(paramMap());
+            }
         }catch (Exception e){
             // 添加参数失败
             log.error("mybatis全局添加参数失败：" + e.getMessage());
