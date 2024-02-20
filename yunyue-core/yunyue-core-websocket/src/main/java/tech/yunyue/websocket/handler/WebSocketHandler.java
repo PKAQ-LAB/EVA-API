@@ -9,6 +9,7 @@ import tech.yunyue.core.threaduser.ThreadUserHelper;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -21,6 +22,7 @@ import java.util.Optional;
 @Slf4j
 public abstract class WebSocketHandler extends AbstractWebSocketHandler {
     private static final String USER_KEY = "THREAD_USER";
+    private static final String PING_MESSAGE = "ping";
 
     /**
      * 获取WebSocket连接的路径，由子类实现。
@@ -67,13 +69,20 @@ public abstract class WebSocketHandler extends AbstractWebSocketHandler {
         // 客户端发送普通文件信息时触发
         String payload = message.getPayload();
         log.info("【websocket消息】收到客户端消息:" + payload);
-        Optional.ofNullable(handleTextMessage(payload)).ifPresent(response -> {
-            try {
-                session.sendMessage(response);
-            } catch (IOException e) {
-                log.info("【websocket消息】回复消息失败：" + e.getMessage());
+        try {
+            // 回复ping
+            if (payload.equalsIgnoreCase(PING_MESSAGE)) {
+                session.sendMessage(new PongMessage());
+                return;
             }
-        });
+            // 处理其余文本消息
+            var response = handleTextMessage(payload);
+            if (Objects.nonNull(response)) {
+                session.sendMessage(response);
+            }
+        } catch (IOException e) {
+            log.info("【websocket消息】回复消息失败：" + e.getMessage());
+        }
     }
 
     /**
@@ -96,7 +105,7 @@ public abstract class WebSocketHandler extends AbstractWebSocketHandler {
         // 设置当前线程的用户
         setCurrentUserFromSession(session);
         ByteBuffer payload = message.getPayload();
-        log.info("发送二进制消息:" + payload.toString());
+        log.info("发送二进制消息:" + payload);
         Optional.ofNullable(handleBinaryMessage(payload)).ifPresent(response -> {
             try {
                 session.sendMessage(response);
