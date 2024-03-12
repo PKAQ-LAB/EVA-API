@@ -118,6 +118,7 @@ public class MongoDBSupporter<T extends LogEntity, E extends LogEvent> implement
             } else if (logEntity instanceof LoginlogEntity log) {
                 addEqCriteria("operate_type", log.getOperateType(), list);
                 addLikeCriteria("operator", log.getOperator(), list);
+                addLikeCriteria("operator_name", log.getOperatorName(), list);
                 addLikeCriteria("device", log.getDevice(), list);
                 addLikeCriteria("version", log.getVersion(), list);
             }
