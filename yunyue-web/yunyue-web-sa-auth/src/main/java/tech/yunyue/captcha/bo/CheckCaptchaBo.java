@@ -22,5 +22,5 @@ public class CheckCaptchaBo {
      */
     @Schema(description = "data")
     @NotNull(message = "滑动轨迹不能为空")
-    private ImageCaptchaTrack data;
+    private DateImageCaptchaTrack data;
 }
