@@ -6,69 +6,40 @@
  */
 package tech.yunyue.captcha.ctrl;
 
-import com.anji.captcha.model.common.ResponseModel;
-import com.anji.captcha.model.vo.CaptchaVO;
-import com.anji.captcha.service.CaptchaService;
-import com.anji.captcha.util.StringUtils;
+import cloud.tianai.captcha.common.constant.CaptchaTypeConstant;
+import cloud.tianai.captcha.common.response.ApiResponse;
+import cloud.tianai.captcha.spring.application.ImageCaptchaApplication;
+import cloud.tianai.captcha.spring.vo.CaptchaResponse;
+import cloud.tianai.captcha.spring.vo.ImageCaptchaVO;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import tech.yunyue.core.mvc.ctrl.Ctrl;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import tech.yunyue.captcha.bo.CheckCaptchaBo;
 
-/**
- * 复制于com.anji.captcha.controller.CaptchaController<br/>
- * 使用jakarta.servlet
- */
+import java.util.Collections;
+
 @RestController
 @RequestMapping("/captcha")
 @Tag(name = "验证码")
 @Slf4j
-public class CaptchaCtrl extends Ctrl {
-
+public class CaptchaCtrl {
     @Autowired
-    private CaptchaService captchaService;
+    private ImageCaptchaApplication application;
 
     @PostMapping("/get")
-    public ResponseModel get(@RequestBody CaptchaVO data, HttpServletRequest request) {
-        assert request.getRemoteHost()!=null;
-        data.setBrowserInfo(getRemoteId(request));
-        log.info("获取验证图片");
-        return captchaService.get(data);
+    public CaptchaResponse<ImageCaptchaVO> get() {
+        return application.generateCaptcha(CaptchaTypeConstant.SLIDER);
     }
 
     @PostMapping("/check")
-    public ResponseModel check(@RequestBody CaptchaVO data, HttpServletRequest request) {
-        data.setBrowserInfo(getRemoteId(request));
-        log.info("前端核对验证码");
-        return captchaService.check(data);
-    }
-
-    //@PostMapping("/verify")
-    public ResponseModel verify(@RequestBody CaptchaVO data, HttpServletRequest request) {
-        return captchaService.verification(data);
-    }
-
-    public static final String getRemoteId(HttpServletRequest request) {
-        String xfwd = request.getHeader("X-Forwarded-For");
-        String ip = getRemoteIpFromXfwd(xfwd);
-        String ua = request.getHeader("user-agent");
-        if (StringUtils.isNotBlank(ip)) {
-            return ip + ua;
+    @ResponseBody
+    public ApiResponse<?> checkCaptcha(@RequestBody @Validated CheckCaptchaBo bo) {
+        ApiResponse<?> response = application.matching(bo.getId(), bo.getData());
+        if (response.isSuccess()) {
+            return ApiResponse.ofSuccess(Collections.singletonMap("id", bo.getId()));
         }
-        return request.getRemoteAddr() + ua;
+        return response;
     }
-
-    private static String getRemoteIpFromXfwd(String xfwd) {
-        if (StringUtils.isNotBlank(xfwd)) {
-            String[] ipList = xfwd.split(",");
-            return StringUtils.trim(ipList[0]);
-        }
-        return null;
-    }
-
 }

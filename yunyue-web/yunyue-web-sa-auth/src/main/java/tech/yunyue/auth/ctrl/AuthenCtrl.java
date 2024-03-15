@@ -1,5 +1,7 @@
 package tech.yunyue.auth.ctrl;
 
+import cloud.tianai.captcha.spring.application.ImageCaptchaApplication;
+import cloud.tianai.captcha.spring.plugins.secondary.SecondaryVerificationApplication;
 import cn.dev33.satoken.config.SaTokenConfig;
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.exception.SaTokenException;
@@ -9,9 +11,6 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.json.JSONUtil;
-import com.anji.captcha.model.common.ResponseModel;
-import com.anji.captcha.model.vo.CaptchaVO;
-import com.anji.captcha.service.CaptchaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -55,10 +54,10 @@ public class AuthenCtrl {
     private final AuthenService authenService;
     private final EvaConfig evaConfig;
     private final SaTokenConfig saTokenConfig;
-    private final CaptchaService captchaService;
     private final ApplicationEventPublisher publisher;
     private final JDBCService jdbcService;
     private final LogHelper logHelper;
+    private final ImageCaptchaApplication application;
 
     /**
      * 登录认证
@@ -68,13 +67,10 @@ public class AuthenCtrl {
     @Operation(summary = "登录")
     public Response login(@RequestBody Map<String, String> params) {
         // 验证码二次校验
-        String captchaVerification = params.get("captchaVerification");
-        CaptchaVO captchaVO = new CaptchaVO();
-        captchaVO.setCaptchaVerification(captchaVerification);
-        ResponseModel response = captchaService.verification(captchaVO);
-        if (!response.isSuccess() && "prod".equals(SpringUtil.getActiveProfile())) {
+        SecondaryVerificationApplication verificationApplication = (SecondaryVerificationApplication) application;
+        if (!verificationApplication.secondaryVerification(params.get("id")) && "prod".equals(SpringUtil.getActiveProfile())) {
             BizCodeEnum.LOGIN_CAPTCHA_FAIL.newException();
-            log.error("验证失败：" + response.getRepMsg());
+            log.error("验证失败：请重试");
         }
 
         // 校验账号密码

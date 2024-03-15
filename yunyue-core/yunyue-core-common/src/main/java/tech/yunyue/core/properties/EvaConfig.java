@@ -4,6 +4,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -80,6 +81,11 @@ public class EvaConfig {
      * 限制用户登录分钟数
      */
     private long loginLockTime = 30;
+
+    /**
+     * 登录验证码背景图片 放在classPath下
+     **/
+    private List<String> loginBGImageURLs;
 
     public SysLog getSyslog() {
         return Optional.ofNullable(syslog).orElse(new SysLog());

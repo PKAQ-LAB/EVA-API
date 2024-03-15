@@ -13,5 +13,5 @@ dependencies {
             "${lib.sa_token_starter}",
             "${lib.sa_token_redis}",
             "${lib.sa_token_jwt}",
-            "${lib.aj_captcha_starter}"
+            "${lib.tianai_captcha}"
 }
