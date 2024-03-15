@@ -1,8 +1,5 @@
 package tech.yunyue.captcha.bo;
 
-import cloud.tianai.captcha.validator.common.model.dto.ImageCaptchaTrack;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.deser.std.DateDeserializers;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -25,6 +22,5 @@ public class CheckCaptchaBo {
      */
     @Schema(description = "data")
     @NotNull(message = "滑动轨迹不能为空")
-    @JsonDeserialize(using = DateDeserializers.DateDeserializer.class)
     private ImageCaptchaTrack data;
 }
