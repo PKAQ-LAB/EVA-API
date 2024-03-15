@@ -27,6 +27,7 @@ public enum BizCodeEnum implements BizAssert {
     LICENSE_VERIFIED("License 验证成功", "0011"),
     LICENSE_REFRESH("License 更新成功", "0012"),
     LICENSE_IPMAC_VERIFIED("IP、MAC地址验证通过", "0013"),
+    LOGIN_WARNING_CONTINUE("该用户已登录", "0014"),
 
     /**
      * 请求失败 400x

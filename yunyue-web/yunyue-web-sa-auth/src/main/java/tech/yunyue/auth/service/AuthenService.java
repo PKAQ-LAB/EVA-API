@@ -6,6 +6,7 @@ import cn.dev33.satoken.secure.BCrypt;
 import cn.dev33.satoken.spring.SpringMVCUtil;
 import cn.dev33.satoken.stp.SaLoginConfig;
 import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.StrUtil;
@@ -43,7 +44,7 @@ public class AuthenService {
     /**
      * 登录
      */
-    public Response additionalAuthenticationChecks(String username, String password) {
+    public Response additionalAuthenticationChecks(String username, String password, boolean forceLogin) {
         // 判断锁定标记是否存在 存在就直接报错
         String key = CommonConstant.REDIS_USER_NO_LOGIN_KEY + username;
         if (StringUtils.hasLength(redisUtil.get(key))) {
@@ -59,11 +60,17 @@ public class AuthenService {
             recordFail(user.getAccount(), user.getTel());
             BizCodeEnum.ACCOUNT_OR_PWD_ERROR.newException();
         }
+        HttpServletRequest request = (HttpServletRequest) SaHolder.getRequest().getSource();
+        // 判断该用户之前是否登录过
+        if (!forceLogin && CollUtil.isNotEmpty(StpUtil.getTokenSignListByLoginId(user.getId(), RequestUtil.getDeivce(request)))) {
+            // 告诉前端该用户已登录，是否强制登录
+            return new Response().failure(BizCodeEnum.LOGIN_WARNING_CONTINUE);
+        }
+
         // 登录成功 删除记录失败记录的集合
         redisUtil.delete(CommonConstant.REDIS_USER_LOGIN_FAIL_KEY + user.getAccount());
 
         // 生成access_token 6小时
-        HttpServletRequest request = (HttpServletRequest) SaHolder.getRequest().getSource();
         saTokenConfig.setTokenName(CommonConstant.ACCESS_TOKEN_KEY);
         var model = SaLoginConfig.setExtra("userId", user.getId())
                 .setExtra("account", user.getAccount())
@@ -130,6 +137,7 @@ public class AuthenService {
         checkTenantEffective(user.getTenantId());
         return user;
     }
+
     /**
      * 根据用户名在数据中查询用户和角色
      */
@@ -155,6 +163,7 @@ public class AuthenService {
 
     /**
      * 检查租户是否有效 启用/未删除/到期时间大于当前时间
+     *
      * @param tenantId
      */
     private void checkTenantEffective(String tenantId) {

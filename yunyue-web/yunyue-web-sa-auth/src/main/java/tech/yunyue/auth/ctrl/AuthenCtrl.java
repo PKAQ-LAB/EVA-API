@@ -76,10 +76,11 @@ public class AuthenCtrl {
         // 校验账号密码
         String username = params.get("username");
         String password = params.get("password");
+        boolean forceLogin = Boolean.parseBoolean(params.getOrDefault("forceLogin","false"));
         if (!StringUtils.hasText(username) || !StringUtils.hasText(password)) {
             BizCodeEnum.ACCOUNT_OR_PWD_ERROR.newException();
         }
-        return authenService.additionalAuthenticationChecks(username, password);
+        return authenService.additionalAuthenticationChecks(username, password, forceLogin);
     }
 
 
