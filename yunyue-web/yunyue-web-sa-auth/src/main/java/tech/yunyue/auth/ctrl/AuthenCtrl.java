@@ -1,7 +1,6 @@
 package tech.yunyue.auth.ctrl;
 
 import cloud.tianai.captcha.spring.application.ImageCaptchaApplication;
-import cloud.tianai.captcha.spring.plugins.secondary.SecondaryVerificationApplication;
 import cn.dev33.satoken.config.SaTokenConfig;
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.exception.SaTokenException;
@@ -27,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tech.yunyue.auth.service.AuthenService;
 import tech.yunyue.auth.service.JDBCService;
+import tech.yunyue.config.ForceLoginSecondaryVerificationApplication;
 import tech.yunyue.core.constant.CommonConstant;
 import tech.yunyue.core.enums.BizCodeEnum;
 import tech.yunyue.core.event.BizEvent;
@@ -66,9 +66,10 @@ public class AuthenCtrl {
     @PostMapping(value = "/login")
     @Operation(summary = "登录")
     public Response login(@RequestBody Map<String, String> params) {
+        boolean forceLogin = Boolean.parseBoolean(params.getOrDefault("forceLogin", "false"));
         // 验证码二次校验
-        SecondaryVerificationApplication verificationApplication = (SecondaryVerificationApplication) application;
-        if (!verificationApplication.secondaryVerification(params.get("id")) && "prod".equals(SpringUtil.getActiveProfile())) {
+        ForceLoginSecondaryVerificationApplication verificationApplication = (ForceLoginSecondaryVerificationApplication) application;
+        if (!verificationApplication.secondaryVerification(params.get("id"), forceLogin) && "prod".equals(SpringUtil.getActiveProfile())) {
             BizCodeEnum.LOGIN_CAPTCHA_FAIL.newException();
             log.error("验证失败：请重试");
         }
@@ -76,7 +77,6 @@ public class AuthenCtrl {
         // 校验账号密码
         String username = params.get("username");
         String password = params.get("password");
-        boolean forceLogin = Boolean.parseBoolean(params.getOrDefault("forceLogin","false"));
         if (!StringUtils.hasText(username) || !StringUtils.hasText(password)) {
             BizCodeEnum.ACCOUNT_OR_PWD_ERROR.newException();
         }
