@@ -17,8 +17,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,12 +33,10 @@ import tech.yunyue.core.log.util.LogHelper;
 import tech.yunyue.core.mvc.vo.Response;
 import tech.yunyue.core.properties.EvaConfig;
 import tech.yunyue.core.threaduser.ThreadUser;
-import tech.yunyue.core.util.json.JsonUtil;
 import tech.yunyue.core.web.util.IpUtil;
 import tech.yunyue.core.web.util.RequestUtil;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
@@ -155,17 +151,9 @@ public class AuthenCtrl {
                 throw new NotLoginException("", "", "");
             }
         } catch (NotLoginException e) {
-            // token过期 返回401 用户重新登录
-            try (PrintWriter printWriter = response.getWriter()) {
-                response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                response.setCharacterEncoding("UTF-8");
-                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-
-                printWriter.write(JsonUtil.toJson(new Response().failure(BizCodeEnum.LOGIN_EXPIRED)));
-                printWriter.flush();
-            }
             saTokenConfig.setTokenName(CommonConstant.ACCESS_TOKEN_KEY); // 改回来
-            return null;
+            // token过期 返回401 用户重新登录
+            BizCodeEnum.LOGIN_EXPIRED.newUnauthorizedException();
         }
         String account = (String) StpUtil.getExtra("account");
         String version = (String) StpUtil.getExtra("version");

@@ -39,7 +39,7 @@ public class FilterAuthStrategy implements SaFilterAuthStrategy {
             // 当前会话是否登录
             if (Objects.isNull(ThreadUserHelper.getCurrentUser()) || !StringUtils.hasText(ThreadUserHelper.getUserId())) {
                 SaHolder.getResponse().setStatus(HttpStatus.UNAUTHORIZED.value());
-                BizCodeEnum.LOGIN_EXPIRED.newException();
+                BizCodeEnum.LOGIN_EXPIRED.newUnauthorizedException();
             }
             // 当前资源是否需要鉴权
             SaRouter.match(antPathMatcher()).stop();
