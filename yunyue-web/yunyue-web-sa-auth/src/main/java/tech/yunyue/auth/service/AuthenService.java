@@ -79,6 +79,10 @@ public class AuthenService {
         StpUtil.login(user.getId(), model);
         // 生成refresh_token 30天
         saTokenConfig.setTokenName(CommonConstant.REFRESH_TOKEN_KEY);
+        if (forceLogin) {
+            // 把之前的refresh_token注销
+            StpUtil.logout(user.getId());
+        }
         StpUtil.login(user.getId(), model.setTimeout(evaConfig.getJwt().getBravoTtl()));
         saTokenConfig.setTokenName(CommonConstant.ACCESS_TOKEN_KEY); // 改回来
 
