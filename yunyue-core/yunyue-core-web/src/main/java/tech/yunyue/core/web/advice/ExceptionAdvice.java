@@ -2,6 +2,7 @@ package tech.yunyue.core.web.advice;
 
 import tech.yunyue.core.enums.BizCodeEnum;
 import tech.yunyue.core.exception.BizException;
+import tech.yunyue.core.exception.UnauthorizedException;
 import tech.yunyue.core.mvc.vo.Response;
 import tech.yunyue.core.util.I18NHelper;
 import jakarta.validation.ConstraintViolation;
@@ -120,6 +121,20 @@ public class ExceptionAdvice {
         log.error("业务异常:" + e.getMessage());
         e.printStackTrace();
         return i18NHelper.getMessage(e.getBizCode(), e.getArgs());
+    }
+
+    /**
+     * 用户认证授权异常
+     *
+     * @param e 异常类型
+     * @return Response
+     */
+    @ExceptionHandler(UnauthorizedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public Response handleBindException(UnauthorizedException e) {
+        log.error("用户认证授权异常:" + e.getMessage());
+        e.printStackTrace();
+        return i18NHelper.getMessage(e.getBizCode());
     }
 
     /**

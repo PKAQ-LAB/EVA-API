@@ -2,7 +2,6 @@ package tech.yunyue.core.exception;
 
 import tech.yunyue.core.enums.BizCode;
 
-import java.text.MessageFormat;
 import java.util.Collection;
 
 /**
@@ -89,4 +88,12 @@ public interface BizAssert extends BizCode {
             throw newException(t, args);
         }
     }
+
+    /**
+     * 断言异常
+     */
+    default UnauthorizedException newUnauthorizedException() {
+        throw new UnauthorizedException(this);
+    }
+
 }
