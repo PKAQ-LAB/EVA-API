@@ -61,6 +61,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         try {
             // 从Storage、请求体、cookie中获取token
             authToken = StpUtil.getTokenValue();
+            logger.warn("-----------Storage、请求体、cookie中获取token【%s】---------------".formatted(authToken));
         } catch (Exception e) {
             authToken = null;
             logger.warn(e);
@@ -83,6 +84,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
                 // 验证token 是否合法
                 uid = getLoginId(authToken);
+                logger.warn("-----------经过处理的当前token为【%s】，用户id为【%s】---------------".formatted(authToken, uid));
                 account = (String) StpUtil.getExtra(authToken, "account");
 
                 // 判断token是否临期且不存在上一个临期token  就刷新token
@@ -127,6 +129,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         // 把登录用户信息存到ThreadUser中
         if (isvalid) {
             ThreadUser currentUser = JSONUtil.toBean(this.jdbcService.loadUserById(uid), ThreadUser.class);
+            logger.warn("-----------当前用户id为【%s】，用户信息为【%s】---------------".formatted(uid, JSONUtil.parseObj(currentUser)));
             currentUser.setUserId(uid)
                     .setAccount(account)
                     .setRolesMap(this.jdbcService.getRoleById(uid))
