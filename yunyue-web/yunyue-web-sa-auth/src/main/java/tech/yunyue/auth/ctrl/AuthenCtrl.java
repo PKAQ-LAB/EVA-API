@@ -158,6 +158,8 @@ public class AuthenCtrl {
         String account = (String) StpUtil.getExtra("account");
         String version = (String) StpUtil.getExtra("version");
         String device = StpUtil.getLoginDevice();
+        // 把之前的refresh_token注销
+        StpUtil.logout(userId);
         // 重新生成refresh_token
         StpUtil.login(userId, SaLoginConfig.setExtra("userId", userId)
                 .setExtra("account", account)
