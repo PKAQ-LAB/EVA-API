@@ -16,6 +16,7 @@ import java.util.Optional;
 @Configuration
 @ConfigurationProperties(prefix = "eva")
 public class EvaConfig {
+    private boolean open;
     /**
      * 是否开启国际化
      */
