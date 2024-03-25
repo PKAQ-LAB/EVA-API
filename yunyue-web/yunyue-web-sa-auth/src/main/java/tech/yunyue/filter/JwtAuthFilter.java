@@ -1,5 +1,6 @@
 package tech.yunyue.filter;
 
+import cn.dev33.satoken.context.SaHolder;
 import cn.dev33.satoken.dao.SaTokenDao;
 import cn.dev33.satoken.error.SaErrorCode;
 import cn.dev33.satoken.exception.NotLoginException;
@@ -55,6 +56,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+        if (true) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         Jwt jwtConfig = evaConfig.getJwt();
         var isvalid = false;
         String authToken;
@@ -62,6 +68,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             // 从Storage、请求体、cookie中获取token
             authToken = StpUtil.getTokenValue();
             logger.warn("-----------Storage、请求体、cookie中获取token【%s】---------------".formatted(authToken));
+            logger.warn("-----------request--------%s--------------%s".formatted(request.getRequestURI(), SaHolder.getRequest().getRequestPath()));
         } catch (Exception e) {
             authToken = null;
             logger.warn(e);

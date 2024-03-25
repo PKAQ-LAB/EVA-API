@@ -10,8 +10,9 @@ dependencies {
             project(":yunyue-core:yunyue-core-data-mybatis"),
             project(":yunyue-core:yunyue-core-cache"),
             "${lib.mysql}",
-            "${lib.sa_token_starter}",
-            "${lib.sa_token_redis}",
             "${lib.sa_token_jwt}",
             "${lib.tianai_captcha}"
+
+    api "${lib.sa_token_starter}",
+    "${lib.sa_token_redis}"
 }
