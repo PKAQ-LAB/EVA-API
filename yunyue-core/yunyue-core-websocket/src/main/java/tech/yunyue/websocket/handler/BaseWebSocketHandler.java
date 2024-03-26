@@ -3,9 +3,10 @@ package tech.yunyue.websocket.handler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
-import org.springframework.web.socket.server.HandshakeInterceptor;
 import tech.yunyue.core.threaduser.ThreadUser;
 import tech.yunyue.core.threaduser.ThreadUserHelper;
+import tech.yunyue.websocket.constant.WebSocketConsts;
+import tech.yunyue.websocket.interceptor.BaseWebSocketInterceptor;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -20,8 +21,7 @@ import java.util.Optional;
  * @author PKAQ
  */
 @Slf4j
-public abstract class WebSocketHandler extends AbstractWebSocketHandler {
-    private static final String USER_KEY = "THREAD_USER";
+public abstract class BaseWebSocketHandler extends AbstractWebSocketHandler {
     private static final String PING_MESSAGE = "ping";
 
     /**
@@ -36,7 +36,7 @@ public abstract class WebSocketHandler extends AbstractWebSocketHandler {
      *
      * @return WebSocket拦截器，返回null则使用默认拦截器
      */
-    public HandshakeInterceptor getInterceptor() {
+    public BaseWebSocketInterceptor getInterceptor() {
         return null;
     }
 
@@ -52,8 +52,6 @@ public abstract class WebSocketHandler extends AbstractWebSocketHandler {
         log.info("【有新的客户端连接了】：{}", key);
         WebSocketSessionManager.add(key, session);
         log.info("【websocket消息】有新的连接，总数为:" + WebSocketSessionManager.SESSION_POOL.size());
-        // 链接建立成功，说明已经通过鉴权，将用户信息存储在session中
-        session.getAttributes().put(USER_KEY, ThreadUserHelper.getCurrentUser());
     }
 
     /**
@@ -162,6 +160,6 @@ public abstract class WebSocketHandler extends AbstractWebSocketHandler {
      * @param session 包含用户信息的WebSocketSession。
      */
     private void setCurrentUserFromSession(WebSocketSession session) {
-        ThreadUserHelper.setCurrentUser((ThreadUser) session.getAttributes().get(USER_KEY));
+        ThreadUserHelper.setCurrentUser((ThreadUser) session.getAttributes().get(WebSocketConsts.USER_INFO_KEY));
     }
 }
