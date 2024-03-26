@@ -84,7 +84,7 @@ public interface LogSupporter<T extends LogEntity, E extends LogEvent> {
      */
     @TransactionalEventListener(phase = TransactionPhase.AFTER_ROLLBACK)
     @Async("log_task")
-    default void listenerRollbask(E event) {
+    default void listenerRollback(E event) {
         T logEntity = (T) event.getSource();
         // 接收的类型匹配才进行保存操作
         if (checkMatch(event) && Objects.nonNull(logEntity)) {
