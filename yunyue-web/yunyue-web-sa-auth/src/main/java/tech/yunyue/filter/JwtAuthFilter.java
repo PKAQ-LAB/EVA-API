@@ -8,7 +8,6 @@ import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.stp.SaLoginConfig;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaFoxUtil;
-import cn.dev33.satoken.util.SaTokenConsts;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
@@ -23,6 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import tech.yunyue.auth.service.JDBCService;
+import tech.yunyue.core.constant.CommonConstant;
 import tech.yunyue.core.enums.BizCodeEnum;
 import tech.yunyue.core.mvc.vo.Response;
 import tech.yunyue.core.properties.EvaConfig;
@@ -43,7 +43,7 @@ import static cn.dev33.satoken.exception.NotLoginException.*;
  */
 @Component
 @RequiredArgsConstructor
-@Order(SaTokenConsts.ASSEMBLY_ORDER)
+@Order(CommonConstant.ASSEMBLY_ORDER - 1)
 public class JwtAuthFilter extends OncePerRequestFilter {
     private final EvaConfig evaConfig;
     private final JDBCService jdbcService;
@@ -56,21 +56,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-        if (evaConfig.isOpen()) {
-            chain.doFilter(request, response);
-            return;
-        }
-
         Jwt jwtConfig = evaConfig.getJwt();
         var isvalid = false;
         String authToken;
         try {
             // 从Storage、请求体、cookie中获取token
             authToken = StpUtil.getTokenValue();
-            logger.warn("-线程：%s----------Storage、请求体、cookie中获取token【%s】--------用户信息%s-------".formatted(Thread.currentThread(), authToken, JSONUtil.parseObj(ThreadUserHelper.getAccount())));
-            if (CharSequenceUtil.isBlank(authToken) && CharSequenceUtil.isNotEmpty(ThreadUserHelper.getUserId())) {
-                logger.warn("线程：%s出现问题了------------".formatted(Thread.currentThread()));
-            }
         } catch (Exception e) {
             authToken = null;
             logger.warn(e);
@@ -93,7 +84,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
                 // 验证token 是否合法
                 uid = getLoginId(authToken);
-                logger.warn("线程：%s-----------经过处理的当前token为【%s】，用户id为【%s】---------------".formatted(Thread.currentThread(), authToken, uid));
                 account = (String) StpUtil.getExtra(authToken, "account");
 
                 // 判断token是否临期且不存在上一个临期token  就刷新token
@@ -153,7 +143,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             }
             ThreadUserHelper.setCurrentUser(currentUser);
         }
-        logger.warn("last------------线程：%s出现token%s------用户信息%s------------".formatted(Thread.currentThread(), authToken, ThreadUserHelper.getUserId()));
+        if (CharSequenceUtil.isBlank(authToken) && CharSequenceUtil.isNotEmpty(ThreadUserHelper.getUserId())) {
+            logger.error("----线程：%s出现问题了------------请求：%s-----------用户：%s".formatted(Thread.currentThread().getId(), request.getRequestURI(), ThreadUserHelper.getUserId()));
+        }
         chain.doFilter(request, response);
     }
 

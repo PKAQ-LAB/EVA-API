@@ -87,4 +87,8 @@ public interface CommonConstant {
     //踢出用户事件
     String KICK_USER_EVENT = "kick_user_event";
 
+    /**
+     * 切面、拦截器、过滤器等各种组件的注册优先级顺序
+     */
+    int ASSEMBLY_ORDER = -100;
 }

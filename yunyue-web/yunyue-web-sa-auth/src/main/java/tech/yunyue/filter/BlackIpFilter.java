@@ -1,6 +1,5 @@
 package tech.yunyue.filter;
 
-import cn.dev33.satoken.util.SaTokenConsts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,6 +15,7 @@ import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+import tech.yunyue.core.constant.CommonConstant;
 import tech.yunyue.core.enums.BizCodeEnum;
 import tech.yunyue.core.exception.BizException;
 import tech.yunyue.core.web.util.IpUtil;
@@ -28,7 +28,7 @@ import java.io.IOException;
  */
 @Component
 @RequiredArgsConstructor
-@Order(SaTokenConsts.ASSEMBLY_ORDER-1)
+@Order(CommonConstant.ASSEMBLY_ORDER-2)
 public class BlackIpFilter extends OncePerRequestFilter {
     private static final String REQUEST_ATTRIBUTES_ATTRIBUTE =
             RequestContextListener.class.getName() + ".REQUEST_ATTRIBUTES";
