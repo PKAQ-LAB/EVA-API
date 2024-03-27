@@ -8,6 +8,7 @@ import cn.dev33.satoken.spring.SpringMVCUtil;
 import cn.dev33.satoken.stp.SaLoginConfig;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.json.JSONUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -65,7 +66,7 @@ public class AuthenCtrl {
         boolean forceLogin = Boolean.parseBoolean(params.getOrDefault("forceLogin", "false"));
         // 验证码二次校验
         ForceLoginSecondaryVerificationApplication verificationApplication = (ForceLoginSecondaryVerificationApplication) application;
-        if (!verificationApplication.secondaryVerification(params.get("id"), forceLogin) && "prod".equals(SpringUtil.getActiveProfile())) {
+        if (!verificationApplication.secondaryVerification(params.get("id"), forceLogin) && !CharSequenceUtil.equalsIgnoreCase("dev", SpringUtil.getActiveProfile())) {
             BizCodeEnum.LOGIN_CAPTCHA_FAIL.newException();
             log.error("验证失败：请重试");
         }
