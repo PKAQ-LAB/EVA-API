@@ -51,7 +51,7 @@ public class MQLogSupporter<T extends LogEntity, E extends LogEvent> implements 
      * @param event
      */
     @Override
-    public void listenerRollbask(E event) {
+    public void listenerRollback(E event) {
         T entity = (T) event.getSource();
         if (checkMatch(event)) this.convertAndSend(entity);
     }
