@@ -48,7 +48,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
             socketHandlers.forEach(handler -> {
                 registry.addHandler(handler, handler.socketPath())
                         .addInterceptors(Optional.ofNullable(handler.getInterceptor()).orElse(defaultInterceptor))
-                        .setAllowedOrigins("prod".equals(SpringUtil.getActiveProfile()) ? null : "*");
+                        .setAllowedOrigins("*");
             });
         }
     }
