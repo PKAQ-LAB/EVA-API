@@ -157,6 +157,6 @@ public class HistoryUtil<T> {
         if (tableName == null && historyLog == null) {
             BizCodeEnum.CAN_NOT_INSERT_HISTORY.newException(clazz);
         }
-        return Optional.ofNullable(historyLog).map(HistoryLog::value).orElse(tableName.value());
+        return Objects.isNull(historyLog) ? tableName.value() : historyLog.value();
     }
 }
