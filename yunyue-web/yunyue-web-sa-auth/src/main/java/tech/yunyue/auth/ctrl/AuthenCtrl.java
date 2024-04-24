@@ -80,6 +80,21 @@ public class AuthenCtrl {
         return authenService.additionalAuthenticationChecks(username, password, forceLogin);
     }
 
+    /**
+     * h5登录
+     */
+    @PostMapping(value = "/h5Login")
+    @Operation(summary = "h5登录")
+    public Response appletLogin(@RequestBody Map<String, String> params) {
+        // 校验账号密码
+        String username = params.get("username");
+        String password = params.get("password");
+        if (!StringUtils.hasText(username) || !StringUtils.hasText(password)) {
+            BizCodeEnum.ACCOUNT_OR_PWD_ERROR.newException();
+        }
+        return authenService.additionalAuthenticationChecks(username, password, true);
+    }
+
 
     /**
      * 退出登录需要需要登录的一点思考：
