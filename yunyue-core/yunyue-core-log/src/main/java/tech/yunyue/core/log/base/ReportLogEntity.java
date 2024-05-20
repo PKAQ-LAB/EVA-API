@@ -46,4 +46,10 @@ public class ReportLogEntity extends LogEntity {
      **/
     @Schema(description = "操作描述")
     private String description;
+
+    /**
+     * 创建人名字
+     */
+    @Schema(description = "创建人名字")
+    private String createName;
 }
