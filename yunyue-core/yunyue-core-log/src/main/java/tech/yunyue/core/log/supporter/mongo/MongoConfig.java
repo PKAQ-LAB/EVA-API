@@ -14,9 +14,11 @@ import tech.yunyue.core.log.constant.LogConstant;
 import tech.yunyue.core.log.events.BizLogEvent;
 import tech.yunyue.core.log.events.ErrorLogEvent;
 import tech.yunyue.core.log.events.LoginLogEvent;
+import tech.yunyue.core.log.events.ReportLogEvent;
 import tech.yunyue.core.log.supporter.mongo.entity.MongoBizLogEntity;
 import tech.yunyue.core.log.supporter.mongo.entity.MongoErrorLogEntity;
 import tech.yunyue.core.log.supporter.mongo.entity.MongoLoginLogEntity;
+import tech.yunyue.core.log.supporter.mongo.entity.MongoReportLogEntity;
 import tech.yunyue.core.properties.EvaConfig;
 
 @Configuration
@@ -45,5 +47,11 @@ public class MongoConfig implements LogConfig {
     @Override
     public LogSupporter<MongoLoginLogEntity, LoginLogEvent> loginLogSupporter(){
         return new MongoDBSupporter<>(new TypeToken<MongoDBSupporter<MongoLoginLogEntity, LoginLogEvent>>(){}, mongoTemplate, LogConstant.LOGIN_LOG_DATE_FIELD, LogConstant.LOGIN_DB_NAME, LogConstant.LOGIN_HISTORY_DB_NAME);
+    }
+
+    @Bean
+    @Override
+    public LogSupporter<MongoReportLogEntity, ReportLogEvent> reportLogSupporter(){
+        return new MongoDBSupporter<>(new TypeToken<MongoDBSupporter<MongoReportLogEntity, ReportLogEvent>>(){}, mongoTemplate, LogConstant.LOGIN_LOG_DATE_FIELD, LogConstant.REPORT_DB_NAME, LogConstant.REPORT_HISTORY_DB_NAME);
     }
 }

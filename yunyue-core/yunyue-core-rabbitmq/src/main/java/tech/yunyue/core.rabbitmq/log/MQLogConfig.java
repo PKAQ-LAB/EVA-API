@@ -7,15 +7,13 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import tech.yunyue.core.log.base.BizLogEntity;
-import tech.yunyue.core.log.base.ErrorlogEntity;
-import tech.yunyue.core.log.base.LogSupporter;
-import tech.yunyue.core.log.base.LoginlogEntity;
+import tech.yunyue.core.log.base.*;
 import tech.yunyue.core.log.config.LogConfig;
 import tech.yunyue.core.log.constant.LogConstant;
 import tech.yunyue.core.log.events.BizLogEvent;
 import tech.yunyue.core.log.events.ErrorLogEvent;
 import tech.yunyue.core.log.events.LoginLogEvent;
+import tech.yunyue.core.log.events.ReportLogEvent;
 import tech.yunyue.core.properties.EvaConfig;
 import tech.yunyue.core.rabbitmq.log.supporter.MQLogSupporter;
 
@@ -34,6 +32,7 @@ public class MQLogConfig implements LogConfig {
     public <T extends BizLogEntity> LogSupporter<T, BizLogEvent> bizLogSupporter() {
         return null;
     }
+
     @Override
     public <T extends ErrorlogEntity> LogSupporter<T, ErrorLogEvent> errorLogSupporter() {
         return null;
@@ -44,24 +43,30 @@ public class MQLogConfig implements LogConfig {
         return null;
     }
 
+    @Override
+    public <T extends ReportLogEntity> LogSupporter<T, ReportLogEvent> reportLogSupporter() {
+        return null;
+    }
+
     @Bean
     public Object bizlog() {
         // 与LogConfig接口的bizLogSupporter方法同名 因为要替换掉同名Supporter
         String beanName = BIZ_LOG_NAME;
         MQLogSupporter rabbitLogSupporter = new MQLogSupporter(rabbitTemplate, SpringUtil.getBean(beanName), LogConstant.LOG_EXCHANGE, LogConstant.BIZ_LOG_ROUTINGKEY);
-        //替换bean 先删除再注册同名bean
+        // 替换bean 先删除再注册同名bean
         beanFactory.removeBeanDefinition(beanName);
-        beanFactory.registerSingleton(beanName,rabbitLogSupporter);
+        beanFactory.registerSingleton(beanName, rabbitLogSupporter);
         return null;
     }
+
     @Bean
     public Object errorlog() {
         // 与LogConfig接口的errorLogSupporter方法同名 因为要替换掉同名Supporter
         String beanName = ERROR_LOG_NAME;
         MQLogSupporter rabbitLogSupporter = new MQLogSupporter(rabbitTemplate, SpringUtil.getBean(beanName), LogConstant.LOG_EXCHANGE, LogConstant.ERROR_LOG_ROUTINGKEY);
-        //替换bean 先删除再注册同名bean
+        // 替换bean 先删除再注册同名bean
         beanFactory.removeBeanDefinition(beanName);
-        beanFactory.registerSingleton(beanName,rabbitLogSupporter);
+        beanFactory.registerSingleton(beanName, rabbitLogSupporter);
         return null;
     }
 
@@ -70,10 +75,22 @@ public class MQLogConfig implements LogConfig {
         // 与LogConfig接口的errorLogSupporter方法同名 因为要替换掉同名Supporter
         String beanName = LOGIN_LOG_NAME;
         MQLogSupporter rabbitLogSupporter = new MQLogSupporter(rabbitTemplate, SpringUtil.getBean(beanName), LogConstant.LOG_EXCHANGE, LogConstant.LOGIN_LOG_ROUTINGKEY);
-        //替换bean 先删除再注册同名bean
+        // 替换bean 先删除再注册同名bean
         beanFactory.removeBeanDefinition(beanName);
-        beanFactory.registerSingleton(beanName,rabbitLogSupporter);
+        beanFactory.registerSingleton(beanName, rabbitLogSupporter);
         return null;
     }
+
+    @Bean
+    public Object reportlog() {
+        // 与LogConfig接口的errorLogSupporter方法同名 因为要替换掉同名Supporter
+        String beanName = REPORT_LOG_NAME;
+        MQLogSupporter rabbitLogSupporter = new MQLogSupporter(rabbitTemplate, SpringUtil.getBean(beanName), LogConstant.LOG_EXCHANGE, LogConstant.REPORT_LOG_ROUTINGKEY);
+        // 替换bean 先删除再注册同名bean
+        beanFactory.removeBeanDefinition(beanName);
+        beanFactory.registerSingleton(beanName, rabbitLogSupporter);
+        return null;
+    }
+
 
 }

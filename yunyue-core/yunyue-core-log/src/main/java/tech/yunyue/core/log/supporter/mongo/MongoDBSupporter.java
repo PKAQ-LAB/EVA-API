@@ -4,7 +4,6 @@ import cn.hutool.core.text.CharSequenceUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.nimbusds.jose.shaded.gson.reflect.TypeToken;
-import io.swagger.v3.oas.annotations.media.Schema;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -96,9 +95,9 @@ public class MongoDBSupporter<T extends LogEntity, E extends LogEvent> implement
         Optional.ofNullable(queryBo.getBegin()).ifPresent(begin -> list.add(Criteria.where(dateTimeField).gte(dateFormat.format(begin))));
         Optional.ofNullable(queryBo.getEnd()).ifPresent(end -> list.add(Criteria.where(dateTimeField).lte(dateFormat.format(end))));
         Optional.ofNullable(queryBo.getLogEntity()).ifPresent(logEntity -> {
-            addEqCriteria("create_id",logEntity.getCreateId(), list);
-            addEqCriteria("post_id",logEntity.getPostId(), list);
-            addEqCriteria("org_id",logEntity.getOrgId(), list);
+            addEqCriteria("create_id", logEntity.getCreateId(), list);
+            addEqCriteria("post_id", logEntity.getPostId(), list);
+            addEqCriteria("org_id", logEntity.getOrgId(), list);
             if (logEntity instanceof BizLogEntity log) {
                 addEqCriteria("operate_type", log.getOperateType(), list);
                 addEqCriteria("b_id", log.getBId(), list);
@@ -121,6 +120,12 @@ public class MongoDBSupporter<T extends LogEntity, E extends LogEvent> implement
                 addLikeCriteria("operator_name", log.getOperatorName(), list);
                 addLikeCriteria("device", log.getDevice(), list);
                 addLikeCriteria("version", log.getVersion(), list);
+            } else if (logEntity instanceof ReportLogEntity log) {
+                addEqCriteria("operate_type", log.getOperateType(), list);
+                addLikeCriteria("report_id", log.getReportId(), list);
+                addLikeCriteria("report_name", log.getReportName(), list);
+                addLikeCriteria("report_code", log.getReportCode(), list);
+                addLikeCriteria("description", log.getDescription(), list);
             }
         });
         if (list.isEmpty()) {

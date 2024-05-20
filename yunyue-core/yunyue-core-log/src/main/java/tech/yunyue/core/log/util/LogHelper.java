@@ -20,14 +20,18 @@ public class LogHelper {
     private final LogSupporter errorLogSupporter;
     private final LogSupporter loginLogSupporter;
 
+    private final LogSupporter reportLogSupporter;
+
     public LogHelper(ApplicationEventPublisher eventPublisher,
                      @Qualifier(LogConfig.BIZ_LOG_NAME) LogSupporter bizLogSupporter,
                      @Qualifier(LogConfig.ERROR_LOG_NAME) LogSupporter errorLogSupporter,
-                     @Qualifier(LogConfig.LOGIN_LOG_NAME) LogSupporter loginLogSupporter) {
+                     @Qualifier(LogConfig.LOGIN_LOG_NAME) LogSupporter loginLogSupporter,
+                     @Qualifier(LogConfig.REPORT_LOG_NAME) LogSupporter reportLogSupporter) {
         this.eventPublisher = eventPublisher;
         this.bizLogSupporter = bizLogSupporter;
         this.errorLogSupporter = errorLogSupporter;
         this.loginLogSupporter = loginLogSupporter;
+        this.reportLogSupporter = reportLogSupporter;
     }
 
     public void save(BizLogEntity bizLogEntity) {
@@ -59,6 +63,10 @@ public class LogHelper {
 
     public LogSupporter getLoginLogSupporter() {
         return loginLogSupporter;
+    }
+
+    public LogSupporter getReportLogSupporter() {
+        return reportLogSupporter;
     }
 
 }
