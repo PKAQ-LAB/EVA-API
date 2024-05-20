@@ -1,6 +1,10 @@
 package tech.yunyue.core.upload.util;
 
 
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.lang.Snowflake;
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
 import org.springframework.web.multipart.MultipartFile;
 import tech.yunyue.core.upload.enumm.BucketTypeEnum;
 import tech.yunyue.core.upload.enumm.IBucket;
@@ -17,6 +21,8 @@ import java.util.List;
 public interface FileProvider<T extends IBucket> {
     // 图片常见后缀
     String SUFFIXSTR = ".bmp .dib .gif .jfif .jpe .jpeg .jpg .png .tif .tiff .ico .webp .svg .raw .psd";
+    String THUMBNAIL_NAME = "thumbnail_";
+    Snowflake snowflake = IdUtil.getSnowflake(16, 18);
 
     /**
      * 上传文件到临时目录，按文件类型/YYYYMM结构存储文件
@@ -232,5 +238,45 @@ public interface FileProvider<T extends IBucket> {
      */
     default InputStream getFileInputStream(String fileName, BucketTypeEnum target) {
         return new ByteArrayInputStream(new byte[0]);
+    }
+
+    /**
+     * 将持久桶的原文件复制到原目录下
+     *
+     * @param sourceName 原文件名
+     * @return 生成的文件目录+保存的文件名
+     */
+    default String copy(String sourceName) {
+        // 原文件新名称
+        var lastIndex = FileUtil.lastIndexOfSeparator(sourceName) + 1;
+        var targetName = "%s%s%s".formatted(sourceName.substring(0, lastIndex), snowflake.nextIdStr(), sourceName.substring(lastIndex));
+        // 复制原文件
+        copy(sourceName, BucketTypeEnum.STORAGE, targetName, BucketTypeEnum.STORAGE);
+
+        // 如果是图片 处理缩略图
+        if (SUFFIXSTR.contains(FileUtil.extName(sourceName))) {
+            // 原缩略图路径
+            String fileName = sourceName.substring(sourceName.lastIndexOf(StrUtil.SLASH) + 1);
+            var sThumbnailName = sourceName.replace(fileName, THUMBNAIL_NAME + fileName);
+            // 新图缩略图路径
+            String newfileName = targetName.substring(targetName.lastIndexOf(StrUtil.SLASH) + 1);
+            var targetThumbnailName = targetName.replace(newfileName, THUMBNAIL_NAME + newfileName);
+            // 复制缩略图
+            copy(sThumbnailName, BucketTypeEnum.STORAGE, targetThumbnailName, BucketTypeEnum.STORAGE);
+        }
+        return targetName;
+    }
+
+    /**
+     * 将原文件夹从原桶复制到目标桶
+     *
+     * @param sourceName 原文件名
+     * @param source     原桶
+     * @param target     目标桶
+     * @param targetName 目标名称
+     * @return 目标名称
+     */
+    default String copy(String sourceName, BucketTypeEnum source, String targetName, BucketTypeEnum target) {
+        return targetName;
     }
 }

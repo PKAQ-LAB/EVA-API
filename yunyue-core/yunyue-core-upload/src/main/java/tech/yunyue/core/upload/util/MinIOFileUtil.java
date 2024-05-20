@@ -10,6 +10,7 @@ import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.text.StrPool;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import io.minio.*;
 import io.minio.http.Method;
@@ -264,16 +265,7 @@ public class MinIOFileUtil implements FileProvider<MinIOBucketEnum>, Initializin
     public void storage(BucketTypeEnum source, BucketTypeEnum target, String... filenames) {
         for (String fileName : filenames) {
             try {
-                minioClient.copyObject(
-                        CopyObjectArgs.builder()
-                                .bucket(getBucketName(target))
-                                .object(fileName)
-                                .source(CopySource.builder()
-                                        .bucket(getBucketName(source))
-                                        .object(fileName)
-                                        .build())
-                                .build());
-
+                copy(fileName, source, fileName, target);
                 // 删除源桶的文件
                 delete(source, fileName);
             } catch (Exception e) {
@@ -618,5 +610,23 @@ public class MinIOFileUtil implements FileProvider<MinIOBucketEnum>, Initializin
      */
     String getBucketName(BucketTypeEnum typeEnum) {
         return typeEnum.getBucketName(MinIOBucketEnum.class);
+    }
+
+    @Override
+    public String copy(String sourceName, BucketTypeEnum source, String targetName, BucketTypeEnum target) {
+        try {
+            minioClient.copyObject(
+                    CopyObjectArgs.builder()
+                            .bucket(getBucketName(target))
+                            .object(targetName)
+                            .source(CopySource.builder()
+                                    .bucket(getBucketName(source))
+                                    .object(sourceName)
+                                    .build())
+                            .build());
+        } catch (Exception e) {
+            log.error("复制[{}]桶[{}]文件失败：[{}]", getBucketName(source), sourceName, e.getMessage());
+        }
+        return sourceName;
     }
 }

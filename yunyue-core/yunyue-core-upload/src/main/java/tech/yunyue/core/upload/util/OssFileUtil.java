@@ -8,6 +8,7 @@ import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.text.StrPool;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import com.aliyun.oss.ClientException;
 import com.aliyun.oss.OSS;
@@ -463,7 +464,7 @@ public class OssFileUtil implements FileProvider<OSSBucketEnum>, InitializingBea
      * 文件名：文件夹路径+文件名
      *
      * @param in          文件流
-     * @param typeEnum  存储桶类型
+     * @param typeEnum    存储桶类型
      * @param fileName    文件名
      * @param formatName  是否需要格式化文件名 即把文件名格式化成：文件夹名/文件名
      * @param contentType 文件的类型
@@ -623,5 +624,15 @@ public class OssFileUtil implements FileProvider<OSSBucketEnum>, InitializingBea
      */
     String getBucketName(BucketTypeEnum type) {
         return type.getBucketName(OSSBucketEnum.class);
+    }
+
+    @Override
+    public String copy(String sourceName, BucketTypeEnum source, String targetName, BucketTypeEnum target) {
+        try {
+            ossClient.copyObject(getBucketName(source), sourceName, getBucketName(target), targetName);
+        } catch (Exception e) {
+            log.error("复制[{}]桶[{}]文件失败：[{}]", getBucketName(source), sourceName, e.getMessage());
+        }
+        return sourceName;
     }
 }
