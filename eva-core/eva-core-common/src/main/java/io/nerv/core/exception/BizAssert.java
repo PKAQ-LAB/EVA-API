@@ -45,11 +45,11 @@ public interface BizAssert extends BizCode {
      * @param obj 待判断对象
      */
     default void assertNotBlank(Object obj) {
-        if (obj instanceof Collection && (null == obj || ((Collection<?>) obj).size() == 0)) {
+        if (obj instanceof Collection && ((Collection<?>) obj).isEmpty()) {
             throw newException(obj);
         }
 
-        if (obj instanceof CharSequence && (null == obj || ((CharSequence) obj).length() == 0)) {
+        if (obj instanceof CharSequence && ((CharSequence) obj).isEmpty()) {
             throw newException(obj);
         }
     }
