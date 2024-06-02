@@ -3,6 +3,7 @@ package io.nerv.core.mybatis.mvc.entity.mybatis;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.annotation.SqlCondition;
 import com.baomidou.mybatisplus.annotation.TableField;
+import io.nerv.core.mvc.entity.Entity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,7 +17,7 @@ import java.util.List;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class StdTreeEntity extends StdEntity {
+public class StdTreeEntity implements Entity {
     @TableField(condition = SqlCondition.LIKE)
     @Schema(description = "编码")
     private String code;

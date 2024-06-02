@@ -8,4 +8,5 @@ import java.io.Serializable;
  * @author: S.PKAQ
  */
 public interface Entity extends Serializable {
+    private String id;
 }

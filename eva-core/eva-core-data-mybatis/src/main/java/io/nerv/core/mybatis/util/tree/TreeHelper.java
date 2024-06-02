@@ -1,5 +1,6 @@
 package io.nerv.core.mybatis.util.tree;
 
+import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.StrUtil;
 import io.nerv.core.mybatis.mvc.entity.mybatis.StdTreeEntity;
 
@@ -46,7 +47,7 @@ public class TreeHelper {
 
         for (StdTreeEntity entity : moduleEntitys) {
             String pid = entity.getParentId();
-            if (StrUtil.isBlank(pid) || "0".equals(pid)) {
+            if (CharSequenceUtil.isBlank(pid) || "0".equals(pid)) {
                 trees.add(entity);
             }
 
