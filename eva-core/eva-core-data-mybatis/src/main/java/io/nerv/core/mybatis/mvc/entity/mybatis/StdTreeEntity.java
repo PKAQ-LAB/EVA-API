@@ -1,5 +1,6 @@
 package io.nerv.core.mybatis.mvc.entity.mybatis;
 
+import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.annotation.SqlCondition;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -18,6 +19,10 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class StdTreeEntity implements Entity {
+
+    @Schema(description = "id")
+    private String id;
+
     @TableField(condition = SqlCondition.LIKE)
     @Schema(description = "编码")
     private String code;
@@ -65,7 +70,7 @@ public class StdTreeEntity implements Entity {
     private String locale;
 
     public String getLocale() {
-        return StrUtil.isNotBlank(this.path) ? "menu" + this.path.replaceAll("/", ".") : "";
+        return CharSequenceUtil.isNotBlank(this.path) ? "menu" + this.path.replaceAll("/", ".") : "";
     }
 
     public String getKey() {
@@ -77,7 +82,7 @@ public class StdTreeEntity implements Entity {
     }
 
     public List<StdTreeEntity> getChildren() {
-        return children == null || children.size() < 1 ? null : children;
+        return children == null || children.isEmpty() ? null : children;
     }
 
     public List<StdTreeEntity> getOriginChildren() {
