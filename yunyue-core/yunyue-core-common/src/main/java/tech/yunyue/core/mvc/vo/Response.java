@@ -151,6 +151,10 @@ public class Response<T> {
         return this;
     }
 
+    public Response failure(BizCode errorCodeEnum, Object arg) {
+        return failure(errorCodeEnum, new Object[]{arg});
+    }
+
     public Response failure(BizCode errorCodeEnum, Object... args) {
         this.success = false;
 
