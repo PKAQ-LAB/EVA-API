@@ -143,6 +143,18 @@ public class Response<T> {
         return this;
     }
 
+    public Response<T> failure(BizCode errorCodeEnum, T data, Object... args) {
+        this.success = false;
+
+        this.code = errorCodeEnum.getCode();
+
+        this.data = data;
+
+        this.message = MessageFormat.format("[" + code + "]" + errorCodeEnum.getMsg(), args);
+
+        return this;
+    }
+
     public Response<T> failure(BizCode errorCodeEnum, Object... args) {
         this.success = false;
 
