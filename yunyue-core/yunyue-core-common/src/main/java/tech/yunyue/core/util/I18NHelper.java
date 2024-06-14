@@ -21,6 +21,19 @@ public class I18NHelper {
     private final MessageSource messageSource;
     private final EvaConfig evaConfig;
 
+    public String getMsg(BizCode e){
+        String code = e.getCode();
+        String message = evaConfig.isI18n() ? this.getMessage(e.toString(), e.getMsg()) : e.getMsg();
+
+        if (message == null || message.isEmpty()) {
+            message = e.getMsg();
+        }
+
+        message = MessageFormat.format("[{0}] {1}", e.getCode(), message);
+
+        return message;
+    }
+
     /**
      * 获取国际化消息
      *
