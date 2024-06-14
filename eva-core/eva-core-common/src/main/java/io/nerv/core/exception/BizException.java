@@ -18,6 +18,8 @@ public class BizException extends RuntimeException {
      */
     private BizCode bizCode;
 
+    private Object data;
+
     public BizException(String msg) {
         super(msg);
     }
@@ -25,6 +27,12 @@ public class BizException extends RuntimeException {
     public BizException(BizCode bizCode) {
         super(bizCode.getMsg());
         this.bizCode = bizCode;
+    }
+
+    public BizException(BizCode bizCode, Object data) {
+        super(bizCode.getMsg());
+        this.bizCode = bizCode;
+        this.data = data;
     }
 
     public BizException(BizCode bizCode, Throwable cause, Object... args) {

@@ -119,7 +119,8 @@ public class ExceptionAdvice {
     public Response handleBindException(BizException e) {
         log.error("业务异常:" + e.getMessage());
         e.printStackTrace();
-        return i18NHelper.getMessage(e.getBizCode());
+        String emsg = i18NHelper.getMsg(e.getBizCode());
+        return new Response().failure(e.getBizCode(), emsg, e.getData());
     }
 
     /**
