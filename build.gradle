@@ -51,7 +51,7 @@ ext {
            "websocket": "org.springframework.boot:spring-boot-starter-websocket",
            "devTools" : "org.springframework.boot:spring-boot-devtools",
            "actuator" : "org.springframework.boot:spring-boot-starter-actuator",
-           "prometheus" : "io.micrometer:micrometer-registry-prometheus:1.13.1",
+           "prometheus" : "io.micrometer:micrometer-registry-prometheus:1.13.2",
            //文件上传minIO
            "minio" : "io.minio:minio:${minio}"
     ]
