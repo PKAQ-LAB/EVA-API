@@ -25,6 +25,8 @@ public interface LogConstant {
     String LOGIN_LOG_ROUTINGKEY = "loginlog";
     String REPORT_DB_NAME = "log_report";
     String REPORT_HISTORY_DB_NAME = "history_log_report";
+    String REPORT_COUNT_DB_NAME = "log_report_print_count";
+    String REPORT_COUNT_HISTORY_DB_NAME = "history_log_report_print_count";
     String REPORT_LOG_ROUTINGKEY = "reportlog";
     // mongo历史记录表的唯一标识 不一定每张表都用id做标识字段
     String MONGO_HISTORY_TABLE_MARK = "m_mark_id";

@@ -52,6 +52,6 @@ public class MongoConfig implements LogConfig {
     @Bean
     @Override
     public LogSupporter<MongoReportLogEntity, ReportLogEvent> reportLogSupporter(){
-        return new MongoDBSupporter<>(new TypeToken<MongoDBSupporter<MongoReportLogEntity, ReportLogEvent>>(){}, mongoTemplate, LogConstant.LOGIN_LOG_DATE_FIELD, LogConstant.REPORT_DB_NAME, LogConstant.REPORT_HISTORY_DB_NAME);
+        return new ReportPrintMongoDBSupporter(mongoTemplate);
     }
 }

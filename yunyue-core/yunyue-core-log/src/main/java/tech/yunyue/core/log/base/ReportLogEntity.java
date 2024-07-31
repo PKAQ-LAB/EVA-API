@@ -13,6 +13,16 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class ReportLogEntity extends LogEntity {
     /**
+     * 模块code
+     **/
+    @Schema(description = "模块code")
+    private String mCode;
+    /**
+     * 业务id
+     **/
+    @Schema(description = "业务id")
+    private String bizId;
+    /**
      * 报表id
      **/
     @Schema(description = "报表id")
