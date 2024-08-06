@@ -8,7 +8,6 @@ import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.text.StrPool;
 import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import com.aliyun.oss.ClientException;
 import com.aliyun.oss.OSS;
@@ -24,6 +23,7 @@ import org.springframework.util.unit.DataSize;
 import org.springframework.web.multipart.MultipartFile;
 import tech.yunyue.core.enums.BizCodeEnum;
 import tech.yunyue.core.properties.EvaConfig;
+import tech.yunyue.core.properties.Upload;
 import tech.yunyue.core.upload.condition.OssCondition;
 import tech.yunyue.core.upload.enumm.BucketTypeEnum;
 import tech.yunyue.core.upload.enumm.OSSBucketEnum;
@@ -69,6 +69,10 @@ public class OssFileUtil implements FileProvider<OSSBucketEnum>, InitializingBea
                 }
             });
         });
+    }
+
+    Upload getConfig() {
+        return evaConfig.getUpload();
     }
 
     /**
@@ -536,10 +540,11 @@ public class OssFileUtil implements FileProvider<OSSBucketEnum>, InitializingBea
             return null;
         }
         try {
-            // 5分钟过期
-            Date expiration = new Date(new Date().getTime() + 5 * 60 * 1000L);
+            // 使用配置文件的失效时间
+            long duration = getConfig().getDuration();
+            long durationMillis = getConfig().getTimeUnit().toMillis(duration);
+            Date expiration = new Date(System.currentTimeMillis() + durationMillis);
             URL url = ossClient.generatePresignedUrl(getBucketName(target), fileName, expiration);
-
             return url.toString();
         } catch (Exception e) {
             e.printStackTrace();
