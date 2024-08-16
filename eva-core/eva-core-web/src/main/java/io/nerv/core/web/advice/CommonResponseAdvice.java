@@ -4,6 +4,8 @@ import io.nerv.core.enums.BizCode;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.ctrl.Ctrl;
 import io.nerv.core.mvc.response.Response;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.ServerHttpRequest;
@@ -20,6 +22,8 @@ import java.util.Objects;
  */
 @RestControllerAdvice
 public class CommonResponseAdvice implements ResponseBodyAdvice {
+    @Value("${project.version}")
+    private String version;
 
     /**
      * 判断是否要执行 beforeBodyWrite 方法，true为执行，false不执行，有注解标记的时候处理返回值
@@ -36,6 +40,8 @@ public class CommonResponseAdvice implements ResponseBodyAdvice {
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
                                   Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
+
+        response.getHeaders().set("version", StringUtils.isNotEmpty(version) ? version : "unknown");
 
         // 只处理继承Ctrl类的响应，第三方接口不需要处理
         if (!Objects.equals(Ctrl.class, returnType.getMethod().getDeclaringClass().getSuperclass())) {
