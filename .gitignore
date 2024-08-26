@@ -7,7 +7,7 @@
 /*.log
 /*.lock
 /*/out
-
+/**/bin
 /wxapp/yarn.lock
 /wxapp/.history
 /wxapp/.temp
