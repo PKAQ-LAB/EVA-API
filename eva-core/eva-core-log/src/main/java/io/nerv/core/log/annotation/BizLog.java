@@ -17,6 +17,7 @@ import java.lang.annotation.*;
 @Documented
 @Inherited
 public @interface BizLog {
+    String msg() default "";
     /**
      * 日志描述
      */
