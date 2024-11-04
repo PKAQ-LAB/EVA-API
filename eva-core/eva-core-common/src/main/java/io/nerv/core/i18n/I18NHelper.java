@@ -1,14 +1,11 @@
-package io.nerv.core.util;
+package io.nerv.core.i18n;
 
 import io.nerv.core.enums.BizCode;
-import io.nerv.core.mvc.response.Response;
-import io.nerv.core.properties.EvaConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
-import java.text.MessageFormat;
 import java.util.Locale;
 
 /**
@@ -19,61 +16,22 @@ import java.util.Locale;
 @RequiredArgsConstructor
 public class I18NHelper {
     private final MessageSource messageSource;
-    private final EvaConfig evaConfig;
 
-    public String getMsg(BizCode e){
-        String code = e.getCode();
-        String message = evaConfig.isI18n() ? this.getMessage(e.toString(), e.getMsg()) : e.getMsg();
-
-        if (message == null || message.isEmpty()) {
-            message = e.getMsg();
-        }
-
-        message = MessageFormat.format("[{0}] {1}", e.getCode(), message);
-
-        return message;
+    public String getMsg(BizCode e) {
+        return this.getMessage(e.getCode(), e.getMsg()) ;
     }
-    /**
-     * 获取国际化消息
-     *
-     * @param e 异常
-     * @return
-     */
-    public Response getMessage(BizCode e) {
-
-        String code = e.getCode();
-        String message = evaConfig.isI18n() ? this.getMessage(e.toString(), e.getMsg()) : e.getMsg();
-
-        if (message == null || message.isEmpty()) {
-            message = e.getMsg();
-        }
-
-        message = MessageFormat.format("[{0}] {1}", e.getCode(), message);
-
-        return new Response().failure(code, message);
-    }
-
-    public Response getMessage(BizCode e, String defaultMsg) {
-
-        String code = e.getCode();
-        String message = evaConfig.isI18n() ? this.getMessage(e.toString(), e.getMsg()) : e.getMsg();
-
-        if (message == null || message.isEmpty()) {
-            message = defaultMsg;
-        }
-
-        message = MessageFormat.format("[{0}] {1}", e.getCode(), message);
-
-        return new Response().failure(code, message);
-    }
-
 
     /**
-     * @param code ：对应messages配置的key.
+     * @param msg ：对应messages配置的key.
      * @return
      */
-    public String getMessage(String code) {
-        return this.getMessage(code, new Object[]{});
+    public String getMessage(String msg) {
+        if (msg.startsWith("{") && msg.endsWith("}")) {
+            // 花括号包裹的
+            msg = msg.substring(1, msg.length() - 1);
+        }
+
+        return this.getMessage(msg, new Object[]{}, msg);
     }
 
     /**

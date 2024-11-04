@@ -17,6 +17,7 @@ public class ThreadUserHelper {
      */
     private static final ThreadLocal<ThreadUser> userThreadLocal = new TransmittableThreadLocal<>();
 
+
     /**
      * 获取当前登录用户方法
      */

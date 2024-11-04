@@ -17,7 +17,7 @@ import java.util.List;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class StdTreeEntity implements Entity {
+public class StdTreeEntity extends StdEntity {
 
     @Schema(description = "id")
     private String id;

@@ -3,7 +3,7 @@ package io.nerv.sys.dict.ctrl;
 import cn.hutool.core.util.StrUtil;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.ctrl.Ctrl;
-import io.nerv.core.mvc.response.Response;
+import io.nerv.core.mvc.vo.Response;
 import io.nerv.sys.dict.cache.DictCacheHelper;
 import io.nerv.sys.dict.entity.DictEntity;
 import io.nerv.sys.dict.service.DictService;

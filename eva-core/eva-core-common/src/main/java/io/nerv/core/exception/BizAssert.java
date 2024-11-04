@@ -1,5 +1,6 @@
 package io.nerv.core.exception;
 
+
 import io.nerv.core.enums.BizCode;
 
 import java.util.Collection;
@@ -7,10 +8,10 @@ import java.util.Collection;
 /**
  * @author PKAQ
  */
+
 public interface BizAssert extends BizCode {
     /**
      * 断言异常
-     *
      * @param args
      * @return
      */
@@ -25,7 +26,7 @@ public interface BizAssert extends BizCode {
      * @return
      */
     default BizException newException(Throwable t) {
-        return new BizException(this, t);
+        throw new BizException(this, t);
     }
 
     /**
@@ -36,7 +37,7 @@ public interface BizAssert extends BizCode {
      * @return
      */
     default BizException newException(Throwable t, Object... args) {
-        return new BizException(this, t, args);
+        throw new BizException(this, t, args);
     }
 
     /**
@@ -45,11 +46,11 @@ public interface BizAssert extends BizCode {
      * @param obj 待判断对象
      */
     default void assertNotBlank(Object obj) {
-        if (obj instanceof Collection && ((Collection<?>) obj).isEmpty()) {
+        if (obj instanceof Collection && (null == obj || ((Collection<?>) obj).size() == 0)) {
             throw newException(obj);
         }
 
-        if (obj instanceof CharSequence && ((CharSequence) obj).isEmpty()) {
+        if (obj instanceof CharSequence && (null == obj || ((CharSequence) obj).length() == 0)) {
             throw newException(obj);
         }
     }
@@ -88,4 +89,5 @@ public interface BizAssert extends BizCode {
             throw newException(t, args);
         }
     }
+
 }

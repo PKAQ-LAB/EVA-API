@@ -1,7 +1,7 @@
 package io.nerv.sys.user.ctrl;
 
 import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.core.mvc.response.Response;
+import io.nerv.core.mvc.vo.Response;
 import io.nerv.core.threaduser.ThreadUserHelper;
 import io.nerv.sys.dict.service.DictService;
 import io.nerv.sys.user.service.UserService;

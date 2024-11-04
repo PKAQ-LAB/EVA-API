@@ -12,11 +12,12 @@ import java.text.MessageFormat;
  */
 @Getter
 public class BizException extends RuntimeException {
-
     /**
      * 消息枚举
      */
     private BizCode bizCode;
+
+    private String estr;
 
     private Object data;
 
@@ -24,6 +25,11 @@ public class BizException extends RuntimeException {
 
     public BizException(String msg) {
         super(msg);
+    }
+
+    public BizException(String msg, String estr) {
+        super(msg);
+        this.estr = estr;
     }
 
     public BizException(BizCode bizCode) {

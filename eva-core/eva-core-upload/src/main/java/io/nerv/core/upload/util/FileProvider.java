@@ -4,7 +4,6 @@ package io.nerv.core.upload.util;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
@@ -18,7 +17,7 @@ public interface FileProvider {
      * @param file
      * @return
      */
-    String upload(MultipartFile file, String path) throws IOException, Exception;
+    String upload(MultipartFile file, String path) throws Exception;
 
     /**
      * 存储

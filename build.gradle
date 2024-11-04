@@ -69,8 +69,11 @@ subprojects {
 
     apply plugin: 'io.spring.dependency-management'
 
-	sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(21)
+        }
+    }
 
     dependencyManagement {
         imports {
@@ -87,6 +90,10 @@ subprojects {
         options.addStringOption('Xdoclint:none', '-quiet')
     }
 
+    tasks.withType(JavaCompile).configureEach {
+        options.compilerArgs.add("-parameters")
+    }
+
     repositories {
         mavenLocal()
         //maven {
@@ -94,12 +101,14 @@ subprojects {
         //    allowInsecureProtocol = true
         //}
 //        allowInsecureProtocol = true
-		maven { url"https://maven.aliyun.com/repository/public" }
-        maven { url"https://maven.aliyun.com/repository/spring" }
-        maven { url"https://maven.aliyun.com/repository/spring-plugin" }
-		maven { url"https://maven.springframework.org"}
-        maven { url"https://repo.spring.io/libs-release" }
-
+        maven {
+            url "http://192.168.10.16:8082/artifactory/yunyue-public/"
+            allowInsecureProtocol = true
+            credentials {
+                username = 'yyfrog'
+                password = 'YYfrog7788'
+            }
+        }
         mavenCentral()
     }
 

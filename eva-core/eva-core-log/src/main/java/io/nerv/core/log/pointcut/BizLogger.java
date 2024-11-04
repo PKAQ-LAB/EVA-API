@@ -2,11 +2,11 @@ package io.nerv.core.log.pointcut;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.text.CharSequenceUtil;
+import io.nerv.core.i18n.I18NHelper;
 import io.nerv.core.log.annotation.BizLog;
 import io.nerv.core.log.base.BizLogEntity;
 import io.nerv.core.log.base.BizLogSupporter;
 import io.nerv.core.threaduser.ThreadUserHelper;
-import io.nerv.core.util.I18NHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;

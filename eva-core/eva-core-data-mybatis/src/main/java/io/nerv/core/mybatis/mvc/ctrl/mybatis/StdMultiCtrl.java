@@ -5,7 +5,7 @@ import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.enums.ResponseEnumm;
 import io.nerv.core.mvc.bo.SingleArrayBo;
 import io.nerv.core.mvc.ctrl.Ctrl;
-import io.nerv.core.mvc.response.Response;
+import io.nerv.core.mvc.vo.Response;
 import io.nerv.core.mybatis.mvc.entity.mybatis.StdMultiEntity;
 import io.nerv.core.mybatis.mvc.service.mybatis.StdMultiService;
 import io.swagger.v3.oas.annotations.Operation;

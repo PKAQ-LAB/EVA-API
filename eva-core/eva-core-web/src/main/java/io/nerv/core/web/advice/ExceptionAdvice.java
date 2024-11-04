@@ -1,9 +1,10 @@
 package io.nerv.core.web.advice;
 
+import cn.hutool.core.util.ObjectUtil;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.exception.BizException;
-import io.nerv.core.mvc.response.Response;
-import io.nerv.core.util.I18NHelper;
+import io.nerv.core.i18n.I18NHelper;
+import io.nerv.core.mvc.vo.Response;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
@@ -20,13 +21,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.Set;
-
-
 /**
  * @Description: 统一异常处理
  * @FileName: ExceptionAdvice.java
- * @Author: S.PKAQ
- * @Version: 1.0
  */
 @RestControllerAdvice
 @Slf4j
@@ -49,7 +46,7 @@ public class ExceptionAdvice {
         for (ConstraintViolation<?> item : violations) {
             message.append(item.getMessage());
         }
-        return new Response().failure(BizCodeEnum.PARAM_TYPEERROR.getCode(), message.toString());
+        return new Response<>().failure(BizCodeEnum.PARAM_TYPEERROR.getCode(), message.toString());
     }
 
     /**
@@ -61,7 +58,7 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Response handleMethodParamCheckException(MethodArgumentNotValidException e) {
-        return new Response().failure(BizCodeEnum.PARAM_TYPEERROR.getCode(), e.getBindingResult().getFieldError().getDefaultMessage());
+        return new Response<>().failure(BizCodeEnum.PARAM_TYPEERROR.getCode(), e.getBindingResult().getFieldError().getDefaultMessage());
     }
 
     /**
@@ -74,7 +71,7 @@ public class ExceptionAdvice {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public Response handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         log.error("参数解析失败：" + e.getMessage());
-        return i18NHelper.getMessage(BizCodeEnum.PARAM_TYPEERROR);
+        return new Response<>().failure(BizCodeEnum.PARAM_TYPEERROR);
     }
 
     /**
@@ -87,7 +84,7 @@ public class ExceptionAdvice {
     @ExceptionHandler({IllegalArgumentException.class, MissingServletRequestParameterException.class})
     public Response handleIllegalArgumentException(Exception e) {
         log.warn("参数类型错误：不支持当前请求的参数类型:" + e.getMessage());
-        return i18NHelper.getMessage(BizCodeEnum.PARAM_TYPEERROR);
+        return new Response<>().failure(BizCodeEnum.PARAM_TYPEERROR);
     }
 
     /**
@@ -105,7 +102,7 @@ public class ExceptionAdvice {
         e.getAllErrors().forEach(
                 x -> errorMsg.append(x.getDefaultMessage()).append(",")
         );
-        return new Response().failure(BizCodeEnum.SERVER_ERROR.getCode(), errorMsg.toString());
+        return new Response<>().failure(BizCodeEnum.SERVER_ERROR.getCode(), errorMsg.toString());
     }
 
     /**
@@ -117,9 +114,19 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.OK)
     @ExceptionHandler(BizException.class)
     public Response handleBindException(BizException e) {
-        log.error("业务异常:" + e.getMessage());
+        String msg = ObjectUtil.defaultIfBlank(e.getMessage(), e.getEstr());
+
+        log.error("业务异常:" + msg);
         e.printStackTrace();
-        return new Response().failure(e.getBizCode(), e.getData(), e.getArgs());
+
+        var res = new Response<>();
+
+        if (null == e.getBizCode()) {
+            res = res.failure(null, e.getMessage(), e.getData(),e.getArgs());
+        } else {
+            res = res.failure(e.getBizCode(), e.getData(), e.getArgs());
+        }
+        return res;
     }
 
     /**
@@ -132,7 +139,7 @@ public class ExceptionAdvice {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public Response handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
         log.warn("不支持当前请求方法:" + e.getMessage());
-        return i18NHelper.getMessage(BizCodeEnum.REQUEST_METHOD_ERROR);
+        return new Response<>().failure(BizCodeEnum.REQUEST_METHOD_ERROR);
     }
 
     /**
@@ -145,7 +152,7 @@ public class ExceptionAdvice {
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     public Response handleHttpMediaTypeNotSupportedException(Exception e) {
         log.warn("不支持当前媒体类型:" + e.getMessage());
-        return i18NHelper.getMessage(BizCodeEnum.REQUEST_MEDIA_ERROR);
+        return new Response<>().failure(BizCodeEnum.REQUEST_MEDIA_ERROR);
     }
 
     /**
@@ -159,6 +166,6 @@ public class ExceptionAdvice {
     public Response handleException(Exception e) {
         log.error("服务运行异常:" + e.getMessage());
         e.printStackTrace();
-        return i18NHelper.getMessage(BizCodeEnum.SERVER_ERROR);
+        return new Response<>().failure(BizCodeEnum.SERVER_ERROR);
     }
 }

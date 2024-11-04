@@ -4,7 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import io.nerv.core.enums.BizCodeEnum;
 import io.nerv.core.mvc.bo.SingleArrayBo;
 import io.nerv.core.mvc.ctrl.Ctrl;
-import io.nerv.core.mvc.response.Response;
+import io.nerv.core.mvc.vo.Response;
 import io.nerv.sys.role.entity.RoleEntity;
 import io.nerv.sys.role.entity.RoleModuleEntity;
 import io.nerv.sys.role.service.RoleService;

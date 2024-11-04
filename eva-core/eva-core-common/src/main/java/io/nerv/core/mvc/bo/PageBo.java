@@ -1,21 +1,24 @@
 package io.nerv.core.mvc.bo;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.io.Serializable;
 
 @Data
-public class PageBo<T> implements Serializable {
+public class PageBo implements Serializable {
 
     private static final int PAGE_NO = 1;
-    private static final int PAGE_SIZE = 10;
+    private static final int PAGE_SIZE = 20;
 
-    // 请求页码
+    @NotNull(message = "页码不能为空")
+    @Min(value = 1, message = "页码最小值为 1")
     private Integer pageNo = PAGE_NO;
 
-    // 单页条数
+    @NotNull(message = "每页条数不能为空")
+    @Min(value = 1, message = "每页条数最小值为 1")
+    @Max(value = 100, message = "每页条数最大值为 100")
     private Integer pageSize = PAGE_SIZE;
-
-    // 请求参数
-    private T param;
 }

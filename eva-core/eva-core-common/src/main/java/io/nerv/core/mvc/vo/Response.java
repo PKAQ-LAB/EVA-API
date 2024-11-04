@@ -1,13 +1,12 @@
-package io.nerv.core.mvc.response;
+package io.nerv.core.mvc.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.nerv.core.enums.BizCode;
 import io.nerv.core.enums.BizCodeEnum;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
-
-import java.text.MessageFormat;
 
 /**
  * 返回对象
@@ -19,12 +18,18 @@ import java.text.MessageFormat;
 @Accessors(chain = true)
 @NoArgsConstructor
 public class Response<T> {
+    private boolean success = true;
 
-    private String code;
-
-    private boolean success;
+    private String code = "0000";
 
     private String message;
+
+    // 业务代码
+    @JsonIgnore
+    private Object mtype;
+
+    @JsonIgnore
+    private Object[] args;
 
     private T data;
 
@@ -38,10 +43,8 @@ public class Response<T> {
      *
      * @return
      */
-    public Response<T> success() {
-        this.success = true;
-        this.code = BizCodeEnum.OPERATE_SUCCESS.getCode();
-
+    public Response success() {
+        this.mtype = BizCodeEnum.OPERATE_SUCCESS;
         return this;
     }
 
@@ -53,25 +56,17 @@ public class Response<T> {
      */
     public Response<T> success(T data) {
         this.data = data;
-        this.success = true;
-        this.code = BizCodeEnum.OPERATE_SUCCESS.getCode();
-        this.message = BizCodeEnum.OPERATE_SUCCESS.getMsg();
-
         return this;
     }
 
     /**
      * 响应成功
      *
-     * @param data
      * @return
      */
-    public Response<T> success(T data, String msg) {
-        this.data = data;
-        this.success = true;
+    public Response<T> success(String msg, Object... args) {
         this.message = msg;
-        this.code = BizCodeEnum.OPERATE_SUCCESS.getCode();
-
+        this.args = args;
         return this;
     }
 
@@ -81,14 +76,13 @@ public class Response<T> {
      * @param data
      * @return
      */
-    public Response<T> success(T data, BizCode msg) {
+    public Response<T> success(T data, BizCode bizCode) {
         this.data = data;
-        this.success = true;
-        this.message = msg.getMsg();
-        this.code = msg.getCode();
+        this.mtype = bizCode;
 
         return this;
     }
+
 
     /**
      * 响应成功
@@ -98,20 +92,18 @@ public class Response<T> {
      */
     public Response<T> success(T data, String msg, String code) {
         this.data = data;
-        this.success = true;
         this.message = msg;
         this.code = code;
         return this;
     }
 
+    
     public Response<T> success(T data, BizCode bizCode, Object... args) {
         this.data = data;
-        this.success = true;
-        this.message = MessageFormat.format(bizCode.getMsg(), null == args ? "" : args);
-        this.code = bizCode.getCode();
+        this.mtype = bizCode;
+        this.args = args;
         return this;
     }
-
 
     /**
      * 失败响应，自定义响应码和消息
@@ -119,7 +111,7 @@ public class Response<T> {
      * @param code
      * @return
      */
-    public Response<T> failure(String code, String message) {
+    public Response failure(String code, String message) {
         this.success = false;
         this.code = code;
         this.message = message;
@@ -128,39 +120,58 @@ public class Response<T> {
     }
 
     /**
-     * 失败响应，自定义响应码和消息
+     * 失败处理
      *
-     * @param errorCodeEnum
+     * @param msg
      * @return
      */
-    public Response<T> failure(BizCode errorCodeEnum) {
+    public Response failure(String msg) {
         this.success = false;
+        this.message = msg;
+        return this;
+    }
 
-        this.code = errorCodeEnum.getCode();
-
-        this.message = MessageFormat.format("[{0}] {1}", errorCodeEnum.getCode(), errorCodeEnum.getMsg());
+    /**
+     * 失败响应，自定义响应码和消息
+     *
+     * @param bizCode
+     * @return
+     */
+    
+    public Response failure(BizCode bizCode) {
+        this.success = false;
+        this.mtype = bizCode;
 
         return this;
     }
 
-    public Response<T> failure(BizCode errorCodeEnum, T data, Object... args) {
+    public Response failure(BizCode bizCode, T data) {
         this.success = false;
 
-        this.code = errorCodeEnum.getCode();
+        this.mtype = bizCode;
+        this.data = data;
+
+        return this;
+    }
+
+    public Response<T> failure(BizCode bizCode, T data, Object... args) {
+        this.success = false;
+
+        this.mtype = bizCode;
+        this.args = args;
 
         this.data = data;
 
-        this.message = MessageFormat.format("[" + code + "]" + errorCodeEnum.getMsg(), args);
-
         return this;
     }
 
-    public Response<T> failure(BizCode errorCodeEnum, Object... args) {
+    public Response<T> failure(String code, String msg, T data, Object... args) {
         this.success = false;
+        this.code = code;
+        this.message = msg;
+        this.args = args;
 
-        this.code = errorCodeEnum.getCode();
-
-        this.message = MessageFormat.format("[" + code + "]" + errorCodeEnum.getMsg(), args);
+        this.data = data;
 
         return this;
     }
@@ -171,7 +182,7 @@ public class Response<T> {
      * @param data
      * @return
      */
-    public Response<T> failure(String code, String message, T data) {
+    public Response failure(String code, String message, T data) {
         this.data = data;
         this.message = message;
         this.success = false;

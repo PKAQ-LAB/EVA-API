@@ -1,8 +1,6 @@
 package io.nerv.core.exception;
 
-import cn.hutool.core.io.FastStringWriter;
 
-import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.UndeclaredThrowableException;
 
@@ -51,15 +49,4 @@ public class Exceptions {
         }
     }
 
-    /**
-     * 将ErrorStack转化为String.
-     *
-     * @param ex Throwable
-     * @return {String}
-     */
-    public static String getStackTraceAsString(Throwable ex) {
-        FastStringWriter stringWriter = new FastStringWriter();
-        ex.printStackTrace(new PrintWriter(stringWriter));
-        return stringWriter.toString();
-    }
 }

@@ -1,7 +1,7 @@
 package io.nerv.core.upload.ctrl;
 
 import cn.hutool.core.map.MapUtil;
-import io.nerv.core.mvc.response.Response;
+import io.nerv.core.mvc.vo.Response;
 import io.nerv.core.upload.util.FileProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,7 @@ public class FileUploadCtrl {
      * @return
      */
     @PostMapping("/file")
-    public Response upload(MultipartFile file, String path) {
+    public Response upload(MultipartFile file, String path) throws Exception {
         String filePath = fileUploadProvider.upload(file, path);
         return new Response().success(MapUtil.of("pname", filePath));
     }

@@ -2,8 +2,8 @@ package io.nerv.core.mvc.ctrl;
 
 import io.nerv.core.enums.BizCode;
 import io.nerv.core.enums.BizCodeEnum;
-import io.nerv.core.mvc.response.Response;
-import io.nerv.core.util.I18NHelper;
+import io.nerv.core.i18n.I18NHelper;
+import io.nerv.core.mvc.vo.Response;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -37,11 +37,12 @@ public abstract class Ctrl {
         return new Response<T>().success(null);
     }
 
-//    protected <T> Response<T> exclude(Object data, String... values){
-//        <T> Response<T> response = new Response<>();
+//    protected Response exclude(Object data, String... values){
+//        Response response = new Response<>();
 //        response.exclude(data, values);
 //        return response;
 //    }
+
 
     /**
      * 返回成功结果
@@ -60,7 +61,7 @@ public abstract class Ctrl {
      * @return
      */
     protected <T> Response<T> success(T data, String msg) {
-        return new Response<T>().success(data, msg);
+        return new Response<T>().success(msg, data);
     }
 
     /**
@@ -71,7 +72,17 @@ public abstract class Ctrl {
      * @return
      */
     protected <T> Response<T> success(T data, BizCode bizCode) {
-        return new Response<T>().success(data, bizCode.getMsg());
+        return new Response<T>().success(bizCode.getMsg(),data);
+    }
+
+    /**
+     * 返回失败结果
+     *
+     * @param msg
+     * @return
+     */
+    protected Response failure(String msg) {
+        return new Response().failure(msg);
     }
 
     /**
@@ -80,8 +91,9 @@ public abstract class Ctrl {
      * @param failCode
      * @return
      */
-    protected <T> Response<T> failure(BizCode failCode) {
-        return new Response<T>().failure(failCode);
+    
+    protected Response failure(BizCode failCode) {
+        return new Response<>().failure(failCode);
     }
 
     /**
@@ -91,8 +103,9 @@ public abstract class Ctrl {
      * @param args
      * @return
      */
-    protected <T> Response<T> failure(BizCode failCode, Object... args) {
-        return new Response<T>().failure(failCode, args);
+    
+    protected Response failure(BizCode failCode, Object... args) {
+        return new Response<>().failure(failCode, args);
     }
 
     /**
@@ -101,8 +114,8 @@ public abstract class Ctrl {
      * @param failCode
      * @return
      */
-    protected <T> Response<T> failure(String failCode, String msg) {
-        return new Response<T>().failure(failCode, msg);
+    protected Response failure(String failCode, String msg) {
+        return new Response<>().failure(failCode, msg);
     }
 
     /**
@@ -110,7 +123,7 @@ public abstract class Ctrl {
      *
      * @return
      */
-    protected <T> Response<T> failure() {
-        return new Response<T>().failure(BizCodeEnum.SERVER_ERROR);
+    protected Response failure() {
+        return new Response<>().failure(BizCodeEnum.SERVER_ERROR);
     }
 }
