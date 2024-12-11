@@ -15,10 +15,10 @@ yarn start
 
 3.访问`http://localhost`
 
-api("${lib.web}"){
+api(libs.web}"){
 		exclude module: 'spring-boot-starter-tomcat'
 	}
-"${lib.undertow}",
+libs.undertow}",
 
 ## 目录说明
 

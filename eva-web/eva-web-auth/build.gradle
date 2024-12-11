@@ -10,6 +10,6 @@ dependencies {
             project(":eva-core:eva-core-data-mybatis"),
             project(":eva-core:eva-core-cache"),
             project(":eva-web:eva-web-sys"),
-            "${lib.mysql}",
-            "${lib.security}"
+            libs.mysql,
+            libs.security
 }

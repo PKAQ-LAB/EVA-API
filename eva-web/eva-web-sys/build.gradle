@@ -8,5 +8,5 @@ dependencies {
     implementation	project(":eva-core:eva-core-web"),
                 	project(":eva-core:eva-core-data-mybatis"),
                 	project(":eva-core:eva-core-cache"),
-                    "${lib.mysql}"
+                    libs.mysql
 }

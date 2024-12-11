@@ -5,14 +5,14 @@ project.archivesBaseName = 'eva-core-common'
 project.description='eva common class'
 
 dependencies {
-    implementation 	"${lib.jaxb_api}",
-                    "${lib.jasypt}"
+    implementation 	libs.jaxb.api,
+                    libs.jasypt
 
 
-    api "${lib.hutool}",
-        "${lib.aop}",
-        "${lib.jwt}",
-        "${lib.json}",
-        "${lib.ttl}",
-        "${lib.validation}"
+    api libs.hutool,
+        libs.aop,
+        libs.jwt,
+        libs.json,
+        libs.ttl,
+        libs.validation
 }

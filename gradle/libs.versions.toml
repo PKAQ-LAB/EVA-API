@@ -1,0 +1,68 @@
+[versions]
+spring-dep = "1.1.6"
+spring-boot = "3.3.5"
+ttl = "2.14.5"
+mysql = "8.0.33"
+mybatis-plus-starter = "3.5.8"
+lombok = "1.18.34"
+knife4j = "4.5.0"
+hutool = "5.8.32"
+jaxb-api = "2.3.1"
+jasypt = "3.0.5"
+p6spy = "3.9.1"
+flyway = "10.20.1"
+boot-admin = "3.1.6"
+truelicense = "1.33"
+caffeine = "3.1.8"
+security-test = "6.3.4"
+jwt = "9.45"
+jsr310 = "2.18.1"
+oracle = "19.24.0.0"
+orai18n = "12.1.0.2.0"
+springdoc = "2.6.0"
+minio = "8.5.13"
+prometheus = "1.14.1"
+versioncheck = "0.51.0"
+
+[libraries]
+boot = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot" }
+p6spy = { module = "p6spy:p6spy", version.ref = "p6spy" }
+flyway = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
+mysql = { module = "mysql:mysql-connector-java", version.ref = "mysql" }
+oracle = { module = "com.oracle.database.jdbc:ojdbc10", version.ref = "oracle" }
+orai18n = { module = "cn.easyproject:orai18n", version.ref = "orai18n" }
+jaxb-api = { module = "javax.xml.bind:jaxb-api", version.ref = "jaxb-api" }
+truelicense = { module = "de.schlichtherle.truelicense:truelicense-core", version.ref = "truelicense" }
+jasypt = { module = "com.github.ulisesbocchio:jasypt-spring-boot-starter", version.ref = "jasypt" }
+validation = { module = "org.springframework.boot:spring-boot-starter-validation" }
+json = { module = "org.springframework.boot:spring-boot-starter-json" }
+jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jsr310" }
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
+caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
+redis = { module = "org.springframework.boot:spring-boot-starter-data-redis" }
+cache = { module = "org.springframework.boot:spring-boot-starter-cache" }
+aop = { module = "org.springframework.boot:spring-boot-starter-aop" }
+jdbc = { module = "org.springframework.boot:spring-boot-starter-jdbc" }
+security = { module = "org.springframework.boot:spring-boot-starter-security" }
+web = { module = "org.springframework.boot:spring-boot-starter-web" }
+undertow = { module = "org.springframework.boot:spring-boot-starter-undertow" }
+test = { module = "org.springframework.boot:spring-boot-starter-test" }
+security-test = { module = "org.springframework.security:spring-security-test", version.ref = "security-test" }
+hutool = { module = "cn.hutool:hutool-all", version.ref = "hutool" }
+mybatis-plus-starter = { module = "com.baomidou:mybatis-plus-boot-starter", version.ref = "mybatis-plus-starter" }
+springdoc = { module = "org.springdoc:springdoc-openapi-starter-webmvc-api", version.ref = "springdoc" }
+springdocui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "springdoc" }
+knife4j-ui = { module = "com.github.xiaoymin:knife4j-openapi3-ui", version.ref = "knife4j" }
+jwt = { module = "com.nimbusds:nimbus-jose-jwt", version.ref = "jwt" }
+ttl = { module = "com.alibaba:transmittable-thread-local", version.ref = "ttl" }
+websocket = { module = "org.springframework.boot:spring-boot-starter-websocket" }
+dev-tools = { module = "org.springframework.boot:spring-boot-devtools" }
+actuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }
+prometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "prometheus" }
+minio = { module = "io.minio:minio", version.ref = "minio" }
+
+
+[plugins]
+spring_dependency_management = { id = "io.spring.dependency-management", version.ref = "spring-dep" }
+spring_boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
+ben_manes_versions = { id = "com.github.ben-manes.versions", version.ref = "versioncheck" }

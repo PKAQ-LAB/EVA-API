@@ -6,12 +6,12 @@ project.description='eva license support'
 
 dependencies {
 
-    implementation("${lib.web}"){
+    implementation(libs.web){
         exclude module: 'spring-boot-starter-tomcat'
     }
 
     implementation  project(":eva-core:eva-core-common"),
-                    "${lib.undertow}"
+                    libs.undertow
 
-    api             "${lib.truelicense}"
+    api             libs.truelicense
 }

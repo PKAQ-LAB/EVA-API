@@ -6,11 +6,11 @@ project.description='eva fileupload support '
 
 dependencies {
 
-    implementation("${lib.web}"){
+    implementation(libs.web){
         exclude module: 'spring-boot-starter-tomcat'
     }
-    implementation "${lib.undertow}",
-                   "${lib.minio}"
+    implementation libs.undertow,
+                   libs.minio
 
     implementation project(":eva-core:eva-core-common")
 }

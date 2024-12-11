@@ -7,10 +7,10 @@ project.description='eva mybatis support'
 dependencies {
     implementation  project(":eva-core:eva-core-common"),
                     project(":eva-core:eva-core-log"),
-                    "${lib.jdbc}",
-                    "${lib.p6spy}",
-                    "${lib.flyway}",
-                    "${lib.springdoc}"
+                    libs.jdbc,
+                    libs.p6spy,
+                    libs.flyway,
+                    libs.springdoc
 
-    api             "${lib.mybatisPlus}"
+    api             libs.mybatis.plus.starter
 }

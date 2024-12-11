@@ -14,10 +14,10 @@ description = """license"""
 // 依赖配置
 dependencies {
     // 使用undertow替代tomcat
-    implementation("${lib.web}"){
+    implementation(libs.web){
         exclude module: 'spring-boot-starter-tomcat'
     }
-    implementation  "${lib.hutool}",
-                    "${lib.truelicense}"
+    implementation  libs.hutool,
+                    libs.truelicense
 
 }

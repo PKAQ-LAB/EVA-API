@@ -6,11 +6,11 @@ project.description='eva web support with all base modules'
 
 dependencies {
 
-    api("${lib.web}"){
+    api(libs.web){
         exclude module: 'spring-boot-starter-tomcat'
     }
-    api "${lib.undertow}"
+    api libs.undertow
 
     api project(":eva-core:eva-core-common"),
-        "${lib.springdoc}"
+        libs.springdoc
 }

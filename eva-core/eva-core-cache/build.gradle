@@ -7,7 +7,7 @@ project.description='eva cache , redis && caffeine'
 dependencies {
     implementation project(":eva-core:eva-core-common")
 
-    api             "${lib.cache}",
-                    "${lib.redis}",
-                    "${lib.caffeine}"
+    api             libs.cache,
+                    libs.redis,
+                    libs.caffeine
 }
