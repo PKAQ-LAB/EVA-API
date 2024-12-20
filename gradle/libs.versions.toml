@@ -1,5 +1,5 @@
 [versions]
-spring-dep = "1.1.6"
+spring-dep = "1.1.7"
 spring-boot = "3.4.0"
 ttl = "2.14.5"
 mysql = "8.0.33"
