@@ -1,9 +1,12 @@
 if (project.file('../../publish.gradle').exists()) {
     apply from: '../../publish.gradle'
 }
-base.archivesName = 'eva-core-helper'
-project.description='EVA工具帮助包'
+
+jar {
+    archiveBaseName = 'eva-core-helper'
+}
+project.description = 'EVA工具帮助包'
 
 dependencies {
-    implementation  project(":eva-core:eva-core-cache")
+    implementation project(":eva-core:eva-core-cache")
 }

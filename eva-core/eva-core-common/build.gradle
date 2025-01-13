@@ -1,7 +1,11 @@
 if (project.file('../../publish.gradle').exists()) {
     apply from: '../../publish.gradle'
 }
-base.archivesName = 'eva-core-common'
+
+jar {
+    archiveBaseName = 'eva-core-common'
+}
+
 project.description='eva common class'
 
 dependencies {

@@ -1,16 +1,18 @@
 if (project.file('../../publish.gradle').exists()) {
     apply from: '../../publish.gradle'
 }
-base.archivesName = 'eva-core-upload'
-project.description='eva fileupload support '
+jar {
+    archiveBaseName = 'eva-core-upload'
+}
+project.description = 'eva fileupload support '
 
 dependencies {
 
-    implementation(libs.web){
+    implementation(libs.web) {
         exclude module: 'spring-boot-starter-tomcat'
     }
     implementation libs.undertow,
-                   libs.minio
+            libs.minio
 
     implementation project(":eva-core:eva-core-common")
 }

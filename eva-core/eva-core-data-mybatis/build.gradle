@@ -2,17 +2,19 @@ if (project.file('../../publish.gradle').exists()) {
     apply from: '../../publish.gradle'
 }
 
-base.archivesName = 'eva-core-data-mybatis'
+jar {
+    archiveBaseName = 'eva-core-data-mybatis'
+}
 
-project.description='eva mybatis support'
+project.description = 'eva mybatis support'
 
 dependencies {
-    implementation  project(":eva-core:eva-core-common"),
-                    project(":eva-core:eva-core-log"),
-                    libs.jdbc,
-                    libs.p6spy,
-                    libs.flyway,
-                    libs.springdoc
+    implementation project(":eva-core:eva-core-common"),
+            project(":eva-core:eva-core-log"),
+            libs.jdbc,
+            libs.p6spy,
+            libs.flyway,
+            libs.springdoc
 
-    api             libs.mybatis.plus.starter
+    api libs.mybatis.plus.starter
 }

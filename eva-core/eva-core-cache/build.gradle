@@ -1,13 +1,15 @@
 if (project.file('../../publish.gradle').exists()) {
     apply from: '../../publish.gradle'
 }
-base.archivesName = 'eva-core-cache'
-project.description='eva cache , redis && caffeine'
+jar {
+    archiveBaseName = 'eva-core-cache'
+}
+project.description = 'eva cache , redis && caffeine'
 
 dependencies {
     implementation project(":eva-core:eva-core-common")
 
-    api             libs.cache,
-                    libs.redis,
-                    libs.caffeine
+    api libs.cache,
+            libs.redis,
+            libs.caffeine
 }

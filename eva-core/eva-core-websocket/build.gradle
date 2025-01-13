@@ -1,11 +1,13 @@
 if (project.file('../../publish.gradle').exists()) {
     apply from: '../../publish.gradle'
 }
-base.archivesName = 'eva-core-websocket'
+jar {
+    archiveBaseName = 'eva-core-websocket'
+}
 project.description = "tool for websocket"
 
 dependencies {
-    implementation(libs.websocket){
+    implementation(libs.websocket) {
         exclude module: 'spring-boot-starter-tomcat'
     }
 
