@@ -1,7 +1,7 @@
 if (project.file('../../publish.gradle').exists()) {
     apply from: '../../publish.gradle'
 }
-project.archivesBaseName = 'eva-core-upload'
+base.archivesName = 'eva-core-upload'
 project.description='eva fileupload support '
 
 dependencies {

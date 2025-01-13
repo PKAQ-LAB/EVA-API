@@ -1,7 +1,7 @@
 if (project.file('../../publish.gradle').exists()) {
     apply from: '../../publish.gradle'
 }
-project.archivesBaseName = 'eva-core-log'
+base.archivesName = 'eva-core-log'
 project.description='eva log support'
 
 dependencies {

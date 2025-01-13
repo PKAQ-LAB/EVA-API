@@ -1,7 +1,7 @@
 if (project.file('../../publish.gradle').exists()) {
     apply from: '../../publish.gradle'
 }
-project.archivesBaseName = 'eva-core-websocket'
+base.archivesName = 'eva-core-websocket'
 project.description = "tool for websocket"
 
 dependencies {

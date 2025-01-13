@@ -1,0 +1,75 @@
+package org.pkaq.core.auth.security.entrypoint;
+
+import cn.hutool.extra.servlet.JakartaServletUtil;
+import org.pkaq.core.auth.util.CacheTokenUtil;
+import org.pkaq.core.constant.CommonConstant;
+import org.pkaq.core.enums.BizCodeEnum;
+import org.pkaq.core.mvc.vo.Response;
+import org.pkaq.core.properties.EvaConfig;
+import org.pkaq.core.threaduser.ThreadUserHelper;
+import org.pkaq.core.util.json.JsonUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+
+/**
+ * 自定义注销成功处理器
+ *
+ * @author PKAQ
+ */
+@Component
+@RequiredArgsConstructor
+public class UrlLogoutSuccessHandler implements LogoutSuccessHandler {
+
+    private final EvaConfig evaConfig;
+
+    private final CacheTokenUtil tokenUtil;
+
+    @Override
+    public void onLogoutSuccess(HttpServletRequest httpServletRequest,
+                                HttpServletResponse httpServletResponse,
+                                Authentication authentication) throws IOException {
+
+        var cacheToken = evaConfig.getJwt().isPersistence();
+        // 清空redis/caffeine中的token 刷新用户secret
+        if (cacheToken) {
+            this.tokenUtil.removeToken(ThreadUserHelper.getUserName());
+            ThreadUserHelper.remove();
+        }
+
+        // 清除cookie
+        JakartaServletUtil.addCookie(httpServletResponse,
+                CommonConstant.ACCESS_TOKEN_KEY,
+                null,
+                0,
+                "/",
+                evaConfig.getCookie().getDomain());
+
+        JakartaServletUtil.addCookie(httpServletResponse,
+                CommonConstant.REFRESH_TOKEN_KEY,
+                null,
+                0,
+                "/",
+                evaConfig.getCookie().getDomain());
+
+
+        JakartaServletUtil.addCookie(httpServletResponse,
+                CommonConstant.USER_KEY,
+                null,
+                0,
+                "/",
+                evaConfig.getCookie().getDomain());
+
+        httpServletResponse.setCharacterEncoding("UTF-8");
+        httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        httpServletResponse.setStatus(HttpServletResponse.SC_OK);
+
+        httpServletResponse.getWriter().write(JsonUtil.toJson(new Response().failure(BizCodeEnum.LOGINOUT_SUCCESS)));
+    }
+}

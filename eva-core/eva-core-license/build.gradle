@@ -1,7 +1,7 @@
 if (project.file('../../publish.gradle').exists()) {
     apply from: '../../publish.gradle'
 }
-project.archivesBaseName = 'eva-core-license'
+base.archivesName = 'eva-core-license'
 project.description='eva license support'
 
 dependencies {

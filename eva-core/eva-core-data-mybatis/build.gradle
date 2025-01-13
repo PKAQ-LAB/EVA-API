@@ -1,7 +1,9 @@
 if (project.file('../../publish.gradle').exists()) {
     apply from: '../../publish.gradle'
 }
-project.archivesBaseName = 'eva-core-data-mybatis'
+
+base.archivesName = 'eva-core-data-mybatis'
+
 project.description='eva mybatis support'
 
 dependencies {

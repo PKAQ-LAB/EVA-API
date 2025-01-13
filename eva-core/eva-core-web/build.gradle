@@ -1,7 +1,7 @@
 if (project.file('../../publish.gradle').exists()) {
     apply from: '../../publish.gradle'
 }
-project.archivesBaseName = 'eva-core-web'
+base.archivesName = 'eva-core-web'
 project.description='eva web support with all base modules'
 
 dependencies {

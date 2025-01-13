@@ -37,7 +37,7 @@ subprojects {
         //}
 //        allowInsecureProtocol = true
         maven {
-            url "http://192.168.10.16:8082/artifactory/yunyue-public/"
+            url "http://dev.pkaq.org:8082/artifactory/yunyue-public/"
             allowInsecureProtocol = true
             credentials {
                 username = 'yyfrog'
