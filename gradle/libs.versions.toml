@@ -20,7 +20,7 @@ jsr310 = "2.18.2"
 oracle = "19.25.0.0"
 orai18n = "12.1.0.2.0"
 springdoc = "2.8.3"
-minio = "8.5.15"
+minio = "8.5.16"
 prometheus = "1.14.3"
 versioncheck = "0.51.0"
 
