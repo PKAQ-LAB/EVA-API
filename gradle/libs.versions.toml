@@ -22,7 +22,7 @@ orai18n = "12.1.0.2.0"
 springdoc = "2.8.3"
 minio = "8.5.17"
 prometheus = "1.14.3"
-versioncheck = "0.51.0"
+versioncheck = "0.52.0"
 
 [libraries]
 boot = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot" }
