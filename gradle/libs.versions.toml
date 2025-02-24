@@ -21,7 +21,7 @@ oracle = "19.25.0.0"
 orai18n = "12.1.0.2.0"
 springdoc = "2.8.5"
 minio = "8.5.17"
-prometheus = "1.14.3"
+prometheus = "1.14.4"
 versioncheck = "0.52.0"
 
 [libraries]
