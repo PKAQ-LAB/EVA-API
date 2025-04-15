@@ -1,8 +1,8 @@
 package org.pkaq.core.license;
 
 import de.schlichtherle.license.*;
-import org.pkaq.core.properties.EvaConfig;
 import lombok.RequiredArgsConstructor;
+import org.pkaq.core.properties.EvaConfig;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;

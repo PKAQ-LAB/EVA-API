@@ -1,6 +1,8 @@
 package org.pkaq.core.exception;
 
 
+import cn.hutool.core.io.FastStringWriter;
+
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.UndeclaredThrowableException;

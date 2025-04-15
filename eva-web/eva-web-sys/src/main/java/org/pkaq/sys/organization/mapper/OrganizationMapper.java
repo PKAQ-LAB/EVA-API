@@ -1,9 +1,9 @@
 package org.pkaq.sys.organization.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.pkaq.sys.organization.entity.OrganizationEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.pkaq.sys.organization.entity.OrganizationEntity;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

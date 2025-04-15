@@ -16,5 +16,6 @@ dependencies {
             libs.flyway,
             libs.springdoc
 
-    api libs.mybatis.plus.starter
+    api libs.mybatis.plus.starter,
+        libs.mybatis.plus.jsqlparser
 }

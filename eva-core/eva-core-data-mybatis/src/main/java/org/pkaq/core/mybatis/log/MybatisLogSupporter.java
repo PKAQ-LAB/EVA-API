@@ -2,13 +2,13 @@ package org.pkaq.core.mybatis.log;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.log.base.BizLogEntity;
 import org.pkaq.core.log.base.BizLogSupporter;
 import org.pkaq.core.log.condition.MybatisSupporterCondition;
 import org.pkaq.core.mybatis.log.entity.MybatisBizLogEntity;
 import org.pkaq.core.mybatis.log.mapper.MybatisSupporterMapper;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 

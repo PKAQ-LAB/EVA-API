@@ -11,7 +11,7 @@ import java.io.Serializable;
 public class PageBo implements Serializable {
 
     private static final int PAGE_NO = 1;
-    private static final int PAGE_SIZE = 20;
+    private static final int PAGE_SIZE = 30;
 
     @NotNull(message = "页码不能为空")
     @Min(value = 1, message = "页码最小值为 1")

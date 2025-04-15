@@ -1,8 +1,8 @@
 package org.pkaq.init;
 
-import org.pkaq.sys.dict.service.DictService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.pkaq.sys.dict.service.DictService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;

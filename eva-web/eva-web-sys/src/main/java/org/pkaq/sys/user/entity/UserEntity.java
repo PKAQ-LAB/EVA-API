@@ -2,16 +2,15 @@ package org.pkaq.sys.user.entity;
 
 import com.baomidou.mybatisplus.annotation.SqlCondition;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.pkaq.core.mybatis.mvc.entity.mybatis.StdEntity;
-import org.pkaq.core.mybatis.mvc.entity.mybatis.StdTreeEntity;
-import org.pkaq.sys.role.entity.RoleEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
+import org.pkaq.core.mybatis.mvc.entity.StdEntity;
+import org.pkaq.core.mybatis.mvc.entity.StdTreeEntity;
+import org.pkaq.sys.role.entity.RoleEntity;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -21,7 +20,6 @@ import java.util.List;
  * 用户管理实体类
  *
  * @author: S.PKAQ
- * @Datetime: 2018/3/29 23:58
  */
 @Data
 @Alias("user")
@@ -81,8 +79,14 @@ public class UserEntity extends StdEntity {
     @Schema(description = "是否锁定")
     private String locked;
 
-    @Schema(description = "微信id")
-    private String weixin_id;
+    @Schema(description = "所属岗位")
+    private String uPostId;
+
+    @Schema(description = "租户code")
+    private String tenantCode;
+
+    @Schema(description = "所属岗位名称")
+    private String postName;
 
     @Schema(description = "用户拥有的角色")
     @TableField(exist = false)
@@ -91,9 +95,5 @@ public class UserEntity extends StdEntity {
     @Schema(description = "用户拥有的模块")
     @TableField(exist = false)
     private List<StdTreeEntity> modules = new ArrayList<>();
-
-    @TableLogic
-    @Schema(description = "逻辑删除状态")
-    private String deleted;
 
 }

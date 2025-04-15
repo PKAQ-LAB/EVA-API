@@ -90,11 +90,4 @@ public interface BizAssert extends BizCode {
         }
     }
 
-    /**
-     * 断言异常
-     */
-    default UnauthorizedException newUnauthorizedException() {
-        throw new UnauthorizedException(this);
-    }
-
 }

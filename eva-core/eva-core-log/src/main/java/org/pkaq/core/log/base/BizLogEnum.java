@@ -1,8 +1,8 @@
 package org.pkaq.core.log.base;
 
-import org.pkaq.core.enums.BizCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.pkaq.core.enums.BizCode;
 
 /**
  * 业务日志类型
@@ -27,7 +27,20 @@ public enum BizLogEnum implements BizCode {
     /**
      * 查询
      **/
-    QUERY("查询", "R");
+    QUERY("查询", "R"),
+
+    /**
+     * 新增或更新操作<br/>
+     **/
+    CREATE_UPDATE("新增/更新", "AOE"),
+    /**
+     * 导入
+     */
+    IMPORT("导入", "I"),
+    /**
+     * 导出
+     */
+    EXPORT("导出", "E");
 
     /**
      * 名称

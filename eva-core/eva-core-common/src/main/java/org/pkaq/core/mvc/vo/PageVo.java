@@ -26,7 +26,7 @@ public class PageVo<T> {
     /**
      * 每页显示条数，默认 10
      */
-    private long size = 10;
+    private long size = 30;
 
     /**
      * 当前页

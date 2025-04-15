@@ -1,17 +1,15 @@
 package org.pkaq.core.log.events;
 
-import org.springframework.context.ApplicationEvent;
-
-import java.util.Map;
+import org.pkaq.core.log.base.BizLogEntity;
 
 /**
  * 系统日志事件
  *
  * @author PKAQ
  */
-public class BizLogEvent extends ApplicationEvent {
+public class BizLogEvent extends LogEvent<BizLogEntity> {
 
-    public BizLogEvent(Map<String, Object> source) {
-        super(source);
+    public BizLogEvent(BizLogEntity entity) {
+        super(entity);
     }
 }

@@ -2,11 +2,11 @@ package org.pkaq.sys.module.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import org.pkaq.core.mybatis.mvc.entity.mybatis.StdTreeEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
+import org.pkaq.core.mybatis.mvc.entity.StdTreeEntity;
 
 import java.util.List;
 

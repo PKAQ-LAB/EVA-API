@@ -15,7 +15,7 @@ import org.springframework.context.annotation.ComponentScan;
 @Slf4j
 @EnableCaching
 @SpringBootApplication
-@ComponentScan(basePackages = {"io.nerv.*"})
+@ComponentScan(basePackages = {"org.pkaq.*"})
 public class WebBooter implements CommandLineRunner {
 
 

@@ -7,10 +7,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import org.pkaq.core.enums.BizCodeEnum;
-import org.pkaq.core.mybatis.mvc.entity.mybatis.StdTreeEntity;
-import org.pkaq.core.mybatis.mvc.service.mybatis.StdService;
-import org.pkaq.core.mybatis.mvc.util.Page;
-import org.pkaq.core.mybatis.util.tree.TreeHelper;
+import org.pkaq.core.mybatis.mvc.entity.StdTreeEntity;
+import org.pkaq.core.mybatis.mvc.service.StdService;
+import org.pkaq.core.mybatis.util.Page;
+import org.pkaq.core.mybatis.util.TreeHelper;
 import org.pkaq.sys.dict.cache.DictCacheHelper;
 import org.pkaq.sys.module.entity.ModuleEntityStd;
 import org.pkaq.sys.module.mapper.ModuleMapper;
@@ -78,7 +78,7 @@ public class UserService extends StdService<UserMapper, UserEntity> {
      */
     public IPage<UserEntity> listUser(UserEntity userEntity, Integer page, Integer size) {
         page = null != page ? page : 1;
-        size = null != size ? size : 10;
+        size = null != size ? size : 30;
 
         Page pagination = new Page();
         pagination.setCurrent(page);

@@ -25,11 +25,10 @@ public class MybatisPlusConfig {
      */
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
-        MybatisPlusInterceptor mybatisPlusInterceptor = new MybatisPlusInterceptor();
-
-        mybatisPlusInterceptor.addInnerInterceptor(new PaginationInnerInterceptor());
-
-        return mybatisPlusInterceptor;
+        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        //分页插件
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
+        return interceptor;
     }
 
     /**
@@ -43,6 +42,7 @@ public class MybatisPlusConfig {
         Properties properties = new Properties();
         properties.setProperty("Oracle", "oracle");
         properties.setProperty("MySQL", "mysql");
+        properties.setProperty("Postgre", "postgre");
         databaseIdProvider.setProperties(properties);
         return databaseIdProvider;
     }

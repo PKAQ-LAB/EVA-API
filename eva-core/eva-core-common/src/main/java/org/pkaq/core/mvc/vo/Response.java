@@ -1,12 +1,12 @@
 package org.pkaq.core.mvc.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.pkaq.core.enums.BizCode;
-import org.pkaq.core.enums.BizCodeEnum;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
+import org.pkaq.core.enums.BizCode;
+import org.pkaq.core.enums.BizCodeEnum;
 
 /**
  * 返回对象

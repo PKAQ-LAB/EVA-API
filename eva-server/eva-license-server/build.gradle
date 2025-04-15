@@ -6,7 +6,7 @@ jar {
     enabled = true
 }
 bootJar {
-    mainClass = 'io.nerv.core.LicenseBooter'
+    mainClass = 'org.pkaq.core.LicenseBooter'
 }
 
 description = """license"""

@@ -1,8 +1,8 @@
 package org.pkaq.config;
 
+import lombok.RequiredArgsConstructor;
 import org.pkaq.core.license.LicenseCheckInterceptor;
 import org.pkaq.core.properties.EvaConfig;
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

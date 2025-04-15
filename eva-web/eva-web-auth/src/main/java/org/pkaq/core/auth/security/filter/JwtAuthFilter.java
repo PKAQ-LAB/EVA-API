@@ -2,6 +2,11 @@ package org.pkaq.core.auth.security.filter;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.JakartaServletUtil;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.pkaq.core.auth.util.CacheTokenUtil;
 import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.enums.BizCodeEnum;
@@ -12,11 +17,6 @@ import org.pkaq.core.threaduser.ThreadUser;
 import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.core.util.json.JsonUtil;
 import org.pkaq.core.web.util.TokenUtil;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -146,7 +146,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             logger.info(SecurityContextHolder.getContext().getAuthentication());
 //            if (StrUtil.isNotBlank(uid) && SecurityContextHolder.getContext().getAuthentication() == null) {
             if (StrUtil.isNotBlank(account)) {
-                logger.debug("io.nerv.security context was null, so authorizing user");
+                logger.debug("org.pkaq.security context was null, so authorizing user");
 
                 // 从redis中 根据用户id获取用户权限列表
                 UserDetails userDetails;
@@ -159,14 +159,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     return;
                 }
 
-                logger.info("authenticated user " + account + ", setting io.nerv.security context");
+                logger.info("authenticated user " + account + ", setting org.pkaq.security context");
                 // 验证通过 将用户信息存入 threadlocal
                 String[] roles = userDetails.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
                         .toArray(String[]::new);
 
                 ThreadUser currentUser = new ThreadUser().setUserId(uid)
-                        .setUserName(account)
+                        .setName(account)
                         .setRoles(roles);
                 ThreadUserHelper.setCurrentUser(currentUser);
 

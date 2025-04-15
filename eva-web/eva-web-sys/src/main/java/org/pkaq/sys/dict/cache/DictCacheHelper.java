@@ -1,9 +1,9 @@
 package org.pkaq.sys.dict.cache;
 
+import lombok.Data;
 import org.pkaq.core.cache.util.RedisUtil;
 import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.util.json.JsonUtil;
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;

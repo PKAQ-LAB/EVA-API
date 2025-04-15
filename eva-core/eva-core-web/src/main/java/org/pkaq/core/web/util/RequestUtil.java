@@ -1,13 +1,15 @@
 package org.pkaq.core.web.util;
 
 import cn.hutool.core.util.StrUtil;
-import org.pkaq.core.constant.CommonConstant;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
+import org.pkaq.core.constant.CommonConstant;
 
 
 /**
  * 请求处理工具类
  */
+@Slf4j
 public class RequestUtil {
     /**
      * 获取请求设备类型
@@ -42,5 +44,27 @@ public class RequestUtil {
      */
     public static String formatDeivceAndVersion(HttpServletRequest request, String format) {
         return String.format(format, getDeivce(request), getVersion(request));
+    }
+
+    /**
+     * 获取请求模块id
+     *
+     * @param request
+     * @return
+     */
+    public static String getModuleId(HttpServletRequest request) {
+        String moduleId = request.getHeader(CommonConstant.MODULE_ID);
+        return StrUtil.isBlank(moduleId) ? "" : moduleId;
+    }
+
+    /**
+     * 获取请求模块code
+     *
+     * @param request
+     * @return
+     */
+    public static String getModuleCode(HttpServletRequest request) {
+        String mcdoe = request.getHeader(CommonConstant.MODULE_CODE);
+        return StrUtil.isBlank(mcdoe) ? "" : mcdoe;
     }
 }

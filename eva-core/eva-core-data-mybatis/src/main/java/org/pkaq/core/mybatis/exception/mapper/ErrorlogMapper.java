@@ -1,8 +1,8 @@
 package org.pkaq.core.mybatis.exception.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.pkaq.core.mybatis.exception.entity.ErrorlogEntity;
 import org.apache.ibatis.annotations.Mapper;
+import org.pkaq.core.mybatis.exception.entity.ErrorlogEntity;
 import org.springframework.stereotype.Repository;
 
 /**

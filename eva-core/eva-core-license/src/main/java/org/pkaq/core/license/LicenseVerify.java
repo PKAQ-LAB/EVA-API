@@ -5,9 +5,9 @@ import cn.hutool.core.net.NetUtil;
 import de.schlichtherle.license.LicenseContent;
 import de.schlichtherle.license.LicenseContentException;
 import de.schlichtherle.license.LicenseManager;
-import org.pkaq.core.properties.EvaConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.pkaq.core.properties.EvaConfig;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 

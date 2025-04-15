@@ -1,8 +1,8 @@
 package org.pkaq.sys.dict.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.pkaq.sys.dict.entity.DictViewEntity;
 import org.apache.ibatis.annotations.Mapper;
+import org.pkaq.sys.dict.entity.DictViewEntity;
 import org.springframework.stereotype.Repository;
 
 /**

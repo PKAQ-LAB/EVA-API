@@ -1,15 +1,18 @@
 package org.pkaq.core.web.filter;
 
-import cn.hutool.core.util.StrUtil;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.threaduser.ThreadUser;
 import org.pkaq.core.threaduser.ThreadUserHelper;
-import org.pkaq.core.web.util.HeaderUtil;
-import jakarta.servlet.*;
-import jakarta.servlet.annotation.WebFilter;
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.extern.slf4j.Slf4j;
+import org.pkaq.core.web.util.RequestUtil;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * 请求拦截，避免服务绕过接口被直接访问
@@ -17,36 +20,22 @@ import java.io.IOException;
  * @author PKAQ
  */
 @Slf4j
-@WebFilter(filterName = "BaseFilter", urlPatterns = {"/*"})
-public class RequestFilter implements Filter {
-    @Override
-    public void init(FilterConfig filterConfig) {
-        log.info("init filter");
-    }
+@Component
+public class RequestFilter extends OncePerRequestFilter {
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        log.info("进入 服务请求拦截 过滤器========");
-        HttpServletRequest request = (HttpServletRequest) servletRequest;
-        String gateway = request.getHeader("gatewayKey");
-        if (StrUtil.isBlank(gateway) || !gateway.equals("key")) {
-            log.info("非法请求");
-            return;
+    public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+        // 用户信息为null  新建一个匿名用户
+        var tu = ThreadUserHelper.getCurrentUser();
+        if (Objects.isNull(tu)) {
+            tu = new ThreadUser();
+            tu.setModuleId(RequestUtil.getModuleId(request));
+            tu.setModuleCode(RequestUtil.getModuleCode(request));
+            ThreadUserHelper.setCurrentUser(tu);
         }
 
-        // 获取用户信息设置到threadlocal中
-        var tu = new ThreadUser();
-        tu.setUserId(HeaderUtil.getUserId(request))
-                .setUserName(HeaderUtil.getUserName(request))
-                .setRoles(HeaderUtil.getRolesArray(request));
-        ThreadUserHelper.setCurrentUser(tu);
-
-        filterChain.doFilter(servletRequest, servletResponse);
+        filterChain.doFilter(request, response);
     }
 
-    @Override
-    public void destroy() {
-        System.out.println("destroy filter");
-    }
 }
  

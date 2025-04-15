@@ -3,10 +3,10 @@ package org.pkaq.core.mybatis.log.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import org.pkaq.core.log.base.BizLogEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
+import org.pkaq.core.log.base.BizLogEntity;
 
 /**
  * 业务日志 mybatis实体类

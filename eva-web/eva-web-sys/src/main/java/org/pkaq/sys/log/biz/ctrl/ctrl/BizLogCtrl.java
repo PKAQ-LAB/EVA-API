@@ -3,16 +3,17 @@ package org.pkaq.sys.log.biz.ctrl.ctrl;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import org.pkaq.core.mvc.vo.Response;
-import org.pkaq.core.mvc.vo.DateRangeVo;
-import org.pkaq.core.mybatis.log.entity.MybatisBizLogEntity;
-import org.pkaq.core.mybatis.log.mapper.MybatisSupporterMapper;
-import org.pkaq.core.mybatis.mvc.util.Page;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
+import org.pkaq.core.mvc.vo.DateRangeVo;
+import org.pkaq.core.mvc.vo.PageVo;
+import org.pkaq.core.mvc.vo.Response;
+import org.pkaq.core.mybatis.log.entity.MybatisBizLogEntity;
+import org.pkaq.core.mybatis.log.mapper.MybatisSupporterMapper;
+import org.pkaq.core.mybatis.util.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -72,7 +73,7 @@ public class BizLogCtrl {
 
         Page pagination = new Page();
         pagination.setCurrent(pageNo == null ? 1 : pageNo);
-        pagination.setSize(size == null ? 10 : size);
+        pagination.setSize(size == null ? 30 : size);
 
         return new Response().success(this.mybatisSupporterMapper.selectPage(pagination, wrapper));
     }

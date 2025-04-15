@@ -1,3 +1,5 @@
+project:
+  version: 0.0.1
 spring:
   profiles:
     active: @profile@
@@ -32,7 +34,7 @@ spring:
 mybatis-plus:
   mapper-locations: classpath*:/mapper/*.xml
   #实体扫描，多个package用逗号或者分号分隔
-  typeAliasesPackage: io.nerv.*.**.entity
+  typeAliasesPackage: org.pkaq.*.**.entity
   global-config:
     db-config:
       id-type: assign_id

@@ -1,10 +1,10 @@
 package org.pkaq.sys.role.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.pkaq.core.annotation.Ignore;
-import org.pkaq.sys.role.entity.RoleModuleEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.pkaq.core.annotation.Ignore;
+import org.pkaq.sys.role.entity.RoleModuleEntity;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

@@ -1,8 +1,8 @@
 package org.pkaq.core.enums;
 
-import org.pkaq.core.exception.BizAssert;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.pkaq.core.exception.BizAssert;
 
 /**
  * 状态码

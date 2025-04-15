@@ -53,4 +53,9 @@ public interface CommonConstant {
     String DEVICE = "device";
     // 请求来源版本号
     String VERSION = "version";
+
+    // 用户操作的模块id请求头
+    String MODULE_ID = "mid";
+    // 用户操作的模块code请求头
+    String MODULE_CODE = "mcode";
 }

@@ -1,9 +1,9 @@
 package org.pkaq.config;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import org.pkaq.core.threaduser.ThreadUserHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
+import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;

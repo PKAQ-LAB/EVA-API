@@ -2,8 +2,8 @@ package org.pkaq.core.web.util;
 
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.extra.servlet.JakartaServletUtil;
-import org.pkaq.core.constant.CommonConstant;
 import jakarta.servlet.http.HttpServletRequest;
+import org.pkaq.core.constant.CommonConstant;
 
 
 public class HeaderUtil {

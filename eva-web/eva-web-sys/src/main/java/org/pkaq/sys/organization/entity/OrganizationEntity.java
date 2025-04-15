@@ -4,11 +4,11 @@ import com.baomidou.mybatisplus.annotation.SqlCondition;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
-import org.pkaq.core.mybatis.mvc.entity.mybatis.StdEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
+import org.pkaq.core.mybatis.mvc.entity.StdEntity;
 
 import java.util.List;
 
@@ -51,10 +51,6 @@ public class OrganizationEntity extends StdEntity {
 
     @Schema(description = "排序")
     private Integer orders;
-
-    @TableLogic
-    @Schema(description = "逻辑删除状态")
-    private String deleted;
 
     @Schema(description = "是否可用")
     private String status;

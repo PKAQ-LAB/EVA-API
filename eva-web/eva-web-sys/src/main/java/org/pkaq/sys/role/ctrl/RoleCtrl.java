@@ -1,6 +1,10 @@
 package org.pkaq.sys.role.ctrl;
 
 import cn.hutool.core.util.StrUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.pkaq.core.enums.BizCodeEnum;
 import org.pkaq.core.mvc.bo.SingleArrayBo;
 import org.pkaq.core.mvc.ctrl.Ctrl;
@@ -8,10 +12,6 @@ import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.sys.role.entity.RoleEntity;
 import org.pkaq.sys.role.entity.RoleModuleEntity;
 import org.pkaq.sys.role.service.RoleService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 /**

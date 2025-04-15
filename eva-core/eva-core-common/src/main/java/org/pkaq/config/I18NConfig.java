@@ -1,5 +1,6 @@
 package org.pkaq.config;
 
+
 import org.springframework.boot.autoconfigure.context.MessageSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.MessageSource;
@@ -7,8 +8,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -28,7 +27,7 @@ public class I18NConfig {
         messageSource.setDefaultEncoding(messageSourceProperties.getEncoding().name());
 
         // 获取 spring.messages.basename 配置的文件路径列表
-        List<String> baseNames = new ArrayList<>(Arrays.asList(messageSourceProperties.getBasename().split(",")));
+        List<String> baseNames = messageSourceProperties.getBasename();
 
         // 追加内置的 SYSI81N 文件
         baseNames.add("i18n/SYSI18N");
@@ -38,6 +37,4 @@ public class I18NConfig {
         messageSource.setUseCodeAsDefaultMessage(messageSourceProperties.isUseCodeAsDefaultMessage());
         return messageSource;
     }
-
-
 }

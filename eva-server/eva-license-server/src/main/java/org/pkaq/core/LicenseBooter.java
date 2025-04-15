@@ -1,8 +1,8 @@
 package org.pkaq.core;
 
+import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.license.LicenseGenerator;
 import org.pkaq.core.license.LicenseVerify;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -16,7 +16,7 @@ import org.springframework.context.annotation.ComponentScan;
  */
 @Slf4j
 @SpringBootApplication
-@ComponentScan(basePackages = {"io.nerv.*"})
+@ComponentScan(basePackages = {"org.pkaq.*"})
 public class LicenseBooter implements CommandLineRunner {
 
     @Autowired

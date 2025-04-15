@@ -1,8 +1,8 @@
 package org.pkaq.core.auth.security.provider;
 
-import org.pkaq.core.enums.BizCodeEnum;
 import lombok.Getter;
 import lombok.Setter;
+import org.pkaq.core.enums.BizCodeEnum;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
 import org.springframework.security.core.AuthenticationException;

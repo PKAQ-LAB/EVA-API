@@ -1,7 +1,7 @@
 package org.pkaq.core.exception;
 
-import org.pkaq.core.enums.BizCode;
 import lombok.Getter;
+import org.pkaq.core.enums.BizCode;
 
 import java.text.MessageFormat;
 

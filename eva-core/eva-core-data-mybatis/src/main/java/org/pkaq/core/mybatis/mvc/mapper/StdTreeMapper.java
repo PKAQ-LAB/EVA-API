@@ -1,8 +1,8 @@
 package org.pkaq.core.mybatis.mvc.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.pkaq.core.mybatis.mvc.entity.mybatis.StdTreeEntity;
 import org.apache.ibatis.annotations.Mapper;
+import org.pkaq.core.mybatis.mvc.entity.StdTreeEntity;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

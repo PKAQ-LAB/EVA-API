@@ -1,9 +1,9 @@
 package org.pkaq.sys.user.vo;
 
-import org.pkaq.sys.user.entity.UserEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.pkaq.sys.user.entity.UserEntity;
 
 import java.util.List;
 import java.util.Map;

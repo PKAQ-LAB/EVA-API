@@ -12,7 +12,6 @@ dependencies {
     implementation 	libs.jaxb.api,
                     libs.jasypt
 
-
     api libs.hutool,
         libs.aop,
         libs.jwt,

@@ -17,7 +17,6 @@ import java.lang.annotation.*;
 @Documented
 @Inherited
 public @interface BizLog {
-    String msg() default "";
     /**
      * 日志描述
      */
@@ -27,6 +26,12 @@ public @interface BizLog {
      * 操作表类型
      */
     BizLogEnum operateType() default BizLogEnum.CREATE;
+
+    /**
+     * 区分新增或修改的参数
+     * 数字表示第几个入参 默认通过第一个参数的id属性来区分操作类型是新增还是修改 id有值为修改 无则新增
+     */
+    String distinguishParam() default "0.id";
 
     /***
      * 操作人
@@ -39,4 +44,23 @@ public @interface BizLog {
      * @return
      */
     String operateDateTime() default "";
+
+    /**
+     * 格式化日志描述的参数名
+     *
+     * @BizLog(args = {"name","code"})  取方法返回对象的name、code属性
+     * @BizLog(args = {"this"})  取方法返回值[当返回对象是基本数据类型或者string类型时]
+     * @BizLog(args = {"name","param:0","param:1.code"})  取方法返回对象的name属性以及第一个入参和第二个入参code属性的值
+     */
+    String[] args() default {};
+
+    /**
+     * 业务id的参数名
+     *
+     * @BizLog(bizId = "id")  取方法返回对象的id属性值
+     * @BizLog(bizId = "this")  取方法返回值[当返回对象是基本数据类型或者string类型时]
+     * @BizLog(bizId = "param:0")  取方法第一个入参的属性值
+     * @BizLog(bizId = "param:1.id")  取方法第一个入参的id属性值
+     */
+    String bizId() default "";
 }

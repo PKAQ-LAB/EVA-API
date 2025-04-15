@@ -5,7 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.pkaq.core.enums.BizCodeEnum;
 import org.pkaq.core.mvc.vo.Response;
-import org.pkaq.core.mybatis.mvc.service.mybatis.StdService;
+import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.sys.organization.entity.OrganizationEntity;
 import org.pkaq.sys.organization.mapper.OrganizationMapper;
 import org.springframework.stereotype.Service;

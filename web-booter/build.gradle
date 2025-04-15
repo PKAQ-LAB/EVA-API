@@ -9,7 +9,7 @@ jar {
 }
 
 bootJar {
-    mainClass = 'io.nerv.WebBooter'
+    mainClass = 'org.pkaq.WebBooter'
 }
 
 description = """web"""
@@ -23,7 +23,6 @@ processResources {
     from(sourceSets.main.resources.srcDirs) {
         filter(ReplaceTokens, tokens: [profile: profile])
     }
-
 }
 
 dependencies {
@@ -38,7 +37,7 @@ dependencies {
                    libs.actuator,
                    libs.knife4j.ui
 
-//                    libs.devTools
-
-
+    if (project.hasProperty('dev')) {
+        runtimeOnly libs.dev.tools
+    }
 }

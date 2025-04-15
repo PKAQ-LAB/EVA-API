@@ -1,68 +1,102 @@
 [versions]
-spring-dep = "1.1.7"
-spring-boot = "3.4.4"
+spring_dep = "1.1.7"
+spring_boot = "3.4.4"
 ttl = "2.14.5"
 mysql = "8.0.33"
-mybatis-plus-starter = "3.5.11"
+mybatis_plus_starter = "3.5.11"
+mybatis_plus_jsqlparser = "3.5.11"
 lombok = "1.18.38"
 knife4j = "4.5.0"
 hutool = "5.8.37"
-jaxb-api = "2.3.1"
+jaxb_api = "2.3.1"
 jasypt = "3.0.5"
 p6spy = "3.9.1"
 flyway = "11.7.0"
-boot-admin = "3.1.6"
 truelicense = "1.33"
 caffeine = "3.2.0"
-security-test = "6.4.4"
+security_test = "6.4.4"
 jwt = "10.2"
-jsr310 = "2.18.3"
-oracle = "19.26.0.0"
-orai18n = "12.1.0.2.0"
+#oracle = "19.26.0.0"
+#orai18n = "12.1.0.2.0"
 springdoc = "2.8.6"
 minio = "8.5.17"
 prometheus = "1.14.6"
 versioncheck = "0.52.0"
 
 [libraries]
-boot = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot" }
+boot = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring_boot" }
+# sql日志
 p6spy = { module = "p6spy:p6spy", version.ref = "p6spy" }
-flyway = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
+# 数据库版本
+flyway = { module = "org.flywaydb:flyway-mysql", version.ref = "flyway" }
+# ORM
+mybatis_plus_starter = { module = "com.baomidou:mybatis-plus-spring-boot3-starter", version.ref = "mybatis_plus_starter" }
+mybatis_plus_jsqlparser = { module = "com.baomidou:mybatis-plus-jsqlparser", version.ref = "mybatis_plus_jsqlparser" }
+# 数据库
 mysql = { module = "mysql:mysql-connector-java", version.ref = "mysql" }
-oracle = { module = "com.oracle.database.jdbc:ojdbc10", version.ref = "oracle" }
-orai18n = { module = "cn.easyproject:orai18n", version.ref = "orai18n" }
-jaxb-api = { module = "javax.xml.bind:jaxb-api", version.ref = "jaxb-api" }
+#oracle = { module = "com.oracle.database.jdbc:ojdbc10", version.ref = "oracle" }
+#orai18n = { module = "cn.easyproject:orai18n", version.ref = "orai18n" }
+
+jaxb_api = { module = "javax.xml.bind:jaxb-api", version.ref = "jaxb_api" }
+
+# license
 truelicense = { module = "de.schlichtherle.truelicense:truelicense-core", version.ref = "truelicense" }
+
+# 配置加密
 jasypt = { module = "com.github.ulisesbocchio:jasypt-spring-boot-starter", version.ref = "jasypt" }
+
+# 验证
 validation = { module = "org.springframework.boot:spring-boot-starter-validation" }
 json = { module = "org.springframework.boot:spring-boot-starter-json" }
-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jsr310" }
+
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
+
+# 缓存
 caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
 redis = { module = "org.springframework.boot:spring-boot-starter-data-redis" }
 cache = { module = "org.springframework.boot:spring-boot-starter-cache" }
+
+# AOP
 aop = { module = "org.springframework.boot:spring-boot-starter-aop" }
+
 jdbc = { module = "org.springframework.boot:spring-boot-starter-jdbc" }
+
+# 安全
 security = { module = "org.springframework.boot:spring-boot-starter-security" }
 web = { module = "org.springframework.boot:spring-boot-starter-web" }
+
+# 中间件
 undertow = { module = "org.springframework.boot:spring-boot-starter-undertow" }
+
+# 测试
 test = { module = "org.springframework.boot:spring-boot-starter-test" }
-security-test = { module = "org.springframework.security:spring-security-test", version.ref = "security-test" }
+security_test = { module = "org.springframework.security:spring-security-test", version.ref = "security_test" }
+
 hutool = { module = "cn.hutool:hutool-all", version.ref = "hutool" }
-mybatis-plus-starter = { module = "com.baomidou:mybatis-plus-boot-starter", version.ref = "mybatis-plus-starter" }
+
+# 接口文档
 springdoc = { module = "org.springdoc:springdoc-openapi-starter-webmvc-api", version.ref = "springdoc" }
 springdocui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "springdoc" }
-knife4j-ui = { module = "com.github.xiaoymin:knife4j-openapi3-ui", version.ref = "knife4j" }
+knife4j_ui = { module = "com.github.xiaoymin:knife4j-openapi3-ui", version.ref = "knife4j" }
+
+# jwt
 jwt = { module = "com.nimbusds:nimbus-jose-jwt", version.ref = "jwt" }
+
+# 安全线程
 ttl = { module = "com.alibaba:transmittable-thread-local", version.ref = "ttl" }
+
+# ws
 websocket = { module = "org.springframework.boot:spring-boot-starter-websocket" }
-dev-tools = { module = "org.springframework.boot:spring-boot-devtools" }
+
+# 监控
+dev_tools = { module = "org.springframework.boot:spring-boot-devtools" }
 actuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }
 prometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "prometheus" }
+
+# 对象存储
 minio = { module = "io.minio:minio", version.ref = "minio" }
 
-
 [plugins]
-spring_dependency_management = { id = "io.spring.dependency-management", version.ref = "spring-dep" }
-spring_boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
+spring_dependency_management = { id = "io.spring.dependency-management", version.ref = "spring_dep" }
+spring_boot = { id = "org.springframework.boot", version.ref = "spring_boot" }
 ben_manes_versions = { id = "com.github.ben-manes.versions", version.ref = "versioncheck" }
