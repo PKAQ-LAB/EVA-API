@@ -22,6 +22,7 @@ springdoc = "2.8.6"
 minio = "8.5.17"
 prometheus = "1.14.6"
 versioncheck = "0.52.0"
+mapstruct = "1.6.3"
 
 [libraries]
 boot = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring_boot" }
@@ -32,6 +33,10 @@ flyway = { module = "org.flywaydb:flyway-mysql", version.ref = "flyway" }
 # ORM
 mybatis_plus_starter = { module = "com.baomidou:mybatis-plus-spring-boot3-starter", version.ref = "mybatis_plus_starter" }
 mybatis_plus_jsqlparser = { module = "com.baomidou:mybatis-plus-jsqlparser", version.ref = "mybatis_plus_jsqlparser" }
+
+mapstruct = { group = "org.mapstruct", name = "mapstruct", version.ref = "mapstruct" }
+mapstruct-processor = { group = "org.mapstruct", name = "mapstruct-processor", version.ref = "mapstruct" }
+
 # 数据库
 mysql = { module = "mysql:mysql-connector-java", version.ref = "mysql" }
 #oracle = { module = "com.oracle.database.jdbc:ojdbc10", version.ref = "oracle" }

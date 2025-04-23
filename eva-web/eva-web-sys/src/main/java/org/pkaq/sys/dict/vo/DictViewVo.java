@@ -1,9 +1,10 @@
-package org.pkaq.sys.dict.entity;
+package org.pkaq.sys.dict.vo;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.apache.ibatis.type.Alias;
+import org.pkaq.core.mvc.vo.Vo;
 
 /**
  * 字典视图
@@ -13,7 +14,7 @@ import org.apache.ibatis.type.Alias;
 @Data
 @Alias("dictView")
 @TableName("v_dict")
-public class DictViewEntity {
+public class DictViewVo implements Vo {
     @Schema(description = "字典编码")
     private String code;
 
@@ -21,11 +22,14 @@ public class DictViewEntity {
     private String name;
 
     @Schema(description = "字典项key")
-    private String keyName;
+    private String dCode;
 
     @Schema(description = "字典项value")
-    private String keyValue;
+    private String dValue;
 
-    @Schema(description = "字典项排序")
-    private String orders;
+    @Schema(description = "是否冻结（0000 - 未冻结，0001 - 冻结， 9999 - 不可编辑）")
+    private String frozen;
+
+    @Schema(description = "展示顺序")
+    private int sort;
 }

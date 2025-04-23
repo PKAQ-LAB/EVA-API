@@ -118,7 +118,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
     public IPage<T> listPage(PageBo pageBo, T entity) {
         LambdaQueryWrapper<T> wrapper = Wrappers.lambdaQuery();
         wrapper.setEntity(entity);
-        wrapper.orderByDesc(T::getGmtModify);
+        wrapper.orderByDesc(T::getUtcModify);
 
         Page pagination = new Page(pageBo.getPageNo(), pageBo.getPageSize());
         return this.mapper.selectPage(pagination, wrapper);
@@ -137,7 +137,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
 
         LambdaQueryWrapper<T> wrapper = Wrappers.lambdaQuery();
         wrapper.setEntity(entity);
-        wrapper.orderByDesc(T::getGmtModify);
+        wrapper.orderByDesc(T::getUtcModify);
         // 分页条件
         Page pagination = new Page();
         pagination.setCurrent(page);

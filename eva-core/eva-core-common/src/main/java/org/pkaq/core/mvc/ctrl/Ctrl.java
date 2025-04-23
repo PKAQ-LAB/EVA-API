@@ -14,9 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @Getter
 public abstract class Ctrl {
-
     @Autowired
-    protected I18NHelper i18NHelper;
+    private I18NHelper i18NHelper;
 
     /**
      * 根据编码获取国际化字符串
@@ -81,8 +80,8 @@ public abstract class Ctrl {
      * @param msg
      * @return
      */
-    protected Response failure(String msg) {
-        return new Response().failure(msg);
+    protected Response<Object> failure(String msg) {
+        return new Response<>().failure(msg);
     }
 
     /**
@@ -92,7 +91,7 @@ public abstract class Ctrl {
      * @return
      */
 
-    protected Response failure(BizCode failCode) {
+    protected Response<Object> failure(BizCode failCode) {
         return new Response<>().failure(failCode);
     }
 
@@ -104,7 +103,7 @@ public abstract class Ctrl {
      * @return
      */
 
-    protected Response failure(BizCode failCode, Object... args) {
+    protected Response<Object> failure(BizCode failCode, Object... args) {
         return new Response<>().failure(failCode, args);
     }
 
@@ -114,7 +113,7 @@ public abstract class Ctrl {
      * @param failCode
      * @return
      */
-    protected Response failure(String failCode, String msg) {
+    protected Response<Object> failure(String failCode, String msg) {
         return new Response<>().failure(failCode, msg);
     }
 
@@ -123,7 +122,7 @@ public abstract class Ctrl {
      *
      * @return
      */
-    protected Response failure() {
+    protected Response<Object> failure() {
         return new Response<>().failure(BizCodeEnum.SERVER_ERROR);
     }
 }

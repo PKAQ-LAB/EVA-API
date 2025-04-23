@@ -16,27 +16,39 @@
         <collection property="lines" ofType="dictItem" column="{mainId=id}"
                     select="org.pkaq.sys.dict.mapper.DictItemMapper.listItemByMainId"/>
     </resultMap>
+
     <sql id="column">
-        m.id,m.code,m.name,m.parent_ID,m.remark,
-        m2.id itemId ,m2.main_id,m2.key_name,m2.key_value,m2.orders,m2.status,m2.remark
+        m.id,
+        m.code,
+        m.name,
+        m.pid,
+        m.remark,
+        m2.id itemId ,
+        m2.main_id,
+        m2.d_code,
+        m2.d_value,
+        m2.sort,
+        m2.frozen,
+        m2.remark
     </sql>
+
     <select id="getDict" resultMap="LineResultMap">
         select *
-        from sys_dict m
+            from sys_dict m
         where m.id = #{id}
     </select>
+
     <!--根据条件查询菜单数据-->
     <select id="listDict" resultMap="TreeResultMap">
         select * from sys_dict
         <where>
-            parent_ID = '0' or parent_ID is null and status != '0001'
+            pid = '0' or pid is null
         </where>
     </select>
     <!-- 根据parentId查询子节点数据-->
     <select id="listChildren" resultMap="BaseResultMap">
         select *
         from sys_dict
-        where parent_ID = #{id}
-        and status != '0001'
+        where pid = #{id} and frozen != '0001'
     </select>
 </mapper>

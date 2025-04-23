@@ -1,12 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="common">
+    <!-- 公共字段   -->
     <resultMap id="resultMap" type="org.pkaq.core.mybatis.mvc.entity.StdEntity">
-        <id column="ID" property="id"/>
-        <result column="REMARK" property="remark"/>
-        <result column="GMT_CREATE" property="gmtCreate"/>
-        <result column="GMT_MODIFY" property="gmtModify"/>
-        <result column="CREATE_BY" property="createBy"/>
-        <result column="MODIFY_BY" property="modifyBy"/>
+        <id property="id" column="id"/>
+        <result property="revision" column="revision"/>
+        <result property="deleted" column="deleted"/>
+        <result property="frozen" column="frozen"/>
+        <result property="sort" column="sort"/>
+        <result property="tenantId" column="tenant_id"/>
+        <result property="createId" column="create_id"/>
+        <result property="createBy" column="create_by"/>
+        <result property="utcCreate" column="utc_create"/>
+        <result property="modifyId" column="modify_id"/>
+        <result property="modifyBy" column="modify_by"/>
+        <result property="utcModify" column="utc_modify"/>
+        <result property="remark" column="remark"/>
     </resultMap>
+    <!-- 删除片段 -->
+    <sql id="deletedSQL">
+        DELETED is null or DELETED = 0
+    </sql>
+    <!-- 非冻结片段 -->
+    <sql id="unFrozenSQL">
+        frozen != '0001'
+    </sql>
 </mapper>

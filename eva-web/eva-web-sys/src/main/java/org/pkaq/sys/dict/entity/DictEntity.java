@@ -2,13 +2,12 @@ package org.pkaq.sys.dict.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
 import org.pkaq.core.mybatis.mvc.entity.StdEntity;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -18,33 +17,27 @@ import java.util.List;
  */
 @Data
 @Alias("dict")
-@TableName("sys_dict")
+@TableName("SYS_DICT")
 @EqualsAndHashCode(callSuper = true)
-@Schema(title = "字典管理")
-public class DictEntity extends StdEntity {
-    private static final long serialVersionUID = 1L;
+public class DictEntity extends StdEntity implements Serializable {
 
-    @NotBlank(message = "编码不允许为空")
-    @Schema(description = "字典分类编码")
+    /** 字典分类编码 **/
     private String code;
 
-    @NotBlank(message = "编码类型不允许为空")
-    @Schema(description = "字典分类名称")
+    /** 字典分类名称 **/
     private String name;
 
-    @NotBlank(message = "归属类型不允许为空")
-    @Schema(description = "上级节点")
-    private String parentId;
+    private String pid;
 
-    @Schema(description = "是否可用（0 已删除,1 可用）")
-    private String status;
+    /** 树路径(id) **/
+    private String path;
 
+    /** 字典项列表 **/
     @TableField(exist = false)
-    @Schema(description = "字典项列表")
     private List<DictItemEntity> lines;
 
+    /** 子节点 **/
     @TableField(exist = false)
-    @Schema(description = "子节点")
     private List<DictEntity> children;
 
 }

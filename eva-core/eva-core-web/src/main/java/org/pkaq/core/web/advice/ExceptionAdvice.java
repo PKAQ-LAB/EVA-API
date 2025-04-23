@@ -9,6 +9,7 @@ import org.pkaq.core.enums.BizCodeEnum;
 import org.pkaq.core.exception.BizException;
 import org.pkaq.core.i18n.I18NHelper;
 import org.pkaq.core.mvc.vo.Response;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Locale;
 import java.util.Set;
 /**
  * @Description: 统一异常处理
@@ -58,6 +60,8 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Response handleMethodParamCheckException(MethodArgumentNotValidException e) {
+        Locale locale = LocaleContextHolder.getLocale();
+        System.out.println("当前语言：" + locale);
         return new Response<>().failure(BizCodeEnum.PARAM_TYPEERROR.getCode(), e.getBindingResult().getFieldError().getDefaultMessage());
     }
 

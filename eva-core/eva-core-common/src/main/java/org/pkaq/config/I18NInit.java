@@ -14,7 +14,7 @@ import java.util.List;
  * i18n配置项，内置SYSI18N为系统默认的内置国际化文件
  */
 @Configuration
-public class I18NConfig {
+public class I18NInit {
     @Bean
     @ConfigurationProperties(prefix = "spring.messages")
     public MessageSourceProperties messageSourceProperties() {
@@ -37,4 +37,5 @@ public class I18NConfig {
         messageSource.setUseCodeAsDefaultMessage(messageSourceProperties.isUseCodeAsDefaultMessage());
         return messageSource;
     }
+
 }

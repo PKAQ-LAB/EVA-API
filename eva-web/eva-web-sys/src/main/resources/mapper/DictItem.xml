@@ -7,6 +7,6 @@
         select *
         from sys_dict_item
         where main_id = #{mainId}
-        order by orders
+        order by sort
     </select>
 </mapper>

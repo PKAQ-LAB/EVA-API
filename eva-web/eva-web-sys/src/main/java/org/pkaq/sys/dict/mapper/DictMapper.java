@@ -9,8 +9,6 @@ import java.util.List;
 
 /**
  * 字典管理mapper
- *
- * @author S.PKAQ
  */
 @Mapper
 @Repository
@@ -32,9 +30,6 @@ public interface DictMapper extends BaseMapper<DictEntity> {
 
     /**
      * 根据ID加载一条字典详情
-     *
-     * @param id
-     * @return
      */
     DictEntity getDict(String id);
 }

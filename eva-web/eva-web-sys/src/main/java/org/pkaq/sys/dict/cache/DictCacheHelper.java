@@ -51,7 +51,7 @@ public class DictCacheHelper {
      * @return
      */
 
-    public LinkedHashMap<String, String> get(String code) {
+    public Map<String, String> get(String code) {
         Cache.ValueWrapper jsonStr = this.cache.get(code);
         return null != jsonStr ? JsonUtil.parse((String) jsonStr.get(), LinkedHashMap.class) : null;
     }
@@ -66,7 +66,7 @@ public class DictCacheHelper {
 
     public String get(String code, String key) {
         String value = null;
-        LinkedHashMap<String, String> itemMap = this.get(code);
+        Map<String, String> itemMap = this.get(code);
         if (null != itemMap) {
             value = itemMap.get(key);
         }
@@ -101,12 +101,12 @@ public class DictCacheHelper {
     }
 
 
-    public void update(String code, LinkedHashMap<String, String> item) {
+    public void update(String code, Map<String, String> item) {
         this.cachePut(code, item);
     }
 
 
-    public void add(String code, LinkedHashMap<String, String> item) {
+    public void add(String code, Map<String, String> item) {
         this.cachePut(code, item);
     }
 

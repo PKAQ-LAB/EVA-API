@@ -11,12 +11,11 @@ spring:
       max-request-size: 10MB
   # 国际化配置
   messages:
-    basename: i18n/i18n
+    basename: i18n/i18n, i18n/sys
   jackson:
     #日期格式化
     date-format: yyyy-MM-dd HH:mm:ss
     # 时区
-    time-zone: GMT+8
     default-property-inclusion: always
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false

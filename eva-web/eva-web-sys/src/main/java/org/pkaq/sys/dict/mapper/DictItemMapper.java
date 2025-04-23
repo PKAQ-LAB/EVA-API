@@ -17,8 +17,6 @@ import java.util.List;
 public interface DictItemMapper extends BaseMapper<DictItemEntity> {
     /**
      * 根据mainId查询
-     *
-     * @return
      */
     List<DictItemEntity> listItemByMainId();
 }

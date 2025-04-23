@@ -13,4 +13,17 @@ dependencies {
             project(":eva-core:eva-core-log"),
             project(":eva-core:eva-core-cache"),
             libs.mysql
+
+    implementation libs.mybatis.plus.starter,
+            libs.mapstruct
+    annotationProcessor libs.mapstruct.processor
+    libs.lombok
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += [
+            "-Amapstruct.defaultComponentModel=spring",
+            "-Amapstruct.suppressGeneratorTimestamp=true",
+            "-Amapstruct.verbose=true"
+    ]
 }

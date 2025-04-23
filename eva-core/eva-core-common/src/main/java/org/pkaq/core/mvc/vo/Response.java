@@ -43,7 +43,7 @@ public class Response<T> {
      *
      * @return
      */
-    public Response success() {
+    public Response<T> success() {
         this.mtype = BizCodeEnum.OPERATE_SUCCESS;
         return this;
     }
@@ -97,7 +97,7 @@ public class Response<T> {
         return this;
     }
 
-    
+
     public Response<T> success(T data, BizCode bizCode, Object... args) {
         this.data = data;
         this.mtype = bizCode;
@@ -111,7 +111,7 @@ public class Response<T> {
      * @param code
      * @return
      */
-    public Response failure(String code, String message) {
+    public Response<T> failure(String code, String message) {
         this.success = false;
         this.code = code;
         this.message = message;
@@ -125,7 +125,7 @@ public class Response<T> {
      * @param msg
      * @return
      */
-    public Response failure(String msg) {
+    public Response<T> failure(String msg) {
         this.success = false;
         this.message = msg;
         return this;
@@ -137,15 +137,15 @@ public class Response<T> {
      * @param bizCode
      * @return
      */
-    
-    public Response failure(BizCode bizCode) {
+
+    public Response<T> failure(BizCode bizCode) {
         this.success = false;
         this.mtype = bizCode;
 
         return this;
     }
 
-    public Response failure(BizCode bizCode, T data) {
+    public Response<T> failure(BizCode bizCode, T data) {
         this.success = false;
 
         this.mtype = bizCode;
@@ -182,7 +182,7 @@ public class Response<T> {
      * @param data
      * @return
      */
-    public Response failure(String code, String message, T data) {
+    public Response<T> failure(String code, String message, T data) {
         this.data = data;
         this.message = message;
         this.success = false;

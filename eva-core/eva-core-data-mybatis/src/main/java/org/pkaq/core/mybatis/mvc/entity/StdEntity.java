@@ -26,17 +26,27 @@ public abstract class StdEntity implements Entity {
 
     @Schema(description = "乐观锁")
     @Version
-    private Integer revision;
+    private int revision;
 
-    @Schema(description = "逻辑删除 (0-未删除、不为0-删除)")
+    @Schema(description = "逻辑删除 (0-未删除、timestamp-删除)")
     @TableLogic
     @TableField(fill = FieldFill.INSERT)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private long deleted;
 
+    @Schema(description = "是否冻结（0000 - 未冻结，0001 - 冻结， 9999 - 不可编辑）")
+    private String frozen;
+
+    @Schema(description = "展示顺序")
+    private int sort;
+
     @Schema(description = "租户id")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String tenantId;
+
+    @Schema(description = "创建人Id")
+    @TableField(fill = FieldFill.INSERT, jdbcType = JdbcType.VARCHAR)
+    private String createId;
 
     @Schema(description = "创建人")
     @TableField(fill = FieldFill.INSERT, jdbcType = JdbcType.VARCHAR)
@@ -45,9 +55,13 @@ public abstract class StdEntity implements Entity {
     @Schema(description = "创建时间")
     @TableField(fill = FieldFill.INSERT)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime gmtCreate;
+    private LocalDateTime utcCreate;
+
+    @Schema(description = "修改人Id")
+    @TableField(fill = FieldFill.INSERT_UPDATE, jdbcType = JdbcType.VARCHAR)
+    private String modifyId;
 
     @Schema(description = "修改人")
     @TableField(fill = FieldFill.INSERT_UPDATE, jdbcType = JdbcType.VARCHAR)
@@ -56,9 +70,9 @@ public abstract class StdEntity implements Entity {
     @Schema(description = "修改时间")
     @TableField(fill = FieldFill.INSERT_UPDATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime gmtModify;
+    private LocalDateTime utcModify;
 
     @Schema(description = "备注")
     private String remark;

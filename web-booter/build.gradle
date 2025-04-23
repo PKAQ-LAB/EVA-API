@@ -29,7 +29,7 @@ dependencies {
 
     api     project(":eva-core:eva-core-web"),
             project(":eva-core:eva-core-data-mybatis"),
-            project(":eva-web:eva-web-auth"),
+            project(":eva-web:eva-web-sys"),
             libs.mysql
 
     implementation libs.springdocui,

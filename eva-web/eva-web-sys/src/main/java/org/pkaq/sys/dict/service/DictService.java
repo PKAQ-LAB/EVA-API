@@ -1,20 +1,23 @@
 package org.pkaq.sys.dict.service;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.text.CharSequenceUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.enums.BizCodeEnum;
 import org.pkaq.core.exception.BizException;
 import org.pkaq.core.mybatis.mvc.service.StdService;
+import org.pkaq.sys.dict.bo.DictAoeBo;
 import org.pkaq.sys.dict.cache.DictCacheHelper;
+import org.pkaq.sys.dict.covernt.DictConvert;
 import org.pkaq.sys.dict.entity.DictEntity;
 import org.pkaq.sys.dict.entity.DictItemEntity;
-import org.pkaq.sys.dict.entity.DictViewEntity;
 import org.pkaq.sys.dict.mapper.DictItemMapper;
 import org.pkaq.sys.dict.mapper.DictMapper;
 import org.pkaq.sys.dict.mapper.DictViewMapper;
+import org.pkaq.sys.dict.vo.DictViewVo;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedHashMap;
@@ -36,15 +39,15 @@ public class DictService extends StdService<DictMapper, DictEntity> {
 
     private final DictItemMapper dictItemMapper;
 
+    private final DictConvert dictConvert;
+
     /**
      * 初始化字典数据缓存
      */
 
     public void init() {
         var dictMap = this.selectDict();
-        dictMap.forEach((k, v) ->
-                dictCacheHelper.cachePut(k, v)
-        );
+        dictMap.forEach(dictCacheHelper::cachePut);
     }
 
     /**
@@ -53,18 +56,15 @@ public class DictService extends StdService<DictMapper, DictEntity> {
      * @return
      */
     public Map<String, LinkedHashMap<String, String>> selectDict() {
-        List<DictViewEntity> dictList = this.dictViewMapper.selectList(null);
+        List<DictViewVo> dictList = this.dictViewMapper.selectList(null);
 
-        LinkedHashMap<String, LinkedHashMap<String, String>> cacheMap =
-                dictList.stream()
-                        .collect(Collectors.groupingBy(DictViewEntity::getCode,
-                                LinkedHashMap::new,
-                                Collectors.toMap(DictViewEntity::getKeyName,
-                                        DictViewEntity::getKeyValue,
-                                        (o, n) -> n,
-                                        LinkedHashMap::new)));
-
-        return cacheMap;
+        return dictList.stream()
+                .collect(Collectors.groupingBy(DictViewVo::getCode,
+                        LinkedHashMap::new,
+                        Collectors.toMap(DictViewVo::getDCode,
+                                DictViewVo::getDValue,
+                                (o, n) -> n,
+                                LinkedHashMap::new)));
     }
 
     public Map fetchDicts() {
@@ -117,24 +117,23 @@ public class DictService extends StdService<DictMapper, DictEntity> {
     /**
      * 编辑一条字典
      *
-     * @param dictEntity 字典对象
+     * @param dictAoeBo 字典对象
      */
-    public void edit(DictEntity dictEntity) {
-        String id = dictEntity.getId();
+    public void edit(DictAoeBo dictAoeBo) {
+        String id = dictAoeBo.getId();
         // 校验code唯一性
-        DictEntity conditionEntity = new DictEntity();
-        conditionEntity.setCode(dictEntity.getCode());
-        conditionEntity = this.mapper.selectOne(new QueryWrapper<>(conditionEntity));
+        DictEntity conditionEntity =
+                new LambdaQueryWrapper<DictEntity>().eq(DictEntity::getCode, dictAoeBo.getCode()).getEntity();
 
-        if (StrUtil.isBlank(id)) {
+        if (CharSequenceUtil.isBlank(id)) {
             BizCodeEnum.CODE_EXIST.assertNotNull("字典");
             // 保存主表
             String mainID = IdWorker.getId() + "";
-            dictEntity.setId(mainID);
-            this.mapper.insert(dictEntity);
+            dictAoeBo.setId(mainID);
+            this.mapper.insert(dictConvert.boToEntity(dictAoeBo));
             // 保存子表
-            if (CollUtil.isNotEmpty(dictEntity.getLines())) {
-                dictEntity.getLines().forEach(item -> {
+            if (CollUtil.isNotEmpty(dictAoeBo.getLines())) {
+                dictAoeBo.getLines().forEach(item -> {
                     item.setMainId(mainID);
                     dictItemMapper.insert(item);
                 });
@@ -145,23 +144,23 @@ public class DictService extends StdService<DictMapper, DictEntity> {
                 //可能是修改字典对象的code属性，所以根据id查原始的code
                 String code = this.mapper.selectById(id).getCode();
 
-                this.mapper.updateById(dictEntity);
+                this.mapper.updateById(dictConvert.boToEntity(dictAoeBo));
 
                 // 更新子表， 先删除再插入
-                QueryWrapper<DictItemEntity> deleteWrapper = new QueryWrapper();
+                QueryWrapper<DictItemEntity> deleteWrapper = new QueryWrapper<>();
                 deleteWrapper.eq("MAIN_ID", id);
                 this.dictItemMapper.delete(deleteWrapper);
 
-                if (CollUtil.isNotEmpty(dictEntity.getLines())) {
-                    dictEntity.getLines().forEach(item -> {
+                if (CollUtil.isNotEmpty(dictAoeBo.getLines())) {
+                    dictAoeBo.getLines().forEach(item -> {
                         item.setMainId(id);
                         dictItemMapper.insert(item);
                     });
                 }
 
                 //修改了字典的code则把原来的删掉加上最新的
-                if (!code.equals(dictEntity.getCode())) {
-                    dictCacheHelper.add(dictEntity.getCode(), dictCacheHelper.get(code));
+                if (!code.equals(dictAoeBo.getCode())) {
+                    dictCacheHelper.add(dictAoeBo.getCode(), dictCacheHelper.get(code));
                     dictCacheHelper.remove(code);
                 }
             } else {
@@ -189,9 +188,7 @@ public class DictService extends StdService<DictMapper, DictEntity> {
      */
 
     public void init(Map<String, LinkedHashMap<String, String>> dictMap) {
-        dictMap.forEach((k, v) ->
-                dictCacheHelper.cachePut(k, v)
-        );
+        dictMap.forEach(dictCacheHelper::cachePut);
     }
 
     public void reload() {

@@ -159,7 +159,7 @@ public abstract class StdMultiService<M extends BaseMapper<T>,
         size = null != size ? size : 30;
 
         LambdaQueryWrapper<T> wrapper = Wrappers.lambdaQuery(entity);
-        wrapper.orderByDesc(T::getGmtModify);
+        wrapper.orderByDesc(T::getUtcCreate);
 
         Page pagination = new Page();
         pagination.setCurrent(page);
@@ -179,7 +179,7 @@ public abstract class StdMultiService<M extends BaseMapper<T>,
         page = null != page ? page : 1;
         // 查询条件
         LambdaQueryWrapper<T> wrapper = Wrappers.lambdaQuery(entity);
-        wrapper.orderByDesc(T::getGmtModify);
+        wrapper.orderByDesc(T::getUtcModify);
         // 分页条件
         Page pagination = new Page();
         pagination.setCurrent(page);
