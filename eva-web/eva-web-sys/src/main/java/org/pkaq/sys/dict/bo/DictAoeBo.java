@@ -33,12 +33,12 @@ public class DictAoeBo implements Bo {
     @Schema(description = "归属类型")
     private String category;
 
-    @NotBlank(message = "{sys.dict.category.empty}")
-    @Schema(description = "字典分类编码")
+    @NotBlank(message = "{sys.dict.code.empty}")
+    @Schema(description = "字典编码")
     private String code;
 
-    @NotBlank(message = "{sys.dict.category.empty}")
-    @Schema(description = "字典分类名称")
+    @NotBlank(message = "{sys.dict.name.empty}")
+    @Schema(description = "字典名称")
     private String name;
 
     @Schema(description = "上级节点")
