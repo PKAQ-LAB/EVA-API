@@ -1,9 +1,7 @@
 package org.pkaq.sys.dict.vo;
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import org.apache.ibatis.type.Alias;
 import org.pkaq.core.mvc.vo.Vo;
 
 /**
@@ -12,8 +10,6 @@ import org.pkaq.core.mvc.vo.Vo;
  * @author: S.PKAQ
  */
 @Data
-@Alias("dictView")
-@TableName("v_dict")
 public class DictViewVo implements Vo {
     @Schema(description = "字典编码")
     private String code;

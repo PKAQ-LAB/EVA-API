@@ -10,7 +10,6 @@ import org.pkaq.core.mybatis.mvc.entity.StdEntity;
 
 import java.io.Serializable;
 
-
 /**
  * 字典管理主表
  *
@@ -22,15 +21,9 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 public class DictItemEntity extends StdEntity implements Serializable {
 
-    @NotBlank(message = "主表ID不允许为空")
-    @Schema(description = "主表ID", requiredMode = Schema.RequiredMode.REQUIRED)
     private String mainId;
 
-    @NotBlank(message = "字典项不允许为空")
-    @Schema(description = "字典项键", requiredMode = Schema.RequiredMode.REQUIRED)
     private String dCode;
 
-    @NotBlank(message = "字典值不允许为空")
-    @Schema(description = "字典项值", requiredMode = Schema.RequiredMode.REQUIRED)
     private String dValue;
 }

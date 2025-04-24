@@ -1,0 +1,13 @@
+if (project.file('../../publish.gradle').exists()) {
+    apply from: '../../publish.gradle'
+}
+jar {
+    archiveBaseName = 'eva-web-domain'
+}
+
+dependencies {
+    implementation project(":eva-core:eva-core-common")
+    implementation libs.springdoc
+}
+
+project.description = 'domain jar for authority and system management'

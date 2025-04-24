@@ -8,16 +8,18 @@ jar {
 project.description = 'sys jar with authority and system management'
 
 dependencies {
+    implementation project(":eva-web:eva-web-domain")
+
     implementation project(":eva-core:eva-core-web"),
-            project(":eva-core:eva-core-data-mybatis"),
-            project(":eva-core:eva-core-log"),
-            project(":eva-core:eva-core-cache"),
-            libs.mysql
+                   project(":eva-core:eva-core-data-mybatis"),
+                   project(":eva-core:eva-core-log"),
+                   project(":eva-core:eva-core-cache"),
+                   libs.mysql
 
     implementation libs.mybatis.plus.starter,
-            libs.mapstruct
+                   libs.mapstruct
+
     annotationProcessor libs.mapstruct.processor
-    libs.lombok
 }
 
 tasks.withType(JavaCompile).configureEach {

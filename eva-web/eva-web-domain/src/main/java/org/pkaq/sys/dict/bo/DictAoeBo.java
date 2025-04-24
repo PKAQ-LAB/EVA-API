@@ -1,11 +1,9 @@
 package org.pkaq.sys.dict.bo;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.pkaq.core.mvc.bo.Bo;
-import org.pkaq.sys.dict.entity.DictItemEntity;
 
 import java.util.List;
 
@@ -48,5 +46,5 @@ public class DictAoeBo implements Bo {
     private String path;
 
     @Schema(description = "字典项明细")
-    private List<DictItemEntity> lines;
+    private List<DictAoeLineBo> lines;
 }

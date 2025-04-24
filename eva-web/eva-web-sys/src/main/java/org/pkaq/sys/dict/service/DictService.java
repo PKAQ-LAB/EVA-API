@@ -11,7 +11,7 @@ import org.pkaq.core.exception.BizException;
 import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.sys.dict.bo.DictAoeBo;
 import org.pkaq.sys.dict.cache.DictCacheHelper;
-import org.pkaq.sys.dict.covernt.DictConvert;
+import org.pkaq.sys.dict.convert.DictConvert;
 import org.pkaq.sys.dict.entity.DictEntity;
 import org.pkaq.sys.dict.entity.DictItemEntity;
 import org.pkaq.sys.dict.mapper.DictItemMapper;
@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
-public class DictService extends StdService<DictMapper, DictEntity> {
+public class DictService extends StdService<DictMapper, DictEntity> implements IDictService {
     private final DictCacheHelper dictCacheHelper;
 
     private final DictViewMapper dictViewMapper;
@@ -44,7 +44,7 @@ public class DictService extends StdService<DictMapper, DictEntity> {
     /**
      * 初始化字典数据缓存
      */
-
+    @Override
     public void init() {
         var dictMap = this.selectDict();
         dictMap.forEach(dictCacheHelper::cachePut);
@@ -52,9 +52,9 @@ public class DictService extends StdService<DictMapper, DictEntity> {
 
     /**
      * 查询字典
-     *
      * @return
      */
+    @Override
     public Map<String, LinkedHashMap<String, String>> selectDict() {
         List<DictViewVo> dictList = this.dictViewMapper.selectList(null);
 
@@ -67,7 +67,8 @@ public class DictService extends StdService<DictMapper, DictEntity> {
                                 LinkedHashMap::new)));
     }
 
-    public Map fetchDicts() {
+    @Override
+    public Map<?, ?> fetchDicts() {
         var ret = dictCacheHelper.getAll();
         if (null == ret) {
             ret = selectDict();
@@ -80,17 +81,19 @@ public class DictService extends StdService<DictMapper, DictEntity> {
      *
      * @return DictEntity
      */
-    public DictEntity getDict(DictEntity dictEntity) {
-        return this.mapper.getDict(dictEntity.getId());
+    @Override
+    public DictViewVo getDict(DictAoeBo bo) {
+         return dictConvert.entityToVo(this.mapper.getDict(bo.getId()));
     }
 
     /**
      * 查询所有字典
      *
-     * @return List<DictEntity>
+     * @return List<DictViewVo>
      */
-    public List<DictEntity> listDict() {
-        return this.mapper.listDict();
+    @Override
+    public List<DictViewVo> listDict() {
+         return dictConvert.toVoList(this.mapper.listDict());
     }
 
     /**
@@ -98,10 +101,11 @@ public class DictService extends StdService<DictMapper, DictEntity> {
      *
      * @param id 字典ID
      */
+    @Override
     public void delDict(String id) {
 
         // 先删除子表 再删除主表
-        QueryWrapper<DictItemEntity> deleteWrapper = new QueryWrapper();
+        QueryWrapper<DictItemEntity> deleteWrapper = new QueryWrapper<>();
         deleteWrapper.eq("MAIN_ID", id);
         this.dictItemMapper.delete(deleteWrapper);
 
@@ -116,9 +120,10 @@ public class DictService extends StdService<DictMapper, DictEntity> {
 
     /**
      * 编辑一条字典
-     *
+     *da
      * @param dictAoeBo 字典对象
      */
+    @Override
     public void edit(DictAoeBo dictAoeBo) {
         String id = dictAoeBo.getId();
         // 校验code唯一性
@@ -135,7 +140,7 @@ public class DictService extends StdService<DictMapper, DictEntity> {
             if (CollUtil.isNotEmpty(dictAoeBo.getLines())) {
                 dictAoeBo.getLines().forEach(item -> {
                     item.setMainId(mainID);
-                    dictItemMapper.insert(item);
+                    dictItemMapper.insert(dictConvert.boToItemEntity(item));
                 });
             }
         } else {
@@ -154,7 +159,7 @@ public class DictService extends StdService<DictMapper, DictEntity> {
                 if (CollUtil.isNotEmpty(dictAoeBo.getLines())) {
                     dictAoeBo.getLines().forEach(item -> {
                         item.setMainId(id);
-                        dictItemMapper.insert(item);
+                        dictItemMapper.insert(dictConvert.boToItemEntity(item));
                     });
                 }
 
@@ -172,11 +177,12 @@ public class DictService extends StdService<DictMapper, DictEntity> {
     /**
      * 校验编码是否存在
      *
-     * @param dictEntity
+     * @param bo
      * @return
      */
-    public boolean checkUnique(DictEntity dictEntity) {
-        long records = this.mapper.selectCount(new QueryWrapper<>(dictEntity));
+    @Override
+    public boolean checkUnique(DictAoeBo bo) {
+        long records = this.mapper.selectCount(new QueryWrapper<>(dictConvert.boToEntity(bo)));
         return records > 0;
     }
 
@@ -187,16 +193,19 @@ public class DictService extends StdService<DictMapper, DictEntity> {
      * @param dictMap
      */
 
+    @Override
     public void init(Map<String, LinkedHashMap<String, String>> dictMap) {
         dictMap.forEach(dictCacheHelper::cachePut);
     }
 
+    @Override
     public void reload() {
         dictCacheHelper.removeAll();
         this.init();
     }
 
 
+    @Override
     public void reload(Map<String, LinkedHashMap<String, String>> dictMap) {
         dictCacheHelper.removeAll();
         this.init(dictMap);

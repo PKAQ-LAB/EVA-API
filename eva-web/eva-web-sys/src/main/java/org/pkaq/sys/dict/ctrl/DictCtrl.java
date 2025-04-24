@@ -13,12 +13,10 @@ import org.pkaq.sys.dict.bo.DictAoeBo;
 import org.pkaq.sys.dict.cache.DictCacheHelper;
 import org.pkaq.sys.dict.entity.DictEntity;
 import org.pkaq.sys.dict.service.DictService;
-import org.springframework.context.i18n.LocaleContextHolder;
+import org.pkaq.sys.dict.vo.DictViewVo;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.LocaleResolver;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -31,8 +29,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class DictCtrl extends Ctrl {
     private final DictService service;
-
-    private final LocaleResolver localeResolver;
 
     private final DictCacheHelper dictCacheHelper;
 
@@ -50,32 +46,32 @@ public class DictCtrl extends Ctrl {
 
     @GetMapping("/list")
     @Operation(summary = "获取字典分类列表")
-    public Response<List<DictEntity>> listDict() {
+    public Response<List<DictViewVo>> listDict() {
         return this.success(this.service.listDict());
     }
 
     @GetMapping({"/get/{id}", "/get/type/{code}"})
     @Operation(summary = "根据ID获取字典")
-    public Response<DictEntity> getDict(@Parameter(name = "id", description = "字典分类ID")
+    public Response<DictViewVo> getDict(@Parameter(name = "id", description = "字典分类ID")
                             @PathVariable(name = "id", required = false) String id,
-                            @Parameter(name = "code", description = "类型编码")
+                                        @Parameter(name = "code", description = "类型编码")
                             @PathVariable(value = "code", required = false) String code) {
         // 参数校验
         if (CharSequenceUtil.isBlank(id) && CharSequenceUtil.isBlank(code)) {
             BizCodeEnum.PARAM_ERROR.newException();
         }
-        DictEntity dictEntity = new DictEntity();
-        dictEntity.setId(id);
-        dictEntity.setCode(code);
+        DictAoeBo bo = new DictAoeBo();
+        bo.setId(id);
+        bo.setCode(code);
 
-        return this.success(this.service.getDict(dictEntity));
+        return this.success(this.service.getDict(bo));
     }
 
     @PostMapping("/checkUnique")
     @Operation(summary = "校验code")
     public Response<Object> checkUnique(@Parameter(name = "dictEntity", description = "要进行校验的参数")
-                                @RequestBody DictEntity dictEntity) {
-        boolean exist = null != dictEntity && CharSequenceUtil.isNotBlank(dictEntity.getCode()) && this.service.checkUnique(dictEntity);
+                                @RequestBody DictAoeBo bo) {
+        boolean exist = null != bo && CharSequenceUtil.isNotBlank(bo.getCode()) && this.service.checkUnique(bo);
         return exist ? this.failure() : this.success();
     }
 
