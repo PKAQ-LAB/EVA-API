@@ -8,7 +8,6 @@ import org.pkaq.core.enums.BizCodeEnum;
 import org.pkaq.core.i18n.I18NHelper;
 import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
-import org.pkaq.core.properties.EvaConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -22,14 +21,13 @@ import java.util.Objects;
 
 /**
  * 统一处理返回值
+ *
  * @author PKAQ
  */
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class CommonResponseAdvice implements ResponseBodyAdvice {
     private final I18NHelper i18NHelper;
-
-    private final EvaConfig evaConfig;
 
     @Value("${project.version}")
     private String version;
@@ -75,13 +73,13 @@ public class CommonResponseAdvice implements ResponseBodyAdvice {
                 code = biz.getCode();
                 message = biz.getMsg();
 
-            } else if (message.startsWith("{") && message.endsWith("}"))  {
+            } else if (message.startsWith("{") && message.endsWith("}")) {
                 // 花括号包裹的
                 code = message.substring(1, message.length() - 1);
                 message = code;
             }
 
-            message = i18NHelper.getMessage(code, res.getArgs(),message);
+            message = i18NHelper.getMessage(code, res.getArgs(), message);
 
             message = MessageFormat.format(message, res.getArgs());
 
@@ -101,7 +99,7 @@ public class CommonResponseAdvice implements ResponseBodyAdvice {
         }
 
         // 如果是成功
-        if(res.isSuccess()) res.setCode("0000");
+        if (res.isSuccess()) res.setCode("0000");
 
         return res;
     }

@@ -3,11 +3,9 @@ package org.pkaq.sys;
 
 import org.pkaq.core.exception.BizAssert;
 
-/**
- * @author dmz
- */
 public enum SYSCode implements BizAssert {
-    FILE_TYPE_ERROR("文件上传格式有误，请选择支持的格式", "00000-00001"),
+    DICT_CODE_EXISTS("字典编码已经存在","0x000-10001"),
+    FILE_TYPE_ERROR("文件上传格式有误，请选择支持的格式", "0X001-00001"),
     MISS_CODE_OR_NAME("未接收到岗位管理编码或名称", "0x001-0701-0001"),
     DUPLICATE_CODE_OR_NAME("岗位管理编码或名称已存在", "0x001-0701-0002"),
     DELETE_LIMIT("超过最大限制,最多仅允许同时删除100条记录", "0x001-0701-0003"),

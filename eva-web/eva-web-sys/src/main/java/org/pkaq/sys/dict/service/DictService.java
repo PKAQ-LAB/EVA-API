@@ -6,9 +6,11 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import lombok.RequiredArgsConstructor;
-import org.pkaq.core.enums.BizCodeEnum;
-import org.pkaq.core.exception.BizException;
+import org.pkaq.core.constant.CommonConstant;
+import org.pkaq.core.log.annotation.BizLog;
+import org.pkaq.core.log.base.BizLogEnum;
 import org.pkaq.core.mybatis.mvc.service.StdService;
+import org.pkaq.sys.SYSCode;
 import org.pkaq.sys.dict.bo.DictAoeBo;
 import org.pkaq.sys.dict.cache.DictCacheHelper;
 import org.pkaq.sys.dict.convert.DictConvert;
@@ -18,7 +20,9 @@ import org.pkaq.sys.dict.mapper.DictItemMapper;
 import org.pkaq.sys.dict.mapper.DictMapper;
 import org.pkaq.sys.dict.mapper.DictViewMapper;
 import org.pkaq.sys.dict.vo.DictViewVo;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -45,6 +49,7 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
      * 初始化字典数据缓存
      */
     @Override
+    @CacheEvict(cacheNames = CommonConstant.CACHE_DICTDATA, key = CommonConstant.SYS_ALL_DICT_KEY)
     public void init() {
         var dictMap = this.selectDict();
         dictMap.forEach(dictCacheHelper::cachePut);
@@ -55,6 +60,7 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
      * @return
      */
     @Override
+    @BizLog(operateType = BizLogEnum.QUERY, description = "查询字典")
     public Map<String, LinkedHashMap<String, String>> selectDict() {
         List<DictViewVo> dictList = this.dictViewMapper.selectList(null);
 
@@ -68,6 +74,7 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
     }
 
     @Override
+    @BizLog(operateType = BizLogEnum.QUERY, description = "查询字典")
     public Map<?, ?> fetchDicts() {
         var ret = dictCacheHelper.getAll();
         if (null == ret) {
@@ -82,6 +89,7 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
      * @return DictEntity
      */
     @Override
+    @BizLog(operateType = BizLogEnum.QUERY, description = "根据条件获取一条字典")
     public DictViewVo getDict(DictAoeBo bo) {
          return dictConvert.entityToVo(this.mapper.getDict(bo.getId()));
     }
@@ -92,6 +100,7 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
      * @return List<DictViewVo>
      */
     @Override
+    @BizLog(operateType = BizLogEnum.QUERY, description = "查询所有字典")
     public List<DictViewVo> listDict() {
          return dictConvert.toVoList(this.mapper.listDict());
     }
@@ -102,6 +111,8 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
      * @param id 字典ID
      */
     @Override
+    @BizLog(operateType = BizLogEnum.DELETE, description = "删除字典[{0}]", args = {"param:0"})
+    @Transactional
     public void delDict(String id) {
 
         // 先删除子表 再删除主表
@@ -124,6 +135,8 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
      * @param dictAoeBo 字典对象
      */
     @Override
+    @BizLog(operateType = BizLogEnum.CREATE_UPDATE, description = "编辑了字典", args = {"#dictAoeBo"})
+    @Transactional
     public void edit(DictAoeBo dictAoeBo) {
         String id = dictAoeBo.getId();
         // 校验code唯一性
@@ -131,9 +144,8 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
                 new LambdaQueryWrapper<DictEntity>().eq(DictEntity::getCode, dictAoeBo.getCode()).getEntity();
 
         if (CharSequenceUtil.isBlank(id)) {
-            BizCodeEnum.CODE_EXIST.assertNotNull("字典");
             // 保存主表
-            String mainID = IdWorker.getId() + "";
+            String mainID = IdWorker.getIdStr();
             dictAoeBo.setId(mainID);
             this.mapper.insert(dictConvert.boToEntity(dictAoeBo));
             // 保存子表
@@ -169,7 +181,7 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
                     dictCacheHelper.remove(code);
                 }
             } else {
-                throw new BizException(BizCodeEnum.CODE_EXIST, "字典");
+                SYSCode.DICT_CODE_EXISTS.newException();
             }
         }
     }

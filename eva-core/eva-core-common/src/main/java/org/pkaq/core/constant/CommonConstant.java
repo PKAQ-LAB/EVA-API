@@ -58,4 +58,6 @@ public interface CommonConstant {
     String MODULE_ID = "mid";
     // 用户操作的模块code请求头
     String MODULE_CODE = "mcode";
+
+    String SYS_ALL_DICT_KEY = "'sys:all:dict'";
 }
