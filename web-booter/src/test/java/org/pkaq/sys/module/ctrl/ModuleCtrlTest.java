@@ -1,7 +1,7 @@
-package org.pkaq.core.organization.ctrl;
+package org.pkaq.sys.module.ctrl;
 
 import org.junit.jupiter.api.Test;
-import org.pkaq.core.BaseTest;
+import org.pkaq.sys.BaseTest;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -9,17 +9,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 /**
- * 组织管理单元测试
+ * 模块管理测试类
  *
  * @author: S.PKAQ
  * @Datetime: 2018/4/19 23:40
  */
-public class OrgCtrlTest extends BaseTest {
+public class ModuleCtrlTest extends BaseTest {
 
     @Test
-    public void listOrg() {
+    public void listModule() {
         try {
-            mockMvc.perform(get("/organization/list"))
+            mockMvc.perform(get("/module/list"))
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andExpect(jsonPath("success").value(true))
                     .andExpect(jsonPath("data").exists())
@@ -30,9 +30,9 @@ public class OrgCtrlTest extends BaseTest {
     }
 
     @Test
-    public void listOrgByAttr() {
+    public void listModuleByAttr() {
         try {
-            mockMvc.perform(get("/organization/listOrgByAttr?name='统合部'"))
+            mockMvc.perform(get("/module/listModuleByAttr?name='统合部'"))
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andExpect(jsonPath("success").value(true))
                     .andExpect(jsonPath("data").exists())
@@ -43,9 +43,9 @@ public class OrgCtrlTest extends BaseTest {
     }
 
     @Test
-    public void getOrg() {
+    public void getModule() {
         try {
-            mockMvc.perform(get("/organization/get/6"))
+            mockMvc.perform(get("/module/get/6"))
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andExpect(jsonPath("success").value(true))
                     .andExpect(jsonPath("data").exists())
@@ -56,10 +56,10 @@ public class OrgCtrlTest extends BaseTest {
     }
 
     @Test
-    public void delOrg() {
+    public void delModule() {
         try {
-            String json = "{param:['b0a14a478c6a493da909acf523cc4768']}";
-            mockMvc.perform(post("/organization/del")
+            String json = "{param:['34d31e857b7d4a4f94aba2f7061b6058']}";
+            mockMvc.perform(post("/module/del")
                             .content(json))
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andExpect(jsonPath("success").value(true))
@@ -70,10 +70,10 @@ public class OrgCtrlTest extends BaseTest {
     }
 
     @Test
-    public void editOrg() {
+    public void editModule() {
         try {
-            String json = "{name: 'junit org name', status: '0000'}";
-            mockMvc.perform(post("/organization/edit")
+            String json = "{name: 'junit module code', status: '0000'}";
+            mockMvc.perform(post("/module/edit")
                             .content(json))
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andExpect(jsonPath("success").value(true))
@@ -85,11 +85,11 @@ public class OrgCtrlTest extends BaseTest {
     }
 
     @Test
-    public void sortOrg() {
+    public void sortModule() {
         try {
-            String json = "[{id: '8', orders: 10010}," +
-                    "{id: '9', orders: 10086}]";
-            mockMvc.perform(post("/organization/sort")
+            String json = "[{id: '23', orders: 10010}," +
+                    "{id: '24', orders: 10086}]";
+            mockMvc.perform(post("/module/sort")
                             .content(json))
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andExpect(jsonPath("success").value(true))
@@ -103,8 +103,8 @@ public class OrgCtrlTest extends BaseTest {
     @Test
     public void switchStatus() {
         try {
-            String json = "{id:'fc79f82f03d94e6f8b1dfa5baf68e95a',status: '0000'}";
-            mockMvc.perform(post("/organization/switchStatus")
+            String json = "{id:'24',status: '0000'}";
+            mockMvc.perform(post("/module/switchStatus")
                             .content(json))
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andExpect(jsonPath("success").value(true))

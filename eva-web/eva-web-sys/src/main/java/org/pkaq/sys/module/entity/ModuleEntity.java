@@ -20,7 +20,7 @@ import java.util.List;
 @TableName("sys_module")
 @EqualsAndHashCode(callSuper = true)
 @Schema(title = "模块管理")
-public class ModuleEntityStd extends StdTreeEntity {
+public class ModuleEntity extends StdTreeEntity {
     private static final long serialVersionUID = 1L;
 
 

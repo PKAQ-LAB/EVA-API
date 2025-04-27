@@ -1,4 +1,4 @@
-package org.pkaq.core;
+package org.pkaq.sys;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +12,9 @@ import org.springframework.web.context.WebApplicationContext;
  * 单元测试基类
  *
  * @author: S.PKAQ
- * @Datetime: 2018/4/4 8:32
  */
-@AutoConfigureMockMvc
 @SpringBootTest
+@AutoConfigureMockMvc
 public class BaseTest {
     @Autowired
     protected MockMvc mockMvc;

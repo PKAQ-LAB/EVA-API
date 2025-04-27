@@ -7,6 +7,9 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * @author PKAQ
+ */
 @Data
 public class PageBo implements Serializable {
 

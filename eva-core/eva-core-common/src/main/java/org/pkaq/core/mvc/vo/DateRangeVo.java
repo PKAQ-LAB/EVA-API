@@ -8,7 +8,6 @@ import java.util.Date;
 
 /**
  * 用于接收数组参数的虚拟对象
- * Datetime: 2017-06-13 22:06
  *
  * @author S.PKAQ
  */

@@ -1,7 +1,7 @@
-package org.pkaq.core.role.ctrl;
+package org.pkaq.sys.role.ctrl;
 
 import org.junit.jupiter.api.Test;
-import org.pkaq.core.BaseTest;
+import org.pkaq.sys.BaseTest;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;

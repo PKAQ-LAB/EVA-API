@@ -1,0 +1,77 @@
+debug: true
+# 日志
+logging:
+  pattern:
+    level: DEBUG
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%thread]){faint} %clr(%-40.40logger{39}){cyan} %L %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
+  # 日志文件配置 file 和 path只需配置一个 不可同时配置 ， 同时配置只生效file
+  file:
+    name: e:/applogs/webapp.log
+  level:
+    org:
+      springframework:
+        boot:
+          autoconfigure:
+            logging: DEBUG
+#  监控
+spring:
+  #  boot:
+  #    admin:
+  #      client:
+  #        url: http://192.168.10.166:19001/
+  #        username: eva
+  #        password: 7u8i9o0p
+  #        instance:
+  #          prefer-ip: true
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      additional-paths: src/main/java
+  # flyway配置 对于非空数据库 需要开启此项避免报错
+  flyway:
+    baseline-on-migrate: true
+    locations: classpath:/db/migration
+    baseline-version: 0
+    enabled: false
+  # redis 配置
+  data:
+    redis:
+      host: 14.103.109.216
+      database: 0
+      timeout: 10000
+      password: 7u8i9o0p
+      port: 12379
+  # 数据源
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:p6spy:mysql://14.103.109.216:12306/eva?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&autoReconnect=true&failOverReadOnly=false&allowPublicKeyRetrieval=true&useSSL=false&rewriteBatchedStatements=true
+    username: eva
+    password: 5t6y7u8i9o0p
+    #    GsyjJCmmNRiHRVGmXdy+QErynoqC/cOBlt5V9dPZ+c2g2XwPc5+BbKrSxWLsyCGG
+    driver-class-name: com.p6spy.engine.spy.P6SpyDriver
+    hikari:
+      minimum-idle: 10
+      maximum-pool-size: 50
+      max-lifetime: 3000
+      connection-test-query: select 1
+eva:
+  # 文件上传
+  upload:
+    type: minio
+    minio:
+      url: http://yy.pkaq.org:9899
+      access: qKjV8I0wBcBEflHi
+      secret: IDryrTUgTyZb91sXsPm3Hp2DfwyEStVb
+#    监控配置
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: '*'
+#  endpoint:
+#    health:
+#      show-details: ALWAYS
+#  server:
+#    address: 47.104.217.77
+#    port: 10086

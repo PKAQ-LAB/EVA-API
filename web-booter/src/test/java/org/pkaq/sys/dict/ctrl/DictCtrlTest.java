@@ -1,25 +1,19 @@
-package org.pkaq.core.module.ctrl;
+package org.pkaq.sys.dict.ctrl;
 
 import org.junit.jupiter.api.Test;
-import org.pkaq.core.BaseTest;
+import org.pkaq.sys.BaseTest;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-/**
- * 模块管理测试类
- *
- * @author: S.PKAQ
- * @Datetime: 2018/4/19 23:40
- */
-public class ModuleCtrlTest extends BaseTest {
+class DictCtrlTest extends BaseTest {
 
     @Test
-    public void listModule() {
+    public void listDict() {
         try {
-            mockMvc.perform(get("/module/list"))
+            mockMvc.perform(get("/sys/dictionary/list"))
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andExpect(jsonPath("success").value(true))
                     .andExpect(jsonPath("data").exists())
@@ -29,13 +23,13 @@ public class ModuleCtrlTest extends BaseTest {
         }
     }
 
+
     @Test
-    public void listModuleByAttr() {
+    public void getDict() {
         try {
-            mockMvc.perform(get("/module/listModuleByAttr?name='统合部'"))
+            mockMvc.perform(get("/dict/get/type/code"))
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andExpect(jsonPath("success").value(true))
-                    .andExpect(jsonPath("data").exists())
                     .andReturn().getResponse().getContentAsString();
         } catch (Exception e) {
             e.printStackTrace();
@@ -43,25 +37,24 @@ public class ModuleCtrlTest extends BaseTest {
     }
 
     @Test
-    public void getModule() {
+    public void checkUnique() {
         try {
-            mockMvc.perform(get("/module/get/6"))
-                    .andExpect(MockMvcResultMatchers.status().isOk())
-                    .andExpect(jsonPath("success").value(true))
-                    .andExpect(jsonPath("data").exists())
-                    .andReturn().getResponse().getContentAsString();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Test
-    public void delModule() {
-        try {
-            String json = "{param:['34d31e857b7d4a4f94aba2f7061b6058']}";
-            mockMvc.perform(post("/module/del")
+            String json = "{code:'biz'}";
+            mockMvc.perform(post("/dict/checkUnique")
                             .content(json))
                     .andExpect(MockMvcResultMatchers.status().isOk())
+                    .andExpect(jsonPath("success").isBoolean())
+                    .andReturn().getResponse().getContentAsString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void delDict() {
+        try {
+            mockMvc.perform(get("/dict/del/baf9953cff6a4a16b84ad442e4458d66"))
+                    .andExpect(MockMvcResultMatchers.status().isOk())
                     .andExpect(jsonPath("success").value(true))
                     .andReturn().getResponse().getContentAsString();
         } catch (Exception e) {
@@ -70,10 +63,10 @@ public class ModuleCtrlTest extends BaseTest {
     }
 
     @Test
-    public void editModule() {
+    public void editDict() {
         try {
-            String json = "{name: 'junit module code', status: '0000'}";
-            mockMvc.perform(post("/module/edit")
+            String json = "{name: 'junit dict name', code: 'junit dict code 0000', parentId: 'x'}";
+            mockMvc.perform(post("/dict/edit")
                             .content(json))
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andExpect(jsonPath("success").value(true))
@@ -84,33 +77,4 @@ public class ModuleCtrlTest extends BaseTest {
         }
     }
 
-    @Test
-    public void sortModule() {
-        try {
-            String json = "[{id: '23', orders: 10010}," +
-                    "{id: '24', orders: 10086}]";
-            mockMvc.perform(post("/module/sort")
-                            .content(json))
-                    .andExpect(MockMvcResultMatchers.status().isOk())
-                    .andExpect(jsonPath("success").value(true))
-                    .andExpect(jsonPath("data").exists())
-                    .andReturn().getResponse().getContentAsString();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Test
-    public void switchStatus() {
-        try {
-            String json = "{id:'24',status: '0000'}";
-            mockMvc.perform(post("/module/switchStatus")
-                            .content(json))
-                    .andExpect(MockMvcResultMatchers.status().isOk())
-                    .andExpect(jsonPath("success").value(true))
-                    .andReturn().getResponse().getContentAsString();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

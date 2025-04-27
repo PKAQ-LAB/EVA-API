@@ -9,11 +9,11 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
  *
  * @author: S.PKAQ
  */
-public class DefaultCacheCondition implements Condition {
+public class CaffeineCacheCondition implements Condition {
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
         String cacheType = context.getEnvironment().getProperty("eva.cache.type");
 
-        return null == cacheType || "".equals(cacheType) || "caffeine".equals(cacheType);
+        return null == cacheType || cacheType.isEmpty() || "caffeine".equals(cacheType);
     }
 }
