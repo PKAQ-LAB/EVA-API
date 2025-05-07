@@ -2,7 +2,6 @@ package org.pkaq.core.auth.security.domain;
 
 import cn.hutool.core.bean.BeanUtil;
 import org.pkaq.core.auth.domain.JwtUserDetail;
-import org.pkaq.core.enums.LockEnumm;
 import org.pkaq.sys.role.entity.RoleEntity;
 import org.pkaq.sys.user.entity.UserEntity;
 

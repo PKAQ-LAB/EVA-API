@@ -1,4 +1,4 @@
-package org.pkaq.helper.seq.seq;
+package org.pkaq.helper.seq;
 
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;

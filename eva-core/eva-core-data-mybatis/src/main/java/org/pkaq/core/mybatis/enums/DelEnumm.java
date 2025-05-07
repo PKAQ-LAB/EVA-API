@@ -1,0 +1,21 @@
+package org.pkaq.core.mybatis.enums;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.pkaq.core.enums.BizCode;
+
+import java.util.Arrays;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+/**
+ * @author: S.PKAQ
+ */
+@Getter
+@AllArgsConstructor
+public enum DelEnumm {
+    // 未删除
+    UN_DELETED("0000");
+
+    private final String code;
+}

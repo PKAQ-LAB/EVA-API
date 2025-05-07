@@ -3,6 +3,8 @@ package org.pkaq.config;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
+import org.pkaq.core.mybatis.enums.DelEnumm;
+import org.pkaq.core.mybatis.enums.FrozenEnumm;
 import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.springframework.stereotype.Component;
 
@@ -26,8 +28,8 @@ public class MybatisMetaObjectHandler implements MetaObjectHandler {
         this.strictInsertFill(metaObject, "createBy", String.class, ThreadUserHelper.getUserName());
         this.strictInsertFill(metaObject, "utcCreate", LocalDateTime.class, LocalDateTime.now());
         this.strictInsertFill(metaObject, "sort", Integer.class, 0);
-        this.strictInsertFill(metaObject, "frozen", String.class, "0000");
-        this.strictInsertFill(metaObject, "deleted", String.class, "0");
+        this.strictInsertFill(metaObject, "frozen", String.class, FrozenEnumm.UN_FROZEN.getCode());
+        this.strictInsertFill(metaObject, "deleted", String.class, DelEnumm.UN_DELETED.getCode());
     }
 
     @Override
