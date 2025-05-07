@@ -1,4 +1,4 @@
-package org.pkaq.config;
+package org.pkaq.core.cache.config;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.RequiredArgsConstructor;

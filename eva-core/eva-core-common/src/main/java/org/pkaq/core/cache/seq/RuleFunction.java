@@ -1,4 +1,4 @@
-package org.pkaq.util.seq;
+package org.pkaq.core.cache.seq;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

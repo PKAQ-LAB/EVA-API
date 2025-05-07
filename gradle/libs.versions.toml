@@ -1,3 +1,4 @@
+
 [versions]
 spring_dep = "1.1.7"
 spring_boot = "3.4.5"
@@ -11,7 +12,7 @@ hutool = "5.8.37"
 jaxb_api = "2.3.1"
 jasypt = "3.0.5"
 p6spy = "3.9.1"
-flyway = "11.8.1"
+flyway = "11.8.0"
 truelicense = "1.33"
 caffeine = "3.2.0"
 security_test = "6.4.5"
@@ -23,6 +24,7 @@ minio = "8.5.17"
 prometheus = "1.14.6"
 versioncheck = "0.52.0"
 mapstruct = "1.6.3"
+servlet_api = "6.1.0"
 
 [libraries]
 boot = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring_boot" }
@@ -72,7 +74,7 @@ web = { module = "org.springframework.boot:spring-boot-starter-web" }
 
 # 中间件
 undertow = { module = "org.springframework.boot:spring-boot-starter-undertow" }
-
+servlet_api = { module = "jakarta.servlet:jakarta.servlet-api", version.ref = "servlet_api"}
 # 测试
 test = { module = "org.springframework.boot:spring-boot-starter-test" }
 security_test = { module = "org.springframework.security:spring-security-test", version.ref = "security_test" }

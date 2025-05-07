@@ -2,6 +2,7 @@ package org.pkaq.core.auth.security.domain;
 
 import cn.hutool.core.bean.BeanUtil;
 import org.pkaq.core.auth.domain.JwtUserDetail;
+import org.pkaq.core.mybatis.enums.FrozenEnumm;
 import org.pkaq.sys.role.entity.RoleEntity;
 import org.pkaq.sys.user.entity.UserEntity;
 
@@ -26,7 +27,7 @@ public final class JwtUserFactory {
                 user.getDeptId(),
                 user.getName(),
                 user.getNickName(),
-                LockEnumm.LOCK.getCode().equals(user.getFrozen()),
+                FrozenEnumm.FROZEN.getCode().equals(user.getFrozen()),
                 mapToGrantedAuthorities(user.getRoles())
         );
     }

@@ -1,4 +1,4 @@
-package org.pkaq.util.seq;
+package org.pkaq.core.cache.seq;
 
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;

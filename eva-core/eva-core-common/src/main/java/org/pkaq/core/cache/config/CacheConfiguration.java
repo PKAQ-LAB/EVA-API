@@ -1,4 +1,4 @@
-package org.pkaq.config;
+package org.pkaq.core.cache.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CachingConfigurer;

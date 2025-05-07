@@ -9,18 +9,20 @@ jar {
 project.description='eva common class'
 
 dependencies {
-    implementation 	libs.jaxb.api,
-                    libs.jasypt
+    api 	libs.jaxb.api,
+            libs.servlet.api,
+            libs.jasypt
 
-    api(libs.web) {
-        exclude module: 'spring-boot-starter-tomcat'
-    }
-    api libs.undertow
+
+    api     libs.cache,
+            libs.redis,
+            libs.caffeine
 
     api libs.hutool,
         libs.aop,
         libs.jwt,
         libs.json,
         libs.ttl,
+        libs.springdoc,
         libs.validation
 }

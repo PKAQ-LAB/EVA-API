@@ -1,4 +1,4 @@
-package org.pkaq.config;
+package org.pkaq.core.cache.config;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

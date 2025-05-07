@@ -2,12 +2,13 @@ package org.pkaq.sys.module.service;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.text.CharSequenceUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.enums.BizCodeEnum;
 import org.pkaq.core.exception.BizException;
+import org.pkaq.core.mybatis.enums.FrozenEnumm;
 import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.core.mybatis.util.TreeHelper;
 import org.pkaq.sys.module.entity.ModuleEntity;
@@ -53,11 +54,11 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
 
         List<ModuleEntity> leafList = this.mapper.selectList(oew);
 
-        if (CollectionUtil.isNotEmpty(leafList)) {
+        if (CollUtil.isNotEmpty(leafList)) {
             // 获取存在子节点的节点名称
             List<Object> list = CollectionUtil.getFieldValues(leafList, "parentName");
             // 拼接名称
-            String name = CollectionUtil.join(list, ",");
+            String name = CollUtil.join(list, ",");
 
             BizCodeEnum.CHILD_EXIST.newException(name);
         } else {
@@ -84,14 +85,14 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
         String moduleId = module.getId();
 
         ModuleEntity originModule = null;
-        if (StrUtil.isNotBlank(moduleId)) {
+        if (CharSequenceUtil.isNotBlank(moduleId)) {
             originModule = this.getById(moduleId);
         }
         // 获取上级节点
         String pid = module.getParentId();
-        if (StrUtil.isNotBlank(moduleId)) {
+        if (CharSequenceUtil.isNotBlank(moduleId)) {
             //是否启用的逻辑
-            if (StrUtil.isNotBlank(module.getStatus()) && LockEnumm.UNLOCK.getCode().equals(module.getStatus())) {
+            if (CharSequenceUtil.isNotBlank(module.getStatus()) && FrozenEnumm.UN_FROZEN.getCode().equals(module.getStatus())) {
                 if (!isDisable(module)) {
                     //如果父节点状态为禁用，则子节点状态也只能为禁用
                     throw new BizException(BizCodeEnum.PARENT_NOT_AVAILABLE);
@@ -107,16 +108,16 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
 
         String root = "0";
         //  当前编辑节点为子节点
-        if (!root.equals(pid) && StrUtil.isNotBlank(pid)) {
+        if (!root.equals(pid) && CharSequenceUtil.isNotBlank(pid)) {
             // 查询新父节点信息
             ModuleEntity parentModule = this.getModule(pid);
             // 设置当前节点信息
-            module.setPathId(StrUtil.isNotBlank(parentModule.getPathId()) ? parentModule.getPathId() + "," + parentModule.getId() : parentModule.getId());
-            String pathName = StrUtil.format("{}/{}", parentModule.getName(), module.getName()); //pathName
+            module.setPathId(CharSequenceUtil.isNotBlank(parentModule.getPathId()) ? parentModule.getPathId() + "," + parentModule.getId() : parentModule.getId());
+            String pathName = CharSequenceUtil.format("{}/{}", parentModule.getName(), module.getName()); //pathName
 
             String oldFatherPath = null;
 
-            if (moduleId != null && originModule != null && StrUtil.isNotBlank(originModule.getParentId())) {
+            if (moduleId != null && originModule != null && CharSequenceUtil.isNotBlank(originModule.getParentId())) {
                 //得到原来父节点的path路径
                 ModuleEntity oldParent = this.mapper.selectById(originModule.getParentId());
                 oldFatherPath = oldParent != null ? oldParent.getPath() : null;
@@ -152,7 +153,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
 
         }
         // 持久化
-        if (StrUtil.isBlank(moduleId)) {
+        if (CharSequenceUtil.isBlank(moduleId)) {
             moduleId = IdWorker.getIdStr();
             module.setId(moduleId);
             this.mapper.insert(module);
@@ -170,7 +171,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
         if (CollUtil.isNotEmpty(resources)) {
             List<String> ids = new ArrayList<>(resources.size());
             for (ModuleResources item : resources) {
-                if (StrUtil.isNotBlank(item.getId())) {
+                if (CharSequenceUtil.isNotBlank(item.getId())) {
                     this.moduleResourceMapper.updateById(item);
                 } else {
                     item.setId(IdWorker.getIdStr());
@@ -182,7 +183,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
             }
 
             // 移除被删除的
-            if (StrUtil.isNotBlank(moduleId)) {
+            if (CharSequenceUtil.isNotBlank(moduleId)) {
                 QueryWrapper<ModuleResources> deleteWrapper = new QueryWrapper();
                 deleteWrapper.notIn("ID", ids);
                 deleteWrapper.eq("MODULE_ID", moduleId);
@@ -196,7 +197,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
 
 
         // 刷新所有子节点的 path parent_name path_name 当修改状态的时候不用刷新子节点信息
-        if (StrUtil.isNotBlank(module.getId()) && null != originModule) {
+        if (CharSequenceUtil.isNotBlank(module.getId()) && null != originModule) {
             this.refreshChild(module, originModule);
         }
 
@@ -210,8 +211,8 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
      * @return
      */
     private boolean parentChanged(String originPId, String newPid) {
-        originPId = StrUtil.isBlank(originPId) ? "0" : originPId;
-        newPid = StrUtil.isBlank(newPid) ? "0" : newPid;
+        originPId = CharSequenceUtil.isBlank(originPId) ? "0" : originPId;
+        newPid = CharSequenceUtil.isBlank(newPid) ? "0" : newPid;
         return !originPId.equals(newPid);
     }
 
@@ -228,7 +229,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
      * 根据ID更新
      */
     public void updateModule(ModuleEntity moduleEntity) {
-        if (StrUtil.isNotBlank(moduleEntity.getStatus()) && LockEnumm.UNLOCK.getCode().equals(moduleEntity.getStatus())) {
+        if (CharSequenceUtil.isNotBlank(moduleEntity.getStatus()) && FrozenEnumm.UN_FROZEN.getCode().equals(moduleEntity.getStatus())) {
             if (!isDisable(moduleEntity)) {
                 return;
             }
@@ -288,11 +289,11 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
         QueryWrapper<ModuleEntity> entityWrapper = new QueryWrapper<>();
         entityWrapper.eq("PATH", module.getPath());
 
-        if (StrUtil.isNotBlank(module.getId())) {
+        if (CharSequenceUtil.isNotBlank(module.getId())) {
             entityWrapper.ne("ID", module.getId());
         }
 
-        if (StrUtil.isBlank(module.getParentId())) {
+        if (CharSequenceUtil.isBlank(module.getParentId())) {
             entityWrapper.isNull("PARENT_ID");
         } else {
             entityWrapper.eq("PARENT_ID", module.getParentId());
@@ -307,7 +308,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
      */
     public void disableChild(ModuleEntity module) {
         //判断是不是禁用
-        if (StrUtil.isBlank(module.getStatus()) || LockEnumm.LOCK.getCode().equals(module.getStatus())) {
+        if (CharSequenceUtil.isBlank(module.getStatus()) || FrozenEnumm.FROZEN.getCode().equals(module.getStatus())) {
             return;
         }
         //禁用该父节点下的所有子节点
@@ -324,11 +325,11 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
     public boolean isDisable(ModuleEntity moduleEntity) {
         ModuleEntity module = this.mapper.selectById(moduleEntity);
         //判断是否启用
-        if (StrUtil.isNotBlank(module.getParentId())) {
+        if (CharSequenceUtil.isNotBlank(module.getParentId())) {
             //得到父节点
             ModuleEntity fatherModule = this.mapper.selectById(module.getParentId());
-            if (fatherModule != null && StrUtil.isNotBlank(fatherModule.getStatus())) {
-                return LockEnumm.LOCK.getCode().equals(fatherModule.getStatus()) ? false : true;
+            if (fatherModule != null && CharSequenceUtil.isNotBlank(fatherModule.getStatus())) {
+                return !FrozenEnumm.FROZEN.getCode().equals(fatherModule.getStatus());
             }
 
         }

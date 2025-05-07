@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import lombok.RequiredArgsConstructor;
+import org.pkaq.core.mybatis.enums.FrozenEnumm;
 import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.core.mybatis.util.Page;
 import org.pkaq.core.threaduser.ThreadUserHelper;
@@ -176,7 +177,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
         boolean isAdmin = ThreadUserHelper.isAdmin();
         // 获取所有菜单
         ModuleEntity moduleEntity = new ModuleEntity();
-        moduleEntity.setStatus(LockEnumm.UNLOCK.getCode());
+        moduleEntity.setStatus(FrozenEnumm.UN_FROZEN.getCode());
         List<ModuleEntity> moduleList = null;
 
         // 非管理员仅能授权当前权限范围内的模块
@@ -263,7 +264,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
             userEntity.setDeptId(deptId);
         }
 
-        userEntity.setFrozen(LockEnumm.UNLOCK.getCode());
+        userEntity.setFrozen(FrozenEnumm.UN_FROZEN.getCode());
 
         List<UserEntity> users = this.userService.listUser(userEntity);
         // 获取已选的模块

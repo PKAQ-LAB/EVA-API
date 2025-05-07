@@ -11,10 +11,9 @@ project.description = 'sys jar with authority and system management'
 dependencies {
     api project(":eva-web:eva-web-domain")
 
-    implementation project(":eva-core:eva-core-web"),
+    implementation project(":eva-core:eva-core-common"),
                    project(":eva-core:eva-core-data-mybatis"),
                    project(":eva-core:eva-core-log"),
-                   project(":eva-core:eva-core-cache"),
                    libs.mysql
 
     implementation      libs.mapstruct

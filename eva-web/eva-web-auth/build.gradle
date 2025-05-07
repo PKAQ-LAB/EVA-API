@@ -7,10 +7,9 @@ jar {
 project.description = 'we jar with system management'
 
 dependencies {
-    api project(":eva-core:eva-core-web"),
+    api     project(":eva-core:eva-core-common"),
             project(":eva-core:eva-core-log"),
             project(":eva-core:eva-core-data-mybatis"),
-            project(":eva-core:eva-core-cache"),
             project(":eva-web:eva-web-sys"),
             libs.mysql,
             libs.security
