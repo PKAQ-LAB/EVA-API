@@ -17,6 +17,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 
+/**
+ * @author PKAQ
+ */
 @Slf4j
 @Configuration
 @Conditional(CaffeineCacheCondition.class)

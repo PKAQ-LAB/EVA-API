@@ -5,12 +5,16 @@ import org.springframework.cache.annotation.CachingConfigurer;
 import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * @author PKAQ
+ */
 @Slf4j
 @Configuration
 public class CacheConfiguration implements CachingConfigurer {
     /*
      * 定义缓存数据 key 生成策略的bean 包名+类名+方法名+所有参数
      */
+    @Override
     public KeyGenerator keyGenerator() {
         return (o, method, objects) -> {
             //格式化缓存key字符串
@@ -23,7 +27,7 @@ public class CacheConfiguration implements CachingConfigurer {
             for (Object obj : objects) {
                 sb.append(obj.toString());
             }
-            log.debug("调用缓存Key : " + sb);
+            log.debug("调用缓存Key : {}", sb);
             return sb.toString();
         };
     }

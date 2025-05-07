@@ -6,6 +6,9 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @author PKAQ
+ */
 @Repository
 public class SequenceRepository {
 

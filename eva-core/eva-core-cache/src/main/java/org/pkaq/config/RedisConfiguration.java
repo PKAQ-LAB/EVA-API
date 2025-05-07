@@ -44,7 +44,7 @@ public class RedisConfiguration {
         //key序列化
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         //value序列化
-        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<Object>(Object.class));
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(Object.class));
 
         redisTemplate.afterPropertiesSet();
         return redisTemplate;
@@ -56,11 +56,9 @@ public class RedisConfiguration {
         RedisCacheConfiguration defaultCache = buildCache(60 * 30L);
 
         if (null != evaConfig.getCache() && null != evaConfig.getCache().getConfig()) {
-            Map<String, RedisCacheConfiguration> cacheMap = new HashMap(evaConfig.getCache().getConfig().size());
+            Map<String, RedisCacheConfiguration> cacheMap = HashMap.newHashMap(evaConfig.getCache().getConfig().size());
 
-            evaConfig.getCache().getConfig().stream().forEach(item -> {
-                cacheMap.put(item.getName(), buildCache(item.getSecondsToExpire()));
-            });
+            evaConfig.getCache().getConfig().forEach(item -> cacheMap.put(item.getName(), buildCache(item.getSecondsToExpire())));
 
             return RedisCacheManager.builder(RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory))
                     .cacheDefaults(defaultCache)
@@ -90,7 +88,7 @@ public class RedisConfiguration {
                 //设置key序列化器
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
                 //设置value序列化器
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer((new Jackson2JsonRedisSerializer(Object.class))));
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer((new Jackson2JsonRedisSerializer<>(Object.class))));
 
         log.debug("自定义RedisCacheManager加载完成");
 

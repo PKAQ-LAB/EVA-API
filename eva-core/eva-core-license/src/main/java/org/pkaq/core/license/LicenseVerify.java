@@ -34,7 +34,7 @@ public class LicenseVerify {
      */
     public void init() {
         try {
-            System.out.println(new File(evaConfig.getLicense().getLicense()).getAbsolutePath());
+            log.info(new File(evaConfig.getLicense().getLicense()).getAbsolutePath());
             ClassPathResource classPathResource = new ClassPathResource(evaConfig.getLicense().getLicense());
 
             licenseManager.install(classPathResource.getFile());

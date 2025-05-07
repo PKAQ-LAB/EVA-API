@@ -15,9 +15,6 @@ public class ReflectHelper {
 
     /**
      * 给object对象的fieldName属性赋value值
-     *
-     * @param object
-     * @param fieldName
      */
     public static void setValue(Object object, String fieldName, Object value) {
         try {
@@ -34,10 +31,6 @@ public class ReflectHelper {
 
     /**
      * 返回object对象的fieldName属性对象
-     *
-     * @param object
-     * @param fieldName
-     * @return
      */
     public static Field getField(Object object, String fieldName) {
         Field field = null;
@@ -56,9 +49,6 @@ public class ReflectHelper {
 
     /**
      * 把object.fieldName属性设置空
-     *
-     * @param object
-     * @param fieldName
      */
     public static void setNull(Object object, String fieldName) {
         //三次判断

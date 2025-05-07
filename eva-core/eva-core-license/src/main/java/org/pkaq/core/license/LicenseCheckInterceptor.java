@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 
 import java.io.PrintWriter;
+import java.util.Objects;
 
 /**
  * license 验证拦截器
@@ -39,9 +40,9 @@ public class LicenseCheckInterceptor implements AsyncHandlerInterceptor {
             response.setStatus(HttpServletResponse.SC_OK);
 
             try (PrintWriter printWriter = response.getWriter()) {
-                printWriter.write(JsonUtil.toJson(
-                        new Response()
-                                .failure(BizCodeEnum.LICENSE_LICENSEHASEXPIRED)));
+                printWriter.write(Objects.requireNonNull(JsonUtil.toJson(
+                        Response
+                                .failure(BizCodeEnum.LICENSE_LICENSEHASEXPIRED))));
                 printWriter.flush();
             }
             return false;

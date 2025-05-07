@@ -7,6 +7,9 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
 
+/**
+ * @author PKAQ
+ */
 @Component
 @RequiredArgsConstructor
 public class SequenceGenerator {
