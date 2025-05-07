@@ -1,4 +1,4 @@
-package org.pkaq.core.web.util;
+package org.pkaq.core.util;
 
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.StrUtil;
@@ -7,8 +7,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.pkaq.core.util.ClassUtil;
-import org.pkaq.core.util.StringPool;
 import org.pkaq.core.util.json.JsonUtil;
 import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;

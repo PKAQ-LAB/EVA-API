@@ -1,4 +1,4 @@
-package org.pkaq.core.web.interceptor;
+package org.pkaq.core.interceptor;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

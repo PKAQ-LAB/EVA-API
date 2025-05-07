@@ -1,4 +1,4 @@
-package org.pkaq.core.web.advice;
+package org.pkaq.core.advice;
 
 import cn.hutool.crypto.SecureUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,7 +10,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.enums.BizCodeEnum;
 import org.pkaq.core.exception.BizException;
-import org.pkaq.core.web.util.TokenUtil;
+import org.pkaq.core.util.TokenUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;

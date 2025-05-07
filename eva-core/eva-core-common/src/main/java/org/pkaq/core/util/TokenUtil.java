@@ -1,4 +1,4 @@
-package org.pkaq.core.web.util;
+package org.pkaq.core.util;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.JakartaServletUtil;

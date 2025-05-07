@@ -1,4 +1,4 @@
-package org.pkaq.core.web.util;
+package org.pkaq.core.util;
 
 
 import jakarta.servlet.http.HttpServletRequest;

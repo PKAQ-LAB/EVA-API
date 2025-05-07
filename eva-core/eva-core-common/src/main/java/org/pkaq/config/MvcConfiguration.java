@@ -1,7 +1,7 @@
 package org.pkaq.config;
 
 import lombok.RequiredArgsConstructor;
-import org.pkaq.core.web.interceptor.UserInfoInterceptor;
+import org.pkaq.core.interceptor.UserInfoInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;

@@ -1,4 +1,4 @@
-package org.pkaq.helper.seq;
+package org.pkaq.util.seq;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.expression.EvaluationContext;

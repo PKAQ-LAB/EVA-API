@@ -12,6 +12,11 @@ dependencies {
     implementation 	libs.jaxb.api,
                     libs.jasypt
 
+    api(libs.web) {
+        exclude module: 'spring-boot-starter-tomcat'
+    }
+    api libs.undertow
+
     api libs.hutool,
         libs.aop,
         libs.jwt,

@@ -1,4 +1,4 @@
-package org.pkaq.core.web.advice;
+package org.pkaq.core.advice;
 
 import cn.hutool.core.util.ObjectUtil;
 import jakarta.validation.ConstraintViolation;
