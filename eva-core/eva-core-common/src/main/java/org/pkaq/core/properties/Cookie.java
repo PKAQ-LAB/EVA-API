@@ -2,6 +2,9 @@ package org.pkaq.core.properties;
 
 import lombok.Data;
 
+/**
+ * @author PKAQ
+ */
 @Data
 public class Cookie {
     /**

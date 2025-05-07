@@ -2,7 +2,6 @@ package org.pkaq.config;
 
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
-import jakarta.validation.ValidatorFactory;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.HibernateValidator;
 import org.springframework.context.MessageSource;
@@ -14,7 +13,7 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 /**
  * hibernate validator参数校验配置
  *
- * @author
+ * @author PKAQ
  */
 @Configuration
 @RequiredArgsConstructor
@@ -23,17 +22,15 @@ public class ValidatorConfiguration {
 
     @Bean
     public Validator validator() {
-        ValidatorFactory validatorFactory = Validation.byProvider(HibernateValidator.class)
+        return Validation.byProvider(HibernateValidator.class)
                 .configure()
                 .failFast(true)
-                .buildValidatorFactory();
-
-        return validatorFactory.getValidator();
+                .buildValidatorFactory()
+                .getValidator();
     }
 
     /**
      * validator 国际化文案配置
-     * @return
      */
     @Bean
     public LocalValidatorFactoryBean getValidator() {

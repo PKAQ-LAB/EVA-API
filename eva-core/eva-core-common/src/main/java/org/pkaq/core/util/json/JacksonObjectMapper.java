@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.util.Locale;
@@ -15,9 +16,7 @@ import java.util.TimeZone;
 /**
  * @author PKAQ
  */
-public class JacksonObjectMapper extends ObjectMapper {
-    private static final long serialVersionUID = 3576819881530616393L;
-
+public class JacksonObjectMapper extends ObjectMapper implements Serializable {
     private static final Locale CHINA = Locale.CHINA;
 
     public JacksonObjectMapper() {

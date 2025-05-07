@@ -12,8 +12,6 @@ import java.util.Collection;
 public interface BizAssert extends BizCode {
     /**
      * 断言异常
-     * @param args
-     * @return
      */
     default BizException newException(Object... args) {
         throw new BizException(this, args);
@@ -21,9 +19,6 @@ public interface BizAssert extends BizCode {
 
     /**
      * 抛出指定异常
-     *
-     * @param t
-     * @return
      */
     default BizException newException(Throwable t) {
         throw new BizException(this, t);
@@ -31,10 +26,6 @@ public interface BizAssert extends BizCode {
 
     /**
      * 抛出指定异常
-     *
-     * @param t
-     * @param args
-     * @return
      */
     default BizException newException(Throwable t, Object... args) {
         throw new BizException(this, t, args);

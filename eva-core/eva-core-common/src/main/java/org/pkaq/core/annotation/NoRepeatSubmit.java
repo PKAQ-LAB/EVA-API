@@ -2,7 +2,9 @@ package org.pkaq.core.annotation;
 
 import java.lang.annotation.*;
 
-// 作用到方法上
+/**
+ * @author PKAQ
+ */ // 作用到方法上
 @Target(ElementType.METHOD)
 // 运行时有效
 @Retention(RetentionPolicy.RUNTIME)

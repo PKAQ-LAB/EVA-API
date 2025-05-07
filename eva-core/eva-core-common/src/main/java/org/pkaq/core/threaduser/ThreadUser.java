@@ -11,6 +11,7 @@ import java.util.Map;
 
 /**
  * 用于trheadlocal存储用户信息的实体类
+ * @author PKAQ
  */
 @Data
 @Accessors(chain = true)

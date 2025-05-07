@@ -4,6 +4,7 @@ import lombok.Data;
 
 /**
  * 资源权限配置类
+ * @author PKAQ
  */
 @Data
 public class ResourcePermission {

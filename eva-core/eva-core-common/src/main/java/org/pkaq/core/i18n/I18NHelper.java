@@ -23,7 +23,6 @@ public class I18NHelper {
 
     /**
      * @param msg ：对应messages配置的key.
-     * @return
      */
     public String getMessage(String msg) {
         if (msg.startsWith("{") && msg.endsWith("}")) {
@@ -36,10 +35,6 @@ public class I18NHelper {
 
     /**
      * 获取code值
-     *
-     * @param code
-     * @param defaultMessage
-     * @return
      */
     public String getMessage(String code, String defaultMessage) {
         return this.getMessage(code, null, defaultMessage);
@@ -47,11 +42,6 @@ public class I18NHelper {
 
     /**
      * 获取code值
-     *
-     * @param code
-     * @param defaultMessage
-     * @param locale
-     * @return
      */
     public String getMessage(String code, String defaultMessage, Locale locale) {
         return this.getMessage(code, null, defaultMessage, locale);
@@ -59,10 +49,6 @@ public class I18NHelper {
 
     /**
      * 获取code值
-     *
-     * @param code
-     * @param locale
-     * @return
      */
     public String getMessage(String code, Locale locale) {
         return this.getMessage(code, null, "", locale);
@@ -71,7 +57,6 @@ public class I18NHelper {
     /**
      * @param code ：对应messages配置的key.
      * @param args : 数组参数.
-     * @return
      */
     public String getMessage(String code, Object[] args) {
         return this.getMessage(code, args, "");
@@ -79,11 +64,6 @@ public class I18NHelper {
 
     /**
      * 获取code值
-     *
-     * @param code
-     * @param args
-     * @param locale
-     * @return
      */
     public String getMessage(String code, Object[] args, Locale locale) {
         return this.getMessage(code, args, "", locale);
@@ -93,7 +73,6 @@ public class I18NHelper {
      * @param code           ：对应messages配置的key.
      * @param args           : 数组参数.
      * @param defaultMessage : 没有设置key的时候的默认值.
-     * @return
      */
     public String getMessage(String code, Object[] args, String defaultMessage) {
         //这里使用比较方便的方法，不依赖request.
@@ -103,12 +82,6 @@ public class I18NHelper {
 
     /**
      * 指定语言.
-     *
-     * @param code
-     * @param args
-     * @param defaultMessage
-     * @param locale
-     * @return
      */
     public String getMessage(String code, Object[] args, String defaultMessage, Locale locale) {
         return messageSource.getMessage(code, args, defaultMessage, locale);

@@ -36,8 +36,6 @@ public class JwtUtil {
 
     /**
      * 生成密钥
-     *
-     * @return
      */
     private byte[] generalKey() {
         return evaConfig.getJwt().getSecert().getBytes(StandardCharsets.UTF_8);
@@ -45,9 +43,6 @@ public class JwtUtil {
 
     /**
      * 获取uid中的uid属性
-     *
-     * @param token
-     * @return
      */
     public String getUid(String token) {
         String uid = "";
@@ -62,9 +57,6 @@ public class JwtUtil {
 
     /**
      * 获取用户名
-     *
-     * @param token
-     * @return
      */
     public String getAccount(String token) {
         String uid = "";
@@ -79,7 +71,6 @@ public class JwtUtil {
 
     /**
      * 获取jwt自定义属性
-     *
      * @param token jwt
      * @return 属性值
      */
