@@ -4,6 +4,7 @@ import cn.hutool.extra.servlet.JakartaServletUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.pkaq.core.auth.AuthCodeEnum;
 import org.pkaq.core.auth.util.CacheTokenUtil;
 import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.enums.BizCodeEnum;
@@ -48,7 +49,7 @@ public class TokenCtrl {
         if (!tokenStatus) {
             // 清除cookie
             this.clearCookie(response);
-            BizCodeEnum.LOGIN_EXPIRED.newException(AuthenticationException.class);
+            AuthCodeEnum.LOGIN_EXPIRED.newException(AuthenticationException.class);
         }
 
         // 获取当前用户 account

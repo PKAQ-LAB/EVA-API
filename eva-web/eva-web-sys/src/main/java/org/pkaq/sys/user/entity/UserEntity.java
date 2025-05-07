@@ -3,8 +3,6 @@ package org.pkaq.sys.user.entity;
 import com.baomidou.mybatisplus.annotation.SqlCondition;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
@@ -23,76 +21,57 @@ import java.util.List;
  */
 @Data
 @Alias("user")
-@TableName("sys_user_info")
+@TableName("SYS_USER")
 @EqualsAndHashCode(callSuper = true)
-@Schema(title = "用户管理")
 public class UserEntity extends StdEntity {
 
-    @Schema(description = "编号")
+    /** 编号 **/
     private String code;
 
-    @Schema(description = "所属部门")
-    private String deptId;
-
-    @Schema(description = "所属部门名称")
-    private String deptName;
-
-    @Schema(description = "电话")
-    private String tel;
-
-    @Schema(description = "邮箱")
-    private String email;
-
-    @Schema(description = "账号")
+    /** 账号 **/
     private String account;
 
-    @Schema(description = "密码")
-    @JsonIgnore
+    /** 密码 **/
     private String password;
 
-    @JsonIgnore
-    @Schema(description = "盐")
+    /** 盐 **/
     private String salt;
 
-    @Schema(description = "用户头像")
+    /** 用户头像 **/
     private String avatar;
 
-    @Schema(description = "姓名")
+    /** 姓名 **/
     @TableField(condition = SqlCondition.LIKE)
     private String name;
 
-    @Schema(description = "昵称")
+    /** 昵称 **/
+    @TableField(condition = SqlCondition.LIKE)
     private String nickName;
 
-    @Schema(description = "注册ip")
-    private String registerIp;
+    /** 电话 **/
+    @TableField(condition = SqlCondition.LIKE)
+    private String tel;
 
-    @Schema(description = "注册时间")
-    private Date gmtRegister;
+    /** 邮箱 **/
+    private String email;
 
-    @Schema(description = "最后登录ip")
+    /** 最后登录ip **/
     private String lastIp;
 
-    @Schema(description = "最后登录时间")
+    /** 最后登录时间 **/
     private Date lastLogin;
 
-    @Schema(description = "是否锁定")
-    private String locked;
+    /** 所属部门 **/
+    private String deptId;
 
-    @Schema(description = "所属岗位")
-    private String uPostId;
+    /** 所属岗位 **/
+    private String postId;
 
-    @Schema(description = "租户code")
-    private String tenantCode;
-
-    @Schema(description = "所属岗位名称")
-    private String postName;
-
-    @Schema(description = "用户拥有的角色")
+    /** 用户拥有的角色 **/
     @TableField(exist = false)
     private List<RoleEntity> roles = new ArrayList<>();
 
-    @Schema(description = "用户拥有的模块")
+    /** 用户拥有的模块 **/
     @TableField(exist = false)
     private List<StdTreeEntity> modules = new ArrayList<>();
 

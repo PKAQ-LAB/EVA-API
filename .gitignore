@@ -6,6 +6,7 @@
 /docs/db/*.pdb
 /*.log
 /*.lock
+/**/.back*
 /*/out
 /**/bin
 /wxapp/yarn.lock

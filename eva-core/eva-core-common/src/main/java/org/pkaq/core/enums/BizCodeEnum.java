@@ -42,22 +42,6 @@ public enum BizCodeEnum implements BizAssert {
     REQUEST_TOO_MORE("当前请求过于频繁，请稍后再试", "4012"),
     REQUEST_MEDIA_ERROR("服务器不支持当前请求的类型", "4015"),
 
-    /**
-     * 用户相关 410x
-     **/
-    LOGIN_FAILED("登录失败", "4100"),
-    ACCOUNT_NOT_EXIST("用户名或密码错误", "4101"),
-    ACCOUNT_OR_PWD_ERROR("用户名或密码错误", "4102"),
-    ACCOUNT_LOCKED("用户已经被锁定", "4103"),
-    LOGIN_ERROR("登录遇到未知错误: [{0}]", "4104"),
-    LOGIN_EXPIRED("未登录或登录已失效, 请重新登录", "4105"),
-    PERMISSION_EXPIRED("用户权限不足，请联系管理员", "4106"),
-    ACCOUNT_ALREADY_EXIST("账号名已存在", "4110"),
-    LOGIN_FAIL_COUNT_LOCKED("登录验证失败次数过多，请[{0}]分钟后再试", "4107"),
-    LOGIN_CAPTCHA_FAIL("验证失败，请重试", "4108"),
-    LOGIN_REPLACED("您的账号在另一地点登录, 您已被迫下线", "4111"),
-    LOGIN_TENANT_AUTH_EXPIRED("当前授权已失效", "4112"),
-
 
     /**
      * 权限相关 420x

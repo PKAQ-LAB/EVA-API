@@ -9,6 +9,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Async;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -48,41 +49,41 @@ public class JdbcSupporter implements BizLogSupporter {
 
     @Override
     public List<BizLogEntity> getLog() {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
     public List<BizLogEntity> getLogByType(String type) {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
     public List<BizLogEntity> getLogAfter(Date dateTime) {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
     public List<BizLogEntity> getLogBetween(Date begin, Date end) {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
     public void cleanAll() {
-
+        // TODO document why this method is empty
     }
 
     @Override
     public void cleanBefore(Date dateTime) {
-
+        // TODO document why this method is empty
     }
 
     @Override
     public void cleanBetween(Date begin, Date end) {
-
+        // TODO document why this method is empty
     }
 
     @Override
     public void print() {
-
+        // TODO document why this method is empty
     }
 }

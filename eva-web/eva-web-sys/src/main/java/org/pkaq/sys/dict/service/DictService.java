@@ -16,6 +16,7 @@ import org.pkaq.sys.dict.cache.DictCacheHelper;
 import org.pkaq.sys.dict.convert.DictConvert;
 import org.pkaq.sys.dict.entity.DictEntity;
 import org.pkaq.sys.dict.entity.DictItemEntity;
+import org.pkaq.sys.dict.entity.DictViewEntity;
 import org.pkaq.sys.dict.mapper.DictItemMapper;
 import org.pkaq.sys.dict.mapper.DictMapper;
 import org.pkaq.sys.dict.mapper.DictViewMapper;
@@ -62,13 +63,13 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
     @Override
     @BizLog(operateType = BizLogEnum.QUERY, description = "查询字典")
     public Map<String, LinkedHashMap<String, String>> selectDict() {
-        List<DictViewVo> dictList = this.dictViewMapper.selectList(null);
+        List<DictViewEntity> dictList = this.dictViewMapper.selectList(null);
 
         return dictList.stream()
-                .collect(Collectors.groupingBy(DictViewVo::getCode,
+                .collect(Collectors.groupingBy(DictViewEntity::getCode,
                         LinkedHashMap::new,
-                        Collectors.toMap(DictViewVo::getDCode,
-                                DictViewVo::getDValue,
+                        Collectors.toMap(DictViewEntity::getDCode,
+                                DictViewEntity::getDValue,
                                 (o, n) -> n,
                                 LinkedHashMap::new)));
     }
@@ -89,7 +90,7 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
      * @return DictEntity
      */
     @Override
-    @BizLog(operateType = BizLogEnum.QUERY, description = "根据条件获取一条字典")
+    @BizLog(operateType = BizLogEnum.QUERY, description = "根据条件获取一条字典", args="{#bo}")
     public DictViewVo getDict(DictAoeBo bo) {
          return dictConvert.entityToVo(this.mapper.getDict(bo.getId()));
     }

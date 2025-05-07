@@ -3,7 +3,7 @@ package org.pkaq.config;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.pkaq.core.cache.condition.DefaultCacheCondition;
+import org.pkaq.core.cache.condition.CaffeineCacheCondition;
 import org.pkaq.core.properties.EvaConfig;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.caffeine.CaffeineCache;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Configuration
-@Conditional(DefaultCacheCondition.class)
+@Conditional(CaffeineCacheCondition.class)
 @RequiredArgsConstructor
 public class CaffeineConfiguration {
 

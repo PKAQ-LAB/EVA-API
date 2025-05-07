@@ -151,8 +151,7 @@ public class JwtUtil {
         /**
          * 4. 生成token
          */
-        String token = signedJWT.serialize();
-        return token;
+        return signedJWT.serialize();
     }
 
     /**
@@ -177,12 +176,7 @@ public class JwtUtil {
             // 获取有效负载
             JWTClaimsSet claimsSet = JWTClaimsSet.parse(jwsObject.getPayload().toJSONObject());
 
-            if (null == claimsSet || "-".equals(claimsSet.getSubject())) {
-                log.error("登录已失效");
-                throw new BizException(BizCodeEnum.LOGIN_EXPIRED);
-            } else {
-                ret = true;
-            }
+            ret = null != claimsSet && !"-".equals(claimsSet.getSubject());
         } catch (JOSEException | ParseException e) {
             e.printStackTrace();
         }

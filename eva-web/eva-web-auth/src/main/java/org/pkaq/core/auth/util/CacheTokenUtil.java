@@ -30,7 +30,6 @@ public class CacheTokenUtil {
         this.jwtUtil = jwtUtil;
         this.redisUtil = redisUtil;
         this.tokenCache = cacheManager.getCache(CommonConstant.CACHE_TOKEN);
-        ;
     }
 
     /**

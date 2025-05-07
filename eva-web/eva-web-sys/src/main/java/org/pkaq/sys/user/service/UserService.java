@@ -1,25 +1,27 @@
 package org.pkaq.sys.user.service;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.crypto.digest.BCrypt;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
-import org.pkaq.core.enums.BizCodeEnum;
+import lombok.RequiredArgsConstructor;
 import org.pkaq.core.mybatis.mvc.entity.StdTreeEntity;
 import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.core.mybatis.util.Page;
 import org.pkaq.core.mybatis.util.TreeHelper;
-import org.pkaq.sys.dict.cache.DictCacheHelper;
-import org.pkaq.sys.module.entity.ModuleEntityStd;
+import org.pkaq.sys.SYSCode;
+import org.pkaq.sys.module.entity.ModuleEntity;
 import org.pkaq.sys.module.mapper.ModuleMapper;
-import org.pkaq.sys.organization.mapper.OrganizationMapper;
 import org.pkaq.sys.role.entity.RoleUserEntity;
 import org.pkaq.sys.role.mapper.RoleUserMapper;
+import org.pkaq.sys.user.bo.UserAoeBo;
+import org.pkaq.sys.user.convert.UserConvert;
 import org.pkaq.sys.user.entity.UserEntity;
 import org.pkaq.sys.user.mapper.UserMapper;
 import org.pkaq.sys.user.vo.PasswordVO;
+import org.pkaq.sys.user.vo.UserListVo;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -29,28 +31,18 @@ import java.util.List;
  * 用户管理
  *
  * @author: S.PKAQ
- * @Datetime: 2018/3/30 0:00
  */
 @Service
+@RequiredArgsConstructor
 public class UserService extends StdService<UserMapper, UserEntity> {
+    private final UserConvert userConvert;
 
-    private final OrganizationMapper organizationMapper;
 
     private final RoleUserMapper roleUserMapper;
 
     private final FileUploadProvider fileUploadProvider;
 
     private final ModuleMapper moduleMapper;
-
-    private final DictCacheHelper dictCacheHelper;
-
-    public UserService(OrganizationMapper organizationMapper, RoleUserMapper roleUserMapper, FileUploadProvider fileUploadProvider, ModuleMapper moduleMapper, DictCacheHelper dictCacheHelper) {
-        this.organizationMapper = organizationMapper;
-        this.roleUserMapper = roleUserMapper;
-        this.fileUploadProvider = fileUploadProvider;
-        this.moduleMapper = moduleMapper;
-        this.dictCacheHelper = dictCacheHelper;
-    }
 
     /**
      * 修改密码
@@ -76,15 +68,15 @@ public class UserService extends StdService<UserMapper, UserEntity> {
      * @param userEntity
      * @return
      */
-    public IPage<UserEntity> listUser(UserEntity userEntity, Integer page, Integer size) {
+    public IPage<UserListVo> listUser(UserAoeBo userEntity, Integer page, Integer size) {
         page = null != page ? page : 1;
         size = null != size ? size : 30;
 
-        Page pagination = new Page();
+        var pagination = new Page<>();
         pagination.setCurrent(page);
         pagination.setSize(size);
 
-        return this.mapper.getUerWithRoleId(pagination, userEntity);
+        return   this.mapper.getUerWithRoleId(pagination, userEntity);
     }
 
     /**
@@ -105,7 +97,7 @@ public class UserService extends StdService<UserMapper, UserEntity> {
      */
     public void updateUser(ArrayList<String> ids, String lock) {
         UserEntity user = new UserEntity();
-        user.setLocked(lock);
+        user.setFrozen(lock);
         QueryWrapper<UserEntity> wrapper = new QueryWrapper<>();
         wrapper.in("id", ids);
 
@@ -130,48 +122,45 @@ public class UserService extends StdService<UserMapper, UserEntity> {
      * @param user 用户对象
      * @return 用户列表
      */
-    public void saveUser(UserEntity user) {
+    public void saveUser(UserAoeBo user) {
         // 用户资料发生修改后 重新生成密码
         // 这里传递过来的密码是进行md5加密后的
         String pwd = user.getPassword();
-        if (StrUtil.isNotBlank(pwd)) {
+        if (CharSequenceUtil.isNotBlank(pwd)) {
             pwd = BCrypt.hashpw(pwd);
             user.setPassword(pwd);
-        }
-        //设置部门名称
-        if (StrUtil.isNotBlank(user.getDeptId())) {
-            user.setDeptName(organizationMapper.selectById(user.getDeptId()).getName());
         }
 
         // 新增手工生成主键
         // 编辑， 删除原有头像文件，保存新的头像文件
         String userId = user.getId();
         boolean isInsert = true;
-        if (StrUtil.isBlank(userId)) {
+        if (CharSequenceUtil.isBlank(userId)) {
             userId = IdWorker.getIdStr();
             user.setId(userId);
         } else {
             isInsert = false;
             UserEntity oldUser = this.mapper.selectById(userId);
             String avatar = oldUser.getAvatar();
-            if (StrUtil.isNotBlank(avatar) && !avatar.equals(user.getAvatar())) {
+            if (CharSequenceUtil.isNotBlank(avatar) && !avatar.equals(user.getAvatar())) {
                 fileUploadProvider.delFromStorage(avatar);
             }
         }
 
         // 保存新的头像文件
-        if (StrUtil.isNotBlank(user.getAvatar())) {
+        if (CharSequenceUtil.isNotBlank(user.getAvatar())) {
             fileUploadProvider.storageWithThumbnail(0.3f, user.getAvatar());
         }
         // 保存权限
+        UserEntity entity = userConvert.boToEntity(user);
         this.saveRoles(user);
 
         if (isInsert) {
-            this.mapper.insert(user);
+            this.mapper.insert(entity);
         } else {
-            this.mapper.updateById(user);
+            this.mapper.updateById(entity);
         }
-        this.merge(user);
+        this.merge(entity);
     }
 
     /**
@@ -180,12 +169,12 @@ public class UserService extends StdService<UserMapper, UserEntity> {
      * @param user
      * @return
      */
-    public boolean checkUnique(UserEntity user) {
+    public boolean checkUnique(UserAoeBo user) {
         QueryWrapper<UserEntity> entityWrapper = new QueryWrapper<>();
-        if (StrUtil.isNotBlank(user.getAccount())) {
+        if (CharSequenceUtil.isNotBlank(user.getAccount())) {
             entityWrapper.eq("account", user.getAccount());
         }
-        if (StrUtil.isNotBlank(user.getId())) {
+        if (CharSequenceUtil.isNotBlank(user.getId())) {
             entityWrapper.ne("id", user.getId());
         }
         long records = this.mapper.selectCount(entityWrapper);
@@ -200,10 +189,10 @@ public class UserService extends StdService<UserMapper, UserEntity> {
      */
     public List<StdTreeEntity> fetch(String uid) {
 
-        List<ModuleEntityStd> moduleEntity = this.moduleMapper.getRoleModuleByUserId(uid);
+        List<ModuleEntity> moduleEntity = this.moduleMapper.getRoleModuleByUserId(uid);
         List<StdTreeEntity> treeModule = new TreeHelper().bulid(moduleEntity);
 
-        BizCodeEnum.PERMISSION_EXPIRED.assertNotBlank(treeModule);
+        SYSCode.PERMISSION_EXPIRED.assertNotBlank(treeModule);
 
         return treeModule;
     }
@@ -213,7 +202,7 @@ public class UserService extends StdService<UserMapper, UserEntity> {
      *
      * @param user
      */
-    public void saveRoles(UserEntity user) {
+    public void saveRoles(UserAoeBo user) {
         // 保存权限
         if (CollUtil.isNotEmpty(user.getRoles())) {
             // 先删除该用户原有的权限

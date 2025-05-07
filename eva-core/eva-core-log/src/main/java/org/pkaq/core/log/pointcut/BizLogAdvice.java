@@ -1,6 +1,6 @@
 package org.pkaq.core.log.pointcut;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.exceptions.UtilException;
 import cn.hutool.core.text.CharSequenceUtil;
@@ -20,10 +20,12 @@ import org.pkaq.core.log.annotation.BizLog;
 import org.pkaq.core.log.base.BizLogEntity;
 import org.pkaq.core.log.base.BizLogEnum;
 import org.pkaq.core.log.base.LogSupporter;
+import org.pkaq.core.log.condition.BizlogSupporterCondition;
 import org.pkaq.core.log.events.BizLogEvent;
 import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.core.util.json.JsonUtil;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,11 +40,12 @@ import java.util.*;
 @Aspect
 @Component
 @RequiredArgsConstructor
+@Conditional(BizlogSupporterCondition.class)
 public class BizLogAdvice {
     private final ApplicationEventPublisher eventPublisher;
     private final I18NHelper i18NHelper;
-    private String formatArg = "param:";
-    private String formatResult = "this";
+    private final String formatArg = "param:";
+    private final String formatResult = "this";
 
     @Pointcut("@annotation(org.pkaq.core.log.annotation.BizLog)")
     private void bizLog() {
@@ -109,7 +112,9 @@ public class BizLogAdvice {
             processResult(result, rMap, formatArgs);
         } catch (Exception e) {
             // 无事务时操作失败不会走AFTER_ROLLBACK监听器 所以手动设置操作失败的记录
-            if (!isTransactional) description = "%s%s".formatted(LogSupporter.FAILURE_PREFIX, description);
+            if (!isTransactional) {
+                description = "%s%s".formatted(LogSupporter.FAILURE_PREFIX, description);
+            }
             throw e;
         } finally {
             // 操作类型为新增 id在新增之后才会回显到入参中 所以需要重新处理一下
@@ -136,14 +141,16 @@ public class BizLogAdvice {
      *                   MessageFormat.format(bizCode.getMsg(), args)
      * @return 返回值的属性和它们在formatArgs的下标
      */
-    private Map<String, List<Integer>> processArgs(Object args[], String[] bizArgs, Object[] formatArgs) {
-        if (bizArgs.length == 0) return null;
+    private Map<String, List<Integer>> processArgs(Object[] args, String[] bizArgs, Object[] formatArgs) {
+        if (bizArgs.length == 0) {
+            return Collections.emptyMap();
+        }
 
         // format需要的方法入参/返回值的属性名和顺序
-        Map<String, List<Integer>> pMap = new HashMap(bizArgs.length);
-        Map<String, List<Integer>> rMap = new HashMap<>(bizArgs.length);
+        Map<String, List<Integer>> pMap = HashMap.newHashMap(bizArgs.length);
+        Map<String, List<Integer>> rMap = HashMap.newHashMap(bizArgs.length);
         // 方法的第几个参数和所需的属性
-        Map<Integer, List<String>> pArgsMap = new HashMap<>(bizArgs.length);
+        Map<Integer, List<String>> pArgsMap = HashMap.newHashMap(bizArgs.length);
         int i = 0;
         try {
             for (String param : bizArgs) {
@@ -168,7 +175,9 @@ public class BizLogAdvice {
             }
 
             // 根据所需入参 得到实际的值 并放在formatArgs中
-            if (pMap.size() == 0) return rMap;
+            if (pMap.isEmpty()) {
+                return rMap;
+            }
             // k表示 方法的入参下标  v表示这个下标对象的属性
             pArgsMap.forEach((k, v) -> {
                 String key = k.toString();
@@ -204,7 +213,9 @@ public class BizLogAdvice {
      * @param result     方法的返回对象
      */
     private void processResult(Object result, Map<String, List<Integer>> rMap, Object[] formatArgs) {
-        if (CollectionUtil.isEmpty(rMap)) return;
+        if (CollUtil.isEmpty(rMap)) {
+            return;
+        }
         try {
             rMap.forEach((k, v) -> {
                 Object value = result;

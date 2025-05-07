@@ -11,7 +11,6 @@ import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.sys.dict.bo.DictAoeBo;
 import org.pkaq.sys.dict.cache.DictCacheHelper;
-import org.pkaq.sys.dict.entity.DictEntity;
 import org.pkaq.sys.dict.service.DictService;
 import org.pkaq.sys.dict.vo.DictViewVo;
 import org.springframework.web.bind.annotation.*;
@@ -45,13 +44,13 @@ public class DictCtrl extends Ctrl {
     }
 
     @GetMapping("/list")
-    @Operation(summary = "获取字典分类列表")
+    @Operation(summary = "获取字典列表")
     public Response<List<DictViewVo>> listDict() {
         return this.success(this.service.listDict());
     }
 
     @GetMapping({"/get/{id}", "/get/type/{code}"})
-    @Operation(summary = "根据ID获取字典")
+    @Operation(summary = "根据ID/code获取字典")
     public Response<DictViewVo> getDict(@Parameter(name = "id", description = "字典分类ID")
                             @PathVariable(name = "id", required = false) String id,
                                         @Parameter(name = "code", description = "类型编码")

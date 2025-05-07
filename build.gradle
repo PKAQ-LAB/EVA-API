@@ -27,6 +27,16 @@ subprojects {
 
     tasks.withType(JavaCompile).configureEach {
         options.compilerArgs.add("-parameters")
+
+        options.compilerArgs += [
+                "-Amapstruct.defaultComponentModel=spring",
+                "-Amapstruct.suppressGeneratorTimestamp=true",
+                "-Amapstruct.verbose=true"
+        ]
+    }
+
+    test {
+        useJUnitPlatform()
     }
 
     repositories {

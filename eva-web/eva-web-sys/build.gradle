@@ -5,10 +5,11 @@ jar {
     archiveBaseName = 'eva-web-sys'
 }
 
+
 project.description = 'sys jar with authority and system management'
 
 dependencies {
-    implementation project(":eva-web:eva-web-domain")
+    api project(":eva-web:eva-web-domain")
 
     implementation project(":eva-core:eva-core-web"),
                    project(":eva-core:eva-core-data-mybatis"),
@@ -16,16 +17,7 @@ dependencies {
                    project(":eva-core:eva-core-cache"),
                    libs.mysql
 
-    implementation libs.mybatis.plus.starter,
-                   libs.mapstruct
+    implementation      libs.mapstruct
 
     annotationProcessor libs.mapstruct.processor
-}
-
-tasks.withType(JavaCompile).configureEach {
-    options.compilerArgs += [
-            "-Amapstruct.defaultComponentModel=spring",
-            "-Amapstruct.suppressGeneratorTimestamp=true",
-            "-Amapstruct.verbose=true"
-    ]
 }

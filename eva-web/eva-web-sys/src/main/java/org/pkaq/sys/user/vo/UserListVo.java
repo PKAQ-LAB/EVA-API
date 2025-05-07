@@ -1,4 +1,4 @@
-package org.pkaq.sys.user.bo;
+package org.pkaq.sys.user.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -17,7 +17,7 @@ import java.util.List;
  */
 @Data
 @Schema(title = "用户管理编辑Bo")
-public class UserAoeBo implements Bo {
+public class UserListVo implements Bo {
 
     @Schema(description = "ID")
     private String id;
@@ -57,11 +57,5 @@ public class UserAoeBo implements Bo {
 
     @Schema(description = "所属岗位")
     private String postId;
-
-    @Schema(description = "用户拥有的角色")
-    private List<RoleEntity> roles = new ArrayList<>();
-
-    @Schema(description = "用户拥有的模块")
-    private List<StdTreeEntity> modules = new ArrayList<>();
 
 }

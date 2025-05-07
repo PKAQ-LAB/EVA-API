@@ -2,7 +2,7 @@ package org.pkaq.sys.dict.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
-import org.pkaq.sys.dict.vo.DictViewVo;
+import org.pkaq.sys.dict.entity.DictViewEntity;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -12,6 +12,6 @@ import org.springframework.stereotype.Repository;
  */
 @Mapper
 @Repository
-public interface DictViewMapper extends BaseMapper<DictViewVo> {
+public interface DictViewMapper extends BaseMapper<DictViewEntity> {
 
 }

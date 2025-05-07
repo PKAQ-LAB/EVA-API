@@ -11,7 +11,7 @@ import org.pkaq.core.enums.LockEnumm;
 import org.pkaq.core.exception.BizException;
 import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.core.mybatis.util.TreeHelper;
-import org.pkaq.sys.module.entity.ModuleEntityStd;
+import org.pkaq.sys.module.entity.ModuleEntity;
 import org.pkaq.sys.module.entity.ModuleResources;
 import org.pkaq.sys.module.mapper.ModuleMapper;
 import org.pkaq.sys.module.mapper.ModuleResourceMapper;
@@ -27,7 +27,7 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor
-public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
+public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
 
     private final ModuleResourceMapper moduleResourceMapper;
 
@@ -36,7 +36,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
      *
      * @return
      */
-    public List<ModuleEntityStd> listModule(ModuleEntityStd module) {
+    public List<ModuleEntity> listModule(ModuleEntity module) {
         return this.mapper.listModule(module);
     }
 
@@ -48,11 +48,11 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
      */
     public void deleteModule(ArrayList<String> ids) {
         // 检查是否存在子节点，存在子节点不允许删除
-        QueryWrapper<ModuleEntityStd> oew = new QueryWrapper<>();
-        oew.setEntity(new ModuleEntityStd());
+        QueryWrapper<ModuleEntity> oew = new QueryWrapper<>();
+        oew.setEntity(new ModuleEntity());
         oew.in("PARENT_ID", ids);
 
-        List<ModuleEntityStd> leafList = this.mapper.selectList(oew);
+        List<ModuleEntity> leafList = this.mapper.selectList(oew);
 
         if (CollectionUtil.isNotEmpty(leafList)) {
             // 获取存在子节点的节点名称
@@ -81,10 +81,10 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
      * @param module 要 新增/编辑 得模块对象
      * @return 重新查询模块列表
      */
-    public void editModule(ModuleEntityStd module) {
+    public void editModule(ModuleEntity module) {
         String moduleId = module.getId();
 
-        ModuleEntityStd originModule = null;
+        ModuleEntity originModule = null;
         if (StrUtil.isNotBlank(moduleId)) {
             originModule = this.getById(moduleId);
         }
@@ -110,7 +110,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
         //  当前编辑节点为子节点
         if (!root.equals(pid) && StrUtil.isNotBlank(pid)) {
             // 查询新父节点信息
-            ModuleEntityStd parentModule = this.getModule(pid);
+            ModuleEntity parentModule = this.getModule(pid);
             // 设置当前节点信息
             module.setPathId(StrUtil.isNotBlank(parentModule.getPathId()) ? parentModule.getPathId() + "," + parentModule.getId() : parentModule.getId());
             String pathName = StrUtil.format("{}/{}", parentModule.getName(), module.getName()); //pathName
@@ -119,7 +119,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
 
             if (moduleId != null && originModule != null && StrUtil.isNotBlank(originModule.getParentId())) {
                 //得到原来父节点的path路径
-                ModuleEntityStd oldParent = this.mapper.selectById(originModule.getParentId());
+                ModuleEntity oldParent = this.mapper.selectById(originModule.getParentId());
                 oldFatherPath = oldParent != null ? oldParent.getPath() : null;
             }
 
@@ -137,14 +137,14 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
             // 由于数据还未提交 节点仍然挂载在原始节点上 所以这里要 -1
             int originParentChilds = this.mapper.countPrantLeaf(originModule.getParentId()) - 1;
             if (originParentChilds < 1) {
-                ModuleEntityStd originParentModule = new ModuleEntityStd();
+                ModuleEntity originParentModule = new ModuleEntity();
                 originParentModule.setIsleaf(true);
                 originParentModule.setId(originModule.getParentId());
                 this.mapper.updateById(originParentModule);
             }
             // 更新新节点 isleaf属性
             int newParentChilds = this.mapper.countPrantLeaf(pid);
-            ModuleEntityStd newParentModule = new ModuleEntityStd();
+            ModuleEntity newParentModule = new ModuleEntity();
             newParentModule.setIsleaf(false);
             newParentModule.setId(pid);
             this.mapper.updateById(newParentModule);
@@ -217,7 +217,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
     }
 
     // 父节点信息有修改 刷新子节点相关数据
-    public void refreshChild(ModuleEntityStd module, ModuleEntityStd oldModule) {
+    public void refreshChild(ModuleEntity module, ModuleEntity oldModule) {
         // 刷新子节点所有名称
         this.mapper.updateChildParentName(
                 module.getPathName(), oldModule.getPathName(),
@@ -228,7 +228,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
     /**
      * 根据ID更新
      */
-    public void updateModule(ModuleEntityStd moduleEntity) {
+    public void updateModule(ModuleEntity moduleEntity) {
         if (StrUtil.isNotBlank(moduleEntity.getStatus()) && LockEnumm.UNLOCK.getCode().equals(moduleEntity.getStatus())) {
             if (!isDisable(moduleEntity)) {
                 return;
@@ -245,8 +245,8 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
      * @param id 模块ID
      * @return 模块信息
      */
-    public ModuleEntityStd getModule(String id) {
-        ModuleEntityStd module = this.getById(id);
+    public ModuleEntity getModule(String id) {
+        ModuleEntity module = this.getById(id);
         // 获取资源信息
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.eq("MODULE_ID", id);
@@ -263,7 +263,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
      * @param module 属性实体类
      * @return 模块树列表
      */
-    public List<ModuleEntityStd> listModuleByAttr(ModuleEntityStd module) {
+    public List<ModuleEntity> listModuleByAttr(ModuleEntity module) {
         //根据名字查询节点信息
         return this.mapper.listModule(module);
     }
@@ -273,8 +273,8 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
      *
      * @param switchModule 进行交换的两个实体
      */
-    public void sortModule(ModuleEntityStd[] switchModule) {
-        for (ModuleEntityStd module : switchModule) {
+    public void sortModule(ModuleEntity[] switchModule) {
+        for (ModuleEntity module : switchModule) {
             this.mapper.updateById(module);
         }
     }
@@ -285,8 +285,8 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
      * @param module
      * @return
      */
-    public boolean checkUnique(ModuleEntityStd module) {
-        QueryWrapper<ModuleEntityStd> entityWrapper = new QueryWrapper<>();
+    public boolean checkUnique(ModuleEntity module) {
+        QueryWrapper<ModuleEntity> entityWrapper = new QueryWrapper<>();
         entityWrapper.eq("PATH", module.getPath());
 
         if (StrUtil.isNotBlank(module.getId())) {
@@ -306,7 +306,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
     /**
      * 父节点被禁用，子节点也会被禁用
      */
-    public void disableChild(ModuleEntityStd module) {
+    public void disableChild(ModuleEntity module) {
         //判断是不是禁用
         if (StrUtil.isBlank(module.getStatus()) || LockEnumm.LOCK.getCode().equals(module.getStatus())) {
             return;
@@ -322,12 +322,12 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntityStd> {
      * @param moduleEntity
      * @return
      */
-    public boolean isDisable(ModuleEntityStd moduleEntity) {
-        ModuleEntityStd module = this.mapper.selectById(moduleEntity);
+    public boolean isDisable(ModuleEntity moduleEntity) {
+        ModuleEntity module = this.mapper.selectById(moduleEntity);
         //判断是否启用
         if (StrUtil.isNotBlank(module.getParentId())) {
             //得到父节点
-            ModuleEntityStd fatherModule = this.mapper.selectById(module.getParentId());
+            ModuleEntity fatherModule = this.mapper.selectById(module.getParentId());
             if (fatherModule != null && StrUtil.isNotBlank(fatherModule.getStatus())) {
                 return LockEnumm.LOCK.getCode().equals(fatherModule.getStatus()) ? false : true;
             }

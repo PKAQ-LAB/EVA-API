@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.pkaq.core.auth.AuthCodeEnum;
 import org.pkaq.core.auth.util.CacheTokenUtil;
 import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.enums.BizCodeEnum;
@@ -94,7 +95,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                         logger.warn("鉴权失败 缓存中无法找到对应token");
                         // 清除cookie
                         this.clearCookie(response);
-                        BizCodeEnum.LOGIN_EXPIRED.newException(AuthenticationException.class);
+                        AuthCodeEnum.LOGIN_EXPIRED.newException(AuthenticationException.class);
                     }
                 }
 
@@ -127,7 +128,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
                     printWriter.write(JsonUtil.toJson(
-                            new Response().failure(BizCodeEnum.LOGIN_EXPIRED))
+                            new Response().failure(AuthCodeEnum.LOGIN_EXPIRED))
                     );
                     printWriter.flush();
                 }

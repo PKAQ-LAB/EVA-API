@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.pkaq.core.annotation.Ignore;
-import org.pkaq.sys.module.entity.ModuleEntityStd;
+import org.pkaq.sys.module.entity.ModuleEntity;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.List;
  */
 @Mapper
 @Repository
-public interface ModuleMapper extends BaseMapper<ModuleEntityStd> {
+public interface ModuleMapper extends BaseMapper<ModuleEntity> {
 
 
     /**
@@ -28,9 +28,9 @@ public interface ModuleMapper extends BaseMapper<ModuleEntityStd> {
      * @return
      */
     @Ignore
-    List<ModuleEntityStd> listGrantedModule(@Param("condition") String condition,
-                                            @Param("module") ModuleEntityStd module,
-                                            @Param("roleNames") String[] roleNames);
+    List<ModuleEntity> listGrantedModule(@Param("condition") String condition,
+                                         @Param("module") ModuleEntity module,
+                                         @Param("roleNames") String[] roleNames);
 
     /**
      * 查询所有符合条件的树
@@ -38,7 +38,7 @@ public interface ModuleMapper extends BaseMapper<ModuleEntityStd> {
      * @param module 符合条件的List
      * @return 符合查询条件的List
      */
-    List<ModuleEntityStd> listModule(@Param("module") ModuleEntityStd module);
+    List<ModuleEntity> listModule(@Param("module") ModuleEntity module);
 
     /**
      * 根据parentID查询子节点数据
@@ -46,7 +46,7 @@ public interface ModuleMapper extends BaseMapper<ModuleEntityStd> {
      * @param id parentID
      * @return 符合条件的List
      */
-    List<ModuleEntityStd> listChildren(String id);
+    List<ModuleEntity> listChildren(String id);
 
     /**
      * 根据用户id查询用户拥有的权限模块列表
@@ -55,7 +55,7 @@ public interface ModuleMapper extends BaseMapper<ModuleEntityStd> {
      * @return 符合条件的List
      */
     @Ignore
-    List<ModuleEntityStd> getRoleModuleByUserId(String userId);
+    List<ModuleEntity> getRoleModuleByUserId(String userId);
 
     /**
      * 根据子节点ID查询父节点信息
@@ -63,7 +63,7 @@ public interface ModuleMapper extends BaseMapper<ModuleEntityStd> {
      * @param id 子节点ID
      * @return 父节点实体类
      */
-    ModuleEntityStd getParentById(String id);
+    ModuleEntity getParentById(String id);
 
     /**
      * 根据子节点ID查询同级节点数量（包含自身）
@@ -86,7 +86,7 @@ public interface ModuleMapper extends BaseMapper<ModuleEntityStd> {
      */
     void disableChild(@Param("id") String id);
 
-    ModuleEntityStd selectId(@Param("id") String id);
+    ModuleEntity selectId(@Param("id") String id);
 
     /**
      * 刷新子节点名称

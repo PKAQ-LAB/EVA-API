@@ -9,7 +9,7 @@ import org.pkaq.core.enums.BizCodeEnum;
 import org.pkaq.core.mvc.bo.SingleArrayBo;
 import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
-import org.pkaq.sys.module.entity.ModuleEntityStd;
+import org.pkaq.sys.module.entity.ModuleEntity;
 import org.pkaq.sys.module.service.ModuleService;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +28,7 @@ public class ModuleCtrl extends Ctrl {
     @PostMapping("/checkUnique")
     @Operation(summary = "校验path唯一性")
     public Response checkUnique(@Parameter(name = "moduleEntity", description = "要进行校验的参数")
-                                @RequestBody ModuleEntityStd module) {
+                                @RequestBody ModuleEntity module) {
 
         boolean exist = (null != module && StrUtil.isNotBlank(module.getPath())) ? this.service.checkUnique(module) : false;
 
@@ -53,7 +53,7 @@ public class ModuleCtrl extends Ctrl {
     @PostMapping("/edit")
     @Operation(summary = "新增/编辑记录")
     public Response save(@Parameter(name = "formdata", description = "模块对象")
-                         @RequestBody ModuleEntityStd entity) {
+                         @RequestBody ModuleEntity entity) {
         this.service.editModule(entity);
         return this.success();
     }
@@ -67,14 +67,14 @@ public class ModuleCtrl extends Ctrl {
 
     @GetMapping({"/listModuleByAttr", "/listNoPage"})
     @Operation(summary = "根据实体类属性获取相应的模块树 ")
-    public Response listModuleByAttr(@Parameter(name = "module", description = "{key: value}") ModuleEntityStd module) {
+    public Response listModuleByAttr(@Parameter(name = "module", description = "{key: value}") ModuleEntity module) {
         return success(this.service.listModuleByAttr(module));
     }
 
     @PostMapping("/sort")
     @Operation(summary = "排序模块信息")
     public Response sortModule(@Parameter(name = "module", description = "{id,orders}")
-                               @RequestBody ModuleEntityStd[] switchObj) {
+                               @RequestBody ModuleEntity[] switchObj) {
         this.service.sortModule(switchObj);
         return success();
     }
@@ -82,7 +82,7 @@ public class ModuleCtrl extends Ctrl {
     @PostMapping("/switchStatus")
     @Operation(summary = "切换模块可用状态")
     public Response switchStatus(@Parameter(name = "id", description = "模块Id")
-                                 @RequestBody ModuleEntityStd module) {
+                                 @RequestBody ModuleEntity module) {
         this.service.disableChild(module);
         return success();
     }

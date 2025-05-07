@@ -5,14 +5,15 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.pkaq.core.annotation.Ignore;
+import org.pkaq.sys.user.bo.UserAoeBo;
 import org.pkaq.sys.user.entity.UserEntity;
+import org.pkaq.sys.user.vo.UserListVo;
 import org.springframework.stereotype.Repository;
 
 /**
  * 用户管理mapper
  *
  * @author: S.PKAQ
- * @Datetime: 2018/3/29 23:57
  */
 @Mapper
 @Repository
@@ -26,7 +27,7 @@ public interface UserMapper extends BaseMapper<UserEntity> {
      * @return
      */
     @Ignore
-    IPage<UserEntity> getUerWithRoleId(IPage page, @Param("user") UserEntity user);
+    IPage<UserListVo> getUerWithRoleId(IPage page, @Param("user") UserAoeBo user);
 
     /**
      * 根据用户account 获取包含权限列表的用户信息

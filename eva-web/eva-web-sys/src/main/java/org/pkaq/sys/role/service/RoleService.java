@@ -2,18 +2,17 @@ package org.pkaq.sys.role.service;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.text.CharSequenceUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.enums.LockEnumm;
-import org.pkaq.core.mvc.vo.PageVo;
 import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.core.mybatis.util.Page;
 import org.pkaq.core.threaduser.ThreadUserHelper;
-import org.pkaq.sys.module.entity.ModuleEntityStd;
+import org.pkaq.sys.module.entity.ModuleEntity;
 import org.pkaq.sys.module.mapper.ModuleMapper;
 import org.pkaq.sys.role.entity.RoleEntity;
 import org.pkaq.sys.role.entity.RoleModuleEntity;
@@ -98,7 +97,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
      * @param ids
      */
     public void deleteRole(ArrayList<String> ids) {
-        QueryWrapper queryWrapper = new QueryWrapper();
+        QueryWrapper queryWrapper = new QueryWrapper<>();
         queryWrapper.in("role_id", ids);
         // 删除角色相关的 授权用户
         this.roleUserMapper.delete(queryWrapper);
@@ -177,9 +176,9 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
 
         boolean isAdmin = ThreadUserHelper.isAdmin();
         // 获取所有菜单
-        ModuleEntityStd moduleEntity = new ModuleEntityStd();
+        ModuleEntity moduleEntity = new ModuleEntity();
         moduleEntity.setStatus(LockEnumm.UNLOCK.getCode());
-        List<ModuleEntityStd> moduleList = null;
+        List<ModuleEntity> moduleList = null;
 
         // 非管理员仅能授权当前权限范围内的模块
         if (isAdmin) {
@@ -261,11 +260,11 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
     public Map<String, Object> listUser(String roleId, String deptId) {
         // 获取所有用户
         UserEntity userEntity = new UserEntity();
-        if (StrUtil.isNotBlank(deptId)) {
+        if (CharSequenceUtil.isNotBlank(deptId)) {
             userEntity.setDeptId(deptId);
         }
 
-        userEntity.setLocked(LockEnumm.UNLOCK.getCode());
+        userEntity.setFrozen(LockEnumm.UNLOCK.getCode());
 
         List<UserEntity> users = this.userService.listUser(userEntity);
         // 获取已选的模块

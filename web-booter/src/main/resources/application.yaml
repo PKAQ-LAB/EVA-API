@@ -21,6 +21,11 @@ spring:
       WRITE_DATES_AS_TIMESTAMPS: false
       #格式化输出
       indent_output: true
+  main:
+    allow-bean-definition-overriding: true
+  web:
+    locale: zh_CN
+    locale-resolver: fixed
 #  spring doc 配置
 #springdoc:
 #  swagger-ui:
