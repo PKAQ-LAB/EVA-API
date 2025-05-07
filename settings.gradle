@@ -17,7 +17,6 @@ include ':eva-core:eva-core-websocket'
 include ':eva-server:eva-admin-server'
 include ':eva-server:eva-license-server'
 include ':eva-web:eva-web-auth'
-include 'eva-core:eva-core-helper'
 
 
 include 'eva-web:eva-web-domain'
