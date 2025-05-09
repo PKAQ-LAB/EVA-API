@@ -4,7 +4,7 @@
   "avatar": "",
   "version": "4.9.4",
   "createdTime": "2025-4-22 15:22:40",
-  "updatedTime": "2025-4-27 17:18:43",
+  "updatedTime": "2025-5-9 13:51:52",
   "dbConns": [],
   "profile": {
     "default": {
@@ -68,14 +68,14 @@
         {
           "defKey": "DELETED",
           "defName": "逻辑删除标识",
-          "comment": "0",
+          "comment": "",
           "type": "BIGINT",
           "len": "",
           "scale": "",
           "primaryKey": false,
           "notNull": true,
           "autoIncrement": false,
-          "defaultValue": "",
+          "defaultValue": "0",
           "hideInGraph": false,
           "refDict": "",
           "baseType": "",
@@ -93,7 +93,7 @@
           "primaryKey": false,
           "notNull": false,
           "autoIncrement": false,
-          "defaultValue": "",
+          "defaultValue": "0000",
           "hideInGraph": false,
           "refDict": "",
           "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64",
@@ -145,7 +145,7 @@
           "len": 40,
           "scale": "",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
@@ -190,7 +190,7 @@
           "len": "",
           "scale": "",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoIncrement": false,
           "defaultValue": "CURRENT_TIMESTAMP",
           "hideInGraph": false,
@@ -710,21 +710,21 @@
         "refKey": "uiHint",
         "hideInGraph": true,
         "value": "UI建议",
-        "enable": true,
+        "enable": false,
         "freeze": false
       },
       {
         "refKey": "extProps",
         "hideInGraph": true,
         "value": "拓展属性",
-        "enable": true,
+        "enable": false,
         "freeze": false
       },
       {
         "refKey": "attr1",
         "value": "属性1",
         "hideInGraph": true,
-        "enable": true,
+        "enable": false,
         "freeze": false
       },
       {
@@ -1122,17 +1122,16 @@
       },
       "headers": [
         {
-          "freeze": false,
           "refKey": "hideInGraph",
           "hideInGraph": true
         },
         {
-          "freeze": true,
+          "freeze": false,
           "refKey": "defKey",
           "hideInGraph": false
         },
         {
-          "freeze": true,
+          "freeze": false,
           "refKey": "defName",
           "hideInGraph": false
         },
@@ -1199,6 +1198,51 @@
         {
           "freeze": false,
           "refKey": "extProps",
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr1",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr2",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr3",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr4",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr5",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr6",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr7",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr8",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr9",
+          "freeze": false,
           "hideInGraph": true
         }
       ],
@@ -1471,17 +1515,16 @@
       },
       "headers": [
         {
-          "freeze": false,
           "refKey": "hideInGraph",
           "hideInGraph": true
         },
         {
-          "freeze": true,
+          "freeze": false,
           "refKey": "defKey",
           "hideInGraph": false
         },
         {
-          "freeze": true,
+          "freeze": false,
           "refKey": "defName",
           "hideInGraph": false
         },
@@ -1548,6 +1591,51 @@
         {
           "freeze": false,
           "refKey": "extProps",
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr1",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr2",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr3",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr4",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr5",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr6",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr7",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr8",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr9",
+          "freeze": false,
           "hideInGraph": true
         }
       ],
@@ -1982,17 +2070,16 @@
       },
       "headers": [
         {
-          "freeze": false,
           "refKey": "hideInGraph",
           "hideInGraph": true
         },
         {
-          "freeze": true,
+          "freeze": false,
           "refKey": "defKey",
           "hideInGraph": false
         },
         {
-          "freeze": true,
+          "freeze": false,
           "refKey": "defName",
           "hideInGraph": false
         },
@@ -2059,6 +2146,51 @@
         {
           "freeze": false,
           "refKey": "extProps",
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr1",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr2",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr3",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr4",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr5",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr6",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr7",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr8",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr9",
+          "freeze": false,
           "hideInGraph": true
         }
       ],
@@ -2513,17 +2645,16 @@
       },
       "headers": [
         {
-          "freeze": false,
           "refKey": "hideInGraph",
           "hideInGraph": true
         },
         {
-          "freeze": true,
+          "freeze": false,
           "refKey": "defKey",
           "hideInGraph": false
         },
         {
-          "freeze": true,
+          "freeze": false,
           "refKey": "defName",
           "hideInGraph": false
         },
@@ -2590,6 +2721,51 @@
         {
           "freeze": false,
           "refKey": "extProps",
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr1",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr2",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr3",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr4",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr5",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr6",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr7",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr8",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr9",
+          "freeze": false,
           "hideInGraph": true
         }
       ],
@@ -2996,17 +3172,16 @@
       },
       "headers": [
         {
-          "freeze": false,
           "refKey": "hideInGraph",
           "hideInGraph": true
         },
         {
-          "freeze": true,
+          "freeze": false,
           "refKey": "defKey",
           "hideInGraph": false
         },
         {
-          "freeze": true,
+          "freeze": false,
           "refKey": "defName",
           "hideInGraph": false
         },
@@ -3073,6 +3248,51 @@
         {
           "freeze": false,
           "refKey": "extProps",
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr1",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr2",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr3",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr4",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr5",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr6",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr7",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr8",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr9",
+          "freeze": false,
           "hideInGraph": true
         }
       ],
@@ -3732,17 +3952,16 @@
       },
       "headers": [
         {
-          "freeze": false,
           "refKey": "hideInGraph",
           "hideInGraph": true
         },
         {
-          "freeze": true,
+          "freeze": false,
           "refKey": "defKey",
           "hideInGraph": false
         },
         {
-          "freeze": true,
+          "freeze": false,
           "refKey": "defName",
           "hideInGraph": false
         },
@@ -3809,6 +4028,51 @@
         {
           "freeze": false,
           "refKey": "extProps",
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr1",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr2",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr3",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr4",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr5",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr6",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr7",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr8",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr9",
+          "freeze": false,
           "hideInGraph": true
         }
       ],
@@ -3999,17 +4263,16 @@
       },
       "headers": [
         {
-          "freeze": false,
           "refKey": "hideInGraph",
           "hideInGraph": true
         },
         {
-          "freeze": true,
+          "freeze": false,
           "refKey": "defKey",
           "hideInGraph": false
         },
         {
-          "freeze": true,
+          "freeze": false,
           "refKey": "defName",
           "hideInGraph": false
         },
@@ -4076,6 +4339,51 @@
         {
           "freeze": false,
           "refKey": "extProps",
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr1",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr2",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr3",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr4",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr5",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr6",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr7",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr8",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr9",
+          "freeze": false,
           "hideInGraph": true
         }
       ],
@@ -4544,17 +4852,16 @@
       },
       "headers": [
         {
-          "freeze": false,
           "refKey": "hideInGraph",
           "hideInGraph": true
         },
         {
-          "freeze": true,
+          "freeze": false,
           "refKey": "defKey",
           "hideInGraph": false
         },
         {
-          "freeze": true,
+          "freeze": false,
           "refKey": "defName",
           "hideInGraph": false
         },
@@ -4621,6 +4928,51 @@
         {
           "freeze": false,
           "refKey": "extProps",
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr1",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr2",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr3",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr4",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr5",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr6",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr7",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr8",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr9",
+          "freeze": false,
           "hideInGraph": true
         }
       ],
@@ -5229,17 +5581,16 @@
       },
       "headers": [
         {
-          "freeze": false,
           "refKey": "hideInGraph",
           "hideInGraph": true
         },
         {
-          "freeze": true,
+          "freeze": false,
           "refKey": "defKey",
           "hideInGraph": false
         },
         {
-          "freeze": true,
+          "freeze": false,
           "refKey": "defName",
           "hideInGraph": false
         },
@@ -5306,6 +5657,51 @@
         {
           "freeze": false,
           "refKey": "extProps",
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr1",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr2",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr3",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr4",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr5",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr6",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr7",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr8",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr9",
+          "freeze": false,
           "hideInGraph": true
         }
       ],
@@ -5802,17 +6198,16 @@
       },
       "headers": [
         {
-          "freeze": false,
           "refKey": "hideInGraph",
           "hideInGraph": true
         },
         {
-          "freeze": true,
+          "freeze": false,
           "refKey": "defKey",
           "hideInGraph": false
         },
         {
-          "freeze": true,
+          "freeze": false,
           "refKey": "defName",
           "hideInGraph": false
         },
@@ -5879,6 +6274,51 @@
         {
           "freeze": false,
           "refKey": "extProps",
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr1",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr2",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr3",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr4",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr5",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr6",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr7",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr8",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr9",
+          "freeze": false,
           "hideInGraph": true
         }
       ],
@@ -6026,17 +6466,16 @@
       },
       "headers": [
         {
-          "freeze": false,
           "refKey": "hideInGraph",
           "hideInGraph": true
         },
         {
-          "freeze": true,
+          "freeze": false,
           "refKey": "defKey",
           "hideInGraph": false
         },
         {
-          "freeze": true,
+          "freeze": false,
           "refKey": "defName",
           "hideInGraph": false
         },
@@ -6103,6 +6542,51 @@
         {
           "freeze": false,
           "refKey": "extProps",
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr1",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr2",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr3",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr4",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr5",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr6",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr7",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr8",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr9",
+          "freeze": false,
           "hideInGraph": true
         }
       ],
@@ -6250,17 +6734,16 @@
       },
       "headers": [
         {
-          "freeze": false,
           "refKey": "hideInGraph",
           "hideInGraph": true
         },
         {
-          "freeze": true,
+          "freeze": false,
           "refKey": "defKey",
           "hideInGraph": false
         },
         {
-          "freeze": true,
+          "freeze": false,
           "refKey": "defName",
           "hideInGraph": false
         },
@@ -6327,6 +6810,51 @@
         {
           "freeze": false,
           "refKey": "extProps",
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr1",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr2",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr3",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr4",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr5",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr6",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr7",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr8",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr9",
+          "freeze": false,
           "hideInGraph": true
         }
       ],
@@ -6431,17 +6959,16 @@
       },
       "headers": [
         {
-          "freeze": false,
           "refKey": "hideInGraph",
           "hideInGraph": true
         },
         {
-          "freeze": true,
+          "freeze": false,
           "refKey": "defKey",
           "hideInGraph": false
         },
         {
-          "freeze": true,
+          "freeze": false,
           "refKey": "defName",
           "hideInGraph": false
         },
@@ -6508,6 +7035,51 @@
         {
           "freeze": false,
           "refKey": "extProps",
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr1",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr2",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr3",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr4",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr5",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr6",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr7",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr8",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr9",
+          "freeze": false,
           "hideInGraph": true
         }
       ],
@@ -6689,7 +7261,7 @@
           "uiHint": "642D2E0A-8846-4549-BE56-8C0473F26EDE"
         },
         {
-          "defKey": "ID_CARD",
+          "defKey": "CARD_NO",
           "defName": "证件号",
           "comment": "",
           "domain": "",
@@ -6781,9 +7353,9 @@
           "len": "",
           "scale": "",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoIncrement": false,
-          "defaultValue": "",
+          "defaultValue": "-1",
           "hideInGraph": false,
           "refDict": "",
           "attr1": "",
@@ -6809,9 +7381,9 @@
           "len": "",
           "scale": "",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoIncrement": false,
-          "defaultValue": "",
+          "defaultValue": "9999-12-31 23:59:59",
           "hideInGraph": false,
           "refDict": "",
           "attr1": "",
@@ -6825,34 +7397,6 @@
           "attr9": "",
           "id": "EECFC6AC-CA8C-4B27-9428-BFBF3A3A1646",
           "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098",
-          "extProps": {},
-          "uiHint": "642D2E0A-8846-4549-BE56-8C0473F26EDE"
-        },
-        {
-          "defKey": "STATUS",
-          "defName": "状态",
-          "comment": "",
-          "domain": "",
-          "type": "VARCHAR",
-          "len": 6,
-          "scale": "",
-          "primaryKey": false,
-          "notNull": false,
-          "autoIncrement": false,
-          "defaultValue": "",
-          "hideInGraph": false,
-          "refDict": "",
-          "attr1": "",
-          "attr2": "",
-          "attr3": "",
-          "attr4": "",
-          "attr5": "",
-          "attr6": "",
-          "attr7": "",
-          "attr8": "",
-          "attr9": "",
-          "id": "5A5BEB36-43D7-467D-B816-AAF0B8ACB0D5",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64",
           "extProps": {},
           "uiHint": "642D2E0A-8846-4549-BE56-8C0473F26EDE"
         },
@@ -6885,19 +7429,21 @@
           "uiHint": "642D2E0A-8846-4549-BE56-8C0473F26EDE"
         },
         {
-          "defKey": "REMARK",
-          "defName": "备注",
+          "defKey": "TENANT_ID",
+          "defName": "租户号",
           "comment": "",
-          "domain": "",
-          "type": "VARCHAR",
-          "len": 400,
+          "type": "",
+          "len": "",
           "scale": "",
           "primaryKey": false,
           "notNull": false,
           "autoIncrement": false,
           "defaultValue": "",
-          "hideInGraph": false,
+          "hideInGraph": true,
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
           "refDict": "",
+          "extProps": {},
+          "notes": {},
           "attr1": "",
           "attr2": "",
           "attr3": "",
@@ -6907,16 +7453,13 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "C408253C-F626-4321-BCCD-A8446125F919",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64",
-          "extProps": {},
-          "uiHint": "642D2E0A-8846-4549-BE56-8C0473F26EDE"
+          "id": "94AC095B-6CAA-47BC-9A9A-A90AC1E57E2E",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "REVISION",
           "defName": "乐观锁",
           "comment": "",
-          "domain": "6BC8F04B-6CFA-4995-98D3-318F5CDD774E",
           "type": "",
           "len": "",
           "scale": "",
@@ -6924,8 +7467,11 @@
           "notNull": false,
           "autoIncrement": false,
           "defaultValue": "0",
-          "hideInGraph": false,
+          "hideInGraph": true,
+          "domain": "6BC8F04B-6CFA-4995-98D3-318F5CDD774E",
           "refDict": "",
+          "extProps": {},
+          "notes": {},
           "attr1": "",
           "attr2": "",
           "attr3": "",
@@ -6935,17 +7481,95 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "E266C45E-4562-4E80-A1F6-40B840509EAE",
-          "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811",
-          "extProps": {},
-          "uiHint": "642D2E0A-8846-4549-BE56-8C0473F26EDE"
+          "id": "DC3D214D-CDEB-4302-94F2-34009EB3E4B4",
+          "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
         },
         {
           "defKey": "DELETED",
-          "defName": "逻辑删除 (0-未删除、不为0-删除)",
+          "defName": "逻辑删除标识",
           "comment": "",
-          "domain": "",
           "type": "BIGINT",
+          "len": "",
+          "scale": "",
+          "primaryKey": false,
+          "notNull": true,
+          "autoIncrement": false,
+          "defaultValue": "0",
+          "hideInGraph": false,
+          "refDict": "",
+          "extProps": {},
+          "notes": {},
+          "attr1": "",
+          "attr2": "",
+          "attr3": "",
+          "attr4": "",
+          "attr5": "",
+          "attr6": "",
+          "attr7": "",
+          "attr8": "",
+          "attr9": "",
+          "id": "3D73FA8B-CBE7-4ABB-A93A-A8BC8715088C",
+          "baseType": ""
+        },
+        {
+          "defKey": "FROZEN",
+          "defName": "是否冻结",
+          "comment": "",
+          "type": "VARCHAR",
+          "len": 6,
+          "scale": "",
+          "primaryKey": false,
+          "notNull": false,
+          "autoIncrement": false,
+          "defaultValue": "0000",
+          "hideInGraph": false,
+          "refDict": "",
+          "extProps": {},
+          "notes": {},
+          "attr1": "",
+          "attr2": "",
+          "attr3": "",
+          "attr4": "",
+          "attr5": "",
+          "attr6": "",
+          "attr7": "",
+          "attr8": "",
+          "attr9": "",
+          "id": "BC1A9727-D587-402A-A974-7EF41A91F1D1",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
+        },
+        {
+          "defKey": "REMARK",
+          "defName": "备注",
+          "comment": "",
+          "type": "VARCHAR",
+          "len": 800,
+          "scale": "",
+          "primaryKey": false,
+          "notNull": false,
+          "autoIncrement": false,
+          "defaultValue": "",
+          "hideInGraph": false,
+          "refDict": "",
+          "extProps": {},
+          "notes": {},
+          "attr1": "",
+          "attr2": "",
+          "attr3": "",
+          "attr4": "",
+          "attr5": "",
+          "attr6": "",
+          "attr7": "",
+          "attr8": "",
+          "attr9": "",
+          "id": "4C6F7496-D3E2-4342-A1B1-72D80FA45685",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
+        },
+        {
+          "defKey": "SORT",
+          "defName": "排序字段",
+          "comment": "",
+          "type": "",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -6953,7 +7577,10 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
+          "domain": "6BC8F04B-6CFA-4995-98D3-318F5CDD774E",
           "refDict": "",
+          "extProps": {},
+          "notes": {},
           "attr1": "",
           "attr2": "",
           "attr3": "",
@@ -6963,81 +7590,24 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "02C87868-6DCA-499A-8226-2E4D4AF8822A",
-          "baseType": "",
-          "extProps": {},
-          "uiHint": "642D2E0A-8846-4549-BE56-8C0473F26EDE"
+          "id": "BD54844E-7384-49CB-9D95-BD1B626E70FF",
+          "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
         },
         {
-          "defKey": "POST_ID",
-          "defName": "创建人岗位ID",
-          "comment": "",
-          "domain": "",
-          "type": "VARCHAR",
-          "len": 40,
-          "scale": "",
-          "primaryKey": false,
-          "notNull": false,
-          "autoIncrement": false,
-          "defaultValue": "",
-          "hideInGraph": false,
-          "refDict": "",
-          "attr1": "",
-          "attr2": "",
-          "attr3": "",
-          "attr4": "",
-          "attr5": "",
-          "attr6": "",
-          "attr7": "",
-          "attr8": "",
-          "attr9": "",
-          "id": "233CC052-7115-41EF-AF29-8922C441E0A5",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64",
-          "extProps": {},
-          "uiHint": "642D2E0A-8846-4549-BE56-8C0473F26EDE"
-        },
-        {
-          "defKey": "ORG_ID",
-          "defName": "创建人部门ID",
-          "comment": "",
-          "domain": "",
-          "type": "VARCHAR",
-          "len": 40,
-          "scale": "",
-          "primaryKey": false,
-          "notNull": false,
-          "autoIncrement": false,
-          "defaultValue": "",
-          "hideInGraph": false,
-          "refDict": "",
-          "attr1": "",
-          "attr2": "",
-          "attr3": "",
-          "attr4": "",
-          "attr5": "",
-          "attr6": "",
-          "attr7": "",
-          "attr8": "",
-          "attr9": "",
-          "id": "83A332ED-F015-45A6-8DB7-46902CFF836B",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64",
-          "extProps": {},
-          "uiHint": "642D2E0A-8846-4549-BE56-8C0473F26EDE"
-        },
-        {
-          "defKey": "CREATE_ID",
+          "defKey": "CREATED_ID",
           "defName": "创建人ID",
           "comment": "",
-          "domain": "",
           "type": "VARCHAR",
           "len": 40,
           "scale": "",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
           "refDict": "",
+          "extProps": {},
+          "notes": {},
           "attr1": "",
           "attr2": "",
           "attr3": "",
@@ -7047,16 +7617,13 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "40F39D6F-533F-4976-953D-E1FEB716CB9E",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64",
-          "extProps": {},
-          "uiHint": "642D2E0A-8846-4549-BE56-8C0473F26EDE"
+          "id": "DF3EF67D-1CB4-494B-8EC7-ED6CDFB097D1",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "CREATE_BY",
           "defName": "创建人",
           "comment": "",
-          "domain": "",
           "type": "VARCHAR",
           "len": 40,
           "scale": "",
@@ -7066,6 +7633,8 @@
           "defaultValue": "",
           "hideInGraph": false,
           "refDict": "",
+          "extProps": {},
+          "notes": {},
           "attr1": "",
           "attr2": "",
           "attr3": "",
@@ -7075,25 +7644,25 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "CEEFEE73-6B36-4A15-B2A3-D155C192D558",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64",
-          "extProps": {},
-          "uiHint": "642D2E0A-8846-4549-BE56-8C0473F26EDE"
+          "id": "B0B70C55-E86E-4215-8DA7-9E9BC53404C4",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
-          "defKey": "GMT_CREATE",
+          "defKey": "UTC_CREATE",
           "defName": "创建时间",
           "comment": "",
-          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
           "type": "",
           "len": "",
           "scale": "",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoIncrement": false,
-          "defaultValue": "",
+          "defaultValue": "CURRENT_TIMESTAMP",
           "hideInGraph": false,
+          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
           "refDict": "",
+          "extProps": {},
+          "notes": {},
           "attr1": "",
           "attr2": "",
           "attr3": "",
@@ -7103,72 +7672,13 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "30E03C3F-72FE-418B-8F79-D7BE869231E8",
-          "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098",
-          "extProps": {},
-          "uiHint": "642D2E0A-8846-4549-BE56-8C0473F26EDE"
+          "id": "DC5C41F3-446A-4607-A7DC-FF8AA302DC94",
+          "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         },
         {
           "defKey": "MODIFY_ID",
           "defName": "修改人ID",
           "comment": "",
-          "domain": "",
-          "type": "VARCHAR",
-          "len": 40,
-          "scale": "",
-          "primaryKey": false,
-          "notNull": false,
-          "autoIncrement": false,
-          "defaultValue": "",
-          "hideInGraph": false,
-          "refDict": "",
-          "attr1": "",
-          "attr2": "",
-          "attr3": "",
-          "attr4": "",
-          "attr5": "",
-          "attr6": "",
-          "attr7": "",
-          "attr8": "",
-          "attr9": "",
-          "id": "59EBEBF5-4456-4847-8F22-3481B1696CA4",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64",
-          "extProps": {},
-          "uiHint": "642D2E0A-8846-4549-BE56-8C0473F26EDE"
-        },
-        {
-          "defKey": "MODIFY_BY",
-          "defName": "更新人",
-          "comment": "",
-          "domain": "",
-          "type": "VARCHAR",
-          "len": 40,
-          "scale": "",
-          "primaryKey": false,
-          "notNull": false,
-          "autoIncrement": false,
-          "defaultValue": "",
-          "hideInGraph": false,
-          "refDict": "",
-          "attr1": "",
-          "attr2": "",
-          "attr3": "",
-          "attr4": "",
-          "attr5": "",
-          "attr6": "",
-          "attr7": "",
-          "attr8": "",
-          "attr9": "",
-          "id": "80B9319F-F226-41F0-8F6B-79D32B08B15F",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64",
-          "extProps": {},
-          "uiHint": "642D2E0A-8846-4549-BE56-8C0473F26EDE"
-        },
-        {
-          "defKey": "GMT_MODIFY",
-          "defName": "更新时间",
-          "comment": "",
-          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
           "type": "",
           "len": "",
           "scale": "",
@@ -7177,7 +7687,10 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
+          "domain": "9092C4E0-1A54-4859-ABBB-5B62DBC27573",
           "refDict": "",
+          "extProps": {},
+          "notes": {},
           "attr1": "",
           "attr2": "",
           "attr3": "",
@@ -7187,13 +7700,86 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "BC3148D2-8F53-472D-AE3B-35C39B06CB46",
-          "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098",
+          "id": "7020D4D2-FC01-458F-992A-5270AC97B3F6",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
+        },
+        {
+          "defKey": "MODIFY_BY",
+          "defName": "修改人",
+          "comment": "",
+          "type": "VARCHAR",
+          "len": 40,
+          "scale": "",
+          "primaryKey": false,
+          "notNull": false,
+          "autoIncrement": false,
+          "defaultValue": "",
+          "hideInGraph": false,
+          "refDict": "",
           "extProps": {},
-          "uiHint": "642D2E0A-8846-4549-BE56-8C0473F26EDE"
+          "notes": {},
+          "attr1": "",
+          "attr2": "",
+          "attr3": "",
+          "attr4": "",
+          "attr5": "",
+          "attr6": "",
+          "attr7": "",
+          "attr8": "",
+          "attr9": "",
+          "id": "0CDFCD3A-6249-4EF6-908A-BFC5EBECD854",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
+        },
+        {
+          "defKey": "UTC_MODIFY",
+          "defName": "修改时间",
+          "comment": "",
+          "type": "",
+          "len": "",
+          "scale": "",
+          "primaryKey": false,
+          "notNull": false,
+          "autoIncrement": false,
+          "defaultValue": "CURRENT_TIMESTAMP",
+          "hideInGraph": false,
+          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
+          "refDict": "",
+          "extProps": {},
+          "notes": {},
+          "attr1": "",
+          "attr2": "",
+          "attr3": "",
+          "attr4": "",
+          "attr5": "",
+          "attr6": "",
+          "attr7": "",
+          "attr8": "",
+          "attr9": "",
+          "id": "EE021691-07F7-41D4-B796-020B34AD3483",
+          "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         }
       ],
-      "indexes": [],
+      "indexes": [
+        {
+          "defKey": "UIX_SYS_TENANT_NAMECODE",
+          "defName": null,
+          "unique": true,
+          "comment": "",
+          "fields": [
+            {
+              "fieldDefKey": "77BF6525-E398-440F-ACAA-018E0BD96AC3",
+              "ascOrDesc": "A",
+              "id": "39B1C413-0050-43AD-9405-E220098159A3"
+            },
+            {
+              "fieldDefKey": "C8F6A43E-903C-4CC9-9635-A417EAB9DD61",
+              "ascOrDesc": "A",
+              "id": "D0566385-E461-44B0-A58E-FB0B308BE435"
+            }
+          ],
+          "id": "28CF916F-5482-4F49-9950-557EA5ED3685"
+        }
+      ],
       "type": "P",
       "sysProps": {
         "nameTemplate": "{defKey}[{defName}]"
@@ -7280,7 +7866,8 @@
           "hideInGraph": true
         }
       ],
-      "correlations": []
+      "correlations": [],
+      "notes": {}
     },
     {
       "id": "7E164350-99C6-4F19-AD1E-DA330688E382",
@@ -7381,17 +7968,16 @@
       },
       "headers": [
         {
-          "freeze": false,
           "refKey": "hideInGraph",
           "hideInGraph": true
         },
         {
-          "freeze": true,
+          "freeze": false,
           "refKey": "defKey",
           "hideInGraph": false
         },
         {
-          "freeze": true,
+          "freeze": false,
           "refKey": "defName",
           "hideInGraph": false
         },
@@ -7458,6 +8044,51 @@
         {
           "freeze": false,
           "refKey": "extProps",
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr1",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr2",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr3",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr4",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr5",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr6",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr7",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr8",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr9",
+          "freeze": false,
           "hideInGraph": true
         }
       ],
@@ -7867,7 +8498,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "CB2CEBC5-90CB-4509-ABF5-3799FFFD94D6",
+          "id": "DEFA7804-CE18-453E-996E-C2D96625E2F0",
           "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
@@ -7895,20 +8526,20 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "B44700D3-A957-4DF7-B3BE-895633D4604F",
+          "id": "22803175-B0D7-4B9B-BB64-DA74A0F02E70",
           "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
         },
         {
           "defKey": "DELETED",
           "defName": "逻辑删除标识",
-          "comment": "0",
+          "comment": "",
           "type": "BIGINT",
           "len": "",
           "scale": "",
           "primaryKey": false,
           "notNull": true,
           "autoIncrement": false,
-          "defaultValue": "",
+          "defaultValue": "0",
           "hideInGraph": false,
           "refDict": "",
           "extProps": {},
@@ -7922,7 +8553,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "7B42C781-882B-4065-B6D3-382F08ED7D48",
+          "id": "6361B098-E1B3-4FCB-B5A7-24C7E8438164",
           "baseType": ""
         },
         {
@@ -7933,7 +8564,7 @@
           "len": 6,
           "scale": "",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoIncrement": false,
           "defaultValue": "0000",
           "hideInGraph": false,
@@ -7949,7 +8580,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "12251529-522F-4D97-968A-8FFE61E7601D",
+          "id": "016C2D44-645C-4213-85B9-3F4404A4BDBC",
           "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
@@ -7976,7 +8607,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "9B73C671-A54E-4CA0-AD68-0F9460A3F6E2",
+          "id": "67118F1F-9C3F-496C-9FA5-6E4ECB801AB4",
           "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
@@ -7989,7 +8620,7 @@
           "primaryKey": false,
           "notNull": false,
           "autoIncrement": false,
-          "defaultValue": "0",
+          "defaultValue": "",
           "hideInGraph": false,
           "domain": "6BC8F04B-6CFA-4995-98D3-318F5CDD774E",
           "refDict": "",
@@ -8004,7 +8635,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "BE6264A1-CEE7-4107-9AB7-F622FDB7F937",
+          "id": "86D59F3D-4E5C-4884-89C4-BCC46724CA88",
           "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
         },
         {
@@ -8015,7 +8646,7 @@
           "len": 40,
           "scale": "",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
@@ -8031,7 +8662,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "056D5A8F-9F7A-430A-8ECC-A450CC472146",
+          "id": "18156C2A-05AF-405B-9837-FEF786B71E08",
           "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
@@ -8058,7 +8689,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "57155C6E-13A7-4E71-9B98-7A6DEFEF3758",
+          "id": "27A74682-25A4-41F1-B3F1-C0D2F40317FC",
           "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
@@ -8069,7 +8700,7 @@
           "len": "",
           "scale": "",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoIncrement": false,
           "defaultValue": "CURRENT_TIMESTAMP",
           "hideInGraph": false,
@@ -8086,22 +8717,22 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "E095EC2B-7BA6-4D5F-B823-2508FA6F10EF",
+          "id": "9BC96E8E-E8C6-489E-A24F-14044EBE707C",
           "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         },
         {
           "defKey": "MODIFY_ID",
           "defName": "修改人ID",
           "comment": "",
-          "type": "VARCHAR",
-          "len": 40,
+          "type": "",
+          "len": "",
           "scale": "",
           "primaryKey": false,
           "notNull": false,
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "",
+          "domain": "9092C4E0-1A54-4859-ABBB-5B62DBC27573",
           "refDict": "",
           "extProps": {},
           "notes": {},
@@ -8114,7 +8745,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "987DCA17-AE8F-4E86-9341-CD631C66F47F",
+          "id": "0E6531BB-3B13-4B56-8849-FCD763669592",
           "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
@@ -8141,7 +8772,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "489DD3F3-E0D8-460B-B58E-2CD08BB0985B",
+          "id": "1239915D-1446-4F46-B252-2A226AFE755C",
           "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
@@ -8169,7 +8800,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "E119DFAD-9A8E-45AF-99B9-2B7A65CE8FB0",
+          "id": "69F99223-7621-40B0-9B65-D94D6641F655",
           "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         }
       ],
@@ -8180,17 +8811,16 @@
       },
       "headers": [
         {
-          "freeze": false,
           "refKey": "hideInGraph",
           "hideInGraph": true
         },
         {
-          "freeze": true,
+          "freeze": false,
           "refKey": "defKey",
           "hideInGraph": false
         },
         {
-          "freeze": true,
+          "freeze": false,
           "refKey": "defName",
           "hideInGraph": false
         },
@@ -8257,6 +8887,51 @@
         {
           "freeze": false,
           "refKey": "extProps",
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr1",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr2",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr3",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr4",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr5",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr6",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr7",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr8",
+          "freeze": false,
+          "hideInGraph": true
+        },
+        {
+          "refKey": "attr9",
+          "freeze": false,
           "hideInGraph": true
         }
       ],

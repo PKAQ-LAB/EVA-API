@@ -11,7 +11,7 @@ import org.apache.ibatis.type.Alias;
 
 /**
  * 租户角色关系表
- * @author 茂茂AdamEve
+ * @author PKAQ
  */
 @Data
 @Alias("tenantUser")

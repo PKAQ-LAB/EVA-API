@@ -8,7 +8,7 @@ import org.pkaq.core.mvc.bo.PageBo;
 /**
  * 租户管理-列表-请求参数
  *
- * @author 茂茂AdamEve
+ * @author PKAQ
  */
 @Schema(description = "租户管理-列表-请求参数")
 @Data
@@ -21,7 +21,7 @@ public class TenantQueryBo extends PageBo {
     private String code;
 
     @Schema(description = "证件号")
-    private String idCard;
+    private String cardNo;
 
     @Schema(description = "联系人")
     private String contactName;

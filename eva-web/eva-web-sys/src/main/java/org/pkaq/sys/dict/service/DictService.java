@@ -10,7 +10,7 @@ import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.log.annotation.BizLog;
 import org.pkaq.core.log.base.BizLogEnum;
 import org.pkaq.core.mybatis.mvc.service.StdService;
-import org.pkaq.sys.SYSCode;
+import org.pkaq.sys.SysCodeEnum;
 import org.pkaq.sys.dict.bo.DictAoeBo;
 import org.pkaq.sys.dict.cache.DictCacheHelper;
 import org.pkaq.sys.dict.convert.DictConvert;
@@ -182,7 +182,7 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
                     dictCacheHelper.remove(code);
                 }
             } else {
-                SYSCode.DICT_CODE_EXISTS.newException();
+                SysCodeEnum.DICT_CODE_EXISTS.newException();
             }
         }
     }

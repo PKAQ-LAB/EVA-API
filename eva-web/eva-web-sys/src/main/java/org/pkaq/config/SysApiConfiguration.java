@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Profile;
  * swagger配置类
  *
  * @author PKAQ
- * @Profile()
  */
 @Configuration
 @Profile({"!prod"})

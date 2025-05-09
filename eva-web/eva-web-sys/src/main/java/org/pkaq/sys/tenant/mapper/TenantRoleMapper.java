@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 /**
  * 租户角色管理
  *
- * @author 茂茂AdamEve
+ * @author PKAQ
  */
 @Mapper
 @Repository
@@ -19,7 +19,6 @@ public interface TenantRoleMapper extends BaseMapper<TenantRoleEntity> {
 
    /**
     * 根据角色ID，删除拥有该角色的租户自行创建的角色中的模块资源脏数据
-    * @param id 角色id
     */
    void removeRedundantModulesForTenantByRoleId(@Param("id") String roleId);
 

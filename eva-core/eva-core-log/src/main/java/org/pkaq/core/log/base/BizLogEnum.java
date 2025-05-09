@@ -32,7 +32,7 @@ public enum BizLogEnum implements BizCode {
     /**
      * 新增或更新操作<br/>
      **/
-    CREATE_UPDATE("新增/更新", "AOE"),
+    EDIT("编辑", "AOE"),
     /**
      * 导入
      */
@@ -45,9 +45,9 @@ public enum BizLogEnum implements BizCode {
     /**
      * 名称
      */
-    private String msg;
+    private final String msg;
     /**
      * 索引
      */
-    private String code;
+    private final String code;
 }

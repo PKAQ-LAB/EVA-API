@@ -27,10 +27,16 @@ processResources {
 
 dependencies {
 
-    api     project(":eva-core:eva-core-common"),
-            project(":eva-core:eva-core-data-mybatis"),
-            project(":eva-web:eva-web-sys"),
-            libs.mysql
+    implementation     project(":eva-core:eva-core-common"),
+                       project(":eva-core:eva-core-data-mybatis"),
+                       project(":eva-web:eva-web-sys"),
+                       libs.mysql
+
+    implementation(libs.web) {
+        exclude module: 'spring-boot-starter-tomcat'
+    }
+
+    implementation libs.undertow
 
     implementation libs.springdocui,
                    libs.prometheus,

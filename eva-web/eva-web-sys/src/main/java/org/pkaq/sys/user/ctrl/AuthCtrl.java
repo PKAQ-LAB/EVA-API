@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.enums.BizCodeEnum;
+import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.sys.dict.service.DictService;
@@ -22,26 +23,25 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-public class AuthCtrl {
+public class AuthCtrl extends Ctrl {
     private final UserService userService;
     private final DictService dictService;
 
     @GetMapping("/fetchMenus")
     @Operation(summary = "获取当前登录用户的信息(菜单.权限.消息)")
     public Response<Object> fetchMenus() {
-
         try {
             final var userId = ThreadUserHelper.getUserId();
 
-            return new Response<>().success(this.userService.fetch(userId));
+            return success(this.userService.fetch(userId));
         } catch (Exception e) {
-            return new Response<>().failure(BizCodeEnum.SERVER_ERROR);
+            return failure(BizCodeEnum.SERVER_ERROR);
         }
     }
 
     @GetMapping("/fetchDicts")
     @Operation(summary = "获取字典信息")
     public Response<Object> fetchDicts() {
-        return new Response<>().success(dictService.fetchDicts());
+        return success(dictService.fetchDicts());
     }
 }

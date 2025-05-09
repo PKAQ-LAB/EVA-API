@@ -25,9 +25,6 @@ public class UserAoeBo implements Bo {
     @Schema(description = "编号")
     private String code;
 
-    @Schema(description = "所属部门")
-    private String deptId;
-
     @Schema(description = "电话")
     private String tel;
 
@@ -55,8 +52,11 @@ public class UserAoeBo implements Bo {
     @Schema(description = "最后登录时间")
     private Date lastLogin;
 
-    @Schema(description = "所属岗位")
+    @Schema(description = "所属岗位ID")
     private String postId;
+
+    @Schema(description = "所属部门")
+    private String deptId;
 
     @Schema(description = "用户拥有的角色")
     private List<RoleEntity> roles = new ArrayList<>();

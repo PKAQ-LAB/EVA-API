@@ -13,7 +13,7 @@ import java.util.Date;
 /**
  * 租户管理-详情-请求参数
  *
- * @author 茂茂AdamEve
+ * @author PKAQ
  */
 @Schema(description = "租户管理-详情-请求参数")
 @Data

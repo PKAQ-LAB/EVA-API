@@ -9,7 +9,7 @@ import lombok.EqualsAndHashCode;
 /**
  * 租户管理-修改租户状态-请求参数
  *
- * @author 茂茂AdamEve
+ * @author PKAQ
  */
 @Schema(description = "租户管理-修改租户状态-请求参数")
 @Data
@@ -21,5 +21,5 @@ public class TenantStatusBo {
     @Schema(description = "状态")
     @NotBlank
     @Size(max = 6)
-    private String status;
+    private String frozen;
 }

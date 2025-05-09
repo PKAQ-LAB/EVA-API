@@ -21,27 +21,18 @@ public interface UserMapper extends BaseMapper<UserEntity> {
 
     /**
      * 查询用户信息
-     *
-     * @param user
-     * @param page
-     * @return
      */
     @Ignore
     IPage<UserListVo> getUerWithRoleId(IPage page, @Param("user") UserAoeBo user);
 
     /**
      * 根据用户account 获取包含权限列表的用户信息
-     *
-     * @return
      */
     @Ignore
     UserEntity getUserWithRole(UserEntity user);
 
     /**
      * 根据用户userId 获取包含权限列表 菜单列表的用户信息
-     *
-     * @param userId
-     * @return
      */
     @Ignore
     UserEntity getUserWithModuleAndRoleById(String userId);

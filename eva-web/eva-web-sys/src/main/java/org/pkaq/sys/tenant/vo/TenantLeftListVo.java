@@ -10,7 +10,7 @@ import org.pkaq.core.mvc.vo.Vo;
 /**
  * 租户管理列表视图对象
  *
- * @author 茂茂AdamEve
+ * @author PKAQ
  */
 @Schema(description = "角色/用户/部门/岗位管理左侧租户列表视图对象")
 @Data

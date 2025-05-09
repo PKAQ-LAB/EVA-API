@@ -1,9 +1,15 @@
 package org.pkaq.sys;
 
 
+import lombok.Getter;
 import org.pkaq.core.exception.BizAssert;
 
-public enum SYSCode implements BizAssert {
+/**
+ * @author PKAQ
+ */
+
+@Getter
+public enum SysCodeEnum implements BizAssert {
     /**
      * 用户相关 410x
      **/
@@ -52,28 +58,20 @@ public enum SYSCode implements BizAssert {
     POST_IMPORT_LEVE_NOT_FIND("[{0}]岗位职级不存在", "0x001-0702-0003"),
     POST_IMPORT_DUPLICATE_CODE("[{0}]岗位编码已存在", "0x001-0702-0004"),
 
-
     DEPT_IMPORT_TITLE_NOT_FIND("[{0}]部门名称不存在", "0x001-0703-0001"),
     DEPT_IMPORT_CODE_NOT_FIND("[{0}]部门编码不存在", "0x001-0703-0002"),
 
     DEPT_IMPORT_DUPLICATE_CODE("[{0}]部门编码已存在", "0x001-0703-0003"),
     MODULE_RESOURCE_COED_EXIST("资源code已存在", "0x001-0701-0010"),
     TENANT_COED_NAME_EXIST("租户code/名称已存在", "0x001-0701-0011"),
+
     TENANT_AUTH_COUNT_MORE("用户超出授权数量", "0x001-0701-0012");
 
-    private String msg;
-    private String code;
+    private final String msg;
+    private final String code;
 
-    private SYSCode(String msg, String code) {
+    SysCodeEnum(String msg, String code) {
         this.msg = msg;
         this.code = code;
-    }
-
-    public String getMsg() {
-        return this.msg;
-    }
-
-    public String getCode() {
-        return this.code;
     }
 }

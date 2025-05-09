@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.pkaq.core.annotation.Ignore;
-import org.pkaq.core.mvc.vo.PageVo;
 import org.pkaq.core.mybatis.util.Page;
 import org.pkaq.sys.tenant.bo.TenantQueryBo;
 import org.pkaq.sys.tenant.entity.TenantEntity;
@@ -15,7 +14,7 @@ import org.springframework.stereotype.Repository;
 /**
  * 租户管理
  *
- * @author 茂茂AdamEve
+ * @author PKAQ
  */
 @Mapper
 @Repository
@@ -23,16 +22,11 @@ import org.springframework.stereotype.Repository;
 public interface TenantMapper extends BaseMapper<TenantEntity> {
     /**
      * 分页查询租户
-     *
-     * @param pagination
-     * @param queryBo
-     * @return
      */
     IPage<TenantListVo> listPage(Page<TenantListVo> pagination, @Param("q") TenantQueryBo queryBo);
 
     /**
      * 锁定超出数量的用户
-     *
      * @param id    租户id
      * @param count 授权数量
      */

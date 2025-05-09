@@ -11,20 +11,20 @@ import org.pkaq.core.mybatis.mvc.entity.StdTreeEntity;
 import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.core.mybatis.util.Page;
 import org.pkaq.core.mybatis.util.TreeHelper;
-import org.pkaq.sys.SYSCode;
+import org.pkaq.core.upload.provider.FileUploadProvider;
+import org.pkaq.sys.SysCodeEnum;
 import org.pkaq.sys.module.entity.ModuleEntity;
 import org.pkaq.sys.module.mapper.ModuleMapper;
 import org.pkaq.sys.role.entity.RoleUserEntity;
 import org.pkaq.sys.role.mapper.RoleUserMapper;
+import org.pkaq.sys.user.bo.RePwdBo;
 import org.pkaq.sys.user.bo.UserAoeBo;
 import org.pkaq.sys.user.convert.UserConvert;
 import org.pkaq.sys.user.entity.UserEntity;
 import org.pkaq.sys.user.mapper.UserMapper;
-import org.pkaq.sys.user.vo.PasswordVO;
 import org.pkaq.sys.user.vo.UserListVo;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -46,16 +46,13 @@ public class UserService extends StdService<UserMapper, UserEntity> {
 
     /**
      * 修改密码
-     *
-     * @param passwordVO
-     * @return
      */
-    public boolean repwd(PasswordVO passwordVO) {
+    public boolean repwd(RePwdBo rePwdBo) {
         //TODO 获取用户ID
-        UserEntity userEntity = this.mapper.selectById(passwordVO.getUserId());
+        UserEntity userEntity = this.mapper.selectById(rePwdBo.getUserId());
 
-        if (BCrypt.checkpw(passwordVO.getOriginpassword(), userEntity.getPassword())) {
-            userEntity.setPassword(BCrypt.hashpw(passwordVO.getNewpassword()));
+        if (BCrypt.checkpw(rePwdBo.getOriginpassword(), userEntity.getPassword())) {
+            userEntity.setPassword(BCrypt.hashpw(rePwdBo.getNewpassword()));
             this.mapper.updateById(userEntity);
             return true;
         }
@@ -64,9 +61,6 @@ public class UserService extends StdService<UserMapper, UserEntity> {
 
     /**
      * 查询用户列表
-     *
-     * @param userEntity
-     * @return
      */
     public IPage<UserListVo> listUser(UserAoeBo userEntity, Integer page, Integer size) {
         page = null != page ? page : 1;
@@ -81,9 +75,6 @@ public class UserService extends StdService<UserMapper, UserEntity> {
 
     /**
      * 查询用户列表 无分页
-     *
-     * @param userEntity
-     * @return
      */
     public List<UserEntity> listUser(UserEntity userEntity) {
         return this.list(userEntity);
@@ -91,11 +82,8 @@ public class UserService extends StdService<UserMapper, UserEntity> {
 
     /**
      * 解锁/锁定用户
-     *
-     * @param ids
-     * @param lock
      */
-    public void updateUser(ArrayList<String> ids, String lock) {
+    public void updateUser(List<String> ids, String lock) {
         UserEntity user = new UserEntity();
         user.setFrozen(lock);
         QueryWrapper<UserEntity> wrapper = new QueryWrapper<>();
@@ -120,7 +108,6 @@ public class UserService extends StdService<UserMapper, UserEntity> {
      * 新增/编辑用户信息
      *
      * @param user 用户对象
-     * @return 用户列表
      */
     public void saveUser(UserAoeBo user) {
         // 用户资料发生修改后 重新生成密码
@@ -165,9 +152,6 @@ public class UserService extends StdService<UserMapper, UserEntity> {
 
     /**
      * 校验账号是否唯一
-     *
-     * @param user
-     * @return
      */
     public boolean checkUnique(UserAoeBo user) {
         QueryWrapper<UserEntity> entityWrapper = new QueryWrapper<>();
@@ -185,22 +169,19 @@ public class UserService extends StdService<UserMapper, UserEntity> {
      * 获取当前登录用户的信息(菜单.权限.消息
      *
      * @param uid 用户ID
-     * @return
      */
     public List<StdTreeEntity> fetch(String uid) {
 
         List<ModuleEntity> moduleEntity = this.moduleMapper.getRoleModuleByUserId(uid);
         List<StdTreeEntity> treeModule = new TreeHelper().bulid(moduleEntity);
 
-        SYSCode.PERMISSION_EXPIRED.assertNotBlank(treeModule);
+        SysCodeEnum.PERMISSION_EXPIRED.assertNotBlank(treeModule);
 
         return treeModule;
     }
 
     /**
      * 保存用户权限
-     *
-     * @param user
      */
     public void saveRoles(UserAoeBo user) {
         // 保存权限

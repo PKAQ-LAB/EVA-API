@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 /**
  * 租户管理-列表-授权参数
  *
- * @author 茂茂AdamEve
+ * @author PKAQ
  */
 @Schema(description = "租户管理-列表-授权参数")
 @Data

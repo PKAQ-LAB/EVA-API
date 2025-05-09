@@ -3,12 +3,8 @@ package org.pkaq.sys.user.vo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.pkaq.core.mvc.bo.Bo;
-import org.pkaq.core.mybatis.mvc.entity.StdTreeEntity;
-import org.pkaq.sys.role.entity.RoleEntity;
 
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 用户管理实体类
@@ -25,9 +21,6 @@ public class UserListVo implements Bo {
     @Schema(description = "编号")
     private String code;
 
-    @Schema(description = "所属部门")
-    private String deptId;
-
     @Schema(description = "电话")
     private String tel;
 
@@ -36,9 +29,6 @@ public class UserListVo implements Bo {
 
     @Schema(description = "账号")
     private String account;
-
-    @Schema(description = "密码")
-    private String password;
 
     @Schema(description = "用户头像")
     private String avatar;
@@ -57,5 +47,9 @@ public class UserListVo implements Bo {
 
     @Schema(description = "所属岗位")
     private String postId;
+
+
+    @Schema(description = "所属部门")
+    private String deptId;
 
 }

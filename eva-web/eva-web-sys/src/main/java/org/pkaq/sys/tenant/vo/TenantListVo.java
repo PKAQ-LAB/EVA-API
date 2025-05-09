@@ -12,7 +12,7 @@ import java.util.Date;
 /**
  * 租户管理列表视图对象
  *
- * @author 茂茂AdamEve
+ * @author PKAQ
  */
 @Schema(description = "租户管理列表视图对象")
 @Data

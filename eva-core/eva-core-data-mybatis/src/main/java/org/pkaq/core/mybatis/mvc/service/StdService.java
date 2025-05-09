@@ -69,7 +69,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
      *
      * @param entity 实体类对象
      */
-    @BizLog(operateType = BizLogEnum.CREATE_UPDATE, description = "保存记录[{0}]", args = {"param:0.id"})
+    @BizLog(operateType = BizLogEnum.EDIT, description = "保存记录[{0}]", args = {"param:0.id"})
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void merge(T entity) {
         if (entity.getId() == null) {
@@ -84,7 +84,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
      * @param entity
      * @param wrapper
      */
-    @BizLog(operateType = BizLogEnum.CREATE_UPDATE, description = "保存记录[{0}]", args = {"param:0.id"})
+    @BizLog(operateType = BizLogEnum.EDIT, description = "保存记录[{0}]", args = {"param:0.id"})
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void merge(T entity, Wrapper<T> wrapper) {
         if (entity.getId() == null) {
