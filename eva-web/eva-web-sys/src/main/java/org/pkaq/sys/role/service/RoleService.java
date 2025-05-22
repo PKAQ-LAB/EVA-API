@@ -3,10 +3,13 @@ package org.pkaq.sys.role.service;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.text.CharSequenceUtil;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.mybatis.enums.FrozenEnumm;
 import org.pkaq.core.mybatis.mvc.service.StdService;
@@ -14,6 +17,10 @@ import org.pkaq.core.mybatis.util.Page;
 import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.sys.module.entity.ModuleEntity;
 import org.pkaq.sys.module.mapper.ModuleMapper;
+import org.pkaq.sys.role.bo.RoleAoeBo;
+import org.pkaq.sys.role.bo.RoleQueryBo;
+import org.pkaq.sys.role.bo.RoleUserAoeBo;
+import org.pkaq.sys.role.convert.RoleConvert;
 import org.pkaq.sys.role.entity.RoleEntity;
 import org.pkaq.sys.role.entity.RoleModuleEntity;
 import org.pkaq.sys.role.entity.RoleUserEntity;
@@ -21,6 +28,7 @@ import org.pkaq.sys.role.mapper.RoleConfigMapper;
 import org.pkaq.sys.role.mapper.RoleMapper;
 import org.pkaq.sys.role.mapper.RoleModuleMapper;
 import org.pkaq.sys.role.mapper.RoleUserMapper;
+import org.pkaq.sys.role.vo.RoleListVo;
 import org.pkaq.sys.user.entity.UserEntity;
 import org.pkaq.sys.user.service.UserService;
 import org.springframework.stereotype.Service;
@@ -48,44 +56,39 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
 
     private final UserService userService;
 
+    private final RoleConvert roleConvert;
+
     /**
      * 查询角色列表
-     *
-     * @param roleEntity
-     * @return
      */
-    public List<RoleEntity> listRole(RoleEntity roleEntity) {
+    public List<RoleListVo> listRole(RoleQueryBo queryBo) {
         // 查询条件
-        QueryWrapper<RoleEntity> wrapper = new QueryWrapper<>(roleEntity);
+        QueryWrapper<RoleEntity> wrapper = new QueryWrapper<>(roleConvert.queryBoToEntity(queryBo));
         // 分页条件
-        return this.mapper.selectList(wrapper);
+        return this.roleConvert.listToVoList(this.mapper.selectList(wrapper));
     }
 
     /**
      * 查询角色列表
-     *
-     * @param roleEntity
-     * @return
      */
-    public IPage<RoleEntity> listRole(RoleEntity roleEntity, Integer page, Integer pageSize) {
+    public IPage<RoleListVo> listRole(RoleQueryBo queryBo, Integer page, Integer pageSize) {
 
         page = null != page ? page : 1;
-        pageSize = null != pageSize ? pageSize : 10;
+        pageSize = null != pageSize ? pageSize : 30;
         // 查询条件
-        QueryWrapper<RoleEntity> wrapper = new QueryWrapper<>(roleEntity);
+
+        QueryWrapper<RoleEntity> wrapper = new QueryWrapper<>(roleConvert.queryBoToEntity(queryBo));
 
         // 分页条件
-        Page pagination = new Page();
+        Page<RoleEntity> pagination = new Page<>();
         pagination.setCurrent(page);
         pagination.setSize(pageSize);
 
-        return this.mapper.selectPage(pagination, wrapper);
+        return this.mapper.selectPage(pagination, wrapper).convert(roleConvert::entityToVo);
     }
 
     /**
      * 根据请求的URL查询角色所属权限
-     *
-     * @return
      */
     public List<Map<String, String>> listRoleNamesWithPath() {
         return this.roleModuleMapper.listRoleNamesWithPath();
@@ -93,8 +96,6 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
 
     /**
      * 批量删除角色
-     *
-     * @param ids
      */
     public void deleteRole(ArrayList<String> ids) {
         QueryWrapper queryWrapper = new QueryWrapper<>();
@@ -117,7 +118,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
      */
     public void updateRole(ArrayList<String> ids, String lock) {
         RoleEntity role = new RoleEntity();
-        role.setLocked(lock);
+        role.setFrozen(lock);
         QueryWrapper<RoleEntity> wrapper = new QueryWrapper<>();
         wrapper.in("id", CollectionUtil.join(ids, ","));
 
@@ -140,13 +141,12 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
      * @param role 角色对象
      * @return 角色列表
      */
-    public void saveRole(RoleEntity role) {
+    public void saveRole(RoleAoeBo role) {
         // 添加 ROLE_ 前缀 并转大写
         if (!role.getCode().startsWith(AUTH_PREFIX)) {
             role.setCode((AUTH_PREFIX + role.getCode()).toUpperCase());
         }
-
-        this.merge(role);
+        this.merge(this.roleConvert.boToEntity(role));
     }
 
     /**
@@ -155,13 +155,16 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
      * @param role
      * @return
      */
-    public boolean checkUnique(RoleEntity role) {
-        QueryWrapper<RoleEntity> entityWrapper = new QueryWrapper<>();
+    public boolean checkUnique(RoleAoeBo role) {
         // 添加 ROLE_ 前缀 并转大写
         if (!role.getCode().startsWith(AUTH_PREFIX)) {
             role.setCode((AUTH_PREFIX + role.getCode()).toUpperCase());
         }
-        entityWrapper.eq("code", role.getCode());
+
+        var entityWrapper = Wrappers.<RoleEntity>lambdaQuery()
+                .eq(RoleEntity::getCode, role.getCode())
+                .ne(RoleEntity::getId, role.getId());
+
         long records = this.mapper.selectCount(entityWrapper);
         return records > 0;
     }
@@ -223,21 +226,21 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
     /**
      * 保存角色关系表
      */
-    public void saveModule(RoleEntity role) {
-        QueryWrapper<RoleModuleEntity> wrapper = new QueryWrapper<>();
-        wrapper.eq("role_id", role.getId());
-        // 删除角色原有的模块
-        this.roleModuleMapper.delete(wrapper);
+    public void saveModule(RoleAoeBo role) {
+        this.roleModuleMapper.delete(
+                new LambdaQueryWrapper<RoleModuleEntity>()
+                        .eq(RoleModuleEntity::getRoleId, role.getId())
+        );
 
         // 插入新的权限信息
-        if (CollectionUtil.isNotEmpty(role.getModules())) {
+        if (CollUtil.isNotEmpty(role.getModules())) {
             List<RoleModuleEntity> modules = role.getModules();
             Map<String, String[]> resourceMap = role.getResources();
 
             for (RoleModuleEntity module : modules) {
                 module.setRoleId(role.getId());
                 //设置角色拥有的资源
-                String[] resources = null != resourceMap ? resourceMap.get(module.getModuleId() + "") : null;
+                String[] resources = null != resourceMap ? resourceMap.get(module.getModuleId()) : null;
                 if (null == resources || resources.length < 1) {
                     this.roleModuleMapper.insert(module);
                 } else {
@@ -282,7 +285,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
                 checked.add(rue.getUserId());
             }
         }
-        Map<String, Object> map = new HashMap<>(2);
+        Map<String, Object> map = HashMap.newHashMap(2);
         map.put("users", users);
         map.put("checked", checked);
         return map;
@@ -291,16 +294,14 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
     /**
      * 保存角色关系表
      */
-    public void saveUser(RoleEntity role) {
-        QueryWrapper<RoleUserEntity> wrapper = new QueryWrapper<>();
-        wrapper.eq("role_id", role.getId());
+    public void saveUser(RoleUserAoeBo role) {
         // 删除原有角色
-        this.roleUserMapper.delete(wrapper);
+        this.roleUserMapper.delete(new LambdaQueryWrapper<RoleUserEntity>().eq(RoleUserEntity::getRoleId, role.getRoleId()));
         // 插入新的权限信息
-        if (CollectionUtil.isNotEmpty(role.getUsers())) {
+        if (CollUtil.isNotEmpty(role.getUsers())) {
             List<RoleUserEntity> users = role.getUsers();
             for (RoleUserEntity user : users) {
-                user.setRoleId(role.getId());
+                user.setRoleId(role.getRoleId());
                 this.roleUserMapper.insert(user);
             }
         }

@@ -5,7 +5,6 @@ jar {
     archiveBaseName = 'eva-web-sys'
 }
 
-
 project.description = 'sys jar with authority and system management'
 
 dependencies {

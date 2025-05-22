@@ -18,7 +18,7 @@ import java.util.Date;
 @Schema(description = "租户管理-详情-请求参数")
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class TenantEditBo {
+public class TenantAoeBo {
     private String id;
 
     @Schema(description = "租户名称")

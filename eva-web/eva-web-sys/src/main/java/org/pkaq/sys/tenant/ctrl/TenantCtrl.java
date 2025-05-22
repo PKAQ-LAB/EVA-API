@@ -12,7 +12,7 @@ import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.mvc.vo.SingleArray;
 import org.pkaq.sys.SysCodeEnum;
 import org.pkaq.sys.tenant.bo.TenantAuthBo;
-import org.pkaq.sys.tenant.bo.TenantEditBo;
+import org.pkaq.sys.tenant.bo.TenantAoeBo;
 import org.pkaq.sys.tenant.bo.TenantQueryBo;
 import org.pkaq.sys.tenant.bo.TenantStatusBo;
 import org.pkaq.sys.tenant.service.TenantService;
@@ -38,7 +38,7 @@ public class TenantCtrl extends Ctrl {
     @PostMapping("/edit")
     @Operation(summary = "新增/编辑记录")
     public Response<Object> edit(@Parameter(name = "formdata", description = "租户对象")
-                                 @RequestBody @Validated TenantEditBo bo) {
+                                 @RequestBody @Validated TenantAoeBo bo) {
         this.service.edit(bo);
         return this.success();
     }
@@ -68,7 +68,7 @@ public class TenantCtrl extends Ctrl {
     @PostMapping("/checkUnique")
     @Operation(summary = "校验租户code/name唯一性")
     public Response<Object> checkUnique(@Parameter(name = "organization", description = "要进行校验的参数")
-                                        @RequestBody TenantEditBo editBo) {
+                                        @RequestBody TenantAoeBo editBo) {
         boolean exist = null != editBo && CharSequenceUtil.isNotBlank(editBo.getCode()) && this.service.checkUnique(editBo);
         return exist ? failure(SysCodeEnum.TENANT_COED_NAME_EXIST) : success();
     }

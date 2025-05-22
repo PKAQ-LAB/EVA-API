@@ -3,14 +3,12 @@ package org.pkaq.sys.tenant.service;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.crypto.digest.BCrypt;
-import cn.hutool.json.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import org.pkaq.core.log.annotation.BizLog;
 import org.pkaq.core.log.base.BizLogEnum;
 import org.pkaq.core.mybatis.enums.FrozenEnumm;
@@ -18,8 +16,8 @@ import org.pkaq.core.mybatis.util.Page;
 import org.pkaq.core.util.json.JsonUtil;
 import org.pkaq.sys.role.entity.RoleUserEntity;
 import org.pkaq.sys.role.mapper.RoleUserMapper;
+import org.pkaq.sys.tenant.bo.TenantAoeBo;
 import org.pkaq.sys.tenant.bo.TenantAuthBo;
-import org.pkaq.sys.tenant.bo.TenantEditBo;
 import org.pkaq.sys.tenant.bo.TenantQueryBo;
 import org.pkaq.sys.tenant.bo.TenantStatusBo;
 import org.pkaq.sys.tenant.convert.TenantConvert;
@@ -39,7 +37,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.StringJoiner;
 
 /**
  * 租户管理Service
@@ -78,7 +75,7 @@ public class TenantService {
      */
     @BizLog(operateType = BizLogEnum.EDIT, description = "编辑租户[{0}]", args = {"param:0.id"})
     @Transactional
-    public void edit(TenantEditBo editBo) {
+    public void edit(TenantAoeBo editBo) {
         boolean isNew = CharSequenceUtil.isBlank(editBo.getId());
         String tid = isNew ? IdWorker.getIdStr() : editBo.getId();
         editBo.setId(tid);
@@ -143,7 +140,7 @@ public class TenantService {
     /**
      * 校验code/名称是否唯一
      */
-    public boolean checkUnique(TenantEditBo editBo) {
+    public boolean checkUnique(TenantAoeBo editBo) {
         var wrapper = Wrappers.<TenantEntity>lambdaQuery()
                 .eq(CharSequenceUtil.isNotBlank(editBo.getCode()), TenantEntity::getCode, editBo.getCode())
                 .eq(CharSequenceUtil.isNotBlank(editBo.getName()), TenantEntity::getName, editBo.getName())
@@ -154,7 +151,7 @@ public class TenantService {
     /**
      * 插入用户
      */
-    private void insertUser(TenantEditBo editBo, String uId) {
+    private void insertUser(TenantAoeBo editBo, String uId) {
         // 插入用户
         UserEntity user = new UserEntity();
         user.setId(uId);
@@ -211,47 +208,47 @@ public class TenantService {
         return JsonUtil.parseArray(JsonUtil.toJson(list), TenantLeftListVo.class);
     }
 
-    @Data
-    static class InitData {
-        private String tableName;
-        private List<JSONObject> records;
-        private JSONObject publicFields;
-    }
+//    @Data
+//    static class InitData {
+//        private String tableName;
+//        private List<JSONObject> records;
+//        private JSONObject publicFields;
+//    }
 
     /**
      * 用逗号连接所有属性名/用逗号连接所有属性值
      */
-    @Data
-    static class KeyValuePair {
-        private StringJoiner keyJoiner;
-        private StringJoiner valueJoiner;
-
-        KeyValuePair() {
-            this.keyJoiner = new StringJoiner(",");
-            this.valueJoiner = new StringJoiner(",");
-        }
-
-        /**
-         * 合并key和合并value
-         */
-        public void merge(KeyValuePair other) {
-            this.keyJoiner.merge(other.getKeyJoiner());
-            this.valueJoiner.merge(other.getValueJoiner());
-        }
-
-        public void keyAdd(CharSequence newElement) {
-            this.keyJoiner.add(newElement);
-        }
-
-        public void valueAdd(CharSequence newElement) {
-            this.valueJoiner.add(newElement);
-        }
-    }
+//    @Data
+//    static class KeyValuePair {
+//        private StringJoiner keyJoiner;
+//        private StringJoiner valueJoiner;
+//
+//        KeyValuePair() {
+//            this.keyJoiner = new StringJoiner(",");
+//            this.valueJoiner = new StringJoiner(",");
+//        }
+//
+//        /**
+//         * 合并key和合并value
+//         */
+//        public void merge(KeyValuePair other) {
+//            this.keyJoiner.merge(other.getKeyJoiner());
+//            this.valueJoiner.merge(other.getValueJoiner());
+//        }
+//
+//        public void keyAdd(CharSequence newElement) {
+//            this.keyJoiner.add(newElement);
+//        }
+//
+//        public void valueAdd(CharSequence newElement) {
+//            this.valueJoiner.add(newElement);
+//        }
+//    }
 
     /**
      * 使用json初始化租户数据
      */
-    private void initJson(TenantEditBo editBo, String uId) {
+    private void initJson(TenantAoeBo editBo, String uId) {
         // TODO
         // 初始化变量map
 //        Map<String, String> globalMap = new HashMap<>();

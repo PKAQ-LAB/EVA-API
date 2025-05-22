@@ -136,7 +136,7 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
      * @param dictAoeBo 字典对象
      */
     @Override
-    @BizLog(operateType = BizLogEnum.CREATE_UPDATE, description = "编辑了字典", args = {"#dictAoeBo"})
+    @BizLog(operateType = BizLogEnum.EDIT, description = "编辑了字典", args = {"#dictAoeBo"})
     @Transactional
     public void edit(DictAoeBo dictAoeBo) {
         String id = dictAoeBo.getId();

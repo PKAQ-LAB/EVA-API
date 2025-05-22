@@ -65,6 +65,20 @@ public enum SysCodeEnum implements BizAssert {
     MODULE_RESOURCE_COED_EXIST("资源code已存在", "0x001-0701-0010"),
     TENANT_COED_NAME_EXIST("租户code/名称已存在", "0x001-0701-0011"),
 
+    PATH_ALREADY_EXIST("模块路径已经存在", "4301"),
+    CHILD_EXIST("[{0}] 存在子节点，无法删除", "4302"),
+    CODE_EXIST("[{0}] 编码已经存在", "4303"),
+    ROLE_CODE_EXIST("权限编码已经存在", "4304"),
+    RESOURCE_USED("资源已经被引用，无法删除", "4305"),
+    PARENT_NOT_AVAILABLE("父节点为禁用状态，无法启用", "4306"),
+    MODULE_RESOURCE_USED("模块下存在已经被引用的资源，无法删除", "4307"),
+    BAD_ORG_PASSWORD("原始密码校验失败", "4308"),
+    ORG_CODE_EXIST("组织(部门)编码已经存在", "4310"),
+
+    ORG_TYPE_INVALID("[{0}]不能添加[{1}] ", "4313"),
+    DICT_CODE_EXIST("字典编码已经存在", "4314"),
+    ORG_TYPE_NO_EXIST("所属组织类型[{0}]没有定义，请稍后再试", "4315"),
+    NO_CHANGE_ORG("不能修改所属组织", "4316"),
     TENANT_AUTH_COUNT_MORE("用户超出授权数量", "0x001-0701-0012");
 
     private final String msg;
