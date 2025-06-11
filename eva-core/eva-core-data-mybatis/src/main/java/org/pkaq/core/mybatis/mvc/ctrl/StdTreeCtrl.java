@@ -29,21 +29,21 @@ public abstract class StdTreeCtrl<T extends StdTreeService, E extends StdTreeEnt
 
     @PostMapping("/checkUnique")
     @Operation(summary = "校验code唯一性")
-    public Response<?> checkUnique(@Parameter(name = "entity", description = "要进行校验的参数")
+    public Response<Object> checkUnique(@Parameter(name = "entity", description = "要进行校验的参数")
                                 @RequestBody E entity) {
         boolean exist = null != entity && CharSequenceUtil.isNotBlank(entity.getCode()) && this.service.count(entity) > 0;
-        return exist ? failure(BizCodeEnum.ORG_CODE_EXIST) : success();
+        return exist ? failure() : success();
     }
 
     @GetMapping("/list")
     @Operation(summary = "根据实体类属性获取相应的树结构 ")
-    public Response<?> listOrgByAttr(@Parameter(name = "entity", description = "{key: value}") E entity) {
+    public Response<Object> listOrgByAttr(@Parameter(name = "entity", description = "{key: value}") E entity) {
         return success(this.service.lisTree(entity));
     }
 
     @GetMapping("/get/{id}")
     @Operation(summary = "根据ID获取节点信息")
-    public Response<?> getOrg(@Parameter(name = "id", description = "节点ID")
+    public Response<Object> getOrg(@Parameter(name = "id", description = "节点ID")
                            @PathVariable("id") String id) {
         return success(this.service.get(id));
     }
@@ -51,7 +51,7 @@ public abstract class StdTreeCtrl<T extends StdTreeService, E extends StdTreeEnt
     @PostMapping("/del")
     @Operation(summary = "根据ID删除/批量删除节点")
     //@PreAuthorize("hasRole('ADMIN')")
-    public Response<?> delOrg(@Parameter(name = "ids", description = "[节点ID]")
+    public Response<Object> delOrg(@Parameter(name = "ids", description = "[节点ID]")
                            @RequestBody SingleArrayBo<String> ids) {
         // 参数非空校验
         BizCodeEnum.NULL_ID.assertNotNull(ids);
@@ -63,7 +63,7 @@ public abstract class StdTreeCtrl<T extends StdTreeService, E extends StdTreeEnt
 
     @PostMapping("/edit")
     @Operation(summary = "编辑节点信息")
-    public Response<?> editOrg(@Parameter(name = "entity", description = "节点信息")
+    public Response<Object> editOrg(@Parameter(name = "entity", description = "节点信息")
                             @RequestBody E entity) {
         this.service.edit(entity);
         return success();
@@ -71,7 +71,7 @@ public abstract class StdTreeCtrl<T extends StdTreeService, E extends StdTreeEnt
 
     @PostMapping("/sort")
     @Operation(summary = "排序节点信息")
-    public Response<?> sortOrg(@Parameter(name = "entity", description = "{id,orders}")
+    public Response<Object> sortOrg(@Parameter(name = "entity", description = "{id,orders}")
                             @RequestBody E[] switchObj) {
         this.service.swtich(switchObj);
         return success();
@@ -79,7 +79,7 @@ public abstract class StdTreeCtrl<T extends StdTreeService, E extends StdTreeEnt
 
     @PostMapping("/switchStatus")
     @Operation(summary = "切换节点可用状态")
-    public Response<?> switchStatus(@Parameter(name = "id", description = "节点Id")
+    public Response<Object> switchStatus(@Parameter(name = "id", description = "节点Id")
                                  @RequestBody E entity) {
         this.service.changeStatus(entity);
         return success();

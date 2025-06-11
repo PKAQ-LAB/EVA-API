@@ -3,7 +3,7 @@
 spring_dep = "1.1.7"
 spring_boot = "3.5.0"
 ttl = "2.14.5"
-mysql = "8.0.33"
+mysql = "8.4.0"
 mybatis_plus_starter = "3.5.12"
 mybatis_plus_jsqlparser = "3.5.12"
 lombok = "1.18.38"
@@ -40,7 +40,7 @@ mapstruct = { group = "org.mapstruct", name = "mapstruct", version.ref = "mapstr
 mapstruct-processor = { group = "org.mapstruct", name = "mapstruct-processor", version.ref = "mapstruct" }
 
 # 数据库
-mysql = { module = "mysql:mysql-connector-java", version.ref = "mysql" }
+mysql = { module = "com.mysql:mysql-connector-j", version.ref = "mysql" }
 #oracle = { module = "com.oracle.database.jdbc:ojdbc10", version.ref = "oracle" }
 #orai18n = { module = "cn.easyproject:orai18n", version.ref = "orai18n" }
 

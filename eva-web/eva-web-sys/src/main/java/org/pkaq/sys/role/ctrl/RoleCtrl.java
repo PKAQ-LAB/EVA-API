@@ -12,10 +12,9 @@ import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.sys.SysCodeEnum;
 import org.pkaq.sys.role.bo.RoleAoeBo;
+import org.pkaq.sys.role.bo.RoleModuleRefBo;
 import org.pkaq.sys.role.bo.RoleQueryBo;
 import org.pkaq.sys.role.bo.RoleUserAoeBo;
-import org.pkaq.sys.role.entity.RoleEntity;
-import org.pkaq.sys.role.entity.RoleModuleEntity;
 import org.pkaq.sys.role.service.RoleService;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,8 +42,7 @@ public class RoleCtrl extends Ctrl {
     @Operation(summary = "根据ID获取角色信息")
     public Response<Object> getRole(@Parameter(name = "id", description = "角色ID")
                                     @PathVariable("id") String id) {
-        RoleEntity entity = this.service.getRole(id);
-        return success(entity);
+        return success(this.service.getRole(id));
     }
 
     @GetMapping({"/list"})
@@ -55,7 +53,7 @@ public class RoleCtrl extends Ctrl {
     }
 
     @GetMapping({"/listAll"})
-    @Operation(summary = "获取角色列表 - 无分页")
+    @Operation(summary = "this.service.getRole(id) - 无分页")
     public Response<Object> listAllRoles(@Parameter(name = "queryBo", description = "包含角色对象属性的查询条件")
                                  RoleQueryBo queryBo) {
         return success(this.service.listRole(queryBo));
@@ -63,8 +61,8 @@ public class RoleCtrl extends Ctrl {
 
     @GetMapping({"/listModule"})
     @Operation(summary = "获得角色绑定的菜单列表")
-    public Response<Object> listModule(@Parameter(name = "roleEntity", description = "包含角色对象属性的查询条件")
-                               RoleModuleEntity role) {
+    public Response<Object> listModule(@Parameter(name = "role", description = "包含角色对象属性的查询条件")
+                                       RoleModuleRefBo role) {
         return success(this.service.listModule(role));
     }
 

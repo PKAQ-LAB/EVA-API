@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.pkaq.core.annotation.Ignore;
+import org.pkaq.sys.role.bo.RoleModuleRefBo;
 import org.pkaq.sys.role.entity.RoleModuleEntity;
 import org.springframework.stereotype.Repository;
 
@@ -23,10 +24,10 @@ public interface RoleModuleMapper extends BaseMapper<RoleModuleEntity> {
     /**
      * 获取已选且是叶子节点的模块
      *
-     * @param roleModuleEntity
+     * @param bo
      * @return
      */
-    List<RoleModuleEntity> roleModuleList(@Param("entity") RoleModuleEntity roleModuleEntity);
+    List<RoleModuleEntity> roleModuleList(@Param("entity") RoleModuleRefBo bo);
 
     /**
      * 根据URL返回匹配的权限名称

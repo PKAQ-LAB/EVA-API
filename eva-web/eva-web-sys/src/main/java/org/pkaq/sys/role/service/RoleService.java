@@ -3,7 +3,6 @@ package org.pkaq.sys.role.service;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.text.CharSequenceUtil;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -18,16 +17,17 @@ import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.sys.module.entity.ModuleEntity;
 import org.pkaq.sys.module.mapper.ModuleMapper;
 import org.pkaq.sys.role.bo.RoleAoeBo;
+import org.pkaq.sys.role.bo.RoleModuleRefBo;
 import org.pkaq.sys.role.bo.RoleQueryBo;
 import org.pkaq.sys.role.bo.RoleUserAoeBo;
 import org.pkaq.sys.role.convert.RoleConvert;
 import org.pkaq.sys.role.entity.RoleEntity;
 import org.pkaq.sys.role.entity.RoleModuleEntity;
 import org.pkaq.sys.role.entity.RoleUserEntity;
-import org.pkaq.sys.role.mapper.RoleConfigMapper;
 import org.pkaq.sys.role.mapper.RoleMapper;
 import org.pkaq.sys.role.mapper.RoleModuleMapper;
 import org.pkaq.sys.role.mapper.RoleUserMapper;
+import org.pkaq.sys.role.vo.RoleDetailVo;
 import org.pkaq.sys.role.vo.RoleListVo;
 import org.pkaq.sys.user.entity.UserEntity;
 import org.pkaq.sys.user.service.UserService;
@@ -51,8 +51,6 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
     private final RoleModuleMapper roleModuleMapper;
 
     private final RoleUserMapper roleUserMapper;
-
-    private final RoleConfigMapper roleConfigMapper;
 
     private final UserService userService;
 
@@ -84,7 +82,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
         pagination.setCurrent(page);
         pagination.setSize(pageSize);
 
-        return this.mapper.selectPage(pagination, wrapper).convert(roleConvert::entityToVo);
+        return this.mapper.selectPage(pagination, wrapper).convert(roleConvert::entityToListVo);
     }
 
     /**
@@ -104,8 +102,6 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
         this.roleUserMapper.delete(queryWrapper);
         // 删除角色相关的 授权模块
         this.roleModuleMapper.delete(queryWrapper);
-        // 删除角色相关的 授权参数
-        this.roleConfigMapper.delete(queryWrapper);
         //删除角色
         this.mapper.deleteBatchIds(ids);
     }
@@ -131,8 +127,8 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
      * @param id 角色id
      * @return 符合条件的角色对象
      */
-    public RoleEntity getRole(String id) {
-        return this.mapper.selectById(id);
+    public RoleDetailVo getRole(String id) {
+        return this.roleConvert.entityToDetailVo(this.mapper.selectById(id)) ;
     }
 
     /**
@@ -175,7 +171,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
      * @param roleModule 权限条件
      * @return
      */
-    public Map<String, Object> listModule(RoleModuleEntity roleModule) {
+    public Map<String, Object> listModule(RoleModuleRefBo roleModule) {
 
         boolean isAdmin = ThreadUserHelper.isAdmin();
         // 获取所有菜单

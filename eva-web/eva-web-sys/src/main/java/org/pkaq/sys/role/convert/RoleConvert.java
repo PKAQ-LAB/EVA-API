@@ -5,6 +5,7 @@ import org.mapstruct.ReportingPolicy;
 import org.pkaq.sys.role.bo.RoleAoeBo;
 import org.pkaq.sys.role.bo.RoleQueryBo;
 import org.pkaq.sys.role.entity.RoleEntity;
+import org.pkaq.sys.role.vo.RoleDetailVo;
 import org.pkaq.sys.role.vo.RoleListVo;
 
 import java.util.List;
@@ -15,7 +16,9 @@ public interface RoleConvert {
 
     List<RoleListVo> listToVoList(List<RoleEntity> roleEntities);
 
-    RoleListVo entityToVo(RoleEntity roleEntity);
+    RoleListVo entityToListVo(RoleEntity roleEntity);
 
     RoleEntity boToEntity(RoleAoeBo roleAoeBo);
+
+    RoleDetailVo entityToDetailVo(RoleEntity roleEntity);
 }

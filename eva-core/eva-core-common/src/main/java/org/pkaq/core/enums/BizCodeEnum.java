@@ -14,6 +14,8 @@ import org.pkaq.core.exception.BizAssert;
 @AllArgsConstructor
 public enum BizCodeEnum implements BizAssert {
 
+    NULL_ID("所需记录ID为空值", "0x001"),
+    NULL_PARAM_ID("所需记录 [ {0} ] 为空值", "0x002"),
     /**
      * 请求成功 000x
      **/
@@ -58,25 +60,7 @@ public enum BizCodeEnum implements BizAssert {
     LICENSE_LICENSEHASEXPIRED("证书已经过期", "4213"),
     LICENSE_LICENSEVERIFYFAILED("证书验证失败", "4214"),
 
-    /**
-     * 业务 430x ~ 439x
-     **/
-    PATH_ALREADY_EXIST("模块路径已经存在", "4301"),
-    CHILD_EXIST("[{0}] 存在子节点，无法删除", "4302"),
-    CODE_EXIST("[{0}] 编码已经存在", "4303"),
-    ROLE_CODE_EXIST("权限编码已经存在", "4304"),
-    RESOURCE_USED("资源已经被引用，无法删除", "4305"),
-    PARENT_NOT_AVAILABLE("父节点为禁用状态，无法启用", "4306"),
-    MODULE_RESOURCE_USED("模块下存在已经被引用的资源，无法删除", "4307"),
-    BAD_ORG_PASSWORD("原始密码校验失败", "4308"),
-    ORG_CODE_EXIST("组织(部门)编码已经存在", "4310"),
 
-    NULL_ID("所需记录ID为空值", "4311"),
-    NULL_PARAM_ID("所需记录 [ {0} ] 为空值", "4312"),
-    ORG_TYPE_INVALID("[{0}]不能添加[{1}] ", "4313"),
-    DICT_CODE_EXIST("字典编码已经存在", "4314"),
-    ORG_TYPE_NO_EXIST("所属组织类型[{0}]没有定义，请稍后再试", "4315"),
-    NO_CHANGE_ORG("不能修改所属组织", "4316"),
     CAN_NOT_INSERT_HISTORY("无法插入历史快照，[{0}]没有使用@TableName/@HistoryLog指定表名", "4319"),
     HISTORY_LOG_CAN_NOT_NULL("历史快照类不能为空", "4320"),
 

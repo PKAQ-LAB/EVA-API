@@ -86,7 +86,7 @@ public class BizLogAdvice {
         var rMap = processArgs(joinPoint.getArgs(), descriptionArgs, formatArgs);
         // 根据参数的某个属性是否为空来判断是新增还是修改
         var operatorType = bizlog.operateType();
-        if (BizLogEnum.CREATE_UPDATE.equals(operatorType)) {
+        if (BizLogEnum.EDIT.equals(operatorType)) {
             operatorType = processOperatorType(bizlog.distinguishParam(), joinPoint.getArgs());
         }
         BizLogEntity bizLogEntity = new BizLogEntity();

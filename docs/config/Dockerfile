@@ -3,7 +3,6 @@ FROM mcr.microsoft.com/java/jre:17-zulu-alpine
 #FROM mcr.microsoft.com/java/jre-headless:17u1-zulu-alpine
 #FROM azul/zulu-openjdk-alpine:17
 # 作者
-MAINTAINER W.F#pkaq@msn.com
 # 映射/tmp到主机
 VOLUME /tmp
 #将打包好的spring程序拷贝到容器中的指定位置
