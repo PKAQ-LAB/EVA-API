@@ -1,7 +1,7 @@
 
 [versions]
 spring_dep = "1.1.7"
-spring_boot = "3.5.0"
+spring_boot = "3.5.2"
 ttl = "2.14.5"
 mysql = "9.3.0"
 mybatis_plus_starter = "3.5.12"
