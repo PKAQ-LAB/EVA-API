@@ -1,0 +1,58 @@
+package org.pkaq.core.mvc.vo;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+import java.util.List;
+
+/**
+ * 树形结构实体基类
+ *
+ * @author: S.PKAQ
+ */
+@Data
+@EqualsAndHashCode(callSuper = false)
+public class StdTreeVo extends StdVo {
+
+    @Schema(description = "编码")
+    private String code;
+
+    @Schema(description = "节点名称")
+    private String name;
+
+    @Schema(description = "上级节点id")
+    private String pid;
+
+    @Schema(description = "路径")
+    private String path;
+
+    @Schema(description = "是否叶子")
+    private Boolean isleaf;
+
+    @Schema(description = "子节点")
+    private List<StdTreeVo> children;
+
+    @Schema(description = "key")
+    private String key;
+
+    @Schema(description = "exact")
+    private Boolean exact;
+
+
+    public String getKey() {
+        return this.getId();
+    }
+
+    public Boolean getExact() {
+        return this.isleaf;
+    }
+
+    public List<StdTreeVo> getChildren() {
+        return children == null || children.isEmpty() ? null : children;
+    }
+
+    public List<StdTreeVo> getOriginChildren() {
+        return children;
+    }
+}

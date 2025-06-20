@@ -5,12 +5,12 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import jakarta.annotation.Resource;
 import org.pkaq.core.constant.CommonConstant;
-import org.pkaq.core.enums.BizCodeEnum;
+import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.mybatis.mvc.entity.StdTreeEntity;
 import org.pkaq.core.mybatis.mvc.mapper.StdTreeMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +24,7 @@ import java.util.List;
  * @author S.PKAQ
  */
 public abstract class StdTreeService<M extends StdTreeMapper<T>, T extends StdTreeEntity> {
-    @Autowired
+    @Resource
     public M mapper;
 
     /**
@@ -55,14 +55,14 @@ public abstract class StdTreeService<M extends StdTreeMapper<T>, T extends StdTr
         Response<?> response = null;
         // 检查是否存在子节点，存在子节点不允许删除
         LambdaQueryWrapper<T> oew = Wrappers.lambdaQuery();
-        oew.in(T::getParentId, ids);
+        oew.in(T::getPid, ids);
 
         List<T> leafList = this.mapper.selectList(oew);
 
         if (CollectionUtil.isNotEmpty(leafList)) {
             List<Object> list = CollectionUtil.getFieldValues(leafList, "parentName");
             String name = CollectionUtil.join(list, ",");
-            response = new Response().failure(BizCodeEnum.CHILD_EXIST, name);
+            response = new Response().failure(CommonCodes.CHILD_EXIST, name);
         } else {
             this.mapper.deleteBatchIds(ids);
             response = new Response().success();
@@ -79,7 +79,7 @@ public abstract class StdTreeService<M extends StdTreeMapper<T>, T extends StdTr
     public void edit(T entity) {
         String orgId = entity.getId();
         // 获取上级节点
-        String pid = entity.getParentId();
+        String pid = entity.getPid();
         String root = "0";
         if (!root.equals(pid) && StrUtil.isNotBlank(pid)) {
             // 查询新父节点信息
@@ -87,9 +87,6 @@ public abstract class StdTreeService<M extends StdTreeMapper<T>, T extends StdTr
             // 设置当前节点信息
             String parentPath = StrUtil.isNotBlank(entity.getId()) ? entity.getPath() + "/" + entity.getId() : parent.getPath();
             entity.setPath(parentPath);
-            String pathName = parent.getPathName() + "/" + entity.getName();
-            entity.setPathName(pathName);
-            entity.setParentName(parent.getName());
 
         } else {
             // 父节点为空, 根节点 设置为非叶子\
@@ -97,16 +94,15 @@ public abstract class StdTreeService<M extends StdTreeMapper<T>, T extends StdTr
             if (StrUtil.isNotBlank(entity.getId())) {
                 entity.setPath(entity.getId());
             }
-            entity.setParentId(pid);
+            entity.setPid(pid);
             entity.setIsleaf(false);
-            entity.setPathName(entity.getName());
         }
 
         // 检查原父节点是否还存在子节点 不存在设置leaf为false
         T orginNode = this.mapper.getParentById(orgId);
 
         // 如果更换了父节点 重新确定原父节点的 leaf属性，以及所修改节点的orders属性
-        if (null != orginNode && !pid.equals(orginNode.getParentId())) {
+        if (null != orginNode && !pid.equals(orginNode.getPid())) {
             int brothers = this.mapper.countPrantLeaf(orgId) - 1;
             if (brothers < 1) {
                 orginNode.setIsleaf(true);
@@ -120,7 +116,7 @@ public abstract class StdTreeService<M extends StdTreeMapper<T>, T extends StdTr
             orderQuery.eq("PARENT_ID", pid);
             orderQuery.eq("DELETED", CommonConstant.EFFECTIVE_RECORD);
 
-            entity.setOrders(this.mapper.selectCount(orderQuery));
+            entity.setSort(this.mapper.selectCount(orderQuery));
         } else {
             oldOrgin = this.mapper.selectById(orgId);
         }

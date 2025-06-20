@@ -5,9 +5,8 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.pkaq.core.enums.BizCodeEnum;
+import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.exception.BizException;
-import org.pkaq.core.i18n.I18NHelper;
 import org.pkaq.core.mvc.vo.Response;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
@@ -31,11 +30,9 @@ import java.util.Set;
 @Slf4j
 @RequiredArgsConstructor
 public class ExceptionAdvice {
-    private final I18NHelper i18NHelper;
-
     /**
      * hibernate validator参数校验失败时抛出的异常
-     *
+     // 处理方法参数上的 @Validated（如 service 层方法）
      * @param e
      * @return
      */
@@ -48,21 +45,22 @@ public class ExceptionAdvice {
         for (ConstraintViolation<?> item : violations) {
             message.append(item.getMessage());
         }
-        return new Response<>().failure(BizCodeEnum.PARAM_TYPEERROR.getCode(), message.toString());
+        return new Response<>().failure(CommonCodes.PARAM_TYPEERROR.getCode(), message.toString());
     }
 
     /**
      * hibernate validator参数校验失败时抛出的异常
-     *
+     // 处理 @Valid + @RequestBody 参数校验异常
      * @param e
      * @return
      */
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Response handleMethodParamCheckException(MethodArgumentNotValidException e) {
         Locale locale = LocaleContextHolder.getLocale();
         System.out.println("当前语言：" + locale);
-        return new Response<>().failure(BizCodeEnum.PARAM_TYPEERROR.getCode(), e.getBindingResult().getFieldError().getDefaultMessage());
+        return new Response<>().failure(CommonCodes.PARAM_TYPEERROR.getCode(), e.getBindingResult().getFieldError().getDefaultMessage());
     }
 
     /**
@@ -75,12 +73,12 @@ public class ExceptionAdvice {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public Response handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         log.error("参数解析失败：" + e.getMessage());
-        return new Response<>().failure(BizCodeEnum.PARAM_TYPEERROR);
+        return new Response<>().failure(CommonCodes.PARAM_TYPEERROR);
     }
 
     /**
      * 参数类型错误
-     *
+     // 缺少参数
      * @param e 异常类型
      * @return Response
      */
@@ -88,12 +86,12 @@ public class ExceptionAdvice {
     @ExceptionHandler({IllegalArgumentException.class, MissingServletRequestParameterException.class})
     public Response handleIllegalArgumentException(Exception e) {
         log.warn("参数类型错误：不支持当前请求的参数类型:" + e.getMessage());
-        return new Response<>().failure(BizCodeEnum.PARAM_TYPEERROR);
+        return new Response<>().failure(CommonCodes.PARAM_TYPEERROR);
     }
 
     /**
      * 400 - spring参数绑定校验错误
-     *
+     // 处理 @Valid + 表单对象（@ModelAttribute）验证异常
      * @param e 异常类型
      * @return Response
      */
@@ -106,7 +104,7 @@ public class ExceptionAdvice {
         e.getAllErrors().forEach(
                 x -> errorMsg.append(x.getDefaultMessage()).append(",")
         );
-        return new Response<>().failure(BizCodeEnum.SERVER_ERROR.getCode(), errorMsg.toString());
+        return new Response<>().failure(CommonCodes.SERVER_ERROR.getCode(), errorMsg.toString());
     }
 
     /**
@@ -143,7 +141,7 @@ public class ExceptionAdvice {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public Response handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
         log.warn("不支持当前请求方法:" + e.getMessage());
-        return new Response<>().failure(BizCodeEnum.REQUEST_METHOD_ERROR);
+        return new Response<>().failure(CommonCodes.REQUEST_METHOD_ERROR);
     }
 
     /**
@@ -156,7 +154,7 @@ public class ExceptionAdvice {
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     public Response handleHttpMediaTypeNotSupportedException(Exception e) {
         log.warn("不支持当前媒体类型:" + e.getMessage());
-        return new Response<>().failure(BizCodeEnum.REQUEST_MEDIA_ERROR);
+        return new Response<>().failure(CommonCodes.REQUEST_MEDIA_ERROR);
     }
 
     /**
@@ -170,6 +168,6 @@ public class ExceptionAdvice {
     public Response handleException(Exception e) {
         log.error("服务运行异常:" + e.getMessage());
         e.printStackTrace();
-        return new Response<>().failure(BizCodeEnum.SERVER_ERROR);
+        return new Response<>().failure(CommonCodes.SERVER_ERROR);
     }
 }

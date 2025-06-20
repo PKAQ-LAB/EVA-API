@@ -1,7 +1,7 @@
 package org.pkaq.core.exception;
 
 
-import org.pkaq.core.enums.BizCode;
+import org.pkaq.core.codes.BizCode;
 
 import java.util.Collection;
 

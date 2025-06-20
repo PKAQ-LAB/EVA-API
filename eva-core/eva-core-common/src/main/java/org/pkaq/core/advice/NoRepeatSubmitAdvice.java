@@ -8,7 +8,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.pkaq.core.constant.CommonConstant;
-import org.pkaq.core.enums.BizCodeEnum;
+import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.exception.BizException;
 import org.pkaq.core.util.TokenUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -53,12 +53,12 @@ public class NoRepeatSubmitAdvice {
             if (cache.get(key) == null) {
                 cache.put(key, 0);
             } else {
-                throw new BizException(BizCodeEnum.REQUEST_TOO_MORE);
+                throw new BizException(CommonCodes.REQUEST_TOO_MORE);
             }
             return pjp.proceed();
         } catch (Throwable e) {
             log.error("验证重复提交时出现未知异常!", e);
-            throw new BizException(BizCodeEnum.REQUEST_TOO_MORE);
+            throw new BizException(CommonCodes.REQUEST_TOO_MORE);
         }
 
     }

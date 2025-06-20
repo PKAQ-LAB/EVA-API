@@ -40,17 +40,17 @@ public class TreeHelper {
         List<StdTreeEntity> trees = new ArrayList<>();
 
         for (StdTreeEntity entity : moduleEntitys) {
-            String pid = entity.getParentId();
+            String pid = entity.getPid();
             if (CharSequenceUtil.isBlank(pid) || "0".equals(pid)) {
                 trees.add(entity);
             }
 
             for (StdTreeEntity it : moduleEntitys) {
-                if (entity.getId().equals(it.getParentId())) {
-                    if (entity.getOriginChildren() == null) {
-                        entity.setChildren(new ArrayList<>());
-                    }
-                    entity.getOriginChildren().add(it);
+                if (entity.getId().equals(it.getPid())) {
+//                    if (entity.getOriginChildren() == null) {
+//                        entity.setChildren(new ArrayList<>());
+//                    }
+//                    entity.getOriginChildren().add(it);
                 }
             }
         }

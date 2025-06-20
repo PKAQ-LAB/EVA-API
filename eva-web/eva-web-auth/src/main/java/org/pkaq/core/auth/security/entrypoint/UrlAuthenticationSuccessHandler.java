@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.auth.domain.JwtUserDetail;
 import org.pkaq.core.auth.util.CacheTokenUtil;
 import org.pkaq.core.constant.CommonConstant;
-import org.pkaq.core.enums.BizCodeEnum;
+import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.jwt.JwtUtil;
 import org.pkaq.core.log.base.BizLogEntity;
 import org.pkaq.core.log.base.BizLogSupporter;
@@ -110,7 +110,7 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         try (PrintWriter printWriter = httpServletResponse.getWriter()) {
             printWriter.write(mapper.writeValueAsString(
                             new Response()
-                                    .success(map, BizCodeEnum.LOGIN_SUCCESS_WELCOME, user.getName())
+                                    .success(map, CommonCodes.LOGIN_SUCCESS_WELCOME, user.getName())
                     )
             );
             printWriter.flush();

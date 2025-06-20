@@ -1,17 +1,11 @@
 package org.pkaq.sys.organization.service;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.RequiredArgsConstructor;
-import org.pkaq.core.enums.BizCodeEnum;
-import org.pkaq.core.mvc.bo.IdCodeBo;
 import org.pkaq.core.mvc.bo.SingleArrayBo;
-import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.sys.SysCodeEnum;
 import org.pkaq.sys.organization.bo.OrganizationAoeBo;
@@ -24,7 +18,6 @@ import org.pkaq.sys.organization.vo.OrganizationDetailVo;
 import org.pkaq.sys.organization.vo.OrganizationListVo;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

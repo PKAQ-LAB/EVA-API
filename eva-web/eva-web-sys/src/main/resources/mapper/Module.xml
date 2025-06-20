@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.module//DTD Mapper 3.0//EN" "http://mybatis.module/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.pkaq.sys.module.mapper.ModuleMapper">
-    <resultMap id="BaseResultMap" type="module" extends="common.resultMap">
+    <resultMap id="BaseResultMap" type="org.pkaq.sys.module.vo.ModuleDetailVo" extends="common.resultMap">
         <result column="NAME" jdbcType="VARCHAR" property="name"/>
         <result column="ICON" jdbcType="VARCHAR" property="icon"/>
         <result column="ROUTEURL" jdbcType="VARCHAR" property="routeurl"/>
         <result column="MODELURL" jdbcType="VARCHAR" property="modelurl"/>
-        <result column="PARENT_ID" jdbcType="VARCHAR" property="parentId"/>
-        <result column="PARENT_NAME" jdbcType="VARCHAR" property="parentName"/>
+        <result column="PARENT_ID" jdbcType="VARCHAR" property="pid"/>
         <result column="PATH" jdbcType="VARCHAR" property="path"/>
-        <result column="PATH_ID" jdbcType="VARCHAR" property="pathId"/>
-        <result column="PATH_NAME" jdbcType="VARCHAR" property="pathName"/>
         <result column="ISLEAF" jdbcType="TINYINT" property="isleaf"/>
-        <result column="ORDERS" jdbcType="INTEGER" property="orders"/>
-        <result column="STATUS" jdbcType="VARCHAR" property="status"/>
+        <result column="ORDERS" jdbcType="INTEGER" property="sort"/>
+        <result column="STATUS" jdbcType="VARCHAR" property="frozen"/>
         <result column="MODIFY_BY" jdbcType="VARCHAR" property="createBy"/>
         <result column="CREATE_BY" jdbcType="VARCHAR" property="modifyBy"/>
         <collection property="children" column="{id=id}" select="listChildren"/>
@@ -93,17 +90,17 @@
     <!--根据条件查询菜单数据-->
     <select id="listModule" resultMap="BaseResultMap">
         select
-        SM.*,
-        SMR.ID R_ID,
-        SMR.MODULE_ID,
-        SMR.RESOURCE_DESC,
-        SMR.RESOURCE_URL,
-        SMR.RESOURCE_TYPE
+            SM.*,
+            SMR.ID R_ID,
+            SMR.MODULE_ID,
+            SMR.RESOURCE_DESC,
+            SMR.RESOURCE_URL,
+            SMR.RESOURCE_TYPE
         from
-        SYS_MODULE SM
+            SYS_MODULE SM
         LEFT JOIN
-        SYS_MODULE_RESOURCES SMR
-        ON SM.ID = SMR.MODULE_ID
+            SYS_MODULE_RESOURCES SMR
+                ON SM.ID = SMR.MODULE_ID
         <where>
             <if test="null == module or null == module.parentId or '' == module.parentId">
                 and (parent_id is null or parent_id = '0')
@@ -159,7 +156,7 @@
     </select>
 
     <!-- 根据parentId查询子节点数据-->
-    <select id="listOrder" resultType="Integer">
+    <select id="listOrder" resultType="java.lang.Integer">
         select
         <if test="_databaseId == 'mysql'">
             ifnull(max(orders),0)

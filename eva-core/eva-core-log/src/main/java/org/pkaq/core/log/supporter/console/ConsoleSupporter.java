@@ -1,11 +1,13 @@
 package org.pkaq.core.log.supporter.console;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.log.base.BizLogEntity;
 import org.pkaq.core.log.base.BizLogSupporter;
 import org.pkaq.core.log.condition.DefaultSupporterCondition;
 import org.pkaq.core.log.constant.LogConstant;
 import org.pkaq.core.log.events.BizLogEvent;
+import org.pkaq.core.mvc.bo.DateRangeBo;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -90,5 +92,15 @@ public class ConsoleSupporter implements BizLogSupporter {
     @Override
     public void print() {
         log.info("Biz log: " + this.bizLogEntity.getDescription());
+    }
+
+    @Override
+    public String get(String id) {
+        return "";
+    }
+
+    @Override
+    public IPage list(DateRangeBo dateRangeBo) {
+        return null;
     }
 }

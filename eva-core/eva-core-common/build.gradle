@@ -24,4 +24,7 @@ dependencies {
         libs.ttl,
         libs.springdoc,
         libs.validation
+
+    api libs.mapstruct
+    annotationProcessor libs.mapstruct.processor
 }

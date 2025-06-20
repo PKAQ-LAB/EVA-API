@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.pkaq.core.enums.BizCodeEnum;
+import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.mvc.bo.IdCodeBo;
 import org.pkaq.core.mvc.bo.SingleArrayBo;
 import org.pkaq.core.mvc.ctrl.Ctrl;
@@ -55,8 +55,8 @@ public class OrganizationCtrl extends Ctrl {
     public Response<Object> delOrg(@Parameter(name = "ids", description = "[组织ID]")
                                    @RequestBody SingleArrayBo<String> ids) {
         // 参数非空校验
-        BizCodeEnum.NULL_ID.assertNotNull(ids);
-        BizCodeEnum.NULL_ID.assertNotNull(ids.getParam());
+        CommonCodes.NULL_ID.assertNotNull(ids);
+        CommonCodes.NULL_ID.assertNotNull(ids.getParam());
 
         // 判断上级节点是否还有其它叶子 如果没有把 isleaf属性改为false
         this.service.deleteOrg(ids.getParam());

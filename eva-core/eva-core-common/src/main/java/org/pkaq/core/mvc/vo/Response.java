@@ -5,8 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
-import org.pkaq.core.enums.BizCode;
-import org.pkaq.core.enums.BizCodeEnum;
+import org.pkaq.core.codes.BizCode;
+import org.pkaq.core.codes.CommonCodes;
 
 /**
  * 统一响应对象
@@ -42,7 +42,7 @@ public class Response<T> {
      */
     public static <T> Response<T> success() {
         log.info("创建默认的成功响应对象");
-        return new Response<T>().setSuccess(true).setMtype(BizCodeEnum.OPERATE_SUCCESS);
+        return new Response<T>().setSuccess(true).setMtype(CommonCodes.OPERATE_SUCCESS);
     }
 
     /**

@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.pkaq.core.enums.BizCodeEnum;
+import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.mvc.bo.SingleArrayBo;
 import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
@@ -40,7 +40,7 @@ public class UserCtrl extends Ctrl {
     @Operation(summary = "重新设置密码")
     public Response<Object> repwd(@Parameter(name = "formdata", description = "用户对象")
                                   @RequestBody RePwdBo rePwdBo) {
-        return this.service.repwd(rePwdBo) ? success() : failure(BizCodeEnum.BAD_ORG_PASSWORD);
+        return this.service.repwd(rePwdBo) ? success() : failure(SysCodeEnum.BAD_ORG_PASSWORD);
     }
 
     @PostMapping("/del")
@@ -49,8 +49,8 @@ public class UserCtrl extends Ctrl {
                                 @RequestBody @Valid SingleArrayBo<String> ids) {
 
         // 参数非空校验
-        BizCodeEnum.NULL_ID.assertNotNull(ids);
-        BizCodeEnum.NULL_ID.assertNotNull(ids.getParam());
+        CommonCodes.NULL_ID.assertNotNull(ids);
+        CommonCodes.NULL_ID.assertNotNull(ids.getParam());
 
         this.service.delete(ids.getParam());
         return success();
@@ -69,7 +69,7 @@ public class UserCtrl extends Ctrl {
     public Response<Object> grant(@Parameter(name = "formdata", description = "用户对象")
                                   @RequestBody UserAoeBo bo) {
         this.service.saveRoles(bo);
-        return success(null, BizCodeEnum.SAVE_SUCCESS);
+        return success(null, CommonCodes.SAVE_SUCCESS);
     }
 
     @GetMapping("/list")
@@ -92,10 +92,11 @@ public class UserCtrl extends Ctrl {
     public Response<Object> lockSwitch(@Parameter(name = "param", description = "用户[id]")
                                        @RequestBody SingleArrayBo<String> param) {
         // 参数非空校验
-        BizCodeEnum.NULL_ID.assertNotNull(param);
-        BizCodeEnum.NULL_ID.assertNotNull(param.getParam());
+        CommonCodes.NULL_ID.assertNotNull(param);
+        CommonCodes.NULL_ID.assertNotNull(param.getParam());
 
-        this.service.updateUser(param.getParam(), param.getStatus());
-        return success(this.service.listPage(null, 1));
+//        this.service.updateUser(param.getParam(), param.getStatus());
+//        return success(this.service.listPage(null, 1));
+        return success();
     }
 }

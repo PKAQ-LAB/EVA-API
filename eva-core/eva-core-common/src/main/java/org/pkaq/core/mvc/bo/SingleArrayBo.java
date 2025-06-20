@@ -12,5 +12,4 @@ import java.util.ArrayList;
 @Data
 public class SingleArrayBo<T> implements Serializable {
     private ArrayList<T> param;
-    private String status;
 }

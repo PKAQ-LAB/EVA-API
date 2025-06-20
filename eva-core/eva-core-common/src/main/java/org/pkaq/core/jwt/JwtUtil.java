@@ -8,7 +8,7 @@ import com.nimbusds.jwt.SignedJWT;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.pkaq.core.enums.BizCodeEnum;
+import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.exception.BizException;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.properties.Jwt;
@@ -85,7 +85,7 @@ public class JwtUtil {
             JWSVerifier jwsVerifier = new MACVerifier(this.generalKey());
             // 如果校验到token被篡改(即:签名认证失败)，那么抛出异常
             if (!jwsObject.verify(jwsVerifier)) {
-                throw new BizException(BizCodeEnum.TOKEN_NOT_VERIFY);
+                throw new BizException(CommonCodes.TOKEN_NOT_VERIFY);
             }
             jwtClaimsSet = JWTClaimsSet.parse(jwsObject.getPayload().toJSONObject());
         } catch (ParseException | JOSEException e) {
@@ -162,7 +162,7 @@ public class JwtUtil {
             jwsVerifier = new MACVerifier(this.generalKey());
             // 如果校验到token被篡改(即:签名认证失败)，那么抛出异常
             if (!jwsObject.verify(jwsVerifier)) {
-                throw new BizException(BizCodeEnum.TOKEN_NOT_VERIFY);
+                throw new BizException(CommonCodes.TOKEN_NOT_VERIFY);
             }
             // 获取有效负载
             JWTClaimsSet claimsSet = JWTClaimsSet.parse(jwsObject.getPayload().toJSONObject());

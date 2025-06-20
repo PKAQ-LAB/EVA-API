@@ -1,9 +1,11 @@
 package org.pkaq.core.log.supporter.jdbc;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.pkaq.core.log.base.BizLogEntity;
 import org.pkaq.core.log.base.BizLogSupporter;
 import org.pkaq.core.log.constant.LogConstant;
 import org.pkaq.core.log.events.BizLogEvent;
+import org.pkaq.core.mvc.bo.DateRangeBo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -85,5 +87,15 @@ public class JdbcSupporter implements BizLogSupporter {
     @Override
     public void print() {
         // TODO document why this method is empty
+    }
+
+    @Override
+    public String get(String id) {
+        return "";
+    }
+
+    @Override
+    public IPage list(DateRangeBo dateRangeBo) {
+        return null;
     }
 }

@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.Getter;
-import org.pkaq.core.enums.BizCodeEnum;
-import org.pkaq.core.enums.ResponseEnumm;
+import org.pkaq.core.codes.CommonCodes;
+import org.pkaq.core.codes.ResponseCodes;
 import org.pkaq.core.mvc.bo.SingleArrayBo;
 import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
@@ -31,11 +31,11 @@ public abstract class StdActiveCtrl<T extends StdActiveService, E extends Model>
     public Response del(@Parameter(name = "ids", description = "[记录ID]")
                         @RequestBody SingleArrayBo<String> ids) {
 
-        BizCodeEnum.NULL_ID.assertNotNull(ids);
-        BizCodeEnum.NULL_ID.assertNotNull(ids.getParam());
+        CommonCodes.NULL_ID.assertNotNull(ids);
+        CommonCodes.NULL_ID.assertNotNull(ids.getParam());
 
         this.service.delete(ids.getParam());
-        return success(this.service.listPage(null, 1), ResponseEnumm.DELETE_SUCCESS);
+        return success(this.service.listPage(null, 1), ResponseCodes.DELETE_SUCCESS);
     }
 
     @PostMapping("edit")
@@ -43,7 +43,7 @@ public abstract class StdActiveCtrl<T extends StdActiveService, E extends Model>
     public Response save(@Parameter(name = "formdata", description = "模型对象")
                          @RequestBody E entity) {
         this.service.merge(entity);
-        return success(entity, ResponseEnumm.SAVE_SUCCESS);
+        return success(entity, ResponseCodes.SAVE_SUCCESS);
     }
 
     @GetMapping("list")

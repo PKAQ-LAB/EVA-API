@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.pkaq.core.enums.BizCodeEnum;
+import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.mvc.vo.SingleArray;
@@ -79,8 +79,8 @@ public class TenantCtrl extends Ctrl {
     public Response<Object> del(@Parameter(name = "ids", description = "[记录ID]")
                                 @RequestBody SingleArray<String> ids) {
         // 参数非空校验
-        BizCodeEnum.NULL_ID.assertNotNull(ids);
-        BizCodeEnum.NULL_ID.assertNotNull(ids.getParam());
+        CommonCodes.NULL_ID.assertNotNull(ids);
+        CommonCodes.NULL_ID.assertNotNull(ids.getParam());
         this.service.delete(ids.getParam());
         return this.success();
     }

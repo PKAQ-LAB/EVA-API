@@ -27,7 +27,8 @@ public final class JwtUserFactory {
                 user.getDeptId(),
                 user.getName(),
                 user.getNickName(),
-                FrozenEnumm.FROZEN.getCode().equals(user.getFrozen()),
+                false,
+//                FrozenEnumm.FROZEN.getCode().equals(user.getFrozen()),
                 mapToGrantedAuthorities(user.getRoles())
         );
     }

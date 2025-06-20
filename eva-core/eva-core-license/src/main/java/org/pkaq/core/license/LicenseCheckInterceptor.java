@@ -3,7 +3,7 @@ package org.pkaq.core.license;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.pkaq.core.enums.BizCodeEnum;
+import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.util.json.JsonUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -42,7 +42,7 @@ public class LicenseCheckInterceptor implements AsyncHandlerInterceptor {
             try (PrintWriter printWriter = response.getWriter()) {
                 printWriter.write(Objects.requireNonNull(JsonUtil.toJson(
                         Response
-                                .failure(BizCodeEnum.LICENSE_LICENSEHASEXPIRED))));
+                                .failure(CommonCodes.LICENSE_LICENSEHASEXPIRED))));
                 printWriter.flush();
             }
             return false;

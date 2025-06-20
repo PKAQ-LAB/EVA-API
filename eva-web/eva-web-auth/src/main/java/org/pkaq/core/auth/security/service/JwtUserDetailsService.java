@@ -3,7 +3,6 @@ package org.pkaq.core.auth.security.service;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.auth.AuthCodeEnum;
 import org.pkaq.core.auth.security.domain.JwtUserFactory;
-import org.pkaq.core.enums.BizCodeEnum;
 import org.pkaq.sys.user.entity.UserEntity;
 import org.pkaq.sys.user.mapper.UserMapper;
 import org.springframework.security.core.userdetails.UserDetails;

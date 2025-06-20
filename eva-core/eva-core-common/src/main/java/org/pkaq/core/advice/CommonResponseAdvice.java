@@ -3,8 +3,8 @@ package org.pkaq.core.advice;
 import cn.hutool.core.util.ObjectUtil;
 import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
-import org.pkaq.core.enums.BizCode;
-import org.pkaq.core.enums.BizCodeEnum;
+import org.pkaq.core.codes.BizCode;
+import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.i18n.I18NHelper;
 import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
@@ -92,8 +92,8 @@ public class CommonResponseAdvice implements ResponseBodyAdvice {
                 return body;
             }
 
-            var msg = i18NHelper.getMsg(BizCodeEnum.OPERATE_SUCCESS);
-            res.setCode(BizCodeEnum.OPERATE_SUCCESS.getCode());
+            var msg = i18NHelper.getMsg(CommonCodes.OPERATE_SUCCESS);
+            res.setCode(CommonCodes.OPERATE_SUCCESS.getCode());
             res.setMessage(msg);
             res.setData(body);
         }

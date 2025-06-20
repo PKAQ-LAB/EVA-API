@@ -4,7 +4,7 @@ import cn.hutool.core.text.CharSequenceUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.Getter;
-import org.pkaq.core.enums.BizCodeEnum;
+import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.mvc.bo.SingleArrayBo;
 import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
@@ -54,8 +54,8 @@ public abstract class StdTreeCtrl<T extends StdTreeService, E extends StdTreeEnt
     public Response<Object> delOrg(@Parameter(name = "ids", description = "[节点ID]")
                            @RequestBody SingleArrayBo<String> ids) {
         // 参数非空校验
-        BizCodeEnum.NULL_ID.assertNotNull(ids);
-        BizCodeEnum.NULL_ID.assertNotNull(ids.getParam());
+        CommonCodes.NULL_ID.assertNotNull(ids);
+        CommonCodes.NULL_ID.assertNotNull(ids.getParam());
 
         // 判断上级节点是否还有其它叶子 如果没有把 isleaf属性改为false
         return this.service.delete(ids.getParam());

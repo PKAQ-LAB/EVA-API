@@ -156,7 +156,7 @@ public class TenantService {
         UserEntity user = new UserEntity();
         user.setId(uId);
         user.setDeptId(editBo.getId());
-        user.setFrozen("9999");
+//        user.setFrozen("9999");
         user.setAccount(editBo.getAdminAccount());
         user.setPassword(BCrypt.hashpw(editBo.getAdminPass()));
         user.setTenantId(editBo.getId());

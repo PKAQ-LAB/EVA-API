@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.pkaq.core.enums.BizCodeEnum;
+import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.sys.dict.bo.DictAoeBo;
@@ -32,7 +32,7 @@ public class DictCtrl extends Ctrl {
     private final DictCacheHelper dictCacheHelper;
 
     public static void main(String[] args) {
-        BizCodeEnum.NULL_PARAM_ID.assertNotNull(null, "角色");
+        CommonCodes.NULL_PARAM_ID.assertNotNull(null, "角色");
     }
 
 
@@ -57,7 +57,7 @@ public class DictCtrl extends Ctrl {
                             @PathVariable(value = "code", required = false) String code) {
         // 参数校验
         if (CharSequenceUtil.isBlank(id) && CharSequenceUtil.isBlank(code)) {
-            BizCodeEnum.PARAM_ERROR.newException();
+            CommonCodes.PARAM_ERROR.newException();
         }
         DictAoeBo bo = new DictAoeBo();
         bo.setId(id);
@@ -80,7 +80,7 @@ public class DictCtrl extends Ctrl {
                             @PathVariable("id") String id) {
 
         // 参数非空校验
-        BizCodeEnum.NULL_ID.assertNotNull(id);
+        CommonCodes.NULL_ID.assertNotNull(id);
 
         this.service.delDict(id);
         return success();

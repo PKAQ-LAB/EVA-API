@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.auth.util.CacheTokenUtil;
 import org.pkaq.core.constant.CommonConstant;
-import org.pkaq.core.enums.BizCodeEnum;
+import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.threaduser.ThreadUserHelper;
@@ -70,6 +70,6 @@ public class UrlLogoutSuccessHandler implements LogoutSuccessHandler {
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
         httpServletResponse.setStatus(HttpServletResponse.SC_OK);
 
-        httpServletResponse.getWriter().write(JsonUtil.toJson(new Response().failure(BizCodeEnum.LOGINOUT_SUCCESS)));
+        httpServletResponse.getWriter().write(JsonUtil.toJson(new Response().failure(CommonCodes.LOGINOUT_SUCCESS)));
     }
 }

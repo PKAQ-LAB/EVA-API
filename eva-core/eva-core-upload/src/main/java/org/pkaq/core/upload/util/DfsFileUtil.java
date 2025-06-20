@@ -10,7 +10,7 @@ import cn.hutool.http.HttpUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.constant.CommonConstant;
-import org.pkaq.core.enums.BizCodeEnum;
+import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.exception.BizException;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.upload.condition.FastDfsCondition;
@@ -66,8 +66,8 @@ public class DfsFileUtil implements FileProvider {
             suffixName = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
             newFileName = snowflake.nextIdStr() + "." + suffixName;
         } else {
-            log.error(BizCodeEnum.FILEIO_ERROR.getMsg());
-            throw new BizException(BizCodeEnum.FILENAME_ERROR);
+            log.error(CommonCodes.FILEIO_ERROR.getMsg());
+            throw new BizException(CommonCodes.FILENAME_ERROR);
         }
         // 判断上传文件是否符合格式
         if (evaConfig.getUpload().getAllowSuffixName().toUpperCase().contains(suffixName)) {
@@ -76,7 +76,7 @@ public class DfsFileUtil implements FileProvider {
                 isr = new InputStreamResource(file.getInputStream(), newFileName);
             } catch (IOException e) {
                 log.error(e.getMessage(), e);
-                throw new BizException(BizCodeEnum.FILEIO_ERROR);
+                throw new BizException(CommonCodes.FILEIO_ERROR);
             }
 
             Map<String, Object> paramMap = new HashMap<>(3);
@@ -98,8 +98,8 @@ public class DfsFileUtil implements FileProvider {
                 file_path = jsonObject.get("path");
             }
         } else {
-            log.error(BizCodeEnum.FILETYPE_NOT_SUPPORTED.getMsg());
-            throw new BizException(BizCodeEnum.FILETYPE_NOT_SUPPORTED);
+            log.error(CommonCodes.FILETYPE_NOT_SUPPORTED.getMsg());
+            throw new BizException(CommonCodes.FILETYPE_NOT_SUPPORTED);
         }
 
         // 放入缓存

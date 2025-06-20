@@ -21,7 +21,6 @@ import java.util.List;
 @Alias("organization")
 @TableName("sys_organization")
 @EqualsAndHashCode(callSuper = true)
-@Schema(title = "组织管理")
 public class OrganizationEntity extends StdEntity {
 
     @TableField(condition = SqlCondition.LIKE)

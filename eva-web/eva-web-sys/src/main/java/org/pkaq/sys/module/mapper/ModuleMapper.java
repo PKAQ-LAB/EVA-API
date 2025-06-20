@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.pkaq.core.annotation.Ignore;
+import org.pkaq.sys.module.bo.ModuleQueryBo;
 import org.pkaq.sys.module.entity.ModuleEntity;
+import org.pkaq.sys.module.vo.ModuleListVo;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -38,7 +40,7 @@ public interface ModuleMapper extends BaseMapper<ModuleEntity> {
      * @param module 符合条件的List
      * @return 符合查询条件的List
      */
-    List<ModuleEntity> listModule(@Param("module") ModuleEntity module);
+    List<ModuleListVo> listModule(@Param("module") ModuleQueryBo module);
 
     /**
      * 根据parentID查询子节点数据

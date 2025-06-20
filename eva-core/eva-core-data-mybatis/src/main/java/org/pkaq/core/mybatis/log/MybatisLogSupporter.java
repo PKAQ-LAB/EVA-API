@@ -2,11 +2,13 @@ package org.pkaq.core.mybatis.log;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.log.base.BizLogEntity;
 import org.pkaq.core.log.base.BizLogSupporter;
 import org.pkaq.core.log.condition.MybatisSupporterCondition;
+import org.pkaq.core.mvc.bo.DateRangeBo;
 import org.pkaq.core.mybatis.log.entity.MybatisBizLogEntity;
 import org.pkaq.core.mybatis.log.mapper.MybatisSupporterMapper;
 import org.springframework.context.annotation.Conditional;
@@ -92,5 +94,15 @@ public class MybatisLogSupporter implements BizLogSupporter {
 
     @Override
     public void print() {
+    }
+
+    @Override
+    public String get(String id) {
+        return "";
+    }
+
+    @Override
+    public IPage list(DateRangeBo dateRangeBo) {
+        return null;
     }
 }

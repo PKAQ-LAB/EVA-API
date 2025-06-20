@@ -29,6 +29,7 @@ public class JacksonObjectMapper extends ObjectMapper implements Serializable {
         //设置为中国上海时区
         super.setTimeZone(TimeZone.getTimeZone(ZoneId.systemDefault()));
         //序列化时，日期的统一格式
+        //TODO
         super.setDateFormat(new SimpleDateFormat(DatePattern.NORM_DATETIME_PATTERN, Locale.CHINA));
         //序列化处理
         super.configure(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS.mappedFeature(), true);
@@ -43,6 +44,7 @@ public class JacksonObjectMapper extends ObjectMapper implements Serializable {
         super.getDeserializationConfig().withoutFeatures(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         //日期格式化
         super.registerModule(new JavaTimeModule());
+        super.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         super.findAndRegisterModules();
     }
 

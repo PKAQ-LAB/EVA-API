@@ -27,8 +27,8 @@ public class MybatisMetaObjectHandler implements MetaObjectHandler {
         this.strictInsertFill(metaObject, "createId", String.class, ThreadUserHelper.getUserId());
         this.strictInsertFill(metaObject, "createBy", String.class, ThreadUserHelper.getUserName());
         this.strictInsertFill(metaObject, "utcCreate", LocalDateTime.class, LocalDateTime.now());
-        this.strictInsertFill(metaObject, "sort", Integer.class, 0);
-        this.strictInsertFill(metaObject, "frozen", String.class, FrozenEnumm.UN_FROZEN.getCode());
+        this.strictInsertFill(metaObject, "sort", Double.class, 0d);
+        this.strictInsertFill(metaObject, "frozen", Integer.class, FrozenEnumm.UN_FROZEN.getCode());
         this.strictInsertFill(metaObject, "deleted", String.class, DelEnumm.UN_DELETED.getCode());
     }
 

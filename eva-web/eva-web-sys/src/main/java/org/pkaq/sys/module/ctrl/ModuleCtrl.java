@@ -1,15 +1,18 @@
 package org.pkaq.sys.module.ctrl;
 
-import cn.hutool.core.util.StrUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.pkaq.core.enums.BizCodeEnum;
+import org.pkaq.core.codes.CommonCodes;
+import org.pkaq.core.mvc.bo.IdCodeBo;
 import org.pkaq.core.mvc.bo.SingleArrayBo;
 import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
-import org.pkaq.sys.module.entity.ModuleEntity;
+import org.pkaq.sys.SysCodeEnum;
+import org.pkaq.sys.module.bo.ModuleAoeBo;
+import org.pkaq.sys.module.bo.ModuleQueryBo;
+import org.pkaq.sys.module.bo.ModuleSortBo;
 import org.pkaq.sys.module.service.ModuleService;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,22 +30,20 @@ public class ModuleCtrl extends Ctrl {
 
     @PostMapping("/checkUnique")
     @Operation(summary = "校验path唯一性")
-    public Response checkUnique(@Parameter(name = "moduleEntity", description = "要进行校验的参数")
-                                @RequestBody ModuleEntity module) {
+    public Response<Object> checkUnique(@Parameter(name = "idCodeBo", description = "要进行校验的参数")
+                                @RequestBody IdCodeBo idCodeBo) {
 
-        boolean exist = (null != module && StrUtil.isNotBlank(module.getPath())) ? this.service.checkUnique(module) : false;
-
-        return exist ? failure(BizCodeEnum.PATH_ALREADY_EXIST) : success();
+        return this.service.isUnique(idCodeBo) ? failure(SysCodeEnum.CODE_EXIST) : success();
     }
 
     @PostMapping("/del")
     @Operation(summary = "根据ID删除/批量删除记录")
-    public Response del(@Parameter(name = "ids", description = "[记录ID]")
-                        @RequestBody SingleArrayBo<String> ids) {
+    public Response<Object> del(@Parameter(name = "ids", description = "[记录ID]")
+                                @RequestBody SingleArrayBo<String> ids) {
 
         // 参数非空校验
-        BizCodeEnum.NULL_ID.assertNotNull(ids);
-        BizCodeEnum.NULL_ID.assertNotNull(ids.getParam());
+        CommonCodes.NULL_ID.assertNotNull(ids);
+        CommonCodes.NULL_ID.assertNotNull(ids.getParam());
 
         //如果Response不为空，则表示该节点下有子节点，返回错误给前台
         this.service.deleteModule(ids.getParam());
@@ -52,38 +53,38 @@ public class ModuleCtrl extends Ctrl {
 
     @PostMapping("/edit")
     @Operation(summary = "新增/编辑记录")
-    public Response save(@Parameter(name = "formdata", description = "模块对象")
-                         @RequestBody ModuleEntity entity) {
-        this.service.editModule(entity);
+    public Response<Object> edit(@Parameter(name = "bo", description = "模块对象")
+                                @RequestBody ModuleAoeBo bo) {
+        this.service.editModule(bo);
         return this.success();
     }
 
     @GetMapping("/get/{id}")
     @Operation(summary = "根据ID获得记录信息")
-    public Response getRole(@Parameter(name = "id", description = "记录ID")
-                            @PathVariable("id") String id) {
+    public Response<Object> getRole(@Parameter(name = "id", description = "记录ID")
+                                    @PathVariable("id") String id) {
         return this.success(this.service.getModule(id));
     }
 
     @GetMapping({"/listModuleByAttr", "/listNoPage"})
     @Operation(summary = "根据实体类属性获取相应的模块树 ")
-    public Response listModuleByAttr(@Parameter(name = "module", description = "{key: value}") ModuleEntity module) {
-        return success(this.service.listModuleByAttr(module));
+    public Response<Object> listModuleByAttr(@Parameter(name = "module", description = "{key: value}") ModuleQueryBo queryBo) {
+        return success(this.service.listModuleByAttr(queryBo));
     }
 
     @PostMapping("/sort")
     @Operation(summary = "排序模块信息")
-    public Response sortModule(@Parameter(name = "module", description = "{id,orders}")
-                               @RequestBody ModuleEntity[] switchObj) {
+    public Response<Object> sortModule(@Parameter(name = "module", description = "{id,orders}")
+                                       @RequestBody ModuleSortBo[] switchObj) {
         this.service.sortModule(switchObj);
         return success();
     }
 
     @PostMapping("/switchStatus")
     @Operation(summary = "切换模块可用状态")
-    public Response switchStatus(@Parameter(name = "id", description = "模块Id")
-                                 @RequestBody ModuleEntity module) {
-        this.service.disableChild(module);
+    public Response<Object> switchStatus(@Parameter(name = "id", description = "模块Id")
+                                         @RequestBody SingleArrayBo<String> ids) {
+        this.service.disableChild(ids);
         return success();
     }
 }

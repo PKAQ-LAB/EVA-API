@@ -4,8 +4,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.Getter;
 import org.pkaq.core.annotation.NoRepeatSubmit;
-import org.pkaq.core.enums.BizCodeEnum;
-import org.pkaq.core.enums.ResponseEnumm;
+import org.pkaq.core.codes.CommonCodes;
+import org.pkaq.core.codes.ResponseCodes;
 import org.pkaq.core.mvc.bo.SingleArrayBo;
 import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
@@ -33,11 +33,11 @@ public abstract class StdMultiCtrl<T extends StdMultiService, E extends StdMulti
     public Response del(@Parameter(name = "ids", description = "[记录ID]")
                         @RequestBody SingleArrayBo<String> ids) {
 
-        BizCodeEnum.NULL_ID.assertNotNull(ids);
-        BizCodeEnum.NULL_ID.assertNotNull(ids.getParam());
+        CommonCodes.NULL_ID.assertNotNull(ids);
+        CommonCodes.NULL_ID.assertNotNull(ids.getParam());
 
         this.service.delete(ids.getParam());
-        return success(null, ResponseEnumm.DELETE_SUCCESS);
+        return success(null, ResponseCodes.DELETE_SUCCESS);
     }
 
     @PostMapping("/edit")
@@ -46,7 +46,7 @@ public abstract class StdMultiCtrl<T extends StdMultiService, E extends StdMulti
     public Response save(@Parameter(name = "formdata", description = "模型对象")
                          @RequestBody E entity) {
         this.service.merge(entity);
-        return success(entity, ResponseEnumm.SAVE_SUCCESS);
+        return success(entity, ResponseCodes.SAVE_SUCCESS);
     }
 
     @GetMapping("/list")

@@ -9,6 +9,7 @@ import java.util.List;
 
 /**
  * 字典编辑BO
+ * @author PKAQ
  */
 @Data
 @Schema(title = "字典编辑BO")

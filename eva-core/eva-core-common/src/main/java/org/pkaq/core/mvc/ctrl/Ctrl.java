@@ -1,8 +1,8 @@
 package org.pkaq.core.mvc.ctrl;
 
 import lombok.Getter;
-import org.pkaq.core.enums.BizCode;
-import org.pkaq.core.enums.BizCodeEnum;
+import org.pkaq.core.codes.BizCode;
+import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.i18n.I18NHelper;
 import org.pkaq.core.mvc.vo.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ public abstract class Ctrl {
      * @return
      */
     protected <T> Response<T> success() {
-        return new Response<T>().success(null, BizCodeEnum.OPERATE_SUCCESS);
+        return Response.success(null, CommonCodes.OPERATE_SUCCESS);
     }
 
 //    protected Response exclude(Object data, String... values){
@@ -50,7 +50,7 @@ public abstract class Ctrl {
      * @return
      */
     protected <T> Response<T> success(T data) {
-        return new Response<T>().success(data, BizCodeEnum.OPERATE_SUCCESS);
+        return Response.success(data, CommonCodes.OPERATE_SUCCESS);
     }
 
     /**
@@ -60,7 +60,7 @@ public abstract class Ctrl {
      * @return
      */
     protected <T> Response<T> success(T data, String msg) {
-        return new Response<T>().success(msg, data);
+        return Response.success(msg, data);
     }
 
     /**
@@ -71,7 +71,7 @@ public abstract class Ctrl {
      * @return
      */
     protected <T> Response<T> success(T data, BizCode bizCode) {
-        return new Response<T>().success(bizCode.getMsg(),data);
+        return Response.success(bizCode.getMsg(),data);
     }
 
     /**
@@ -81,7 +81,7 @@ public abstract class Ctrl {
      * @return
      */
     protected Response<Object> failure(String msg) {
-        return new Response<>().failure(msg);
+        return Response.failure(msg);
     }
 
     /**
@@ -92,7 +92,7 @@ public abstract class Ctrl {
      */
 
     protected Response<Object> failure(BizCode failCode) {
-        return new Response<>().failure(failCode);
+        return Response.failure(failCode);
     }
 
     /**
@@ -104,7 +104,7 @@ public abstract class Ctrl {
      */
 
     protected Response<Object> failure(BizCode failCode, Object... args) {
-        return new Response<>().failure(failCode, args);
+        return Response.failure(failCode, args);
     }
 
     /**
@@ -114,7 +114,7 @@ public abstract class Ctrl {
      * @return
      */
     protected Response<Object> failure(String failCode, String msg) {
-        return new Response<>().failure(failCode, msg);
+        return Response.failure(failCode, msg);
     }
 
     /**
@@ -123,6 +123,6 @@ public abstract class Ctrl {
      * @return
      */
     protected Response<Object> failure() {
-        return new Response<>().failure(BizCodeEnum.SERVER_ERROR);
+        return Response.failure(CommonCodes.SERVER_ERROR);
     }
 }

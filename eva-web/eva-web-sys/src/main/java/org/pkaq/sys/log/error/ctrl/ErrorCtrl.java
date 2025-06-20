@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
 import org.pkaq.core.mvc.bo.DateRangeBo;
+import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.mybatis.exception.entity.ErrorlogEntity;
 import org.pkaq.core.mybatis.exception.mapper.ErrorlogMapper;
@@ -23,11 +24,14 @@ import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.Date;
 
+/**
+ * @author PKAQ
+ */
 @RestController
 @RequestMapping("/monitor/log/error")
 @Tag(name = "错误日志")
 @RequiredArgsConstructor
-public class ErrorCtrl {
+public class ErrorCtrl extends Ctrl {
 
     private final ErrorlogMapper errorlogMapper;
 
@@ -37,7 +41,7 @@ public class ErrorCtrl {
 
     @GetMapping({"/get/{id}"})
     @Operation(summary = "根据id获取操作日志明细")
-    public Response query(@Parameter(name = "id", description = "操作日志id")
+    public Response<Object> query(@Parameter(name = "id", description = "操作日志id")
                           @PathVariable(name = "id") String id) {
         return new Response().success(this.errorlogMapper.selectById(id));
     }

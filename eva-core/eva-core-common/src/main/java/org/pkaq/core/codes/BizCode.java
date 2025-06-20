@@ -1,4 +1,4 @@
-package org.pkaq.core.enums;
+package org.pkaq.core.codes;
 
 /**
  * 枚举基类

@@ -10,7 +10,7 @@ import cn.hutool.core.util.IdUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.constant.CommonConstant;
-import org.pkaq.core.enums.BizCodeEnum;
+import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.exception.BizException;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.upload.condition.DefaultNgCondition;
@@ -63,8 +63,8 @@ public class NgFileUtil implements FileProvider {
             suffixName = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
             newFileName = snowflake.nextIdStr() + "." + suffixName;
         } else {
-            log.error(BizCodeEnum.FILEIO_ERROR.getMsg());
-            throw new BizException(BizCodeEnum.FILENAME_ERROR);
+            log.error(CommonCodes.FILEIO_ERROR.getMsg());
+            throw new BizException(CommonCodes.FILENAME_ERROR);
         }
         // 判断上传文件是否符合格式
         if (evaConfig.getUpload().getAllowSuffixName().toLowerCase().contains(suffixName)) {
@@ -84,12 +84,12 @@ public class NgFileUtil implements FileProvider {
                 file.transferTo(tempFile);
                 tempFile.setReadable(true, false);
             } catch (Exception e) {
-                log.error(BizCodeEnum.FILEIO_ERROR.getMsg());
-                throw new BizException(BizCodeEnum.FILESAVE_ERROR);
+                log.error(CommonCodes.FILEIO_ERROR.getMsg());
+                throw new BizException(CommonCodes.FILESAVE_ERROR);
             }
         } else {
-            log.error(BizCodeEnum.FILETYPE_NOT_SUPPORTED.getMsg());
-            throw new BizException(BizCodeEnum.FILETYPE_NOT_SUPPORTED);
+            log.error(CommonCodes.FILETYPE_NOT_SUPPORTED.getMsg());
+            throw new BizException(CommonCodes.FILETYPE_NOT_SUPPORTED);
         }
 
         // 放入缓存

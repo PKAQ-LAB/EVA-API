@@ -2,19 +2,20 @@ package org.pkaq.core.mybatis.mvc.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import jakarta.annotation.Resource;
 import org.pkaq.core.log.annotation.BizLog;
 import org.pkaq.core.log.base.BizLogEnum;
+import org.pkaq.core.mvc.bo.IdCodeBo;
 import org.pkaq.core.mvc.bo.PageBo;
 import org.pkaq.core.mybatis.mvc.entity.StdEntity;
 import org.pkaq.core.mybatis.util.Page;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,10 +26,16 @@ import java.util.List;
  * @author S.PKAQ
  */
 public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
-    @Autowired
-    public M mapper;
+    @Resource
+    protected M mapper;
 
+    public boolean isUnique(IdCodeBo idCodeBo){
+        QueryWrapper<T> wrapper = new QueryWrapper<>();
+        wrapper.eq("code", idCodeBo.getCode());
+        wrapper.ne("id", idCodeBo.getId());
 
+        return this.mapper.selectCount(wrapper) > 0;
+    }
     /**
      * 通用根据ID查询
      *
@@ -36,7 +43,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
      * @return 实体类对象
      */
     @BizLog(operateType = BizLogEnum.QUERY, description = "根据id查询")
-    public T getById(String id) {
+    public T get(String id) {
         return this.mapper.selectById(id);
     }
 
@@ -47,7 +54,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
      * @return
      */
     @BizLog(operateType = BizLogEnum.QUERY, description = "查询符合条件的记录条数")
-    public Long selectCount(T entity) {
+    protected Long count(T entity) {
         Wrapper<T> wrapper = Wrappers.lambdaQuery(entity);
         return this.mapper.selectCount(wrapper);
     }
@@ -59,7 +66,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
      * @return
      */
     @BizLog(operateType = BizLogEnum.QUERY, description = "根据条件获取一条记录")
-    public T getByEntity(T entity) {
+    protected T get(T entity) {
         Wrapper<T> wrapper = Wrappers.lambdaQuery(entity);
         return this.mapper.selectOne(wrapper);
     }
@@ -72,26 +79,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
     @BizLog(operateType = BizLogEnum.EDIT, description = "保存记录[{0}]", args = {"param:0.id"})
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void merge(T entity) {
-        if (entity.getId() == null) {
-            this.mapper.insert(entity);
-        } else {
-            this.mapper.updateById(entity);
-        }
-    }
-
-    /***
-     * 根据指定条件合并
-     * @param entity
-     * @param wrapper
-     */
-    @BizLog(operateType = BizLogEnum.EDIT, description = "保存记录[{0}]", args = {"param:0.id"})
-    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public void merge(T entity, Wrapper<T> wrapper) {
-        if (entity.getId() == null) {
-            this.mapper.insert(entity);
-        } else {
-            this.mapper.update(entity, wrapper);
-        }
+        this.mapper.insertOrUpdate(entity);
     }
 
     /**
@@ -132,7 +120,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
      * @return 分页模型类
      */
     @BizLog(operateType = BizLogEnum.QUERY, description = "根据条件分页查询记录")
-    public IPage<T> listPage(T entity, Integer page) {
+    protected IPage<T> listPage(T entity, Integer page) {
         page = null != page ? page : 1;
 
         LambdaQueryWrapper<T> wrapper = Wrappers.lambdaQuery();
@@ -152,7 +140,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
      */
     @BizLog(operateType = BizLogEnum.DELETE, description = "删除记录[{0}]", args = {"param:0"})
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public void delete(ArrayList<String> param) {
+    public void delete(List<String> param) {
         this.mapper.deleteBatchIds(param);
     }
 }

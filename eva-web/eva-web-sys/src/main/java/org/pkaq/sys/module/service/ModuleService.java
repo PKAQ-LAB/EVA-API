@@ -3,18 +3,25 @@ package org.pkaq.sys.module.service;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.text.CharSequenceUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import lombok.RequiredArgsConstructor;
-import org.pkaq.core.enums.BizCodeEnum;
 import org.pkaq.core.exception.BizException;
-import org.pkaq.core.mybatis.enums.FrozenEnumm;
+import org.pkaq.core.mvc.bo.SingleArrayBo;
 import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.core.mybatis.util.TreeHelper;
+import org.pkaq.sys.SysCodeEnum;
+import org.pkaq.sys.module.bo.ModuleAoeBo;
+import org.pkaq.sys.module.bo.ModuleQueryBo;
+import org.pkaq.sys.module.bo.ModuleSortBo;
+import org.pkaq.sys.module.convert.ModuleConvert;
 import org.pkaq.sys.module.entity.ModuleEntity;
 import org.pkaq.sys.module.entity.ModuleResources;
 import org.pkaq.sys.module.mapper.ModuleMapper;
 import org.pkaq.sys.module.mapper.ModuleResourceMapper;
+import org.pkaq.sys.module.vo.ModuleDetailVo;
+import org.pkaq.sys.module.vo.ModuleListVo;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,7 +35,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
-
+    private final ModuleConvert moduleConvert;
     private final ModuleResourceMapper moduleResourceMapper;
 
     /**
@@ -36,8 +43,8 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
      *
      * @return
      */
-    public List<ModuleEntity> listModule(ModuleEntity module) {
-        return this.mapper.listModule(module);
+    public List<ModuleListVo> listModule(ModuleQueryBo queryBo) {
+        return this.mapper.listModule(queryBo);
     }
 
     /**
@@ -60,7 +67,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
             // 拼接名称
             String name = CollUtil.join(list, ",");
 
-            BizCodeEnum.CHILD_EXIST.newException(name);
+            SysCodeEnum.CHILD_EXIST.newException(name);
         } else {
             try {
                 // 删除相关资源
@@ -70,7 +77,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
                 // 删除模块
                 this.mapper.deleteBatchIds(ids);
             } catch (Exception e) {
-                throw new BizException(BizCodeEnum.MODULE_RESOURCE_USED);
+                throw new BizException(SysCodeEnum.MODULE_RESOURCE_USED);
             }
         }
     }
@@ -78,68 +85,67 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
     /**
      * 新增/编辑一条模块信息
      *
-     * @param module 要 新增/编辑 得模块对象
+     * @param bo 要 新增/编辑 得模块对象
      * @return 重新查询模块列表
      */
-    public void editModule(ModuleEntity module) {
+    public void editModule(ModuleAoeBo bo) {
+        var module = this.moduleConvert.aoeBoToEntity(bo);
         String moduleId = module.getId();
 
         ModuleEntity originModule = null;
         if (CharSequenceUtil.isNotBlank(moduleId)) {
-            originModule = this.getById(moduleId);
+            originModule = this.get(moduleId);
         }
         // 获取上级节点
-        String pid = module.getParentId();
+        String pid = module.getPid();
         if (CharSequenceUtil.isNotBlank(moduleId)) {
             //是否启用的逻辑
-            if (CharSequenceUtil.isNotBlank(module.getStatus()) && FrozenEnumm.UN_FROZEN.getCode().equals(module.getStatus())) {
-                if (!isDisable(module)) {
-                    //如果父节点状态为禁用，则子节点状态也只能为禁用
-                    throw new BizException(BizCodeEnum.PARENT_NOT_AVAILABLE);
-                }
-            }
+//            if (CharSequenceUtil.isNotBlank(module.getFrozen()) && FrozenEnumm.UN_FROZEN.getCode().equals(module.getFrozen())) {
+//                if (!isDisable(module)) {
+//                    //如果父节点状态为禁用，则子节点状态也只能为禁用
+//                    throw new BizException(SysCodeEnum.PARENT_NOT_AVAILABLE);
+//                }
+//            }
             //是否禁用的逻辑
-            disableChild(module);
+//            disableChild(module);
         } else {
             //新增设置orders为同级模块中最大的orders+1
             module.setIsleaf(true);
-            module.setOrders(this.mapper.listOrder(pid) + 1);
+            module.setSort(this.mapper.listOrder(pid) + 1);
         }
 
         String root = "0";
         //  当前编辑节点为子节点
         if (!root.equals(pid) && CharSequenceUtil.isNotBlank(pid)) {
             // 查询新父节点信息
-            ModuleEntity parentModule = this.getModule(pid);
+            ModuleDetailVo parentModule = this.getModule(pid);
             // 设置当前节点信息
-            module.setPathId(CharSequenceUtil.isNotBlank(parentModule.getPathId()) ? parentModule.getPathId() + "," + parentModule.getId() : parentModule.getId());
+            module.setPid(CharSequenceUtil.isNotBlank(parentModule.getPath()) ? parentModule.getPath() + "," + parentModule.getId() : parentModule.getId());
             String pathName = CharSequenceUtil.format("{}/{}", parentModule.getName(), module.getName()); //pathName
 
             String oldFatherPath = null;
 
-            if (moduleId != null && originModule != null && CharSequenceUtil.isNotBlank(originModule.getParentId())) {
+            if (moduleId != null && originModule != null && CharSequenceUtil.isNotBlank(originModule.getPid())) {
                 //得到原来父节点的path路径
-                ModuleEntity oldParent = this.mapper.selectById(originModule.getParentId());
+                ModuleEntity oldParent = this.mapper.selectById(originModule.getPid());
                 oldFatherPath = oldParent != null ? oldParent.getPath() : null;
             }
 
             module.setPath(TreeHelper.assemblePath(parentModule.getPath(), module.getPath(), oldFatherPath));
-            module.setPathName(pathName);
-            module.setParentName(parentModule.getName());
 
         }
 
         // 判断是否更换了父节点
         // 如果更换了父节点 重新确定原父节点的 leaf属性，以及所修改节点的orders属性
-        if (null != originModule && this.parentChanged(originModule.getParentId(), pid)) {
+        if (null != originModule && this.parentChanged(originModule.getPid(), pid)) {
             // 更新原节点
             // 检查原父节点是否还存在子节点 来重新确定原始父节点得isleaf属性
             // 由于数据还未提交 节点仍然挂载在原始节点上 所以这里要 -1
-            int originParentChilds = this.mapper.countPrantLeaf(originModule.getParentId()) - 1;
+            int originParentChilds = this.mapper.countPrantLeaf(originModule.getPid()) - 1;
             if (originParentChilds < 1) {
                 ModuleEntity originParentModule = new ModuleEntity();
                 originParentModule.setIsleaf(true);
-                originParentModule.setId(originModule.getParentId());
+                originParentModule.setId(originModule.getPid());
                 this.mapper.updateById(originParentModule);
             }
             // 更新新节点 isleaf属性
@@ -149,7 +155,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
             newParentModule.setId(pid);
             this.mapper.updateById(newParentModule);
             // 重新设置节点顺序
-            module.setOrders(newParentChilds + 1);
+            module.setSort(newParentChilds + 1);
 
         }
         // 持久化
@@ -166,7 +172,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
          有id 更新
          无id 新增
          */
-        List<ModuleResources> resources = module.getResources();
+        List<ModuleResources> resources = bo.getResources();
 
         if (CollUtil.isNotEmpty(resources)) {
             List<String> ids = new ArrayList<>(resources.size());
@@ -190,7 +196,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
                 try {
                     this.moduleResourceMapper.delete(deleteWrapper);
                 } catch (Exception e) {
-                    throw new BizException(BizCodeEnum.RESOURCE_USED);
+                    throw new BizException(SysCodeEnum.RESOURCE_USED);
                 }
             }
         }
@@ -219,22 +225,22 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
     // 父节点信息有修改 刷新子节点相关数据
     public void refreshChild(ModuleEntity module, ModuleEntity oldModule) {
         // 刷新子节点所有名称
-        this.mapper.updateChildParentName(
-                module.getPathName(), oldModule.getPathName(),
-                module.getPathId(), oldModule.getPathId(),
-                module.getName(), module.getId());
+//        this.mapper.updateChildParentName(
+//                module.getPathName(), oldModule.getPathName(),
+//                module.getPathId(), oldModule.getPathId(),
+//                module.getName(), module.getId());
     }
 
     /**
      * 根据ID更新
      */
     public void updateModule(ModuleEntity moduleEntity) {
-        if (CharSequenceUtil.isNotBlank(moduleEntity.getStatus()) && FrozenEnumm.UN_FROZEN.getCode().equals(moduleEntity.getStatus())) {
-            if (!isDisable(moduleEntity)) {
-                return;
-            }
-        }
-        disableChild(moduleEntity);
+//        if (CharSequenceUtil.isNotBlank(moduleEntity.getFrozen()) && FrozenEnumm.UN_FROZEN.getCode().equals(moduleEntity.getFrozen())) {
+//            if (!isDisable(moduleEntity)) {
+//                return;
+//            }
+//        }
+//        disableChild(moduleEntity);
         this.mapper.updateById(moduleEntity);
     }
 
@@ -245,27 +251,29 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
      * @param id 模块ID
      * @return 模块信息
      */
-    public ModuleEntity getModule(String id) {
-        ModuleEntity module = this.getById(id);
+    public ModuleDetailVo getModule(String id) {
+        ModuleEntity module = this.get(id);
         // 获取资源信息
-        QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.eq("MODULE_ID", id);
+        LambdaQueryWrapper<ModuleResources> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(ModuleResources::getModuleId, id);
         List<ModuleResources> resourceList = this.moduleResourceMapper.selectList(queryWrapper);
 
-        module.setResources(resourceList);
+        var md = this.moduleConvert.entityToDetailVo(module);
 
-        return module;
+        md.setResources(resourceList);
+
+        return md;
     }
 
     /**
      * 根据属性查询模块树列表
      *
-     * @param module 属性实体类
+     * @param queryBo 属性实体类
      * @return 模块树列表
      */
-    public List<ModuleEntity> listModuleByAttr(ModuleEntity module) {
+    public List<ModuleListVo> listModuleByAttr(ModuleQueryBo queryBo) {
         //根据名字查询节点信息
-        return this.mapper.listModule(module);
+        return this.mapper.listModule(queryBo);
     }
 
     /**
@@ -273,10 +281,10 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
      *
      * @param switchModule 进行交换的两个实体
      */
-    public void sortModule(ModuleEntity[] switchModule) {
-        for (ModuleEntity module : switchModule) {
-            this.mapper.updateById(module);
-        }
+    public void sortModule(ModuleSortBo[] switchModule) {
+//        for (ModuleEntity module : switchModule) {
+//            this.mapper.updateById(module);
+//        }
     }
 
     /**
@@ -293,10 +301,10 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
             entityWrapper.ne("ID", module.getId());
         }
 
-        if (CharSequenceUtil.isBlank(module.getParentId())) {
+        if (CharSequenceUtil.isBlank(module.getPid())) {
             entityWrapper.isNull("PARENT_ID");
         } else {
-            entityWrapper.eq("PARENT_ID", module.getParentId());
+            entityWrapper.eq("PARENT_ID", module.getPid());
         }
 
         long records = this.mapper.selectCount(entityWrapper);
@@ -306,13 +314,13 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
     /**
      * 父节点被禁用，子节点也会被禁用
      */
-    public void disableChild(ModuleEntity module) {
+    public void disableChild(SingleArrayBo<String> ids) {
         //判断是不是禁用
-        if (CharSequenceUtil.isBlank(module.getStatus()) || FrozenEnumm.FROZEN.getCode().equals(module.getStatus())) {
-            return;
-        }
-        //禁用该父节点下的所有子节点
-        this.mapper.disableChild(module.getId());
+//        if (CharSequenceUtil.isBlank(module.getFrozen()) || FrozenEnumm.FROZEN.getCode().equals(module.getFrozen())) {
+//            return;
+//        }
+//        //禁用该父节点下的所有子节点
+//        this.mapper.disableChild(module.getId());
     }
 
 
@@ -325,12 +333,12 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
     public boolean isDisable(ModuleEntity moduleEntity) {
         ModuleEntity module = this.mapper.selectById(moduleEntity);
         //判断是否启用
-        if (CharSequenceUtil.isNotBlank(module.getParentId())) {
+        if (CharSequenceUtil.isNotBlank(module.getPid())) {
             //得到父节点
-            ModuleEntity fatherModule = this.mapper.selectById(module.getParentId());
-            if (fatherModule != null && CharSequenceUtil.isNotBlank(fatherModule.getStatus())) {
-                return !FrozenEnumm.FROZEN.getCode().equals(fatherModule.getStatus());
-            }
+            ModuleEntity fatherModule = this.mapper.selectById(module.getPid());
+//            if (fatherModule != null && CharSequenceUtil.isNotBlank(fatherModule.getFrozen())) {
+//                return !FrozenEnumm.FROZEN.getCode().equals(fatherModule.getFrozen());
+//            }
 
         }
         return true;

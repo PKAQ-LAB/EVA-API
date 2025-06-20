@@ -17,8 +17,10 @@ import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 import org.springframework.web.util.UrlPathHelper;
 
 import java.util.*;
@@ -37,7 +39,8 @@ public class DynamicSecurityMetadataSource implements FilterInvocationSecurityMe
     private final RoleService roleService;
 
     private final EvaConfig evaConfig;
-
+    // 构造器注入
+    private final HandlerMappingIntrospector introspector;
     /**
      * 资源权限 角色 - 资源路径 的map
      */
@@ -137,12 +140,18 @@ public class DynamicSecurityMetadataSource implements FilterInvocationSecurityMe
                  *  简单鉴权模式 可访问所有无权限要求的资源
                  *  根据资源路径获取访问该资源需要的所有角色 置入 Collection<ConfigAttribute>
                  */
+
                 pathPermSet.forEach((v) -> {
-                    var urlMatcher = new AntPathRequestMatcher(v);
-                    if (urlMatcher.matches(request) || StrUtil.equals(requestUrl, v)) {
-                        ConfigAttribute securityConfig = new SecurityConfig(v);
-                        set.add(securityConfig);
-                    }
+//                    RequestMatcher urlMatcher = new MvcRequestMatcher(introspector, v);
+//                    if (urlMatcher.matches(request) || StrUtil.equals(requestUrl, v)) {
+//                        ConfigAttribute securityConfig = new SecurityConfig(v);
+//                        set.add(securityConfig);
+//                    }
+//                    var urlMatcher = new AntPathRequestMatcher(v);
+//                    if (urlMatcher.matches(request) || StrUtil.equals(requestUrl, v)) {
+//                        ConfigAttribute securityConfig = new SecurityConfig(v);
+//                        set.add(securityConfig);
+//                    }
                 });
             }
         }

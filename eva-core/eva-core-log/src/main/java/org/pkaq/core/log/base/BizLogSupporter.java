@@ -1,5 +1,8 @@
 package org.pkaq.core.log.base;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import org.pkaq.core.mvc.bo.DateRangeBo;
+
 import java.util.Date;
 import java.util.List;
 
@@ -68,4 +71,8 @@ public interface BizLogSupporter {
      * 打印当前操作日志
      */
     void print();
+
+    String get(String id);
+
+    IPage list(DateRangeBo dateRangeBo);
 }

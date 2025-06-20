@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.pkaq.core.enums.BizCodeEnum;
+import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.threaduser.ThreadUserHelper;
@@ -35,7 +35,7 @@ public class AuthCtrl extends Ctrl {
 
             return success(this.userService.fetch(userId));
         } catch (Exception e) {
-            return failure(BizCodeEnum.SERVER_ERROR);
+            return failure(CommonCodes.SERVER_ERROR);
         }
     }
 

@@ -1,4 +1,4 @@
-package org.pkaq.core.enums;
+package org.pkaq.core.codes;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum ResponseEnumm implements BizCode {
+public enum ResponseCodes implements BizCode {
     /**
      * 可用
      */

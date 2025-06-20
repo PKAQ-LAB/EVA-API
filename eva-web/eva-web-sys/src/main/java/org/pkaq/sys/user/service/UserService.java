@@ -85,7 +85,7 @@ public class UserService extends StdService<UserMapper, UserEntity> {
      */
     public void updateUser(List<String> ids, String lock) {
         UserEntity user = new UserEntity();
-        user.setFrozen(lock);
+//        user.setFrozen(lock);
         QueryWrapper<UserEntity> wrapper = new QueryWrapper<>();
         wrapper.in("id", ids);
 

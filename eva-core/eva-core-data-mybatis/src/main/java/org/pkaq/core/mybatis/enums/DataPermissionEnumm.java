@@ -2,7 +2,7 @@ package org.pkaq.core.mybatis.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.pkaq.core.enums.BizCode;
+import org.pkaq.core.codes.BizCode;
 
 import java.util.Arrays;
 

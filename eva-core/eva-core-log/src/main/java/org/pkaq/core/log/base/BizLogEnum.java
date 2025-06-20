@@ -2,7 +2,7 @@ package org.pkaq.core.log.base;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.pkaq.core.enums.BizCode;
+import org.pkaq.core.codes.BizCode;
 
 /**
  * 业务日志类型

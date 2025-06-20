@@ -1,4 +1,4 @@
-package org.pkaq.core.enums;
+package org.pkaq.core.codes;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,8 +12,8 @@ import org.pkaq.core.exception.BizAssert;
  */
 @Getter
 @AllArgsConstructor
-public enum BizCodeEnum implements BizAssert {
-
+public enum CommonCodes implements BizAssert {
+    CHILD_EXIST("[{0}] 存在子节点，无法删除", "4302"),
     NULL_ID("所需记录ID为空值", "0x001"),
     NULL_PARAM_ID("所需记录 [ {0} ] 为空值", "0x002"),
     /**

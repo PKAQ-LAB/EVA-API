@@ -114,7 +114,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
      */
     public void updateRole(ArrayList<String> ids, String lock) {
         RoleEntity role = new RoleEntity();
-        role.setFrozen(lock);
+//        role.setFrozen(lock);
         QueryWrapper<RoleEntity> wrapper = new QueryWrapper<>();
         wrapper.in("id", CollectionUtil.join(ids, ","));
 
@@ -176,12 +176,12 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
         boolean isAdmin = ThreadUserHelper.isAdmin();
         // 获取所有菜单
         ModuleEntity moduleEntity = new ModuleEntity();
-        moduleEntity.setStatus(FrozenEnumm.UN_FROZEN.getCode());
+//        moduleEntity.setStatus(FrozenEnumm.UN_FROZEN.getCode());
         List<ModuleEntity> moduleList = null;
 
         // 非管理员仅能授权当前权限范围内的模块
         if (isAdmin) {
-            moduleList = this.moduleMapper.listModule(moduleEntity);
+//            moduleList = this.moduleMapper.listModule(moduleEntity);
         } else {
             moduleList = this.moduleMapper.listGrantedModule(null, moduleEntity, new String[]{"获取角色列表"});
         }

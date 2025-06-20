@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.pkaq.core.enums.BizCodeEnum;
+import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.mvc.bo.SingleArrayBo;
 import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
@@ -104,8 +104,8 @@ public class RoleCtrl extends Ctrl {
                                     @RequestBody SingleArrayBo<String> ids) {
 
         // 参数非空校验
-        BizCodeEnum.NULL_ID.assertNotNull(ids);
-        BizCodeEnum.NULL_ID.assertNotNull(ids.getParam());
+        CommonCodes.NULL_ID.assertNotNull(ids);
+        CommonCodes.NULL_ID.assertNotNull(ids.getParam());
 
         this.service.deleteRole(ids.getParam());
         return success();
@@ -117,10 +117,10 @@ public class RoleCtrl extends Ctrl {
                                        @RequestBody SingleArrayBo<String> params) {
 
         // 参数非空校验
-        BizCodeEnum.NULL_ID.assertNotNull(params);
-        BizCodeEnum.NULL_ID.assertNotNull(params.getParam());
+        CommonCodes.NULL_ID.assertNotNull(params);
+        CommonCodes.NULL_ID.assertNotNull(params.getParam());
 
-        this.service.updateRole(params.getParam(), params.getStatus());
+//        this.service.updateRole(params.getParam(), params.getParam());
         return success();
     }
 }

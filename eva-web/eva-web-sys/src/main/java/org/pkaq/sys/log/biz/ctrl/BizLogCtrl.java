@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
 import org.pkaq.core.log.base.BizLogSupporter;
 import org.pkaq.core.mvc.bo.DateRangeBo;
+import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.mybatis.log.entity.MybatisBizLogEntity;
 import org.pkaq.core.mybatis.util.Page;
@@ -22,11 +23,14 @@ import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.Date;
 
+/**
+ * @author PKAQ
+ */
 @RestController
 @RequestMapping("/monitor/log/biz")
 @Tag(name = "业务日志")
 @RequiredArgsConstructor
-public class BizLogCtrl {
+public class BizLogCtrl extends Ctrl {
     private final BizLogSupporter bizLogSupporter;
 
     private final DatabaseIdProvider databaseIdProvider;
@@ -35,14 +39,14 @@ public class BizLogCtrl {
 
     @GetMapping({"/get/{id}"})
     @Operation(description = "根据id获取操作日志明细")
-    public Response query(@Parameter(name = "id", description = "操作日志id")
+    public Response<Object> query(@Parameter(name = "id", description = "操作日志id")
                           @PathVariable(name = "id") String id) {
-        return new Response().success(this.bizLogSupporter.get(id));
+        return success(this.bizLogSupporter.get(id));
     }
 
     @GetMapping("/list")
     @Operation(description = "获取日志列表")
-    public Response list(@Parameter(name = "dateRange", description = "查询区间") DateRangeBo dateRange,
+    public Response<Object> list(@Parameter(name = "dateRange", description = "查询区间") DateRangeBo dateRange,
                          @Parameter(name = "pageNo", description = "页码") Integer pageNo,
                          @Parameter(name = "pageCount", description = "条数") Integer size) throws SQLException {
 
