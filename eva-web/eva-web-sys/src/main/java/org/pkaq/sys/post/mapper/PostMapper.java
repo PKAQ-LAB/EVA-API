@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import org.pkaq.core.mybatis.util.Page;
 import org.pkaq.sys.post.bo.PostQueryBo;
 import org.pkaq.sys.post.entity.PostEntity;
-import org.pkaq.sys.post.vo.PostTableVo;
+import org.pkaq.sys.post.vo.PostListVo;
 
 /**
  * @author dmz
@@ -21,6 +21,6 @@ public interface PostMapper extends BaseMapper<PostEntity> {
      * @param queryBo 传入参数
      * @return 列表
      */
-    IPage<PostTableVo> list(Page<PostTableVo> page, @Param("code") String code, @Param("q") PostQueryBo queryBo);
+    IPage<PostListVo> list(Page<PostListVo> page, @Param("q") PostQueryBo queryBo);
 
 }

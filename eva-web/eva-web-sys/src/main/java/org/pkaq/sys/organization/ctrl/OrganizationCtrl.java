@@ -1,15 +1,19 @@
 package org.pkaq.sys.organization.ctrl;
 
-import cn.hutool.core.util.StrUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.enums.BizCodeEnum;
+import org.pkaq.core.mvc.bo.IdCodeBo;
 import org.pkaq.core.mvc.bo.SingleArrayBo;
 import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
-import org.pkaq.sys.organization.entity.OrganizationEntity;
+import org.pkaq.sys.SysCodeEnum;
+import org.pkaq.sys.organization.bo.OrganizationAoeBo;
+import org.pkaq.sys.organization.bo.OrganizationQueryBo;
+import org.pkaq.sys.organization.bo.OrganizationSortBo;
 import org.pkaq.sys.organization.service.OrganizationService;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,60 +31,60 @@ public class OrganizationCtrl extends Ctrl {
 
     @PostMapping("/checkUnique")
     @Operation(summary = "校验code唯一性")
-    public Response checkUnique(@Parameter(name = "organization", description = "要进行校验的参数")
-                                @RequestBody OrganizationEntity organization) {
-        boolean exist = (null != organization && StrUtil.isNotBlank(organization.getCode())) ? this.service.checkUnique(organization) : false;
-        return exist ? failure(BizCodeEnum.ORG_CODE_EXIST) : success();
+    public Response<Object> checkUnique(@Parameter(name = "idCodeBo", description = "要进行校验的参数")
+                                        @RequestBody @Valid IdCodeBo idCodeBo) {
+        return this.service.isUnique(idCodeBo) ? failure(SysCodeEnum.ORG_CODE_EXIST) : success();
     }
 
     @GetMapping("/list")
     @Operation(summary = "根据实体类属性获取相应的组织树 ")
-    public Response listOrgByAttr(@Parameter(name = "organization", description = "{key: value}") OrganizationEntity organization) {
-        return success(this.service.list(organization));
+    public Response<Object> listOrgByAttr(@Parameter(name = "queryBo", description = "{key: value}") OrganizationQueryBo queryBo) {
+        return success(this.service.list(queryBo));
     }
 
     @GetMapping("/get/{id}")
-    @Operation(summary = "根据ID获取组织信息")
-    public Response getOrg(@Parameter(name = "id", description = "组织ID")
-                           @PathVariable("id") String id) {
-        OrganizationEntity entity = this.service.getOrg(id);
-        return success(entity);
+    @Operation(summary = "根据ID获取详情")
+    public Response<Object> getOrg(@Parameter(name = "id", description = "组织ID")
+                                   @PathVariable("id") String id) {
+        return success(this.service.getOrg(id));
     }
 
     @PostMapping("/del")
     @Operation(summary = "根据ID删除/批量删除组织")
     //@PreAuthorize("hasRole('ADMIN')")
-    public Response delOrg(@Parameter(name = "ids", description = "[组织ID]")
-                           @RequestBody SingleArrayBo<String> ids) {
+    public Response<Object> delOrg(@Parameter(name = "ids", description = "[组织ID]")
+                                   @RequestBody SingleArrayBo<String> ids) {
         // 参数非空校验
         BizCodeEnum.NULL_ID.assertNotNull(ids);
         BizCodeEnum.NULL_ID.assertNotNull(ids.getParam());
 
         // 判断上级节点是否还有其它叶子 如果没有把 isleaf属性改为false
-        return this.service.deleteOrg(ids.getParam());
+        this.service.deleteOrg(ids.getParam());
+
+        return success();
     }
 
     @PostMapping("/edit")
     @Operation(summary = "编辑组织信息")
-    public Response editOrg(@Parameter(name = "organization", description = "组织信息")
-                            @RequestBody OrganizationEntity organization) {
-        this.service.editOrg(organization);
+    public Response<Object> editOrg(@Parameter(name = "organization", description = "组织信息")
+                                    @RequestBody OrganizationAoeBo bo) {
+        this.service.editOrg(bo);
         return success();
     }
 
     @PostMapping("/sort")
     @Operation(summary = "排序组织信息")
-    public Response sortOrg(@Parameter(name = "organization", description = "{id,orders}")
-                            @RequestBody OrganizationEntity[] switchObj) {
+    public Response<Object> sortOrg(@Parameter(name = "organization", description = "{id,orders}")
+                                    @RequestBody OrganizationSortBo[] switchObj) {
         this.service.sortOrg(switchObj);
         return success();
     }
 
     @PostMapping("/switchStatus")
     @Operation(summary = "切换组织可用状态")
-    public Response switchStatus(@Parameter(name = "id", description = "组织Id")
-                                 @RequestBody OrganizationEntity organization) {
-        this.service.switchStatus(organization);
+    public Response<Object> switchStatus(@Parameter(name = "id", description = "组织Id")
+                                         @RequestBody SingleArrayBo<String> ids) {
+        this.service.switchStatus(ids);
         return success();
     }
 }

@@ -1,0 +1,28 @@
+package org.pkaq.core.mvc.bo;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+import org.hibernate.validator.constraints.Length;
+
+/**
+ * 实体类基类，用于存放公共属性
+ *
+ * @author: S.PKAQ
+ */
+@Data
+public abstract class StdBo implements Bo {
+    private String id;
+
+    @Schema(description = "乐观锁")
+    private int revision;
+
+    /** 是否冻结（0 - 未冻结，1 - 冻结， -1 - 不可编辑） **/
+    private int frozen;
+
+    @Schema(description = "展示顺序")
+    private double sort;
+
+    @Schema(description = "备注")
+    @Length(max = 400)
+    private String remark;
+}

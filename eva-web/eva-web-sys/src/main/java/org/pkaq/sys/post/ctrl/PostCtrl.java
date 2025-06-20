@@ -11,11 +11,11 @@ import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.mvc.vo.SingleArray;
 import org.pkaq.sys.SysCodeEnum;
-import org.pkaq.sys.post.bo.PostEditBo;
+import org.pkaq.sys.post.bo.PostAoeBo;
 import org.pkaq.sys.post.bo.PostQueryBo;
 import org.pkaq.sys.post.service.PostService;
 import org.pkaq.sys.post.vo.PostDetailVo;
-import org.pkaq.sys.post.vo.PostTableVo;
+import org.pkaq.sys.post.vo.PostListVo;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,19 +37,19 @@ public class PostCtrl extends Ctrl {
 
     @PostMapping("/checkUnique")
     @Operation(summary = "校验code/name唯一性")
-    public Response<Object> checkUnique(@Parameter(name = "postEditBo", required = true, description = "岗位管理新增/编辑/唯一校验请求参数")
-                                @RequestBody PostEditBo postEditBo) {
+    public Response<Object> checkUnique(@Parameter(name = "bo", required = true, description = "岗位管理新增/编辑/唯一校验请求参数")
+                                        @RequestBody PostAoeBo bo) {
         // 参数校验
-        if (CharSequenceUtil.isAllBlank(postEditBo.getCode(), postEditBo.getTitle())) {
+        if (CharSequenceUtil.isAllBlank(bo.getCode(), bo.getTitle())) {
             return failure(SysCodeEnum.MISS_CODE_OR_NAME);
         }
-        boolean exists = this.postService.checkUnique(postEditBo);
+        boolean exists = this.postService.checkUnique(bo);
         return exists ? success() : failure(SysCodeEnum.DUPLICATE_CODE_OR_NAME);
     }
 
     @GetMapping("/list")
     @Operation(summary = "根据条件查询岗位管理列表数据")
-    public Response<IPage<PostTableVo>> list(@Parameter(name = "query", description = "请求参数")
+    public Response<IPage<PostListVo>> list(@Parameter(name = "query", description = "请求参数")
                                              PostQueryBo query) {
 
         return success(this.postService.list(query));
@@ -65,7 +65,7 @@ public class PostCtrl extends Ctrl {
     @PostMapping("/edit")
     @Operation(summary = "新增/编辑岗位管理信息")
     public Response<Object> edit(@Parameter(name = "edit", description = "编辑")
-                         @RequestBody @Validated PostEditBo bo) {
+                                @RequestBody @Validated PostAoeBo bo) {
         this.postService.edit(bo);
         return this.success();
     }
@@ -73,7 +73,7 @@ public class PostCtrl extends Ctrl {
     @PostMapping("/del")
     @Operation(summary = "根据ID删除")
     public Response<Object> del(@Parameter(name = "ids", description = "[ids]")
-                        @RequestBody SingleArray<String> ids) {
+                                @RequestBody SingleArray<String> ids) {
         // 参数非空校验
         BizCodeEnum.NULL_ID.assertNotNull(ids.getParam());
         this.postService.del(ids.getParam());

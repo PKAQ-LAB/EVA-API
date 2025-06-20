@@ -10,7 +10,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
-import org.pkaq.core.mvc.vo.DateRangeVo;
+import org.pkaq.core.mvc.bo.DateRangeBo;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.mybatis.exception.entity.ErrorlogEntity;
 import org.pkaq.core.mybatis.exception.mapper.ErrorlogMapper;
@@ -44,7 +44,7 @@ public class ErrorCtrl {
 
     @GetMapping("/list")
     @Operation(summary = "获取错误日志列表")
-    public Response<?> list(@Parameter(name = "dateRange", description = "查询区间") DateRangeVo dateRange,
+    public Response<?> list(@Parameter(name = "dateRange", description = "查询区间") DateRangeBo dateRange,
                          @Parameter(name = "pageNo", description = "页码") Integer pageNo,
                          @Parameter(name = "pageCount", description = "条数") Integer pageCount) throws SQLException {
 

@@ -1,4 +1,4 @@
-package org.pkaq.sys.annotation;
+package org.pkaq.sys.dict.annotation;
 
 import com.fasterxml.jackson.annotation.JacksonAnnotationsInside;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -15,7 +15,7 @@ import java.lang.annotation.*;
 @Documented
 @JacksonAnnotationsInside
 @JsonSerialize(using = JacksonCodeSerializer.class)
-public @interface Code {
+public @interface Dict {
     /**
      * 该属性表示在字典中的code值，为空时则表示cede值与属性名一致。
      */

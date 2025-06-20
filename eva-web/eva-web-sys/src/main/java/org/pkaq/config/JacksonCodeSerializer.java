@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 import lombok.NoArgsConstructor;
-import org.pkaq.sys.annotation.Code;
+import org.pkaq.sys.dict.annotation.Dict;
 import org.pkaq.sys.dict.cache.DictCacheHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,9 +75,9 @@ public class JacksonCodeSerializer extends JsonSerializer<String> implements Con
             return prov.findValueSerializer(property.getType(), property);
         }
 
-        Code annotation = property.getAnnotation(Code.class);
+        Dict annotation = property.getAnnotation(Dict.class);
         if (annotation == null) {
-            annotation = property.getContextAnnotation(Code.class);
+            annotation = property.getContextAnnotation(Dict.class);
         }
 
         if (annotation != null && StringUtils.hasText(annotation.value())) {

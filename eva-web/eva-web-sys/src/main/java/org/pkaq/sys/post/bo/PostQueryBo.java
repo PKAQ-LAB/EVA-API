@@ -12,14 +12,9 @@ import org.pkaq.core.mvc.bo.PageBo;
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class PostQueryBo extends PageBo {
-    /**
-     * 岗位
-     */
     @Schema(description = "岗位")
     private String title;
-    /**
-     * 职级
-     */
+
     @Schema(description = "职级")
     private String level;
 

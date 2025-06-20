@@ -13,7 +13,7 @@ import org.pkaq.core.mybatis.mvc.entity.StdEntity;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-@Alias("sys_post")
+@Alias("post")
 @TableName("SYS_POST")
 public class PostEntity extends StdEntity {
     /**
@@ -31,17 +31,14 @@ public class PostEntity extends StdEntity {
     /**
      * 上级岗位ID
      */
-    private String parentId;
+    private String pid;
     /**
      * 岗位路径
      */
     private String pathId;
+
     /**
-     * 状态
+     * 是否叶子
      */
-    private String status;
-    /**
-     * 排序
-     */
-    private Integer sorts;
+    private String isLeaf;
 }

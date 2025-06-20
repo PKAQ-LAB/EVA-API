@@ -15,8 +15,4 @@ dependencies {
                    project(":eva-core:eva-core-log"),
                    project(":eva-core:eva-core-upload"),
                    libs.mysql
-
-    implementation      libs.mapstruct
-
-    annotationProcessor libs.mapstruct.processor
 }

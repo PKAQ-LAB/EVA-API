@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * @author PKAQ
  */
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(config = MapConvertConfig.class)
 public interface UserConvert {
     List<UserListVo> toVoList(List<UserEntity> list);
 

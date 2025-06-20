@@ -1,7 +1,7 @@
 package org.pkaq.sys.role.convert;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.ReportingPolicy;
+import org.pkaq.core.mvc.convert.MapConvertConfig;
 import org.pkaq.sys.role.bo.RoleAoeBo;
 import org.pkaq.sys.role.bo.RoleQueryBo;
 import org.pkaq.sys.role.entity.RoleEntity;
@@ -10,7 +10,10 @@ import org.pkaq.sys.role.vo.RoleListVo;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+/**
+ * @author PKAQ
+ */
+@Mapper(config = MapConvertConfig.class)
 public interface RoleConvert {
     RoleEntity queryBoToEntity(RoleQueryBo queryBo);
 

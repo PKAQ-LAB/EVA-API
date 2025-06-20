@@ -1,4 +1,4 @@
-package org.pkaq.sys.log.biz.ctrl.ctrl;
+package org.pkaq.sys.log.biz.ctrl;
 
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
@@ -8,11 +8,10 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
-import org.pkaq.core.mvc.vo.DateRangeVo;
-import org.pkaq.core.mvc.vo.PageVo;
+import org.pkaq.core.log.base.BizLogSupporter;
+import org.pkaq.core.mvc.bo.DateRangeBo;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.mybatis.log.entity.MybatisBizLogEntity;
-import org.pkaq.core.mybatis.log.mapper.MybatisSupporterMapper;
 import org.pkaq.core.mybatis.util.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,7 +27,7 @@ import java.util.Date;
 @Tag(name = "业务日志")
 @RequiredArgsConstructor
 public class BizLogCtrl {
-    private final MybatisSupporterMapper mybatisSupporterMapper;
+    private final BizLogSupporter bizLogSupporter;
 
     private final DatabaseIdProvider databaseIdProvider;
 
@@ -38,12 +37,12 @@ public class BizLogCtrl {
     @Operation(description = "根据id获取操作日志明细")
     public Response query(@Parameter(name = "id", description = "操作日志id")
                           @PathVariable(name = "id") String id) {
-        return new Response().success(this.mybatisSupporterMapper.selectById(id));
+        return new Response().success(this.bizLogSupporter.get(id));
     }
 
     @GetMapping("/list")
     @Operation(description = "获取日志列表")
-    public Response list(@Parameter(name = "dateRange", description = "查询区间") DateRangeVo dateRange,
+    public Response list(@Parameter(name = "dateRange", description = "查询区间") DateRangeBo dateRange,
                          @Parameter(name = "pageNo", description = "页码") Integer pageNo,
                          @Parameter(name = "pageCount", description = "条数") Integer size) throws SQLException {
 
@@ -75,7 +74,7 @@ public class BizLogCtrl {
         pagination.setCurrent(pageNo == null ? 1 : pageNo);
         pagination.setSize(size == null ? 30 : size);
 
-        return new Response().success(this.mybatisSupporterMapper.selectPage(pagination, wrapper));
+        return new Response().success(this.bizLogSupporter.list(dateRange));
     }
 
 }

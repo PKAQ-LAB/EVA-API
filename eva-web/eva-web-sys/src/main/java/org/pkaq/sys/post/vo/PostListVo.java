@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode;
 @Schema(description = "岗位管理列表视图对象")
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class PostTableVo {
+public class PostListVo {
     /**
      * 记录id
      */

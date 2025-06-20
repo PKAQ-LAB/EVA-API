@@ -4,7 +4,10 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class IdBo implements Bo {
+public class IdCodeBo implements Bo {
     @NotBlank(message = "{4007}")
     private String id;
+
+    @NotBlank(message = "{4007}")
+    private String code;
 }

@@ -10,7 +10,7 @@ import org.pkaq.sys.tenant.vo.TenantDetailVo;
 /**
  * @author PKAQ
  */
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(config = MapConvertConfig.class)
 public interface TenantConvert {
 
     TenantEntity boToEntity(TenantAoeBo bo);

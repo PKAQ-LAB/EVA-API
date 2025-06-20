@@ -1,13 +1,9 @@
-package org.pkaq.sys.organization.entity;
+package org.pkaq.sys.organization.vo;
 
-import com.baomidou.mybatisplus.annotation.SqlCondition;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.apache.ibatis.type.Alias;
-import org.pkaq.core.mybatis.mvc.entity.StdEntity;
+import org.pkaq.core.mvc.vo.Vo;
 
 import java.util.List;
 
@@ -18,17 +14,14 @@ import java.util.List;
  */
 
 @Data
-@Alias("organization")
-@TableName("sys_organization")
-@EqualsAndHashCode(callSuper = true)
-@Schema(title = "组织管理")
-public class OrganizationEntity extends StdEntity {
+@EqualsAndHashCode(callSuper = false)
+@Schema(title = "组织管理列表vo")
+public class OrganizationListVo implements Vo {
+    private String id;
 
-    @TableField(condition = SqlCondition.LIKE)
     @Schema(description = "组织名称")
     private String name;
 
-    @TableField(condition = SqlCondition.LIKE)
     @Schema(description = "编码")
     private String code;
 
@@ -41,21 +34,18 @@ public class OrganizationEntity extends StdEntity {
     @Schema(description = "是否是叶子")
     private boolean isleaf;
 
-    @TableField(exist = false)
     @Schema(description = "子节点")
-    private List<OrganizationEntity> children;
+    private List<OrganizationListVo> children;
 
     /**
      * TreeSelect组件需要为一个key
      */
-    @TableField(exist = false)
     @Schema(description = "key")
     private String key;
 
     /**
      * TreeSelect组件指定treeNodeLabelProp无法生效 仍然按默认title属性读取 这里添加title返回
      */
-    @TableField(exist = false)
     @Schema(description = "title")
     private String title;
 
@@ -71,7 +61,7 @@ public class OrganizationEntity extends StdEntity {
         return this.getId();
     }
 
-    public List<OrganizationEntity> getChildren() {
+    public List<OrganizationListVo> getChildren() {
         return children == null || children.size() < 1 ? null : children;
     }
 

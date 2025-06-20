@@ -1,4 +1,4 @@
-package org.pkaq.config;
+package org.pkaq.core.i18n;
 
 
 import org.springframework.boot.autoconfigure.context.MessageSourceProperties;

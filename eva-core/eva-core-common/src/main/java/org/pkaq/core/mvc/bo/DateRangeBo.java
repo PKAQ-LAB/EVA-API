@@ -1,4 +1,4 @@
-package org.pkaq.core.mvc.vo;
+package org.pkaq.core.mvc.bo;
 
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -12,12 +12,10 @@ import java.util.Date;
  * @author S.PKAQ
  */
 @Data
-public class DateRangeVo<T> implements Serializable {
+public class DateRangeBo implements Serializable {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date begin;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date end;
-
-    private T obj;
 }

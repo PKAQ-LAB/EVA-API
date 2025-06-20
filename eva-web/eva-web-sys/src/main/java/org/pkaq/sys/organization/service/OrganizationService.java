@@ -1,13 +1,27 @@
 package org.pkaq.sys.organization.service;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import lombok.RequiredArgsConstructor;
 import org.pkaq.core.enums.BizCodeEnum;
+import org.pkaq.core.mvc.bo.IdCodeBo;
+import org.pkaq.core.mvc.bo.SingleArrayBo;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.mybatis.mvc.service.StdService;
+import org.pkaq.sys.SysCodeEnum;
+import org.pkaq.sys.organization.bo.OrganizationAoeBo;
+import org.pkaq.sys.organization.bo.OrganizationQueryBo;
+import org.pkaq.sys.organization.bo.OrganizationSortBo;
+import org.pkaq.sys.organization.convert.OrganizationConvert;
 import org.pkaq.sys.organization.entity.OrganizationEntity;
 import org.pkaq.sys.organization.mapper.OrganizationMapper;
+import org.pkaq.sys.organization.vo.OrganizationDetailVo;
+import org.pkaq.sys.organization.vo.OrganizationListVo;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,8 +33,9 @@ import java.util.List;
  * @author S.PKAQ
  */
 @Service
+@RequiredArgsConstructor
 public class OrganizationService extends StdService<OrganizationMapper, OrganizationEntity> {
-
+    private final OrganizationConvert organizationConvert;
     /**
      * 查询组织结构树
      *
@@ -36,46 +51,41 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
      * @param ids
      * @return
      */
-    public Response deleteOrg(ArrayList<String> ids) {
-        Response response = null;
+    public void deleteOrg(List<String> ids) {
         // 检查是否存在子节点，存在子节点不允许删除
-        QueryWrapper<OrganizationEntity> oew = new QueryWrapper<>();
-        oew.in("parent_ID", ids);
+        LambdaQueryWrapper<OrganizationEntity> oew = new LambdaQueryWrapper<>();
+        oew.in(OrganizationEntity::getPid, ids);
 
         List<OrganizationEntity> leafList = this.mapper.selectList(oew);
 
-        if (CollectionUtil.isNotEmpty(leafList)) {
-            List<Object> list = CollectionUtil.getFieldValues(leafList, "parentName");
-            String name = CollectionUtil.join(list, ",");
+        if (CollUtil.isNotEmpty(leafList)) {
+            List<Object> list = CollUtil.getFieldValues(leafList, "parentName");
+            String name = CollUtil.join(list, ",");
 
-            BizCodeEnum.CHILD_EXIST.newException(name);
+            SysCodeEnum.CHILD_EXIST.newException(name);
         } else {
             this.mapper.deleteBatchIds(ids);
-            response = new Response().success();
         }
-
-        return response;
     }
 
     /**
      * 新增/编辑一条组织信息
      *
-     * @param organization 要 新增/编辑 得组织对象
+     * @param bo 要 新增/编辑 得组织对象
      */
-    public void editOrg(OrganizationEntity organization) {
+    public void editOrg(OrganizationAoeBo bo) {
+        var organization = this.organizationConvert.aoeBoToEntity(bo);
+
         String orgId = organization.getId();
         // 获取上级节点
-        String pid = organization.getParentId();
+        String pid = organization.getPid();
         String root = "0";
         if (!root.equals(pid) && StrUtil.isNotBlank(pid)) {
             // 查询新父节点信息
-            OrganizationEntity parentOrg = this.getOrg(pid);
+            OrganizationEntity parentOrg = this.get(pid);
             // 设置当前节点信息
             String parentPath = StrUtil.isNotBlank(organization.getId()) ? parentOrg.getPath() + "/" + organization.getId() : parentOrg.getPath();
             organization.setPath(parentPath);
-            String pathName = parentOrg.getPathName() + "/" + organization.getName();
-            organization.setPathName(pathName);
-            organization.setParentName(parentOrg.getName());
 
         } else {
             // 父节点为空, 根节点 设置为非叶子\
@@ -83,16 +93,15 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
             if (StrUtil.isNotBlank(organization.getId())) {
                 organization.setPath(organization.getId());
             }
-            organization.setParentId(pid);
+            organization.setPid(pid);
             organization.setIsleaf(false);
-            organization.setPathName(organization.getName());
         }
 
         // 检查原父节点是否还存在子节点 不存在设置leaf为false
         OrganizationEntity orginNode = this.mapper.getParentById(orgId);
 
         // 如果更换了父节点 重新确定原父节点的 leaf属性，以及所修改节点的orders属性
-        if (null != orginNode && !pid.equals(orginNode.getParentId())) {
+        if (null != orginNode && !pid.equals(orginNode.getPid())) {
             int brothers = this.mapper.countPrantLeaf(orgId) - 1;
             if (brothers < 1) {
                 orginNode.setIsleaf(true);
@@ -101,8 +110,8 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
         }
         //如果是新增且orders属性为空则设置orders属性
         OrganizationEntity oldOrgin = null;
-        if (StrUtil.isBlank(organization.getId())) {
-            organization.setOrders(this.mapper.countPrantLeaf(pid));
+        if (CharSequenceUtil.isBlank(organization.getId())) {
+            organization.setSort(this.mapper.countPrantLeaf(pid));
         } else {
             oldOrgin = this.mapper.selectById(orgId);
         }
@@ -144,18 +153,19 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
      * @param id 组织ID
      * @return 组织信息
      */
-    public OrganizationEntity getOrg(String id) {
-        return this.getById(id);
+    public OrganizationDetailVo getOrg(String id) {
+        return this.organizationConvert.entityToDetailVo(this.get(id));
     }
 
     /**
      * 根据属性查询组织树列表
      *
-     * @param organization 属性实体类
      * @return 组织树列表
      */
-    public List<OrganizationEntity> list(OrganizationEntity organization) {
-        return this.mapper.listOrg(organization);
+    public List<OrganizationListVo> list(OrganizationQueryBo queryBo) {
+        var bo = this.organizationConvert.queryBoToEntity(queryBo);
+        var vo = this.mapper.listOrg(bo);
+        return this.organizationConvert.entityToListVo(vo);
     }
 
     /**
@@ -163,31 +173,20 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
      *
      * @param switchOrg 进行交换的两个实体
      */
-    public void sortOrg(OrganizationEntity[] switchOrg) {
-        for (OrganizationEntity org : switchOrg) {
-            this.mapper.updateById(org);
-        }
+    public void sortOrg(OrganizationSortBo[] switchOrg) {
+        // 优化逻辑
+//        for (OrganizationEntity org : switchOrg) {
+//            this.mapper.updateById(org);
+//        }
     }
 
     /**
      * 切换可用状态 - 级联操作
-     *
-     * @param organization
+     * @param ids
      */
-    public void switchStatus(OrganizationEntity organization) {
-        this.mapper.switchStatus(organization);
+    public void switchStatus(SingleArrayBo<String> ids) {
+        //TODO 优化逻辑
+        //this.mapper.switchStatus(organization);
     }
 
-    /**
-     * 校验code是否唯一
-     *
-     * @param organization
-     * @return
-     */
-    public boolean checkUnique(OrganizationEntity organization) {
-        QueryWrapper<OrganizationEntity> entityWrapper = new QueryWrapper<>();
-        entityWrapper.eq("code", organization.getCode());
-        long records = this.mapper.selectCount(entityWrapper);
-        return records > 0;
-    }
 }

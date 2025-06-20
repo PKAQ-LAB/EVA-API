@@ -10,7 +10,7 @@ import org.pkaq.sys.dict.vo.DictViewVo;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(config = MapConvertConfig.class)
 public interface DictConvert {
 
     DictViewVo entityToVo(DictEntity dict);
