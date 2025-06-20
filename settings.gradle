@@ -2,9 +2,6 @@ rootProject.name = 'eva'
 
 include 'web-booter'
 
-include ':eva-web:eva-web-sys'
-include ':eva-web:eva-web-auth'
-
 include ':eva-core:eva-core-log'
 include ':eva-core:eva-core-common'
 include ':eva-core:eva-core-data-mybatis'
@@ -15,4 +12,7 @@ include ':eva-core:eva-core-websocket'
 include ':eva-server:eva-admin-server'
 include ':eva-server:eva-license-server'
 
-include 'eva-web:eva-web-domain'
+include ':eva-web:eva-web-auth'
+
+include 'eva-web:eva-web-sys:eva-web-sys-domain'
+include ':eva-web:eva-web-sys:eva-web-sys-service'

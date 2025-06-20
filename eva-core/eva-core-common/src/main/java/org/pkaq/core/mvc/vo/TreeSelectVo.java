@@ -32,17 +32,9 @@ public class TreeSelectVo {
      **/
     private String path;
     /**
-     * 路径中文描述
-     **/
-    private String pathName;
-    /**
      * 上级节点id
      **/
-    private String parentId;
-    /**
-     * 上级节点名称
-     **/
-    private String parentName;
+    private String pid;
     /**
      * 子节点
      **/
