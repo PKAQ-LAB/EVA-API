@@ -57,8 +57,8 @@ spring:
       connection-test-query: select 1
 eva:
   # 文件上传
-  upload:
-    type: minio
+  file:
+    type: none
     minio:
       url: http://yy.pkaq.org:9899
       access: qKjV8I0wBcBEflHi

@@ -33,7 +33,7 @@ public class WebBooter implements CommandLineRunner {
 
         log.info(" ------------------ Swagger ------------------ ");
         log.info(" #                                            #");
-        log.info(" # Local: http://localhost:" + port + path + "/doc.html #");
+        log.info(" # Local: http://localhost:" + port + path + "/doc.html  #");
         log.info(" #                                            #");
         log.info(" ------------------ Swagger ------------------ ");
 
