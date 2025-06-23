@@ -2,6 +2,7 @@ package org.pkaq.core.mybatis.util;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
+import org.pkaq.core.mvc.vo.PageVo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,9 +18,8 @@ import static java.util.stream.Collectors.toList;
  *
  * @author PKAQ
  */
-public class Page<T> implements IPage<T> {
+public class Page<T> implements IPage<T>, PageVo {
 
-    private static final long serialVersionUID = 8545996863226528798L;
     protected List<T> records = Collections.emptyList();
     /**
      * 总数

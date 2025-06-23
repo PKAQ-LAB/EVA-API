@@ -9,14 +9,13 @@ import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.sys.dict.service.DictService;
+import org.pkaq.sys.module.service.ModuleService;
 import org.pkaq.sys.user.service.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * JWT鉴权
- *
  * @author: S.PKAQ
  */
 @Slf4j
@@ -25,8 +24,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthCtrl extends Ctrl {
-    private final UserService userService;
     private final DictService dictService;
+    private final ModuleService moduleService;
 
     @GetMapping("/fetchMenus")
     @Operation(summary = "获取当前登录用户的信息(菜单.权限.消息)")
@@ -34,7 +33,7 @@ public class AuthCtrl extends Ctrl {
         try {
             final var userId = ThreadUserHelper.getUserId();
 
-            return success(this.userService.fetch(userId));
+            return success(this.moduleService.fetchModuleByUid(userId));
         } catch (Exception e) {
             return failure(CommonCodes.SERVER_ERROR);
         }

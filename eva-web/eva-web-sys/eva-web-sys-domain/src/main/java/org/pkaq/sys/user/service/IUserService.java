@@ -1,0 +1,29 @@
+package org.pkaq.sys.user.service;
+
+import org.pkaq.core.mvc.vo.PageVo;
+import org.pkaq.sys.user.bo.RePwdBo;
+import org.pkaq.sys.user.bo.UserAoeBo;
+import org.pkaq.sys.user.bo.UserCheckBo;
+import org.pkaq.sys.user.bo.UserQueryBo;
+import org.pkaq.sys.user.vo.UserDetailVo;
+import org.pkaq.sys.user.vo.UserListVo;
+
+import java.util.List;
+
+public interface IUserService {
+    void repwd(RePwdBo rePwdBo);
+
+    void delete(List<String> param);
+
+    List<UserListVo> listUser(UserQueryBo queryBo);
+
+    PageVo<UserListVo> listPage(UserQueryBo queryBo);
+
+    void updateUser(List<String> ids);
+
+    UserDetailVo getUser(String id);
+
+    void saveUser(UserAoeBo user);
+
+    boolean checkUnique(UserCheckBo user);
+}

@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.exception.BizException;
 import org.pkaq.core.mvc.bo.SingleArrayBo;
+import org.pkaq.core.mybatis.mvc.entity.StdTreeEntity;
 import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.core.mybatis.util.TreeHelper;
 import org.pkaq.sys.SysCodes;
@@ -22,6 +23,7 @@ import org.pkaq.sys.module.mapper.ModuleMapper;
 import org.pkaq.sys.module.mapper.ModuleResourceMapper;
 import org.pkaq.sys.module.vo.ModuleDetailVo;
 import org.pkaq.sys.module.vo.ModuleListVo;
+import org.pkaq.sys.user.vo.UserResourceVo;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -342,5 +344,21 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
 
         }
         return true;
+    }
+    /**
+     * 获取当前登录用户的信息(菜单.权限.消息
+     *
+     * @param uid 用户ID
+     */
+    public List<UserResourceVo> fetchModuleByUid(String uid) {
+        // 菜单树
+        List<ModuleEntity> moduleEntity = this.mapper.getRoleModuleByUserId(uid);
+        List<StdTreeEntity> treeModule = new TreeHelper().bulid(moduleEntity);
+
+        List<UserResourceVo> urv = this.moduleConvert.moduleTreeToUserResourceVo(treeModule);
+        // 权限是否为空
+        SysCodes.PERMISSION_EXPIRED.assertNotBlank(treeModule);
+
+        return urv;
     }
 }

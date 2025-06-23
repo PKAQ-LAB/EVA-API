@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.List;
+
 /**
  * 树形结构实体基类
  *
@@ -13,9 +15,6 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class StdTreeEntity extends StdEntity {
-
-    /** id **/
-    private String id;
 
     @TableField(condition = SqlCondition.LIKE)
     /** 编码 **/
@@ -32,4 +31,7 @@ public class StdTreeEntity extends StdEntity {
 
     /** 是否叶子 **/
     private Boolean isleaf;
+
+    /** 子节点 **/
+    private List<StdTreeEntity> children;
 }

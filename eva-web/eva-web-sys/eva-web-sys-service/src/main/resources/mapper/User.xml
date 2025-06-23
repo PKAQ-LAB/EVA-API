@@ -40,13 +40,13 @@
 
     <select id="getUerWithRoleId" resultMap="UserWithRoleId">
         SELECT
-        su.*,
-        sru.id R_ID,
-        sru.ROLE_ID
+            su.*,
+            sru.id R_ID,
+            sru.ROLE_ID
         FROM
-        sys_user_info su
-        LEFT JOIN sys_role_user sru
-        ON su.id = sru.USER_ID
+            sys_user_info su
+        LEFT JOIN SYS_ROLEUSER_REF sru
+            ON su.id = sru.USER_ID
         <where>
             <if test="null != user.deptId and user.deptId != ''">
                 su.dept_Id = #{user.deptId,jdbcType=VARCHAR}

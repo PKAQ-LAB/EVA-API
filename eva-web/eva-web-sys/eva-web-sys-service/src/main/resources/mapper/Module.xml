@@ -2,48 +2,31 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.module//DTD Mapper 3.0//EN" "http://mybatis.module/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.pkaq.sys.module.mapper.ModuleMapper">
     <resultMap id="BaseResultMap" type="org.pkaq.sys.module.vo.ModuleDetailVo" extends="common.resultMap">
-        <result column="NAME" jdbcType="VARCHAR" property="name"/>
-        <result column="ICON" jdbcType="VARCHAR" property="icon"/>
-        <result column="ROUTEURL" jdbcType="VARCHAR" property="routeurl"/>
-        <result column="MODELURL" jdbcType="VARCHAR" property="modelurl"/>
-        <result column="PARENT_ID" jdbcType="VARCHAR" property="pid"/>
-        <result column="PATH" jdbcType="VARCHAR" property="path"/>
-        <result column="ISLEAF" jdbcType="TINYINT" property="isleaf"/>
-        <result column="ORDERS" jdbcType="INTEGER" property="sort"/>
-        <result column="STATUS" jdbcType="VARCHAR" property="frozen"/>
-        <result column="MODIFY_BY" jdbcType="VARCHAR" property="createBy"/>
-        <result column="CREATE_BY" jdbcType="VARCHAR" property="modifyBy"/>
+        <id property="id" column="ID"/>
         <collection property="children" column="{id=id}" select="listChildren"/>
         <collection property="resources" javaType="java.util.List" ofType="moduleResource">
             <id column="R_ID" property="id" jdbcType="VARCHAR"/>
-            <result column="MODULE_ID" property="moduleId" jdbcType="VARCHAR"/>
-            <result column="RESOURCE_DESC" property="resourceDesc" jdbcType="VARCHAR"/>
-            <result column="RESOURCE_URL" property="resourceUrl" jdbcType="VARCHAR"/>
-            <result column="RESOURCE_TYPE" property="resourceType" jdbcType="VARCHAR"/>
         </collection>
     </resultMap>
 
     <!--根据权限ID查询用户拥有的模块-->
     <select id="getRoleModuleByUserId" resultType="module">
         select
-        distinct
-        m.*
+            distinct
+            m.*
         from
-        SYS_MODULE M,
-        SYS_ROLE R,
-        SYS_ROLE_MODULE RM,
-        SYS_ROLE_USER RU
+            SYS_MODULE M,
+            SYS_ROLE R,
+            SYS_ROLE_MODULE RM,
+            SYS_ROLEUSER_REF RU
         where
-        M.STATUS != '0001'
-        and
-        R.ID=RM.ROLE_ID
-        and
-        M.ID=RM.MODULE_ID
-        and
-        R.ID=RU.ROLE_ID
-        and
-        ru.USER_ID = #{userId}
-        order by m.orders asc
+            M.STATUS != '0001' and
+            R.ID=RM.ROLE_ID and
+            M.ID=RM.MODULE_ID and
+            R.ID=RU.ROLE_ID and
+            ru.USER_ID = #{userId}
+        order by
+            m.orders asc
     </select>
     <!--根据条件查询 拥有权限的 菜单数据-->
     <select id="listGrantedModule" resultMap="BaseResultMap">

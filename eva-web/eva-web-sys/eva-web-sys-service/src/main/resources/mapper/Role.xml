@@ -3,10 +3,10 @@
 <mapper namespace="org.pkaq.sys.role.mapper.RoleMapper">
     <!-- 根据userId获取 权限相关信息-->
     <select id="selectByUserId" resultType="role">
-        select R.ID,
-        R.NAME,
-        R.CODE,
-        RU.USER_ID,
+        select  R.ID,
+                R.NAME,
+                R.CODE,
+                RU.USER_ID,
         <if test="_databaseId == 'mysql'">
             ifnull(DATA_PERMISSION_TYPE, '0000') DATA_PERMISSION_TYPE,
         </if>
@@ -14,7 +14,7 @@
             nvl(DATA_PERMISSION_TYPE, '0000') DATA_PERMISSION_TYPE,
         </if>
         DATA_PERMISSION_DEPTID
-        from SYS_ROLE R, SYS_ROLE_USER RU
+        from SYS_ROLE R, SYS_ROLEUSER_REF RU
         <where>
             R.ID= RU.ROLE_ID
             and

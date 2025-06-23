@@ -4,22 +4,18 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.crypto.digest.BCrypt;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.log.annotation.BizLog;
 import org.pkaq.core.log.base.BizLogEnum;
-import org.pkaq.core.mybatis.mvc.entity.StdTreeEntity;
+import org.pkaq.core.mvc.vo.PageVo;
 import org.pkaq.core.mybatis.mvc.service.ConvertService;
 import org.pkaq.core.mybatis.util.Page;
-import org.pkaq.core.mybatis.util.TreeHelper;
 import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.core.upload.provider.FileUploadProvider;
 import org.pkaq.sys.SysCodes;
-import org.pkaq.sys.module.entity.ModuleEntity;
-import org.pkaq.sys.module.mapper.ModuleMapper;
 import org.pkaq.sys.role.mapper.RoleUserMapper;
 import org.pkaq.sys.role.service.UserRoleRefSerivce;
 import org.pkaq.sys.user.bo.*;
@@ -41,13 +37,11 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor
-public class UserService extends ConvertService<UserMapper, UserConvert> {
+public class UserService extends ConvertService<UserMapper, UserConvert> implements IUserService {
 
     private final UserRoleRefSerivce userRoleRefSerivce;
 
     private final FileUploadProvider fileUploadProvider;
-
-    private final ModuleMapper moduleMapper;
 
     private final RoleUserMapper roleUserMapper;
 
@@ -56,41 +50,29 @@ public class UserService extends ConvertService<UserMapper, UserConvert> {
      */
     @BizLog(operateType = BizLogEnum.EDIT, description = "更新了密码[{0}]", args = {"param:0.id"})
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    @Override
     public void repwd(RePwdBo rePwdBo) {
         var uid = ThreadUserHelper.getUserId();
         UserEntity userEntity = this.mapper.selectById(uid);
 
         if (!BCrypt.checkpw(rePwdBo.getOriginPassword(), userEntity.getPassword())) {
-            throw SysCodes.BAD_ORG_PASSWORD.newException();
+            SysCodes.BAD_ORG_PASSWORD.newException();
         }
         userEntity.setPassword(BCrypt.hashpw(rePwdBo.getNewPassword()));
         this.mapper.updateById(userEntity);
     }
 
-    /**
-     * 查询用户列表
-     */
-    public IPage<UserListVo> listUser(UserAoeBo userEntity, Integer page, Integer size) {
-        page = null != page ? page : 1;
-        size = null != size ? size : 30;
-
-        var pagination = new Page<>();
-        pagination.setCurrent(page);
-        pagination.setSize(size);
-
-        return this.mapper.getUerWithRoleId(pagination, userEntity);
-    }
-
     @BizLog(operateType = BizLogEnum.DELETE, description = "删除了用户", args = {"param:0"})
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    @Override
     public void delete(List<String> param) {
         this.mapper.deleteByIds(param);
     }
-
     /**
      * 查询用户列表 无分页
      */
     @BizLog(operateType = BizLogEnum.QUERY, description = "查询了用户列表")
+    @Override
     public List<UserListVo> listUser(UserQueryBo queryBo) {
         UserEntity user = this.converter.queryBoToEntity(queryBo);
         LambdaQueryWrapper<UserEntity> wrapper = Wrappers.lambdaQuery();
@@ -98,27 +80,23 @@ public class UserService extends ConvertService<UserMapper, UserConvert> {
         wrapper.orderByDesc(UserEntity::getModifyBy);
         return this.converter.entityListToVoList(this.mapper.selectList(wrapper));
     }
-
-
     /**
      * 列表查询 - 分页
-     *
-     * @param queryBo
-     * @return
      */
     @BizLog(operateType = BizLogEnum.QUERY, description = "查询了用户列表")
-    public IPage<UserListVo> listPage(UserQueryBo queryBo) {
+    @Override
+    public PageVo listPage(UserQueryBo queryBo) {
         LambdaQueryWrapper<UserEntity> wrapper = Wrappers.lambdaQuery();
         wrapper.setEntity(this.converter.queryBoToEntity(queryBo));
         wrapper.orderByDesc(UserEntity::getUtcModify);
 
         Page<UserEntity> pagination = new Page<>(queryBo.getPageNo(), queryBo.getPageSize());
-        return this.mapper.selectPage(pagination, wrapper).convert(this.converter::entityToListVo);
+        return this.mapper.selectPage(pagination, wrapper);
     }
-
     /**
      * 解锁/锁定用户
      */
+    @Override
     public void updateUser(List<String> ids) {
         if (CollUtil.isEmpty(ids)) {
             CommonCodes.NULL_ID.newException();
@@ -126,13 +104,13 @@ public class UserService extends ConvertService<UserMapper, UserConvert> {
 
         this.mapper.change(ids);
     }
-
     /**
      * 获取一条用户信息
      *
      * @param id 用户id
      * @return 符合条件的用户对象
      */
+    @Override
     public UserDetailVo getUser(String id) {
         var user = this.mapper.selectById(id);
         if (null == user) {
@@ -146,7 +124,6 @@ public class UserService extends ConvertService<UserMapper, UserConvert> {
 
         return uvo;
     }
-
     /**
      * 新增/编辑用户信息
      *
@@ -154,6 +131,7 @@ public class UserService extends ConvertService<UserMapper, UserConvert> {
      */
     @BizLog(operateType = BizLogEnum.EDIT, description = "更新用户记录[{0}]", args = {"param:0.id"})
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    @Override
     public void saveUser(UserAoeBo user) {
         // 用户资料发生修改后 重新生成密码
         // 这里传递过来的密码是进行md5加密后的
@@ -197,10 +175,10 @@ public class UserService extends ConvertService<UserMapper, UserConvert> {
         userGrantBo.setRoleIds(user.getRoleIds());
         this.userRoleRefSerivce.saveRoles(userGrantBo);
     }
-
     /**
      * 校验账号是否唯一
      */
+    @Override
     public boolean checkUnique(UserCheckBo user) {
         LambdaQueryWrapper<UserEntity> entityWrapper = new LambdaQueryWrapper<>();
         entityWrapper.nested(w ->
@@ -212,20 +190,5 @@ public class UserService extends ConvertService<UserMapper, UserConvert> {
             entityWrapper.ne(UserEntity::getId, user.getId());
         }
         return this.mapper.selectCount(entityWrapper) > 0;
-    }
-
-    /**
-     * 获取当前登录用户的信息(菜单.权限.消息
-     *
-     * @param uid 用户ID
-     */
-    public List<StdTreeEntity> fetch(String uid) {
-
-        List<ModuleEntity> moduleEntity = this.moduleMapper.getRoleModuleByUserId(uid);
-        List<StdTreeEntity> treeModule = new TreeHelper().bulid(moduleEntity);
-
-        SysCodes.PERMISSION_EXPIRED.assertNotBlank(treeModule);
-
-        return treeModule;
     }
 }
