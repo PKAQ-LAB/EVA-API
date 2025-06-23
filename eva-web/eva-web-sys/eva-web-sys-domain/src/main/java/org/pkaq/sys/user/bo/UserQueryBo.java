@@ -30,6 +30,9 @@ public class UserQueryBo extends PageBo {
     @Schema(description = "姓名")
     private String name;
 
+    @Schema(description = "状态")
+    private int frozen;
+
     @Schema(description = "所属岗位ID")
     private List<String> postId = new ArrayList<>();
 

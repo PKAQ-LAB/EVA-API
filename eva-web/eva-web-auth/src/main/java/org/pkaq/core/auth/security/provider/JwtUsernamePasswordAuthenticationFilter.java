@@ -12,10 +12,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,23 +24,25 @@ import java.util.stream.Collectors;
 
 /**
  * 重新实现用户登录逻辑
- *
- * @author
+ * @author PKAQ
  */
-public class JwtUsernamePasswordAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
+public class JwtUsernamePasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private AuthenticationManager authenticationManager;
-    private AuthenticationSuccessHandler successHandler;
-    private AuthenticationFailureHandler failureHandler;
+    private final String url;
+    private final AuthenticationManager authenticationManager;
+    private final AuthenticationSuccessHandler successHandler;
+    private final AuthenticationFailureHandler failureHandler;
 
     public JwtUsernamePasswordAuthenticationFilter(String url,
                                                    AuthenticationManager authenticationManager,
                                                    AuthenticationSuccessHandler successHandler,
                                                    AuthenticationFailureHandler failureHandler) {
-        super(new AntPathRequestMatcher(url, "POST"));
+        this.url = url;
+        this.authenticationManager = authenticationManager;
         this.successHandler = successHandler;
         this.failureHandler = failureHandler;
-        this.authenticationManager = authenticationManager;
+        setAuthenticationSuccessHandler(successHandler);
+        setAuthenticationFailureHandler(failureHandler);
     }
 
     /**
@@ -56,11 +57,17 @@ public class JwtUsernamePasswordAuthenticationFilter extends AbstractAuthenticat
      * @throws AuthenticationException
      */
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException {
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
-        String params = request.getReader().lines().collect(Collectors.joining());
+        String params = null;
+        try {
+            params = request.getReader().lines().collect(Collectors.joining());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         Map<String, String> param = JsonUtil.parse(params, Map.class);
 
+        assert param != null;
         String username = param.get("account");
         String password = param.get("password");
 
@@ -68,6 +75,14 @@ public class JwtUsernamePasswordAuthenticationFilter extends AbstractAuthenticat
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password, authorities);
 
         return this.authenticationManager.authenticate(authenticationToken);
+    }
+
+
+    @Override
+    protected boolean requiresAuthentication(HttpServletRequest request, HttpServletResponse response) {
+        // 手动实现路径和方法匹配逻辑（等价于 AntPathRequestMatcher）
+        return "POST".equalsIgnoreCase(request.getMethod())
+                && request.getRequestURI().equals(url);
     }
 
     @Override

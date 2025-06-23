@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.log.annotation.BizLog;
-import org.pkaq.core.log.base.BizLogEnum;
+import org.pkaq.core.log.base.BizLogCodes;
 import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.dict.bo.DictAoeBo;
@@ -61,7 +61,7 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
      * @return
      */
     @Override
-    @BizLog(operateType = BizLogEnum.QUERY, description = "查询字典")
+    @BizLog(operateType = BizLogCodes.QUERY, description = "查询字典")
     public Map<String, LinkedHashMap<String, String>> selectDict() {
         List<DictViewEntity> dictList = this.dictViewMapper.selectList(null);
 
@@ -75,7 +75,7 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
     }
 
     @Override
-    @BizLog(operateType = BizLogEnum.QUERY, description = "查询字典")
+    @BizLog(operateType = BizLogCodes.QUERY, description = "查询字典")
     public Map<?, ?> fetchDicts() {
         var ret = dictCacheHelper.getAll();
         if (null == ret) {
@@ -90,7 +90,7 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
      * @return DictEntity
      */
     @Override
-    @BizLog(operateType = BizLogEnum.QUERY, description = "根据条件获取一条字典", args="{#bo}")
+    @BizLog(operateType = BizLogCodes.QUERY, description = "根据条件获取一条字典", args="{#bo}")
     public DictViewVo getDict(DictAoeBo bo) {
          return dictConvert.entityToVo(this.mapper.getDict(bo.getId()));
     }
@@ -101,7 +101,7 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
      * @return List<DictViewVo>
      */
     @Override
-    @BizLog(operateType = BizLogEnum.QUERY, description = "查询所有字典")
+    @BizLog(operateType = BizLogCodes.QUERY, description = "查询所有字典")
     public List<DictViewVo> listDict() {
          return dictConvert.toVoList(this.mapper.listDict());
     }
@@ -112,7 +112,7 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
      * @param id 字典ID
      */
     @Override
-    @BizLog(operateType = BizLogEnum.DELETE, description = "删除字典[{0}]", args = {"param:0"})
+    @BizLog(operateType = BizLogCodes.DELETE, description = "删除字典[{0}]", args = {"param:0"})
     @Transactional
     public void delDict(String id) {
 
@@ -136,7 +136,7 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
      * @param dictAoeBo 字典对象
      */
     @Override
-    @BizLog(operateType = BizLogEnum.EDIT, description = "编辑了字典", args = {"#dictAoeBo"})
+    @BizLog(operateType = BizLogCodes.EDIT, description = "编辑了字典", args = {"#dictAoeBo"})
     @Transactional
     public void edit(DictAoeBo dictAoeBo) {
         String id = dictAoeBo.getId();

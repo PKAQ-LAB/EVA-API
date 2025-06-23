@@ -11,7 +11,7 @@ import org.pkaq.core.codes.BizCode;
  */
 @Getter
 @AllArgsConstructor
-public enum BizLogEnum implements BizCode {
+public enum BizLogCodes implements BizCode {
     /**
      * 新增
      **/
@@ -50,4 +50,6 @@ public enum BizLogEnum implements BizCode {
      * 索引
      */
     private final String code;
+
+    private final String prefix = "log";
 }

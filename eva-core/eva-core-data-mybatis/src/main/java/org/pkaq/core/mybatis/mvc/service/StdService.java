@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import jakarta.annotation.Resource;
 import org.pkaq.core.log.annotation.BizLog;
-import org.pkaq.core.log.base.BizLogEnum;
+import org.pkaq.core.log.base.BizLogCodes;
 import org.pkaq.core.mvc.bo.IdCodeBo;
 import org.pkaq.core.mvc.bo.PageBo;
 import org.pkaq.core.mybatis.mvc.entity.StdEntity;
@@ -42,7 +42,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
      * @param id id
      * @return 实体类对象
      */
-    @BizLog(operateType = BizLogEnum.QUERY, description = "根据id查询")
+    @BizLog(operateType = BizLogCodes.QUERY, description = "根据id查询")
     public T get(String id) {
         return this.mapper.selectById(id);
     }
@@ -53,7 +53,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
      * @param entity
      * @return
      */
-    @BizLog(operateType = BizLogEnum.QUERY, description = "查询符合条件的记录条数")
+    @BizLog(operateType = BizLogCodes.QUERY, description = "查询符合条件的记录条数")
     protected Long count(T entity) {
         Wrapper<T> wrapper = Wrappers.lambdaQuery(entity);
         return this.mapper.selectCount(wrapper);
@@ -65,7 +65,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
      * @param entity
      * @return
      */
-    @BizLog(operateType = BizLogEnum.QUERY, description = "根据条件获取一条记录")
+    @BizLog(operateType = BizLogCodes.QUERY, description = "根据条件获取一条记录")
     protected T get(T entity) {
         Wrapper<T> wrapper = Wrappers.lambdaQuery(entity);
         return this.mapper.selectOne(wrapper);
@@ -76,7 +76,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
      *
      * @param entity 实体类对象
      */
-    @BizLog(operateType = BizLogEnum.EDIT, description = "保存记录[{0}]", args = {"param:0.id"})
+    @BizLog(operateType = BizLogCodes.EDIT, description = "保存记录[{0}]", args = {"param:0.id"})
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void merge(T entity) {
         this.mapper.insertOrUpdate(entity);
@@ -88,7 +88,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
      * @param entity 要进行查询的实体类
      * @return 返回结果
      */
-    @BizLog(operateType = BizLogEnum.QUERY, description = "根据条件查询记录")
+    @BizLog(operateType = BizLogCodes.QUERY, description = "根据条件查询记录")
     public List<T> list(T entity) {
         LambdaQueryWrapper<T> wrapper = Wrappers.lambdaQuery();
         wrapper.orderByDesc(T::getModifyBy);
@@ -101,7 +101,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
      * @param entity 目标实体类
      * @return 分页模型类
      */
-    @BizLog(operateType = BizLogEnum.QUERY, description = "分页查询记录")
+    @BizLog(operateType = BizLogCodes.QUERY, description = "分页查询记录")
     public IPage<T> listPage(PageBo pageBo, T entity) {
         LambdaQueryWrapper<T> wrapper = Wrappers.lambdaQuery();
         wrapper.setEntity(entity);
@@ -118,7 +118,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
      * @param page   当前页码
      * @return 分页模型类
      */
-    @BizLog(operateType = BizLogEnum.QUERY, description = "根据条件分页查询记录")
+    @BizLog(operateType = BizLogCodes.QUERY, description = "根据条件分页查询记录")
     protected IPage<T> listPage(T entity, Integer page) {
         page = null != page ? page : 1;
 
@@ -137,7 +137,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
      * @param param
      * @return
      */
-    @BizLog(operateType = BizLogEnum.DELETE, description = "删除记录[{0}]", args = {"param:0"})
+    @BizLog(operateType = BizLogCodes.DELETE, description = "删除记录[{0}]", args = {"param:0"})
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void delete(List<String> param) {
         this.mapper.deleteByIds(param);

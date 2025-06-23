@@ -9,7 +9,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.log.annotation.BizLog;
-import org.pkaq.core.log.base.BizLogEnum;
+import org.pkaq.core.log.base.BizLogCodes;
 import org.pkaq.core.mvc.vo.PageVo;
 import org.pkaq.core.mybatis.mvc.service.ConvertService;
 import org.pkaq.core.mybatis.util.Page;
@@ -48,7 +48,7 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
     /**
      * 修改密码
      */
-    @BizLog(operateType = BizLogEnum.EDIT, description = "更新了密码[{0}]", args = {"param:0.id"})
+    @BizLog(operateType = BizLogCodes.EDIT, description = "更新了密码[{0}]", args = {"param:0.id"})
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     @Override
     public void repwd(RePwdBo rePwdBo) {
@@ -62,7 +62,7 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
         this.mapper.updateById(userEntity);
     }
 
-    @BizLog(operateType = BizLogEnum.DELETE, description = "删除了用户", args = {"param:0"})
+    @BizLog(operateType = BizLogCodes.DELETE, description = "删除了用户", args = {"param:0"})
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     @Override
     public void delete(List<String> param) {
@@ -71,7 +71,7 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
     /**
      * 查询用户列表 无分页
      */
-    @BizLog(operateType = BizLogEnum.QUERY, description = "查询了用户列表")
+    @BizLog(operateType = BizLogCodes.QUERY, description = "查询了用户列表")
     @Override
     public List<UserListVo> listUser(UserQueryBo queryBo) {
         UserEntity user = this.converter.queryBoToEntity(queryBo);
@@ -83,9 +83,9 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
     /**
      * 列表查询 - 分页
      */
-    @BizLog(operateType = BizLogEnum.QUERY, description = "查询了用户列表")
+    @BizLog(operateType = BizLogCodes.QUERY, description = "查询了用户列表")
     @Override
-    public PageVo listPage(UserQueryBo queryBo) {
+    public PageVo<UserListVo> listPage(UserQueryBo queryBo) {
         LambdaQueryWrapper<UserEntity> wrapper = Wrappers.lambdaQuery();
         wrapper.setEntity(this.converter.queryBoToEntity(queryBo));
         wrapper.orderByDesc(UserEntity::getUtcModify);
@@ -129,7 +129,7 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
      *
      * @param user 用户对象
      */
-    @BizLog(operateType = BizLogEnum.EDIT, description = "更新用户记录[{0}]", args = {"param:0.id"})
+    @BizLog(operateType = BizLogCodes.EDIT, description = "更新用户记录[{0}]", args = {"param:0.id"})
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     @Override
     public void saveUser(UserAoeBo user) {

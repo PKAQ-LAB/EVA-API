@@ -1,6 +1,6 @@
 package org.pkaq.core.log.annotation;
 
-import org.pkaq.core.log.base.BizLogEnum;
+import org.pkaq.core.log.base.BizLogCodes;
 
 import java.lang.annotation.*;
 
@@ -25,7 +25,7 @@ public @interface BizLog {
     /**
      * 操作表类型
      */
-    BizLogEnum operateType() default BizLogEnum.CREATE;
+    BizLogCodes operateType() default BizLogCodes.CREATE;
 
     /**
      * 区分新增或修改的参数

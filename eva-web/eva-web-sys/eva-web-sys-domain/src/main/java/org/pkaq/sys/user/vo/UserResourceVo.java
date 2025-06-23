@@ -4,7 +4,7 @@ package org.pkaq.sys.user.vo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.pkaq.core.mvc.vo.Vo;
-import org.pkaq.sys.module.entity.ModuleResources;
+import org.pkaq.sys.module.vo.ModuleResourcesVo;
 
 import java.util.List;
 
@@ -29,6 +29,6 @@ public class UserResourceVo implements Vo {
     private List<UserResourceVo> children;
 
     @Schema(description = "模块拥有的资源")
-    private List<ModuleResources> resources;
+    private List<ModuleResourcesVo> resources;
 
 }

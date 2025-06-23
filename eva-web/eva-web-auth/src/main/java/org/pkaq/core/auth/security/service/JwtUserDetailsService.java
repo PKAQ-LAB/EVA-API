@@ -36,7 +36,7 @@ public class JwtUserDetailsService implements UserDetailsService {
         user.setTel(account);
         user.setEmail(account);
 
-        user = userMapper.getUserWithRole(user);
+        var u = userMapper.getUserWithRole(user);
 
         AuthCodeEnum.ACCOUNT_NOT_EXIST.assertNotNull(user);
         return JwtUserFactory.create(user);

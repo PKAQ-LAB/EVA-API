@@ -10,7 +10,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import org.pkaq.core.log.annotation.BizLog;
-import org.pkaq.core.log.base.BizLogEnum;
+import org.pkaq.core.log.base.BizLogCodes;
 import org.pkaq.core.mybatis.enums.FrozenEnumm;
 import org.pkaq.core.mybatis.util.Page;
 import org.pkaq.core.util.json.JsonUtil;
@@ -58,7 +58,7 @@ public class TenantService {
     /**
      * 根据ID批量删除
      */
-    @BizLog(operateType = BizLogEnum.DELETE, description = "删除租户[{0}]", args = {"param:0"})
+    @BizLog(operateType = BizLogCodes.DELETE, description = "删除租户[{0}]", args = {"param:0"})
     @Transactional
     public void delete(List<String> ids) {
         // 删除租户
@@ -73,7 +73,7 @@ public class TenantService {
     /**
      * 新增/编辑一条租户信息
      */
-    @BizLog(operateType = BizLogEnum.EDIT, description = "编辑租户[{0}]", args = {"param:0.id"})
+    @BizLog(operateType = BizLogCodes.EDIT, description = "编辑租户[{0}]", args = {"param:0.id"})
     @Transactional
     public void edit(TenantAoeBo editBo) {
         boolean isNew = CharSequenceUtil.isBlank(editBo.getId());
@@ -105,7 +105,7 @@ public class TenantService {
      * @param id 租户ID
      * @return 租户信息
      */
-    @BizLog(operateType = BizLogEnum.QUERY, description = "根据id查询租户")
+    @BizLog(operateType = BizLogCodes.QUERY, description = "根据id查询租户")
     public TenantDetailVo get(String id) {
         var entity = this.mapper.selectById(id);
         var vo = tenantConvert.entityToVo(entity);
@@ -120,7 +120,7 @@ public class TenantService {
      *
      * @return 租户列表
      */
-    @BizLog(operateType = BizLogEnum.QUERY, description = "查询租户")
+    @BizLog(operateType = BizLogCodes.QUERY, description = "查询租户")
     public IPage<TenantListVo> list(TenantQueryBo queryBo) {
         // 获取分页数据  模糊查询
         Page<TenantListVo> pagination = new Page<>(queryBo.getPageNo(), queryBo.getPageSize());
@@ -130,7 +130,7 @@ public class TenantService {
     /**
      * 切换可用状态
      */
-    @BizLog(operateType = BizLogEnum.UPDATE, description = "切换租户[{0}]状态", args = {"param:0.id"})
+    @BizLog(operateType = BizLogCodes.UPDATE, description = "切换租户[{0}]状态", args = {"param:0.id"})
     @Transactional
     public void switchStatus(TenantStatusBo bo) {
         var entity = tenantConvert.boToEntity(bo);
@@ -168,7 +168,7 @@ public class TenantService {
      *
      * @param authBo
      */
-    @BizLog(operateType = BizLogEnum.UPDATE, description = "保存租户角色关系")
+    @BizLog(operateType = BizLogCodes.UPDATE, description = "保存租户角色关系")
     @Transactional
     public void saveAuth(TenantAuthBo authBo) {
         Optional.ofNullable(authBo).ifPresent(bo -> {

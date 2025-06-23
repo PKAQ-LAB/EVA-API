@@ -2,7 +2,6 @@ package org.pkaq.core.mybatis.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.pkaq.core.codes.BizCode;
 
 import java.util.Arrays;
 
@@ -11,7 +10,7 @@ import java.util.Arrays;
  */
 @Getter
 @AllArgsConstructor
-public enum DataPermissionEnumm implements BizCode {
+public enum DataPermissionEnumm {
     /**
      * 可用
      */
@@ -27,11 +26,12 @@ public enum DataPermissionEnumm implements BizCode {
     /**
      * 名称
      */
-    private String msg;
+    private final String msg;
     /**
      * 索引
      */
-    private String code;
+    private final String code;
+
 
     public static DataPermissionEnumm getByCode(String code) {
         return Arrays.stream(DataPermissionEnumm.values()).filter(o -> o.getCode().equals(code)).findFirst().orElse(null);

@@ -10,6 +10,9 @@ import org.pkaq.sys.user.vo.UserListVo;
 
 import java.util.List;
 
+/**
+ * @author PKAQ
+ */
 public interface IUserService {
     void repwd(RePwdBo rePwdBo);
 

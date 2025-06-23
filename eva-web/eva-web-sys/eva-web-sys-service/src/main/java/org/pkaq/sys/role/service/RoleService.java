@@ -29,8 +29,9 @@ import org.pkaq.sys.role.mapper.RoleModuleMapper;
 import org.pkaq.sys.role.mapper.RoleUserMapper;
 import org.pkaq.sys.role.vo.RoleDetailVo;
 import org.pkaq.sys.role.vo.RoleListVo;
-import org.pkaq.sys.user.entity.UserEntity;
+import org.pkaq.sys.user.bo.UserQueryBo;
 import org.pkaq.sys.user.service.UserService;
+import org.pkaq.sys.user.vo.UserListVo;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -258,14 +259,14 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
      */
     public Map<String, Object> listUser(String roleId, String deptId) {
         // 获取所有用户
-        UserEntity userEntity = new UserEntity();
+        UserQueryBo userEntity = new UserQueryBo();
         if (CharSequenceUtil.isNotBlank(deptId)) {
             userEntity.setDeptId(deptId);
         }
 
         userEntity.setFrozen(FrozenEnumm.UN_FROZEN.getCode());
 
-        List<UserEntity> users = this.userService.listUser(userEntity);
+        List<UserListVo> users = this.userService.listUser(userEntity);
         // 获取已选的模块
         RoleUserEntity roleUserEntity = new RoleUserEntity();
         roleUserEntity.setRoleId(roleId);

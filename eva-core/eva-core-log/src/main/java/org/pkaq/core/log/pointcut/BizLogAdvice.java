@@ -18,7 +18,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.pkaq.core.i18n.I18NHelper;
 import org.pkaq.core.log.annotation.BizLog;
 import org.pkaq.core.log.base.BizLogEntity;
-import org.pkaq.core.log.base.BizLogEnum;
+import org.pkaq.core.log.base.BizLogCodes;
 import org.pkaq.core.log.base.LogSupporter;
 import org.pkaq.core.log.condition.BizlogSupporterCondition;
 import org.pkaq.core.log.events.BizLogEvent;
@@ -86,7 +86,7 @@ public class BizLogAdvice {
         var rMap = processArgs(joinPoint.getArgs(), descriptionArgs, formatArgs);
         // 根据参数的某个属性是否为空来判断是新增还是修改
         var operatorType = bizlog.operateType();
-        if (BizLogEnum.EDIT.equals(operatorType)) {
+        if (BizLogCodes.EDIT.equals(operatorType)) {
             operatorType = processOperatorType(bizlog.distinguishParam(), joinPoint.getArgs());
         }
         BizLogEntity bizLogEntity = new BizLogEntity();
@@ -118,7 +118,7 @@ public class BizLogAdvice {
             throw e;
         } finally {
             // 操作类型为新增 id在新增之后才会回显到入参中 所以需要重新处理一下
-            if (BizLogEnum.CREATE.equals(operatorType)) {
+            if (BizLogCodes.CREATE.equals(operatorType)) {
                 processArgs(joinPoint.getArgs(), descriptionArgs, formatArgs);
             }
             if (CharSequenceUtil.isNotBlank(bizlog.bizId())) {
@@ -243,18 +243,18 @@ public class BizLogAdvice {
      * @param distinguishParam 区分新增或修改的参数 0.id表示取第一个入参的id属性 id有值为修改 无则新增
      * @param args             方法入参
      */
-    private BizLogEnum processOperatorType(String distinguishParam, Object[] args) {
+    private BizLogCodes processOperatorType(String distinguishParam, Object[] args) {
         try {
             var index = Integer.parseInt(distinguishParam.substring(0, 1));
             var param = distinguishParam.substring(2);
             var value = getFieldValue(args[index], param);
             if (!Objects.isNull(value)) {
-                return BizLogEnum.UPDATE;
+                return BizLogCodes.UPDATE;
             }
         } catch (Exception ignored) {
             // 无法判断新增/修改 默认新增
         }
-        return BizLogEnum.CREATE;
+        return BizLogCodes.CREATE;
     }
 
     /**
