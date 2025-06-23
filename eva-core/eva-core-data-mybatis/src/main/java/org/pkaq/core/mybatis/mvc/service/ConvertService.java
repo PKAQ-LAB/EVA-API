@@ -1,8 +1,8 @@
 package org.pkaq.core.mybatis.mvc.service;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import jakarta.annotation.Resource;
 import org.pkaq.core.mvc.convert.Convert;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * service 基类
@@ -11,9 +11,9 @@ import org.pkaq.core.mvc.convert.Convert;
  * @author S.PKAQ
  */
 public abstract class ConvertService<M extends BaseMapper, C extends Convert> {
-    @Resource
+    @Autowired
     protected M mapper;
 
-    @Resource
+    @Autowired
     protected C converter;
 }

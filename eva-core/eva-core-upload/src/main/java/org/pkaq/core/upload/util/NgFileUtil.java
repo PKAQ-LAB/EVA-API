@@ -14,6 +14,7 @@ import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.exception.BizException;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.upload.condition.DefaultNgCondition;
+import org.pkaq.core.upload.provider.FileProvider;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Conditional;

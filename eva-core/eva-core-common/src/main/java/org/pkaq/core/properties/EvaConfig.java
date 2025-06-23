@@ -34,7 +34,7 @@ public class EvaConfig {
     /**
      * 文件上传配置
      **/
-    private Upload upload;
+    private File upload;
     /**
      * jwt配置
      **/
@@ -72,8 +72,8 @@ public class EvaConfig {
         return null == this.errorLog ? new ErrorLog() : errorLog;
     }
 
-    public Upload getUpload() {
-        return null == this.upload ? new Upload() : upload;
+    public File getUpload() {
+        return null == this.upload ? new File() : upload;
     }
 
     public Jwt getJwt() {

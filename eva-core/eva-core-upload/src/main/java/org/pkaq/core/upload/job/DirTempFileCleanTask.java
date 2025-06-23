@@ -2,7 +2,9 @@ package org.pkaq.core.upload.job;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.pkaq.core.upload.util.FileProvider;
+import org.pkaq.core.upload.condition.DirFileCondition;
+import org.pkaq.core.upload.provider.FileProvider;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
@@ -10,10 +12,8 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.support.PeriodicTrigger;
 
 import java.time.Duration;
-
-
 /**
- * 缓存目录文件清理任务
+ * 缓存目录文件清理任务  - 只有基于目录的文件存储才启用
  * 定时清理因用户上传后未提交表单产生的临时文件
  * <p>
  * 举个例子，比如 我有个表单，里面有合同上传，文件是异步上传到文件服务器然后返回文件id的,
@@ -25,7 +25,8 @@ import java.time.Duration;
 @Configuration
 @EnableScheduling
 @RequiredArgsConstructor
-public class TempFileCleanTask implements SchedulingConfigurer {
+@Conditional(DirFileCondition.class)
+public class DirTempFileCleanTask implements SchedulingConfigurer {
 
     private final FileProvider fileUploadProvider;
 

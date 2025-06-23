@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-import jakarta.annotation.Resource;
 import org.pkaq.core.mybatis.util.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
@@ -23,7 +22,7 @@ import java.util.List;
  * @author S.PKAQ
  */
 public abstract class StdActiveService<M extends BaseMapper<T>, T extends Model> {
-    @Resource
+    @Autowired
     protected M mapper;
 
     /**

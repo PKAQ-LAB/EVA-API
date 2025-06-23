@@ -1,15 +1,18 @@
 package org.pkaq.sys.dict.cache;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.sys.dict.service.IDictService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+/**
+ * @author PKAQ
+ */
 @Slf4j
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Order(2)
 public class DictInit implements CommandLineRunner {
     private final IDictService dictService;

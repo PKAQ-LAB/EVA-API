@@ -1,4 +1,4 @@
-package org.pkaq.core.upload.util;
+package org.pkaq.core.upload.provider;
 
 
 import org.springframework.web.multipart.MultipartFile;

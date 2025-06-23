@@ -5,12 +5,12 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import jakarta.annotation.Resource;
-import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.codes.CommonCodes;
+import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.mybatis.mvc.entity.StdTreeEntity;
 import org.pkaq.core.mybatis.mvc.mapper.StdTreeMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +24,7 @@ import java.util.List;
  * @author S.PKAQ
  */
 public abstract class StdTreeService<M extends StdTreeMapper<T>, T extends StdTreeEntity> {
-    @Resource
+    @Autowired
     public M mapper;
 
     /**

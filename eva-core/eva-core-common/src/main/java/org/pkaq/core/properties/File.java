@@ -7,7 +7,7 @@ import lombok.Data;
  * @author PKAQ
  */
 @Data
-public class Upload {
+public class File {
     private MinIo minIo;
     // 使用的存储类型
     private String type;

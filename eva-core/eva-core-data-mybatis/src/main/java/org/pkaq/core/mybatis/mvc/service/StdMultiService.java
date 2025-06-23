@@ -7,8 +7,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import jakarta.annotation.Resource;
-import org.pkaq.core.mvc.vo.PageVo;
 import org.pkaq.core.mybatis.mvc.entity.StdMultiEntity;
 import org.pkaq.core.mybatis.mvc.entity.StdMultiLineEntity;
 import org.pkaq.core.mybatis.util.Page;
@@ -30,10 +28,10 @@ public abstract class StdMultiService<M extends BaseMapper<T>,
         L extends BaseMapper<S>,
         T extends StdMultiEntity<S>,
         S extends StdMultiLineEntity> {
-    @Resource
+    @Autowired
     public M mapper;
 
-    @Resource
+    @Autowired
     public L lineMapper;
 
     /**

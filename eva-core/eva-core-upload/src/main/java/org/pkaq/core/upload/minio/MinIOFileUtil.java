@@ -1,4 +1,4 @@
-package org.pkaq.core.upload.util;
+package org.pkaq.core.upload.minio;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.img.ImgUtil;
@@ -8,25 +8,19 @@ import cn.hutool.core.io.NioUtil;
 import io.minio.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.pkaq.core.exception.BizException;
-import org.pkaq.core.properties.EvaConfig;
-import org.pkaq.core.properties.Upload;
 import org.pkaq.core.upload.condition.MinIOCondition;
-import org.springframework.context.annotation.Bean;
+import org.pkaq.core.upload.provider.FileProvider;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * 文件上传工具类 - 使用MinIO
+ * @author PKAQ
  */
 @Slf4j
 @Component
@@ -37,39 +31,7 @@ public class MinIOFileUtil implements FileProvider {
     private static final String THUMBNAIL_NAME = "thumbnail_";
     private static final String TEMP = "_temp";
     private static final String STORAGE = "_storage";
-    private final EvaConfig evaConfig;
     private final MinioClient minioClient;
-
-    /**
-     * 初始化MinioClient和存储桶
-     */
-    @Bean
-    public MinioClient minioClient() {
-        Upload upload = evaConfig.getUpload();
-        if (!StringUtils.hasText(upload.getMinIo().getUrl())) {
-            throw new BizException("请配置eva.upload.minio.minio_url");
-        }
-        if (!StringUtils.hasText(upload.getMinIo().getAccess())) {
-            throw new BizException("请配置eva.upload.minio.minio_access");
-        }
-        if (!StringUtils.hasText(upload.getMinIo().getSecret())) {
-            throw new BizException("请配置eva.upload.minio.minio_secret");
-        }
-
-        //初始化MinioClient
-        MinioClient mc = MinioClient.builder()
-                .endpoint(upload.getMinIo().getUrl())
-                .credentials(upload.getMinIo().getAccess(), upload.getMinIo().getAccess())
-                .build();
-
-        //创建存储桶 默认存储桶是私有的 只能通过外链访问 最长7天
-
-        createBucket(TEMP);
-        createBucket(STORAGE);
-
-        return mc;
-    }
-
     /**
      * 文件上传 默认上传到配置的tmp目录
      * 按文件类型/YYYYMM结构存储文件
@@ -133,7 +95,7 @@ public class MinIOFileUtil implements FileProvider {
     public List<String> storage(String... filenames) {
         for (String fileName : filenames) {
             try {
-                this.minioClient.copyObject(
+                minioClient.copyObject(
                         CopyObjectArgs.builder()
                                 .bucket(fileName)
                                 .object(fileName)
@@ -146,8 +108,8 @@ public class MinIOFileUtil implements FileProvider {
                 //删除临时桶的文件
                 removeMinio(TEMP, fileName);
             } catch (Exception e) {
-                e.printStackTrace();
-                return null;
+               log.error(e.getMessage(), e);
+                return Collections.emptyList();
             }
         }
         return List.of(filenames);
@@ -180,7 +142,7 @@ public class MinIOFileUtil implements FileProvider {
                                 "image/" + suffix);
 
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        log.error(e.getMessage(), e);
                     }
                 });
     }
@@ -240,7 +202,7 @@ public class MinIOFileUtil implements FileProvider {
             IoUtil.copy(in, out, NioUtil.DEFAULT_BUFFER_SIZE);
             out.flush();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -251,7 +213,7 @@ public class MinIOFileUtil implements FileProvider {
         try {
             return this.minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             return false;
         }
     }
@@ -265,7 +227,7 @@ public class MinIOFileUtil implements FileProvider {
                 this.minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
         } catch (Exception e) {
             log.error("创建桶[{}]失败：[{}]", bucketName, e.getMessage());
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -282,7 +244,7 @@ public class MinIOFileUtil implements FileProvider {
             //上传
             uploadObject(in, fileName, fileName, true, MediaType.APPLICATION_OCTET_STREAM_VALUE);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         return fileName;
     }
@@ -301,7 +263,7 @@ public class MinIOFileUtil implements FileProvider {
             //上传
             uploadObject(in, bucketName, fileName, true, "application/octet-stream");
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         return fileName;
     }
@@ -328,7 +290,7 @@ public class MinIOFileUtil implements FileProvider {
                             .build());
             in.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         return fileName;
     }
@@ -340,7 +302,7 @@ public class MinIOFileUtil implements FileProvider {
         try {
             this.minioClient.removeObject(RemoveObjectArgs.builder().bucket(bucketName).object(fileName).build());
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -352,7 +314,7 @@ public class MinIOFileUtil implements FileProvider {
             this.minioClient.setBucketPolicy(
                     SetBucketPolicyArgs.builder().bucket(bucketName).config(policyJson).build());
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 

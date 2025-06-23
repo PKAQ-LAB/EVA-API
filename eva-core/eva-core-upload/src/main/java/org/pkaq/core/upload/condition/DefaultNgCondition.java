@@ -1,6 +1,6 @@
 package org.pkaq.core.upload.condition;
 
-import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.text.CharSequenceUtil;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
@@ -14,7 +14,7 @@ public class DefaultNgCondition implements Condition {
 
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        String cacheType = context.getEnvironment().getProperty("eva.upload.type");
-        return StrUtil.isBlank(cacheType) || "ng".equals(cacheType) || "nginx".equals(cacheType);
+        String cacheType = context.getEnvironment().getProperty("eva.file.type");
+        return CharSequenceUtil.isBlank(cacheType) || "ng".equals(cacheType) || "nginx".equals(cacheType);
     }
 }

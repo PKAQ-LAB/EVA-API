@@ -6,13 +6,13 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import jakarta.annotation.Resource;
 import org.pkaq.core.log.annotation.BizLog;
 import org.pkaq.core.log.base.BizLogCodes;
 import org.pkaq.core.mvc.bo.IdCodeBo;
 import org.pkaq.core.mvc.bo.PageBo;
 import org.pkaq.core.mybatis.mvc.entity.StdEntity;
 import org.pkaq.core.mybatis.util.Page;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +26,7 @@ import java.util.List;
  * @author S.PKAQ
  */
 public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
-    @Resource
+    @Autowired
     protected M mapper;
 
     public boolean isUnique(IdCodeBo idCodeBo){

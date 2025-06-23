@@ -14,7 +14,7 @@ import org.pkaq.core.mvc.vo.PageVo;
 import org.pkaq.core.mybatis.mvc.service.ConvertService;
 import org.pkaq.core.mybatis.util.Page;
 import org.pkaq.core.threaduser.ThreadUserHelper;
-import org.pkaq.core.upload.provider.FileUploadProvider;
+import org.pkaq.core.upload.provider.FileProvider;
 import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.role.mapper.RoleUserMapper;
 import org.pkaq.sys.role.service.UserRoleRefSerivce;
@@ -41,7 +41,7 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
 
     private final UserRoleRefSerivce userRoleRefSerivce;
 
-    private final FileUploadProvider fileUploadProvider;
+    private final FileProvider fileProvider;
 
     private final RoleUserMapper roleUserMapper;
 
@@ -151,13 +151,13 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
             UserEntity oldUser = this.mapper.selectById(userId);
             String avatar = oldUser.getAvatar();
             if (CharSequenceUtil.isNotBlank(avatar) && !avatar.equals(user.getAvatar())) {
-                fileUploadProvider.delFromStorage(avatar);
+                fileProvider.delFromStorage(avatar);
             }
         }
 
         // 保存新的头像文件
         if (CharSequenceUtil.isNotBlank(user.getAvatar())) {
-            fileUploadProvider.storageWithThumbnail(0.3f, user.getAvatar());
+            fileProvider.storageWithThumbnail(0.3f, user.getAvatar());
         }
 
         // 保存用户
