@@ -10,7 +10,6 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 public class DirFileCondition implements Condition {
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        // 替换成你自己的条件类
         return new DefaultNgCondition().matches(context, metadata) ||
                new FastDfsCondition().matches(context, metadata);
     }

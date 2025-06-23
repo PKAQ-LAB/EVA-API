@@ -36,7 +36,7 @@ public class MinioInit implements CommandLineRunner {
         minIOFileUtil.createBucket(DRAFT);
         minIOFileUtil.createBucket(THUMBNAIL_NAME);
 
-        log.info("Minio init complete - order 3");
+        log.info("------------------ Minio 桶初始化完成 [order - 3]------------------ ");
 
     }
 }

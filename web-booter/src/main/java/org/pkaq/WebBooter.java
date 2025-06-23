@@ -8,7 +8,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.env.Environment;
 
 /**
  * 启动类
@@ -20,19 +22,25 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 @ComponentScan(basePackages = {"org.pkaq.*"})
 public class WebBooter implements CommandLineRunner {
-    @Autowired
-    ApplicationContext ctx;
 
     public static void main(String[] args) {
-        SpringApplication.run(WebBooter.class, args);
+        var application = SpringApplication.run(WebBooter.class, args);
+
+        Environment env = application.getEnvironment();
+
+        String port = env.getProperty("server.port");
+        String path = env.getProperty("server.servlet.context-path");
+
+        log.info(" ------------------ Swagger ------------------ ");
+        log.info(" #                                            #");
+        log.info(" # Local: http://localhost:" + port + path + "/doc.html #");
+        log.info(" #                                            #");
+        log.info(" ------------------ Swagger ------------------ ");
+
     }
 
     @Override
     public void run(String... args) {
-        for (String name : ctx.getBeanNamesForType(IDictService.class)) {
-            System.out.println(" - " + name + " : " + ctx.getType(name));
-        }
-
-        log.info(" ---- WEB BOOTER STARTED ---- ");
+        log.info(" ------------------ WEB BOOTER STARTED ------------------ ");
     }
 }

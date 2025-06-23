@@ -23,6 +23,6 @@
     </sql>
     <!-- 非冻结片段 -->
     <sql id="unFrozenSQL">
-        frozen != '0001'
+        frozen != 1
     </sql>
 </mapper>

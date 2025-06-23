@@ -19,6 +19,6 @@ public class DictInit implements CommandLineRunner {
     @Override
     public void run(String... args) {
         dictService.init();
-        log.info("------------------ 字典初始化成功 ------------------ ");
+        log.info("------------------ 字典初始化完成[order - 2] ------------------ ");
     }
 }
