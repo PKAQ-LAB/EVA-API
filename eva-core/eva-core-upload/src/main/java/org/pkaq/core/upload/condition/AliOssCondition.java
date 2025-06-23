@@ -15,6 +15,6 @@ public class AliOssCondition implements Condition {
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
         String cacheType = context.getEnvironment().getProperty("eva.file.type");
-        return CharSequenceUtil.isBlank(cacheType) || "ali".equals(cacheType) || "aliyun".equals(cacheType);
+        return CharSequenceUtil.isBlank(cacheType) || "ali".equalsIgnoreCase(cacheType) || "aliyun".equalsIgnoreCase(cacheType);
     }
 }

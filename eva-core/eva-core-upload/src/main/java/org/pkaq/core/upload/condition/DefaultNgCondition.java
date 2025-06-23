@@ -14,7 +14,7 @@ public class DefaultNgCondition implements Condition {
 
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        String cacheType = context.getEnvironment().getProperty("eva.file.type");
-        return CharSequenceUtil.isBlank(cacheType) || "ng".equals(cacheType) || "nginx".equals(cacheType);
+        String fileType = context.getEnvironment().getProperty("eva.file.type");
+        return CharSequenceUtil.isBlank(fileType) || "ng".equalsIgnoreCase(fileType) || "nginx".equalsIgnoreCase(fileType);
     }
 }

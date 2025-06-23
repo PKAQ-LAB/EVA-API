@@ -13,6 +13,6 @@ public class MinIOCondition implements Condition {
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
         String cacheType = context.getEnvironment().getProperty("eva.file.type");
-        return "minio".equals(cacheType);
+        return "minio".equalsIgnoreCase(cacheType);
     }
 }

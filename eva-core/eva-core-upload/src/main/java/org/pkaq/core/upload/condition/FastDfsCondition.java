@@ -12,7 +12,7 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 public class FastDfsCondition implements Condition {
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        String cacheType = context.getEnvironment().getProperty("eva.file.type");
-        return "dfs".equals(cacheType);
+        String fileType = context.getEnvironment().getProperty("eva.file.type");
+        return "dfs".equalsIgnoreCase(fileType);
     }
 }
