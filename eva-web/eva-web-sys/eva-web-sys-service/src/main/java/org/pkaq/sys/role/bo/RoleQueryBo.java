@@ -2,7 +2,8 @@ package org.pkaq.sys.role.bo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import org.pkaq.core.mvc.bo.Bo;
+import lombok.EqualsAndHashCode;
+import org.pkaq.core.mvc.bo.StdTreeBo;
 import org.pkaq.sys.role.entity.RoleModuleEntity;
 import org.pkaq.sys.role.entity.RoleUserEntity;
 
@@ -12,25 +13,10 @@ import java.util.Map;
 /**
  * @author PKAQ
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Schema(title = "角色管理列表查询 bo")
-public class RoleQueryBo implements Bo {
-    private String id;
-
-    @Schema(description = "角色名称")
-    private String name;
-
-    @Schema(description = "角色编码")
-    private String code;
-
-    @Schema(description = "上级角色ID")
-    private String pid;
-
-    @Schema(description = "上级角色id path")
-    private String path;
-
-    @Schema(description = "是否是叶子")
-    private Byte isleaf;
+public class RoleQueryBo extends StdTreeBo {
 
     @Schema(description = "数据权限类型")
     private String dataPermissionType;

@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
 import org.pkaq.core.mybatis.mvc.entity.StdEntity;
+import org.pkaq.core.mybatis.mvc.entity.StdTreeEntity;
 
 import java.util.List;
 import java.util.Map;
@@ -20,35 +21,7 @@ import java.util.Map;
 @Alias("role")
 @TableName("sys_role")
 @EqualsAndHashCode(callSuper = true)
-public class RoleEntity extends StdEntity {
-
-    /**
-     * 角色名称
-     **/
-    @TableField(condition = SqlCondition.LIKE)
-    private String name;
-
-    /**
-     * 角色编码
-     **/
-    @TableField(condition = SqlCondition.LIKE)
-    private String code;
-
-    /**
-     * 上级角色ID
-     **/
-    private String pid;
-
-    /**
-     * 上级角色id path
-     **/
-    private String path;
-
-    /**
-     * 是否是叶子
-     **/
-    private Byte isleaf;
-
+public class RoleEntity extends StdTreeEntity {
     /**
      * 数据权限类型
      **/

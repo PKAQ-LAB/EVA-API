@@ -91,7 +91,7 @@ public class UserEntity extends StdEntity {
     /**
      * 所属岗位
      **/
-    private String postId;
+    private List<String> postId;
 
     /**
      * 用户拥有的角色

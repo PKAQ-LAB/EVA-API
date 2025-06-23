@@ -1,7 +1,8 @@
 package org.pkaq.sys.role.vo;
 
 import lombok.Data;
-import org.pkaq.core.mvc.vo.Vo;
+import lombok.EqualsAndHashCode;
+import org.pkaq.core.mvc.vo.StdTreeVo;
 import org.pkaq.sys.role.entity.RoleModuleEntity;
 import org.pkaq.sys.role.entity.RoleUserEntity;
 
@@ -12,23 +13,9 @@ import java.util.Map;
  * 角色列表vo
  * @author: S.PKAQ
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class RoleListVo implements Vo {
-
-    /** 角色名称 **/
-    private String name;
-
-    /** 角色编码 **/
-    private String code;
-
-    /** 上级角色ID **/
-    private String pid;
-
-    /** 上级角色id path **/
-    private String path;
-
-    /** 是否是叶子 **/
-    private Byte isleaf;
+public class RoleListVo extends StdTreeVo {
 
     /** 数据权限类型 **/
     private String dataPermissionType;

@@ -57,6 +57,9 @@ subprojects {
         implementation libs.lombok
         annotationProcessor libs.lombok
 
+        implementation      libs.mapstruct
+        annotationProcessor libs.mapstruct.processor
+
         testImplementation libs.test,
                            libs.security.test
 

@@ -18,7 +18,6 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan(basePackages = {"org.pkaq.*"})
 public class WebBooter implements CommandLineRunner {
 
-
     public static void main(String[] args) {
         SpringApplication.run(WebBooter.class, args);
     }

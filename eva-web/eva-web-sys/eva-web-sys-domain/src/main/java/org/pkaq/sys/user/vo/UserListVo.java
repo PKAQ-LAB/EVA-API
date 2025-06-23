@@ -5,6 +5,7 @@ import lombok.Data;
 import org.pkaq.core.mvc.bo.Bo;
 
 import java.sql.Date;
+import java.util.List;
 
 /**
  * 用户管理实体类
@@ -46,7 +47,7 @@ public class UserListVo implements Bo {
     private Date lastLogin;
 
     @Schema(description = "所属岗位")
-    private String postId;
+    private List<String> postId;
 
     @Schema(description = "所属部门")
     private String deptId;

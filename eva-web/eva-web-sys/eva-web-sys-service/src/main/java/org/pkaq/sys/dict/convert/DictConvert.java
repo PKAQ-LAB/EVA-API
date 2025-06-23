@@ -1,7 +1,6 @@
 package org.pkaq.sys.dict.convert;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.ReportingPolicy;
 import org.pkaq.core.mvc.convert.Convert;
 import org.pkaq.core.mvc.convert.MapConvertConfig;
 import org.pkaq.sys.dict.bo.DictAoeBo;
