@@ -9,7 +9,7 @@ import org.pkaq.core.mvc.bo.IdCodeBo;
 import org.pkaq.core.mvc.bo.SingleArrayBo;
 import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
-import org.pkaq.sys.SysCodeEnum;
+import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.module.bo.ModuleAoeBo;
 import org.pkaq.sys.module.bo.ModuleQueryBo;
 import org.pkaq.sys.module.bo.ModuleSortBo;
@@ -33,7 +33,7 @@ public class ModuleCtrl extends Ctrl {
     public Response<Object> checkUnique(@Parameter(name = "idCodeBo", description = "要进行校验的参数")
                                 @RequestBody IdCodeBo idCodeBo) {
 
-        return this.service.isUnique(idCodeBo) ? failure(SysCodeEnum.CODE_EXIST) : success();
+        return this.service.isUnique(idCodeBo) ? failure(SysCodes.CODE_EXIST) : success();
     }
 
     @PostMapping("/del")

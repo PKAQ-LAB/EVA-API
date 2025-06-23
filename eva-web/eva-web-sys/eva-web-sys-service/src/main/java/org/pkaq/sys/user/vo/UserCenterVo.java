@@ -13,7 +13,7 @@ import java.util.Map;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class UserCenterVO extends UserEntity {
+public class UserCenterVo extends UserEntity {
 
     @Schema(description = "权限分组名称")
     private String group;

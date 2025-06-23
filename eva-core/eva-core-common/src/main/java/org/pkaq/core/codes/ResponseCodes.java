@@ -22,9 +22,11 @@ public enum ResponseCodes implements BizCode {
     /**
      * 名称
      */
-    private String msg;
+    private final String msg;
     /**
      * 索引
      */
-    private String code;
+    private final String code;
+
+    private final String prefix = "res";
 }

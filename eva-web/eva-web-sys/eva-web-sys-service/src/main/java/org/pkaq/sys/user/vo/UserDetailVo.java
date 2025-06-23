@@ -1,10 +1,9 @@
-package org.pkaq.sys.user.bo;
+package org.pkaq.sys.user.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.pkaq.core.mvc.bo.StdBo;
+import org.pkaq.core.mvc.vo.StdVo;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -15,11 +14,10 @@ import java.util.List;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-@Schema(title = "用户管理编辑Bo")
-public class UserAoeBo extends StdBo {
+@Schema(title = "用户管理详情Vo")
+public class UserDetailVo extends StdVo {
 
     @Schema(description = "编号")
-    @NotBlank(message = "{sys.user.code.required}")
     private String code;
 
     @Schema(description = "电话")
@@ -29,12 +27,7 @@ public class UserAoeBo extends StdBo {
     private String email;
 
     @Schema(description = "账号")
-    @NotBlank(message = "{sys.user.account.required}")
     private String account;
-
-    @Schema(description = "密码")
-    @NotBlank(message = "{sys.user.pwd.required}")
-    private String password;
 
     @Schema(description = "用户头像")
     private String avatar;

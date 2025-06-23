@@ -25,53 +25,83 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class UserEntity extends StdEntity {
 
-    /** 编号 **/
+    /**
+     * 编号
+     **/
     private String code;
 
-    /** 账号 **/
+    /**
+     * 账号
+     **/
     private String account;
 
-    /** 密码 **/
+    /**
+     * 密码
+     **/
     private String password;
 
-    /** 盐 **/
+    /**
+     * 盐
+     **/
     private String salt;
 
-    /** 用户头像 **/
+    /**
+     * 用户头像
+     **/
     private String avatar;
 
-    /** 姓名 **/
+    /**
+     * 姓名
+     **/
     @TableField(condition = SqlCondition.LIKE)
     private String name;
 
-    /** 昵称 **/
+    /**
+     * 昵称
+     **/
     @TableField(condition = SqlCondition.LIKE)
     private String nickName;
 
-    /** 电话 **/
+    /**
+     * 电话
+     **/
     @TableField(condition = SqlCondition.LIKE)
     private String tel;
 
-    /** 邮箱 **/
+    /**
+     * 邮箱
+     **/
     private String email;
 
-    /** 最后登录ip **/
+    /**
+     * 最后登录ip
+     **/
     private String lastIp;
 
-    /** 最后登录时间 **/
+    /**
+     * 最后登录时间
+     **/
     private Date lastLogin;
 
-    /** 所属部门 **/
+    /**
+     * 所属部门
+     **/
     private String deptId;
 
-    /** 所属岗位 **/
+    /**
+     * 所属岗位
+     **/
     private String postId;
 
-    /** 用户拥有的角色 **/
+    /**
+     * 用户拥有的角色
+     **/
     @TableField(exist = false)
     private List<RoleEntity> roles = new ArrayList<>();
 
-    /** 用户拥有的模块 **/
+    /**
+     * 用户拥有的模块
+     **/
     @TableField(exist = false)
     private List<StdTreeEntity> modules = new ArrayList<>();
 

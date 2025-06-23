@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.mvc.bo.SingleArrayBo;
 import org.pkaq.core.mybatis.mvc.service.StdService;
-import org.pkaq.sys.SysCodeEnum;
+import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.organization.bo.OrganizationAoeBo;
 import org.pkaq.sys.organization.bo.OrganizationQueryBo;
 import org.pkaq.sys.organization.bo.OrganizationSortBo;
@@ -55,7 +55,7 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
             List<Object> list = CollUtil.getFieldValues(leafList, "parentName");
             String name = CollUtil.join(list, ",");
 
-            SysCodeEnum.CHILD_EXIST.newException(name);
+            SysCodes.CHILD_EXIST.newException(name);
         } else {
             this.mapper.deleteBatchIds(ids);
         }

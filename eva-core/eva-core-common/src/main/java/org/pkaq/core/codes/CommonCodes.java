@@ -13,6 +13,8 @@ import org.pkaq.core.exception.BizAssert;
 @Getter
 @AllArgsConstructor
 public enum CommonCodes implements BizAssert {
+    SERVER_ERROR("服务器发生错误,请联系管理员", "0x00-0500"),
+
     CHILD_EXIST("[{0}] 存在子节点，无法删除", "4302"),
     NULL_ID("所需记录ID为空值", "0x001"),
     NULL_PARAM_ID("所需记录 [ {0} ] 为空值", "0x002"),
@@ -39,11 +41,10 @@ public enum CommonCodes implements BizAssert {
     PARAM_LOST("请求参数丢失", "4007"),
     PARAM_TYPEERROR("参数类型错误 ", "4008"),
     PARAM_LENGTH("参数长度错误", "4009"),
-    SERVER_ERROR("服务器发生错误,请联系管理员", "4010"),
+
     REQUEST_METHOD_ERROR("服务器不支持当前请求的方法", "4011"),
     REQUEST_TOO_MORE("当前请求过于频繁，请稍后再试", "4012"),
     REQUEST_MEDIA_ERROR("服务器不支持当前请求的类型", "4015"),
-
 
     /**
      * 权限相关 420x
@@ -73,7 +74,6 @@ public enum CommonCodes implements BizAssert {
     FILETYPE_NOT_SUPPORTED("不支持的文件格式", "4309"),
     FILE_SIZE_EXCEEDS_LIMIT("文件大小超出限制", "4310"),
 
-    /** 三方调用 **/
     /**
      * 微信 440x ~ 442x
      **/
@@ -83,9 +83,11 @@ public enum CommonCodes implements BizAssert {
     /**
      * 名称
      */
-    private String msg;
+    private final String msg ;
     /**
      * 索引
      */
-    private String code;
+    private final String code;
+
+    private final String prefix = "common";
 }

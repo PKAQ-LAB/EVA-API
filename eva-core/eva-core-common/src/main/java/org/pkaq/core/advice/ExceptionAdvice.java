@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.exception.BizException;
 import org.pkaq.core.mvc.vo.Response;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.Locale;
 import java.util.Set;
 /**
  * @Description: 统一异常处理
@@ -38,14 +36,14 @@ public class ExceptionAdvice {
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ConstraintViolationException.class)
-    public Response handleViolationException(ConstraintViolationException e) {
+    public Response<Object> handleViolationException(ConstraintViolationException e) {
         Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
         StringBuilder message = new StringBuilder();
 
         for (ConstraintViolation<?> item : violations) {
             message.append(item.getMessage());
         }
-        return new Response<>().failure(CommonCodes.PARAM_TYPEERROR.getCode(), message.toString());
+        return Response.failure(CommonCodes.PARAM_TYPEERROR.getCode(), message.toString());
     }
 
     /**
@@ -57,10 +55,8 @@ public class ExceptionAdvice {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Response handleMethodParamCheckException(MethodArgumentNotValidException e) {
-        Locale locale = LocaleContextHolder.getLocale();
-        System.out.println("当前语言：" + locale);
-        return new Response<>().failure(CommonCodes.PARAM_TYPEERROR.getCode(), e.getBindingResult().getFieldError().getDefaultMessage());
+    public Response<Object> handleMethodParamCheckException(MethodArgumentNotValidException e) {
+        return Response.failure(CommonCodes.PARAM_TYPEERROR.getCode(), e.getBindingResult().getFieldError().getDefaultMessage());
     }
 
     /**
@@ -71,9 +67,9 @@ public class ExceptionAdvice {
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public Response handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+    public Response<Object> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         log.error("参数解析失败：" + e.getMessage());
-        return new Response<>().failure(CommonCodes.PARAM_TYPEERROR);
+        return Response.failure(CommonCodes.PARAM_TYPEERROR);
     }
 
     /**
@@ -84,9 +80,9 @@ public class ExceptionAdvice {
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({IllegalArgumentException.class, MissingServletRequestParameterException.class})
-    public Response handleIllegalArgumentException(Exception e) {
+    public Response<Object> handleIllegalArgumentException(Exception e) {
         log.warn("参数类型错误：不支持当前请求的参数类型:" + e.getMessage());
-        return new Response<>().failure(CommonCodes.PARAM_TYPEERROR);
+        return Response.failure(CommonCodes.PARAM_TYPEERROR);
     }
 
     /**
@@ -97,14 +93,13 @@ public class ExceptionAdvice {
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BindException.class)
-    public Response handleBindException(BindException e) {
+    public Response<Object> handleBindException(BindException e) {
         log.error("服务运行异常:" + e.getMessage());
-        e.printStackTrace();
         StringBuilder errorMsg = new StringBuilder();
         e.getAllErrors().forEach(
                 x -> errorMsg.append(x.getDefaultMessage()).append(",")
         );
-        return new Response<>().failure(CommonCodes.SERVER_ERROR.getCode(), errorMsg.toString());
+        return Response.failure(CommonCodes.SERVER_ERROR.getCode(), errorMsg.toString());
     }
 
     /**
@@ -115,20 +110,16 @@ public class ExceptionAdvice {
      */
     @ResponseStatus(HttpStatus.OK)
     @ExceptionHandler(BizException.class)
-    public Response handleBindException(BizException e) {
+    public Response<Object> handleBindException(BizException e) {
         String msg = ObjectUtil.defaultIfBlank(e.getMessage(), e.getEstr());
 
         log.error("业务异常:" + msg);
-        e.printStackTrace();
-
-        var res = new Response<>();
 
         if (null == e.getBizCode()) {
-            res = res.failure(null, e.getMessage(), e.getData(),e.getArgs());
+            return Response.failure(null, e.getMessage(), e.getData(),e.getArgs());
         } else {
-            res = res.failure(e.getBizCode(), e.getData(), e.getArgs());
+            return Response.failure(e.getBizCode(), e.getData(), e.getArgs());
         }
-        return res;
     }
 
     /**
@@ -139,9 +130,9 @@ public class ExceptionAdvice {
      */
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public Response handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
+    public Response<Object> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
         log.warn("不支持当前请求方法:" + e.getMessage());
-        return new Response<>().failure(CommonCodes.REQUEST_METHOD_ERROR);
+        return Response.failure(CommonCodes.REQUEST_METHOD_ERROR);
     }
 
     /**
@@ -152,9 +143,9 @@ public class ExceptionAdvice {
      */
     @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
-    public Response handleHttpMediaTypeNotSupportedException(Exception e) {
+    public Response<Object> handleHttpMediaTypeNotSupportedException(Exception e) {
         log.warn("不支持当前媒体类型:" + e.getMessage());
-        return new Response<>().failure(CommonCodes.REQUEST_MEDIA_ERROR);
+        return Response.failure(CommonCodes.REQUEST_MEDIA_ERROR);
     }
 
     /**
@@ -165,9 +156,8 @@ public class ExceptionAdvice {
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
-    public Response handleException(Exception e) {
+    public Response<Object> handleException(Exception e) {
         log.error("服务运行异常:" + e.getMessage());
-        e.printStackTrace();
-        return new Response<>().failure(CommonCodes.SERVER_ERROR);
+        return Response.failure(CommonCodes.SERVER_ERROR);
     }
 }

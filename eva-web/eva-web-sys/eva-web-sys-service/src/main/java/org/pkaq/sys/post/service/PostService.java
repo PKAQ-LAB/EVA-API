@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.pkaq.core.mybatis.mvc.service.ConvertService;
 import org.pkaq.core.mybatis.util.Page;
-import org.pkaq.sys.SysCodeEnum;
+import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.post.bo.PostAoeBo;
 import org.pkaq.sys.post.bo.PostQueryBo;
 import org.pkaq.sys.post.convert.PostConvert;
@@ -82,7 +82,7 @@ public class PostService extends ConvertService<PostMapper, PostConvert> {
 
         PostEntity entity = this.mapper.selectById(id);
         if (ObjectUtil.isNull(entity)) {
-            SysCodeEnum.RECORD_NOT_FOUND.newException();
+            SysCodes.RECORD_NOT_FOUND.newException();
         }
         return this.converter.entityToDetailVo(entity);
     }
@@ -96,7 +96,7 @@ public class PostService extends ConvertService<PostMapper, PostConvert> {
     public void del(List<String> param) {
         // 限制： 最多只允许同时删除100条
         if (param.size() > 100) {
-            SysCodeEnum.DELETE_LIMIT.newException();
+            SysCodes.DELETE_LIMIT.newException();
         }
 
         // 查询所删除ID

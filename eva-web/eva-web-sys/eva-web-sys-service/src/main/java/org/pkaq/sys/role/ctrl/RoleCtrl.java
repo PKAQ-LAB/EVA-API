@@ -10,7 +10,7 @@ import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.mvc.bo.SingleArrayBo;
 import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
-import org.pkaq.sys.SysCodeEnum;
+import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.role.bo.RoleAoeBo;
 import org.pkaq.sys.role.bo.RoleModuleRefBo;
 import org.pkaq.sys.role.bo.RoleQueryBo;
@@ -35,7 +35,7 @@ public class RoleCtrl extends Ctrl {
     public Response<Object> checkUnique(@Parameter(name = "roleEsaveModulentity", description = "要进行校验的参数")
                                         @RequestBody RoleAoeBo role) {
         boolean exist = null != role && CharSequenceUtil.isNotBlank(role.getCode()) && this.service.checkUnique(role);
-        return exist ? failure(SysCodeEnum.ROLE_CODE_EXIST) : success();
+        return exist ? failure(SysCodes.ROLE_CODE_EXIST) : success();
     }
 
     @GetMapping("/get/{id}")

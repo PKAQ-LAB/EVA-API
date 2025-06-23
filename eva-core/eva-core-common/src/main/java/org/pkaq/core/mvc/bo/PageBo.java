@@ -5,13 +5,11 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import java.io.Serializable;
-
 /**
  * @author PKAQ
  */
 @Data
-public class PageBo implements Serializable {
+public class PageBo implements Bo {
 
     private static final int PAGE_NO = 1;
     private static final int PAGE_SIZE = 30;

@@ -10,7 +10,7 @@ import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.mvc.vo.SingleArray;
-import org.pkaq.sys.SysCodeEnum;
+import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.post.bo.PostAoeBo;
 import org.pkaq.sys.post.bo.PostQueryBo;
 import org.pkaq.sys.post.service.PostService;
@@ -41,10 +41,10 @@ public class PostCtrl extends Ctrl {
                                         @RequestBody PostAoeBo bo) {
         // 参数校验
         if (CharSequenceUtil.isAllBlank(bo.getCode(), bo.getTitle())) {
-            return failure(SysCodeEnum.MISS_CODE_OR_NAME);
+            return failure(SysCodes.MISS_CODE_OR_NAME);
         }
         boolean exists = this.postService.checkUnique(bo);
-        return exists ? success() : failure(SysCodeEnum.DUPLICATE_CODE_OR_NAME);
+        return exists ? success() : failure(SysCodes.DUPLICATE_CODE_OR_NAME);
     }
 
     @GetMapping("/list")

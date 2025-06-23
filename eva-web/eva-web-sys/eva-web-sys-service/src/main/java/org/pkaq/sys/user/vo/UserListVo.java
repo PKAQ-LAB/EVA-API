@@ -48,7 +48,6 @@ public class UserListVo implements Bo {
     @Schema(description = "所属岗位")
     private String postId;
 
-
     @Schema(description = "所属部门")
     private String deptId;
 

@@ -10,15 +10,15 @@ import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.mvc.bo.SingleArrayBo;
 import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
-import org.pkaq.sys.SysCodeEnum;
-import org.pkaq.sys.user.bo.RePwdBo;
-import org.pkaq.sys.user.bo.UserAoeBo;
-import org.pkaq.sys.user.entity.UserEntity;
+import org.pkaq.sys.SysCodes;
+import org.pkaq.sys.role.service.UserRoleRefSerivce;
+import org.pkaq.sys.user.bo.*;
 import org.pkaq.sys.user.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
 /**
  * 用户管理实体类
+ *
  * @author: S.PKAQ
  */
 @Tag(name = "用户管理")
@@ -28,29 +28,30 @@ import org.springframework.web.bind.annotation.*;
 public class UserCtrl extends Ctrl {
     private final UserService service;
 
+    private final UserRoleRefSerivce userRoleRefSerivce;
+
     @PostMapping("/checkUnique")
     @Operation(summary = "校验账号唯一性")
-    public Response<Object> checkUnique(@Parameter(name = "UserAoeBo", description = "要进行校验的参数")
-                                        @RequestBody UserAoeBo bo) {
+    public Response<Object> checkUnique(@Parameter(name = "bo", description = "要进行校验的参数")
+                                        @RequestBody UserCheckBo bo) {
         boolean exist = null != bo && CharSequenceUtil.isNotBlank(bo.getAccount()) && this.service.checkUnique(bo);
-        return exist ? failure(SysCodeEnum.ACCOUNT_ALREADY_EXIST) : success();
+        return exist ? failure(SysCodes.ACCOUNT_ALREADY_EXIST) : success();
     }
 
     @PostMapping("repwd")
     @Operation(summary = "重新设置密码")
-    public Response<Object> repwd(@Parameter(name = "formdata", description = "用户对象")
+    public Response<Object> repwd(@Parameter(name = "rePwdBo", description = "用户对象")
                                   @RequestBody RePwdBo rePwdBo) {
-        return this.service.repwd(rePwdBo) ? success() : failure(SysCodeEnum.BAD_ORG_PASSWORD);
+        this.service.repwd(rePwdBo);
+        return success();
     }
 
     @PostMapping("/del")
     @Operation(summary = "根据ID删除/批量删除记录")
     public Response<Object> del(@Parameter(name = "ids", description = "[记录ID]")
                                 @RequestBody @Valid SingleArrayBo<String> ids) {
-
         // 参数非空校验
         CommonCodes.NULL_ID.assertNotNull(ids);
-        CommonCodes.NULL_ID.assertNotNull(ids.getParam());
 
         this.service.delete(ids.getParam());
         return success();
@@ -58,7 +59,7 @@ public class UserCtrl extends Ctrl {
 
     @PostMapping("/edit")
     @Operation(summary = "新增/编辑记录")
-    public Response<Object> save(@Parameter(name = "formdata", description = "用户对象")
+    public Response<Object> edit(@Parameter(name = "UserAoeBo", description = "用户对象")
                                  @RequestBody UserAoeBo bo) {
         this.service.saveUser(bo);
         return success();
@@ -66,37 +67,34 @@ public class UserCtrl extends Ctrl {
 
     @PostMapping("/grant")
     @Operation(summary = "授权")
-    public Response<Object> grant(@Parameter(name = "formdata", description = "用户对象")
-                                  @RequestBody UserAoeBo bo) {
-        this.service.saveRoles(bo);
+    public Response<Object> grant(@Parameter(name = "bo", description = "授权角色")
+                                  @RequestBody UserGrantBo bo) {
+        this.userRoleRefSerivce.saveRoles(bo);
         return success(null, CommonCodes.SAVE_SUCCESS);
     }
 
     @GetMapping("/list")
     @Operation(summary = "列表查询")
     public Response<Object> list(@Parameter(name = "condition", description = "用户对象")
-                                 UserAoeBo bo, Integer pageNo, Integer pageSize) {
-        return success(this.service.listUser(bo, pageNo, pageSize));
+                                 UserQueryBo bo) {
+        return success(this.service.listPage(bo));
     }
 
     @GetMapping("/get/{id}")
     @Operation(summary = "根据ID获得记录信息")
-    public Response<Object> getRole(@Parameter(name = "id", description = "记录ID")
-                                    @PathVariable("id") String id) {
-        UserEntity user = this.service.getUser(id);
-        return null == user ? this.failure() : this.success(user);
+    public Response<Object> get(@Parameter(name = "id", description = "记录ID")
+                                @PathVariable("id") String id) {
+        return this.success(this.service.getUser(id));
     }
 
-    @PostMapping("/lock")
+    @PostMapping("/switch")
     @Operation(summary = "锁定/解锁")
-    public Response<Object> lockSwitch(@Parameter(name = "param", description = "用户[id]")
-                                       @RequestBody SingleArrayBo<String> param) {
+    public Response<Object> change(@Parameter(name = "param", description = "用户[id]")
+                                   @RequestBody SingleArrayBo<String> param) {
         // 参数非空校验
-        CommonCodes.NULL_ID.assertNotNull(param);
         CommonCodes.NULL_ID.assertNotNull(param.getParam());
 
-//        this.service.updateUser(param.getParam(), param.getStatus());
-//        return success(this.service.listPage(null, 1));
+        this.service.updateUser(param.getParam());
         return success();
     }
 }

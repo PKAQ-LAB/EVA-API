@@ -3,27 +3,34 @@ package org.pkaq.sys.user.service;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.crypto.digest.BCrypt;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
+import org.pkaq.core.codes.CommonCodes;
+import org.pkaq.core.log.annotation.BizLog;
+import org.pkaq.core.log.base.BizLogEnum;
 import org.pkaq.core.mybatis.mvc.entity.StdTreeEntity;
-import org.pkaq.core.mybatis.mvc.service.StdService;
+import org.pkaq.core.mybatis.mvc.service.ConvertService;
 import org.pkaq.core.mybatis.util.Page;
 import org.pkaq.core.mybatis.util.TreeHelper;
+import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.core.upload.provider.FileUploadProvider;
-import org.pkaq.sys.SysCodeEnum;
+import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.module.entity.ModuleEntity;
 import org.pkaq.sys.module.mapper.ModuleMapper;
-import org.pkaq.sys.role.entity.RoleUserEntity;
 import org.pkaq.sys.role.mapper.RoleUserMapper;
-import org.pkaq.sys.user.bo.RePwdBo;
-import org.pkaq.sys.user.bo.UserAoeBo;
+import org.pkaq.sys.role.service.UserRoleRefSerivce;
+import org.pkaq.sys.user.bo.*;
 import org.pkaq.sys.user.convert.UserConvert;
 import org.pkaq.sys.user.entity.UserEntity;
 import org.pkaq.sys.user.mapper.UserMapper;
+import org.pkaq.sys.user.vo.UserDetailVo;
 import org.pkaq.sys.user.vo.UserListVo;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -34,29 +41,30 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor
-public class UserService extends StdService<UserMapper, UserEntity> {
-    private final UserConvert userConvert;
+public class UserService extends ConvertService<UserMapper, UserConvert> {
 
-
-    private final RoleUserMapper roleUserMapper;
+    private final UserRoleRefSerivce userRoleRefSerivce;
 
     private final FileUploadProvider fileUploadProvider;
 
     private final ModuleMapper moduleMapper;
 
+    private final RoleUserMapper roleUserMapper;
+
     /**
      * 修改密码
      */
-    public boolean repwd(RePwdBo rePwdBo) {
-        //TODO 获取用户ID
-        UserEntity userEntity = this.mapper.selectById(rePwdBo.getUserId());
+    @BizLog(operateType = BizLogEnum.EDIT, description = "更新了密码[{0}]", args = {"param:0.id"})
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public void repwd(RePwdBo rePwdBo) {
+        var uid = ThreadUserHelper.getUserId();
+        UserEntity userEntity = this.mapper.selectById(uid);
 
-        if (BCrypt.checkpw(rePwdBo.getOriginpassword(), userEntity.getPassword())) {
-            userEntity.setPassword(BCrypt.hashpw(rePwdBo.getNewpassword()));
-            this.mapper.updateById(userEntity);
-            return true;
+        if (!BCrypt.checkpw(rePwdBo.getOriginPassword(), userEntity.getPassword())) {
+            throw SysCodes.BAD_ORG_PASSWORD.newException();
         }
-        return false;
+        userEntity.setPassword(BCrypt.hashpw(rePwdBo.getNewPassword()));
+        this.mapper.updateById(userEntity);
     }
 
     /**
@@ -70,26 +78,53 @@ public class UserService extends StdService<UserMapper, UserEntity> {
         pagination.setCurrent(page);
         pagination.setSize(size);
 
-        return   this.mapper.getUerWithRoleId(pagination, userEntity);
+        return this.mapper.getUerWithRoleId(pagination, userEntity);
+    }
+
+    @BizLog(operateType = BizLogEnum.DELETE, description = "删除了用户", args = {"param:0"})
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public void delete(List<String> param) {
+        this.mapper.deleteByIds(param);
     }
 
     /**
      * 查询用户列表 无分页
      */
-    public List<UserEntity> listUser(UserEntity userEntity) {
-        return this.list(userEntity);
+    @BizLog(operateType = BizLogEnum.QUERY, description = "查询了用户列表")
+    public List<UserListVo> listUser(UserQueryBo queryBo) {
+        UserEntity user = this.converter.queryBoToEntity(queryBo);
+        LambdaQueryWrapper<UserEntity> wrapper = Wrappers.lambdaQuery();
+        wrapper.setEntity(user);
+        wrapper.orderByDesc(UserEntity::getModifyBy);
+        return this.converter.entityListToVoList(this.mapper.selectList(wrapper));
+    }
+
+
+    /**
+     * 列表查询 - 分页
+     *
+     * @param queryBo
+     * @return
+     */
+    @BizLog(operateType = BizLogEnum.QUERY, description = "查询了用户列表")
+    public IPage<UserListVo> listPage(UserQueryBo queryBo) {
+        LambdaQueryWrapper<UserEntity> wrapper = Wrappers.lambdaQuery();
+        wrapper.setEntity(this.converter.queryBoToEntity(queryBo));
+        wrapper.orderByDesc(UserEntity::getUtcModify);
+
+        Page<UserEntity> pagination = new Page<>(queryBo.getPageNo(), queryBo.getPageSize());
+        return this.mapper.selectPage(pagination, wrapper).convert(this.converter::entityToListVo);
     }
 
     /**
      * 解锁/锁定用户
      */
-    public void updateUser(List<String> ids, String lock) {
-        UserEntity user = new UserEntity();
-//        user.setFrozen(lock);
-        QueryWrapper<UserEntity> wrapper = new QueryWrapper<>();
-        wrapper.in("id", ids);
+    public void updateUser(List<String> ids) {
+        if (CollUtil.isEmpty(ids)) {
+            CommonCodes.NULL_ID.newException();
+        }
 
-        this.mapper.update(user, wrapper);
+        this.mapper.change(ids);
     }
 
     /**
@@ -98,10 +133,18 @@ public class UserService extends StdService<UserMapper, UserEntity> {
      * @param id 用户id
      * @return 符合条件的用户对象
      */
-    public UserEntity getUser(String id) {
-        UserEntity userEntity = new UserEntity();
-        userEntity.setId(id);
-        return this.mapper.getUserWithRole(userEntity);
+    public UserDetailVo getUser(String id) {
+        var user = this.mapper.selectById(id);
+        if (null == user) {
+            SysCodes.CANNOT_FIND_USER.newException();
+        }
+        var uvo = this.converter.entityToDetilVo(user);
+        // 权限列表
+        var roleIds = this.roleUserMapper.selectRoleIds(id);
+
+        uvo.setRoleIds(roleIds);
+
+        return uvo;
     }
 
     /**
@@ -109,14 +152,14 @@ public class UserService extends StdService<UserMapper, UserEntity> {
      *
      * @param user 用户对象
      */
+    @BizLog(operateType = BizLogEnum.EDIT, description = "更新用户记录[{0}]", args = {"param:0.id"})
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void saveUser(UserAoeBo user) {
         // 用户资料发生修改后 重新生成密码
         // 这里传递过来的密码是进行md5加密后的
         String pwd = user.getPassword();
-        if (CharSequenceUtil.isNotBlank(pwd)) {
-            pwd = BCrypt.hashpw(pwd);
-            user.setPassword(pwd);
-        }
+        pwd = BCrypt.hashpw(pwd);
+        user.setPassword(pwd);
 
         // 新增手工生成主键
         // 编辑， 删除原有头像文件，保存新的头像文件
@@ -138,31 +181,37 @@ public class UserService extends StdService<UserMapper, UserEntity> {
         if (CharSequenceUtil.isNotBlank(user.getAvatar())) {
             fileUploadProvider.storageWithThumbnail(0.3f, user.getAvatar());
         }
-        // 保存权限
-        UserEntity entity = userConvert.boToEntity(user);
-        this.saveRoles(user);
 
+        // 保存用户
+        UserEntity entity = this.converter.boToEntity(user);
         if (isInsert) {
             this.mapper.insert(entity);
         } else {
             this.mapper.updateById(entity);
         }
-        this.merge(entity);
+        this.mapper.insertOrUpdate(entity);
+
+        // 保存权限
+        UserGrantBo userGrantBo = new UserGrantBo();
+        userGrantBo.setUserId(userId);
+        userGrantBo.setRoleIds(user.getRoleIds());
+        this.userRoleRefSerivce.saveRoles(userGrantBo);
     }
 
     /**
      * 校验账号是否唯一
      */
-    public boolean checkUnique(UserAoeBo user) {
-        QueryWrapper<UserEntity> entityWrapper = new QueryWrapper<>();
-        if (CharSequenceUtil.isNotBlank(user.getAccount())) {
-            entityWrapper.eq("account", user.getAccount());
-        }
+    public boolean checkUnique(UserCheckBo user) {
+        LambdaQueryWrapper<UserEntity> entityWrapper = new LambdaQueryWrapper<>();
+        entityWrapper.nested(w ->
+                w.eq(UserEntity::getAccount, user.getAccount())
+                        .or()
+                        .eq(UserEntity::getCode, user.getCode()));
+
         if (CharSequenceUtil.isNotBlank(user.getId())) {
-            entityWrapper.ne("id", user.getId());
+            entityWrapper.ne(UserEntity::getId, user.getId());
         }
-        long records = this.mapper.selectCount(entityWrapper);
-        return records > 0;
+        return this.mapper.selectCount(entityWrapper) > 0;
     }
 
     /**
@@ -175,29 +224,8 @@ public class UserService extends StdService<UserMapper, UserEntity> {
         List<ModuleEntity> moduleEntity = this.moduleMapper.getRoleModuleByUserId(uid);
         List<StdTreeEntity> treeModule = new TreeHelper().bulid(moduleEntity);
 
-        SysCodeEnum.PERMISSION_EXPIRED.assertNotBlank(treeModule);
+        SysCodes.PERMISSION_EXPIRED.assertNotBlank(treeModule);
 
         return treeModule;
-    }
-
-    /**
-     * 保存用户权限
-     */
-    public void saveRoles(UserAoeBo user) {
-        // 保存权限
-        if (CollUtil.isNotEmpty(user.getRoles())) {
-            // 先删除该用户原有的权限
-            QueryWrapper<RoleUserEntity> deleteWrapper = new QueryWrapper<>();
-            deleteWrapper.eq("user_id", user.getId());
-
-            this.roleUserMapper.delete(deleteWrapper);
-            // 再插入更新后的权限
-            user.getRoles().forEach(item -> {
-                RoleUserEntity roleUserEntity = new RoleUserEntity();
-                roleUserEntity.setRoleId(item.getId());
-                roleUserEntity.setUserId(user.getId());
-                roleUserMapper.insert(roleUserEntity);
-            });
-        }
     }
 }

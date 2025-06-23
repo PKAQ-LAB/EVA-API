@@ -11,7 +11,7 @@ import org.pkaq.core.exception.BizException;
 import org.pkaq.core.mvc.bo.SingleArrayBo;
 import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.core.mybatis.util.TreeHelper;
-import org.pkaq.sys.SysCodeEnum;
+import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.module.bo.ModuleAoeBo;
 import org.pkaq.sys.module.bo.ModuleQueryBo;
 import org.pkaq.sys.module.bo.ModuleSortBo;
@@ -67,7 +67,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
             // 拼接名称
             String name = CollUtil.join(list, ",");
 
-            SysCodeEnum.CHILD_EXIST.newException(name);
+            SysCodes.CHILD_EXIST.newException(name);
         } else {
             try {
                 // 删除相关资源
@@ -77,7 +77,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
                 // 删除模块
                 this.mapper.deleteBatchIds(ids);
             } catch (Exception e) {
-                throw new BizException(SysCodeEnum.MODULE_RESOURCE_USED);
+                throw new BizException(SysCodes.MODULE_RESOURCE_USED);
             }
         }
     }
@@ -196,7 +196,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
                 try {
                     this.moduleResourceMapper.delete(deleteWrapper);
                 } catch (Exception e) {
-                    throw new BizException(SysCodeEnum.RESOURCE_USED);
+                    throw new BizException(SysCodes.RESOURCE_USED);
                 }
             }
         }

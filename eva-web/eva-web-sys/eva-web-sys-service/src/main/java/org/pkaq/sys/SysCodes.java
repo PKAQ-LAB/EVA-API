@@ -9,10 +9,15 @@ import org.pkaq.core.exception.BizAssert;
  */
 
 @Getter
-public enum SysCodeEnum implements BizAssert {
+public enum SysCodes implements BizAssert {
     /**
-     * 用户相关 410x
+     * 用户相关 010x
      **/
+
+    ACCOUNT_ALREADY_EXIST("账户名已存在", "0x00-0100"),
+    BAD_ORG_PASSWORD("原始密码校验失败", "0x00-0101"),
+    CANNOT_FIND_USER("权限不足或无法查询到该用户", "0x00-0102"),
+
     LOGIN_FAILED("登录失败", "0x000-00000"),
     ACCOUNT_NOT_EXIST("用户名或密码错误", "0x000-00001"),
     ACCOUNT_OR_PWD_ERROR("用户名或密码错误", "0x000-00002"),
@@ -20,7 +25,7 @@ public enum SysCodeEnum implements BizAssert {
     LOGIN_ERROR("登录遇到未知错误: [{0}]", "0x000-00004"),
     LOGIN_EXPIRED("未登录或登录已失效, 请重新登录", "0x000-00005"),
     PERMISSION_EXPIRED("用户权限不足，请联系管理员", "0x000-00006"),
-    ACCOUNT_ALREADY_EXIST("账户名已存在", "0x000-00010"),
+
     LOGIN_FAIL_COUNT_LOCKED("登录验证失败次数过多，请[{0}]分钟后再试", "0x000-00007"),
     LOGIN_CAPTCHA_FAIL("验证失败，请重试", "0x000-00008"),
     LOGIN_REPLACED("您的账号在另一地点登录, 您已被迫下线", "0x000-00011"),
@@ -72,7 +77,7 @@ public enum SysCodeEnum implements BizAssert {
     RESOURCE_USED("资源已经被引用，无法删除", "4305"),
     PARENT_NOT_AVAILABLE("父节点为禁用状态，无法启用", "4306"),
     MODULE_RESOURCE_USED("模块下存在已经被引用的资源，无法删除", "4307"),
-    BAD_ORG_PASSWORD("原始密码校验失败", "4308"),
+
     ORG_CODE_EXIST("组织(部门)编码已经存在", "4310"),
 
     ORG_TYPE_INVALID("[{0}]不能添加[{1}] ", "4313"),
@@ -83,8 +88,9 @@ public enum SysCodeEnum implements BizAssert {
 
     private final String msg;
     private final String code;
+    private final String prefix = "sys";
 
-    SysCodeEnum(String msg, String code) {
+    SysCodes(String msg, String code) {
         this.msg = msg;
         this.code = code;
     }

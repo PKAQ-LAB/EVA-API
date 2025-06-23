@@ -10,7 +10,7 @@ import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.mvc.vo.SingleArray;
-import org.pkaq.sys.SysCodeEnum;
+import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.tenant.bo.TenantAuthBo;
 import org.pkaq.sys.tenant.bo.TenantAoeBo;
 import org.pkaq.sys.tenant.bo.TenantQueryBo;
@@ -70,7 +70,7 @@ public class TenantCtrl extends Ctrl {
     public Response<Object> checkUnique(@Parameter(name = "organization", description = "要进行校验的参数")
                                         @RequestBody TenantAoeBo editBo) {
         boolean exist = null != editBo && CharSequenceUtil.isNotBlank(editBo.getCode()) && this.service.checkUnique(editBo);
-        return exist ? failure(SysCodeEnum.TENANT_COED_NAME_EXIST) : success();
+        return exist ? failure(SysCodes.TENANT_COED_NAME_EXIST) : success();
     }
 
 

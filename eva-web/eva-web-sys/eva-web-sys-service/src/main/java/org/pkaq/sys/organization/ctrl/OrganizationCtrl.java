@@ -10,7 +10,7 @@ import org.pkaq.core.mvc.bo.IdCodeBo;
 import org.pkaq.core.mvc.bo.SingleArrayBo;
 import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
-import org.pkaq.sys.SysCodeEnum;
+import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.organization.bo.OrganizationAoeBo;
 import org.pkaq.sys.organization.bo.OrganizationQueryBo;
 import org.pkaq.sys.organization.bo.OrganizationSortBo;
@@ -33,7 +33,7 @@ public class OrganizationCtrl extends Ctrl {
     @Operation(summary = "校验code唯一性")
     public Response<Object> checkUnique(@Parameter(name = "idCodeBo", description = "要进行校验的参数")
                                         @RequestBody @Valid IdCodeBo idCodeBo) {
-        return this.service.isUnique(idCodeBo) ? failure(SysCodeEnum.ORG_CODE_EXIST) : success();
+        return this.service.isUnique(idCodeBo) ? failure(SysCodes.ORG_CODE_EXIST) : success();
     }
 
     @GetMapping("/list")

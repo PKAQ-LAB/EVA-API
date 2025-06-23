@@ -13,21 +13,21 @@ public interface BizAssert extends BizCode {
     /**
      * 断言异常
      */
-    default BizException newException(Object... args) {
+    default void newException(Object... args) {
         throw new BizException(this, args);
     }
 
     /**
      * 抛出指定异常
      */
-    default BizException newException(Throwable t) {
+    default void newException(Throwable t) {
         throw new BizException(this, t);
     }
 
     /**
      * 抛出指定异常
      */
-    default BizException newException(Throwable t, Object... args) {
+    default void newException(Throwable t, Object... args) {
         throw new BizException(this, t, args);
     }
 
@@ -38,11 +38,11 @@ public interface BizAssert extends BizCode {
      */
     default void assertNotBlank(Object obj) {
         if (obj instanceof Collection && (null == obj || ((Collection<?>) obj).size() == 0)) {
-            throw newException(obj);
+            newException(obj);
         }
 
         if (obj instanceof CharSequence && (null == obj || ((CharSequence) obj).length() == 0)) {
-            throw newException(obj);
+            newException(obj);
         }
     }
 
@@ -53,7 +53,7 @@ public interface BizAssert extends BizCode {
      */
     default void assertNotNull(Object obj) {
         if (obj == null) {
-            throw newException();
+            newException();
         }
     }
 
@@ -66,7 +66,7 @@ public interface BizAssert extends BizCode {
      */
     default void assertNotNull(Object obj, Object... args) {
         if (obj == null) {
-            throw newException(args);
+            newException(args);
         }
     }
 
@@ -77,7 +77,7 @@ public interface BizAssert extends BizCode {
      */
     default void assertNotNullException(Object obj, Throwable t, Object... args) {
         if (obj == null) {
-            throw newException(t, args);
+            newException(t, args);
         }
     }
 

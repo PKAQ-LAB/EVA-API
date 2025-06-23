@@ -1,25 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.pkaq.sys.user.mapper.UserMapper">
-    <resultMap id="BaseResultMap" type="user" extends="common.resultMap">
-        <result property="code" column="CODE" />
-        <result property="account" column="ACCOUNT" />
-        <result property="password" column="PASSWORD" />
-        <result property="salt" column="SALT" />
-        <result property="avatar" column="AVATAR" />
-        <result property="name" column="NAME" />
-        <result property="nickName" column="NICK_NAME" />
-        <result property="tel" column="TEL" />
-        <result property="email" column="EMAIL" />
-        <result property="lastIp" column="LAST_IP" />
-        <result property="lastLogin" column="LAST_LOGIN" />
-        <result property="deptId" column="DEPT_ID" />
-        <result property="postId" column="POST_ID" />
+    <resultMap id="BaseResultMap" type="org.pkaq.sys.user.vo.UserDetailVo" extends="common.resultMap">
+        <id property="id" column="ID"/>
     </resultMap>
     <!-- 获取包含权限列表的用户信息-->
     <resultMap id="UserWithRole" type="user" extends="BaseResultMap">
-        <collection property="roles" column="{userId=id}" select="org.pkaq.sys.role.mapper.RoleMapper.selectByUserId"
-                    ofType="role"/>
+        <collection property="roles" column="{userId=id}" select="org.pkaq.sys.role.mapper.RoleMapper.selectByUserId" ofType="role"/>
     </resultMap>
 
     <!-- 获取包含权限列表的用户信息-->
@@ -37,6 +24,19 @@
         <collection property="modules" column="{userId=id}"
                     select="org.pkaq.sys.module.mapper.ModuleMapper.getRoleModuleByUserId" ofType="module"/>
     </resultMap>
+
+    <!-- 根据id更新用户锁定状态   -->
+    <update id="change">
+        update sys_user set frozen = abs(frozen - 1)
+        <where>
+            <if test="null != ids and '' != ids">
+                id in
+                <foreach collection="ids" item="id" index="index" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </update>
 
     <select id="getUerWithRoleId" resultMap="UserWithRoleId">
         SELECT

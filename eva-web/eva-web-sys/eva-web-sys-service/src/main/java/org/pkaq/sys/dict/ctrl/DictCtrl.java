@@ -31,10 +31,6 @@ public class DictCtrl extends Ctrl {
 
     private final DictCacheHelper dictCacheHelper;
 
-    public static void main(String[] args) {
-        CommonCodes.NULL_PARAM_ID.assertNotNull(null, "角色");
-    }
-
 
     @GetMapping({"/query/{code}"})
     @Operation(summary = "根据 code 从缓存中获取字典项")

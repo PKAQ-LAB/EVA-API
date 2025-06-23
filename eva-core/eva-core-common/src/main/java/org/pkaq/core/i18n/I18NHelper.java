@@ -10,7 +10,7 @@ import java.util.Locale;
 
 /**
  * 国际化工具类
- * Author: S.PKAQ
+ * @author PKAQ
  */
 @Component
 @RequiredArgsConstructor
@@ -18,7 +18,7 @@ public class I18NHelper {
     private final MessageSource messageSource;
 
     public String getMsg(BizCode e) {
-        return this.getMessage(e.getCode(), e.getMsg()) ;
+        return this.getMessage(e.getKey(), e.getMsg());
     }
 
     /**
@@ -65,25 +65,24 @@ public class I18NHelper {
     /**
      * 获取code值
      */
-    public String getMessage(String code, Object[] args, Locale locale) {
-        return this.getMessage(code, args, "", locale);
+    public String getMessage(String key, Object[] args, Locale locale) {
+        return this.getMessage(key, args, "", locale);
     }
 
     /**
-     * @param code           ：对应messages配置的key.
+     * @param key           ：对应messages配置的key.
      * @param args           : 数组参数.
      * @param defaultMessage : 没有设置key的时候的默认值.
      */
-    public String getMessage(String code, Object[] args, String defaultMessage) {
-        //这里使用比较方便的方法，不依赖request.
+    public String getMessage(String key, Object[] args, String defaultMessage) {
         Locale locale = LocaleContextHolder.getLocale();
-        return this.getMessage(code, args, defaultMessage, locale);
+        return this.getMessage(key, args, defaultMessage, locale);
     }
 
     /**
      * 指定语言.
      */
-    public String getMessage(String code, Object[] args, String defaultMessage, Locale locale) {
-        return messageSource.getMessage(code, args, defaultMessage, locale);
+    public String getMessage(String key, Object[] args, String defaultMessage, Locale locale) {
+        return messageSource.getMessage(key, args, defaultMessage, locale);
     }
 }

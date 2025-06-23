@@ -1,7 +1,5 @@
 package org.pkaq.sys.role.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -15,12 +13,9 @@ import org.apache.ibatis.type.Alias;
  */
 @Data
 @Alias("roleUser")
-@TableName("sys_role_user")
+@TableName("SYS_ROLEUSER_REF")
 @EqualsAndHashCode()
 public class RoleUserEntity {
-    @TableId(type = IdType.ASSIGN_UUID)
-    private String id;
-
     @NotBlank
     private String roleId;
 

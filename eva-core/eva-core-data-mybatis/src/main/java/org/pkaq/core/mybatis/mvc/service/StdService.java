@@ -92,7 +92,6 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
     public List<T> list(T entity) {
         LambdaQueryWrapper<T> wrapper = Wrappers.lambdaQuery();
         wrapper.orderByDesc(T::getModifyBy);
-
         return this.mapper.selectList(wrapper);
     }
 
@@ -141,6 +140,6 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
     @BizLog(operateType = BizLogEnum.DELETE, description = "删除记录[{0}]", args = {"param:0"})
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void delete(List<String> param) {
-        this.mapper.deleteBatchIds(param);
+        this.mapper.deleteByIds(param);
     }
 }

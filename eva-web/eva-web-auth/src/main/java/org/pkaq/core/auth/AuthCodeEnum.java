@@ -1,11 +1,12 @@
 package org.pkaq.core.auth;
 
+import lombok.Getter;
 import org.pkaq.core.exception.BizAssert;
 
 /**
  * @author PKAQ
  */
-
+@Getter
 public enum AuthCodeEnum implements BizAssert {
     LOGIN_FAILED("登录失败", "0x000-00000"),
     ACCOUNT_NOT_EXIST("用户名或密码错误", "0x000-00001"),
@@ -20,19 +21,13 @@ public enum AuthCodeEnum implements BizAssert {
     LOGIN_REPLACED("您的账号在另一地点登录, 您已被迫下线", "0x000-00011"),
     LOGIN_TENANT_AUTH_EXPIRED("当前授权已失效", "0x000-00012");
 
-    private String msg;
-    private String code;
+    @Getter
+    private final String msg;
+    private final String code;
+    private final String prefix = "auth";
 
-    private AuthCodeEnum(String msg, String code) {
+    AuthCodeEnum(String msg, String code) {
         this.msg = msg;
         this.code = code;
-    }
-
-    public String getMsg() {
-        return this.msg;
-    }
-
-    public String getCode() {
-        return this.code;
     }
 }
