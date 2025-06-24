@@ -17,6 +17,9 @@ public enum SysCodes implements BizAssert {
     ACCOUNT_ALREADY_EXIST("账户名已存在", "0x00-0100"),
     BAD_ORG_PASSWORD("原密码校验失败", "0x00-0101"),
     CANNOT_FIND_USER("权限不足或无法查询到该用户", "0x00-0102"),
+    CHECKFIELD_ALREADY_EXIST("需要进行校验的字段为空", "0x00-0103"),
+    CODE_ALREADY_EXIST("编码已存在", "0x00-0105"),
+    ACCOUNT_OR_CODE_ALREADY_EXIST("账户名或者编码已存在", "0x00-0106"),
 
     LOGIN_FAILED("登录失败", "0x000-00000"),
     ACCOUNT_NOT_EXIST("用户名或密码错误", "0x000-00001"),

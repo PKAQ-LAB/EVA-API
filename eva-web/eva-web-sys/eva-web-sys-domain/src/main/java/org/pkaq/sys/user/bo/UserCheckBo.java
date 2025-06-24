@@ -18,10 +18,8 @@ public class UserCheckBo implements Bo {
     private String id;
 
     @Schema(description = "编号")
-    @NotBlank(message = "{sys.user.code.required}")
     private String code;
 
     @Schema(description = "账号")
-    @NotBlank(message = "{sys.user.account.required}")
     private String account;
 }

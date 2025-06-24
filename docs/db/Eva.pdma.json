@@ -4,7 +4,7 @@
   "avatar": "",
   "version": "4.9.4",
   "createdTime": "2025-4-22 15:22:40",
-  "updatedTime": "2025-6-22 21:46:08",
+  "updatedTime": "2025-6-24 13:36:46",
   "dbConns": [],
   "profile": {
     "default": {
@@ -138,7 +138,7 @@
           "id": "D74B273B-22C9-4837-ADE9-9B609908031C"
         },
         {
-          "defKey": "CREATED_ID",
+          "defKey": "CREATE_ID",
           "defName": "创建人ID",
           "comment": "",
           "type": "VARCHAR",
@@ -8175,34 +8175,6 @@
           "uiHint": "642D2E0A-8846-4549-BE56-8C0473F26EDE"
         },
         {
-          "defKey": "SALT",
-          "defName": "盐",
-          "comment": "",
-          "domain": "",
-          "type": "VARCHAR",
-          "len": 40,
-          "scale": "",
-          "primaryKey": false,
-          "notNull": false,
-          "autoIncrement": false,
-          "defaultValue": "",
-          "hideInGraph": false,
-          "refDict": "",
-          "attr1": "",
-          "attr2": "",
-          "attr3": "",
-          "attr4": "",
-          "attr5": "",
-          "attr6": "",
-          "attr7": "",
-          "attr8": "",
-          "attr9": "",
-          "id": "69544F9E-42E1-4473-B498-B25FA64BD2E8",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64",
-          "extProps": {},
-          "uiHint": "642D2E0A-8846-4549-BE56-8C0473F26EDE"
-        },
-        {
           "defKey": "AVATAR",
           "defName": "头像",
           "comment": "",
@@ -8459,7 +8431,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "DEFA7804-CE18-453E-996E-C2D96625E2F0",
+          "id": "4D9E6A09-8BD1-48B6-8F94-CB2E06B10014",
           "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
@@ -8487,7 +8459,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "22803175-B0D7-4B9B-BB64-DA74A0F02E70",
+          "id": "44E52948-3C7B-4340-8AE1-2BC3B9D56020",
           "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
         },
         {
@@ -8514,20 +8486,20 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "6361B098-E1B3-4FCB-B5A7-24C7E8438164",
+          "id": "F813D516-5E12-4148-8007-BEC8383C8C75",
           "baseType": ""
         },
         {
           "defKey": "FROZEN",
           "defName": "是否冻结",
           "comment": "",
-          "type": "VARCHAR",
-          "len": 6,
+          "type": "INT",
+          "len": "",
           "scale": "",
           "primaryKey": false,
           "notNull": false,
           "autoIncrement": false,
-          "defaultValue": "0000",
+          "defaultValue": "0",
           "hideInGraph": false,
           "refDict": "",
           "extProps": {},
@@ -8541,8 +8513,8 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "016C2D44-645C-4213-85B9-3F4404A4BDBC",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
+          "id": "DAB9767C-ADEE-44FC-BDD9-93D0E9527D2C",
+          "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
         },
         {
           "defKey": "REMARK",
@@ -8568,22 +8540,21 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "67118F1F-9C3F-496C-9FA5-6E4ECB801AB4",
+          "id": "2F094504-3C99-48EE-9102-0CF3F08A11FF",
           "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "SORT",
           "defName": "排序字段",
           "comment": "",
-          "type": "",
-          "len": "",
-          "scale": "",
+          "type": "DECIMAL",
+          "len": 10,
+          "scale": 4,
           "primaryKey": false,
           "notNull": false,
           "autoIncrement": false,
-          "defaultValue": "",
+          "defaultValue": "0",
           "hideInGraph": false,
-          "domain": "6BC8F04B-6CFA-4995-98D3-318F5CDD774E",
           "refDict": "",
           "extProps": {},
           "notes": {},
@@ -8596,11 +8567,11 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "86D59F3D-4E5C-4884-89C4-BCC46724CA88",
-          "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
+          "id": "847D9742-8766-46CC-B057-560FF49A34D9",
+          "baseType": "1A0BDC09-0792-4174-9E8E-80BE8DF44B8E"
         },
         {
-          "defKey": "CREATED_ID",
+          "defKey": "CREATE_ID",
           "defName": "创建人ID",
           "comment": "",
           "type": "VARCHAR",
@@ -8623,7 +8594,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "18156C2A-05AF-405B-9837-FEF786B71E08",
+          "id": "2E17967F-52D0-4229-B60B-2B490E098AFA",
           "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
@@ -8650,7 +8621,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "27A74682-25A4-41F1-B3F1-C0D2F40317FC",
+          "id": "32E5FEBD-F663-4F20-9977-D904969CB282",
           "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
@@ -8678,7 +8649,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "9BC96E8E-E8C6-489E-A24F-14044EBE707C",
+          "id": "294C7F89-6C65-42DC-913B-FA962387D81A",
           "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         },
         {
@@ -8706,7 +8677,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "0E6531BB-3B13-4B56-8849-FCD763669592",
+          "id": "4A3D8511-9DEE-423A-AB95-E67E436DE3F4",
           "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
@@ -8733,7 +8704,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "1239915D-1446-4F46-B252-2A226AFE755C",
+          "id": "C7FE4247-2B5C-4701-AA69-E941DAC9A390",
           "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
@@ -8761,7 +8732,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "69F99223-7621-40B0-9B65-D94D6641F655",
+          "id": "45D75F83-85C9-484D-8559-B791009A956C",
           "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         }
       ],
