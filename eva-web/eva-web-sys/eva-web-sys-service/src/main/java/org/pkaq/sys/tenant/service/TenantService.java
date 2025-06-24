@@ -12,7 +12,7 @@ import lombok.AllArgsConstructor;
 import org.pkaq.core.log.annotation.BizLog;
 import org.pkaq.core.log.base.BizLogCodes;
 import org.pkaq.core.mybatis.enums.FrozenEnumm;
-import org.pkaq.core.mybatis.util.Page;
+import org.pkaq.core.mybatis.util.PageResult;
 import org.pkaq.core.util.json.JsonUtil;
 import org.pkaq.sys.role.entity.RoleUserEntity;
 import org.pkaq.sys.role.mapper.RoleUserMapper;
@@ -123,7 +123,7 @@ public class TenantService {
     @BizLog(operateType = BizLogCodes.QUERY, description = "查询租户")
     public IPage<TenantListVo> list(TenantQueryBo queryBo) {
         // 获取分页数据  模糊查询
-        Page<TenantListVo> pagination = new Page<>(queryBo.getPageNo(), queryBo.getPageSize());
+        PageResult<TenantListVo> pagination = new PageResult<>(queryBo.getPageNo(), queryBo.getPageSize());
         return this.mapper.listPage(pagination, queryBo);
     }
 

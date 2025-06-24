@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
@@ -19,13 +20,16 @@ import java.util.function.Supplier;
 @Slf4j
 @Component
 public class MybatisMetaObjectHandler implements MetaObjectHandler {
-
+    private final String ANONYMOUS = "Anonymous";
 
     @Override
     public void insertFill(MetaObject metaObject) {
-        log.debug("start insert fill ....");
-        this.strictInsertFill(metaObject, "createId", String.class, ThreadUserHelper.getUserId());
-        this.strictInsertFill(metaObject, "createBy", String.class, ThreadUserHelper.getUserName());
+        log.debug("#EVA-DEBUG....自动填充Insert字段");
+        var uid = Optional.ofNullable(ThreadUserHelper.getUserId()).orElse(ANONYMOUS);
+        var uname = Optional.ofNullable(ThreadUserHelper.getUserName()).orElse(ANONYMOUS);
+
+        this.strictInsertFill(metaObject, "createId", String.class, uid);
+        this.strictInsertFill(metaObject, "createBy", String.class, uname);
         this.strictInsertFill(metaObject, "utcCreate", LocalDateTime.class, LocalDateTime.now());
         this.strictInsertFill(metaObject, "sort", Double.class, 0d);
         this.strictInsertFill(metaObject, "frozen", Integer.class, FrozenEnumm.UN_FROZEN.getCode());
@@ -34,9 +38,12 @@ public class MybatisMetaObjectHandler implements MetaObjectHandler {
 
     @Override
     public void updateFill(MetaObject metaObject) {
-        log.debug("start update fill ....");
-        this.strictInsertFill(metaObject, "modifyId", String.class, ThreadUserHelper.getUserId());
-        this.strictUpdateFill(metaObject, "modifyBy", String.class, ThreadUserHelper.getUserName());
+        log.debug("#EVA-DEBUG....自动填充Update字段");
+        var uid = Optional.ofNullable(ThreadUserHelper.getUserId()).orElse(ANONYMOUS);
+        var uname = Optional.ofNullable(ThreadUserHelper.getUserName()).orElse(ANONYMOUS);
+
+        this.strictInsertFill(metaObject, "modifyId", String.class, uid);
+        this.strictUpdateFill(metaObject, "modifyBy", String.class, uname);
         this.strictUpdateFill(metaObject, "utcModify", LocalDateTime.class, LocalDateTime.now());
     }
 

@@ -13,7 +13,7 @@ import org.pkaq.core.mvc.bo.DateRangeBo;
 import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.mybatis.log.entity.MybatisBizLogEntity;
-import org.pkaq.core.mybatis.util.Page;
+import org.pkaq.core.mybatis.util.PageResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -74,11 +74,9 @@ public class BizLogCtrl extends Ctrl {
 
         wrapper.orderByDesc("OPERATE_DATETIME");
 
-        Page pagination = new Page();
-        pagination.setCurrent(pageNo == null ? 1 : pageNo);
-        pagination.setSize(size == null ? 30 : size);
+        PageResult pagination = new PageResult(pageNo, size);
 
-        return new Response().success(this.bizLogSupporter.list(dateRange));
+        return Response.success(this.bizLogSupporter.list(dateRange));
     }
 
 }

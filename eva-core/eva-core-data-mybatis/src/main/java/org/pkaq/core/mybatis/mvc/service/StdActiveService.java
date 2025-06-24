@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-import org.pkaq.core.mybatis.util.Page;
+import org.pkaq.core.mybatis.util.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,7 +73,7 @@ public abstract class StdActiveService<M extends BaseMapper<T>, T extends Model>
      */
     protected List<T> list(T entity) {
         QueryWrapper<T> wrapper = Wrappers.query(entity);
-        wrapper.orderByDesc("gmt_Modify");
+        wrapper.orderByDesc("UTC_MODIFY");
 
         return entity.selectList(wrapper);
     }
@@ -88,15 +88,10 @@ public abstract class StdActiveService<M extends BaseMapper<T>, T extends Model>
      */
     public IPage<T> listPage(T entity, Integer page, Integer size) {
 
-        page = null != page ? page : 1;
-        size = null != size ? size : 30;
-
         QueryWrapper<T> wrapper = Wrappers.query(entity);
-        wrapper.orderByDesc("gmt_Modify");
+        wrapper.orderByDesc("UTC_MODIFY");
 
-        Page pagination = new Page();
-        pagination.setCurrent(page);
-        pagination.setSize(size);
+        PageResult<T> pagination = new PageResult<>(page, size);
 
         return entity.selectPage(pagination, wrapper);
     }
@@ -113,11 +108,10 @@ public abstract class StdActiveService<M extends BaseMapper<T>, T extends Model>
         page = null != page ? page : 1;
         // 查询条件
         QueryWrapper<T> wrapper = Wrappers.query(entity);
-        wrapper.orderByDesc("gmt_Modify");
+        wrapper.orderByDesc("UTC_MODIFY");
 
         // 分页条件
-        Page pagination = new Page();
-        pagination.setCurrent(page);
+        PageResult<T> pagination = new PageResult<>(page,30);
 
         return entity.selectPage(pagination, wrapper);
     }

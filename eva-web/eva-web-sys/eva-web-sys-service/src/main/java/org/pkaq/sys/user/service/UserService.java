@@ -6,13 +6,14 @@ import cn.hutool.crypto.digest.BCrypt;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.log.annotation.BizLog;
 import org.pkaq.core.log.base.BizLogCodes;
 import org.pkaq.core.mvc.vo.PageVo;
 import org.pkaq.core.mybatis.mvc.service.ConvertService;
-import org.pkaq.core.mybatis.util.Page;
+import org.pkaq.core.mybatis.util.PageResult;
 import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.core.upload.provider.FileProvider;
 import org.pkaq.sys.SysCodes;
@@ -52,14 +53,21 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     @Override
     public void repwd(RePwdBo rePwdBo) {
-        var uid = ThreadUserHelper.getUserId();
+//        var uid = ThreadUserHelper.getUserId();
+        String uid = "1937330583033430017";
+
         UserEntity userEntity = this.mapper.selectById(uid);
 
         if (!BCrypt.checkpw(rePwdBo.getOriginPassword(), userEntity.getPassword())) {
             SysCodes.BAD_ORG_PASSWORD.newException();
         }
-        userEntity.setPassword(BCrypt.hashpw(rePwdBo.getNewPassword()));
-        this.mapper.updateById(userEntity);
+
+        UserEntity updateE = new UserEntity();
+        updateE.setId(userEntity.getId());
+        updateE.setPassword(BCrypt.hashpw(rePwdBo.getNewPassword()));
+        updateE.setRevision(rePwdBo.getRevision());
+
+        this.mapper.updateById(updateE);
     }
 
     @BizLog(operateType = BizLogCodes.DELETE, description = "删除了用户", args = {"param:0"})
@@ -68,6 +76,7 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
     public void delete(List<String> param) {
         this.mapper.deleteByIds(param);
     }
+
     /**
      * 查询用户列表 无分页
      */
@@ -89,9 +98,9 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
         LambdaQueryWrapper<UserEntity> wrapper = Wrappers.lambdaQuery();
         wrapper.setEntity(this.converter.queryBoToEntity(queryBo));
         wrapper.orderByDesc(UserEntity::getUtcModify);
+        PageResult<UserEntity> pagination = new PageResult<>(queryBo.getPageNo(), queryBo.getPageSize());
+        return this.mapper.selectPage(pagination, wrapper).map(this.converter::entityToListVo);
 
-        Page<UserEntity> pagination = new Page<>(queryBo.getPageNo(), queryBo.getPageSize());
-        return this.mapper.selectPage(pagination, wrapper);
     }
     /**
      * 解锁/锁定用户
@@ -167,13 +176,14 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
         } else {
             this.mapper.updateById(entity);
         }
-        this.mapper.insertOrUpdate(entity);
 
         // 保存权限
-        UserGrantBo userGrantBo = new UserGrantBo();
-        userGrantBo.setUserId(userId);
-        userGrantBo.setRoleIds(user.getRoleIds());
-        this.userRoleRefSerivce.saveRoles(userGrantBo);
+        if (CollUtil.isNotEmpty(user.getRoleIds())){
+            UserGrantBo userGrantBo = new UserGrantBo();
+            userGrantBo.setUserId(userId);
+            userGrantBo.setRoleIds(user.getRoleIds());
+            this.userRoleRefSerivce.saveRoles(userGrantBo);
+        }
     }
     /**
      * 校验账号是否唯一

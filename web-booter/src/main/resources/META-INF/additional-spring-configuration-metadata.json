@@ -1,0 +1,155 @@
+{
+  "properties": [
+    {
+      "name": "eva.i18n",
+      "type": "java.lang.Boolean",
+      "description": "是否启用国际化"
+    },
+    {
+      "name": "eva.norepeat-check",
+      "type": "java.lang.Boolean",
+      "description": "是否启用重复提交检查"
+    },
+    {
+      "name": "eva.cookie.maxAge",
+      "type": "java.lang.Integer",
+      "description": "Cookie 最大存活时间（单位秒）"
+    },
+    {
+      "name": "eva.jwt.persistence",
+      "type": "java.lang.Boolean",
+      "description": "是否持久化 Token"
+    },
+    {
+      "name": "eva.jwt.header",
+      "type": "java.lang.String",
+      "description": "JWT 请求头名称"
+    },
+    {
+      "name": "eva.jwt.token-head",
+      "type": "java.lang.String",
+      "description": "JWT Token 前缀"
+    },
+    {
+      "name": "eva.jwt.sign",
+      "type": "java.lang.String",
+      "description": "JWT 签名名称"
+    },
+    {
+      "name": "eva.jwt.secert",
+      "type": "java.lang.String",
+      "description": "JWT 签名密钥"
+    },
+    {
+      "name": "eva.jwt.ttl",
+      "type": "java.lang.Integer",
+      "description": "JWT Token 有效期（秒）"
+    },
+    {
+      "name": "eva.jwt.alphaTtl",
+      "type": "java.lang.Long",
+      "description": "Alpha 级别 Token TTL（毫秒）"
+    },
+    {
+      "name": "eva.jwt.bravoTtl",
+      "type": "java.lang.Long",
+      "description": "Bravo 级别 Token TTL（毫秒）"
+    },
+    {
+      "name": "eva.jwt.threshold",
+      "type": "java.lang.Long",
+      "description": "Token 刷新过期阈值（毫秒）"
+    },
+    {
+      "name": "eva.security.webstatic",
+      "type": "java.lang.String",
+      "description": "Web 静态资源路径（保留字段）"
+    },
+    {
+      "name": "eva.security.anonymous",
+      "type": "java.lang.String",
+      "description": "无需登录即可访问的路径"
+    },
+    {
+      "name": "eva.security.permit",
+      "type": "java.lang.String",
+      "description": "无需资源鉴权的路径"
+    },
+    {
+      "name": "eva.resource-permission.enable",
+      "type": "java.lang.Boolean",
+      "description": "是否启用资源权限控制"
+    },
+    {
+      "name": "eva.resource-permission.strict",
+      "type": "java.lang.Boolean",
+      "description": "是否启用严格鉴权模式"
+    },
+    {
+      "name": "eva.datapermission.enable",
+      "type": "java.lang.Boolean",
+      "description": "是否启用数据权限控制"
+    },
+    {
+      "name": "eva.datapermission.exclude-tables",
+      "type": "java.lang.String",
+      "description": "数据权限排除的表"
+    },
+    {
+      "name": "eva.cache.type",
+      "type": "java.lang.String",
+      "description": "缓存类型（如 caffeine 或 redis）"
+    },
+    {
+      "name": "eva.cache.config",
+      "type": "java.util.List",
+      "description": "缓存配置列表"
+    },
+    {
+      "name": "eva.errorlog.enabled",
+      "type": "java.lang.Boolean",
+      "description": "是否启用错误日志记录"
+    },
+    {
+      "name": "eva.bizlog.enabled",
+      "type": "java.lang.Boolean",
+      "description": "是否启用业务日志"
+    },
+    {
+      "name": "eva.bizlog.impl",
+      "type": "java.lang.String",
+      "description": "业务日志实现方式（如 mybatis）"
+    },
+    {
+      "name": "eva.license.enable",
+      "type": "java.lang.Boolean",
+      "description": "是否启用 License 校验"
+    },
+    {
+      "name": "eva.license.alias",
+      "type": "java.lang.String",
+      "description": "公钥别名"
+    },
+    {
+      "name": "eva.license.keystore_pwd",
+      "type": "java.lang.String",
+      "description": "访问密钥库的密码"
+    },
+    {
+      "name": "eva.license.path",
+      "type": "java.lang.String",
+      "description": "公钥库路径"
+    },
+    {
+      "name": "eva.license.license",
+      "type": "java.lang.String",
+      "description": "证书文件路径"
+    },
+    {
+      "name": "eva.license.subject",
+      "type": "java.lang.String",
+      "description": "项目唯一识别码"
+    }
+  ],
+  "hints": []
+}

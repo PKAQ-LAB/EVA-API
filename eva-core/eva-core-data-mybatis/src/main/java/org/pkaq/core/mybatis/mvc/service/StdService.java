@@ -11,7 +11,7 @@ import org.pkaq.core.log.base.BizLogCodes;
 import org.pkaq.core.mvc.bo.IdCodeBo;
 import org.pkaq.core.mvc.bo.PageBo;
 import org.pkaq.core.mybatis.mvc.entity.StdEntity;
-import org.pkaq.core.mybatis.util.Page;
+import org.pkaq.core.mybatis.util.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -107,7 +107,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
         wrapper.setEntity(entity);
         wrapper.orderByDesc(T::getUtcModify);
 
-        Page pagination = new Page(pageBo.getPageNo(), pageBo.getPageSize());
+        PageResult<T> pagination = new PageResult<>(pageBo.getPageNo(), pageBo.getPageSize());
         return this.mapper.selectPage(pagination, wrapper);
     }
 
@@ -126,8 +126,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
         wrapper.setEntity(entity);
         wrapper.orderByDesc(T::getUtcModify);
         // 分页条件
-        Page pagination = new Page();
-        pagination.setCurrent(page);
+        PageResult<T> pagination = new PageResult<>(page, 30);
         return this.mapper.selectPage(pagination, wrapper);
     }
 

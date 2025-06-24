@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.pkaq.core.mybatis.mvc.service.ConvertService;
-import org.pkaq.core.mybatis.util.Page;
+import org.pkaq.core.mybatis.util.PageResult;
 import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.post.bo.PostAoeBo;
 import org.pkaq.sys.post.bo.PostQueryBo;
@@ -52,7 +52,7 @@ public class PostService extends ConvertService<PostMapper, PostConvert> {
      */
     public IPage<PostListVo> list(PostQueryBo query) {
 
-        return this.mapper.list(new Page<>(query.getPageNo(), query.getPageSize()), query);
+        return this.mapper.list(new PageResult<>(query.getPageNo(), query.getPageSize()), query);
     }
 
     /**

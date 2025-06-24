@@ -20,6 +20,7 @@ public abstract class StdEntity implements Entity {
 
     /** 乐观锁 **/
     @Version
+    @TableField("revision")
     private int revision;
 
     /** 逻辑删除 (0-未删除、timestamp-删除) **/

@@ -9,12 +9,11 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import org.pkaq.core.mybatis.mvc.entity.StdMultiEntity;
 import org.pkaq.core.mybatis.mvc.entity.StdMultiLineEntity;
-import org.pkaq.core.mybatis.util.Page;
+import org.pkaq.core.mybatis.util.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -160,9 +159,7 @@ public abstract class StdMultiService<M extends BaseMapper<T>,
         LambdaQueryWrapper<T> wrapper = Wrappers.lambdaQuery(entity);
         wrapper.orderByDesc(T::getUtcCreate);
 
-        Page pagination = new Page();
-        pagination.setCurrent(page);
-        pagination.setSize(size);
+        PageResult<T> pagination = new PageResult<>(page, size);
 
         return this.mapper.selectPage(pagination, wrapper);
     }
@@ -180,8 +177,7 @@ public abstract class StdMultiService<M extends BaseMapper<T>,
         LambdaQueryWrapper<T> wrapper = Wrappers.lambdaQuery(entity);
         wrapper.orderByDesc(T::getUtcModify);
         // 分页条件
-        Page pagination = new Page();
-        pagination.setCurrent(page);
+        PageResult<T> pagination = new PageResult<>(page, 30);
         return this.mapper.selectPage(pagination, wrapper);
     }
 
@@ -192,7 +188,7 @@ public abstract class StdMultiService<M extends BaseMapper<T>,
      * @return
      */
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public void delete(ArrayList<String> param) {
+    public void delete(List<String> param) {
         // 先删除子表 再删除主表
         LambdaQueryWrapper<S> lineWrapper = Wrappers.lambdaQuery();
         lineWrapper.in(S::getMainId, param);

@@ -44,7 +44,7 @@
             sru.id R_ID,
             sru.ROLE_ID
         FROM
-            sys_user_info su
+            SYS_USER su
         LEFT JOIN SYS_ROLEUSER_REF sru
             ON su.id = sru.USER_ID
         <where>
@@ -64,7 +64,7 @@
     </select>
     <!-- 根据用户 账号/电话/邮箱 获取包含权限列表的用户信息 -->
     <select id="getUserWithRole" resultMap="UserWithRole">
-        select * from sys_user_info su
+        select * from SYS_USER su
         <where>
             <if test="null != id and id != ''">
                 su.id = #{id,jdbcType=VARCHAR}
@@ -79,7 +79,7 @@
     <!-- 根据用户ID 获取包含模块 权限列表的用户信息-->
     <select id="getUserWithModuleAndRoleById" resultMap="UserWithModuleAndRole">
         select *
-        from sys_user_info
+        from sys_user
         where id = #{userId,jdbcType=VARCHAR}
     </select>
 </mapper>

@@ -58,7 +58,7 @@ spring:
 eva:
   # 文件上传
   file:
-    type: none
+    type: ng
     minio:
       url: http://yy.pkaq.org:9899
       access: qKjV8I0wBcBEflHi

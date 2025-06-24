@@ -13,6 +13,7 @@ import org.pkaq.core.mvc.bo.Bo;
 @EqualsAndHashCode(callSuper = false)
 @Schema(title = "用户创建Bo")
 public class RePwdBo implements Bo {
+    private int revision;
 
     @Schema(description = "原始密码")
     @NotBlank(message = "{sys.user.oldpwd.required}")

@@ -12,7 +12,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.mybatis.enums.FrozenEnumm;
 import org.pkaq.core.mybatis.mvc.service.StdService;
-import org.pkaq.core.mybatis.util.Page;
+import org.pkaq.core.mybatis.util.PageResult;
 import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.sys.module.entity.ModuleEntity;
 import org.pkaq.sys.module.mapper.ModuleMapper;
@@ -79,9 +79,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
         QueryWrapper<RoleEntity> wrapper = new QueryWrapper<>(roleConvert.queryBoToEntity(queryBo));
 
         // 分页条件
-        Page<RoleEntity> pagination = new Page<>();
-        pagination.setCurrent(page);
-        pagination.setSize(pageSize);
+        PageResult<RoleEntity> pagination = new PageResult<>(page , pageSize);
 
         return this.mapper.selectPage(pagination, wrapper).convert(roleConvert::entityToListVo);
     }
