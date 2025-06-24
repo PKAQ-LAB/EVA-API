@@ -13,14 +13,14 @@ import java.util.List;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@Schema(title = "用户授权Bo")
-public class UserGrantBo implements Bo {
+@Schema(title = "用户岗位Bo")
+public class UserPostBo implements Bo {
 
     @Schema(description = "目标用户ID")
     @NotBlank(message = "{sys.user.grant.userid.required}")
     private String userId;
 
-    @Schema(description = "权限ID")
+    @Schema(description = "岗位Id")
     @NotBlank(message = "{sys.user.grant.roleid.required}")
-    private List<String> roleIds;
+    private List<String> postIds;
 }

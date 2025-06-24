@@ -2,7 +2,7 @@ package org.pkaq.core.auth.security.entrypoint;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.pkaq.core.auth.AuthCodeEnum;
+import org.pkaq.core.auth.AuthCodes;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.util.json.JsonUtil;
 import org.springframework.http.MediaType;
@@ -44,7 +44,7 @@ public class UnauthorizedHandler implements AuthenticationEntryPoint, Serializab
         try (PrintWriter printWriter = response.getWriter()) {
             printWriter.write(JsonUtil.toJson(
                     new Response()
-                            .failure(AuthCodeEnum.LOGIN_EXPIRED)));
+                            .failure(AuthCodes.LOGIN_EXPIRED)));
             printWriter.flush();
         }
     }

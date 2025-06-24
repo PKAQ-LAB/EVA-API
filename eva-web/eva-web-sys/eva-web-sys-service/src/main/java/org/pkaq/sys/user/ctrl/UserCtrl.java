@@ -49,7 +49,6 @@ public class UserCtrl extends Ctrl {
             }
         }
 
-
         return success();
     }
 

@@ -45,8 +45,8 @@ mybatis-plus:
       #      字段策略
       #      驼峰下划线转换
       table-underline: true
-      logic-delete-value: '0001' # 逻辑已删除值(默认为 1)
-      logic-not-delete-value: '0000' # 逻辑未删除值(默认为 0)
+      logic-delete-value: 'UNIX_TIMESTAMP()' # 逻辑已删除值(默认为 1)
+      logic-not-delete-value: 0 # 逻辑未删除值(默认为 0)
       where-strategy: not_empty
     banner: false
   configuration:

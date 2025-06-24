@@ -1,7 +1,7 @@
 package org.pkaq.core.auth.security.service;
 
 import lombok.RequiredArgsConstructor;
-import org.pkaq.core.auth.AuthCodeEnum;
+import org.pkaq.core.auth.AuthCodes;
 import org.pkaq.core.auth.security.domain.JwtUserFactory;
 import org.pkaq.sys.user.entity.UserEntity;
 import org.pkaq.sys.user.mapper.UserMapper;
@@ -38,7 +38,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 
         var u = userMapper.getUserWithRole(user);
 
-        AuthCodeEnum.ACCOUNT_NOT_EXIST.assertNotNull(user);
+        AuthCodes.ACCOUNT_NOT_EXIST.assertNotNull(user);
         return JwtUserFactory.create(user);
     }
 }

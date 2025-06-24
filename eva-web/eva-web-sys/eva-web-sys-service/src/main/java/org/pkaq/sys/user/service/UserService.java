@@ -6,7 +6,6 @@ import cn.hutool.crypto.digest.BCrypt;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.log.annotation.BizLog;
@@ -17,6 +16,7 @@ import org.pkaq.core.mybatis.util.PageResult;
 import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.core.upload.provider.FileProvider;
 import org.pkaq.sys.SysCodes;
+import org.pkaq.sys.post.service.UserPostRefSerivce;
 import org.pkaq.sys.role.mapper.RoleUserMapper;
 import org.pkaq.sys.role.service.UserRoleRefSerivce;
 import org.pkaq.sys.user.bo.*;
@@ -42,6 +42,8 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
 
     private final UserRoleRefSerivce userRoleRefSerivce;
 
+    private final UserPostRefSerivce userPostRefSerivce;
+
     private final FileProvider fileProvider;
 
     private final RoleUserMapper roleUserMapper;
@@ -53,8 +55,7 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     @Override
     public void repwd(RePwdBo rePwdBo) {
-//        var uid = ThreadUserHelper.getUserId();
-        String uid = "1937330583033430017";
+        var uid = ThreadUserHelper.getUserId();
 
         UserEntity userEntity = this.mapper.selectById(uid);
 
@@ -183,6 +184,14 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
             userGrantBo.setUserId(userId);
             userGrantBo.setRoleIds(user.getRoleIds());
             this.userRoleRefSerivce.saveRoles(userGrantBo);
+        }
+
+        // 保存岗位
+        if (CollUtil.isNotEmpty(user.getRoleIds())){
+            UserPostBo postBo = new UserPostBo();
+            postBo.setUserId(userId);
+            postBo.setPostIds(user.getPostId());
+            this.userPostRefSerivce.savePosts(postBo);
         }
     }
     /**

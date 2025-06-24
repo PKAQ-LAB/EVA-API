@@ -2,7 +2,7 @@ package org.pkaq.core.auth.security.entrypoint;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.pkaq.core.auth.AuthCodeEnum;
+import org.pkaq.core.auth.AuthCodes;
 import org.pkaq.core.codes.BizCode;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.util.json.JsonUtil;
@@ -31,10 +31,10 @@ public class UrlAuthenticationFailureHandler implements AuthenticationFailureHan
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
         httpServletResponse.setStatus(HttpServletResponse.SC_OK);
 
-        BizCode bizcode = AuthCodeEnum.LOGIN_FAILED;
+        BizCode bizcode = AuthCodes.LOGIN_FAILED;
 
         if (e instanceof BadCredentialsException) {
-            bizcode = AuthCodeEnum.ACCOUNT_OR_PWD_ERROR;
+            bizcode = AuthCodes.ACCOUNT_OR_PWD_ERROR;
         }
 
 
