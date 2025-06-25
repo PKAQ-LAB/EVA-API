@@ -13,10 +13,10 @@ import org.pkaq.core.mvc.entity.Entity;
 @EqualsAndHashCode(callSuper = false)
 public class ModuleResourcesVo implements Entity {
 
-    private String id;
+    private Long id;
 
     @Schema(description = "模块id")
-    private String moduleId;
+    private long moduleId;
 
     @Schema(description = "资源描述")
     private String resourceDesc;

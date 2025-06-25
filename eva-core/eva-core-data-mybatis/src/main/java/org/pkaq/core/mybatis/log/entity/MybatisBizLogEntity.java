@@ -18,6 +18,6 @@ import org.pkaq.core.log.base.BizLogEntity;
 @TableName("log_biz")
 @EqualsAndHashCode(callSuper = true)
 public class MybatisBizLogEntity extends BizLogEntity {
-    @TableId(type = IdType.ASSIGN_UUID)
-    private String id;
+    @TableId(type = IdType.ASSIGN_ID)
+    private Long id;
 }

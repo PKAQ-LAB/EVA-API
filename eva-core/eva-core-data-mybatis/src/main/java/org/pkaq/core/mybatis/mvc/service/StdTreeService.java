@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.mvc.vo.Response;
+import org.pkaq.core.mybatis.enums.DelEnumm;
 import org.pkaq.core.mybatis.mvc.entity.StdTreeEntity;
 import org.pkaq.core.mybatis.mvc.mapper.StdTreeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * service 基类
@@ -77,22 +79,21 @@ public abstract class StdTreeService<M extends StdTreeMapper<T>, T extends StdTr
      * @param entity 要 新增/编辑 的对象
      */
     public void edit(T entity) {
-        String orgId = entity.getId();
+        Long orgId = entity.getId();
         // 获取上级节点
-        String pid = entity.getPid();
-        String root = "0";
-        if (!root.equals(pid) && StrUtil.isNotBlank(pid)) {
+        Long pid = entity.getPid();
+        if (null != pid && pid != 0) {
             // 查询新父节点信息
             T parent = this.get(pid);
             // 设置当前节点信息
-            String parentPath = StrUtil.isNotBlank(entity.getId()) ? entity.getPath() + "/" + entity.getId() : parent.getPath();
+            String parentPath = entity.getPath() + "/" + entity.getId();
             entity.setPath(parentPath);
 
         } else {
             // 父节点为空, 根节点 设置为非叶子\
-            pid = root;
-            if (StrUtil.isNotBlank(entity.getId())) {
-                entity.setPath(entity.getId());
+            pid = null;
+            if (null != entity.getId() && entity.getId() != 0) {
+                entity.setPath(entity.getId()+"");
             }
             entity.setPid(pid);
             entity.setIsleaf(false);
@@ -102,7 +103,7 @@ public abstract class StdTreeService<M extends StdTreeMapper<T>, T extends StdTr
         T orginNode = this.mapper.getParentById(orgId);
 
         // 如果更换了父节点 重新确定原父节点的 leaf属性，以及所修改节点的orders属性
-        if (null != orginNode && !pid.equals(orginNode.getPid())) {
+        if (null != orginNode && !Objects.equals(pid, orginNode.getPid())) {
             int brothers = this.mapper.countPrantLeaf(orgId) - 1;
             if (brothers < 1) {
                 orginNode.setIsleaf(true);
@@ -111,10 +112,10 @@ public abstract class StdTreeService<M extends StdTreeMapper<T>, T extends StdTr
         }
         //如果是新增且orders属性为空则设置orders属性
         T oldOrgin = null;
-        if (StrUtil.isBlank(entity.getId())) {
-            QueryWrapper<T> orderQuery = new QueryWrapper<>();
-            orderQuery.eq("PARENT_ID", pid);
-            orderQuery.eq("DELETED", CommonConstant.EFFECTIVE_RECORD);
+        if (null == entity.getId() || entity.getId() == 0) {
+            LambdaQueryWrapper<T> orderQuery = new LambdaQueryWrapper<>();
+            orderQuery.eq(T::getPid, pid);
+            orderQuery.eq(T::getDeleted, DelEnumm.UN_DELETED);
 
             entity.setSort(this.mapper.selectCount(orderQuery));
         } else {
@@ -158,7 +159,7 @@ public abstract class StdTreeService<M extends StdTreeMapper<T>, T extends StdTr
      * @param id ID
      * @return
      */
-    public T get(String id) {
+    public T get(Long id) {
         return this.mapper.selectById(id);
     }
 

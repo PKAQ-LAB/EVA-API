@@ -20,13 +20,13 @@ import org.apache.ibatis.type.Alias;
 @Schema(title = "租户角色关系表")
 public class TenantRoleEntity {
     @TableId(type = IdType.ASSIGN_ID)
-    private String id;
+    private Long id;
 
     @NotBlank
     @Schema(description = "租户ID")
-    private String tenantId;
+    private Long tenantId;
 
     @NotBlank
     @Schema(description = "角色ID")
-    private String roleId;
+    private Long roleId;
 }

@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
  */
 @Data
 public class StdVo implements Vo {
-    private String id;
+    private Long id;
 
     @Schema(description = "乐观锁")
     private int revision;

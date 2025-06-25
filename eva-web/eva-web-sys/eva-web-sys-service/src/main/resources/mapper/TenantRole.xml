@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="tech.yunyue.sys.tenant.mapper.TenantRoleMapper">
+
+<!--    根据角色ID，删除拥有该角色的租户创建的角色中多余的模块 -->
+    <delete id="removeRedundantModulesForTenantByRoleId">
+        DELETE
+        from sys_role_module
+        where id in (select old.mrId
+                     from (select id, CONCAT(MODULE_ID, ',', IFNULL(RESOURCE_ID, '')) mrId
+                           from sys_role_module
+                           where ROLE_ID = #{id} and MODULE_ID is not null) source
+                    RIGHT JOIN (select srm.id, CONCAT(MODULE_ID, ',', IFNULL(RESOURCE_ID, '')) mrId
+                            from (select r.* from sys_role r
+                                             RIGHT JOIN (select TENANT_ID from sys_tenant_role where ROLE_ID = #{id}) t
+                                             on t.TENANT_ID = r.TENANT_ID) tr
+                            INNER JOIN sys_role_module srm on tr.id = srm.ROLE_ID
+                            where MODULE_ID is not null) old
+                     on source.mrId = old.mrId
+                     where source.id is null);
+    </delete>
+<!--    根据角色id和租户id 删除该租户创建的角色中多余的模块-->
+    <delete id="removeRedundantModulesForTenant">
+        DELETE
+        from sys_role_module
+        where id in (select old.mrId
+                      from (select id, CONCAT(MODULE_ID, ',', IFNULL(RESOURCE_ID, '')) mrId
+                            from sys_role_module
+                            where ROLE_ID = #{roleId} and MODULE_ID is not null) source
+                               RIGHT JOIN (select srm.id, CONCAT(MODULE_ID, ',', IFNULL(RESOURCE_ID, '')) mrId
+                                           from sys_role r INNER JOIN sys_role_module srm on r.id = srm.ROLE_ID
+                                           where MODULE_ID is not null and r.TENANT_ID = #{id}) old
+                                          on source.mrId = old.mrId
+                      where source.id is null);
+    </delete>
+</mapper>

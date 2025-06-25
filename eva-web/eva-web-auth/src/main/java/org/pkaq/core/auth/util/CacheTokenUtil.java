@@ -35,13 +35,13 @@ public class CacheTokenUtil {
     /**
      * 构造token缓存的value
      */
-    public Map<String, Object> buildCacheValue(HttpServletRequest request, String account, String token) {
+    public Map<String, Object> buildCacheValue(HttpServletRequest request, Long uid, String token) {
         return Map.of("device", RequestUtil.getDeivce(request),
                 "version", RequestUtil.getVersion(request),
                 "issuedAt", jwtUtil.getIssuedAt(token),
                 "expireAt", jwtUtil.getExpirationDateFromToken(token),
                 "loginTime", LocalDateTime.now(),
-                "account", account,
+                "account", uid,
                 "token", token);
     }
 
@@ -51,7 +51,7 @@ public class CacheTokenUtil {
      * @param key
      * @param value
      */
-    public void saveToken(String key, Object value) {
+    public void saveToken(Long key, Object value) {
         this.tokenCache.put(key, value);
     }
 
@@ -78,7 +78,7 @@ public class CacheTokenUtil {
      * @param uid
      * @return
      */
-    public Object getToken(String uid) {
+    public Object getToken(Long uid) {
         var wrapper = this.tokenCache.get(uid);
         return null == wrapper ? null : wrapper.get();
     }

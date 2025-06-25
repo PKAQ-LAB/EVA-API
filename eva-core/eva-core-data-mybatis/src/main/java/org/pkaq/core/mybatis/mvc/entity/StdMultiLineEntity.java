@@ -18,5 +18,5 @@ public abstract class StdMultiLineEntity implements Entity {
 
     @NotBlank(message = "主表ID不允许为空")
     @Schema(description = "主表ID", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String mainId;
+    private Long mainId;
 }

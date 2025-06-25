@@ -9,6 +9,7 @@ import java.util.List;
 
 /**
  * 字典管理mapper
+ * @author PKAQ
  */
 @Mapper
 @Repository
@@ -26,10 +27,10 @@ public interface DictMapper extends BaseMapper<DictEntity> {
      * @param id parentID
      * @return 符合条件的List
      */
-    List<DictEntity> listChildren(String id);
+    List<DictEntity> listChildren(Long id);
 
     /**
      * 根据ID加载一条字典详情
      */
-    DictEntity getDict(String id);
+    DictEntity getDict(Long id);
 }

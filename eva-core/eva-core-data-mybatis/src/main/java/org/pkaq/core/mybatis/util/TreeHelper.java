@@ -40,8 +40,8 @@ public class TreeHelper {
         List<StdTreeEntity> trees = new ArrayList<>();
 
         for (StdTreeEntity entity : moduleEntitys) {
-            String pid = entity.getPid();
-            if (CharSequenceUtil.isBlank(pid) || "0".equals(pid)) {
+            Long pid = entity.getPid();
+            if (null == pid || 0 == pid) {
                 trees.add(entity);
             }
 

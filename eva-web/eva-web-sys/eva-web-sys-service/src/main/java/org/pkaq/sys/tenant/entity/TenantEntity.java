@@ -56,5 +56,5 @@ public class TenantEntity extends StdEntity {
     private Date expirationDate;
 
     @Schema(description = "管理员Id")
-    private String adminId;
+    private Long adminId;
 }

@@ -14,7 +14,7 @@ import java.util.List;
 @Data
 @Schema(title = "字典编辑BO")
 public class DictAoeBo implements Bo {
-    private String id;
+    private Long id;
 
     @Schema(description = "乐观锁")
     private int revision;

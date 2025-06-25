@@ -1,5 +1,6 @@
 package org.pkaq.core.util;
 
+import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.StrUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -52,9 +53,9 @@ public class RequestUtil {
      * @param request
      * @return
      */
-    public static String getModuleId(HttpServletRequest request) {
+    public static long getModuleId(HttpServletRequest request) {
         String moduleId = request.getHeader(CommonConstant.MODULE_ID);
-        return StrUtil.isBlank(moduleId) ? "" : moduleId;
+        return CharSequenceUtil.isBlank(moduleId) ? 0 : Long.parseLong(moduleId);
     }
 
     /**

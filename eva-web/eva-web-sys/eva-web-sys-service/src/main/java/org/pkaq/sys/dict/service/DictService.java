@@ -114,7 +114,7 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
     @Override
     @BizLog(operateType = BizLogCodes.DELETE, description = "删除字典[{0}]", args = {"param:0"})
     @Transactional
-    public void delDict(String id) {
+    public void delDict(Long id) {
 
         // 先删除子表 再删除主表
         QueryWrapper<DictItemEntity> deleteWrapper = new QueryWrapper<>();
@@ -139,14 +139,14 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
     @BizLog(operateType = BizLogCodes.EDIT, description = "编辑了字典", args = {"#dictAoeBo"})
     @Transactional
     public void edit(DictAoeBo dictAoeBo) {
-        String id = dictAoeBo.getId();
+        Long id = dictAoeBo.getId();
         // 校验code唯一性
         DictEntity conditionEntity =
                 new LambdaQueryWrapper<DictEntity>().eq(DictEntity::getCode, dictAoeBo.getCode()).getEntity();
 
-        if (CharSequenceUtil.isBlank(id)) {
+        if (null == id || 0 == id) {
             // 保存主表
-            String mainID = IdWorker.getIdStr();
+            long mainID = IdWorker.getId();
             dictAoeBo.setId(mainID);
             this.mapper.insert(dictConvert.boToEntity(dictAoeBo));
             // 保存子表

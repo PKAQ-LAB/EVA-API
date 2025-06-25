@@ -27,7 +27,7 @@ public class DictEntity extends StdEntity implements Serializable {
     /** 字典分类名称 **/
     private String name;
 
-    private String pid;
+    private Long pid;
 
     /** 树路径(id) **/
     private String path;

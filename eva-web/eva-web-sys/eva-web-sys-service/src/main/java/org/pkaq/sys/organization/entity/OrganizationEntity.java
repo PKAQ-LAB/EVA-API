@@ -58,7 +58,7 @@ public class OrganizationEntity extends StdEntity {
     @Schema(description = "title")
     private String title;
 
-    public String getKey() {
+    public Long getKey() {
         return this.getId();
     }
 
@@ -66,7 +66,7 @@ public class OrganizationEntity extends StdEntity {
         return this.name;
     }
 
-    public String getValue() {
+    public Long getValue() {
         return this.getId();
     }
 

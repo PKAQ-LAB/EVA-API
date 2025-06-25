@@ -20,6 +20,7 @@ public enum SysCodes implements BizAssert {
     CHECKFIELD_ALREADY_EXIST("需要进行校验的字段为空", "0x000-01003"),
     CODE_ALREADY_EXIST("编码已存在", "0x000-01005"),
     ACCOUNT_OR_CODE_ALREADY_EXIST("账户名或者编码已存在", "0x000-01006"),
+    USER_ACCOUNT_LIMIT("用户超出授权数量", "0x000-01007" ),
 
     DICT_CODE_EXISTS("字典编码已经存在","0x0000-10001"),
     FILE_TYPE_ERROR("文件上传格式有误，请选择支持的格式", "0x0001-00001"),
@@ -72,8 +73,7 @@ public enum SysCodes implements BizAssert {
     ORG_TYPE_INVALID("[{0}]不能添加[{1}] ", "4313"),
     DICT_CODE_EXIST("字典编码已经存在", "4314"),
     ORG_TYPE_NO_EXIST("所属组织类型[{0}]没有定义，请稍后再试", "4315"),
-    NO_CHANGE_ORG("不能修改所属组织", "4316"),
-    TENANT_AUTH_COUNT_MORE("用户超出授权数量", "0x0001-0701-0012");
+    NO_CHANGE_ORG("不能修改所属组织", "4316");
 
     private final String msg;
     private final String code;

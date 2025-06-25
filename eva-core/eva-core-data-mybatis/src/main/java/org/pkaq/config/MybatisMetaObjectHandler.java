@@ -25,24 +25,24 @@ public class MybatisMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {
         log.debug("#EVA-DEBUG....自动填充Insert字段");
-        var uid = Optional.ofNullable(ThreadUserHelper.getUserId()).orElse(ANONYMOUS);
+        var uid = Optional.of(ThreadUserHelper.getUserId()).orElse(-1L);
         var uname = Optional.ofNullable(ThreadUserHelper.getUserName()).orElse(ANONYMOUS);
 
-        this.strictInsertFill(metaObject, "createId", String.class, uid);
+        this.strictInsertFill(metaObject, "createId", Long.class, uid);
         this.strictInsertFill(metaObject, "createBy", String.class, uname);
         this.strictInsertFill(metaObject, "utcCreate", LocalDateTime.class, LocalDateTime.now());
         this.strictInsertFill(metaObject, "sort", Double.class, 0d);
         this.strictInsertFill(metaObject, "frozen", Integer.class, FrozenEnumm.UN_FROZEN.getCode());
-        this.strictInsertFill(metaObject, "deleted", String.class, DelEnumm.UN_DELETED.getCode());
+        this.strictInsertFill(metaObject, "deleted", Integer.class, DelEnumm.UN_DELETED.getCode());
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
         log.debug("#EVA-DEBUG....自动填充Update字段");
-        var uid = Optional.ofNullable(ThreadUserHelper.getUserId()).orElse(ANONYMOUS);
+        var uid = Optional.of(ThreadUserHelper.getUserId()).orElse(-1L);
         var uname = Optional.ofNullable(ThreadUserHelper.getUserName()).orElse(ANONYMOUS);
 
-        this.strictInsertFill(metaObject, "modifyId", String.class, uid);
+        this.strictInsertFill(metaObject, "modifyId", Long.class, uid);
         this.strictUpdateFill(metaObject, "modifyBy", String.class, uname);
         this.strictUpdateFill(metaObject, "utcModify", LocalDateTime.class, LocalDateTime.now());
     }

@@ -17,8 +17,8 @@ import org.apache.ibatis.type.Alias;
 @EqualsAndHashCode()
 public class RoleUserEntity {
     @NotBlank
-    private String roleId;
+    private Long roleId;
 
     @NotBlank
-    private String userId;
+    private Long userId;
 }

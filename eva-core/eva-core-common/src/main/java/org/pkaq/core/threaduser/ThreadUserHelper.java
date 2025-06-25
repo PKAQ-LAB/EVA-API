@@ -77,7 +77,7 @@ public class ThreadUserHelper {
     /**
      * 安全获取 Map<String, GrantedRoles>
      */
-    private static Map<String, ThreadUser.GrantedRoles> safeGetRolesMap() {
+    private static Map<Long, ThreadUser.GrantedRoles> safeGetRolesMap() {
         return Optional.ofNullable(userThreadLocal.get())
                 .map(ThreadUser::getRolesMap)
                 .orElseGet(() -> {
@@ -91,7 +91,7 @@ public class ThreadUserHelper {
     /**
      * 获取用户ID，找不到返回 null
      */
-    public static String getUserId() {
+    public static long getUserId() {
         return safeGet(ThreadUser::getUserId, "用户ID");
     }
 
@@ -119,8 +119,8 @@ public class ThreadUserHelper {
     /**
      * 获取租户ID
      */
-    public static String getTenantId() {
-        return safeGetString(ThreadUser::getTenantId);
+    public static long getTenantId() {
+        return safeGet(ThreadUser::getTenantId, "租户id");
     }
 
     /**
@@ -133,15 +133,15 @@ public class ThreadUserHelper {
     /**
      * 获取部门ID
      */
-    public static String getOrgId() {
-        return safeGetString(ThreadUser::getDeptId);
+    public static long getOrgId() {
+        return safeGet(ThreadUser::getDeptId, "部门id");
     }
 
     /**
      * 获取岗位ID
      */
-    public static String getPostId() {
-        return safeGetString(ThreadUser::getPostId);
+    public static long getPostId() {
+        return safeGet(ThreadUser::getPostId,"岗位id");
     }
 
     // ====================== 角色与权限相关 ======================
@@ -151,7 +151,7 @@ public class ThreadUserHelper {
      */
     public static String[] getUserRoles() {
         return safeGetStringArray(user -> {
-            Map<String, ThreadUser.GrantedRoles> rolesMap = user.getRolesMap();
+            Map<Long, ThreadUser.GrantedRoles> rolesMap = user.getRolesMap();
             if (rolesMap == null || rolesMap.isEmpty()) {
                 return new String[0];
             }
@@ -164,7 +164,7 @@ public class ThreadUserHelper {
     /**
      * 获取用户角色 Map
      */
-    public static Map<String, ThreadUser.GrantedRoles> getUsetGrantedRoles() {
+    public static Map<Long, ThreadUser.GrantedRoles> getUsetGrantedRoles() {
         return safeGetRolesMap();
     }
 
@@ -178,7 +178,7 @@ public class ThreadUserHelper {
     /**
      * 获取角色ID列表
      */
-    public static List<String> getRoleIdsList() {
+    public static List<Long> getRoleIdsList() {
         return Optional.ofNullable(getUsetGrantedRoles())
                 .map(Map::keySet)
                 .map(List::copyOf)
@@ -198,8 +198,8 @@ public class ThreadUserHelper {
     /**
      * 当前用户操作的模块ID
      */
-    public static String getMid() {
-        return safeGetString(ThreadUser::getModuleId);
+    public static long getMid() {
+        return safeGet(ThreadUser::getModuleId, "模块id");
     }
 
     /**
@@ -212,7 +212,7 @@ public class ThreadUserHelper {
     /**
      * 获取角色权限映射表
      */
-    public static Map<String, List<String>> getRolePermission() {
+    public static Map<Long, List<Long>> getRolePermission() {
         return Optional.ofNullable(userThreadLocal.get())
                 .map(ThreadUser::getRolePermissonMap)
                 .orElse(Collections.emptyMap());

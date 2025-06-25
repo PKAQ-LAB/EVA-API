@@ -43,7 +43,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
      * @return 实体类对象
      */
     @BizLog(operateType = BizLogCodes.QUERY, description = "根据id查询")
-    public T get(String id) {
+    public T get(long id) {
         return this.mapper.selectById(id);
     }
 

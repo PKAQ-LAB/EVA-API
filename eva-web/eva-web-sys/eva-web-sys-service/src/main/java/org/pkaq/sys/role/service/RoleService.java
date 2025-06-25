@@ -240,7 +240,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
                     this.roleModuleMapper.insert(module);
                 } else {
                     for (String s : resources) {
-                        module.setId(IdWorker.getIdStr());
+                        module.setId(IdWorker.getId());
                         module.setResourceId(s);
                         this.roleModuleMapper.insert(module);
                     }
@@ -255,10 +255,10 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
      * @param roleId 权限条件
      * @return
      */
-    public Map<String, Object> listUser(String roleId, String deptId) {
+    public Map<String, Object> listUser(Long roleId, Long deptId) {
         // 获取所有用户
         UserQueryBo userEntity = new UserQueryBo();
-        if (CharSequenceUtil.isNotBlank(deptId)) {
+        if (null != deptId && 0 != deptId) {
             userEntity.setDeptId(deptId);
         }
 
@@ -273,7 +273,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
         wrapper.setEntity(roleUserEntity);
         // 只返回moduleId
         List<RoleUserEntity> roleUserList = this.roleUserMapper.selectList(wrapper);
-        List<String> checked = null;
+        List<Long> checked = null;
         if (CollectionUtils.isNotEmpty(roleUserList)) {
             checked = new ArrayList<>(roleUserList.size());
             for (RoleUserEntity rue : roleUserList) {

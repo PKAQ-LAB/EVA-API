@@ -27,8 +27,9 @@ public interface TenantMapper extends BaseMapper<TenantEntity> {
 
     /**
      * 锁定超出数量的用户
-     * @param id    租户id
+     *
+     * @param tid   租户id
      * @param count 授权数量
      */
-    void lockExcessUsers(@Param("id") String id, @Param("count") int count);
+    void reGrantUser(@Param("tid") Long tid, @Param("count") int count, @Param("frz") int frz);
 }

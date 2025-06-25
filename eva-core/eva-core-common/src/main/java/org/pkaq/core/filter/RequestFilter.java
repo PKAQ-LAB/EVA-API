@@ -5,14 +5,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.pkaq.core.threaduser.ThreadUser;
-import org.pkaq.core.threaduser.ThreadUserHelper;
-import org.pkaq.core.util.RequestUtil;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Objects;
 
 /**
  * 请求拦截，避免服务绕过接口被直接访问
@@ -25,15 +21,7 @@ public class RequestFilter extends OncePerRequestFilter {
 
     @Override
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-        // 用户信息为null  新建一个匿名用户
-        var tu = ThreadUserHelper.getCurrentUser();
-        if (Objects.isNull(tu)) {
-            tu = new ThreadUser();
-            tu.setModuleId(RequestUtil.getModuleId(request));
-            tu.setModuleCode(RequestUtil.getModuleCode(request));
-            ThreadUserHelper.setCurrentUser(tu);
-        }
-
+        //TODO 微服务需要在此校验请求头正确性
         filterChain.doFilter(request, response);
     }
 

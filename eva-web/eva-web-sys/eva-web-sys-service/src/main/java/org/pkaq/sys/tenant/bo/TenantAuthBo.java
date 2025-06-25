@@ -15,12 +15,12 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 public class TenantAuthBo {
     @NotBlank
-    private String id;
+    private Long id;
 
     @Schema(description = "原角色id 修改时材有")
     private String oldRole;
 
     @Schema(description = "角色id")
     @NotBlank
-    private String roleId;
+    private Long roleId;
 }

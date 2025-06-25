@@ -11,7 +11,7 @@ import org.hibernate.validator.constraints.Length;
  */
 @Data
 public abstract class StdBo implements Bo {
-    private String id;
+    private Long id;
 
     @Schema(description = "乐观锁")
     private int revision;
@@ -23,6 +23,6 @@ public abstract class StdBo implements Bo {
     private double sort;
 
     @Schema(description = "备注")
-    @Length(max = 400)
+    @Length(max = 400, message = "{validate.length.max}")
     private String remark;
 }

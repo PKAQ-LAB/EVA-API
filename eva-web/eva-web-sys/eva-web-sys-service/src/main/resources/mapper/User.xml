@@ -79,7 +79,23 @@
     <!-- 根据用户ID 获取包含模块 权限列表的用户信息-->
     <select id="getUserWithModuleAndRoleById" resultMap="UserWithModuleAndRole">
         select *
-        from sys_user
-        where id = #{userId,jdbcType=VARCHAR}
+        from SYS_USER
+        where id = #{userId}
+    </select>
+
+    <select id="availableCounts" resultType="java.lang.Integer">
+        SELECT
+            T.AUTH_USER_COUNT - IFNULL(U.USER_COUNT, 0) AS ct
+        FROM SYS_TENANT T
+             LEFT JOIN (
+                SELECT
+                    TENANT_ID, COUNT(*) AS USER_COUNT
+                FROM SYS_USER
+                    WHERE
+                        <include refid="common.deletedSQL"/> and TENANT_ID = #{tid}
+                GROUP BY TENANT_ID
+        ) U ON U.TENANT_ID = T.ID
+                WHERE
+                    <include refid="common.deletedSQL"/> and T.ID = #{tid}
     </select>
 </mapper>

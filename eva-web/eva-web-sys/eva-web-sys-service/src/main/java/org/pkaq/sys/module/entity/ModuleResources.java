@@ -20,13 +20,12 @@ import org.pkaq.core.mvc.entity.Entity;
 @Schema(title = "模块资源管理")
 @EqualsAndHashCode(callSuper = false)
 public class ModuleResources implements Entity {
-    private static final long serialVersionUID = 1L;
 
-    @TableId(type = IdType.ASSIGN_UUID)
-    private String id;
+    @TableId(type = IdType.ASSIGN_ID)
+    private Long id;
 
     @Schema(description = "模块id")
-    private String moduleId;
+    private Long moduleId;
 
     @Schema(description = "资源描述")
     private String resourceDesc;

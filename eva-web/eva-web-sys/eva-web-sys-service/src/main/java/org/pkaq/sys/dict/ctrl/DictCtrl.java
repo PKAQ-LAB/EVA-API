@@ -48,11 +48,11 @@ public class DictCtrl extends Ctrl {
     @GetMapping({"/get/{id}", "/get/type/{code}"})
     @Operation(summary = "根据ID/code获取字典")
     public Response<DictViewVo> getDict(@Parameter(name = "id", description = "字典分类ID")
-                            @PathVariable(name = "id", required = false) String id,
+                            @PathVariable(name = "id", required = false) long id,
                                         @Parameter(name = "code", description = "类型编码")
                             @PathVariable(value = "code", required = false) String code) {
         // 参数校验
-        if (CharSequenceUtil.isBlank(id) && CharSequenceUtil.isBlank(code)) {
+        if (0 == id && CharSequenceUtil.isBlank(code)) {
             CommonCodes.PARAM_ERROR.newException();
         }
         DictAoeBo bo = new DictAoeBo();
@@ -73,7 +73,7 @@ public class DictCtrl extends Ctrl {
     @GetMapping("/del/{id}")
     @Operation(summary = "根据ID删除")
     public Response<Object> delDict(@Parameter(name = "id", description = "[字典ID]")
-                            @PathVariable("id") String id) {
+                                    @PathVariable("id") Long id) {
 
         // 参数非空校验
         CommonCodes.NULL_ID.assertNotNull(id);

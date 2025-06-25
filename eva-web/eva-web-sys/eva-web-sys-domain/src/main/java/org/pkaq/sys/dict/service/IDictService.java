@@ -22,7 +22,7 @@ public interface IDictService {
 
     List<DictViewVo> listDict();
 
-    void delDict(String id);
+    void delDict(Long id);
 
     void edit(DictAoeBo dictAoeBo);
 

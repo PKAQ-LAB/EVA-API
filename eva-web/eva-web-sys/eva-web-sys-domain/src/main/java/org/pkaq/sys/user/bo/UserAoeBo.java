@@ -52,12 +52,12 @@ public class UserAoeBo extends StdBo {
     private Date lastLogin;
 
     @Schema(description = "所属岗位ID")
-    private List<String> postId = new ArrayList<>();
+    private List<Long> postId = new ArrayList<>();
 
     @Schema(description = "所属部门")
     private String deptId;
 
     @Schema(description = "用户拥有的角色")
-    private List<String> roleIds = new ArrayList<>();
+    private List<Long> roleIds = new ArrayList<>();
 
 }

@@ -71,7 +71,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         if (StrUtil.isNotBlank(authToken)) {
-            String uid = jwtUtil.getUid(authToken);
+            Long uid = jwtUtil.getUid(authToken);
 
             /**
              * token即将过期 刷新
@@ -138,7 +138,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         if (isvalid && (inCache || !cacheToken)) {
-            String uid = jwtUtil.getUid(authToken);
+            long uid = jwtUtil.getUid(authToken);
             String account = jwtUtil.getAccount(authToken);
 
             logger.info("checking authentication ：" + account);

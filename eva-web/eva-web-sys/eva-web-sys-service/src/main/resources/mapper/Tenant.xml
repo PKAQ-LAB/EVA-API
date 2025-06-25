@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.pkaq.sys.tenant.mapper.TenantMapper">
+
+    <select id="listPage" resultType="tech.yunyue.sys.tenant.vo.TenantListVo">
+        select
+        t.id,t.name,t.code,t.type,
+        t.full_name fullName,
+        t.card_type cardType,
+        t.id_card idCard,
+        t.contact_name contactName,
+        t.contact_tel contactTel,
+        t.auth_user_count authUserCount,
+        t.expiration_date expirationDate,
+        t.status,
+        t.remark,
+        r.id roleId,
+        r.name roleName
+        from sys_tenant t
+        left join sys_tenant_role tr on t.id = tr.tenant_id
+        left join sys_role r on tr.role_id = r.id
+        where
+            t.<include refid="common.deletedSQL"/>
+            <if test="q != null">
+                <if test="@cn.hutool.core.text.CharSequenceUtil@isNotBlank(q.name)">
+                    <bind name="rNameLike" value="'%'+q.name+'%'"/>
+                    AND t.name LIKE #{rNameLike}
+                </if>
+                <if test="@cn.hutool.core.text.CharSequenceUtil@isNotBlank(q.code)">
+                    <bind name="rCodeLike" value="'%'+q.code+'%'"/>
+                    AND t.code LIKE #{rCodeLike}
+
+                </if>
+                <if test="@cn.hutool.core.text.CharSequenceUtil@isNotBlank(q.idCard)">
+                    <bind name="rCardLike" value="'%'+q.idCard+'%'"/>
+                    AND t.id_card LIKE #{rCardLike}
+                </if>
+                <if test="@cn.hutool.core.text.CharSequenceUtil@isNotBlank(q.contactName)">
+                    <bind name="rCNameLike" value="'%'+q.contactName+'%'"/>
+                    AND t.contact_name LIKE #{rCNameLike}
+                </if>
+            </if>
+    </select>
+
+    <!--    锁定超出数量的用户-->
+    <update id="reGrantUser">
+        WITH SORTED_USERS AS (
+            SELECT ID
+            FROM SYS_USER
+            WHERE TENANT_ID = #{tid}
+            ORDER BY UTC_MODIFY DESC
+            <choose>
+                <when test="_databaseId =='mysql'">
+                    LIMIT 18446744073709551615 OFFSET #{count}
+                </when>
+                <otherwise>
+                    OFFSET #{count} ROWS
+                </otherwise>
+            </choose>
+        )
+        UPDATE SYS_USER
+            JOIN SORTED_USERS ON SYS_USER.ID = SORTED_USERS.ID
+        SET SYS_USER.FROZEN = #{frz}
+        WHERE SYS_USER.FROZEN IS NULL OR SYS_USER.FROZEN != 1
+    </update>
+</mapper>

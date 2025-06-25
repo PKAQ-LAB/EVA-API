@@ -15,7 +15,7 @@ import java.util.List;
 @Schema(title = "角色-用户关系保存")
 public class RoleUserAoeBo implements Bo {
     @Schema(description = "角色id")
-    private String roleId;
+    private Long roleId;
 
     @Schema(description = "用户ID列表")
     @NotNull

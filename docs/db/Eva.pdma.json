@@ -4,7 +4,7 @@
   "avatar": "",
   "version": "4.9.4",
   "createdTime": "2025-4-22 15:22:40",
-  "updatedTime": "2025-6-24 16:48:00",
+  "updatedTime": "2025-6-24 22:16:48",
   "dbConns": [],
   "profile": {
     "default": {
@@ -15,8 +15,8 @@
           "defKey": "ID",
           "defName": "主键",
           "comment": "",
-          "type": "VARCHAR",
-          "len": 40,
+          "type": "BIGINT",
+          "len": "",
           "scale": "",
           "primaryKey": true,
           "notNull": true,
@@ -24,7 +24,7 @@
           "defaultValue": "",
           "hideInGraph": false,
           "refDict": "",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64",
+          "baseType": "",
           "extProps": {},
           "domain": "",
           "id": "B6BAB3E4-ADD1-4BB4-95BA-E5CDA4FA7940"
@@ -33,19 +33,19 @@
           "defKey": "TENANT_ID",
           "defName": "租户号",
           "comment": "",
-          "type": "",
-          "len": 32,
+          "type": "BIGINT",
+          "len": "",
           "scale": "",
           "primaryKey": false,
           "notNull": false,
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
+          "domain": "",
           "refDict": "",
           "uiHint": "",
           "id": "ADB3AD14-6603-43E2-8261-114E32442B5B",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
+          "baseType": ""
         },
         {
           "defKey": "REVISION",
@@ -141,8 +141,8 @@
           "defKey": "CREATE_ID",
           "defName": "创建人ID",
           "comment": "",
-          "type": "VARCHAR",
-          "len": 40,
+          "type": "BIGINT",
+          "len": "",
           "scale": "",
           "primaryKey": false,
           "notNull": true,
@@ -150,7 +150,7 @@
           "defaultValue": "",
           "hideInGraph": false,
           "refDict": "",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64",
+          "baseType": "",
           "extProps": {},
           "domain": "",
           "id": "8AAC7F9D-993A-44A8-8629-261D740692E1"
@@ -214,7 +214,7 @@
           "defKey": "MODIFY_ID",
           "defName": "修改人ID",
           "comment": "",
-          "type": "",
+          "type": "BIGINT",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -223,9 +223,9 @@
           "defaultValue": "",
           "hideInGraph": false,
           "refDict": "",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64",
+          "baseType": "",
           "extProps": {},
-          "domain": "9092C4E0-1A54-4859-ABBB-5B62DBC27573",
+          "domain": "",
           "id": "281A6A64-5989-4816-A428-EA2F75C67E48"
         },
         {
@@ -6860,8 +6860,8 @@
           "defName": "",
           "comment": "",
           "domain": "",
-          "type": "VARCHAR",
-          "len": 40,
+          "type": "BIGINT",
+          "len": "",
           "scale": "",
           "primaryKey": true,
           "notNull": true,
@@ -6879,7 +6879,7 @@
           "attr8": "",
           "attr9": "",
           "id": "47FD88F9-D02D-433E-A1DF-DBC7BDE79797",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64",
+          "baseType": "",
           "extProps": {},
           "uiHint": "642D2E0A-8846-4549-BE56-8C0473F26EDE"
         },
@@ -6888,8 +6888,8 @@
           "defName": "",
           "comment": "",
           "domain": "",
-          "type": "VARCHAR",
-          "len": 40,
+          "type": "BIGINT",
+          "len": "",
           "scale": "",
           "primaryKey": true,
           "notNull": true,
@@ -6907,7 +6907,7 @@
           "attr8": "",
           "attr9": "",
           "id": "5D03E3E7-FAA0-424B-BB88-00A173DF3BA2",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64",
+          "baseType": "",
           "extProps": {},
           "uiHint": "642D2E0A-8846-4549-BE56-8C0473F26EDE"
         }
@@ -7049,7 +7049,7 @@
     {
       "id": "5C0121C4-8A4E-40C6-8B2E-06A2A9607024",
       "defKey": "SYS_TENANT",
-      "defName": "基础管理_租户管理",
+      "defName": "系统管理_租户管理",
       "comment": "",
       "properties": {},
       "fields": [
@@ -7058,8 +7058,8 @@
           "defName": "ID",
           "comment": "",
           "domain": "",
-          "type": "VARCHAR",
-          "len": 40,
+          "type": "BIGINT",
+          "len": "",
           "scale": "",
           "primaryKey": true,
           "notNull": true,
@@ -7077,7 +7077,7 @@
           "attr8": "",
           "attr9": "",
           "id": "385EA1CF-2A0F-42F8-8AAF-F77A511971E3",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64",
+          "baseType": "",
           "extProps": {},
           "uiHint": "642D2E0A-8846-4549-BE56-8C0473F26EDE"
         },
@@ -7342,9 +7342,9 @@
           "len": "",
           "scale": "",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoIncrement": false,
-          "defaultValue": "9999-12-31 23:59:59",
+          "defaultValue": "",
           "hideInGraph": false,
           "refDict": "",
           "attr1": "",
@@ -7366,11 +7366,11 @@
           "defName": "超级管理员id",
           "comment": "",
           "domain": "",
-          "type": "VARCHAR",
-          "len": 40,
+          "type": "BIGINT",
+          "len": "",
           "scale": "",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
@@ -7385,7 +7385,7 @@
           "attr8": "",
           "attr9": "",
           "id": "6C6CB09B-82D9-44B4-8ED0-0717E5629F78",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64",
+          "baseType": "",
           "extProps": {},
           "uiHint": "642D2E0A-8846-4549-BE56-8C0473F26EDE"
         },
@@ -7393,7 +7393,7 @@
           "defKey": "TENANT_ID",
           "defName": "租户号",
           "comment": "",
-          "type": "",
+          "type": "BIGINT",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -7401,7 +7401,6 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
           "refDict": "",
           "extProps": {},
           "notes": {},
@@ -7414,8 +7413,8 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "94AC095B-6CAA-47BC-9A9A-A90AC1E57E2E",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
+          "id": "E3624F80-5BBF-485C-BF0A-0F4DFCF60295",
+          "baseType": ""
         },
         {
           "defKey": "REVISION",
@@ -7442,7 +7441,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "DC3D214D-CDEB-4302-94F2-34009EB3E4B4",
+          "id": "48CFC27E-F4BE-48AE-9E9A-437E64FB3C2D",
           "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
         },
         {
@@ -7469,20 +7468,20 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "3D73FA8B-CBE7-4ABB-A93A-A8BC8715088C",
+          "id": "4DCA08F7-314E-4F12-A4D5-7AB516C9224B",
           "baseType": ""
         },
         {
           "defKey": "FROZEN",
           "defName": "是否冻结",
           "comment": "",
-          "type": "VARCHAR",
-          "len": 6,
+          "type": "INT",
+          "len": "",
           "scale": "",
           "primaryKey": false,
           "notNull": false,
           "autoIncrement": false,
-          "defaultValue": "0000",
+          "defaultValue": "0",
           "hideInGraph": false,
           "refDict": "",
           "extProps": {},
@@ -7496,8 +7495,8 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "BC1A9727-D587-402A-A974-7EF41A91F1D1",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
+          "id": "5BFE8C74-D92A-4A8E-B330-8110E7452C7B",
+          "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
         },
         {
           "defKey": "REMARK",
@@ -7523,22 +7522,21 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "4C6F7496-D3E2-4342-A1B1-72D80FA45685",
+          "id": "0624F33A-524F-4B73-BECA-1FD2AEAE631A",
           "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
           "defKey": "SORT",
           "defName": "排序字段",
           "comment": "",
-          "type": "",
-          "len": "",
-          "scale": "",
+          "type": "DECIMAL",
+          "len": 10,
+          "scale": 4,
           "primaryKey": false,
           "notNull": false,
           "autoIncrement": false,
-          "defaultValue": "",
+          "defaultValue": "0",
           "hideInGraph": false,
-          "domain": "6BC8F04B-6CFA-4995-98D3-318F5CDD774E",
           "refDict": "",
           "extProps": {},
           "notes": {},
@@ -7551,15 +7549,15 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "BD54844E-7384-49CB-9D95-BD1B626E70FF",
-          "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
+          "id": "29CAB5F7-13E6-403B-8A8A-6E45DDEE2B38",
+          "baseType": "1A0BDC09-0792-4174-9E8E-80BE8DF44B8E"
         },
         {
-          "defKey": "CREATED_ID",
+          "defKey": "CREATE_ID",
           "defName": "创建人ID",
           "comment": "",
-          "type": "VARCHAR",
-          "len": 40,
+          "type": "BIGINT",
+          "len": "",
           "scale": "",
           "primaryKey": false,
           "notNull": true,
@@ -7578,8 +7576,8 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "DF3EF67D-1CB4-494B-8EC7-ED6CDFB097D1",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
+          "id": "98ED4F83-4762-4822-9B81-0C355E3634F4",
+          "baseType": ""
         },
         {
           "defKey": "CREATE_BY",
@@ -7605,7 +7603,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "B0B70C55-E86E-4215-8DA7-9E9BC53404C4",
+          "id": "EFA736BB-62D9-41CD-B18C-E68C47424837",
           "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
@@ -7633,14 +7631,14 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "DC5C41F3-446A-4607-A7DC-FF8AA302DC94",
+          "id": "B5305ECC-904C-43B5-B7BB-07D8499D33D1",
           "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         },
         {
           "defKey": "MODIFY_ID",
           "defName": "修改人ID",
           "comment": "",
-          "type": "",
+          "type": "BIGINT",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -7648,7 +7646,6 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "9092C4E0-1A54-4859-ABBB-5B62DBC27573",
           "refDict": "",
           "extProps": {},
           "notes": {},
@@ -7661,8 +7658,8 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "7020D4D2-FC01-458F-992A-5270AC97B3F6",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
+          "id": "A391A88F-A2F6-43C7-9008-9B8661ADF6AE",
+          "baseType": ""
         },
         {
           "defKey": "MODIFY_BY",
@@ -7688,7 +7685,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "0CDFCD3A-6249-4EF6-908A-BFC5EBECD854",
+          "id": "EBC61C86-DE06-4343-8E62-25A25DC350FF",
           "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
@@ -7716,7 +7713,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "EE021691-07F7-41D4-B796-020B34AD3483",
+          "id": "2D5A9B78-7CAE-49C5-AC30-0E172972644C",
           "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         }
       ],
@@ -8067,8 +8064,8 @@
           "defName": "",
           "comment": "",
           "domain": "",
-          "type": "VARCHAR",
-          "len": 40,
+          "type": "BIGINT ",
+          "len": "",
           "scale": "",
           "primaryKey": true,
           "notNull": true,
@@ -8086,7 +8083,7 @@
           "attr8": "",
           "attr9": "",
           "id": "9414002A-FB71-4949-A905-B7560834CCD5",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64",
+          "baseType": "",
           "extProps": {},
           "uiHint": "642D2E0A-8846-4549-BE56-8C0473F26EDE"
         },
@@ -8410,7 +8407,7 @@
           "defKey": "TENANT_ID",
           "defName": "租户号",
           "comment": "",
-          "type": "",
+          "type": "BIGINT",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -8418,7 +8415,6 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
           "refDict": "",
           "extProps": {},
           "notes": {},
@@ -8431,8 +8427,8 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "4D9E6A09-8BD1-48B6-8F94-CB2E06B10014",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
+          "id": "DB5F2965-4702-44CA-95FE-84F04D0AC1E6",
+          "baseType": ""
         },
         {
           "defKey": "REVISION",
@@ -8459,7 +8455,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "44E52948-3C7B-4340-8AE1-2BC3B9D56020",
+          "id": "3F716ABD-94FF-41A0-87DE-D51C5D4E9B0D",
           "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
         },
         {
@@ -8486,7 +8482,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "F813D516-5E12-4148-8007-BEC8383C8C75",
+          "id": "DB5433EC-227E-4043-B407-B29BA08DB960",
           "baseType": ""
         },
         {
@@ -8513,7 +8509,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "DAB9767C-ADEE-44FC-BDD9-93D0E9527D2C",
+          "id": "8111CCA6-8160-4EA1-89B0-B206C3935B2D",
           "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
         },
         {
@@ -8540,7 +8536,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "2F094504-3C99-48EE-9102-0CF3F08A11FF",
+          "id": "4E09FF97-EEE6-4D36-BE21-020906B7148F",
           "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
@@ -8567,15 +8563,15 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "847D9742-8766-46CC-B057-560FF49A34D9",
+          "id": "4EFB6183-E71E-43B6-9380-E7D9BAD23683",
           "baseType": "1A0BDC09-0792-4174-9E8E-80BE8DF44B8E"
         },
         {
           "defKey": "CREATE_ID",
           "defName": "创建人ID",
           "comment": "",
-          "type": "VARCHAR",
-          "len": 40,
+          "type": "BIGINT",
+          "len": "",
           "scale": "",
           "primaryKey": false,
           "notNull": true,
@@ -8594,8 +8590,8 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "2E17967F-52D0-4229-B60B-2B490E098AFA",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
+          "id": "6E9851E2-FCBC-4873-8BAB-2D54650FB6C1",
+          "baseType": ""
         },
         {
           "defKey": "CREATE_BY",
@@ -8621,7 +8617,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "32E5FEBD-F663-4F20-9977-D904969CB282",
+          "id": "2B74A106-4B62-4F3D-A738-756166C2672B",
           "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
@@ -8649,14 +8645,14 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "294C7F89-6C65-42DC-913B-FA962387D81A",
+          "id": "A6DD1843-507D-4EA6-AE74-1912C12782CB",
           "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         },
         {
           "defKey": "MODIFY_ID",
           "defName": "修改人ID",
           "comment": "",
-          "type": "",
+          "type": "BIGINT",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -8664,7 +8660,6 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "9092C4E0-1A54-4859-ABBB-5B62DBC27573",
           "refDict": "",
           "extProps": {},
           "notes": {},
@@ -8677,8 +8672,8 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "4A3D8511-9DEE-423A-AB95-E67E436DE3F4",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
+          "id": "9040A6BD-1682-403E-BCE5-8EF5B1EE5C96",
+          "baseType": ""
         },
         {
           "defKey": "MODIFY_BY",
@@ -8704,7 +8699,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "C7FE4247-2B5C-4701-AA69-E941DAC9A390",
+          "id": "DE30D847-7B58-4D82-B416-5E6572448FCA",
           "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
@@ -8732,7 +8727,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "45D75F83-85C9-484D-8559-B791009A956C",
+          "id": "10F53342-DE9D-47E4-906F-A79EAC0377E0",
           "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         }
       ],
@@ -8881,8 +8876,8 @@
           "defKey": "POST_ID",
           "defName": "",
           "comment": "",
-          "type": "VARCHAR",
-          "len": 40,
+          "type": "BIGINT",
+          "len": "",
           "scale": "",
           "primaryKey": true,
           "notNull": true,
@@ -8902,14 +8897,14 @@
           "attr8": "",
           "attr9": "",
           "id": "B8C66FE9-A869-4019-8BF5-D3D27D0A10CB",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
+          "baseType": ""
         },
         {
           "defKey": "USER_ID",
           "defName": "",
           "comment": "",
-          "type": "VARCHAR",
-          "len": 40,
+          "type": "BIGINT",
+          "len": "",
           "scale": "",
           "primaryKey": true,
           "notNull": true,
@@ -8929,7 +8924,7 @@
           "attr8": "",
           "attr9": "",
           "id": "C7E0DD01-FC6B-460D-B1B9-6256EE562683",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
+          "baseType": ""
         }
       ],
       "indexes": [],

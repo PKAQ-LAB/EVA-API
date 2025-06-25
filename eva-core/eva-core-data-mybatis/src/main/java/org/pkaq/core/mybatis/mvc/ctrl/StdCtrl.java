@@ -70,7 +70,7 @@ public abstract class StdCtrl<T extends StdService, E extends StdEntity> extends
     @Operation(summary = "根据ID查询", description = "根据ID获得记录信息")
     @NoRepeatSubmit
     public Response<Object> get(@Parameter(name = "id", description = "记录ID")
-                        @PathVariable("id") String id) {
+                                @PathVariable("id") long id) {
         return this.success(this.service.get(id));
     }
 }

@@ -11,14 +11,13 @@ import java.util.Collection;
  * JwtUser
  *
  * @author: S.PKAQ
- * @Datetime: 2018/4/24 23:14
  */
 @Data
 public class JwtUserDetail implements UserDetails {
     /**
      * 用户ID
      **/
-    private final String id;
+    private final Long id;
     /**
      * 用户账号
      **/
@@ -39,7 +38,7 @@ public class JwtUserDetail implements UserDetails {
     /**
      * 部门id
      **/
-    private String deptId;
+    private Long deptId;
     /**
      * 部门名称
      **/
@@ -53,7 +52,7 @@ public class JwtUserDetail implements UserDetails {
      **/
     private String nickName;
 
-    public JwtUserDetail(String id, String account, String password, String deptId, String deptName, String name, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
+    public JwtUserDetail(Long id, String account, String password, Long deptId, String deptName, String name, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.account = account;
         this.password = password;

@@ -17,7 +17,7 @@ import java.util.Map;
 @Accessors(chain = true)
 public class ThreadUser implements Serializable {
     // 用户id
-    private String userId;
+    private long userId;
     // 用户账号
     private String account;
     // 用户手机号
@@ -27,23 +27,23 @@ public class ThreadUser implements Serializable {
     // 用户名称
     private String[] roles;
     // 用户拥有的角色以及角色的数据权限类型
-    private Map<String, GrantedRoles> rolesMap;
+    private Map<Long, GrantedRoles> rolesMap;
     // 用户拥有的数据权限
     private String dataPermission;
     // 用户的租户id
-    private String tenantId;
+    private long tenantId;
     // 用户的租户code
     private String tenantCode;
     // 当前用户操作的模块id
-    private String moduleId;
+    private long moduleId;
     // 当前用户操作的模块code
     private String moduleCode;
     // 当前用户部门id
-    private String deptId;
+    private long deptId;
     // 当前用户岗位id
-    private String postId;
+    private long postId;
     // 当前用户所有角色与其对应的path权限 当前路径是无需资源鉴权的路径||没打开资源鉴权时，该map为null（资源鉴权时才会设置角色和其权限）
-    private Map<String, List<String>> rolePermissonMap;
+    private Map<Long, List<Long>> rolePermissonMap;
     // 当前用户的设备类型
     private String device;
     // 当前用户的应用版本

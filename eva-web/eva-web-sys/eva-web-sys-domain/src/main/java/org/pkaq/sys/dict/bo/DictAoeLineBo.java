@@ -5,12 +5,15 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.pkaq.core.mvc.bo.Bo;
 
+/**
+ * @author PKAQ
+ */
 @Data
 @Schema(title = "字典明细BO")
 public class DictAoeLineBo implements Bo {
     @NotBlank(message = "主表ID不允许为空")
     @Schema(description = "主表ID", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String mainId;
+    private Long mainId;
 
     @NotBlank(message = "字典项不允许为空")
     @Schema(description = "字典项键", requiredMode = Schema.RequiredMode.REQUIRED)

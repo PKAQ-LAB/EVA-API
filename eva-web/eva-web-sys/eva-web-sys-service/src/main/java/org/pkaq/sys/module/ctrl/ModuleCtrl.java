@@ -62,7 +62,7 @@ public class ModuleCtrl extends Ctrl {
     @GetMapping("/get/{id}")
     @Operation(summary = "根据ID获得记录信息")
     public Response<Object> getRole(@Parameter(name = "id", description = "记录ID")
-                                    @PathVariable("id") String id) {
+                                    @PathVariable("id") Long id) {
         return this.success(this.service.getModule(id));
     }
 

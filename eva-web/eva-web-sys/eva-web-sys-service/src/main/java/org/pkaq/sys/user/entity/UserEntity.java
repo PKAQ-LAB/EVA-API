@@ -82,6 +82,6 @@ public class UserEntity extends StdEntity {
     /**
      * 所属部门
      **/
-    private String deptId;
+    private Long deptId;
 
 }

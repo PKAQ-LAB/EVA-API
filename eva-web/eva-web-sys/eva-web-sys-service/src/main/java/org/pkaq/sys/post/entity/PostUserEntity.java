@@ -17,8 +17,8 @@ import org.apache.ibatis.type.Alias;
 @EqualsAndHashCode()
 public class PostUserEntity {
     @NotBlank
-    private String postId;
+    private Long postId;
 
     @NotBlank
-    private String userId;
+    private Long userId;
 }

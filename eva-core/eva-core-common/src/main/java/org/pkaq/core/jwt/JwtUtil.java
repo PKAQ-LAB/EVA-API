@@ -44,11 +44,11 @@ public class JwtUtil {
     /**
      * 获取uid中的uid属性
      */
-    public String getUid(String token) {
-        String uid = "";
+    public long getUid(String token) {
+        Long uid = null;
         try {
             final JWTClaimsSet claims = getClaimsFromToken(token);
-            uid = claims.getJWTID();
+            uid = Long.valueOf(claims.getJWTID());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -100,7 +100,7 @@ public class JwtUtil {
      * @param username  username
      * @return jwt token
      */
-    public String build(long ttlMillis, String userId, String username) {
+    public String build(long ttlMillis, long userId, String username) {
         /**
          * 1.创建一个32-byte的密匙
          */
@@ -124,7 +124,7 @@ public class JwtUtil {
                 .issueTime(new Date(nowMillis))
                 .issuer(this.jwtConfig().getSign())
                 .subject(username)
-                .jwtID(userId)
+                .jwtID(userId+"")
                 .expirationTime(ttlMillis > 0 ? exp : null)
                 .notBeforeTime(new Date(nowMillis))
                 .build();
@@ -181,7 +181,7 @@ public class JwtUtil {
      * @return
      */
     public String refreshToken(String token) {
-        final String uid = this.getUid(token);
+        final long uid = this.getUid(token);
         final String account = this.getAccount(token);
         return this.build(this.jwtConfig().getThreshold(), uid, account);
     }

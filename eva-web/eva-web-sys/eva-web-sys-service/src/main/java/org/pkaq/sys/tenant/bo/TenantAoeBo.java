@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.pkaq.core.mvc.bo.StdBo;
 
 import java.util.Date;
 
@@ -18,46 +19,45 @@ import java.util.Date;
 @Schema(description = "租户管理-详情-请求参数")
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class TenantAoeBo {
-    private String id;
+public class TenantAoeBo extends StdBo {
 
     @Schema(description = "租户名称")
-    @Size(max = 40)
+    @Size(max = 40, message = "{validate.length.max}")
     @NotBlank
     private String name;
 
     @Schema(description = "租户编码")
-    @Size(max = 6)
+    @Size(max = 6, message = "{validate.length.max}")
     @NotBlank
     private String code;
 
     @Schema(description = "租户类型")
-    @Size(max = 6)
+    @Size(max = 6, message = "{validate.length.max}")
     @NotBlank
     private String type;
 
     @Schema(description = "全称")
-    @Size(max = 60)
+    @Size(max = 60, message = "{validate.length.max}")
     @NotBlank
     private String fullName;
 
     @Schema(description = "证件类型")
-    @Size(max = 6)
+    @Size(max = 6, message = "{validate.length.max}")
     @NotBlank
     private String cardType;
 
     @Schema(description = "证件号")
-    @Size(max = 30)
+    @Size(max = 30, message = "{validate.length.max}")
     @NotBlank
     private String idCard;
 
     @Schema(description = "联系人")
-    @Size(max = 40)
+    @Size(max = 40, message = "{validate.length.max}")
     @NotBlank
     private String contactName;
 
     @Schema(description = "联系方式")
-    @Size(max = 16)
+    @Size(max = 16, message = "{validate.length.max}")
     @NotBlank
     private String contactTel;
 
@@ -75,8 +75,4 @@ public class TenantAoeBo {
 
     @Schema(description = "租户管理员密码")
     private String adminPass;
-
-
-    @Schema(description = "备注")
-    private String remark;
 }

@@ -24,7 +24,7 @@ public class StdTreeEntity extends StdEntity {
     private String name;
 
     /** 上级节点id **/
-    private String pid;
+    private Long pid;
 
     /** 路径 **/
     private String path;

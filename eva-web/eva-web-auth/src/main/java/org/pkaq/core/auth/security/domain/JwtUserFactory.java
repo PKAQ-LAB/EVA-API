@@ -2,7 +2,6 @@ package org.pkaq.core.auth.security.domain;
 
 import cn.hutool.core.bean.BeanUtil;
 import org.pkaq.core.auth.domain.JwtUserDetail;
-import org.pkaq.core.mybatis.enums.FrozenEnumm;
 import org.pkaq.sys.role.entity.RoleEntity;
 import org.pkaq.sys.user.entity.UserEntity;
 
@@ -21,7 +20,7 @@ public final class JwtUserFactory {
 
     public static JwtUserDetail create(UserEntity user) {
         return new JwtUserDetail(
-                String.valueOf(user.getId()),
+                user.getId(),
                 user.getAccount(),
                 user.getPassword(),
                 user.getDeptId(),

@@ -29,7 +29,7 @@ public interface StdTreeMapper<T> extends BaseMapper<T> {
      * @param name
      * @param id
      */
-    void updateChildParentName(String name, String id);
+    void updateChildParentName(String name, Long id);
 
     /**
      * 刷新子节点的路径
@@ -45,7 +45,7 @@ public interface StdTreeMapper<T> extends BaseMapper<T> {
      * @param pid
      * @return
      */
-    int countPrantLeaf(String pid);
+    int countPrantLeaf(Long pid);
 
     /**
      * 查询子节点
@@ -63,7 +63,7 @@ public interface StdTreeMapper<T> extends BaseMapper<T> {
      * @param <T>
      * @return
      */
-    <T extends StdTreeEntity> T getParentById(String orgId);
+    <T extends StdTreeEntity> T getParentById(Long orgId);
 
     /**
      * 加载树结构

@@ -33,14 +33,7 @@ public class StdTreeVo extends StdVo {
     @Schema(description = "子节点")
     private List<StdTreeVo> children;
 
-    @Schema(description = "key")
-    private String key;
-
-    @Schema(description = "exact")
-    private Boolean exact;
-
-
-    public String getKey() {
+    public Long getKey() {
         return this.getId();
     }
 

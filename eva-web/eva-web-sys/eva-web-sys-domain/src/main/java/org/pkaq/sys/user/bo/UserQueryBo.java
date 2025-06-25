@@ -34,9 +34,9 @@ public class UserQueryBo extends PageBo {
     private int frozen;
 
     @Schema(description = "所属岗位ID")
-    private List<String> postId = new ArrayList<>();
+    private List<Long> postId = new ArrayList<>();
 
     @Schema(description = "所属部门")
-    private String deptId;
+    private Long deptId;
 
 }

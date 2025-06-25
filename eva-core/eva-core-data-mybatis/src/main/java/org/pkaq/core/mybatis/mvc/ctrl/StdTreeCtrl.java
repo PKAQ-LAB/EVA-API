@@ -44,7 +44,7 @@ public abstract class StdTreeCtrl<T extends StdTreeService, E extends StdTreeEnt
     @GetMapping("/get/{id}")
     @Operation(summary = "根据ID获取节点信息")
     public Response<Object> getOrg(@Parameter(name = "id", description = "节点ID")
-                           @PathVariable("id") String id) {
+                           @PathVariable("id") Long id) {
         return success(this.service.get(id));
     }
 

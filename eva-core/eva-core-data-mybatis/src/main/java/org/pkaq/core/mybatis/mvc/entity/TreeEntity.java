@@ -1,5 +1,6 @@
 package org.pkaq.core.mybatis.mvc.entity;
 
+import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.annotation.SqlCondition;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -19,7 +20,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 public class TreeEntity implements Entity {
     @Schema(description = "id")
-    private String id;
+    private Long id;
 
     @TableField(condition = SqlCondition.LIKE)
     @Schema(description = "编码")
@@ -69,10 +70,10 @@ public class TreeEntity implements Entity {
     private String locale;
 
     public String getLocale() {
-        return StrUtil.isNotBlank(this.path) ? "menu" + this.path.replaceAll("/", ".") : "";
+        return CharSequenceUtil.isNotBlank(this.path) ? "menu" + this.path.replaceAll("/", ".") : "";
     }
 
-    public String getKey() {
+    public Long getKey() {
         return this.getId();
     }
 

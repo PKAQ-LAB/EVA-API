@@ -101,7 +101,6 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
         wrapper.orderByDesc(UserEntity::getUtcModify);
         PageResult<UserEntity> pagination = new PageResult<>(queryBo.getPageNo(), queryBo.getPageSize());
         return this.mapper.selectPage(pagination, wrapper).map(this.converter::entityToListVo);
-
     }
     /**
      * 解锁/锁定用户
@@ -151,11 +150,16 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
 
         // 新增手工生成主键
         // 编辑， 删除原有头像文件，保存新的头像文件
-        String userId = user.getId();
+        long userId = user.getId();
         boolean isInsert = true;
-        if (CharSequenceUtil.isBlank(userId)) {
-            userId = IdWorker.getIdStr();
+        if (0 == userId) {
+            userId = IdWorker.getId();
             user.setId(userId);
+            var tid = ThreadUserHelper.getTenantId();
+            var leftCt = this.mapper.availableCounts(tid);
+            if (leftCt < 1){
+                SysCodes.USER_ACCOUNT_LIMIT.newException();
+            }
         } else {
             isInsert = false;
             UserEntity oldUser = this.mapper.selectById(userId);

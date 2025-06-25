@@ -18,9 +18,9 @@ public class UserGrantBo implements Bo {
 
     @Schema(description = "目标用户ID")
     @NotBlank(message = "{sys.user.grant.userid.required}")
-    private String userId;
+    private long userId;
 
     @Schema(description = "权限ID")
     @NotBlank(message = "{sys.user.grant.roleid.required}")
-    private List<String> roleIds;
+    private List<Long> roleIds;
 }

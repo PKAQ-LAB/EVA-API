@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.auth.util.CacheTokenUtil;
+import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,27 +22,27 @@ import java.util.List;
 @RequestMapping("/monitor/log/online")
 @Tag(name = "获取在线用户")
 @RequiredArgsConstructor
-public class OnlineUserCtrl {
+public class OnlineUserCtrl extends Ctrl {
     private final CacheTokenUtil tokenUtil;
 
     @GetMapping("/list")
     @Operation(description = "获取在线用户列表")
     public Response list(@Parameter(name = "uid", description = "查询固定用户") String account) {
-        Response response = new Response();
-        if (StrUtil.isNotBlank(account)) {
-            Object obj = this.tokenUtil.getToken(account);
-
-            List list = new ArrayList(1);
-
-            if (null != obj) {
-                list.add(obj);
-            }
-
-            response.setData(list);
-        } else {
-            response.setData(this.tokenUtil.getAllToken().values());
-        }
-        return response.success();
+//        Response response = new Response();
+//        if (StrUtil.isNotBlank(account)) {
+//            Object obj = this.tokenUtil.getToken(account);
+//
+//            List list = new ArrayList(1);
+//
+//            if (null != obj) {
+//                list.add(obj);
+//            }
+//
+//            response.setData(list);
+//        } else {
+//            response.setData(this.tokenUtil.getAllToken().values());
+//        }
+        return success();
     }
 
     @GetMapping("/offline")

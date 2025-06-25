@@ -3,6 +3,7 @@ package org.pkaq.sys.tenant.service;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.crypto.digest.BCrypt;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
@@ -12,6 +13,7 @@ import lombok.AllArgsConstructor;
 import org.pkaq.core.log.annotation.BizLog;
 import org.pkaq.core.log.base.BizLogCodes;
 import org.pkaq.core.mybatis.enums.FrozenEnumm;
+import org.pkaq.core.mybatis.mvc.service.ConvertService;
 import org.pkaq.core.mybatis.util.PageResult;
 import org.pkaq.core.util.json.JsonUtil;
 import org.pkaq.sys.role.entity.RoleUserEntity;
@@ -34,7 +36,6 @@ import org.pkaq.sys.user.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,15 +47,11 @@ import java.util.Optional;
 @Service
 @Schema(description = "租户管理")
 @AllArgsConstructor
-public class TenantService {
-    private final TenantMapper mapper;
+public class TenantService extends ConvertService<TenantMapper, TenantConvert> {
     private final UserMapper userMapper;
     private final TenantRoleMapper tenantRoleMapper;
     private final RoleUserMapper roleUserMapperl;
     private final UserService userService;
-
-    private final TenantConvert tenantConvert;
-
     /**
      * 根据ID批量删除
      */
@@ -66,8 +63,12 @@ public class TenantService {
             this.mapper.deleteByIds(ids);
             // 删除租户所有用户 并踢出去
             List<String> userIds = this.userMapper.selectObjs(Wrappers.<UserEntity>lambdaQuery().select(UserEntity::getId).in(UserEntity::getTenantId, ids));
-            userService.delete((ArrayList<String>) userIds);
+            userService.delete(userIds);
         }
+    }
+
+    public static void main(String[] args) {
+        System.out.println(IdWorker.getId());
     }
 
     /**
@@ -76,26 +77,37 @@ public class TenantService {
     @BizLog(operateType = BizLogCodes.EDIT, description = "编辑租户[{0}]", args = {"param:0.id"})
     @Transactional
     public void edit(TenantAoeBo editBo) {
-        boolean isNew = CharSequenceUtil.isBlank(editBo.getId());
-        String tid = isNew ? IdWorker.getIdStr() : editBo.getId();
+        boolean isNew = (null == editBo.getId() || editBo.getId() == 0);
+        long tid = isNew ? IdWorker.getId() : editBo.getId();
         editBo.setId(tid);
 
-        TenantEntity entity = tenantConvert.boToEntity(editBo);
+        TenantEntity entity = this.converter.boToEntity(editBo);
         if (isNew) {
-            var adminId = IdWorker.getIdStr();
+            var adminId = IdWorker.getId();
             entity.setAdminId(adminId);
             this.mapper.insert(entity);
 
             // 初始化管理员用户
             insertUser(editBo, adminId);
-            // 使用json初始化租户数据
-            initJson(editBo, adminId);
         } else {
             // 租户号只读 不能修改
             entity.setCode(null);
+
+            LambdaQueryWrapper<TenantEntity> wrapper = new LambdaQueryWrapper<>();
+            wrapper.select(TenantEntity::getAuthUserCount);
+            wrapper.eq(TenantEntity::getId, editBo.getId());
+            var orAuthCount = this.mapper.selectOne(wrapper).getAuthUserCount();
+
             this.mapper.updateById(entity);
-            // 锁定超出数量的用户
-            this.mapper.lockExcessUsers(tid, editBo.getAuthUserCount());
+            if (editBo.getAuthUserCount() < orAuthCount){
+                // 授权用户减少 锁定超出数量的用户
+                this.mapper.reGrantUser(tid, editBo.getAuthUserCount(), -1);
+            }
+
+            if(editBo.getAuthUserCount() > orAuthCount){
+                // 授权用户增加 解锁超出的锁定用户
+                this.mapper.reGrantUser(tid, editBo.getAuthUserCount(), 0);
+            }
         }
     }
 
@@ -108,7 +120,7 @@ public class TenantService {
     @BizLog(operateType = BizLogCodes.QUERY, description = "根据id查询租户")
     public TenantDetailVo get(String id) {
         var entity = this.mapper.selectById(id);
-        var vo = tenantConvert.entityToVo(entity);
+        var vo = converter.entityToVo(entity);
 
         // 查询管理员账号
         Optional.ofNullable(userMapper.selectById(entity.getAdminId())).ifPresent(admin -> vo.setAdminAccount(admin.getAccount()));
@@ -133,7 +145,7 @@ public class TenantService {
     @BizLog(operateType = BizLogCodes.UPDATE, description = "切换租户[{0}]状态", args = {"param:0.id"})
     @Transactional
     public void switchStatus(TenantStatusBo bo) {
-        var entity = tenantConvert.boToEntity(bo);
+        var entity = converter.boToEntity(bo);
         this.mapper.updateById(entity);
     }
 
@@ -144,14 +156,14 @@ public class TenantService {
         var wrapper = Wrappers.<TenantEntity>lambdaQuery()
                 .eq(CharSequenceUtil.isNotBlank(editBo.getCode()), TenantEntity::getCode, editBo.getCode())
                 .eq(CharSequenceUtil.isNotBlank(editBo.getName()), TenantEntity::getName, editBo.getName())
-                .ne(CharSequenceUtil.isNotBlank(editBo.getId()), TenantEntity::getId, editBo.getId());
+                .ne(null != editBo.getId() && 0 != editBo.getId(), TenantEntity::getId, editBo.getId());
         return this.mapper.selectCount(wrapper) > 0;
     }
 
     /**
      * 插入用户
      */
-    private void insertUser(TenantAoeBo editBo, String uId) {
+    private void insertUser(TenantAoeBo editBo, Long uId) {
         // 插入用户
         UserEntity user = new UserEntity();
         user.setId(uId);

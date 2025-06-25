@@ -48,7 +48,7 @@ public interface ModuleMapper extends BaseMapper<ModuleEntity> {
      * @param id parentID
      * @return 符合条件的List
      */
-    List<ModuleEntity> listChildren(String id);
+    List<ModuleEntity> listChildren(Long id);
 
     /**
      * 根据用户id查询用户拥有的权限模块列表
@@ -57,7 +57,7 @@ public interface ModuleMapper extends BaseMapper<ModuleEntity> {
      * @return 符合条件的List
      */
     @Ignore
-    List<ModuleEntity> getRoleModuleByUserId(String userId);
+    List<ModuleEntity> getRoleModuleByUserId(Long userId);
 
     /**
      * 根据子节点ID查询父节点信息
@@ -65,7 +65,7 @@ public interface ModuleMapper extends BaseMapper<ModuleEntity> {
      * @param id 子节点ID
      * @return 父节点实体类
      */
-    ModuleEntity getParentById(String id);
+    ModuleEntity getParentById(Long id);
 
     /**
      * 根据子节点ID查询同级节点数量（包含自身）
@@ -73,7 +73,7 @@ public interface ModuleMapper extends BaseMapper<ModuleEntity> {
      * @param id 子节点ID
      * @return 同级节点数量
      */
-    int countPrantLeaf(String id);
+    int countPrantLeaf(Long id);
 
 
     /**
@@ -81,14 +81,14 @@ public interface ModuleMapper extends BaseMapper<ModuleEntity> {
      *
      * @param id parentID
      */
-    Integer listOrder(@Param("pid") String id);
+    Integer listOrder(@Param("pid") Long id);
 
     /**
      * 根据id禁用子节点
      */
-    void disableChild(@Param("id") String id);
+    void disableChild(@Param("id") Long id);
 
-    ModuleEntity selectId(@Param("id") String id);
+    ModuleEntity selectId(@Param("id") Long id);
 
     /**
      * 刷新子节点名称

@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.apache.ibatis.type.JdbcType;
 
 import java.util.List;
 
@@ -19,9 +18,8 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 public abstract class StdMultiEntity<T> extends StdEntity {
 
-    @TableId(type = IdType.ASSIGN_UUID)
-    @TableField(jdbcType = JdbcType.VARCHAR)
-    private String id;
+    @TableId(type = IdType.ASSIGN_ID)
+    private Long id;
 
     @TableField(exist = false)
     @Schema(description = "子表")

@@ -15,10 +15,10 @@ import org.apache.ibatis.type.Alias;
 @Alias("roleModule")
 @TableName("sys_role_module")
 public class RoleModuleEntity {
-    @TableId(type = IdType.ASSIGN_UUID)
-    private String id;
+    @TableId(type = IdType.ASSIGN_ID)
+    private Long id;
 
-    private String roleId;
+    private Long roleId;
 
     private String moduleId;
 

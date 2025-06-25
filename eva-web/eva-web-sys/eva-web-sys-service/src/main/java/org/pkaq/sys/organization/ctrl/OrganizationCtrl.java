@@ -45,7 +45,7 @@ public class OrganizationCtrl extends Ctrl {
     @GetMapping("/get/{id}")
     @Operation(summary = "根据ID获取详情")
     public Response<Object> getOrg(@Parameter(name = "id", description = "组织ID")
-                                   @PathVariable("id") String id) {
+                                   @PathVariable("id") Long id) {
         return success(this.service.getOrg(id));
     }
 

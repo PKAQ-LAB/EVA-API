@@ -18,9 +18,9 @@ public class UserPostBo implements Bo {
 
     @Schema(description = "目标用户ID")
     @NotBlank(message = "{sys.user.grant.userid.required}")
-    private String userId;
+    private Long userId;
 
     @Schema(description = "岗位Id")
     @NotBlank(message = "{sys.user.grant.roleid.required}")
-    private List<String> postIds;
+    private List<Long> postIds;
 }

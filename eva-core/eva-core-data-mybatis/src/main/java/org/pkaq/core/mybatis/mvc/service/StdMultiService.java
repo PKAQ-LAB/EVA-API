@@ -100,12 +100,12 @@ public abstract class StdMultiService<M extends BaseMapper<T>,
      */
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void merge(T entity) {
-        String id = entity.getId();
+        long id = entity.getId();
         // 校验code唯一性
 
-        if (StrUtil.isBlank(id)) {
+        if (0 == id) {
             // 保存主表
-            String mainId = IdWorker.getIdStr();
+            long mainId = IdWorker.getId();
 
             entity.setId(mainId);
             this.mapper.insert(entity);

@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class IdCodeBo implements Bo {
     @NotBlank(message = "{4007}")
-    private String id;
+    private Long id;
 
     @NotBlank(message = "{4007}")
     private String code;

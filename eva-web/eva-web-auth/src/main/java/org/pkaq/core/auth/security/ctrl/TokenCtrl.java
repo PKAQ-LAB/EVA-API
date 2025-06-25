@@ -52,8 +52,8 @@ public class TokenCtrl {
         }
 
         // 获取当前用户 account
-        String uid = jwtUtil.getUid(refreshTk);
-        String account = jwtUtil.getUid(refreshTk);
+        Long uid = jwtUtil.getUid(refreshTk);
+        String account = jwtUtil.getAccount(refreshTk);
         // 签发新 access token
         String new_alpha = jwtUtil.build(evaConfig.getJwt().getAlphaTtl(), uid, account);
 
@@ -77,7 +77,7 @@ public class TokenCtrl {
 
         // 持久化 token
         if (cacheToken) {
-            cacheTokenUtil.saveToken(uid, cacheTokenUtil.buildCacheValue(request, account, new_alpha));
+            cacheTokenUtil.saveToken(uid, cacheTokenUtil.buildCacheValue(request, uid, new_alpha));
         }
 
         var map = Map.of(CommonConstant.ACCESS_TOKEN_KEY, new_alpha,

@@ -20,7 +20,7 @@ public interface TenantRoleMapper extends BaseMapper<TenantRoleEntity> {
    /**
     * 根据角色ID，删除拥有该角色的租户自行创建的角色中的模块资源脏数据
     */
-   void removeRedundantModulesForTenantByRoleId(@Param("id") String roleId);
+   void removeRedundantModulesForTenantByRoleId(@Param("id") Long roleId);
 
    /**
     * 根据角色id和租户id 删除该租户创建的角色中多余的模块
@@ -28,5 +28,5 @@ public interface TenantRoleMapper extends BaseMapper<TenantRoleEntity> {
     * @param roleId 角色id
     *
     */
-   void removeRedundantModulesForTenant(@Param("id")String id, @Param("roleId") String roleId);
+   void removeRedundantModulesForTenant(@Param("id")Long id, @Param("roleId") Long roleId);
 }

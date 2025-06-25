@@ -10,7 +10,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum DelEnumm {
     // 未删除
-    UN_DELETED("0000");
+    UN_DELETED(0);
 
-    private final String code;
+    private final int code;
 }

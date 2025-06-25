@@ -14,9 +14,8 @@ import java.time.LocalDateTime;
  */
 @Data
 public abstract class StdEntity implements Entity {
-    @TableId(type = IdType.ASSIGN_UUID)
-    @TableField(jdbcType = JdbcType.VARCHAR)
-    private String id;
+    @TableId(type = IdType.ASSIGN_ID)
+    private Long id;
 
     /** 乐观锁 **/
     @Version
@@ -35,11 +34,11 @@ public abstract class StdEntity implements Entity {
     private double sort;
 
     /** 租户id **/
-    private String tenantId;
+    private Long tenantId;
 
     /** 创建人Id **/
     @TableField(fill = FieldFill.INSERT, jdbcType = JdbcType.VARCHAR)
-    private String createId;
+    private Long createId;
 
     /** 创建人 **/
     @TableField(fill = FieldFill.INSERT, jdbcType = JdbcType.VARCHAR)
@@ -51,7 +50,7 @@ public abstract class StdEntity implements Entity {
 
     /** 修改人Id **/
     @TableField(fill = FieldFill.INSERT_UPDATE, jdbcType = JdbcType.VARCHAR)
-    private String modifyId;
+    private Long modifyId;
 
     /** 修改人 **/
     @TableField(fill = FieldFill.INSERT_UPDATE, jdbcType = JdbcType.VARCHAR)

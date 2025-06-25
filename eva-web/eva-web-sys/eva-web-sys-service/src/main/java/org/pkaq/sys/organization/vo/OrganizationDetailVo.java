@@ -17,7 +17,6 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 @Schema(title = "组织管理列表vo")
 public class OrganizationDetailVo extends StdVo {
-    private String id;
 
     @Schema(description = "组织名称")
     private String name;
@@ -37,11 +36,6 @@ public class OrganizationDetailVo extends StdVo {
     @Schema(description = "子节点")
     private List<OrganizationDetailVo> children;
 
-    /**
-     * TreeSelect组件需要为一个key
-     */
-    @Schema(description = "key")
-    private String key;
 
     /**
      * TreeSelect组件指定treeNodeLabelProp无法生效 仍然按默认title属性读取 这里添加title返回
@@ -49,7 +43,7 @@ public class OrganizationDetailVo extends StdVo {
     @Schema(description = "title")
     private String title;
 
-    public String getKey() {
+    public Long getKey() {
         return this.getId();
     }
 
@@ -57,7 +51,7 @@ public class OrganizationDetailVo extends StdVo {
         return this.name;
     }
 
-    public String getValue() {
+    public Long getValue() {
         return this.getId();
     }
 
