@@ -2,52 +2,16 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.pkaq.sys.tenant.mapper.TenantMapper">
 
-    <select id="listPage" resultType="tech.yunyue.sys.tenant.vo.TenantListVo">
-        select
-        t.id,t.name,t.code,t.type,
-        t.full_name fullName,
-        t.card_type cardType,
-        t.id_card idCard,
-        t.contact_name contactName,
-        t.contact_tel contactTel,
-        t.auth_user_count authUserCount,
-        t.expiration_date expirationDate,
-        t.status,
-        t.remark,
-        r.id roleId,
-        r.name roleName
-        from sys_tenant t
-        left join sys_tenant_role tr on t.id = tr.tenant_id
-        left join sys_role r on tr.role_id = r.id
-        where
-            t.<include refid="common.deletedSQL"/>
-            <if test="q != null">
-                <if test="@cn.hutool.core.text.CharSequenceUtil@isNotBlank(q.name)">
-                    <bind name="rNameLike" value="'%'+q.name+'%'"/>
-                    AND t.name LIKE #{rNameLike}
-                </if>
-                <if test="@cn.hutool.core.text.CharSequenceUtil@isNotBlank(q.code)">
-                    <bind name="rCodeLike" value="'%'+q.code+'%'"/>
-                    AND t.code LIKE #{rCodeLike}
-
-                </if>
-                <if test="@cn.hutool.core.text.CharSequenceUtil@isNotBlank(q.idCard)">
-                    <bind name="rCardLike" value="'%'+q.idCard+'%'"/>
-                    AND t.id_card LIKE #{rCardLike}
-                </if>
-                <if test="@cn.hutool.core.text.CharSequenceUtil@isNotBlank(q.contactName)">
-                    <bind name="rCNameLike" value="'%'+q.contactName+'%'"/>
-                    AND t.contact_name LIKE #{rCNameLike}
-                </if>
-            </if>
-    </select>
-
     <!--    锁定超出数量的用户-->
     <update id="reGrantUser">
         WITH SORTED_USERS AS (
             SELECT ID
             FROM SYS_USER
             WHERE TENANT_ID = #{tid}
+                  and
+                  <include refid="common.avalibleSQL">
+                      <property name="prefix" value="SYS_USER" />
+                  </include>
             ORDER BY UTC_MODIFY DESC
             <choose>
                 <when test="_databaseId =='mysql'">
@@ -61,6 +25,59 @@
         UPDATE SYS_USER
             JOIN SORTED_USERS ON SYS_USER.ID = SORTED_USERS.ID
         SET SYS_USER.FROZEN = #{frz}
-        WHERE SYS_USER.FROZEN IS NULL OR SYS_USER.FROZEN != 1
+        WHERE (SYS_USER.FROZEN IS NULL OR SYS_USER.FROZEN != 1)
+            and
+            <include refid="common.avalibleSQL">
+                <property name="prefix" value="SYS_USER" />
+            </include>
+    </update>
+
+    <!-- 冻结已被冻结的租户对应的用户 -->
+    <update id="frozenUser" >
+        UPDATE SYS_USER u
+            JOIN SYS_TENANT t ON u.tenant_id = t.id
+        SET u.frozen = 1
+        WHERE t.frozen = 1
+          AND u.tenant_id IN
+            <foreach collection="ids" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+          AND
+            <include refid="common.avalibleSQL">
+                <property name="prefix" value="u" />
+            </include>
+    </update>
+
+    <!-- 解冻已被冻结的租户对应的用户 -->
+    <update id="unfronzenUser">
+        WITH ordered_users AS (
+            SELECT
+                u.id,
+                u.tenant_id,
+                u.frozen,
+                t.auth_user_count,
+                ROW_NUMBER() OVER (PARTITION BY u.tenant_id ORDER BY u.create_time ASC) AS rn
+            FROM sys_user u
+                JOIN sys_tenant t ON u.tenant_id = t.id
+            WHERE
+                u.tenant_id IN
+                <foreach collection="ids" item="id" index="index" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+                AND
+                <include refid="common.avalibleSQL">
+                    <property name="prefix" value="u" />
+                </include>
+        )
+        UPDATE sys_user u
+            JOIN ordered_users o ON u.id = o.id
+        SET u.frozen = 0
+        WHERE o.rn &lt;= o.auth_user_count
+            AND u.frozen != -1
+            AND u.frozen != 0
+            AND
+                <include refid="common.avalibleSQL">
+                    <property name="prefix" value="u" />
+                </include>
     </update>
 </mapper>

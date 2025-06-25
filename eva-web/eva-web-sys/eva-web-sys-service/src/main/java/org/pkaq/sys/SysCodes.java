@@ -11,9 +11,8 @@ import org.pkaq.core.exception.BizAssert;
 @Getter
 public enum SysCodes implements BizAssert {
     /**
-     * 用户相关 010x
+     * 用户相关 0100x
      **/
-
     ACCOUNT_ALREADY_EXIST("账户名已存在", "0x000-01000"),
     BAD_ORG_PASSWORD("原密码校验失败", "0x000-01001"),
     CANNOT_FIND_USER("权限不足或无法查询到该用户", "0x000-01002"),
@@ -21,6 +20,12 @@ public enum SysCodes implements BizAssert {
     CODE_ALREADY_EXIST("编码已存在", "0x000-01005"),
     ACCOUNT_OR_CODE_ALREADY_EXIST("账户名或者编码已存在", "0x000-01006"),
     USER_ACCOUNT_LIMIT("用户超出授权数量", "0x000-01007" ),
+    /**
+     * 租户相关 0100x
+     **/
+    TENANT_CODE_ALREADY_EXIST("编码已存在", "0x000-02000"),
+    TENANT_NAME_ALREADY_EXIST("名称已存在", "0x000-02001"),
+    TENANT_CODE_OR_NAME_ALREADY_EXIST("名称已存在", "0x000-02001"),
 
     DICT_CODE_EXISTS("字典编码已经存在","0x0000-10001"),
     FILE_TYPE_ERROR("文件上传格式有误，请选择支持的格式", "0x0001-00001"),

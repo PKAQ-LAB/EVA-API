@@ -223,9 +223,4 @@ public class DictService extends StdService<DictMapper, DictEntity, DictConvert>
         dictCacheHelper.removeAll();
         this.init(dictMap);
     }
-
-    @Override
-    protected Convert<DictEntity> getConvert() {
-        return this.dictConvert;
-    }
 }

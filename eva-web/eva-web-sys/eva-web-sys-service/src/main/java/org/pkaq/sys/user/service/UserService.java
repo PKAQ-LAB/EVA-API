@@ -214,4 +214,14 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
         }
         return this.mapper.selectCount(entityWrapper) > 0;
     }
+
+
+    @BizLog(operateType = BizLogCodes.EDIT, description = "创建了租户管理员[{0}]", args = {"param:0.id"})
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public void createTenantAdmin(UserEntity user) {
+        String pwd = user.getPassword();
+               pwd = BCrypt.hashpw(pwd);
+               user.setPassword(pwd);
+        this.mapper.insert(user);
+    }
 }

@@ -1,4 +1,4 @@
-package org.pkaq.sys.user.bo;
+package org.pkaq.sys.tenant.bo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -10,8 +10,8 @@ import org.pkaq.core.mvc.bo.Bo;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@Schema(title = "账户编码唯一校验Bo")
-public class UserCheckBo implements Bo {
+@Schema(title = "租户编码/名称校验bo")
+public class TenantCheckBo implements Bo {
 
     @Schema(description = "ID")
     private Long id;
@@ -19,6 +19,6 @@ public class UserCheckBo implements Bo {
     @Schema(description = "编号")
     private String code;
 
-    @Schema(description = "账号")
-    private String account;
+    @Schema(description = "名称")
+    private String name;
 }

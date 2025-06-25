@@ -360,9 +360,4 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity, Module
 
         return urv;
     }
-
-    @Override
-    protected Convert<ModuleEntity> getConvert() {
-        return this.moduleConvert;
-    }
 }

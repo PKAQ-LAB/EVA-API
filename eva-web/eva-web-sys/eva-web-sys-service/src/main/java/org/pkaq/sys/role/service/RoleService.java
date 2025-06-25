@@ -10,7 +10,7 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.mvc.convert.Convert;
-import org.pkaq.core.mybatis.enums.FrozenEnumm;
+import org.pkaq.core.enums.FrozenEnumm;
 import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.core.mybatis.util.PageResult;
 import org.pkaq.core.threaduser.ThreadUserHelper;
@@ -300,10 +300,5 @@ public class RoleService extends StdService<RoleMapper, RoleEntity, RoleConvert>
                 this.roleUserMapper.insert(user);
             }
         }
-    }
-
-    @Override
-    protected Convert<RoleEntity> getConvert() {
-        return this.roleConvert;
     }
 }

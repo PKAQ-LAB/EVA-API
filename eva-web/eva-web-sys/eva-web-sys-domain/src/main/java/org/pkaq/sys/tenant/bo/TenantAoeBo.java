@@ -1,6 +1,5 @@
 package org.pkaq.sys.tenant.bo;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -9,7 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.pkaq.core.mvc.bo.StdBo;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * 租户管理-详情-请求参数
@@ -49,7 +48,7 @@ public class TenantAoeBo extends StdBo {
     @Schema(description = "证件号")
     @Size(max = 30, message = "{validate.length.max}")
     @NotBlank
-    private String idCard;
+    private String cardNo;
 
     @Schema(description = "联系人")
     @Size(max = 40, message = "{validate.length.max}")
@@ -66,8 +65,7 @@ public class TenantAoeBo extends StdBo {
 
     @Schema(description = "到期时间")
     @NotNull
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date expirationDate;
+    private LocalDateTime expirationDate;
 
     @Schema(description = "租户管理员账号")
     @NotNull

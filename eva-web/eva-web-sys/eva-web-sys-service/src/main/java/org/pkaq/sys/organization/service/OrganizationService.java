@@ -182,9 +182,4 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
         //TODO 优化逻辑
         //this.mapper.switchStatus(organization);
     }
-
-    @Override
-    protected Convert<OrganizationEntity> getConvert() {
-        return null;
-    }
 }

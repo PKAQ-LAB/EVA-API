@@ -92,10 +92,10 @@
                     TENANT_ID, COUNT(*) AS USER_COUNT
                 FROM SYS_USER
                     WHERE
-                        <include refid="common.deletedSQL"/> and TENANT_ID = #{tid}
+                        <include refid="common.avalibleSQL"/> and TENANT_ID = #{tid}
                 GROUP BY TENANT_ID
         ) U ON U.TENANT_ID = T.ID
                 WHERE
-                    <include refid="common.deletedSQL"/> and T.ID = #{tid}
+                    <include refid="common.avalibleSQL"/> and T.ID = #{tid}
     </select>
 </mapper>

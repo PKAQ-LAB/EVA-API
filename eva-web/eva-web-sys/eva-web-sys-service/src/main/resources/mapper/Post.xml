@@ -20,7 +20,7 @@
         <choose>
             <when test="q != null">
                 <where>
-                    AND y.<include refid="common.deletedSQL"/>
+                    AND y.<include refid="common.avalibleSQL"/>
                     <if test="q.title!=null and q.title !=''">
                         AND y.TITLE like concat('%',#{q.title},'%')
                     </if>

@@ -1,4 +1,4 @@
-package org.pkaq.core.mybatis.enums;
+package org.pkaq.core.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

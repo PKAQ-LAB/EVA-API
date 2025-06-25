@@ -1,8 +1,10 @@
 package org.pkaq.core.mybatis.mvc.service;
 
+import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import org.pkaq.core.codes.CommonCodes;
@@ -13,6 +15,7 @@ import org.pkaq.core.mvc.bo.IdCodeBo;
 import org.pkaq.core.mvc.bo.PageBo;
 import org.pkaq.core.mvc.convert.Convert;
 import org.pkaq.core.mvc.vo.PageVo;
+import org.pkaq.core.mvc.vo.SingleArray;
 import org.pkaq.core.mvc.vo.Vo;
 import org.pkaq.core.mybatis.mvc.entity.StdEntity;
 import org.pkaq.core.mybatis.util.PageResult;
@@ -36,9 +39,33 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity, C
     @Autowired
     protected C convert;
 
-    protected abstract Convert<T> getConvert();
+    /**
+     * 切换锁定状态
+     * @param ids
+     */
+    @BizLog(operateType = BizLogCodes.EDIT, description = "切换状态 [{0}]", args = {"param:0"})
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public void switchFrozen(SingleArray<Long> ids){
+        if (null == ids || ids.getParam() == null) {
+            CommonCodes.PARAM_ERROR.newException();
+        }
 
+        UpdateWrapper<T> updateWrapper = new UpdateWrapper<>();
+        updateWrapper
+                .in("id", ids)
+                .setSql("frozen = abs(frozen - 1)")
+                .ne("frozen", -1);
+
+        this.mapper.update(updateWrapper);
+    }
+    /**
+     * 校验编码唯一性
+     */
     public boolean isUnique(IdCodeBo idCodeBo){
+        if (null == idCodeBo || idCodeBo.getId() == null) {
+            CommonCodes.PARAM_ERROR.newException();
+        }
+
         QueryWrapper<T> wrapper = new QueryWrapper<>();
         wrapper.eq("code", idCodeBo.getCode());
 
@@ -52,11 +79,15 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity, C
      */
     @BizLog(operateType = BizLogCodes.QUERY, description = "根据id查询")
     public <V extends Vo> V get(long id) {
+        if (0 == id) {
+            CommonCodes.PARAM_ERROR.newException();
+        }
+
         var entity = this.mapper.selectById(id);
         if (entity == null) {
             CommonCodes.CAN_NOT_FIND_RECORD.newException(id);
         }
-        return this.getConvert().entityToDetailVo(entity);
+        return this.convert.entityToDetailVo(entity);
     }
 
     /**
@@ -64,7 +95,11 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity, C
      */
     @BizLog(operateType = BizLogCodes.QUERY, description = "查询了的记录条数")
     protected Long count(Bo bo) {
-        var entity = this.getConvert().boToEntity(bo);
+        if (null == bo) {
+            CommonCodes.PARAM_ERROR.newException();
+        }
+
+        var entity = this.convert.boToEntity(bo);
         Wrapper<T> wrapper = Wrappers.lambdaQuery(entity);
         return this.mapper.selectCount(wrapper);
     }
@@ -74,7 +109,11 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity, C
      */
     @BizLog(operateType = BizLogCodes.QUERY, description = "根据条件获取一条记录")
     protected Vo get(Bo bo) {
-        var entity = this.getConvert().boToEntity(bo);
+        if (null == bo) {
+            CommonCodes.PARAM_ERROR.newException();
+        }
+
+        var entity = this.convert.boToEntity(bo);
         Wrapper<T> wrapper = Wrappers.lambdaQuery(entity);
         var e = this.mapper.selectOne(wrapper);
         if (e == null) {
@@ -89,7 +128,10 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity, C
     @BizLog(operateType = BizLogCodes.EDIT, description = "保存记录[{0}]", args = {"param:0.id"})
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void merge(Bo bo) {
-        var entity = this.getConvert().boToEntity(bo);
+        if (null == bo) {
+            CommonCodes.PARAM_ERROR.newException();
+        }
+        var entity = this.convert.boToEntity(bo);
         this.mapper.insertOrUpdate(entity);
     }
 
@@ -98,28 +140,35 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity, C
      */
     @BizLog(operateType = BizLogCodes.QUERY, description = "根据条件查询记录")
     public List<? extends Vo> list(Bo bo) {
-        var entity = this.getConvert().boToEntity(bo);
+        if (null == bo) {
+            CommonCodes.PARAM_ERROR.newException();
+        }
+        var entity = this.convert.boToEntity(bo);
 
         LambdaQueryWrapper<T> wrapper = Wrappers.lambdaQuery();
         wrapper.orderByDesc(T::getModifyBy);
         wrapper.setEntity(entity);
 
-        return this.getConvert().entityToListVo(this.mapper.selectList(wrapper));
+        return this.convert.entityToListVo(this.mapper.selectList(wrapper));
     }
 
     /**
      * 按分页查询
      */
     @BizLog(operateType = BizLogCodes.QUERY, description = "分页查询记录")
-    public PageVo<Vo> listPage(PageBo pageBo) {
-        var entity = this.getConvert().boToEntity(pageBo);
+    public <V extends Vo> PageVo<V> listPage(PageBo pageBo) {
+        if (null == pageBo) {
+            CommonCodes.PARAM_ERROR.newException();
+        }
+
+        var entity = this.convert.boToEntity(pageBo);
 
         LambdaQueryWrapper<T> wrapper = Wrappers.lambdaQuery();
         wrapper.setEntity(entity);
         wrapper.orderByDesc(T::getUtcModify);
 
         PageResult<T> pagination = new PageResult<>(pageBo.getPageNo(), pageBo.getPageSize());
-        return this.mapper.selectPage(pagination, wrapper).map(this.getConvert()::entityToListVo);
+        return this.mapper.selectPage(pagination, wrapper).map(this.convert::entityToListVo);
     }
 
     /**
@@ -128,6 +177,10 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity, C
     @BizLog(operateType = BizLogCodes.DELETE, description = "删除记录[{0}]", args = {"param:0"})
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void delete(List<Long> param) {
+        if (CollUtil.isNotEmpty(param)) {
+            CommonCodes.PARAM_ERROR.newException();
+        }
+
         this.mapper.deleteByIds(param);
     }
 }

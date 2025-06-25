@@ -18,11 +18,14 @@
         <result property="remark" column="remark"/>
     </resultMap>
     <!-- 删除片段 -->
+    <sql id="avalibleSQL">
+        ${prefix}.deleted = 0 OR ${prefix}.deleted IS NULL
+    </sql>
     <sql id="deletedSQL">
-        DELETED is null or DELETED = 0
+        DELETED > 0
     </sql>
     <!-- 非冻结片段 -->
     <sql id="unFrozenSQL">
-        frozen != 1
+        FROZEN != 1
     </sql>
 </mapper>

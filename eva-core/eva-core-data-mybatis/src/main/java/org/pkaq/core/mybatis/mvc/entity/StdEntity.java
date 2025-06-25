@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import org.apache.ibatis.type.JdbcType;
 import org.pkaq.core.mvc.entity.Entity;
+import org.pkaq.core.enums.FrozenEnumm;
 
 import java.time.LocalDateTime;
 
@@ -28,7 +29,7 @@ public abstract class StdEntity implements Entity {
     private long deleted;
 
     /** 是否冻结（0 - 未冻结，1 - 冻结， -1 - 不可编辑） **/
-    private int frozen;
+    private FrozenEnumm frozen;
 
     /** 展示顺序 **/
     private double sort;

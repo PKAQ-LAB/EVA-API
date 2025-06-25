@@ -36,9 +36,9 @@ public enum CommonCodes implements BizAssert {
     /**
      * 请求失败 400x
      **/
+    PARAM_LOST("请求参数丢失", "0x0400-00001"),
     TOKEN_NOT_VERIFY("Token校验异常", "4000"),
-    PARAM_ERROR("请求参数错误", "4006"),
-    PARAM_LOST("请求参数丢失", "4007"),
+    PARAM_ERROR("请求参数错误", "0x0400-00002"),
     PARAM_TYPEERROR("参数类型错误 ", "4008"),
     PARAM_LENGTH("参数长度错误", "4009"),
 

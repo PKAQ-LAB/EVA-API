@@ -1,6 +1,7 @@
 package org.pkaq.core.mvc.vo;
 
 import lombok.Data;
+import org.pkaq.core.enums.FrozenEnumm;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,5 +13,5 @@ import java.util.ArrayList;
 @Data
 public class SingleArray<T> implements Serializable {
     private ArrayList<T> param;
-    private String status;
+    private FrozenEnumm status;
 }

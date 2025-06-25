@@ -26,7 +26,7 @@ public interface UserMapper extends BaseMapper<UserEntity> {
      * 查询用户信息
      */
     @Ignore
-    IPage<UserListVo> getUerWithRoleId(IPage page, @Param("user") UserAoeBo user);
+    IPage<UserListVo> getUerWithRoleId(IPage<UserEntity> page, @Param("user") UserAoeBo user);
 
     /**
      * 根据用户account 获取包含权限列表的用户信息
@@ -42,15 +42,11 @@ public interface UserMapper extends BaseMapper<UserEntity> {
 
     /**
      * 切换锁定状态
-     *
-     * @param ids
      */
     void change(List<Long> ids);
 
     /**
      * 查询剩余可用授权用户数
-     * @param tid
-     * @return
      */
     int availableCounts(long tid);
 }
