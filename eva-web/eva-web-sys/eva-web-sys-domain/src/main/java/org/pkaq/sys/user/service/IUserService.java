@@ -16,15 +16,15 @@ import java.util.List;
 public interface IUserService {
     void repwd(RePwdBo rePwdBo);
 
-    void delete(List<String> param);
+    void delete(List<Long> param);
 
     List<UserListVo> listUser(UserQueryBo queryBo);
 
     PageVo<UserListVo> listPage(UserQueryBo queryBo);
 
-    void updateUser(List<String> ids);
+    void updateUser(List<Long> ids);
 
-    UserDetailVo getUser(String id);
+    UserDetailVo getUser(Long id);
 
     void saveUser(UserAoeBo user);
 

@@ -45,7 +45,7 @@ public interface UserMapper extends BaseMapper<UserEntity> {
      *
      * @param ids
      */
-    void change(List<String> ids);
+    void change(List<Long> ids);
 
     /**
      * 查询剩余可用授权用户数

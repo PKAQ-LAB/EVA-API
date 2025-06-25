@@ -74,7 +74,7 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
     @BizLog(operateType = BizLogCodes.DELETE, description = "删除了用户", args = {"param:0"})
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     @Override
-    public void delete(List<String> param) {
+    public void delete(List<Long> param) {
         this.mapper.deleteByIds(param);
     }
 
@@ -106,7 +106,7 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
      * 解锁/锁定用户
      */
     @Override
-    public void updateUser(List<String> ids) {
+    public void updateUser(List<Long> ids) {
         if (CollUtil.isEmpty(ids)) {
             CommonCodes.NULL_ID.newException();
         }
@@ -120,7 +120,7 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
      * @return 符合条件的用户对象
      */
     @Override
-    public UserDetailVo getUser(String id) {
+    public UserDetailVo getUser(Long id) {
         var user = this.mapper.selectById(id);
         if (null == user) {
             SysCodes.CANNOT_FIND_USER.newException();
@@ -209,7 +209,7 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
                         .or()
                         .eq(UserEntity::getCode, user.getCode()));
 
-        if (CharSequenceUtil.isNotBlank(user.getId())) {
+        if (null != user.getId() && user.getId() != 0) {
             entityWrapper.ne(UserEntity::getId, user.getId());
         }
         return this.mapper.selectCount(entityWrapper) > 0;

@@ -47,9 +47,9 @@ public class UserListVo implements Vo {
     private Date lastLogin;
 
     @Schema(description = "所属岗位")
-    private List<String> postId;
+    private List<Long> postId;
 
     @Schema(description = "所属部门")
-    private String deptId;
+    private Long deptId;
 
 }

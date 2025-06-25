@@ -1,7 +1,6 @@
 package org.pkaq.sys.user.bo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.pkaq.core.mvc.bo.Bo;
@@ -15,7 +14,7 @@ import org.pkaq.core.mvc.bo.Bo;
 public class UserCheckBo implements Bo {
 
     @Schema(description = "ID")
-    private String id;
+    private Long id;
 
     @Schema(description = "编号")
     private String code;

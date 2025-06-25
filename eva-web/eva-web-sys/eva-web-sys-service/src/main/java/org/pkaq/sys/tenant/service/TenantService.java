@@ -57,12 +57,12 @@ public class TenantService extends ConvertService<TenantMapper, TenantConvert> {
      */
     @BizLog(operateType = BizLogCodes.DELETE, description = "删除租户[{0}]", args = {"param:0"})
     @Transactional
-    public void delete(List<String> ids) {
+    public void delete(List<Long> ids) {
         // 删除租户
         if (CollUtil.isNotEmpty(ids)) {
             this.mapper.deleteByIds(ids);
             // 删除租户所有用户 并踢出去
-            List<String> userIds = this.userMapper.selectObjs(Wrappers.<UserEntity>lambdaQuery().select(UserEntity::getId).in(UserEntity::getTenantId, ids));
+            List<Long> userIds = this.userMapper.selectObjs(Wrappers.<UserEntity>lambdaQuery().select(UserEntity::getId).in(UserEntity::getTenantId, ids));
             userService.delete(userIds);
         }
     }

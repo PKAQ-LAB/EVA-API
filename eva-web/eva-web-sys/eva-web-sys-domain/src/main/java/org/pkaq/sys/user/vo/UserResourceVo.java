@@ -15,9 +15,9 @@ import java.util.List;
 @Schema(title = "用户拥有的模块")
 public class UserResourceVo implements Vo {
 
-    private String id;
+    private Long id;
 
-    private String pid;
+    private Long pid;
 
     @Schema(description = "模块路由url")
     private String routeurl;

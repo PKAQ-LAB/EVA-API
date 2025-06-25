@@ -63,7 +63,7 @@ public class UserCtrl extends Ctrl {
     @PostMapping("/del")
     @Operation(summary = "根据ID删除/批量删除记录")
     public Response<Object> del(@Parameter(name = "ids", description = "[记录ID]")
-                                @RequestBody @Valid SingleArrayBo<String> ids) {
+                                @RequestBody @Valid SingleArrayBo<Long> ids) {
         // 参数非空校验
         CommonCodes.NULL_ID.assertNotNull(ids);
 
@@ -97,14 +97,14 @@ public class UserCtrl extends Ctrl {
     @GetMapping("/get/{id}")
     @Operation(summary = "根据ID获得记录信息")
     public Response<Object> get(@Parameter(name = "id", description = "记录ID")
-                                @PathVariable("id") String id) {
+                                @PathVariable("id") Long id) {
         return this.success(this.service.getUser(id));
     }
 
     @PostMapping("/switch")
     @Operation(summary = "锁定/解锁")
     public Response<Object> change(@Parameter(name = "param", description = "用户[id]")
-                                   @RequestBody SingleArrayBo<String> param) {
+                                   @RequestBody SingleArrayBo<Long> param) {
         // 参数非空校验
         CommonCodes.NULL_ID.assertNotNull(param.getParam());
 

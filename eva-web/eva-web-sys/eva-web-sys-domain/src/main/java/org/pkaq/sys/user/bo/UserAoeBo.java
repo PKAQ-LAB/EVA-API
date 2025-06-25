@@ -55,7 +55,7 @@ public class UserAoeBo extends StdBo {
     private List<Long> postId = new ArrayList<>();
 
     @Schema(description = "所属部门")
-    private String deptId;
+    private Long deptId;
 
     @Schema(description = "用户拥有的角色")
     private List<Long> roleIds = new ArrayList<>();

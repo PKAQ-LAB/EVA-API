@@ -77,9 +77,8 @@ public class TenantCtrl extends Ctrl {
     @PostMapping("/del")
     @Operation(summary = "根据ID删除/批量删除记录")
     public Response<Object> del(@Parameter(name = "ids", description = "[记录ID]")
-                                @RequestBody SingleArray<String> ids) {
+                                @RequestBody SingleArray<Long> ids) {
         // 参数非空校验
-        CommonCodes.NULL_ID.assertNotNull(ids);
         CommonCodes.NULL_ID.assertNotNull(ids.getParam());
         this.service.delete(ids.getParam());
         return this.success();

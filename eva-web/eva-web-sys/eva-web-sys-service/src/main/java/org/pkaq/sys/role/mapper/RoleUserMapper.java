@@ -23,5 +23,5 @@ public interface RoleUserMapper extends BaseMapper<RoleUserEntity> {
      * @param id
      * @return
      */
-    List<String> selectRoleIds(String id);
+    List<Long> selectRoleIds(Long id);
 }
