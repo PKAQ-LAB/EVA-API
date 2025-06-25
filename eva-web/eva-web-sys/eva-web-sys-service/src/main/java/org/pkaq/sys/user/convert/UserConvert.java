@@ -1,8 +1,10 @@
 package org.pkaq.sys.user.convert;
 
 import org.mapstruct.Mapper;
+import org.pkaq.core.mvc.bo.Bo;
 import org.pkaq.core.mvc.convert.Convert;
 import org.pkaq.core.mvc.convert.MapConvertConfig;
+import org.pkaq.core.mvc.vo.Vo;
 import org.pkaq.sys.user.bo.UserAoeBo;
 import org.pkaq.sys.user.bo.UserQueryBo;
 import org.pkaq.sys.user.entity.UserEntity;
@@ -15,15 +17,18 @@ import java.util.List;
  * @author PKAQ
  */
 @Mapper(config = MapConvertConfig.class)
-public interface UserConvert extends Convert {
+public interface UserConvert extends Convert<UserEntity> {
 
+    @Override
     UserListVo entityToListVo(UserEntity entity);
 
     UserEntity boToEntity(UserAoeBo bo);
 
-    UserEntity queryBoToEntity(UserQueryBo queryBo);
+    UserEntity boToEntity(UserQueryBo queryBo);
 
-    List<UserListVo> entityListToVoList(List<UserEntity> list);
+    @Override
+    List<UserListVo> entityToListVo(List<UserEntity> list);
 
-    UserDetailVo entityToDetilVo(UserEntity user);
+    @Override
+    UserDetailVo entityToDetailVo(UserEntity user);
 }

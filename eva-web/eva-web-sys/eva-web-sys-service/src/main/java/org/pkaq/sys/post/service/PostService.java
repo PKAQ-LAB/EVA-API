@@ -99,7 +99,7 @@ public class PostService extends ConvertService<PostMapper, PostConvert> {
             SysCodes.DELETE_LIMIT.newException();
         }
 
-        // 查询所删除ID
+        // 查询所删除IDaoeBoToEntity
         LambdaQueryWrapper<PostEntity> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.in(PostEntity::getId, param);
 

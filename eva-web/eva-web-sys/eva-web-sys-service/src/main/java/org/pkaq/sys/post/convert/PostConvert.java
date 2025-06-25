@@ -11,7 +11,7 @@ import org.pkaq.sys.post.vo.PostDetailVo;
  * @author PKAQ
  */
 @Mapper(config = MapConvertConfig.class)
-public interface PostConvert extends Convert {
+public interface PostConvert extends Convert<PostEntity> {
     PostEntity aoeBoToEntity(PostAoeBo bo);
 
     PostDetailVo entityToDetailVo(PostEntity entity);

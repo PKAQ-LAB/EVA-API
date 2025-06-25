@@ -13,7 +13,8 @@ import org.pkaq.core.exception.BizAssert;
 @Getter
 @AllArgsConstructor
 public enum CommonCodes implements BizAssert {
-    SERVER_ERROR("服务器发生错误,请联系管理员", "0x00-0500"),
+    SERVER_ERROR("服务器发生错误,请联系管理员", "0x000-00000"),
+    CAN_NOT_FIND_RECORD("无法找到指定记录 [{0}]", "0x000-02001"),
     CHILD_EXIST("[{0}] 存在子节点，无法删除", "4302"),
     NULL_ID("所需记录ID为空值", "0x001"),
     NULL_PARAM_ID("所需记录 [ {0} ] 为空值", "0x002"),

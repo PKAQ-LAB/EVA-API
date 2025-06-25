@@ -22,7 +22,7 @@ public class StdTreeVo extends StdVo {
     private String name;
 
     @Schema(description = "上级节点id")
-    private String pid;
+    private Long pid;
 
     @Schema(description = "路径")
     private String path;

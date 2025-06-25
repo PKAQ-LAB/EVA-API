@@ -6,6 +6,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.mvc.bo.SingleArrayBo;
+import org.pkaq.core.mvc.convert.Convert;
 import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.organization.bo.OrganizationAoeBo;
@@ -27,7 +28,7 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor
-public class OrganizationService extends StdService<OrganizationMapper, OrganizationEntity> {
+public class OrganizationService extends StdService<OrganizationMapper, OrganizationEntity, OrganizationConvert> {
     private final OrganizationConvert organizationConvert;
     /**
      * 查询组织结构树
@@ -147,7 +148,7 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
      * @return 组织信息
      */
     public OrganizationDetailVo getOrg(long id) {
-        return this.organizationConvert.entityToDetailVo(this.get(id));
+        return this.get(id);
     }
 
     /**
@@ -182,4 +183,8 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
         //this.mapper.switchStatus(organization);
     }
 
+    @Override
+    protected Convert<OrganizationEntity> getConvert() {
+        return null;
+    }
 }

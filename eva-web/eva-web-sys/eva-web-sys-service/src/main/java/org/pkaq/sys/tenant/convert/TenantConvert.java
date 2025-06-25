@@ -1,7 +1,6 @@
 package org.pkaq.sys.tenant.convert;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.ReportingPolicy;
 import org.pkaq.core.mvc.convert.Convert;
 import org.pkaq.core.mvc.convert.MapConvertConfig;
 import org.pkaq.sys.tenant.bo.TenantAoeBo;
@@ -13,7 +12,7 @@ import org.pkaq.sys.tenant.vo.TenantDetailVo;
  * @author PKAQ
  */
 @Mapper(config = MapConvertConfig.class)
-public interface TenantConvert extends Convert {
+public interface TenantConvert extends Convert<TenantEntity> {
 
     TenantEntity boToEntity(TenantAoeBo bo);
 

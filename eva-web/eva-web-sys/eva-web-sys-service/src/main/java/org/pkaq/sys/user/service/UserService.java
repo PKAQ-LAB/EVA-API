@@ -84,11 +84,11 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
     @BizLog(operateType = BizLogCodes.QUERY, description = "查询了用户列表")
     @Override
     public List<UserListVo> listUser(UserQueryBo queryBo) {
-        UserEntity user = this.converter.queryBoToEntity(queryBo);
+        UserEntity user = this.converter.boToEntity(queryBo);
         LambdaQueryWrapper<UserEntity> wrapper = Wrappers.lambdaQuery();
         wrapper.setEntity(user);
         wrapper.orderByDesc(UserEntity::getModifyBy);
-        return this.converter.entityListToVoList(this.mapper.selectList(wrapper));
+        return this.converter.entityToListVo(this.mapper.selectList(wrapper));
     }
     /**
      * 列表查询 - 分页
@@ -97,7 +97,7 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
     @Override
     public PageVo<UserListVo> listPage(UserQueryBo queryBo) {
         LambdaQueryWrapper<UserEntity> wrapper = Wrappers.lambdaQuery();
-        wrapper.setEntity(this.converter.queryBoToEntity(queryBo));
+        wrapper.setEntity(this.converter.boToEntity(queryBo));
         wrapper.orderByDesc(UserEntity::getUtcModify);
         PageResult<UserEntity> pagination = new PageResult<>(queryBo.getPageNo(), queryBo.getPageSize());
         return this.mapper.selectPage(pagination, wrapper).map(this.converter::entityToListVo);
@@ -125,7 +125,7 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
         if (null == user) {
             SysCodes.CANNOT_FIND_USER.newException();
         }
-        var uvo = this.converter.entityToDetilVo(user);
+        var uvo = this.converter.entityToDetailVo(user);
         // 权限列表
         var roleIds = this.roleUserMapper.selectRoleIds(id);
 

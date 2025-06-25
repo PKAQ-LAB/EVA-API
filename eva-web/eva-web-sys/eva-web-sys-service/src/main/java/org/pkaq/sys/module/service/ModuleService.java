@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.exception.BizException;
 import org.pkaq.core.mvc.bo.SingleArrayBo;
+import org.pkaq.core.mvc.convert.Convert;
 import org.pkaq.core.mybatis.mvc.entity.StdTreeEntity;
 import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.core.mybatis.util.TreeHelper;
@@ -36,7 +37,7 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor
-public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
+public class ModuleService extends StdService<ModuleMapper, ModuleEntity, ModuleConvert> {
     private final ModuleConvert moduleConvert;
     private final ModuleResourceMapper moduleResourceMapper;
 
@@ -91,10 +92,10 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
      * @return 重新查询模块列表
      */
     public void editModule(ModuleAoeBo bo) {
-        var module = this.moduleConvert.aoeBoToEntity(bo);
+        var module = this.moduleConvert.boToEntity(bo);
         Long moduleId = module.getId();
 
-        ModuleEntity originModule = null;
+        ModuleDetailVo originModule = null;
         if (null != moduleId && 0 != moduleId) {
             originModule = this.get(moduleId);
         }
@@ -205,7 +206,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
 
         // 刷新所有子节点的 path parent_name path_name 当修改状态的时候不用刷新子节点信息
         if (null != module.getId() && 0 != module.getId() && null != originModule) {
-            this.refreshChild(module, originModule);
+//            this.refreshChild(module, originModule);
         }
 
     }
@@ -358,5 +359,10 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
 //        SysCodes.PERMISSION_EXPIRED.assertNotBlank(treeModule);
 
         return urv;
+    }
+
+    @Override
+    protected Convert<ModuleEntity> getConvert() {
+        return this.moduleConvert;
     }
 }

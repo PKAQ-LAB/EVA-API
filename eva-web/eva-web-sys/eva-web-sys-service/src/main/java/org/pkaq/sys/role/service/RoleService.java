@@ -2,7 +2,6 @@ package org.pkaq.sys.role.service;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.text.CharSequenceUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -10,6 +9,7 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
+import org.pkaq.core.mvc.convert.Convert;
 import org.pkaq.core.mybatis.enums.FrozenEnumm;
 import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.core.mybatis.util.PageResult;
@@ -41,7 +41,7 @@ import java.util.*;
  */
 @Service
 @RequiredArgsConstructor
-public class RoleService extends StdService<RoleMapper, RoleEntity> {
+public class RoleService extends StdService<RoleMapper, RoleEntity, RoleConvert> {
     /**
      * 权限前缀
      **/
@@ -141,7 +141,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
         if (!role.getCode().startsWith(AUTH_PREFIX)) {
             role.setCode((AUTH_PREFIX + role.getCode()).toUpperCase());
         }
-        this.merge(this.roleConvert.boToEntity(role));
+        this.merge(role);
     }
 
     /**
@@ -300,5 +300,10 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> {
                 this.roleUserMapper.insert(user);
             }
         }
+    }
+
+    @Override
+    protected Convert<RoleEntity> getConvert() {
+        return this.roleConvert;
     }
 }

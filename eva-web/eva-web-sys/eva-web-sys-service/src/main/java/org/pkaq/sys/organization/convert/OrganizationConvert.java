@@ -15,7 +15,7 @@ import java.util.List;
  * @author PKAQ
  */
 @Mapper(config = MapConvertConfig.class)
-public interface OrganizationConvert extends Convert {
+public interface OrganizationConvert extends Convert<OrganizationEntity> {
     OrganizationEntity queryBoToEntity(OrganizationQueryBo queryBo);
 
     OrganizationEntity aoeBoToEntity(OrganizationAoeBo aoeBo);

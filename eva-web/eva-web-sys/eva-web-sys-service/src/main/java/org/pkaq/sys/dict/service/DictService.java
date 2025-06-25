@@ -1,7 +1,6 @@
 package org.pkaq.sys.dict.service;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.text.CharSequenceUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
@@ -9,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.log.annotation.BizLog;
 import org.pkaq.core.log.base.BizLogCodes;
+import org.pkaq.core.mvc.convert.Convert;
 import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.dict.bo.DictAoeBo;
@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
-public class DictService extends StdService<DictMapper, DictEntity> implements IDictService {
+public class DictService extends StdService<DictMapper, DictEntity, DictConvert> implements IDictService {
     private final DictCacheHelper dictCacheHelper;
 
     private final DictViewMapper dictViewMapper;
@@ -224,4 +224,8 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
         this.init(dictMap);
     }
 
+    @Override
+    protected Convert<DictEntity> getConvert() {
+        return this.dictConvert;
+    }
 }
