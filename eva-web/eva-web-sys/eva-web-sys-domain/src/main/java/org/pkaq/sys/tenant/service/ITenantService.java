@@ -1,6 +1,6 @@
 package org.pkaq.sys.tenant.service;
 
-import org.pkaq.core.mvc.vo.SingleArray;
+import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.sys.tenant.bo.TenantAoeBo;
 import org.pkaq.sys.tenant.bo.TenantCheckBo;
 import org.pkaq.sys.tenant.vo.TenantDetailVo;

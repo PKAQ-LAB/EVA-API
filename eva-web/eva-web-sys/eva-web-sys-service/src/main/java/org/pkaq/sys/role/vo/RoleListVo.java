@@ -1,13 +1,9 @@
 package org.pkaq.sys.role.vo;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.pkaq.core.mvc.vo.StdTreeVo;
-import org.pkaq.sys.role.entity.RoleModuleEntity;
-import org.pkaq.sys.role.entity.RoleUserEntity;
-
-import java.util.List;
-import java.util.Map;
+import org.pkaq.core.mvc.vo.StdVo;
 
 /**
  * 角色列表vo
@@ -15,17 +11,10 @@ import java.util.Map;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class RoleListVo extends StdTreeVo {
+public class RoleListVo extends StdVo {
+    @Schema(description = "编码")
+    private String code;
 
-    /** 数据权限类型 **/
-    private String dataPermissionType;
-
-    /** 角色拥有的模块列表 **/
-    private List<RoleModuleEntity> modules;
-
-    /** 角色拥有的用户列表 **/
-    private List<RoleUserEntity> users;
-
-    /** 模块权限 **/
-    private Map<String, String[]> resources;
+    @Schema(description = "名称")
+    private String name;
 }

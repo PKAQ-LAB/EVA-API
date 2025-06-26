@@ -6,6 +6,8 @@ package org.pkaq.core.constant;
  * @author PKAQ
  */
 public interface CommonConstant {
+
+    String AUTH_PREFIX = "ROLE_";
     /**
      * 有效记录标识
      */

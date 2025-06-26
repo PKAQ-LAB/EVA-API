@@ -5,10 +5,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.Getter;
 import org.pkaq.core.annotation.NoRepeatSubmit;
 import org.pkaq.core.codes.CommonCodes;
-import org.pkaq.core.codes.ResponseCodes;
-import org.pkaq.core.mvc.bo.Bo;
-import org.pkaq.core.mvc.bo.PageBo;
-import org.pkaq.core.mvc.bo.SingleArrayBo;
+import org.pkaq.core.mvc.bo.IdCodeBo;
+import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.mybatis.mvc.service.StdService;
@@ -28,48 +26,37 @@ public abstract class StdCtrl<T extends StdService> extends Ctrl {
     @Autowired
     protected T service;
 
-    @PostMapping("/del")
-    @Operation(summary = "删除记录", description = "根据ID删除/批量删除记录")
-    @NoRepeatSubmit
-    public Response<Object> del(@Parameter(name = "ids", description = "[记录ID]")
-                        @RequestBody SingleArrayBo<String> ids) {
-
-        CommonCodes.NULL_ID.assertNotNull(ids);
-        CommonCodes.NULL_ID.assertNotNull(ids.getParam());
-
-        this.service.delete(ids.getParam());
-        return success(null, ResponseCodes.DELETE_SUCCESS);
-    }
-
-    @PostMapping("/edit")
-    @Operation(summary = "新增记录", description = "新增/编辑记录")
-    @NoRepeatSubmit
-    public Response<Object> save(@Parameter(name = "formdata", description = "模型对象")
-                         @RequestBody Bo bo) {
-        this.service.merge(bo);
-        return success(bo, ResponseCodes.SAVE_SUCCESS);
-    }
-
-    @GetMapping("/list")
-    @Operation(summary = "分页查询", description = "列表查询")
-    @NoRepeatSubmit
-    public Response<Object> list(@Parameter(name = "page", description = "分页查询参数") PageBo page) {
-        return this.success(this.service.listPage(page));
-    }
-
-    @GetMapping("/listAll")
-    @Operation(summary = "查询全部", description = "列表查询 无分页")
-    @NoRepeatSubmit
-    public Response<Object> listAll(@Parameter(name = "condition", description = "模型对象")
-                            Bo bo) {
-        return this.success(this.service.list(bo));
+    @PostMapping("/checkUnique")
+    @Operation(summary = "校验code唯一性")
+    public Response<Object> checkUnique(@Parameter(name = "idCodeBo", description = "要进行校验的参数")
+                                        @RequestBody IdCodeBo idCodeBo) {
+        var exist = this.service.isUnique(idCodeBo);
+        return exist ? failure() : success();
     }
 
     @GetMapping("/get/{id}")
     @Operation(summary = "根据ID查询", description = "根据ID获得记录信息")
-    @NoRepeatSubmit
     public Response<Object> get(@Parameter(name = "id", description = "记录ID")
                                 @PathVariable("id") long id) {
         return this.success(this.service.get(id));
+    }
+
+    @PostMapping("/del")
+    @Operation(summary = "删除记录", description = "根据ID删除/批量删除记录")
+    public Response<Object> del(@Parameter(name = "ids", description = "[记录ID]")
+                                @RequestBody SingleArray<Long> ids) {
+
+        CommonCodes.NULL_ID.assertNotNull(ids.getParam());
+
+        this.service.delete(ids.getParam());
+        return success();
+    }
+
+    @PostMapping("/switch")
+    @Operation(summary = "锁定/解锁")
+    public Response<Object> change(@Parameter(name = "params", description = "[id]")
+                                   @RequestBody SingleArray<Long> ids) {
+        this.service.switchFrozen(ids);
+        return success();
     }
 }

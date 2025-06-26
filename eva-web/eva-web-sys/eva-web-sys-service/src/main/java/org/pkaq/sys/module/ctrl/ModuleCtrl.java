@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.mvc.bo.IdCodeBo;
-import org.pkaq.core.mvc.bo.SingleArrayBo;
+import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.sys.SysCodes;
@@ -39,7 +39,7 @@ public class ModuleCtrl extends Ctrl {
     @PostMapping("/del")
     @Operation(summary = "根据ID删除/批量删除记录")
     public Response<Object> del(@Parameter(name = "ids", description = "[记录ID]")
-                                @RequestBody SingleArrayBo<String> ids) {
+                                @RequestBody SingleArray<String> ids) {
 
         // 参数非空校验
         CommonCodes.NULL_ID.assertNotNull(ids);
@@ -83,7 +83,7 @@ public class ModuleCtrl extends Ctrl {
     @PostMapping("/switchStatus")
     @Operation(summary = "切换模块可用状态")
     public Response<Object> switchStatus(@Parameter(name = "id", description = "模块Id")
-                                         @RequestBody SingleArrayBo<String> ids) {
+                                         @RequestBody SingleArray<String> ids) {
         this.service.disableChild(ids);
         return success();
     }

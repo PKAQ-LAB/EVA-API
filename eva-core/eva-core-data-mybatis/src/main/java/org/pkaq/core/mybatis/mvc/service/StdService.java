@@ -1,21 +1,21 @@
 package org.pkaq.core.mybatis.mvc.service;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.crypto.digest.BCrypt;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import org.pkaq.core.codes.CommonCodes;
+import org.pkaq.core.enums.FrozenEnumm;
 import org.pkaq.core.log.annotation.BizLog;
 import org.pkaq.core.log.base.BizLogCodes;
-import org.pkaq.core.mvc.bo.Bo;
-import org.pkaq.core.mvc.bo.IdCodeBo;
-import org.pkaq.core.mvc.bo.PageBo;
+import org.pkaq.core.mvc.bo.*;
 import org.pkaq.core.mvc.convert.Convert;
 import org.pkaq.core.mvc.vo.PageVo;
-import org.pkaq.core.mvc.vo.SingleArray;
 import org.pkaq.core.mvc.vo.Vo;
 import org.pkaq.core.mybatis.mvc.entity.StdEntity;
 import org.pkaq.core.mybatis.util.PageResult;
@@ -134,7 +134,18 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity, C
         var entity = this.convert.boToEntity(bo);
         this.mapper.insertOrUpdate(entity);
     }
-
+    /**
+     * 新增/编辑一条租户信息
+     */
+    @BizLog(operateType = BizLogCodes.EDIT, description = "编辑租户[{0}]", args = {"param:0.id"})
+    @Transactional
+    public void edit(StdBo editBo) {
+        if (null == editBo) {
+            CommonCodes.PARAM_ERROR.newException();
+        }
+        var entity = this.convert.boToEntity(editBo);
+        this.mapper.insertOrUpdate(entity);
+    }
     /**
      * 查询所有
      */

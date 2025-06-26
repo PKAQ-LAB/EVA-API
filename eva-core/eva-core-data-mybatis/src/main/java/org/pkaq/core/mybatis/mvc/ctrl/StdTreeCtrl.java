@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.Getter;
 import org.pkaq.core.codes.CommonCodes;
-import org.pkaq.core.mvc.bo.SingleArrayBo;
+import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.mybatis.mvc.entity.StdTreeEntity;
@@ -52,9 +52,8 @@ public abstract class StdTreeCtrl<T extends StdTreeService, E extends StdTreeEnt
     @Operation(summary = "根据ID删除/批量删除节点")
     //@PreAuthorize("hasRole('ADMIN')")
     public Response<Object> delOrg(@Parameter(name = "ids", description = "[节点ID]")
-                           @RequestBody SingleArrayBo<String> ids) {
+                                   @RequestBody SingleArray<Long> ids) {
         // 参数非空校验
-        CommonCodes.NULL_ID.assertNotNull(ids);
         CommonCodes.NULL_ID.assertNotNull(ids.getParam());
 
         // 判断上级节点是否还有其它叶子 如果没有把 isleaf属性改为false

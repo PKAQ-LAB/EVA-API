@@ -1,12 +1,9 @@
 package org.pkaq.sys.organization.service;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.text.CharSequenceUtil;
-import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
-import org.pkaq.core.mvc.bo.SingleArrayBo;
-import org.pkaq.core.mvc.convert.Convert;
+import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.organization.bo.OrganizationAoeBo;
@@ -178,7 +175,7 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
      * 切换可用状态 - 级联操作
      * @param ids
      */
-    public void switchStatus(SingleArrayBo<String> ids) {
+    public void switchStatus(SingleArray<String> ids) {
         //TODO 优化逻辑
         //this.mapper.switchStatus(organization);
     }

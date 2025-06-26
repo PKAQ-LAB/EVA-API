@@ -1,16 +1,11 @@
 package org.pkaq.sys.role.entity;
 
-import com.baomidou.mybatisplus.annotation.SqlCondition;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
+import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.mybatis.mvc.entity.StdEntity;
-import org.pkaq.core.mybatis.mvc.entity.StdTreeEntity;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * 角色管理模型类
@@ -21,29 +16,21 @@ import java.util.Map;
 @Alias("role")
 @TableName("sys_role")
 @EqualsAndHashCode(callSuper = true)
-public class RoleEntity extends StdTreeEntity {
-    /**
-     * 数据权限类型
-     **/
-    private String dataPermissionType;
+public class RoleEntity extends StdEntity {
 
-    /**
-     * 角色拥有的模块列表
-     **/
-    @TableField(exist = false)
-    private List<RoleModuleEntity> modules;
+    /** 编码 **/
+    private String code;
 
-    /**
-     * 角色拥有的用户列表
-     **/
 
-    @TableField(exist = false)
-    private List<RoleUserEntity> users;
+    /** 名称 **/
+    private String name;
 
-    /**
-     * 模块权限
-     **/
+    // 添加 ROLE_ 前缀 并转大写
+    public String getCod(){
 
-    @TableField(exist = false)
-    private Map<String, String[]> resources;
+        if (!this.code.startsWith(CommonConstant.AUTH_PREFIX)) {
+            this.code =  CommonConstant.AUTH_PREFIX + this.code;
+        }
+        return this.code.toUpperCase();
+    }
 }

@@ -25,4 +25,5 @@ public interface RoleConvert extends Convert<RoleEntity> {
     RoleEntity boToEntity(RoleAoeBo roleAoeBo);
 
     RoleDetailVo entityToDetailVo(RoleEntity roleEntity);
+
 }

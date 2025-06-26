@@ -1,4 +1,4 @@
-package org.pkaq.core.mvc.vo;
+package org.pkaq.core.mvc.bo;
 
 import lombok.Data;
 import org.pkaq.core.enums.FrozenEnumm;

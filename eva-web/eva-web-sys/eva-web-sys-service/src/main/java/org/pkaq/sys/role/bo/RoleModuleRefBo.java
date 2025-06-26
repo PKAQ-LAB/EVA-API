@@ -14,9 +14,9 @@ import org.pkaq.core.mvc.bo.Bo;
 public class RoleModuleRefBo implements Bo {
 
     @Schema(description = "角色ID")
-    private String roleId;
+    private Long roleId;
 
     @Schema(description = "模块ID")
-    private String moduleId;
+    private Long moduleId;
 
 }

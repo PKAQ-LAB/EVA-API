@@ -10,6 +10,6 @@ import lombok.Data;
 public class IdCodeBo implements Bo {
     private Long id;
 
-    @NotBlank(message = "{4007}")
+    @NotBlank(message = "{common.code.required}")
     private String code;
 }

@@ -9,7 +9,7 @@ import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.PageVo;
 import org.pkaq.core.mvc.vo.Response;
-import org.pkaq.core.mvc.vo.SingleArray;
+import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.tenant.bo.TenantAoeBo;
 import org.pkaq.sys.tenant.bo.TenantCheckBo;
@@ -31,38 +31,9 @@ import org.springframework.web.bind.annotation.*;
 public class TenantCtrl extends Ctrl {
     private final TenantService service;
 
-    @PostMapping("/edit")
-    @Operation(summary = "新增/编辑记录")
-    public Response<Object> edit(@Parameter(name = "formdata", description = "租户对象")
-                                 @RequestBody @Validated TenantAoeBo bo) {
-        this.service.edit(bo);
-        return this.success();
-    }
-
-    @GetMapping("/list")
-    @Operation(summary = "根据条件查询列表数据 ")
-    public Response<PageVo<TenantListVo>> list(@Parameter(name = "ResourcesQueryBo", description = "请求参数")
-                                              TenantQueryBo queryBo) {
-        return success(this.service.listPage(queryBo));
-    }
-
-    @GetMapping("/get/{id}")
-    @Operation(summary = "根据ID获得租户信息")
-    public Response<TenantDetailVo> getRole(@Parameter(name = "id", description = "记录ID")
-                                            @PathVariable("id") Long id) {
-        return this.success(this.service.get(id));
-    }
-
-    @PostMapping("/switchStatus")
-    @Operation(summary = "切换租户可用状态")
-    public Response<Object> switchStatus(@RequestBody SingleArray<Long> ids) {
-        this.service.switchFrozen(ids);
-        return success();
-    }
-
     @PostMapping("/checkUnique")
     @Operation(summary = "校验租户code/name唯一性")
-    public Response<Object> checkUnique(@Parameter(name = "organization", description = "要进行校验的参数")
+    public Response<Object> checkUnique(@Parameter(name = "checkBo", description = "要进行校验的参数")
                                         @RequestBody TenantCheckBo checkBo) {
         if (null == checkBo.getCode() && null == checkBo.getName()) {
             CommonCodes.PARAM_LOST.newException();
@@ -78,6 +49,35 @@ public class TenantCtrl extends Ctrl {
                 return failure(SysCodes.TENANT_CODE_OR_NAME_ALREADY_EXIST);
             }
         }
+        return success();
+    }
+
+    @PostMapping("/edit")
+    @Operation(summary = "新增/编辑记录")
+    public Response<Object> edit(@Parameter(name = "formdata", description = "租户对象")
+                                 @RequestBody @Validated TenantAoeBo bo) {
+        this.service.edit(bo);
+        return this.success();
+    }
+
+    @GetMapping("/list")
+    @Operation(summary = "根据条件查询列表数据 ")
+    public Response<PageVo<TenantListVo>> list(@Parameter(name = "queryBo", description = "请求参数")
+                                              TenantQueryBo queryBo) {
+        return success(this.service.listPage(queryBo));
+    }
+
+    @GetMapping("/get/{id}")
+    @Operation(summary = "根据ID获得租户信息")
+    public Response<TenantDetailVo> getRole(@Parameter(name = "id", description = "记录ID")
+                                            @PathVariable("id") Long id) {
+        return this.success(this.service.get(id));
+    }
+
+    @PostMapping("/switchStatus")
+    @Operation(summary = "切换租户可用状态")
+    public Response<Object> switchStatus(@RequestBody SingleArray<Long> ids) {
+        this.service.switchFrozen(ids);
         return success();
     }
 

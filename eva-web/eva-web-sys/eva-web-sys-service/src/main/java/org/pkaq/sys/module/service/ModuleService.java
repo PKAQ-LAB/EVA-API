@@ -8,8 +8,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.exception.BizException;
-import org.pkaq.core.mvc.bo.SingleArrayBo;
-import org.pkaq.core.mvc.convert.Convert;
+import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.core.mybatis.mvc.entity.StdTreeEntity;
 import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.core.mybatis.util.TreeHelper;
@@ -315,7 +314,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity, Module
     /**
      * 父节点被禁用，子节点也会被禁用
      */
-    public void disableChild(SingleArrayBo<String> ids) {
+    public void disableChild(SingleArray<String> ids) {
         //判断是不是禁用
 //        if (CharSequenceUtil.isBlank(module.getFrozen()) || FrozenEnumm.FROZEN.getCode().equals(module.getFrozen())) {
 //            return;

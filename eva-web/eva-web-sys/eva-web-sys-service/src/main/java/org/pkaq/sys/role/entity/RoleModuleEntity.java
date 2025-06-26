@@ -1,7 +1,5 @@
 package org.pkaq.sys.role.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import org.apache.ibatis.type.Alias;
@@ -13,14 +11,11 @@ import org.apache.ibatis.type.Alias;
  */
 @Data
 @Alias("roleModule")
-@TableName("sys_role_module")
+@TableName("SYS_ROLEMODULE_REF")
 public class RoleModuleEntity {
-    @TableId(type = IdType.ASSIGN_ID)
-    private Long id;
-
     private Long roleId;
 
-    private String moduleId;
+    private Long moduleId;
 
-    private String resourceId;
+    private Long resourceId;
 }

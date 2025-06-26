@@ -7,7 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.mvc.bo.IdCodeBo;
-import org.pkaq.core.mvc.bo.SingleArrayBo;
+import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.sys.SysCodes;
@@ -53,7 +53,7 @@ public class OrganizationCtrl extends Ctrl {
     @Operation(summary = "根据ID删除/批量删除组织")
     //@PreAuthorize("hasRole('ADMIN')")
     public Response<Object> delOrg(@Parameter(name = "ids", description = "[组织ID]")
-                                   @RequestBody SingleArrayBo<String> ids) {
+                                   @RequestBody SingleArray<String> ids) {
         // 参数非空校验
         CommonCodes.NULL_ID.assertNotNull(ids);
         CommonCodes.NULL_ID.assertNotNull(ids.getParam());
@@ -83,7 +83,7 @@ public class OrganizationCtrl extends Ctrl {
     @PostMapping("/switchStatus")
     @Operation(summary = "切换组织可用状态")
     public Response<Object> switchStatus(@Parameter(name = "id", description = "组织Id")
-                                         @RequestBody SingleArrayBo<String> ids) {
+                                         @RequestBody SingleArray<String> ids) {
         this.service.switchStatus(ids);
         return success();
     }

@@ -1,16 +1,18 @@
 package org.pkaq.sys.role.ctrl;
 
-import cn.hutool.core.text.CharSequenceUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.pkaq.core.annotation.NoRepeatSubmit;
 import org.pkaq.core.codes.CommonCodes;
-import org.pkaq.core.mvc.bo.SingleArrayBo;
-import org.pkaq.core.mvc.ctrl.Ctrl;
+import org.pkaq.core.mvc.bo.Bo;
+import org.pkaq.core.mvc.bo.PageBo;
+import org.pkaq.core.mvc.bo.SingleArray;
+import org.pkaq.core.mvc.bo.StdBo;
 import org.pkaq.core.mvc.vo.Response;
-import org.pkaq.sys.SysCodes;
+import org.pkaq.core.mybatis.mvc.ctrl.StdCtrl;
 import org.pkaq.sys.role.bo.RoleAoeBo;
 import org.pkaq.sys.role.bo.RoleModuleRefBo;
 import org.pkaq.sys.role.bo.RoleQueryBo;
@@ -27,37 +29,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/sys/role")
 @RequiredArgsConstructor
-public class RoleCtrl extends Ctrl {
-    private final RoleService service;
+public class RoleCtrl extends StdCtrl<RoleService> {
 
-    @PostMapping("/checkUnique")
-    @Operation(summary = "校验角色编码唯一性")
-    public Response<Object> checkUnique(@Parameter(name = "roleEsaveModulentity", description = "要进行校验的参数")
-                                        @RequestBody RoleAoeBo role) {
-        boolean exist = null != role && CharSequenceUtil.isNotBlank(role.getCode()) && this.service.checkUnique(role);
-        return exist ? failure(SysCodes.ROLE_CODE_EXIST) : success();
-    }
-
-    @GetMapping("/get/{id}")
-    @Operation(summary = "根据ID获取角色信息")
-    public Response<Object> getRole(@Parameter(name = "id", description = "角色ID")
-                                    @PathVariable("id") String id) {
-        return success(this.service.getRole(id));
-    }
-
-    @GetMapping({"/list"})
-    @Operation(summary = "获取角色列表")
-    public Response<Object> listRoles(@Parameter(name = "queryBo", description = "包含角色对象属性的查询条件")
-                                      RoleQueryBo queryBo, Integer page, Integer pageSize) {
-        return success(this.service.listRole(queryBo, page, pageSize));
-    }
-
-    @GetMapping({"/listAll"})
-    @Operation(summary = "this.service.getRole(id) - 无分页")
-    public Response<Object> listAllRoles(@Parameter(name = "queryBo", description = "包含角色对象属性的查询条件")
-                                 RoleQueryBo queryBo) {
-        return success(this.service.listRole(queryBo));
-    }
 
     @GetMapping({"/listModule"})
     @Operation(summary = "获得角色绑定的菜单列表")
@@ -66,7 +39,7 @@ public class RoleCtrl extends Ctrl {
         return success(this.service.listModule(role));
     }
 
-    @PostMapping({"/saveModule"})
+    @PostMapping({"/grantModule"})
     @Operation(summary = "保存角色模块关系")
     public Response<Object> saveModule(@Parameter(name = "param", description = "角色详情")
                                        @RequestBody RoleAoeBo roleAoeBo) {
@@ -82,7 +55,7 @@ public class RoleCtrl extends Ctrl {
         return success(this.service.listUser(roleId, deptId));
     }
 
-    @PostMapping({"/saveUser"})
+    @PostMapping({"/grantUser"})
     @Operation(summary = "保存角色用户关系")
     public Response<Object> saveUser(@Parameter(name = "param", description = "角色用户id关系")
                                      @RequestBody @Valid RoleUserAoeBo role) {
@@ -90,37 +63,32 @@ public class RoleCtrl extends Ctrl {
         return success();
     }
 
-    @PostMapping("/save")
-    @Operation(summary = "新增/编辑角色信息")
-    public Response<Object> saveRole(@Parameter(name = "role", description = "角色信息")
-                                     @RequestBody @Valid RoleAoeBo role) {
-        this.service.saveRole(role);
-        return success();
-    }
-
+    @Override
     @PostMapping("/del")
     @Operation(summary = "根据ID删除/批量删除角色")
-    public Response<Object> delRole(@Parameter(name = "ids", description = "[角色id]")
-                                    @RequestBody SingleArrayBo<String> ids) {
+    public Response<Object> del(@Parameter(name = "ids", description = "[角色id]")
+                                    @RequestBody SingleArray<Long> ids) {
 
         // 参数非空校验
-        CommonCodes.NULL_ID.assertNotNull(ids);
         CommonCodes.NULL_ID.assertNotNull(ids.getParam());
 
-        this.service.deleteRole(ids.getParam());
+        this.service.delete(ids.getParam());
         return success();
     }
 
-    @PostMapping("/lock")
-    @Operation(summary = "锁定/解锁")
-    public Response<Object> lockSwitch(@Parameter(name = "params", description = "角色[id]")
-                                       @RequestBody SingleArrayBo<String> params) {
 
-        // 参数非空校验
-        CommonCodes.NULL_ID.assertNotNull(params);
-        CommonCodes.NULL_ID.assertNotNull(params.getParam());
-
-//        this.service.updateRole(params.getParam(), params.getParam());
+    @PostMapping("/edit")
+    @Operation(summary = "新增记录", description = "新增/编辑记录")
+    public Response<Object> save(@Parameter(name = "formdata", description = "模型对象")
+                                 @RequestBody RoleAoeBo bo) {
+        this.service.edit(bo);
         return success();
     }
+
+    @GetMapping("/list")
+    @Operation(summary = "分页查询", description = "列表查询")
+    public Response<Object> list(@Parameter(name = "page", description = "分页查询参数") RoleQueryBo page) {
+        return this.success(this.service.listPage(page));
+    }
+
 }

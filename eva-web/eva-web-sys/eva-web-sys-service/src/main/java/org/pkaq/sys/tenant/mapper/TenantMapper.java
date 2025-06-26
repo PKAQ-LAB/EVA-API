@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.pkaq.core.annotation.Ignore;
-import org.pkaq.core.mvc.vo.SingleArray;
+import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.sys.tenant.entity.TenantEntity;
 import org.springframework.stereotype.Repository;
 

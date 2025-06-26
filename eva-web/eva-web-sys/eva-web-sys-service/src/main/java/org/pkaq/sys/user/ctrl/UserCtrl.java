@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.codes.CommonCodes;
-import org.pkaq.core.mvc.bo.SingleArrayBo;
+import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.sys.SysCodes;
@@ -63,7 +63,7 @@ public class UserCtrl extends Ctrl {
     @PostMapping("/del")
     @Operation(summary = "根据ID删除/批量删除记录")
     public Response<Object> del(@Parameter(name = "ids", description = "[记录ID]")
-                                @RequestBody @Valid SingleArrayBo<Long> ids) {
+                                @RequestBody @Valid SingleArray<Long> ids) {
         // 参数非空校验
         CommonCodes.NULL_ID.assertNotNull(ids);
 
@@ -104,7 +104,7 @@ public class UserCtrl extends Ctrl {
     @PostMapping("/switch")
     @Operation(summary = "锁定/解锁")
     public Response<Object> change(@Parameter(name = "param", description = "用户[id]")
-                                   @RequestBody SingleArrayBo<Long> param) {
+                                   @RequestBody SingleArray<Long> param) {
         // 参数非空校验
         CommonCodes.NULL_ID.assertNotNull(param.getParam());
 
