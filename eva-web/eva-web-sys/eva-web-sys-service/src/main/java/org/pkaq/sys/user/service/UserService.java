@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.crypto.digest.BCrypt;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.core.upload.provider.FileProvider;
 import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.post.service.UserPostRefSerivce;
+import org.pkaq.sys.role.entity.RoleUserEntity;
 import org.pkaq.sys.role.mapper.RoleUserMapper;
 import org.pkaq.sys.role.service.UserRoleRefSerivce;
 import org.pkaq.sys.user.bo.*;
@@ -74,8 +76,9 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     @Override
     public void delete(List<Long> param) {
-        // TODO 需要同步删除权限关系表中的数据
         this.mapper.deleteByIds(param);
+        // 删除授权关系
+        this.roleUserMapper.delete(new LambdaQueryWrapper<RoleUserEntity>().in(RoleUserEntity::getUserId, param));
     }
 
     /**

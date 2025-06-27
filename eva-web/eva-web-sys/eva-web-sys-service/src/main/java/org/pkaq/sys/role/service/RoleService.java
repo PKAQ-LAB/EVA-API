@@ -10,6 +10,7 @@ import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.enums.FrozenEnumm;
 import org.pkaq.core.mvc.bo.IdCodeBo;
 import org.pkaq.core.mybatis.mvc.service.StdService;
+import org.pkaq.core.mybatis.util.TreeHelper;
 import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.sys.module.mapper.ModuleMapper;
 import org.pkaq.sys.module.vo.ModuleDetailVo;
@@ -100,7 +101,6 @@ public class RoleService extends StdService<RoleMapper, RoleEntity, RoleConvert>
      * 获取该角色绑定的所有模块 资源
      *
      * @param roleModule 权限条件
-     * @return
      */
     @Override
     public RoleGrantedModuleVo fetchResource(RoleResourceRefBo roleModule) {
@@ -125,8 +125,11 @@ public class RoleService extends StdService<RoleMapper, RoleEntity, RoleConvert>
             moduleChecked.add(k);
         });
 
+        // 菜单转换为树形结构
+        var moduleTree = TreeHelper.buildTree(moduleMap.values());
+
         RoleGrantedModuleVo roleModuleVo = new RoleGrantedModuleVo();
-        roleModuleVo.setModules(moduleMap.values());
+        roleModuleVo.setModules(moduleTree);
         roleModuleVo.setCheckedModuleIds(moduleChecked);
 
         return roleModuleVo;
