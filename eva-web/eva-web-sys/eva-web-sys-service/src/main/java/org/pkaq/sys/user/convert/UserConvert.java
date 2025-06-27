@@ -3,8 +3,6 @@ package org.pkaq.sys.user.convert;
 import org.mapstruct.Mapper;
 import org.pkaq.core.mvc.convert.Convert;
 import org.pkaq.core.mvc.convert.MapConvertConfig;
-import org.pkaq.core.mvc.entity.Entity;
-import org.pkaq.core.mvc.vo.Vo;
 import org.pkaq.sys.user.bo.UserAoeBo;
 import org.pkaq.sys.user.bo.UserQueryBo;
 import org.pkaq.sys.user.entity.UserEntity;

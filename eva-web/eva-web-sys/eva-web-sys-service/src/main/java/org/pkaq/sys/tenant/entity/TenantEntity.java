@@ -20,39 +20,61 @@ import java.util.Date;
 @TableName("sys_tenant")
 @EqualsAndHashCode(callSuper = true)
 public class TenantEntity extends StdEntity {
-    /** 租户名称 **/
+    /**
+     * 租户名称
+     **/
     @TableField(condition = SqlCondition.LIKE)
     private String name;
 
-    /** 租户编码 **/
+    /**
+     * 租户编码
+     **/
     @TableField(condition = SqlCondition.LIKE)
     private String code;
 
-    /** 租户类型 **/
+    /**
+     * 租户类型
+     **/
     private String type;
 
-    /** 全称 **/
+    /**
+     * 全称
+     **/
     private String fullName;
 
-    /** 证件类型 **/
+    /**
+     * 证件类型
+     **/
     private String cardType;
 
-    /** 证件号 **/
+    /**
+     * 证件号
+     **/
     @TableField(condition = SqlCondition.LIKE)
     private String cardNo;
 
-    /** 联系人 **/
+    /**
+     * 联系人
+     **/
     private String contactName;
 
-    /** 联系方式 **/
+    /**
+     * 联系方式
+     **/
     private String contactTel;
 
-    /** 授权用户数 **/
+    /**
+     * 授权用户数
+     **/
     private int authUserCount;
 
-    /** 到期时间 **/
+    /**
+     * 到期时间
+     **/
     private Date expirationDate;
 
-    /** 管理员Id **/
+    /**
+     * 管理员Id
+     **/
     private Long adminId;
 }

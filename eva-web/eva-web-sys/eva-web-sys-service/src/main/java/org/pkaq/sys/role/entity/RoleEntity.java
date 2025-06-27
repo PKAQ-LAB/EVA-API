@@ -18,18 +18,22 @@ import org.pkaq.core.mybatis.mvc.entity.StdEntity;
 @EqualsAndHashCode(callSuper = true)
 public class RoleEntity extends StdEntity {
 
-    /** 编码 **/
+    /**
+     * 编码
+     **/
     private String code;
 
 
-    /** 名称 **/
+    /**
+     * 名称
+     **/
     private String name;
 
     // 添加 ROLE_ 前缀 并转大写
-    public String getCod(){
+    public String getCod() {
 
         if (!this.code.startsWith(CommonConstant.AUTH_PREFIX)) {
-            this.code =  CommonConstant.AUTH_PREFIX + this.code;
+            this.code = CommonConstant.AUTH_PREFIX + this.code;
         }
         return this.code.toUpperCase();
     }

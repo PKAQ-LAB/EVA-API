@@ -5,9 +5,9 @@ import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.pkaq.core.annotation.Ignore;
+import org.pkaq.sys.module.vo.ResourcesVo;
 import org.pkaq.sys.role.bo.RoleResourceRefBo;
 import org.pkaq.sys.role.entity.RoleResourceEntity;
-import org.pkaq.sys.module.vo.ResourcesVo;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -40,6 +40,7 @@ public interface RoleResourceMapper extends BaseMapper<RoleResourceEntity> {
 
     /**
      * 查询资源 并对该角色已拥有的资源打标记
+     *
      * @param roleId
      * @return
      */

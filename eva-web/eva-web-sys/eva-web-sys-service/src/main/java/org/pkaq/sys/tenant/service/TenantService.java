@@ -11,8 +11,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.enums.FrozenEnumm;
-import org.pkaq.core.log.annotation.BizLog;
-import org.pkaq.core.log.base.BizLogCodes;
 import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.sys.tenant.bo.TenantAoeBo;
@@ -43,10 +41,9 @@ public class TenantService extends StdService<TenantMapper, TenantEntity, Tenant
     private final UserMapper userMapper;
     private final UserService userService;
 
-    @BizLog(operateType = BizLogCodes.EDIT, description = "切换状态 [{0}]", args = {"param:0"})
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     @Override
-    public void switchFrozen(SingleArray<Long> ids){
+    public void switchFrozen(SingleArray<Long> ids) {
         if (null == ids || null == ids.getParam() || null == ids.getStatus()) {
             CommonCodes.PARAM_ERROR.newException();
         }
@@ -60,20 +57,20 @@ public class TenantService extends StdService<TenantMapper, TenantEntity, Tenant
         this.mapper.update(updateWrapper);
 
         // 同时冻结用户
-        if (FrozenEnumm.FROZEN == ids.getStatus()){
+        if (FrozenEnumm.FROZEN == ids.getStatus()) {
             this.mapper.frozenUser(ids);
         }
 
         // 同时解锁用户
-        if (FrozenEnumm.UN_FROZEN == ids.getStatus()){
+        if (FrozenEnumm.UN_FROZEN == ids.getStatus()) {
             this.mapper.unfronzenUser(ids);
         }
     }
+
     /**
      * 根据ID批量删除
      */
-    @BizLog(operateType = BizLogCodes.DELETE, description = "删除租户[{0}]", args = {"param:0"})
-    @Transactional
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     @Override
     public void delete(List<Long> ids) {
         if (CollUtil.isNotEmpty(ids)) {
@@ -90,8 +87,7 @@ public class TenantService extends StdService<TenantMapper, TenantEntity, Tenant
     /**
      * 新增/编辑一条租户信息
      */
-    @BizLog(operateType = BizLogCodes.EDIT, description = "编辑租户[{0}]", args = {"param:0.id"})
-    @Transactional
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     @Override
     public void edit(TenantAoeBo editBo) {
         if (null == editBo) {
@@ -144,7 +140,6 @@ public class TenantService extends StdService<TenantMapper, TenantEntity, Tenant
      * @param id 租户ID
      * @return 租户信息
      */
-    @BizLog(operateType = BizLogCodes.QUERY, description = "根据id查询租户")
     @Override
     public TenantDetailVo get(String id) {
         var entity = this.mapper.selectById(id);
@@ -154,6 +149,7 @@ public class TenantService extends StdService<TenantMapper, TenantEntity, Tenant
         Optional.ofNullable(userMapper.selectById(entity.getAdminId())).ifPresent(admin -> vo.setAdminAccount(admin.getAccount()));
         return vo;
     }
+
     /**
      * 校验code/名称是否唯一
      */
@@ -161,9 +157,9 @@ public class TenantService extends StdService<TenantMapper, TenantEntity, Tenant
     public boolean checkUnique(TenantCheckBo checkBo) {
         LambdaQueryWrapper<TenantEntity> wrapper = new LambdaQueryWrapper<>();
         wrapper.nested(w ->
-                        w.eq(TenantEntity::getName, checkBo.getName())
-                         .or()
-                         .eq(TenantEntity::getCode, checkBo.getCode()));
+                w.eq(TenantEntity::getName, checkBo.getName())
+                        .or()
+                        .eq(TenantEntity::getCode, checkBo.getCode()));
 
         if (null != checkBo.getId() && checkBo.getId() != 0) {
             wrapper.ne(TenantEntity::getId, checkBo.getId());

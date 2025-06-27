@@ -40,7 +40,6 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity, C
      * 切换锁定状态
      * @param ids
      */
-    @BizLog(operateType = BizLogCodes.EDIT, description = "切换状态 [{0}]", args = {"param:0"})
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void switchFrozen(SingleArray<Long> ids){
         if (null == ids || ids.getParam() == null) {
@@ -74,7 +73,6 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity, C
     /**
      * 通用根据ID查询
      */
-    @BizLog(operateType = BizLogCodes.QUERY, description = "根据id查询")
     public <V extends Vo> V get(long id) {
         if (0 == id) {
             CommonCodes.PARAM_ERROR.newException();
@@ -90,7 +88,6 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity, C
     /**
      * 查询符合条件得记录条数
      */
-    @BizLog(operateType = BizLogCodes.QUERY, description = "查询了的记录条数")
     protected Long count(Bo bo) {
         if (null == bo) {
             CommonCodes.PARAM_ERROR.newException();
@@ -104,7 +101,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity, C
     /**
      * 根据条件获取一条记录
      */
-    @BizLog(operateType = BizLogCodes.QUERY, description = "根据条件获取一条记录")
+
     protected Vo get(Bo bo) {
         if (null == bo) {
             CommonCodes.PARAM_ERROR.newException();
@@ -122,7 +119,6 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity, C
     /**
      * 合并保存,如果不存在id执行插入,存在ID执行更新
      */
-    @BizLog(operateType = BizLogCodes.EDIT, description = "保存记录[{0}]", args = {"param:0.id"})
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void merge(Bo bo) {
         if (null == bo) {
@@ -134,7 +130,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity, C
     /**
      * 新增/编辑一条租户信息
      */
-    @BizLog(operateType = BizLogCodes.EDIT, description = "编辑租户[{0}]", args = {"param:0.id"})
+
     @Transactional
     public void edit(StdBo editBo) {
         if (null == editBo) {
@@ -146,7 +142,6 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity, C
     /**
      * 查询所有
      */
-    @BizLog(operateType = BizLogCodes.QUERY, description = "根据条件查询记录")
     public List<? extends Vo> list(Bo bo) {
         if (null == bo) {
             CommonCodes.PARAM_ERROR.newException();
@@ -163,7 +158,6 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity, C
     /**
      * 按分页查询
      */
-    @BizLog(operateType = BizLogCodes.QUERY, description = "分页查询记录")
     public <V extends Vo> PageVo<V> listPage(PageBo pageBo) {
         if (null == pageBo) {
             CommonCodes.PARAM_ERROR.newException();
@@ -182,7 +176,6 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity, C
     /**
      * 通用删除
      */
-    @BizLog(operateType = BizLogCodes.DELETE, description = "删除记录[{0}]", args = {"param:0"})
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void delete(List<Long> param) {
         if (CollUtil.isNotEmpty(param)) {

@@ -10,7 +10,6 @@ import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.sys.dict.service.DictService;
 import org.pkaq.sys.module.service.ModuleService;
-import org.pkaq.sys.user.service.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

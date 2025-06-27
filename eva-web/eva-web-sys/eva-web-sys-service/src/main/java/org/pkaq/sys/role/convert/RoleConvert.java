@@ -8,8 +8,8 @@ import org.pkaq.sys.role.bo.RoleAoeBo;
 import org.pkaq.sys.role.bo.RoleQueryBo;
 import org.pkaq.sys.role.entity.RoleEntity;
 import org.pkaq.sys.role.vo.RoleDetailVo;
-import org.pkaq.sys.role.vo.RoleListVo;
 import org.pkaq.sys.role.vo.RoleGrantedModuleVo;
+import org.pkaq.sys.role.vo.RoleListVo;
 
 import java.util.List;
 

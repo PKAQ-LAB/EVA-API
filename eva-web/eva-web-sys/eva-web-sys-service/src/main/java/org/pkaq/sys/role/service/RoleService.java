@@ -1,7 +1,6 @@
 package org.pkaq.sys.role.service;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -30,7 +29,10 @@ import org.pkaq.sys.user.entity.UserEntity;
 import org.pkaq.sys.user.mapper.UserMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -73,20 +75,6 @@ public class RoleService extends StdService<RoleMapper, RoleEntity, RoleConvert>
     }
 
     /**
-     * 解锁/锁定角色
-     *
-     * @param ids
-     * @param lock
-     */
-    public void updateRole(ArrayList<String> ids, String lock) {
-        RoleEntity role = new RoleEntity();
-//        role.setFrozen(lock);
-        QueryWrapper<RoleEntity> wrapper = new QueryWrapper<>();
-        wrapper.in("id", CollectionUtil.join(ids, ","));
-
-        this.mapper.update(role, wrapper);
-    }
-    /**
      * 校验编码是否唯一
      *
      * @param idCodeBo
@@ -128,13 +116,12 @@ public class RoleService extends StdService<RoleMapper, RoleEntity, RoleConvert>
 
         var moduleChecked = new HashSet<Long>();
         // 将资源组装到模块中
-        resourceMap.forEach((k,v) -> {
+        resourceMap.forEach((k, v) -> {
             var module = moduleMap.get(k);
             module.setResources(v);
             // 收集模块的选中id
             moduleChecked.add(k);
         });
-
 
         RoleGrantedModuleVo roleModuleVo = new RoleGrantedModuleVo();
         roleModuleVo.setModules(moduleMap.values());
@@ -193,7 +180,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity, RoleConvert>
 
         Set<Long> checkedUser = this.roleUserMapper.selectObjs(wrapper)
                 .stream()
-                .map(o -> (Long)o)
+                .map(o -> (Long) o)
                 .collect(Collectors.toSet());
 
         RoleGrantedUserVo roleGrantedUserVo = new RoleGrantedUserVo();

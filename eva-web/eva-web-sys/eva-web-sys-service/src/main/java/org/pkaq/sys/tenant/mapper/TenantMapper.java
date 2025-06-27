@@ -28,6 +28,7 @@ public interface TenantMapper extends BaseMapper<TenantEntity> {
 
     /**
      * 冻结已被冻结的租户对应的用户
+     *
      * @param ids
      */
     void frozenUser(SingleArray<Long> ids);

@@ -8,8 +8,6 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.codes.CommonCodes;
-import org.pkaq.core.log.annotation.BizLog;
-import org.pkaq.core.log.base.BizLogCodes;
 import org.pkaq.core.mvc.entity.Entity;
 import org.pkaq.core.mvc.vo.PageVo;
 import org.pkaq.core.mvc.vo.Vo;
@@ -54,7 +52,6 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
     /**
      * 修改密码
      */
-    @BizLog(operateType = BizLogCodes.EDIT, description = "更新了密码[{0}]", args = {"param:0.id"})
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     @Override
     public void repwd(RePwdBo rePwdBo) {
@@ -74,17 +71,16 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
         this.mapper.updateById(updateE);
     }
 
-    @BizLog(operateType = BizLogCodes.DELETE, description = "删除了用户", args = {"param:0"})
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     @Override
     public void delete(List<Long> param) {
+        // TODO 需要同步删除权限关系表中的数据
         this.mapper.deleteByIds(param);
     }
 
     /**
      * 查询用户列表 无分页
      */
-    @BizLog(operateType = BizLogCodes.QUERY, description = "查询了用户列表")
     @Override
     public List<UserListVo> listUser(UserQueryBo queryBo) {
         UserEntity user = this.converter.boToEntity(queryBo);
@@ -101,10 +97,10 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
         wrapper.orderByDesc(UserEntity::getModifyBy);
         return convert.apply(this.mapper.selectList(wrapper));
     }
+
     /**
      * 列表查询 - 分页
      */
-    @BizLog(operateType = BizLogCodes.QUERY, description = "查询了用户列表")
     @Override
     public PageVo<UserListVo> listPage(UserQueryBo queryBo) {
         LambdaQueryWrapper<UserEntity> wrapper = Wrappers.lambdaQuery();
@@ -113,6 +109,7 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
         PageResult<UserEntity> pagination = new PageResult<>(queryBo.getPageNo(), queryBo.getPageSize());
         return this.mapper.selectPage(pagination, wrapper).map(this.converter::entityToListVo);
     }
+
     /**
      * 解锁/锁定用户
      */
@@ -124,6 +121,7 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
 
         this.mapper.change(ids);
     }
+
     /**
      * 获取一条用户信息
      *
@@ -144,12 +142,12 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
 
         return uvo;
     }
+
     /**
      * 新增/编辑用户信息
      *
      * @param user 用户对象
      */
-    @BizLog(operateType = BizLogCodes.EDIT, description = "更新用户记录[{0}]", args = {"param:0.id"})
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     @Override
     public void saveUser(UserAoeBo user) {
@@ -168,7 +166,7 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
             user.setId(userId);
             var tid = ThreadUserHelper.getTenantId();
             var leftCt = this.mapper.availableCounts(tid);
-            if (leftCt < 1){
+            if (leftCt < 1) {
                 SysCodes.USER_ACCOUNT_LIMIT.newException();
             }
         } else {
@@ -194,7 +192,7 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
         }
 
         // 保存权限
-        if (CollUtil.isNotEmpty(user.getRoleIds())){
+        if (CollUtil.isNotEmpty(user.getRoleIds())) {
             UserGrantBo userGrantBo = new UserGrantBo();
             userGrantBo.setUserId(userId);
             userGrantBo.setRoleIds(user.getRoleIds());
@@ -202,13 +200,14 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
         }
 
         // 保存岗位
-        if (CollUtil.isNotEmpty(user.getRoleIds())){
+        if (CollUtil.isNotEmpty(user.getRoleIds())) {
             UserPostBo postBo = new UserPostBo();
             postBo.setUserId(userId);
             postBo.setPostIds(user.getPostId());
             this.userPostRefSerivce.savePosts(postBo);
         }
     }
+
     /**
      * 校验账号是否唯一
      */
@@ -227,12 +226,11 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
     }
 
 
-    @BizLog(operateType = BizLogCodes.EDIT, description = "创建了租户管理员[{0}]", args = {"param:0.id"})
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void createTenantAdmin(UserEntity user) {
         String pwd = user.getPassword();
-               pwd = BCrypt.hashpw(pwd);
-               user.setPassword(pwd);
+        pwd = BCrypt.hashpw(pwd);
+        user.setPassword(pwd);
         this.mapper.insert(user);
     }
 }
