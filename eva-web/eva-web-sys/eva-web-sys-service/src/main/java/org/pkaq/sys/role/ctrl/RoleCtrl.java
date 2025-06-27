@@ -78,7 +78,6 @@ public class RoleCtrl extends StdCtrl<RoleService> {
         return success();
     }
 
-
     @PostMapping("/edit")
     @Operation(summary = "新增记录", description = "新增/编辑记录")
     @BizLog(operateType = BizLogCodes.EDIT, description = "编辑了角色信息[{0}]", args = {"param:0"})

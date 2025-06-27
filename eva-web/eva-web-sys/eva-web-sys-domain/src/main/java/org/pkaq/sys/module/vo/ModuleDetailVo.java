@@ -1,11 +1,9 @@
-
 package org.pkaq.sys.module.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.pkaq.core.mvc.vo.StdTreeVo;
-import org.pkaq.sys.module.entity.ModuleResources;
 
 import java.util.List;
 
@@ -29,6 +27,6 @@ public class ModuleDetailVo extends StdTreeVo {
     private String modelurl;
 
     @Schema(description = "模块拥有的资源")
-    private List<ResourcesVo> resources;
+    private List<ModuleResourcesVo> resources;
 
 }

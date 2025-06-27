@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
-public class RoleService extends StdService<RoleMapper, RoleEntity, RoleConvert> {
+public class RoleService extends StdService<RoleMapper, RoleEntity, RoleConvert> implements IRoleService {
 
     private final RoleResourceMapper roleResourceMapper;
 
@@ -55,6 +55,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity, RoleConvert>
     /**
      * 根据请求的URL查询角色所属权限
      */
+    @Override
     public List<Map<String, String>> listRoleNamesWithPath() {
         return this.roleResourceMapper.listRoleNamesWithPath();
     }
@@ -101,6 +102,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity, RoleConvert>
      * @param roleModule 权限条件
      * @return
      */
+    @Override
     public RoleGrantedModuleVo fetchResource(RoleResourceRefBo roleModule) {
         if (null == roleModule || roleModule.getRoleId() == null) {
             CommonCodes.PARAM_ERROR.newException();
@@ -133,6 +135,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity, RoleConvert>
     /**
      * 保存角色关系表
      */
+    @Override
     public void grantResource(RoleResourceRefBo role) {
         if (null == role.getRoleId()) {
             CommonCodes.PARAM_ERROR.newException();
@@ -162,6 +165,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity, RoleConvert>
      * @param roleId 权限条件
      * @return
      */
+    @Override
     public RoleGrantedUserVo listUser(Long roleId, Long deptId) {
         // 获取所有用户
         LambdaQueryWrapper<UserEntity> userWrapper = new LambdaQueryWrapper<>();
@@ -193,6 +197,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity, RoleConvert>
     /**
      * 保存角色关系表
      */
+    @Override
     public void grantUser(RoleUserRefBo role) {
         if (null == role.getRoleId()) {
             CommonCodes.PARAM_ERROR.newException();

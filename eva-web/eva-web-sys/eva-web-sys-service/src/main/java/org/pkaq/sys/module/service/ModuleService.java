@@ -15,6 +15,7 @@ import org.pkaq.core.mybatis.util.TreeHelper;
 import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.module.bo.ModuleAoeBo;
 import org.pkaq.sys.module.bo.ModuleQueryBo;
+import org.pkaq.sys.module.bo.ModuleResourcesBo;
 import org.pkaq.sys.module.bo.ModuleSortBo;
 import org.pkaq.sys.module.convert.ModuleConvert;
 import org.pkaq.sys.module.entity.ModuleEntity;
@@ -23,6 +24,7 @@ import org.pkaq.sys.module.mapper.ModuleMapper;
 import org.pkaq.sys.module.mapper.ModuleResourceMapper;
 import org.pkaq.sys.module.vo.ModuleDetailVo;
 import org.pkaq.sys.module.vo.ModuleListVo;
+import org.pkaq.sys.module.vo.ModuleResourcesVo;
 import org.pkaq.sys.user.vo.UserResourceVo;
 import org.springframework.stereotype.Service;
 
@@ -173,17 +175,17 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity, Module
          有id 更新
          无id 新增
          */
-        List<ModuleResources> resources = bo.getResources();
+        List<ModuleResourcesBo> resources = bo.getResources();
 
         if (CollUtil.isNotEmpty(resources)) {
             List<Long> ids = new ArrayList<>(resources.size());
-            for (ModuleResources item : resources) {
+            for (ModuleResourcesBo item : resources) {
                 if (null != item.getId() && 0 != item.getId()) {
-                    this.moduleResourceMapper.updateById(item);
+//                    this.moduleResourceMapper.updateById(item);
                 } else {
                     item.setId(IdWorker.getId());
                     item.setModuleId(moduleId);
-                    this.moduleResourceMapper.insert(item);
+//                    this.moduleResourceMapper.insert(item);
                 }
 
                 ids.add(item.getId());

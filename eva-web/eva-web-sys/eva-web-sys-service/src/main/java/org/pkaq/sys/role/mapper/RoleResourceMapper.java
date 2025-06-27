@@ -5,7 +5,7 @@ import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.pkaq.core.annotation.Ignore;
-import org.pkaq.sys.module.vo.ResourcesVo;
+import org.pkaq.sys.module.vo.ModuleResourcesVo;
 import org.pkaq.sys.role.bo.RoleResourceRefBo;
 import org.pkaq.sys.role.entity.RoleResourceEntity;
 import org.springframework.stereotype.Repository;
@@ -45,5 +45,5 @@ public interface RoleResourceMapper extends BaseMapper<RoleResourceEntity> {
      * @return
      */
     @MapKey("MODULE_ID")
-    Map<Long, List<ResourcesVo>> listGrantedResource(Long roleId);
+    Map<Long, List<ModuleResourcesVo>> listGrantedResource(Long roleId);
 }

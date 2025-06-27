@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @RequiredArgsConstructor
-public class UserRoleRefSerivce {
+public class UserRoleRefSerivce implements IUserRoleRefSerivce {
     private final RoleUserMapper roleUserMapper;
 
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)

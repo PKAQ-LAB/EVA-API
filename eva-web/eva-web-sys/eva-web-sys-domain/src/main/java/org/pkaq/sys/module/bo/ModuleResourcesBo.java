@@ -1,7 +1,5 @@
-package org.pkaq.sys.module.vo;
+package org.pkaq.sys.module.bo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,9 +11,8 @@ import org.pkaq.core.mvc.vo.Vo;
 @Data
 @Schema(title = "模块资源管理")
 @EqualsAndHashCode(callSuper = false)
-public class ResourcesVo implements Vo {
+public class ModuleResourcesBo implements Vo {
 
-    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     @Schema(description = "模块id")

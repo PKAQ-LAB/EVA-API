@@ -1,10 +1,8 @@
 package org.pkaq.sys.module.convert;
 
 import org.mapstruct.Mapper;
-import org.pkaq.core.mvc.bo.Bo;
 import org.pkaq.core.mvc.convert.Convert;
 import org.pkaq.core.mvc.convert.MapConvertConfig;
-import org.pkaq.core.mvc.vo.Vo;
 import org.pkaq.core.mybatis.mvc.entity.StdTreeEntity;
 import org.pkaq.sys.module.bo.ModuleAoeBo;
 import org.pkaq.sys.module.entity.ModuleEntity;

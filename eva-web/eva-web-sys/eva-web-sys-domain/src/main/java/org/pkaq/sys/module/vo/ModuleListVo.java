@@ -1,14 +1,9 @@
-
 package org.pkaq.sys.module.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.pkaq.core.mvc.bo.StdTreeBo;
 import org.pkaq.core.mvc.vo.StdTreeVo;
-import org.pkaq.sys.module.entity.ModuleResources;
-
-import java.util.List;
 
 /**
  * 模块管理

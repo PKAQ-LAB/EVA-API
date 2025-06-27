@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.pkaq.core.mvc.bo.StdTreeBo;
-import org.pkaq.sys.module.entity.ModuleResources;
 
 import java.util.List;
 
@@ -28,6 +27,6 @@ public class ModuleAoeBo extends StdTreeBo {
     private String modelurl;
 
     @Schema(description = "模块拥有的资源")
-    private List<ModuleResources> resources;
+    private List<ModuleResourcesBo> resources;
 
 }
