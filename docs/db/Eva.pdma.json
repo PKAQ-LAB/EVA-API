@@ -4,7 +4,7 @@
   "avatar": "",
   "version": "4.9.4",
   "createdTime": "2025-4-22 15:22:40",
-  "updatedTime": "2025-6-25 22:30:39",
+  "updatedTime": "2025-6-26 15:35:28",
   "dbConns": [],
   "profile": {
     "default": {
@@ -3311,8 +3311,8 @@
           "defName": "",
           "comment": "",
           "domain": "",
-          "type": "VARCHAR",
-          "len": 40,
+          "type": "BIGINT",
+          "len": "",
           "scale": "",
           "primaryKey": true,
           "notNull": true,
@@ -3330,13 +3330,31 @@
           "attr8": "",
           "attr9": "",
           "id": "33F179D2-4BF1-4700-B2E7-AC4CA1A26CC0",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64",
+          "baseType": "",
           "extProps": {},
           "uiHint": "642D2E0A-8846-4549-BE56-8C0473F26EDE"
         },
         {
+          "defKey": "CODE",
+          "defName": "编码",
+          "comment": "",
+          "type": "VARCHAR",
+          "len": 40,
+          "scale": "",
+          "primaryKey": false,
+          "notNull": false,
+          "autoIncrement": false,
+          "defaultValue": "",
+          "hideInGraph": false,
+          "refDict": "",
+          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64",
+          "extProps": {},
+          "domain": "",
+          "id": "987113DC-291A-4E3A-BFA6-0F341C43D97C"
+        },
+        {
           "defKey": "NAME",
-          "defName": "",
+          "defName": "名称",
           "comment": "",
           "domain": "",
           "type": "VARCHAR",
@@ -3391,12 +3409,12 @@
           "uiHint": "642D2E0A-8846-4549-BE56-8C0473F26EDE"
         },
         {
-          "defKey": "ROUTEURL",
+          "defKey": "ROUTE_URL",
           "defName": "路由路径",
           "comment": "",
           "domain": "",
           "type": "VARCHAR",
-          "len": 40,
+          "len": 300,
           "scale": "",
           "primaryKey": false,
           "notNull": false,
@@ -3419,12 +3437,12 @@
           "uiHint": "642D2E0A-8846-4549-BE56-8C0473F26EDE"
         },
         {
-          "defKey": "MODELURL",
-          "defName": "前端model url",
+          "defKey": "COMPONENT_URL",
+          "defName": "组件路径",
           "comment": "",
           "domain": "",
           "type": "VARCHAR",
-          "len": 40,
+          "len": 300,
           "scale": "",
           "primaryKey": false,
           "notNull": false,
@@ -3447,40 +3465,12 @@
           "uiHint": "642D2E0A-8846-4549-BE56-8C0473F26EDE"
         },
         {
-          "defKey": "PATH_ID",
-          "defName": "路径ID",
-          "comment": "",
-          "domain": "",
-          "type": "VARCHAR",
-          "len": 1200,
-          "scale": "",
-          "primaryKey": false,
-          "notNull": false,
-          "autoIncrement": false,
-          "defaultValue": "",
-          "hideInGraph": false,
-          "refDict": "",
-          "attr1": "",
-          "attr2": "",
-          "attr3": "",
-          "attr4": "",
-          "attr5": "",
-          "attr6": "",
-          "attr7": "",
-          "attr8": "",
-          "attr9": "",
-          "id": "667C8A83-AED6-436A-8BE0-DBD92F54622A",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64",
-          "extProps": {},
-          "uiHint": "642D2E0A-8846-4549-BE56-8C0473F26EDE"
-        },
-        {
           "defKey": "PID",
           "defName": "父节点ID",
           "comment": "",
           "domain": "",
-          "type": "VARCHAR",
-          "len": 40,
+          "type": "BIGINT",
+          "len": "",
           "scale": "",
           "primaryKey": false,
           "notNull": false,
@@ -3498,7 +3488,7 @@
           "attr8": "",
           "attr9": "",
           "id": "93347A5B-2A2F-4297-B138-EEB451A1AA08",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64",
+          "baseType": "",
           "extProps": {},
           "uiHint": "642D2E0A-8846-4549-BE56-8C0473F26EDE"
         },
@@ -3562,7 +3552,7 @@
           "defKey": "TENANT_ID",
           "defName": "租户号",
           "comment": "",
-          "type": "",
+          "type": "BIGINT",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -3570,7 +3560,6 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
           "refDict": "",
           "extProps": {},
           "notes": {},
@@ -3583,8 +3572,8 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "132D7279-BA94-4DA7-9A3C-8EFCA660FA0A",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
+          "id": "DDB1348F-FFA4-4C08-B960-26534E93B216",
+          "baseType": ""
         },
         {
           "defKey": "REVISION",
@@ -3611,7 +3600,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "E8FBA5B9-2034-4AB9-8EDB-15B7187EE228",
+          "id": "BC506585-F5AF-4149-AB34-22A5AB92CBE5",
           "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
         },
         {
@@ -3638,7 +3627,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "C8E1D705-58AE-4FF3-9A4C-A5EEB64CD1B6",
+          "id": "BB503017-416D-4802-B549-DABF24E45AF3",
           "baseType": ""
         },
         {
@@ -3665,7 +3654,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "A7CC43CE-180B-40CA-A74E-1C62615B4D67",
+          "id": "A81288C9-AB32-46FE-B0AE-B747A6B6B1DB",
           "baseType": "1D764C4A-6F9F-421E-B11A-6F3E23B51811"
         },
         {
@@ -3692,7 +3681,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "54357539-7989-4016-A51E-F1FE79D64AE0",
+          "id": "49D5706F-4D10-48B9-AC60-F1607AA878AA",
           "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
@@ -3707,7 +3696,6 @@
           "autoIncrement": false,
           "defaultValue": "0",
           "hideInGraph": false,
-          "domain": "",
           "refDict": "",
           "extProps": {},
           "notes": {},
@@ -3720,15 +3708,15 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "A7E19974-9E18-4BC6-99B5-A20F0FFD5259",
+          "id": "C49FEFE7-7320-4F2D-A7E1-880C122325D0",
           "baseType": "1A0BDC09-0792-4174-9E8E-80BE8DF44B8E"
         },
         {
-          "defKey": "CREATED_ID",
+          "defKey": "CREATE_ID",
           "defName": "创建人ID",
           "comment": "",
-          "type": "VARCHAR",
-          "len": 40,
+          "type": "BIGINT",
+          "len": "",
           "scale": "",
           "primaryKey": false,
           "notNull": true,
@@ -3747,8 +3735,8 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "F296146A-63BA-4D1F-BCBC-B0943D0577A0",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
+          "id": "A3DA2DED-FF10-4594-8E13-915240C100B6",
+          "baseType": ""
         },
         {
           "defKey": "CREATE_BY",
@@ -3774,7 +3762,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "45B2DB52-B5AC-455A-8F5E-40EA8E493A32",
+          "id": "BA4584E1-9792-4EA6-9781-7F5D075CE9A1",
           "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
@@ -3802,14 +3790,14 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "0C884551-AC81-43D0-BE23-51190B0A4656",
+          "id": "E4B50295-5C62-444E-86D1-D61DD161E901",
           "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         },
         {
           "defKey": "MODIFY_ID",
           "defName": "修改人ID",
           "comment": "",
-          "type": "",
+          "type": "BIGINT",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -3817,7 +3805,6 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "9092C4E0-1A54-4859-ABBB-5B62DBC27573",
           "refDict": "",
           "extProps": {},
           "notes": {},
@@ -3830,8 +3817,8 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "D75BF196-2033-4232-AB2E-D3C5CE3396DD",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
+          "id": "53640AC5-D307-464B-B8EA-4BF7163BAD4C",
+          "baseType": ""
         },
         {
           "defKey": "MODIFY_BY",
@@ -3857,7 +3844,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "17BD916E-BCAD-40F2-9D22-7B0FD59AD83B",
+          "id": "167E7F1E-3044-48CC-A062-1D6184A5BCDA",
           "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64"
         },
         {
@@ -3885,7 +3872,7 @@
           "attr7": "",
           "attr8": "",
           "attr9": "",
-          "id": "68389E93-83E3-46EF-866D-5842B4FFA25F",
+          "id": "B2D70CDB-8266-4864-A3E6-B99B3823A0CA",
           "baseType": "89D69E81-EA34-42EE-9FA2-93B8BD27E098"
         }
       ],
@@ -4035,8 +4022,8 @@
           "defName": "",
           "comment": "",
           "domain": "",
-          "type": "VARCHAR",
-          "len": 40,
+          "type": "BIGINT",
+          "len": "",
           "scale": "",
           "primaryKey": true,
           "notNull": true,
@@ -4054,7 +4041,7 @@
           "attr8": "",
           "attr9": "",
           "id": "09F27C06-F41C-4AAF-BFDA-BEFB56593F77",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64",
+          "baseType": "",
           "extProps": {},
           "uiHint": "642D2E0A-8846-4549-BE56-8C0473F26EDE"
         },
@@ -4063,8 +4050,8 @@
           "defName": "模块ID",
           "comment": "",
           "domain": "",
-          "type": "VARCHAR",
-          "len": 40,
+          "type": "BIGINT",
+          "len": "",
           "scale": "",
           "primaryKey": false,
           "notNull": false,
@@ -4082,7 +4069,7 @@
           "attr8": "",
           "attr9": "",
           "id": "4DDC748E-A3E0-4ED8-A5CA-ADA09AA7FDB4",
-          "baseType": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64",
+          "baseType": "",
           "extProps": {},
           "uiHint": "642D2E0A-8846-4549-BE56-8C0473F26EDE"
         },
@@ -4331,7 +4318,8 @@
           "hideInGraph": true
         }
       ],
-      "correlations": []
+      "correlations": [],
+      "notes": {}
     },
     {
       "id": "8354E1F4-40D4-4AE4-B0F6-9054E87E5ED4",
@@ -6465,7 +6453,7 @@
     },
     {
       "id": "A933DADC-B97B-4210-ACE9-F23715456AA7",
-      "defKey": "SYS_ROLEMODULE_REF",
+      "defKey": "SYS_ROLERES_REF",
       "defName": "系统管理_角色_授权模块",
       "comment": "",
       "properties": {},
@@ -6494,34 +6482,6 @@
           "attr8": "",
           "attr9": "",
           "id": "E000DE6D-4430-49D1-90FC-18DBC811796E",
-          "baseType": "",
-          "extProps": {},
-          "uiHint": "642D2E0A-8846-4549-BE56-8C0473F26EDE"
-        },
-        {
-          "defKey": "MODULE_ID",
-          "defName": "模块ID",
-          "comment": "",
-          "domain": "",
-          "type": "BIGINT",
-          "len": "",
-          "scale": "",
-          "primaryKey": true,
-          "notNull": true,
-          "autoIncrement": false,
-          "defaultValue": "",
-          "hideInGraph": false,
-          "refDict": "",
-          "attr1": "",
-          "attr2": "",
-          "attr3": "",
-          "attr4": "",
-          "attr5": "",
-          "attr6": "",
-          "attr7": "",
-          "attr8": "",
-          "attr9": "",
-          "id": "77BAD722-7B92-43FB-BE84-CF32974E721C",
           "baseType": "",
           "extProps": {},
           "uiHint": "642D2E0A-8846-4549-BE56-8C0473F26EDE"

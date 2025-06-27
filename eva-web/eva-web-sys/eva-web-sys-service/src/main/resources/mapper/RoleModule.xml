@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.pkaq.sys.role.mapper.RoleModuleMapper">
+<mapper namespace="org.pkaq.sys.role.mapper.RoleResourceMapper">
 
     <!--获取已选且是叶子节点的模块-->
     <select id="roleModuleList" resultType="roleModule">
@@ -30,6 +30,23 @@
           AND m.id = mr.module_id
           AND rm.RESOURCE_ID = mr.ID
           AND m.isleaf = '1'
+    </select>
+    <!--    查询资源 并对该角色已拥有的资源打标记-->
+    <select id="listGrantedResource" resultType="java.util.Map">
+        SELECT
+            r.ID,
+            r.MODULE_ID,
+            r.RESOURCE_DESC,
+            r.RESOURCE_URL,
+            r.RESOURCE_TYPE,
+            CASE
+                WHEN rr.ROLE_ID IS NOT NULL THEN 1
+                ELSE 0
+                END AS CHECKED
+        FROM SYS_MODULE_RESOURCES r
+                 LEFT JOIN SYS_ROLERES_REF rr
+                           ON r.ID = rr.RESOURCE_ID AND rr.ROLE_ID = #{roleId}
+        ORDER BY r.MODULE_ID ASC;
     </select>
 
 </mapper>

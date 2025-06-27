@@ -5,18 +5,14 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.pkaq.core.annotation.NoRepeatSubmit;
 import org.pkaq.core.codes.CommonCodes;
-import org.pkaq.core.mvc.bo.Bo;
-import org.pkaq.core.mvc.bo.PageBo;
 import org.pkaq.core.mvc.bo.SingleArray;
-import org.pkaq.core.mvc.bo.StdBo;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.mybatis.mvc.ctrl.StdCtrl;
 import org.pkaq.sys.role.bo.RoleAoeBo;
-import org.pkaq.sys.role.bo.RoleModuleRefBo;
 import org.pkaq.sys.role.bo.RoleQueryBo;
-import org.pkaq.sys.role.bo.RoleUserAoeBo;
+import org.pkaq.sys.role.bo.RoleUserRefBo;
+import org.pkaq.sys.role.bo.RoleResourceRefBo;
 import org.pkaq.sys.role.service.RoleService;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,35 +27,34 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class RoleCtrl extends StdCtrl<RoleService> {
 
-
-    @GetMapping({"/listModule"})
-    @Operation(summary = "获得角色绑定的菜单列表")
-    public Response<Object> listModule(@Parameter(name = "role", description = "包含角色对象属性的查询条件")
-                                       RoleModuleRefBo role) {
-        return success(this.service.listModule(role));
+    @GetMapping({"/fetchResource"})
+    @Operation(summary = "获得角色绑定的菜单资源列表")
+    public Response<Object> fetchResource(@Parameter(name = "role", description = "包含角色对象属性的查询条件")
+                                          RoleResourceRefBo role) {
+        return success(this.service.fetchResource(role));
     }
 
-    @PostMapping({"/grantModule"})
+    @PostMapping({"/grantResource"})
     @Operation(summary = "保存角色模块关系")
-    public Response<Object> saveModule(@Parameter(name = "param", description = "角色详情")
-                                       @RequestBody RoleAoeBo roleAoeBo) {
-        this.service.saveModule(roleAoeBo);
+    public Response<Object> grantResource(@Parameter(name = "param", description = "角色详情")
+                                       @RequestBody RoleResourceRefBo roleAoeBo) {
+        this.service.grantResource(roleAoeBo);
         return success();
     }
 
     @GetMapping({"/listUser"})
     @Operation(summary = "获得角色绑定的用户列表")
     public Response<Object> listUser(@Parameter(name = "roleEntity", description = "包含角色对象属性的查询条件", required = true)
-                             @RequestParam Long roleId,
-                             @RequestParam(required = false) Long deptId) {
+                                     @RequestParam Long roleId,
+                                     @RequestParam(required = false) Long deptId) {
         return success(this.service.listUser(roleId, deptId));
     }
 
     @PostMapping({"/grantUser"})
     @Operation(summary = "保存角色用户关系")
-    public Response<Object> saveUser(@Parameter(name = "param", description = "角色用户id关系")
-                                     @RequestBody @Valid RoleUserAoeBo role) {
-        this.service.saveUser(role);
+    public Response<Object> grantUser(@Parameter(name = "param", description = "角色用户id关系")
+                                     @RequestBody @Valid RoleUserRefBo role) {
+        this.service.grantUser(role);
         return success();
     }
 
@@ -67,7 +62,7 @@ public class RoleCtrl extends StdCtrl<RoleService> {
     @PostMapping("/del")
     @Operation(summary = "根据ID删除/批量删除角色")
     public Response<Object> del(@Parameter(name = "ids", description = "[角色id]")
-                                    @RequestBody SingleArray<Long> ids) {
+                                @RequestBody SingleArray<Long> ids) {
 
         // 参数非空校验
         CommonCodes.NULL_ID.assertNotNull(ids.getParam());

@@ -1,15 +1,18 @@
 package org.pkaq.sys.module.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.pkaq.core.annotation.Ignore;
 import org.pkaq.sys.module.bo.ModuleQueryBo;
 import org.pkaq.sys.module.entity.ModuleEntity;
+import org.pkaq.sys.module.vo.ModuleDetailVo;
 import org.pkaq.sys.module.vo.ModuleListVo;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 模块管理module
@@ -98,4 +101,12 @@ public interface ModuleMapper extends BaseMapper<ModuleEntity> {
                                @Param("name") String name, @Param("id") String id);
 
 
+    /**
+     * 查询当前用户拥有得所有角色包含的资源合集
+     *
+     * @param uid
+     * @return
+     */
+    @MapKey("id")
+    Map<Long, ModuleDetailVo> listGrantedModules(long uid);
 }

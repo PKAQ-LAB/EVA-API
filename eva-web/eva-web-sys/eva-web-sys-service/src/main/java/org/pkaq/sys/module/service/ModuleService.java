@@ -261,7 +261,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity, Module
 
         var md = this.moduleConvert.entityToDetailVo(module);
 
-        md.setResources(resourceList);
+//        md.setResources(resourceList);
 
         return md;
     }

@@ -21,8 +21,8 @@ public class ModuleEntity extends StdTreeEntity {
     private String icon;
 
     /** 模块路由url **/
-    private String routeurl;
+    private String routeUrl;
 
     /** 模块前端model url **/
-    private String modelurl;
+    private String componentUrl;
 }

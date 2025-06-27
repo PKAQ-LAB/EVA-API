@@ -15,9 +15,8 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class StdTreeEntity extends StdEntity {
-
-    @TableField(condition = SqlCondition.LIKE)
     /** 编码 **/
+    @TableField(condition = SqlCondition.LIKE)
     private String code;
 
     /** 节点名称 **/

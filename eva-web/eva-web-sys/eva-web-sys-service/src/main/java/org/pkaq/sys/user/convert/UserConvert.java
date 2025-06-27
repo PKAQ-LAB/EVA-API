@@ -3,11 +3,14 @@ package org.pkaq.sys.user.convert;
 import org.mapstruct.Mapper;
 import org.pkaq.core.mvc.convert.Convert;
 import org.pkaq.core.mvc.convert.MapConvertConfig;
+import org.pkaq.core.mvc.entity.Entity;
+import org.pkaq.core.mvc.vo.Vo;
 import org.pkaq.sys.user.bo.UserAoeBo;
 import org.pkaq.sys.user.bo.UserQueryBo;
 import org.pkaq.sys.user.entity.UserEntity;
 import org.pkaq.sys.user.vo.UserDetailVo;
 import org.pkaq.sys.user.vo.UserListVo;
+import org.pkaq.sys.user.vo.UserSimpleVo;
 
 import java.util.List;
 
@@ -29,4 +32,6 @@ public interface UserConvert extends Convert<UserEntity> {
 
     @Override
     UserDetailVo entityToDetailVo(UserEntity user);
+
+    List<UserSimpleVo> entityToSimpleVo(List<UserEntity> user);
 }

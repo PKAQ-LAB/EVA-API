@@ -1,6 +1,7 @@
 package org.pkaq.core.properties;
 
 import lombok.Data;
+import org.pkaq.core.enums.ModeEnumm;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -15,10 +16,14 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "eva")
 @EnableConfigurationProperties(EvaConfig.class)
 public class EvaConfig {
+
     /**
      * 是否开启国际化
      */
     private boolean i18n;
+
+    /** 模式 saas / singleton **/
+    private ModeEnumm mode;
     /**
      * 是否启用重复提交判断
      **/

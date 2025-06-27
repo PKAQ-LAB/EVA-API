@@ -3,11 +3,13 @@ package org.pkaq.sys.role.convert;
 import org.mapstruct.Mapper;
 import org.pkaq.core.mvc.convert.Convert;
 import org.pkaq.core.mvc.convert.MapConvertConfig;
+import org.pkaq.sys.module.entity.ModuleEntity;
 import org.pkaq.sys.role.bo.RoleAoeBo;
 import org.pkaq.sys.role.bo.RoleQueryBo;
 import org.pkaq.sys.role.entity.RoleEntity;
 import org.pkaq.sys.role.vo.RoleDetailVo;
 import org.pkaq.sys.role.vo.RoleListVo;
+import org.pkaq.sys.role.vo.RoleGrantedModuleVo;
 
 import java.util.List;
 
@@ -25,5 +27,7 @@ public interface RoleConvert extends Convert<RoleEntity> {
     RoleEntity boToEntity(RoleAoeBo roleAoeBo);
 
     RoleDetailVo entityToDetailVo(RoleEntity roleEntity);
+
+    List<RoleGrantedModuleVo> entityToModuleList(List<ModuleEntity> entities);
 
 }

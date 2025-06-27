@@ -10,7 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.log.annotation.BizLog;
 import org.pkaq.core.log.base.BizLogCodes;
+import org.pkaq.core.mvc.entity.Entity;
 import org.pkaq.core.mvc.vo.PageVo;
+import org.pkaq.core.mvc.vo.Vo;
 import org.pkaq.core.mybatis.mvc.service.ConvertService;
 import org.pkaq.core.mybatis.util.PageResult;
 import org.pkaq.core.threaduser.ThreadUserHelper;
@@ -30,6 +32,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * 用户管理
@@ -89,6 +92,14 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
         wrapper.setEntity(user);
         wrapper.orderByDesc(UserEntity::getModifyBy);
         return this.converter.entityToListVo(this.mapper.selectList(wrapper));
+    }
+
+    public List<? extends Vo> listUser(UserQueryBo queryBo, Function<List<? extends Entity>, List<? extends Vo>> convert) {
+        UserEntity user = this.converter.boToEntity(queryBo);
+        LambdaQueryWrapper<UserEntity> wrapper = Wrappers.lambdaQuery();
+        wrapper.setEntity(user);
+        wrapper.orderByDesc(UserEntity::getModifyBy);
+        return convert.apply(this.mapper.selectList(wrapper));
     }
     /**
      * 列表查询 - 分页

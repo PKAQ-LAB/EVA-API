@@ -1,11 +1,13 @@
 package org.pkaq.sys.role.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.pkaq.core.annotation.Ignore;
-import org.pkaq.sys.role.bo.RoleModuleRefBo;
-import org.pkaq.sys.role.entity.RoleModuleEntity;
+import org.pkaq.sys.role.bo.RoleResourceRefBo;
+import org.pkaq.sys.role.entity.RoleResourceEntity;
+import org.pkaq.sys.module.vo.ResourcesVo;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -19,7 +21,7 @@ import java.util.Map;
 @Mapper
 @Repository
 @Ignore
-public interface RoleModuleMapper extends BaseMapper<RoleModuleEntity> {
+public interface RoleResourceMapper extends BaseMapper<RoleResourceEntity> {
 
     /**
      * 获取已选且是叶子节点的模块
@@ -27,7 +29,7 @@ public interface RoleModuleMapper extends BaseMapper<RoleModuleEntity> {
      * @param bo
      * @return
      */
-    List<RoleModuleEntity> roleModuleList(@Param("entity") RoleModuleRefBo bo);
+    List<RoleResourceEntity> roleModuleList(@Param("entity") RoleResourceRefBo bo);
 
     /**
      * 根据URL返回匹配的权限名称
@@ -35,4 +37,12 @@ public interface RoleModuleMapper extends BaseMapper<RoleModuleEntity> {
      * @return
      */
     List<Map<String, String>> listRoleNamesWithPath();
+
+    /**
+     * 查询资源 并对该角色已拥有的资源打标记
+     * @param roleId
+     * @return
+     */
+    @MapKey("MODULE_ID")
+    Map<Long, List<ResourcesVo>> listGrantedResource(Long roleId);
 }

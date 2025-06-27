@@ -11,11 +11,9 @@ import org.apache.ibatis.type.Alias;
  */
 @Data
 @Alias("roleModule")
-@TableName("SYS_ROLEMODULE_REF")
-public class RoleModuleEntity {
+@TableName("SYS_ROLERES_REF")
+public class RoleResourceEntity {
     private Long roleId;
-
-    private Long moduleId;
 
     private Long resourceId;
 }

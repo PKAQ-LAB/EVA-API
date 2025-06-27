@@ -4,32 +4,34 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
+import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.enums.FrozenEnumm;
 import org.pkaq.core.mvc.bo.IdCodeBo;
 import org.pkaq.core.mybatis.mvc.service.StdService;
+import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.sys.module.mapper.ModuleMapper;
-import org.pkaq.sys.role.bo.RoleAoeBo;
-import org.pkaq.sys.role.bo.RoleModuleRefBo;
-import org.pkaq.sys.role.bo.RoleUserAoeBo;
+import org.pkaq.sys.module.vo.ModuleDetailVo;
+import org.pkaq.sys.role.bo.RoleResourceRefBo;
+import org.pkaq.sys.role.bo.RoleUserRefBo;
 import org.pkaq.sys.role.convert.RoleConvert;
 import org.pkaq.sys.role.entity.RoleEntity;
+import org.pkaq.sys.role.entity.RoleResourceEntity;
 import org.pkaq.sys.role.entity.RoleUserEntity;
 import org.pkaq.sys.role.mapper.RoleMapper;
-import org.pkaq.sys.role.mapper.RoleModuleMapper;
+import org.pkaq.sys.role.mapper.RoleResourceMapper;
 import org.pkaq.sys.role.mapper.RoleUserMapper;
-import org.pkaq.sys.user.bo.UserQueryBo;
-import org.pkaq.sys.user.service.UserService;
-import org.pkaq.sys.user.vo.UserListVo;
+import org.pkaq.sys.role.vo.RoleGrantedModuleVo;
+import org.pkaq.sys.role.vo.RoleGrantedUserVo;
+import org.pkaq.sys.user.convert.UserConvert;
+import org.pkaq.sys.user.entity.UserEntity;
+import org.pkaq.sys.user.mapper.UserMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author: S.PKAQ
@@ -37,23 +39,22 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class RoleService extends StdService<RoleMapper, RoleEntity, RoleConvert> {
-    /**
-     * 权限前缀
-     **/
 
-    private final ModuleMapper moduleMapper;
-
-    private final RoleModuleMapper roleModuleMapper;
+    private final RoleResourceMapper roleResourceMapper;
 
     private final RoleUserMapper roleUserMapper;
 
-    private final UserService userService;
+    private final ModuleMapper moduleMapper;
+
+    private final UserMapper userMapper;
+
+    private final UserConvert userConvert;
 
     /**
      * 根据请求的URL查询角色所属权限
      */
     public List<Map<String, String>> listRoleNamesWithPath() {
-        return this.roleModuleMapper.listRoleNamesWithPath();
+        return this.roleResourceMapper.listRoleNamesWithPath();
     }
 
     /**
@@ -66,7 +67,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity, RoleConvert>
         // 删除该角色 授权的用户(可能有其它角色绑定)
         this.roleUserMapper.delete(queryWrapper);
         // 删除该角色 授权的模块以及资源
-        this.roleModuleMapper.delete(queryWrapper);
+        this.roleResourceMapper.delete(queryWrapper);
         //删除角色
         this.mapper.deleteByIds(ids);
     }
@@ -107,89 +108,65 @@ public class RoleService extends StdService<RoleMapper, RoleEntity, RoleConvert>
     }
 
     /**
-     * 获取该角色绑定的所有模块
+     * 获取该角色绑定的所有模块 资源
      *
      * @param roleModule 权限条件
      * @return
      */
-    public Map<String, Object> listModule(RoleModuleRefBo roleModule) {
+    public RoleGrantedModuleVo fetchResource(RoleResourceRefBo roleModule) {
+        if (null == roleModule || roleModule.getRoleId() == null) {
+            CommonCodes.PARAM_ERROR.newException();
+        }
+        // 获取角色范围内的不重复菜单
+        var curUid = ThreadUserHelper.getUserId();
+        var roleId = roleModule.getRoleId();
 
-//        boolean isAdmin = ThreadUserHelper.isAdmin();
-//        // 获取所有菜单
-//        ModuleEntity moduleEntity = new ModuleEntity();
-////        moduleEntity.setStatus(FrozenEnumm.UN_FROZEN.getCode());
-//        List<ModuleEntity> moduleList = null;
-//
-//        // 非管理员仅能授权当前权限范围内的模块
-//        if (isAdmin) {
-////            moduleList = this.moduleMapper.listModule(moduleEntity);
-//        } else {
-//            moduleList = this.moduleMapper.listGrantedModule(null, moduleEntity, new String[]{"获取角色列表"});
-//        }
-//
-//        //获取已选且是叶子节点的模块
-//        List<RoleModuleEntity> roleModuleList = this.roleModuleMapper.roleModuleList(roleModule);
-//        // 已选的moduleId
-//        HashSet<String> checked = null;
-//        // 已选的资源权限
-//        Map<String, List<String>> checkedResource = new HashMap<>(roleModuleList.size());
-//
-//        if (CollectionUtils.isNotEmpty(roleModuleList)) {
-//            checked = new HashSet<>(roleModuleList.size());
-//            for (RoleModuleEntity rme : roleModuleList) {
-//                if (!checked.contains(rme.getModuleId())) {
-//                    checked.add(rme.getModuleId());
-//                }
-//
-//                String rid = rme.getResourceId();
-//                String mid = rme.getModuleId();
-//
-//                List<String> list = checkedResource.get(mid);
-//                if (CollUtil.isEmpty(list)) {
-//                    list = new ArrayList<>();
-//                }
-//                list.add(rid);
-//                checkedResource.put(rme.getModuleId(), list);
-//            }
-//        }
-//
-//        Map<String, Object> map = new HashMap<>(3);
-//        map.put("modules", moduleList);
-//        map.put("checked", checked);
-//        map.put("checkedResource", checkedResource);
-//        return map;
-        return null;
+        Map<Long, ModuleDetailVo> moduleMap = this.moduleMapper.listGrantedModules(curUid);
+
+        // 查询该角色拥有的所有资源
+        var resourceMap = this.roleResourceMapper.listGrantedResource(roleId);
+
+        var moduleChecked = new HashSet<Long>();
+        // 将资源组装到模块中
+        resourceMap.forEach((k,v) -> {
+            var module = moduleMap.get(k);
+            module.setResources(v);
+            // 收集模块的选中id
+            moduleChecked.add(k);
+        });
+
+
+        RoleGrantedModuleVo roleModuleVo = new RoleGrantedModuleVo();
+        roleModuleVo.setModules(moduleMap.values());
+        roleModuleVo.setCheckedModuleIds(moduleChecked);
+
+        return roleModuleVo;
     }
 
     /**
      * 保存角色关系表
      */
-    public void saveModule(RoleAoeBo role) {
-//        this.roleModuleMapper.delete(
-//                new LambdaQueryWrapper<RoleModuleEntity>()
-//                        .eq(RoleModuleEntity::getRoleId, role.getId())
-//        );
-//
-//        // 插入新的权限信息
-//        if (CollUtil.isNotEmpty(role.getModules())) {
-//            List<RoleModuleEntity> modules = role.getModules();
-//            Map<String, String[]> resourceMap = role.getResources();
-//
-//            for (RoleModuleEntity module : modules) {
-//                module.setRoleId(role.getId());
-//                //设置角色拥有的资源
-//                String[] resources = null != resourceMap ? resourceMap.get(module.getModuleId()) : null;
-//                if (null == resources || resources.length < 1) {
-//                    this.roleModuleMapper.insert(module);
-//                } else {
-//                    for (String s : resources) {
-//                        module.setId(IdWorker.getId());
-//                        module.setResourceId(s);
-//                        this.roleModuleMapper.insert(module);
-//                    }
-//                }
-//            }
-//        }
+    public void grantResource(RoleResourceRefBo role) {
+        if (null == role.getRoleId()) {
+            CommonCodes.PARAM_ERROR.newException();
+        }
+        this.roleResourceMapper.delete(
+                new LambdaQueryWrapper<RoleResourceEntity>()
+                        .eq(RoleResourceEntity::getRoleId, role.getRoleId())
+        );
+
+        // 写入资源信息
+        if (CollUtil.isNotEmpty(role.getResourceId())) {
+            List<Long> resources = role.getResourceId();
+
+            for (Long rid : resources) {
+                var ref = new RoleResourceEntity();
+                ref.setRoleId(role.getRoleId());
+                ref.setResourceId(rid);
+
+                this.roleResourceMapper.insert(ref);
+            }
+        }
     }
 
     /**
@@ -198,49 +175,51 @@ public class RoleService extends StdService<RoleMapper, RoleEntity, RoleConvert>
      * @param roleId 权限条件
      * @return
      */
-    public Map<String, Object> listUser(Long roleId, Long deptId) {
+    public RoleGrantedUserVo listUser(Long roleId, Long deptId) {
         // 获取所有用户
-        UserQueryBo userEntity = new UserQueryBo();
-        if (null != deptId && 0 != deptId) {
-            userEntity.setDeptId(deptId);
-        }
+        LambdaQueryWrapper<UserEntity> userWrapper = new LambdaQueryWrapper<>();
+        userWrapper.eq((null != deptId && 0 != deptId), UserEntity::getDeptId, deptId);
+        userWrapper.eq(UserEntity::getFrozen, FrozenEnumm.UN_FROZEN);
 
-        userEntity.setFrozen(FrozenEnumm.UN_FROZEN.getCode());
+        List<UserEntity> users = this.userMapper.selectList(userWrapper);
 
-        List<UserListVo> users = this.userService.listUser(userEntity);
-        // 获取已选的模块
+        // 获取已选的用户
         RoleUserEntity roleUserEntity = new RoleUserEntity();
         roleUserEntity.setRoleId(roleId);
 
-        QueryWrapper<RoleUserEntity> wrapper = new QueryWrapper<>();
-        wrapper.setEntity(roleUserEntity);
-        // 只返回moduleId
-        List<RoleUserEntity> roleUserList = this.roleUserMapper.selectList(wrapper);
-        List<Long> checked = null;
-        if (CollectionUtils.isNotEmpty(roleUserList)) {
-            checked = new ArrayList<>(roleUserList.size());
-            for (RoleUserEntity rue : roleUserList) {
-                checked.add(rue.getUserId());
-            }
-        }
-        Map<String, Object> map = HashMap.newHashMap(2);
-        map.put("users", users);
-        map.put("checked", checked);
-        return map;
+        LambdaQueryWrapper<RoleUserEntity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(RoleUserEntity::getRoleId, roleId);
+        wrapper.select(RoleUserEntity::getUserId);
+
+        Set<Long> checkedUser = this.roleUserMapper.selectObjs(wrapper)
+                .stream()
+                .map(o -> (Long)o)
+                .collect(Collectors.toSet());
+
+        RoleGrantedUserVo roleGrantedUserVo = new RoleGrantedUserVo();
+        roleGrantedUserVo.setCheckedUser(checkedUser);
+        roleGrantedUserVo.setUsers(this.userConvert.entityToSimpleVo(users));
+
+        return roleGrantedUserVo;
     }
 
     /**
      * 保存角色关系表
      */
-    public void saveUser(RoleUserAoeBo role) {
+    public void grantUser(RoleUserRefBo role) {
+        if (null == role.getRoleId()) {
+            CommonCodes.PARAM_ERROR.newException();
+        }
         // 删除原有角色
         this.roleUserMapper.delete(new LambdaQueryWrapper<RoleUserEntity>().eq(RoleUserEntity::getRoleId, role.getRoleId()));
         // 插入新的权限信息
-        if (CollUtil.isNotEmpty(role.getUsers())) {
-            List<RoleUserEntity> users = role.getUsers();
-            for (RoleUserEntity user : users) {
-                user.setRoleId(role.getRoleId());
-                this.roleUserMapper.insert(user);
+        if (CollUtil.isNotEmpty(role.getUserId())) {
+            List<Long> users = role.getUserId();
+            for (Long user : users) {
+                var ref = new RoleUserEntity();
+                ref.setRoleId(role.getRoleId());
+                ref.setUserId(user);
+                this.roleUserMapper.insert(ref);
             }
         }
     }

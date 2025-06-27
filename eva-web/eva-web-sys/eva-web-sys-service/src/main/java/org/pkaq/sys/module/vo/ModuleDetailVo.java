@@ -29,6 +29,6 @@ public class ModuleDetailVo extends StdTreeVo {
     private String modelurl;
 
     @Schema(description = "模块拥有的资源")
-    private List<ModuleResources> resources;
+    private List<ResourcesVo> resources;
 
 }

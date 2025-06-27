@@ -30,6 +30,9 @@ public class StdTreeVo extends StdVo {
     @Schema(description = "是否叶子")
     private Boolean isleaf;
 
+    @Schema(description = "是否选中")
+    private boolean checked = false;
+
     @Schema(description = "子节点")
     private List<StdTreeVo> children;
 
