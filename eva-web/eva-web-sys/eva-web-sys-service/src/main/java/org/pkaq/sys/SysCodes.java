@@ -11,21 +11,27 @@ import org.pkaq.core.exception.BizAssert;
 @Getter
 public enum SysCodes implements BizAssert {
     /**
-     * 用户相关 0100x
+     * 用户相关 0x000-01
      **/
-    ACCOUNT_ALREADY_EXIST("账户名已存在", "0x000-01000"),
-    BAD_ORG_PASSWORD("原密码校验失败", "0x000-01001"),
-    CANNOT_FIND_USER("权限不足或无法查询到该用户", "0x000-01002"),
-    CHECKFIELD_ALREADY_EXIST("需要进行校验的字段为空", "0x000-01003"),
-    CODE_ALREADY_EXIST("编码已存在", "0x000-01005"),
-    ACCOUNT_OR_CODE_ALREADY_EXIST("账户名或者编码已存在", "0x000-01006"),
-    USER_ACCOUNT_LIMIT("用户超出授权数量", "0x000-01007" ),
+    ACCOUNT_ALREADY_EXIST("账户名已存在", "0x001-01000"),
+    BAD_ORG_PASSWORD("原密码校验失败", "0x001-01001"),
+    CANNOT_FIND_USER("权限不足或无法查询到该用户", "0x001-01002"),
+    CHECKFIELD_ALREADY_EXIST("需要进行校验的字段为空", "0x001-01003"),
+    CODE_ALREADY_EXIST("编码已存在", "0x001-01005"),
+    ACCOUNT_OR_CODE_ALREADY_EXIST("账户名或者编码已存在", "0x001-01006"),
+    USER_ACCOUNT_LIMIT("用户超出授权数量", "0x001-01007" ),
+
     /**
-     * 租户相关 0100x
+     * 租户相关 0100x-02
      **/
     TENANT_CODE_ALREADY_EXIST("编码已存在", "0x000-02000"),
     TENANT_NAME_ALREADY_EXIST("名称已存在", "0x000-02001"),
     TENANT_CODE_OR_NAME_ALREADY_EXIST("名称已存在", "0x000-02001"),
+    /**
+     * 租户相关 0100x-03
+     **/
+    MODULE_RESOURCE_USED("模块下存在已经被引用的资源，无法删除", "0x000-03001"),
+
 
     DICT_CODE_EXISTS("字典编码已经存在","0x0000-10001"),
     FILE_TYPE_ERROR("文件上传格式有误，请选择支持的格式", "0x0001-00001"),
@@ -66,12 +72,10 @@ public enum SysCodes implements BizAssert {
     TENANT_COED_NAME_EXIST("租户code/名称已存在", "0x0001-0701-0011"),
 
     PATH_ALREADY_EXIST("模块路径已经存在", "4301"),
-    CHILD_EXIST("[{0}] 存在子节点，无法删除", "4302"),
+
     CODE_EXIST("[{0}] 编码已经存在", "4303"),
     ROLE_CODE_EXIST("权限编码已经存在", "4304"),
     RESOURCE_USED("资源已经被引用，无法删除", "4305"),
-    PARENT_NOT_AVAILABLE("父节点为禁用状态，无法启用", "4306"),
-    MODULE_RESOURCE_USED("模块下存在已经被引用的资源，无法删除", "4307"),
 
     ORG_CODE_EXIST("组织(部门)编码已经存在", "4310"),
 

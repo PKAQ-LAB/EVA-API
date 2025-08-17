@@ -1,8 +1,6 @@
 package org.pkaq.core.mybatis.mvc.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,9 +15,6 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = false)
 public abstract class StdMultiEntity<T> extends StdEntity {
-
-    @TableId(type = IdType.ASSIGN_ID)
-    private Long id;
 
     @TableField(exist = false)
     @Schema(description = "子表")

@@ -1,14 +1,13 @@
 package org.pkaq.core.mybatis.mvc.service;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import org.pkaq.core.mybatis.mvc.entity.StdMultiEntity;
-import org.pkaq.core.mybatis.mvc.entity.StdMultiLineEntity;
+import org.pkaq.core.mybatis.mvc.entity.StdLineEntity;
 import org.pkaq.core.mybatis.util.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
@@ -26,7 +25,7 @@ import java.util.List;
 public abstract class StdMultiService<M extends BaseMapper<T>,
         L extends BaseMapper<S>,
         T extends StdMultiEntity<S>,
-        S extends StdMultiLineEntity> {
+        S extends StdLineEntity> {
     @Autowired
     public M mapper;
 

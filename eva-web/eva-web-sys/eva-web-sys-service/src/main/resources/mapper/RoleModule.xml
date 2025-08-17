@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.pkaq.sys.role.mapper.RoleResourceMapper">
+    <delete id="purgeBrokenRoleResourceRefs" parameterType="java.lang.Long">
+        DELETE rr
+            FROM SYS_ROLERES_REF rr
+        JOIN SYS_MODULE_RESOURCES res ON rr.resource_id = res.id
+        WHERE res.module_id = #{mid}
+    </delete>
 
     <!--获取已选且是叶子节点的模块-->
     <select id="roleModuleList" resultType="roleModule">

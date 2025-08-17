@@ -46,4 +46,10 @@ public interface RoleResourceMapper extends BaseMapper<RoleResourceEntity> {
      */
     @MapKey("MODULE_ID")
     Map<Long, List<ModuleResourcesVo>> listGrantedResource(Long roleId);
+
+    /**
+     * 删除权限中失效的的引用关系
+     * @param moduleId
+     */
+    void purgeBrokenRoleResourceRefs(Long moduleId);
 }

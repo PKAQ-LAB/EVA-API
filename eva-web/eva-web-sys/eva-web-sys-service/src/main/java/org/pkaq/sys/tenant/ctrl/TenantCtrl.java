@@ -66,7 +66,7 @@ public class TenantCtrl extends Ctrl {
 
     @GetMapping("/list")
     @Operation(summary = "根据条件查询列表数据 ")
-    @BizLog(operateType = BizLogCodes.EDIT, description = "查询了租户列表[{0}]", args = {"param:0"})
+    @BizLog(operateType = BizLogCodes.QUERY, description = "查询了租户列表[{0}]", args = {"param:0"})
     public Response<PageVo<TenantListVo>> list(@Parameter(name = "queryBo", description = "请求参数")
                                                TenantQueryBo queryBo) {
         return success(this.service.listPage(queryBo));
@@ -74,7 +74,7 @@ public class TenantCtrl extends Ctrl {
 
     @GetMapping("/get/{id}")
     @Operation(summary = "根据ID获得租户信息")
-    @BizLog(operateType = BizLogCodes.EDIT, description = "查询了租户信息[{0}]", args = {"param:0"})
+    @BizLog(operateType = BizLogCodes.QUERY, description = "查询了租户信息[{0}]", args = {"param:0"})
     public Response<TenantDetailVo> getRole(@Parameter(name = "id", description = "记录ID")
                                             @PathVariable("id") Long id) {
         return this.success(this.service.get(id));
@@ -90,7 +90,7 @@ public class TenantCtrl extends Ctrl {
 
     @PostMapping("/del")
     @Operation(summary = "根据ID删除/批量删除记录")
-    @BizLog(operateType = BizLogCodes.EDIT, description = "删除了租户信息[{0}]", args = {"param:0"})
+    @BizLog(operateType = BizLogCodes.DELETE, description = "删除了租户信息[{0}]", args = {"param:0"})
     public Response<Object> del(@Parameter(name = "ids", description = "[记录ID]")
                                 @RequestBody SingleArray<Long> ids) {
         // 参数非空校验

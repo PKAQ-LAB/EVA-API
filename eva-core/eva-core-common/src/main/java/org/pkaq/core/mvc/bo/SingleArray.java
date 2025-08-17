@@ -4,7 +4,7 @@ import lombok.Data;
 import org.pkaq.core.enums.FrozenEnumm;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 用于接收数组参数的虚拟对象
@@ -12,6 +12,6 @@ import java.util.ArrayList;
  */
 @Data
 public class SingleArray<T> implements Serializable {
-    private ArrayList<T> param;
+    private List<T> param;
     private FrozenEnumm status;
 }
