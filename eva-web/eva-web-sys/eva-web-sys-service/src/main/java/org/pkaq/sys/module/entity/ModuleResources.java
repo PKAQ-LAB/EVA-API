@@ -22,4 +22,6 @@ public class ModuleResources extends StdLineEntity {
     private String resourceUrl;
 
     private String resourceType;
+
+    private long batchId;
 }

@@ -10,6 +10,7 @@ import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.sys.dict.service.DictService;
 import org.pkaq.sys.module.service.ModuleService;
+import org.pkaq.sys.user.service.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthCtrl extends Ctrl {
     private final DictService dictService;
     private final ModuleService moduleService;
+    private final UserService userService;
 
     @GetMapping("/fetchMenus")
     @Operation(summary = "获取当前登录用户的信息(菜单.权限.消息)")
@@ -32,7 +34,7 @@ public class AuthCtrl extends Ctrl {
         try {
             final var userId = ThreadUserHelper.getUserId();
 
-            return success(this.moduleService.fetchModuleByUid(userId));
+            return success(this.userService.fetchModuleByUid(userId));
         } catch (Exception e) {
             return failure(CommonCodes.SERVER_ERROR);
         }

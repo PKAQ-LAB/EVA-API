@@ -2,6 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.pkaq.sys.tenant.mapper.TenantMapper">
 
+    <delete id="deleteByModuleIds">
+        DELETE rr
+            FROM SYS_ROLERES_REF rr
+        JOIN SYS_MODULE_RESOURCES mr ON rr.RESOURCE_ID = mr.ID
+            WHERE mr.MAIN_ID IN
+        <foreach collection="moduleIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
     <!--    锁定超出数量的用户-->
     <update id="reGrantUser">
         WITH SORTED_USERS AS (

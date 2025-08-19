@@ -52,4 +52,10 @@ public interface RoleResourceMapper extends BaseMapper<RoleResourceEntity> {
      * @param moduleId
      */
     void purgeBrokenRoleResourceRefs(Long moduleId);
+
+    /**
+     * 删除授权的资源
+     * @param ids
+     */
+    int deleteByModuleIds(@Param("moduleIds")List<Long> ids);
 }

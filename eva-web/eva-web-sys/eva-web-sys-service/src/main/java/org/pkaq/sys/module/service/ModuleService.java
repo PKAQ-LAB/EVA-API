@@ -2,6 +2,7 @@ package org.pkaq.sys.module.service;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.CharSequenceUtil;
+import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.pkaq.core.mybatis.util.TreeHelper;
 import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.module.bo.ModuleAoeBo;
 import org.pkaq.sys.module.bo.ModuleQueryBo;
+import org.pkaq.sys.module.bo.ModuleResourcesBo;
 import org.pkaq.sys.module.bo.ModuleSortBo;
 import org.pkaq.sys.module.convert.ModuleConvert;
 import org.pkaq.sys.module.entity.ModuleEntity;
@@ -21,10 +23,10 @@ import org.pkaq.sys.module.mapper.ModuleMapper;
 import org.pkaq.sys.module.mapper.ModuleResourceMapper;
 import org.pkaq.sys.module.vo.ModuleDetailVo;
 import org.pkaq.sys.role.mapper.RoleResourceMapper;
-import org.pkaq.sys.user.vo.UserResourceVo;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -39,6 +41,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity, Module
     private final ModuleResourceMapper moduleResourceMapper;
 
     private final RoleResourceMapper roleResourceMapper;
+
     /**
      * 根据ID批量删除
      *
@@ -68,6 +71,8 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity, Module
                 this.moduleResourceMapper.delete(deleteWrapper);
                 // 删除模块
                 this.mapper.deleteByIds(ids);
+                // 删除授权
+                this.roleResourceMapper.deleteByModuleIds(ids);
             } catch (Exception e) {
                 throw new BizException(SysCodes.MODULE_RESOURCE_USED);
             }
@@ -80,6 +85,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity, Module
      * @param bo 要 新增/编辑 得模块对象
      * @return 重新查询模块列表
      */
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void editModule(ModuleAoeBo bo) {
         var module = this.convert.boToEntity(bo);
 
@@ -94,63 +100,14 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity, Module
         } else {
             // 树原有信息
             ModuleDetailVo originModule = this.get(moduleId);
-            // 1.冻结状态变更逻辑
-            if (FrozenEnumm.UN_FROZEN == module.getFrozen() && !isRoot) {
-                //解除冻结， 查询其父节点状态是否为冻结，否则不可改变状态
-                ModuleEntity parent = this.mapper.selectById(pid);
-                if (null != parent && parent.getFrozen() == FrozenEnumm.FROZEN) {
-                    throw new BizException(CommonCodes.PARENT_NOT_AVAILABLE);
-                }
-            } else {
-                // 冻结，将节点以及下属子节点一起冻结
-                LambdaUpdateWrapper<ModuleEntity> updateWrapper = new LambdaUpdateWrapper<>();
-                updateWrapper.eq(ModuleEntity::getId, moduleId).or().eq(ModuleEntity::getPid, pid);
-                this.mapper.update(updateWrapper);
-            }
-
+            // 处理冻结逻辑
+            this.handleFrozenStatus(module, originModule, isRoot);
             // 2.父节点变更逻辑（重新设置叶子属性，重新调整排序）
-            // 原來存在父節點
-            if (!Objects.equals(originModule.getId(), pid)) {
-                // 判断原有父级是否还有下级节点 没有设置为叶子
-                var orginalChildCount = this.mapper.selectCount(new LambdaQueryWrapper<ModuleEntity>().eq(ModuleEntity::getPid, pid));
-                if (orginalChildCount - 1 < 1) {
-                    this.mapper.update(new LambdaUpdateWrapper<ModuleEntity>()
-                            .eq(ModuleEntity::getId, originModule.getPid())
-                            .set(ModuleEntity::getIsleaf, false)
-                    );
-                }
-            }
-            // 把新的父级设置为非叶子並設置path
-            if (!isRoot) {
-                this.mapper.update(new LambdaUpdateWrapper<ModuleEntity>()
-                        .eq(ModuleEntity::getId, pid)
-                        .set(ModuleEntity::getIsleaf, true)
-                );
-
-                // 设置id组成的path ： 新的父级节点path 属性 + 其id
-                var newParent = this.mapper.selectById(pid);
-                var path = CharSequenceUtil.format("{}/{}", newParent.getPath(), moduleId);
-
-                module.setPath(path);
-            } else {
-                module.setPath(null);
-            }
-
-            // 父节点变更导致path变更，更新该节点下所有得子级path
-            // TODO
+            this.handleParentChange(module, originModule, isRoot);
         }
 
         // 更新資源信息（注意：存在权限引用，不可使用先删除再写入方案）
-        // 更新资源信息
-        LocalDateTime utc_now = LocalDateTime.now();
-        if (CollUtil.isNotEmpty(bo.getResources())) {
-            var resource = this.convert.resourceBoToEntity(bo.getResources());
-            resource.forEach(this.moduleResourceMapper::insertOrUpdate);
-        }
-        // 删除小于更新时间的
-        this.moduleResourceMapper.delete(new LambdaUpdateWrapper<ModuleResources>()
-                .eq(ModuleResources::getMainId, moduleId)
-                .lt(ModuleResources::getUtcModify, utc_now));
+        this.handleResources(moduleId, bo.getResources());
         // 删除权限中失效的的引用关系
         this.roleResourceMapper.purgeBrokenRoleResourceRefs(moduleId);
     }
@@ -171,7 +128,6 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity, Module
         var resourceList = this.convert.resourceEntityToVo(this.moduleResourceMapper.selectList(queryWrapper));
         md.setResources(resourceList);
 
-        // 树形结构转换
         return md;
     }
 
@@ -181,44 +137,27 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity, Module
      * @param queryBo 属性实体类
      * @return 模块树列表
      */
-    public Collection<ModuleDetailVo> list(ModuleQueryBo queryBo) {
+    public Collection<ModuleDetailVo> list(ModuleQueryBo queryBo, boolean withResource) {
         // 根据条件查询模块，返回Map<moduleId, ModuleDetailVo>
         Map<Long, ModuleDetailVo> moduleMap = this.mapper.selectModuleMapList(queryBo);
 
         if (CollUtil.isEmpty(moduleMap)) {
             return Collections.emptyList();
         }
-
-        // 批量查询模块对应的资源
-        LambdaQueryWrapper<ModuleResources> resourceQuery = new LambdaQueryWrapper<>();
-        resourceQuery.in(ModuleResources::getMainId, moduleMap.keySet());
-        List<ModuleResources> resourceList = this.moduleResourceMapper.selectList(resourceQuery);
-
-        // 按模块ID分组资源，转换并设置到对应模块Vo中
-        Map<Long, List<ModuleResources>> resourceGroupByModule = resourceList.stream()
-                .collect(Collectors.groupingBy(ModuleResources::getMainId));
-
-        resourceGroupByModule.forEach((moduleId, resources) -> {
-            ModuleDetailVo moduleVo = moduleMap.get(moduleId);
-            if (moduleVo != null) {
-                moduleVo.setResources(this.convert.resourceEntityToVo(resources));
-            }
-        });
+        if (withResource){
+            this.handleFetchResource(moduleMap);
+        }
 
         // 构造树形结构返回
         return TreeHelper.buildTree(moduleMap.values());
     }
 
-
     /**
      * 交换两个orders值
-     *
-     * @param switchModule 进行交换的两个实体
+     * @param bo 进行交换的两个实体
      */
-    public void sortModule(ModuleSortBo[] switchModule) {
-//        for (ModuleEntity module : switchModule) {
-//            this.mapper.updateById(module);
-//        }
+    public void sortModule(ModuleSortBo bo) {
+        this.mapper.updateSort(bo.getId(),bo.getOldSort(),bo.getNewSort());
     }
 
     /**
@@ -245,20 +184,123 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity, Module
     }
 
     /**
-     * 获取当前登录用户的信息(菜单.权限.消息
-     *
-     * @param uid 用户ID
+     * 查询模块的资源
+     * @param moduleMap
      */
-    public List<UserResourceVo> fetchModuleByUid(Long uid) {
-//        // 菜单树
-//        List<ModuleEntity> moduleEntity = this.mapper.getRoleModuleByUserId(uid);
-//        List<StdTreeEntity> treeModule = TreeHelper().bulid(moduleEntity);
-//
-//        List<UserResourceVo> urv = this.convert.moduleTreeToUserResourceVo(treeModule);
-//        // 权限是否为空
-////        SysCodes.PERMISSION_EXPIRED.assertNotBlank(treeModule);
-//
-//        return urv;
-        return null;
+    private void handleFetchResource(Map<Long, ModuleDetailVo> moduleMap){
+        // 批量查询模块对应的资源
+        LambdaQueryWrapper<ModuleResources> resourceQuery = new LambdaQueryWrapper<>();
+        resourceQuery.in(ModuleResources::getMainId, moduleMap.keySet());
+        List<ModuleResources> resourceList = this.moduleResourceMapper.selectList(resourceQuery);
+
+        // 按模块ID分组资源，转换并设置到对应模块Vo中
+        Map<Long, List<ModuleResources>> resourceGroupByModule = resourceList.stream()
+                .collect(Collectors.groupingBy(ModuleResources::getMainId));
+
+        resourceGroupByModule.forEach((moduleId, resources) -> {
+            ModuleDetailVo moduleVo = moduleMap.get(moduleId);
+            if (moduleVo != null) {
+                moduleVo.setResources(this.convert.resourceEntityToVo(resources));
+            }
+        });
     }
+    /**
+     * 调整冻结状态
+     *
+     * @param module
+     * @param originModule
+     * @param isRoot
+     */
+    private void handleFrozenStatus(ModuleEntity module, ModuleDetailVo originModule, boolean isRoot) {
+        if (FrozenEnumm.UN_FROZEN == module.getFrozen()) {
+            // 解除冻结
+            if (!isRoot) {
+                ModuleEntity parent = this.mapper.selectById(module.getPid());
+                if (parent != null && parent.getFrozen() == FrozenEnumm.FROZEN) {
+                    throw new BizException(CommonCodes.PARENT_NOT_AVAILABLE);
+                }
+            }
+            this.mapper.update(new LambdaUpdateWrapper<ModuleEntity>()
+                    .likeRight(ModuleEntity::getPath, originModule.getPath())
+                    .set(ModuleEntity::getFrozen, FrozenEnumm.UN_FROZEN));
+        } else {
+            // 冻结节点及子节点
+            this.mapper.update(new LambdaUpdateWrapper<ModuleEntity>()
+                    .likeRight(ModuleEntity::getPath, originModule.getPath())
+                    .set(ModuleEntity::getFrozen, FrozenEnumm.FROZEN));
+        }
+    }
+
+    /**
+     * 父节点变更处理
+     *
+     * @param module
+     * @param originModule
+     * @param isRoot
+     */
+    private void handleParentChange(ModuleEntity module, ModuleDetailVo originModule, boolean isRoot) {
+        Long moduleId = module.getId();
+        Long pid = module.getPid();
+        // 原來存在父節點
+        if (!Objects.equals(originModule.getPid(), pid)) {
+            // 判断原有父级是否还有下级节点 没有设置为叶子
+            var orginalChildCount = mapper.selectCount(new LambdaQueryWrapper<ModuleEntity>()
+                    .eq(ModuleEntity::getPid, originModule.getPid())
+                    .ne(ModuleEntity::getId, moduleId)
+            );
+            // 原父节点变为叶子
+            if (orginalChildCount == 0) {
+                this.mapper.update(new LambdaUpdateWrapper<ModuleEntity>()
+                        .eq(ModuleEntity::getId, originModule.getPid())
+                        .set(ModuleEntity::getIsleaf, true)
+                );
+            }
+            // 新父节点变为非叶子
+            if (!isRoot) {
+                mapper.update(null, new LambdaUpdateWrapper<ModuleEntity>()
+                        .eq(ModuleEntity::getId, pid)
+                        .set(ModuleEntity::getIsleaf, false)
+                );
+            }
+            // 更新path
+            if (!isRoot) {
+                // 设置id组成的path ： 新的父级节点path 属性 + 其id
+                var newParent = this.mapper.selectById(pid);
+                var newPath = CharSequenceUtil.format("{}/{}", newParent.getPath(), moduleId);
+                module.setPath(newPath);
+
+                mapper.updateById(module);
+                var oldPath = originModule.getPath();
+                if (CharSequenceUtil.isNotEmpty(oldPath)) {
+                    this.mapper.refreshPath(oldPath, oldPath.length(), newPath);
+                }
+            } else {
+                module.setPath(null);
+                mapper.updateById(module);
+            }
+        }
+    }
+
+    /**
+     * 资源更新
+     *
+     * @param moduleId
+     * @param resources
+     */
+    private void handleResources(Long moduleId, List<ModuleResourcesBo> resources) {
+        long batchId = IdUtil.getSnowflakeNextId();
+        // 更新资源信息
+        if (CollUtil.isNotEmpty(resources)) {
+            var resource = this.convert.resourceBoToEntity(resources);
+            resource.forEach(r -> {
+                r.setBatchId(batchId);
+                this.moduleResourceMapper.insertOrUpdate(r);
+            });
+        }
+        // 删除小于更新时间的
+        this.moduleResourceMapper.delete(new LambdaUpdateWrapper<ModuleResources>()
+                .eq(ModuleResources::getMainId, moduleId)
+                .ne(ModuleResources::getBatchId, batchId));
+    }
+
 }

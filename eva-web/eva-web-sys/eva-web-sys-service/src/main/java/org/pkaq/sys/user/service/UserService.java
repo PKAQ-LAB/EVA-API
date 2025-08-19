@@ -27,6 +27,7 @@ import org.pkaq.sys.user.entity.UserEntity;
 import org.pkaq.sys.user.mapper.UserMapper;
 import org.pkaq.sys.user.vo.UserDetailVo;
 import org.pkaq.sys.user.vo.UserListVo;
+import org.pkaq.sys.user.vo.UserResourceVo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -209,6 +210,24 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
             postBo.setPostIds(user.getPostId());
             this.userPostRefSerivce.savePosts(postBo);
         }
+    }
+
+    /**
+     * 获取当前登录用户的信息(菜单.权限.消息
+     * todo
+     * @param uid 用户ID
+     */
+    public List<UserResourceVo> fetchModuleByUid(Long uid) {
+//        // 菜单树
+//        List<ModuleEntity> moduleEntity = this.mapper.getRoleModuleByUserId(uid);
+//        List<StdTreeEntity> treeModule = TreeHelper().bulid(moduleEntity);
+//
+//        List<UserResourceVo> urv = this.convert.moduleTreeToUserResourceVo(treeModule);
+//        // 权限是否为空
+////        SysCodes.PERMISSION_EXPIRED.assertNotBlank(treeModule);
+//
+//        return urv;
+        return null;
     }
 
     /**

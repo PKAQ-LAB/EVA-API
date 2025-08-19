@@ -59,14 +59,14 @@ public class ModuleCtrl extends StdCtrl<ModuleService> {
     @Operation(summary = "根据实体类属性获取相应的模块树 ")
     @BizLog(operateType = BizLogCodes.EDIT, description = "查询了模块树[{0}]", args = {"param:0"})
     public Response<Object> list(@Parameter(name = "module", description = "{key: value}") ModuleQueryBo queryBo) {
-        return success(this.service.list(queryBo));
+        return success(this.service.list(queryBo, false));
     }
 
     @PostMapping("/sort")
     @Operation(summary = "排序模块信息")
     @BizLog(operateType = BizLogCodes.EDIT, description = "调整了模块顺序[{0}]", args = {"param:0"})
     public Response<Object> sortModule(@Parameter(name = "module", description = "{id,orders}")
-                                       @RequestBody ModuleSortBo[] switchObj) {
+                                       @RequestBody ModuleSortBo switchObj) {
         this.service.sortModule(switchObj);
         return success();
     }

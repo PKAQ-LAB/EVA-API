@@ -114,4 +114,19 @@ public interface ModuleMapper extends BaseMapper<ModuleEntity> {
 
     @MapKey("id")
     Map<Long, ModuleDetailVo> selectModuleMapList(ModuleQueryBo bo);
+
+    /**
+     * 刷新树的path
+     * @param oldPath
+     * @param oldPathLength
+     * @param newPath
+     */
+    void refreshPath(@Param("oldPath") String oldPath,
+                     @Param("oldPathLength") int oldPathLength,
+                     @Param("newPath") String newPath);
+
+    // 更新节点排序
+    void updateSort(@Param("id") Long id,
+                    @Param("oldSort") Integer oldSort,
+                    @Param("newSort") Integer newSort);
 }

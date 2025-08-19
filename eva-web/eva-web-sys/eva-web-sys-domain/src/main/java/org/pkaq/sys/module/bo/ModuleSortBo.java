@@ -14,8 +14,11 @@ import org.pkaq.core.mvc.bo.Bo;
 @Schema(title = "模块顺序调整Bo")
 public class ModuleSortBo implements Bo {
 
-    private String id;
+    private Long id;
 
-    @Schema(description = "展示顺序")
-    private int sort;
+    @Schema(description = "旧的顺序")
+    private int oldSort;
+
+    @Schema(description = "新的顺序")
+    private int newSort;
 }

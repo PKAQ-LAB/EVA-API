@@ -9,6 +9,30 @@
         </collection>
     </resultMap>
 
+    <!-- 更新path   -->
+    <update id="refreshPath" parameterType="map">
+        UPDATE sys_module
+        SET path = CONCAT(#{newPath}, SUBSTRING(path, #{oldPathLength} + 1))
+        WHERE path LIKE CONCAT(#{oldPath}, '/%')
+    </update>
+
+    <!--    更新排序-->
+    <update id="updateSort" parameterType="map">
+        UPDATE sys_module
+        SET sort = CASE
+            WHEN id = #{id} THEN #{newSort}
+            WHEN #{newSort} &lt; #{oldSort}
+                AND sort &gt;= #{newSort}
+                AND sort &lt; #{oldSort} THEN sort + 1
+            WHEN #{newSort} &gt; #{oldSort}
+                AND sort &lt;= #{newSort}
+                AND sort &gt; #{oldSort} THEN sort - 1
+            ELSE sort
+        END
+        WHERE (sort BETWEEN LEAST(#{oldSort}, #{newSort}) AND GREATEST(#{oldSort}, #{newSort}))
+            OR id = #{id}
+    </update>
+
     <!--根据权限ID查询用户拥有的模块-->
     <select id="getRoleModuleByUserId" resultType="module">
         select
