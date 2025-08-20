@@ -7,8 +7,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.pkaq.core.mvc.bo.StdBo;
 
-import java.util.List;
-
 /**
  * @author: S.PKAQ
  */

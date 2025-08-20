@@ -1,6 +1,5 @@
 package org.pkaq.sys.module.mapper;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Mapper;
@@ -10,12 +9,10 @@ import org.pkaq.sys.module.bo.ModuleQueryBo;
 import org.pkaq.sys.module.entity.ModuleEntity;
 import org.pkaq.sys.module.vo.ModuleDetailVo;
 import org.pkaq.sys.module.vo.ModuleListVo;
-import org.pkaq.sys.module.vo.ModuleResourcesVo;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 模块管理module
