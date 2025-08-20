@@ -1,5 +1,6 @@
 package org.pkaq.sys.notice.ctrl;
 
+import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -8,10 +9,10 @@ import org.springframework.web.bind.annotation.RestController;
  * @author: S.PKAQ
  */
 @RestController
-public class NoticeCtrl {
+public class NoticeCtrl extends Ctrl {
 
     @GetMapping("notices")
-    public Response notices() {
+    public Response<String> notices() {
         String json = "[" +
                 "    {" +
                 "      id: '000000001'," +
@@ -27,6 +28,6 @@ public class NoticeCtrl {
                 "      datetime: '2017-08-08'," +
                 "      type: 'notification'," +
                 "    }]";
-        return new Response().success(json);
+        return success(json);
     }
 }

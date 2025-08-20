@@ -184,7 +184,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity, Module
     }
 
     /**
-     * 查询模块的资源
+     *
      * @param moduleMap
      */
     private void handleFetchResource(Map<Long, ModuleDetailVo> moduleMap){
