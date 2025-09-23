@@ -66,7 +66,7 @@ public class BizLogAdvice {
         var description = bizlog.description();
         // 如果是以{}包裹的字符串就使用i18n获取国际化文案
 
-        if (StrUtil.isNotBlank(description) && description.startsWith("{") && description.endsWith("}")) {
+        if (CharSequenceUtil.isNotBlank(description) && description.startsWith("{") && description.endsWith("}")) {
             description = i18NHelper.getMessage(description.replace("{", "").replace("}", ""),description);
         }
 

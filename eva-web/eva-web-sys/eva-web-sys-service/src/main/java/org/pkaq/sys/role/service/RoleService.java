@@ -65,7 +65,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity, RoleConvert>
      * 批量删除角色
      */
     @Override
-    public void delete(List<Long> ids) {
+    public void delete(Set<Long> ids) {
         QueryWrapper queryWrapper = new QueryWrapper<>();
         queryWrapper.in("role_id", ids);
         // 删除该角色 授权的用户(可能有其它角色绑定)

@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * service 基类
@@ -50,7 +51,7 @@ public abstract class StdTreeService<M extends StdTreeMapper<T>, T extends StdTr
      * @param ids
      * @return
      */
-    public Response<?> delete(List<String> ids) {
+    public Response<?> delete(Set<String> ids) {
         Response<?> response = null;
         // 检查是否存在子节点，存在子节点不允许删除
         LambdaQueryWrapper<T> oew = Wrappers.lambdaQuery();

@@ -8,12 +8,13 @@ import org.pkaq.sys.user.vo.UserResourceVo;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author PKAQ
  */
 public interface IModuleService {
-    void deleteModule(List<Long> ids);
+    void deleteModule(Set<Long> ids);
 
     void editModule(ModuleAoeBo bo);
 

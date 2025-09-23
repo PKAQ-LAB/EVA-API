@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * service 基类
@@ -187,7 +188,7 @@ public abstract class StdMultiService<M extends BaseMapper<T>,
      * @return
      */
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public void delete(List<String> param) {
+    public void delete(Set<String> param) {
         // 先删除子表 再删除主表
         LambdaQueryWrapper<S> lineWrapper = Wrappers.lambdaQuery();
         lineWrapper.in(S::getMainId, param);

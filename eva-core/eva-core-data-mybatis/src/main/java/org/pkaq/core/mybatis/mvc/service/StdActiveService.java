@@ -11,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * service 基类
@@ -122,7 +122,7 @@ public abstract class StdActiveService<M extends BaseMapper<T>, T extends Model>
      * @param param
      */
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public void delete(ArrayList<String> param) {
+    public void delete(Set<String> param) {
         this.mapper.deleteBatchIds(param);
     }
 }

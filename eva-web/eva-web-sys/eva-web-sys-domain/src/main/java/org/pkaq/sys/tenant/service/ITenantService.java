@@ -6,6 +6,7 @@ import org.pkaq.sys.tenant.bo.TenantCheckBo;
 import org.pkaq.sys.tenant.vo.TenantDetailVo;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author PKAQ
@@ -13,7 +14,7 @@ import java.util.List;
 public interface ITenantService {
     void switchFrozen(SingleArray<Long> ids);
 
-    void delete(List<Long> ids);
+    void delete(Set<Long> ids);
 
     void edit(TenantAoeBo editBo);
 

@@ -3,9 +3,9 @@ package org.pkaq.sys.organization.service;
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
+import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.core.mybatis.mvc.service.StdService;
-import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.organization.bo.OrganizationAoeBo;
 import org.pkaq.sys.organization.bo.OrganizationQueryBo;
 import org.pkaq.sys.organization.bo.OrganizationSortBo;
@@ -17,6 +17,7 @@ import org.pkaq.sys.organization.vo.OrganizationListVo;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 组织信息Service
@@ -42,7 +43,7 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
      * @param ids
      * @return
      */
-    public void deleteOrg(List<String> ids) {
+    public void deleteOrg(Set<Long> ids) {
         // 检查是否存在子节点，存在子节点不允许删除
         LambdaQueryWrapper<OrganizationEntity> oew = new LambdaQueryWrapper<>();
         oew.in(OrganizationEntity::getPid, ids);
@@ -53,9 +54,9 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
             List<Object> list = CollUtil.getFieldValues(leafList, "parentName");
             String name = CollUtil.join(list, ",");
 
-            SysCodes.CHILD_EXIST.newException(name);
+            CommonCodes.CHILD_EXIST.newException(name);
         } else {
-            this.mapper.deleteBatchIds(ids);
+            this.mapper.deleteByIds(ids);
         }
     }
 

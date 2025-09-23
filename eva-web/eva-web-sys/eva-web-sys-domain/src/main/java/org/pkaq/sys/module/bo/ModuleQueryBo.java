@@ -14,6 +14,9 @@ import org.pkaq.core.mvc.bo.Bo;
 @EqualsAndHashCode(callSuper = false)
 @Schema(title = "模块管理詳情Bo")
 public class ModuleQueryBo implements Bo {
+
+    private Long id;
+
     @Schema(description = "编码")
     private String code;
 
@@ -21,6 +24,6 @@ public class ModuleQueryBo implements Bo {
     private String name;
 
     @Schema(description = "上级节点id")
-    private String pid;
+    private Long pid;
 
 }

@@ -31,7 +31,9 @@ public enum SysCodes implements BizAssert {
      * 租户相关 0100x-03
      **/
     MODULE_RESOURCE_USED("模块下存在已经被引用的资源，无法删除", "0x000-03001"),
-
+    /**
+     *
+     */
 
     DICT_CODE_EXISTS("字典编码已经存在","0x0000-10001"),
     FILE_TYPE_ERROR("文件上传格式有误，请选择支持的格式", "0x0001-00001"),

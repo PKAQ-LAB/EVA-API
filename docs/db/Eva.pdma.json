@@ -4,7 +4,7 @@
   "avatar": "",
   "version": "4.9.4",
   "createdTime": "2025-4-22 15:22:40",
-  "updatedTime": "2025-6-30 15:40:54",
+  "updatedTime": "2025-8-19 20:38:31",
   "dbConns": [],
   "profile": {
     "default": {
@@ -4072,6 +4072,24 @@
           "baseType": "",
           "extProps": {},
           "uiHint": "642D2E0A-8846-4549-BE56-8C0473F26EDE"
+        },
+        {
+          "defKey": "BATCH_ID",
+          "defName": "批次ID",
+          "comment": "",
+          "type": "BIGINT",
+          "len": "",
+          "scale": "",
+          "primaryKey": false,
+          "notNull": false,
+          "autoIncrement": false,
+          "defaultValue": "0",
+          "hideInGraph": false,
+          "refDict": "",
+          "baseType": "",
+          "extProps": {},
+          "domain": "",
+          "id": "2A6990A3-F20B-4BAE-B663-5A2A2845BF74"
         },
         {
           "defKey": "RESOURCE_DESC",

@@ -9,6 +9,7 @@ import org.pkaq.sys.user.vo.UserDetailVo;
 import org.pkaq.sys.user.vo.UserListVo;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author PKAQ
@@ -16,13 +17,13 @@ import java.util.List;
 public interface IUserService {
     void repwd(RePwdBo rePwdBo);
 
-    void delete(List<Long> param);
+    void delete(Set<Long> param);
 
     List<UserListVo> listUser(UserQueryBo queryBo);
 
     PageVo<UserListVo> listPage(UserQueryBo queryBo);
 
-    void updateUser(List<Long> ids);
+    void updateUser(Set<Long> ids);
 
     UserDetailVo getUser(Long id);
 

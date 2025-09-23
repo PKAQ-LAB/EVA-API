@@ -8,11 +8,12 @@ import org.pkaq.sys.role.vo.RoleGrantedUserVo;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface IRoleService {
     List<Map<String, String>> listRoleNamesWithPath();
 
-    void delete(List<Long> ids);
+    void delete(Set<Long> ids);
 
     boolean isUnique(IdCodeBo idCodeBo);
 

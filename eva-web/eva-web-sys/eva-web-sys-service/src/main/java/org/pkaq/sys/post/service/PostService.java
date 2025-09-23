@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author dmz
@@ -93,7 +94,7 @@ public class PostService extends ConvertService<PostMapper, PostConvert> {
      * @param param 批量传入id
      */
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public void del(List<String> param) {
+    public void del(Set<String> param) {
         // 限制： 最多只允许同时删除100条
         if (param.size() > 100) {
             SysCodes.DELETE_LIMIT.newException();

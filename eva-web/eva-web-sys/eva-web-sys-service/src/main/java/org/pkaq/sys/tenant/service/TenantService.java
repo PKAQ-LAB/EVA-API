@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * 租户管理Service
@@ -72,7 +73,7 @@ public class TenantService extends StdService<TenantMapper, TenantEntity, Tenant
      */
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     @Override
-    public void delete(List<Long> ids) {
+    public void delete(Set<Long> ids) {
         if (CollUtil.isNotEmpty(ids)) {
             CommonCodes.PARAM_ERROR.newException();
         }

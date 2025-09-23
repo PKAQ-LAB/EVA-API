@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.enums.FrozenEnumm;
 import org.pkaq.core.exception.BizException;
+import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.core.mybatis.util.TreeHelper;
 import org.pkaq.sys.SysCodes;
@@ -48,7 +49,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity, Module
      * @param ids
      * @return
      */
-    public void deleteModule(List<Long> ids) {
+    public void deleteModule(Set<Long> ids) {
         // 检查是否存在子节点，存在子节点不允许删除
         LambdaQueryWrapper<ModuleEntity> oew = new LambdaQueryWrapper<>();
         oew.in(ModuleEntity::getPid, ids);
@@ -216,7 +217,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity, Module
             // 解除冻结
             if (!isRoot) {
                 ModuleEntity parent = this.mapper.selectById(module.getPid());
-                if (parent != null && parent.getFrozen() == FrozenEnumm.FROZEN) {
+                if (parent != null  && parent.getFrozen() == FrozenEnumm.FROZEN) {
                     throw new BizException(CommonCodes.PARENT_NOT_AVAILABLE);
                 }
             }
@@ -303,4 +304,19 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity, Module
                 .ne(ModuleResources::getBatchId, batchId));
     }
 
+    /**
+     * 动态切换树的冻结状态
+     * @param ids
+     */
+    public void switchFrozen(SingleArray<Long> ids) {
+        for (Long id : ids.getParam()) {
+            ModuleEntity parent = mapper.selectOne(new LambdaQueryWrapper<ModuleEntity>().eq(ModuleEntity::getPid, id));
+            // 父节点冻结，禁止切换（严格模式）
+            if (parent.getPid() != null && 0 != parent.getPid() && parent.getFrozen() == FrozenEnumm.FROZEN) {
+                continue;
+            }
+            // 级联切换节点状态
+            this.mapper.switchFrozen(ids);
+        }
+    }
 }

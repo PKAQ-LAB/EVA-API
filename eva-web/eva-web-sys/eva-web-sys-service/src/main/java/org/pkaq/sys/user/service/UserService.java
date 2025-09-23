@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -75,7 +76,7 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
 
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     @Override
-    public void delete(List<Long> param) {
+    public void delete(Set<Long> param) {
         this.mapper.deleteByIds(param);
         // 删除授权关系
         this.roleUserMapper.delete(new LambdaQueryWrapper<RoleUserEntity>().in(RoleUserEntity::getUserId, param));
@@ -117,7 +118,7 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
      * 解锁/锁定用户
      */
     @Override
-    public void updateUser(List<Long> ids) {
+    public void updateUser(Set<Long> ids) {
         if (CollUtil.isEmpty(ids)) {
             CommonCodes.NULL_ID.newException();
         }

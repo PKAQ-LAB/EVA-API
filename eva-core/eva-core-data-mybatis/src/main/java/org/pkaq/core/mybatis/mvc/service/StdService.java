@@ -8,8 +8,6 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import org.pkaq.core.codes.CommonCodes;
-import org.pkaq.core.log.annotation.BizLog;
-import org.pkaq.core.log.base.BizLogCodes;
 import org.pkaq.core.mvc.bo.*;
 import org.pkaq.core.mvc.convert.Convert;
 import org.pkaq.core.mvc.vo.PageVo;
@@ -21,6 +19,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * service 基类
@@ -177,7 +176,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity, C
      * 通用删除
      */
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public void delete(List<Long> param) {
+    public void delete(Set<Long> param) {
         if (CollUtil.isNotEmpty(param)) {
             CommonCodes.PARAM_ERROR.newException();
         }

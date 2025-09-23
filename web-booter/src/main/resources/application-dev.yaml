@@ -52,9 +52,17 @@ spring:
     driver-class-name: com.p6spy.engine.spy.P6SpyDriver
     hikari:
       minimum-idle: 10
-      maximum-pool-size: 50
-      max-lifetime: 3000
-      connection-test-query: select 1
+      # 最大连接池大小：一般设为 CPU 核心数 * 2 ~ 5，取决于并发量
+      # 如果数据库和应用在同机，可以大一些，比如 50；如果数据库在远程，建议 30 左右
+      maximum-pool-size: 40
+      # 连接的最大存活时间：避免和数据库 wait_timeout 冲突，建议 30 分钟
+      max-lifetime: 1800000  # 30 min (毫秒)
+      # 空闲连接存活时间，通常小于 max-lifetime，避免空闲过久
+      idle-timeout: 600000   # 10 min (毫秒)
+      # 连接超时时间，等待可用连接的最长时间
+      connection-timeout: 30000  # 30 秒
+      # 心跳检测 SQL
+      connection-test-query: SELECT 1
 eva:
   # 文件上传
   file:

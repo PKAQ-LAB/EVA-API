@@ -12,6 +12,7 @@ import org.pkaq.sys.user.vo.UserListVo;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 用户管理mapper
@@ -43,7 +44,7 @@ public interface UserMapper extends BaseMapper<UserEntity> {
     /**
      * 切换锁定状态
      */
-    void change(List<Long> ids);
+    void change(Set<Long> ids);
 
     /**
      * 查询剩余可用授权用户数

@@ -53,7 +53,7 @@ public class OrganizationCtrl extends Ctrl {
     @Operation(summary = "根据ID删除/批量删除组织")
     //@PreAuthorize("hasRole('ADMIN')")
     public Response<Object> delOrg(@Parameter(name = "ids", description = "[组织ID]")
-                                   @RequestBody SingleArray<String> ids) {
+                                   @RequestBody SingleArray<Long> ids) {
         // 参数非空校验
         CommonCodes.NULL_ID.assertNotNull(ids);
         CommonCodes.NULL_ID.assertNotNull(ids.getParam());

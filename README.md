@@ -63,3 +63,16 @@ libs.undertow}",
  - 工具包: Hutool
  - ORM: Mybatis, Mybatis-plus
 
+JWT:
+1.双token
+2.加入设备id防止跨设备使用
+
+请求:
+1.请求头加入版本号/设备类型
+
+逻辑删除
+1.把 DELETED 放到索引最前面
+2.超过6个月的数据归档（mongo或者不存），原表物理删除： 策略模式+SPI
+
+日志：
+可配置只记录那些包相关的日志

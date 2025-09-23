@@ -8,8 +8,8 @@ import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.log.annotation.BizLog;
 import org.pkaq.core.log.base.BizLogCodes;
 import org.pkaq.core.mvc.bo.SingleArray;
+import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
-import org.pkaq.core.mybatis.mvc.ctrl.StdCtrl;
 import org.pkaq.sys.module.bo.ModuleAoeBo;
 import org.pkaq.sys.module.bo.ModuleQueryBo;
 import org.pkaq.sys.module.bo.ModuleSortBo;
@@ -24,9 +24,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/sys/module")
 @RequiredArgsConstructor
-public class ModuleCtrl extends StdCtrl<ModuleService> {
+public class ModuleCtrl extends Ctrl {
+    private final ModuleService service;
 
-    @Override
     @PostMapping("/del")
     @Operation(summary = "根据ID删除/批量删除记录")
     @BizLog(operateType = BizLogCodes.DELETE, description = "删除了模块[{0}]", args = {"param:0"})
@@ -48,15 +48,15 @@ public class ModuleCtrl extends StdCtrl<ModuleService> {
     }
 
     @GetMapping("/get/{id}")
-    @Operation(summary = "根据ID获得记录信息")
+    @Operation(summary = "根据ID获得模块")
     @BizLog(operateType = BizLogCodes.EDIT, description = "插叙了模块信息[{0}]", args = {"param:0"})
-    public Response<Object> getRole(@Parameter(name = "id", description = "记录ID")
+    public Response<Object> get(@Parameter(name = "id", description = "记录ID")
                                     @PathVariable("id") Long id) {
         return this.success(this.service.getModule(id));
     }
 
     @GetMapping({"/list"})
-    @Operation(summary = "根据实体类属性获取相应的模块树 ")
+    @Operation(summary = "获取模块树 ")
     @BizLog(operateType = BizLogCodes.EDIT, description = "查询了模块树[{0}]", args = {"param:0"})
     public Response<Object> list(@Parameter(name = "module", description = "{key: value}") ModuleQueryBo queryBo) {
         return success(this.service.list(queryBo, false));
@@ -65,16 +65,17 @@ public class ModuleCtrl extends StdCtrl<ModuleService> {
     @PostMapping("/sort")
     @Operation(summary = "排序模块信息")
     @BizLog(operateType = BizLogCodes.EDIT, description = "调整了模块顺序[{0}]", args = {"param:0"})
-    public Response<Object> sortModule(@Parameter(name = "module", description = "{id,orders}")
+    public Response<Object> sort(@Parameter(name = "module", description = "{id,orders}")
                                        @RequestBody ModuleSortBo switchObj) {
         this.service.sortModule(switchObj);
         return success();
     }
 
-    @PostMapping("/switchStatus")
-    @Operation(summary = "切换模块可用状态")
-    public Response<Object> switchStatus(@Parameter(name = "id", description = "模块Id")
-                                         @RequestBody SingleArray<String> ids) {
+    @PostMapping("/frozen")
+    @Operation(summary = "切换冻结状态")
+    public Response<Object> frozen(@Parameter(name = "id", description = "模块Id")
+                                   @RequestBody SingleArray<Long> ids) {
+        this.service.switchFrozen(ids);
         return success();
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 角色模块关系mapper
@@ -57,5 +58,5 @@ public interface RoleResourceMapper extends BaseMapper<RoleResourceEntity> {
      * 删除授权的资源
      * @param ids
      */
-    int deleteByModuleIds(@Param("moduleIds")List<Long> ids);
+    int deleteByModuleIds(@Param("moduleIds") Set<Long> ids);
 }

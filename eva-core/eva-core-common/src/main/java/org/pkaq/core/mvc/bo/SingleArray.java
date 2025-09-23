@@ -5,6 +5,7 @@ import org.pkaq.core.enums.FrozenEnumm;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 用于接收数组参数的虚拟对象
@@ -12,6 +13,6 @@ import java.util.List;
  */
 @Data
 public class SingleArray<T> implements Serializable {
-    private List<T> param;
+    private Set<T> param;
     private FrozenEnumm status;
 }

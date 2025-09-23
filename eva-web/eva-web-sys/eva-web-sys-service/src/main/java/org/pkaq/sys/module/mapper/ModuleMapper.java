@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.pkaq.core.annotation.Ignore;
+import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.sys.module.bo.ModuleQueryBo;
 import org.pkaq.sys.module.entity.ModuleEntity;
 import org.pkaq.sys.module.vo.ModuleDetailVo;
@@ -110,7 +111,7 @@ public interface ModuleMapper extends BaseMapper<ModuleEntity> {
     Map<Long, ModuleDetailVo> listGrantedModules(long uid);
 
     @MapKey("id")
-    Map<Long, ModuleDetailVo> selectModuleMapList(ModuleQueryBo bo);
+    Map<Long, ModuleDetailVo> selectModuleMapList(@Param("bo")  ModuleQueryBo bo);
 
     /**
      * 刷新树的path
@@ -126,4 +127,10 @@ public interface ModuleMapper extends BaseMapper<ModuleEntity> {
     void updateSort(@Param("id") Long id,
                     @Param("oldSort") Integer oldSort,
                     @Param("newSort") Integer newSort);
+
+    /**
+     * 切换状态
+     * @param ids
+     */
+    void switchFrozen(SingleArray<Long> ids);
 }

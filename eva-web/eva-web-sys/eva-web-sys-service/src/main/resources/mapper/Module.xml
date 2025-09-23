@@ -16,6 +16,20 @@
         WHERE path LIKE CONCAT(#{oldPath}, '/%')
     </update>
 
+    <!-- 根据id更新模块及子孙节点冻结状态 -->
+    <update id="switchFrozen">
+        update sys_module
+        set frozen = abs(frozen - 1)
+        <where>
+            <if test="null != ids and !ids.isEmpty()">
+                <foreach collection="ids" item="id" index="index" open="(" close=")" separator="or">
+                    id = #{id} or path like concat('%', #{id}, '%')
+                </foreach>
+            </if>
+        </where>
+    </update>
+
+
     <!--    更新排序-->
     <update id="updateSort" parameterType="map">
         UPDATE sys_module
@@ -228,19 +242,16 @@
             <include refid="common.avalibleSQL">
                 <property name="prefix" value="t"/>
             </include>
-            <if test="id != null">
+            <if test="bo.id != null">
                 AND t.ID = #{bo.id}
             </if>
-            <if test="name != null and name != ''">
+            <if test="bo.name != null and bo.name != ''">
                 AND t.NAME LIKE CONCAT('%', #{bo.name}, '%')
             </if>
-            <if test="pid != null">
+            <if test="bo.pid != null">
                 AND t.PID = #{bo.pid}
             </if>
-            <if test="isleaf != null">
-                AND t.ISLEAF = #{bo.isleaf}
-            </if>
-            <if test="code != null and code != ''">
+            <if test="bo.code != null and bo.code != ''">
                 AND t.CODE = #{bo.code}
             </if>
         </where>

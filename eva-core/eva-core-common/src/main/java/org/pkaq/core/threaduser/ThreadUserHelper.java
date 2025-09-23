@@ -56,6 +56,15 @@ public class ThreadUserHelper {
                 });
     }
 
+    private static Long safeGetLong(Function<ThreadUser, Long> extractor, String fieldName) {
+        return Optional.ofNullable(userThreadLocal.get())
+                .map(extractor)
+                .orElseGet(() -> {
+                    log.warn("获取用户【{}】失败：当前线程中没有用户信息", fieldName);
+                    return -1L;
+                });
+    }
+
     /**
      * 安全获取字符串类型字段，默认返回空字符串
      */
@@ -92,7 +101,7 @@ public class ThreadUserHelper {
      * 获取用户ID，找不到返回 null
      */
     public static long getUserId() {
-        return safeGet(ThreadUser::getUserId, "用户ID");
+        return safeGetLong(ThreadUser::getUserId, "用户ID");
     }
 
     /**
@@ -120,7 +129,7 @@ public class ThreadUserHelper {
      * 获取租户ID
      */
     public static long getTenantId() {
-        return safeGet(ThreadUser::getTenantId, "租户id");
+        return safeGetLong(ThreadUser::getTenantId, "租户id");
     }
 
     /**
@@ -134,14 +143,14 @@ public class ThreadUserHelper {
      * 获取部门ID
      */
     public static long getOrgId() {
-        return safeGet(ThreadUser::getDeptId, "部门id");
+        return safeGetLong(ThreadUser::getDeptId, "部门id");
     }
 
     /**
      * 获取岗位ID
      */
     public static long getPostId() {
-        return safeGet(ThreadUser::getPostId,"岗位id");
+        return safeGetLong(ThreadUser::getPostId,"岗位id");
     }
 
     // ====================== 角色与权限相关 ======================
