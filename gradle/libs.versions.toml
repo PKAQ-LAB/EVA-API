@@ -22,7 +22,7 @@ jwt = "10.5"
 springdoc = "2.8.13"
 minio = "8.5.17"
 prometheus = "1.15.4"
-versioncheck = "0.52.0"
+versioncheck = "0.53.0"
 mapstruct = "1.6.3"
 servlet_api = "6.1.0"
 
