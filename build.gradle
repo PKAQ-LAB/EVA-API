@@ -16,6 +16,17 @@ subprojects {
 
     apply plugin: 'io.spring.dependency-management'
 
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(25)
+        }
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        sourceCompatibility = '25'
+        targetCompatibility = '25'
+    }
+
     tasks.withType(JavaCompile).configureEach {
         options.encoding = "UTF-8"
     }
