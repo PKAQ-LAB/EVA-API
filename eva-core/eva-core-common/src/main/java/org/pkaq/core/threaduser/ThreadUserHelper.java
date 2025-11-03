@@ -1,7 +1,6 @@
 package org.pkaq.core.threaduser;
 
 import cn.hutool.core.util.ArrayUtil;
-import com.alibaba.ttl.TransmittableThreadLocal;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.constant.CommonConstant;
 
@@ -17,7 +16,7 @@ public class ThreadUserHelper {
     /**
      * 存储用户对象的 ThreadLocal，支持线程传递
      */
-    private static final ThreadLocal<ThreadUser> userThreadLocal = new TransmittableThreadLocal<>();
+    private static final ScopedValue<ThreadUser> userThreadLocal = ScopedValue.newInstance();
 
     /**
      * 获取当前登录用户
@@ -32,14 +31,15 @@ public class ThreadUserHelper {
      * @param user 用户对象
      */
     public static void setCurrentUser(ThreadUser user) {
-        userThreadLocal.set(user);
+        ScopedValue.where(userThreadLocal, user);
     }
 
     /**
-     * 移除当前用户对象
+     * 替代 set + remove：
+     * 在作用域中设置用户信息并执行逻辑，退出作用域自动清理
      */
-    public static void remove() {
-        userThreadLocal.remove();
+    public static void runWithUser(ThreadUser user, Runnable runnable) {
+        ScopedValue.where(userThreadLocal, user).run(runnable);
     }
 
     // ====================== 工具方法 ======================
@@ -48,51 +48,57 @@ public class ThreadUserHelper {
      * 安全获取用户字段，并记录未找到用户日志
      */
     private static <T> T safeGet(Function<ThreadUser, T> extractor, String fieldName) {
-        return Optional.ofNullable(userThreadLocal.get())
-                .map(extractor)
-                .orElseGet(() -> {
-                    log.warn("获取用户【{}】失败：当前线程中没有用户信息", fieldName);
-                    return null;
-                });
+        if (userThreadLocal.isBound()) {
+            return extractor.apply(userThreadLocal.get());
+        } else {
+            log.warn("获取用户【{}】失败：当前线程中没有用户信息", fieldName);
+            return null;
+        }
     }
 
     private static Long safeGetLong(Function<ThreadUser, Long> extractor, String fieldName) {
-        return Optional.ofNullable(userThreadLocal.get())
-                .map(extractor)
-                .orElseGet(() -> {
-                    log.warn("获取用户【{}】失败：当前线程中没有用户信息", fieldName);
-                    return -1L;
-                });
+        if (userThreadLocal.isBound()) {
+            return extractor.apply(userThreadLocal.get());
+        } else {
+            log.warn("获取用户【{}】失败：当前线程中没有用户信息", fieldName);
+            return -1L;
+        }
     }
 
     /**
      * 安全获取字符串类型字段，默认返回空字符串
      */
     private static String safeGetString(Function<ThreadUser, String> extractor) {
-        return Optional.ofNullable(userThreadLocal.get())
-                .map(extractor)
-                .orElse("");
+        if (userThreadLocal.isBound()) {
+            return extractor.apply(userThreadLocal.get());
+        } else {
+            log.warn("获取用户失败：当前线程中没有用户信息");
+            return "";
+        }
     }
 
     /**
      * 安全获取字符串数组字段，默认返回空数组
      */
     private static String[] safeGetStringArray(Function<ThreadUser, String[]> extractor) {
-        return Optional.ofNullable(userThreadLocal.get())
-                .map(extractor)
-                .orElse(new String[0]);
+        if (userThreadLocal.isBound()) {
+            return extractor.apply(userThreadLocal.get());
+        } else {
+            log.warn("获取用户失败：当前线程中没有用户信息");
+            return new String[0];
+        }
     }
 
     /**
      * 安全获取 Map<String, GrantedRoles>
      */
     private static Map<Long, ThreadUser.GrantedRoles> safeGetRolesMap() {
-        return Optional.ofNullable(userThreadLocal.get())
-                .map(ThreadUser::getRolesMap)
-                .orElseGet(() -> {
-                    log.warn("获取用户角色失败：当前线程中没有用户信息");
-                    return Collections.emptyMap();
-                });
+        if (userThreadLocal.isBound()) {
+            return userThreadLocal.get().getRolesMap();
+        } else {
+            log.warn("获取用户角色失败：当前线程中没有用户信息");
+            return Collections.emptyMap();
+        }
     }
 
     // ====================== 用户基础信息 ======================
@@ -222,9 +228,12 @@ public class ThreadUserHelper {
      * 获取角色权限映射表
      */
     public static Map<Long, List<Long>> getRolePermission() {
-        return Optional.ofNullable(userThreadLocal.get())
-                .map(ThreadUser::getRolePermissonMap)
-                .orElse(Collections.emptyMap());
+        if (userThreadLocal.isBound()) {
+            return userThreadLocal.get().getRolePermissonMap();
+        } else {
+            log.warn("获取用户失败：当前线程中没有用户信息");
+            return Collections.emptyMap();
+        }
     }
 
     // ====================== 设备 & 版本 ======================
