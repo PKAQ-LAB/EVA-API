@@ -40,7 +40,8 @@ public enum CommonCodes implements BizAssert {
     PARAM_LOST("请求参数丢失", "0x0400-00001"),
     TOKEN_NOT_VERIFY("Token校验异常", "4000"),
     PARAM_ERROR("请求参数错误", "0x0400-00002"),
-    PARAM_TYPEERROR("参数类型错误 ", "4008"),
+    DUPLICATE_CODE_ERROR("编码校验失败,存在重复编码", "0x0400-00003"),
+    PARAM_TYPE_ERROR("参数类型错误 ", "4008"),
     PARAM_LENGTH("参数长度错误", "4009"),
 
     REQUEST_METHOD_ERROR("服务器不支持当前请求的方法", "4011"),

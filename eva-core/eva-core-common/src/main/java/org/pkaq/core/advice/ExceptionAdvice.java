@@ -49,7 +49,7 @@ public class ExceptionAdvice {
         for (ConstraintViolation<?> item : violations) {
             message.append(item.getMessage());
         }
-        return Response.failure(CommonCodes.PARAM_TYPEERROR.getCode(), message.toString());
+        return Response.failure(CommonCodes.PARAM_TYPE_ERROR.getCode(), message.toString());
     }
 
     /**
@@ -69,7 +69,7 @@ public class ExceptionAdvice {
             e.printStackTrace();
         }
 
-        return Response.failure(CommonCodes.PARAM_TYPEERROR.getCode(), e.getBindingResult().getFieldError().getDefaultMessage());
+        return Response.failure(CommonCodes.PARAM_TYPE_ERROR.getCode(), e.getBindingResult().getFieldError().getDefaultMessage());
     }
 
     /**
@@ -87,7 +87,7 @@ public class ExceptionAdvice {
             e.printStackTrace();
         }
 
-        return Response.failure(CommonCodes.PARAM_TYPEERROR);
+        return Response.failure(CommonCodes.PARAM_TYPE_ERROR);
     }
 
     /**
@@ -105,7 +105,7 @@ public class ExceptionAdvice {
             e.printStackTrace();
         }
 
-        return Response.failure(CommonCodes.PARAM_TYPEERROR);
+        return Response.failure(CommonCodes.PARAM_TYPE_ERROR);
     }
 
     /**
