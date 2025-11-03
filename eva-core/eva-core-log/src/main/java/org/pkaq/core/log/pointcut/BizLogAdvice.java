@@ -6,7 +6,6 @@ import cn.hutool.core.exceptions.UtilException;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ReflectUtil;
-import cn.hutool.core.util.StrUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,8 +16,8 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.pkaq.core.i18n.I18NHelper;
 import org.pkaq.core.log.annotation.BizLog;
-import org.pkaq.core.log.base.BizLogEntity;
 import org.pkaq.core.log.base.BizLogCodes;
+import org.pkaq.core.log.base.BizLogEntity;
 import org.pkaq.core.log.base.LogSupporter;
 import org.pkaq.core.log.condition.BizlogSupporterCondition;
 import org.pkaq.core.log.events.BizLogEvent;
@@ -34,6 +33,7 @@ import java.util.*;
 
 /**
  * 异步记录日志
+ *
  * @author PKAQ
  */
 @Slf4j
@@ -67,11 +67,11 @@ public class BizLogAdvice {
         // 如果是以{}包裹的字符串就使用i18n获取国际化文案
 
         if (CharSequenceUtil.isNotBlank(description) && description.startsWith("{") && description.endsWith("}")) {
-            description = i18NHelper.getMessage(description.replace("{", "").replace("}", ""),description);
+            description = i18NHelper.getMessage(description.replace("{", "").replace("}", ""), description);
         }
 
         if (Objects.nonNull(schema)) {
-            description = i18NHelper.getMessage("sys.operate.description","操作描述：") + description;
+            description = i18NHelper.getMessage("sys.operate.description", "操作描述：") + description;
         }
 
         var className = joinPoint.getTarget().getClass().getName();

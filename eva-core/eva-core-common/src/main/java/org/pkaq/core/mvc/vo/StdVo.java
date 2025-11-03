@@ -17,7 +17,9 @@ public class StdVo implements Vo {
     @Schema(description = "乐观锁")
     private int revision;
 
-    /** 是否冻结（0 - 未冻结，1 - 冻结， -1 - 不可编辑） **/
+    /**
+     * 是否冻结（0 - 未冻结，1 - 冻结， -1 - 不可编辑）
+     **/
     private FrozenEnumm frozen;
 
     @Schema(description = "展示顺序")

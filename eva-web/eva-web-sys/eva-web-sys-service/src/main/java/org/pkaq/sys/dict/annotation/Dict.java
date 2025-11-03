@@ -8,6 +8,7 @@ import java.lang.annotation.*;
 
 /**
  * 用以字典值转换的注解
+ *
  * @author PKAQ
  */
 @Target(ElementType.FIELD)

@@ -9,6 +9,7 @@ import java.util.List;
 
 /**
  * 字典管理mapper
+ *
  * @author PKAQ
  */
 @Mapper

@@ -175,6 +175,7 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
 
     /**
      * 切换可用状态 - 级联操作
+     *
      * @param ids
      */
     public void switchStatus(SingleArray<String> ids) {

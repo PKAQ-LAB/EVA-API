@@ -19,7 +19,7 @@ public enum SysCodes implements BizAssert {
     CHECKFIELD_ALREADY_EXIST("需要进行校验的字段为空", "0x001-01003"),
     CODE_ALREADY_EXIST("编码已存在", "0x001-01005"),
     ACCOUNT_OR_CODE_ALREADY_EXIST("账户名或者编码已存在", "0x001-01006"),
-    USER_ACCOUNT_LIMIT("用户超出授权数量", "0x001-01007" ),
+    USER_ACCOUNT_LIMIT("用户超出授权数量", "0x001-01007"),
 
     /**
      * 租户相关 0100x-02
@@ -35,7 +35,7 @@ public enum SysCodes implements BizAssert {
      *
      */
 
-    DICT_CODE_EXISTS("字典编码已经存在","0x0000-10001"),
+    DICT_CODE_EXISTS("字典编码已经存在", "0x0000-10001"),
     FILE_TYPE_ERROR("文件上传格式有误，请选择支持的格式", "0x0001-00001"),
     MISS_CODE_OR_NAME("未接收到岗位管理编码或名称", "0x0001-0701-0001"),
     DUPLICATE_CODE_OR_NAME("岗位管理编码或名称已存在", "0x0001-0701-0002"),

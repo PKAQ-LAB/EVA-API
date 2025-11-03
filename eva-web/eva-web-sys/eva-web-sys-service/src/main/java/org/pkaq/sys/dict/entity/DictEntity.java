@@ -21,22 +21,32 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class DictEntity extends StdEntity implements Serializable {
 
-    /** 字典分类编码 **/
+    /**
+     * 字典分类编码
+     **/
     private String code;
 
-    /** 字典分类名称 **/
+    /**
+     * 字典分类名称
+     **/
     private String name;
 
     private Long pid;
 
-    /** 树路径(id) **/
+    /**
+     * 树路径(id)
+     **/
     private String path;
 
-    /** 字典项列表 **/
+    /**
+     * 字典项列表
+     **/
     @TableField(exist = false)
     private List<DictItemEntity> lines;
 
-    /** 子节点 **/
+    /**
+     * 子节点
+     **/
     @TableField(exist = false)
     private List<DictEntity> children;
 

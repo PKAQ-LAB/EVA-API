@@ -148,7 +148,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
         if (CollUtil.isEmpty(moduleMap)) {
             return Collections.emptyList();
         }
-        if (withResource){
+        if (withResource) {
             this.handleFetchResource(moduleMap);
         }
 
@@ -158,10 +158,11 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
 
     /**
      * 交换两个orders值
+     *
      * @param bo 进行交换的两个实体
      */
     public void sortModule(ModuleSortBo bo) {
-        this.mapper.updateSort(bo.getId(),bo.getOldSort(),bo.getNewSort());
+        this.mapper.updateSort(bo.getId(), bo.getOldSort(), bo.getNewSort());
     }
 
     /**
@@ -191,7 +192,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
      *
      * @param moduleMap
      */
-    private void handleFetchResource(Map<Long, ModuleDetailVo> moduleMap){
+    private void handleFetchResource(Map<Long, ModuleDetailVo> moduleMap) {
         // 批量查询模块对应的资源
         LambdaQueryWrapper<ModuleResources> resourceQuery = new LambdaQueryWrapper<>();
         resourceQuery.in(ModuleResources::getMainId, moduleMap.keySet());
@@ -208,6 +209,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
             }
         });
     }
+
     /**
      * 调整冻结状态
      *
@@ -220,7 +222,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
             // 解除冻结
             if (!isRoot) {
                 ModuleEntity parent = this.mapper.selectById(module.getPid());
-                if (parent != null  && parent.getFrozen() == FrozenEnumm.FROZEN) {
+                if (parent != null && parent.getFrozen() == FrozenEnumm.FROZEN) {
                     throw new BizException(CommonCodes.PARENT_NOT_AVAILABLE);
                 }
             }
@@ -309,6 +311,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
 
     /**
      * 动态切换树的冻结状态
+     *
      * @param ids
      */
     public void switchFrozen(SingleArray<Long> ids) {

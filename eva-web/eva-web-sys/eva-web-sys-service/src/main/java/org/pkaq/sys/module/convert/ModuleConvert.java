@@ -19,7 +19,7 @@ import java.util.List;
  * @author PKAQ
  */
 @Mapper(config = MapConvertConfig.class)
-public interface ModuleConvert  {
+public interface ModuleConvert {
 
     List<ModuleListVo> entityToListVo(List<ModuleEntity> entity);
 

@@ -30,7 +30,7 @@ public abstract class StdTreeCtrl<T extends StdTreeService, E extends StdTreeEnt
     @PostMapping("/checkUnique")
     @Operation(summary = "校验code唯一性")
     public Response<Object> checkUnique(@Parameter(name = "entity", description = "要进行校验的参数")
-                                @RequestBody E entity) {
+                                        @RequestBody E entity) {
         boolean exist = null != entity && CharSequenceUtil.isNotBlank(entity.getCode()) && this.service.count(entity) > 0;
         return exist ? failure() : success();
     }
@@ -44,7 +44,7 @@ public abstract class StdTreeCtrl<T extends StdTreeService, E extends StdTreeEnt
     @GetMapping("/get/{id}")
     @Operation(summary = "根据ID获取节点信息")
     public Response<Object> getOrg(@Parameter(name = "id", description = "节点ID")
-                           @PathVariable("id") Long id) {
+                                   @PathVariable("id") Long id) {
         return success(this.service.get(id));
     }
 
@@ -63,7 +63,7 @@ public abstract class StdTreeCtrl<T extends StdTreeService, E extends StdTreeEnt
     @PostMapping("/edit")
     @Operation(summary = "编辑节点信息")
     public Response<Object> editOrg(@Parameter(name = "entity", description = "节点信息")
-                            @RequestBody E entity) {
+                                    @RequestBody E entity) {
         this.service.edit(entity);
         return success();
     }
@@ -71,7 +71,7 @@ public abstract class StdTreeCtrl<T extends StdTreeService, E extends StdTreeEnt
     @PostMapping("/sort")
     @Operation(summary = "排序节点信息")
     public Response<Object> sortOrg(@Parameter(name = "entity", description = "{id,orders}")
-                            @RequestBody E[] switchObj) {
+                                    @RequestBody E[] switchObj) {
         this.service.swtich(switchObj);
         return success();
     }
@@ -79,7 +79,7 @@ public abstract class StdTreeCtrl<T extends StdTreeService, E extends StdTreeEnt
     @PostMapping("/switchStatus")
     @Operation(summary = "切换节点可用状态")
     public Response<Object> switchStatus(@Parameter(name = "id", description = "节点Id")
-                                 @RequestBody E entity) {
+                                         @RequestBody E entity) {
         this.service.changeStatus(entity);
         return success();
     }

@@ -11,6 +11,6 @@ public class DirFileCondition implements Condition {
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
         return new DefaultNgCondition().matches(context, metadata) ||
-               new FastDfsCondition().matches(context, metadata);
+                new FastDfsCondition().matches(context, metadata);
     }
 }

@@ -111,10 +111,11 @@ public interface ModuleMapper extends BaseMapper<ModuleEntity> {
     Map<Long, ModuleDetailVo> listGrantedModules(long uid);
 
     @MapKey("id")
-    Map<Long, ModuleDetailVo> selectModuleMapList(@Param("bo")  ModuleQueryBo bo);
+    Map<Long, ModuleDetailVo> selectModuleMapList(@Param("bo") ModuleQueryBo bo);
 
     /**
      * 刷新树的path
+     *
      * @param oldPath
      * @param oldPathLength
      * @param newPath
@@ -130,6 +131,7 @@ public interface ModuleMapper extends BaseMapper<ModuleEntity> {
 
     /**
      * 切换状态
+     *
      * @param ids
      */
     void switchFrozen(SingleArray<Long> ids);

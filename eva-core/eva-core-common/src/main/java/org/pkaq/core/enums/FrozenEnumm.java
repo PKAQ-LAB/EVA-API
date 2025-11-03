@@ -17,10 +17,10 @@ public enum FrozenEnumm implements BaseEnum<Integer> {
     // 只读
     READ_ONLY(-1);
 
+    @JsonValue
+    private final Integer code;
+
     FrozenEnumm(int code) {
         this.code = code;
     }
-
-    @JsonValue
-    private final Integer code;
 }

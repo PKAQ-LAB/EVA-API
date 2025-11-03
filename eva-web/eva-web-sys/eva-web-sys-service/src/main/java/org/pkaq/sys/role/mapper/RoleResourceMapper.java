@@ -50,12 +50,14 @@ public interface RoleResourceMapper extends BaseMapper<RoleResourceEntity> {
 
     /**
      * 删除权限中失效的的引用关系
+     *
      * @param moduleId
      */
     void purgeBrokenRoleResourceRefs(Long moduleId);
 
     /**
      * 删除授权的资源
+     *
      * @param ids
      */
     int deleteByModuleIds(@Param("moduleIds") Set<Long> ids);

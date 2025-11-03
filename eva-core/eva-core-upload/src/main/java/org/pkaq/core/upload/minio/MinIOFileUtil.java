@@ -20,6 +20,7 @@ import java.util.*;
 
 /**
  * 文件上传工具类 - 使用MinIO
+ *
  * @author PKAQ
  */
 @Slf4j
@@ -32,6 +33,7 @@ public class MinIOFileUtil implements FileProvider {
     private static final String TEMP = "_temp";
     private static final String STORAGE = "_storage";
     private final MinioClient minioClient;
+
     /**
      * 文件上传 默认上传到配置的tmp目录
      * 按文件类型/YYYYMM结构存储文件
@@ -108,7 +110,7 @@ public class MinIOFileUtil implements FileProvider {
                 //删除临时桶的文件
                 removeMinio(TEMP, fileName);
             } catch (Exception e) {
-               log.error(e.getMessage(), e);
+                log.error(e.getMessage(), e);
                 return Collections.emptyList();
             }
         }

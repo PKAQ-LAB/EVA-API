@@ -17,12 +17,18 @@ import org.pkaq.core.mybatis.mvc.entity.StdTreeEntity;
 @EqualsAndHashCode(callSuper = true)
 public class ModuleEntity extends StdTreeEntity {
 
-    /** 模块图标 **/
+    /**
+     * 模块图标
+     **/
     private String icon;
 
-    /** 模块路由url **/
+    /**
+     * 模块路由url
+     **/
     private String routeUrl;
 
-    /** 模块前端model url **/
+    /**
+     * 模块前端model url
+     **/
     private String componentUrl;
 }

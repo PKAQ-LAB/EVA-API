@@ -14,7 +14,7 @@ import java.util.List;
  * @author PKAQ
  */
 @Mapper(config = MapConvertConfig.class)
-public interface DictConvert  {
+public interface DictConvert {
 
     DictViewVo entityToVo(DictEntity dict);
 

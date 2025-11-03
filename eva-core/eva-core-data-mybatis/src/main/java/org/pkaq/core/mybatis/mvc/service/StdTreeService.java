@@ -4,8 +4,8 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import org.pkaq.core.codes.CommonCodes;
-import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.enums.DelEnumm;
+import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.mybatis.mvc.entity.StdTreeEntity;
 import org.pkaq.core.mybatis.mvc.mapper.StdTreeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,7 +91,7 @@ public abstract class StdTreeService<M extends StdTreeMapper<T>, T extends StdTr
             // 父节点为空, 根节点 设置为非叶子\
             pid = null;
             if (null != entity.getId() && entity.getId() != 0) {
-                entity.setPath(entity.getId()+"");
+                entity.setPath(entity.getId() + "");
             }
             entity.setPid(pid);
             entity.setIsleaf(false);

@@ -71,6 +71,7 @@ public class JwtUtil {
 
     /**
      * 获取jwt自定义属性
+     *
      * @param token jwt
      * @return 属性值
      */
@@ -124,7 +125,7 @@ public class JwtUtil {
                 .issueTime(new Date(nowMillis))
                 .issuer(this.jwtConfig().getSign())
                 .subject(username)
-                .jwtID(userId+"")
+                .jwtID(userId + "")
                 .expirationTime(ttlMillis > 0 ? exp : null)
                 .notBeforeTime(new Date(nowMillis))
                 .build();

@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * 自定义序列号规则生成工具
+ *
  * @author PKAQ
  */
 public class RuleFunction {

@@ -3,6 +3,7 @@ package org.pkaq.core.constant;
 
 /**
  * 系统内置常量
+ *
  * @author PKAQ
  */
 public interface CommonConstant {

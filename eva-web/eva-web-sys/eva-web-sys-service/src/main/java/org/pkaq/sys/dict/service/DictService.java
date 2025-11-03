@@ -44,6 +44,7 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
     private final DictItemMapper dictItemMapper;
 
     private final DictConvert dictConvert;
+
     /**
      * 初始化字典数据缓存
      */
@@ -56,6 +57,7 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
 
     /**
      * 查询字典
+     *
      * @return
      */
     @Override
@@ -88,9 +90,9 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
      * @return DictEntity
      */
     @Override
-    @BizLog(operateType = BizLogCodes.QUERY, description = "根据条件获取一条字典", args="{#bo}")
+    @BizLog(operateType = BizLogCodes.QUERY, description = "根据条件获取一条字典", args = "{#bo}")
     public DictViewVo getDict(DictAoeBo bo) {
-         return dictConvert.entityToVo(this.mapper.getDict(bo.getId()));
+        return dictConvert.entityToVo(this.mapper.getDict(bo.getId()));
     }
 
     /**
@@ -101,7 +103,7 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
     @Override
     @BizLog(operateType = BizLogCodes.QUERY, description = "查询所有字典")
     public List<DictViewVo> listDict() {
-         return dictConvert.toVoList(this.mapper.listDict());
+        return dictConvert.toVoList(this.mapper.listDict());
     }
 
     /**
@@ -130,7 +132,8 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
 
     /**
      * 编辑一条字典
-     *da
+     * da
+     *
      * @param dictAoeBo 字典对象
      */
     @Override

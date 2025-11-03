@@ -85,7 +85,7 @@ public enum CommonCodes implements BizAssert {
     /**
      * 名称
      */
-    private final String msg ;
+    private final String msg;
     /**
      * 索引
      */

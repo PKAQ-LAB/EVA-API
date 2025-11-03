@@ -5,7 +5,6 @@ import lombok.Data;
 import org.apache.ibatis.type.JdbcType;
 import org.pkaq.core.enums.FrozenEnumm;
 import org.pkaq.core.mvc.entity.Entity;
-import org.pkaq.core.mybatis.enums.UniversalEnumTypeHandler;
 
 import java.time.LocalDateTime;
 
@@ -19,49 +18,73 @@ public abstract class StdEntity implements Entity {
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
-    /** 乐观锁 **/
+    /**
+     * 乐观锁
+     **/
     @Version
     @TableField("revision")
     private int revision;
 
-    /** 逻辑删除 (0-未删除、timestamp-删除) **/
+    /**
+     * 逻辑删除 (0-未删除、timestamp-删除)
+     **/
     @TableLogic
     @TableField(fill = FieldFill.INSERT)
     private long deleted;
 
-    /** 是否冻结（0 - 未冻结，1 - 冻结， -1 - 不可编辑） **/
+    /**
+     * 是否冻结（0 - 未冻结，1 - 冻结， -1 - 不可编辑）
+     **/
     private FrozenEnumm frozen;
 
-    /** 展示顺序 **/
+    /**
+     * 展示顺序
+     **/
     private double sort;
 
-    /** 租户id **/
+    /**
+     * 租户id
+     **/
     private Long tenantId;
 
-    /** 创建人Id **/
+    /**
+     * 创建人Id
+     **/
     @TableField(fill = FieldFill.INSERT, jdbcType = JdbcType.VARCHAR)
     private Long createId;
 
-    /** 创建人 **/
+    /**
+     * 创建人
+     **/
     @TableField(fill = FieldFill.INSERT, jdbcType = JdbcType.VARCHAR)
     private String createBy;
 
-    /** 创建时间 **/
+    /**
+     * 创建时间
+     **/
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime utcCreate;
 
-    /** 修改人Id **/
+    /**
+     * 修改人Id
+     **/
     @TableField(fill = FieldFill.INSERT_UPDATE, jdbcType = JdbcType.VARCHAR)
     private Long modifyId;
 
-    /** 修改人 **/
+    /**
+     * 修改人
+     **/
     @TableField(fill = FieldFill.INSERT_UPDATE, jdbcType = JdbcType.VARCHAR)
     private String modifyBy;
 
-    /** 修改时间 **/
+    /**
+     * 修改时间
+     **/
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime utcModify;
 
-    /** 备注 **/
+    /**
+     * 备注
+     **/
     private String remark;
 }

@@ -1,8 +1,6 @@
 package org.pkaq.core.enums;
 
 public interface BaseEnum<T> {
-    T getCode();
-
     static <E extends Enum<E> & BaseEnum<T>, T> E of(Class<E> enumClass, Object code) {
         if (code == null) return null;
         for (E e : enumClass.getEnumConstants()) {
@@ -12,4 +10,6 @@ public interface BaseEnum<T> {
         }
         throw new IllegalArgumentException("Unknown code: " + code + " for enum " + enumClass.getSimpleName());
     }
+
+    T getCode();
 }

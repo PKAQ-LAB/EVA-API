@@ -21,9 +21,10 @@ import java.util.Objects;
  * 自定义 Jackson 序列化器，用于在 JSON 序列化时根据 @Code 注解对字段值进行字典翻译。
  * 示例：
  * public class User {
- *     @author PKAQ
+ *
+ * @author PKAQ
  * {@code @Code("user_type")}
- *     private String type; // 如 "1" -> "管理员"
+ * private String type; // 如 "1" -> "管理员"
  * }
  */
 @NoArgsConstructor

@@ -50,7 +50,7 @@ public class PostCtrl extends Ctrl {
     @GetMapping("/list")
     @Operation(summary = "根据条件查询岗位管理列表数据")
     public Response<IPage<PostListVo>> list(@Parameter(name = "query", description = "请求参数")
-                                             PostQueryBo query) {
+                                            PostQueryBo query) {
 
         return success(this.postService.list(query));
     }
@@ -65,7 +65,7 @@ public class PostCtrl extends Ctrl {
     @PostMapping("/edit")
     @Operation(summary = "新增/编辑岗位管理信息")
     public Response<Object> edit(@Parameter(name = "edit", description = "编辑")
-                                @RequestBody @Validated PostAoeBo bo) {
+                                 @RequestBody @Validated PostAoeBo bo) {
         this.postService.edit(bo);
         return this.success();
     }

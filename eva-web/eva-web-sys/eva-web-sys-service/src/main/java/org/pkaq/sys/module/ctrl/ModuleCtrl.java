@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 /**
  * 模块管理controller
+ *
  * @author: S.PKAQ
  */
 @Tag(name = "模块管理")
@@ -51,7 +52,7 @@ public class ModuleCtrl extends Ctrl {
     @Operation(summary = "根据ID获得模块")
     @BizLog(operateType = BizLogCodes.EDIT, description = "插叙了模块信息[{0}]", args = {"param:0"})
     public Response<Object> get(@Parameter(name = "id", description = "记录ID")
-                                    @PathVariable("id") Long id) {
+                                @PathVariable("id") Long id) {
         return this.success(this.service.getModule(id));
     }
 
@@ -66,7 +67,7 @@ public class ModuleCtrl extends Ctrl {
     @Operation(summary = "排序模块信息")
     @BizLog(operateType = BizLogCodes.EDIT, description = "调整了模块顺序[{0}]", args = {"param:0"})
     public Response<Object> sort(@Parameter(name = "module", description = "{id,orders}")
-                                       @RequestBody ModuleSortBo switchObj) {
+                                 @RequestBody ModuleSortBo switchObj) {
         this.service.sortModule(switchObj);
         return success();
     }

@@ -39,7 +39,7 @@ public class TreeHelper {
      * 适用于具有 ID、PID（父ID）、children 属性的数据模型，例如菜单、组织架构等。
      *
      * @param flatList 扁平结构的节点列表（无父子层级关系）
-     * @param <T> 实现了树结构的实体类，需包含 getId、getPid、getChildren、setChildren 方法
+     * @param <T>      实现了树结构的实体类，需包含 getId、getPid、getChildren、setChildren 方法
      * @return 构建好的树形结构根节点列表
      */
     public static <T extends StdTreeVo> Collection<T> buildTree(Collection<T> flatList) {

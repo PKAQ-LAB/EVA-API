@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 @Order(2)
 public class DictInit implements CommandLineRunner {
     private final IDictService dictService;
+
     @Override
     public void run(String... args) {
         dictService.init();

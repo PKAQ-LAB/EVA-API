@@ -34,11 +34,11 @@ public class SequenceGenerator {
      * LENGTH：序列号长度，不足长度时补零
      * RESET_PERIOD：重置周期，可选值 DAILY、MONTHLY、YEARLY、YY，分别表示按日、月、年和两位数年份重置
      * 示例：#seq(1, 5, 'MONTHLY') 生成 00001
-     *  规则示例1：#prefix('ORD') + '-' + #date('yyMM') + '-' + #seq(1,5,'MONTHLY')
-     *  结果示例：ORD-2405-00001
-     *  规则示例2：#date('yy') + #seq(1,4,'YY')
-     *  结果示例：24-0001
-     *  规则示例3：#seq(1,6,'DAILY')
+     * 规则示例1：#prefix('ORD') + '-' + #date('yyMM') + '-' + #seq(1,5,'MONTHLY')
+     * 结果示例：ORD-2405-00001
+     * 规则示例2：#date('yy') + #seq(1,4,'YY')
+     * 结果示例：24-0001
+     * 规则示例3：#seq(1,6,'DAILY')
      */
 
     public String generateSeqNum(String tenantId, String rule) {

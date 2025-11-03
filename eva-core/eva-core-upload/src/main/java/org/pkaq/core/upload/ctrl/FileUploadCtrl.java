@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 文件上传Ctrl
+ *
  * @author PKAQ
  */
 @Slf4j
@@ -27,6 +28,7 @@ public class FileUploadCtrl {
 
     /**
      * 文件上传
+     *
      * @param file
      * @param path
      * @return

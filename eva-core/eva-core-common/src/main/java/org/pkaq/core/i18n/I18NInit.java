@@ -12,6 +12,7 @@ import java.util.List;
 
 /**
  * i18n配置项，内置SYSI18N为系统默认的内置国际化文件
+ *
  * @author PKAQ
  */
 @Configuration

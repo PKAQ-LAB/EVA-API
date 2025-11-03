@@ -15,22 +15,34 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class StdTreeEntity extends StdEntity {
-    /** 编码 **/
+    /**
+     * 编码
+     **/
     @TableField(condition = SqlCondition.LIKE)
     private String code;
 
-    /** 节点名称 **/
+    /**
+     * 节点名称
+     **/
     private String name;
 
-    /** 上级节点id **/
+    /**
+     * 上级节点id
+     **/
     private Long pid;
 
-    /** 路径 **/
+    /**
+     * 路径
+     **/
     private String path;
 
-    /** 是否叶子 **/
+    /**
+     * 是否叶子
+     **/
     private Boolean isleaf;
 
-    /** 子节点 **/
+    /**
+     * 子节点
+     **/
     private List<StdTreeEntity> children;
 }

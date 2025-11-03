@@ -46,19 +46,14 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 public class UserService extends StdService<UserMapper, UserEntity> implements IUserService {
 
-    private final UserRoleRefSerivce userRoleRefSerivce;
-
-    private final UserPostRefSerivce userPostRefSerivce;
-
-    private final FileProvider fileProvider;
-
-    private final RoleUserMapper roleUserMapper;
-
-    private final UserConvert convert;
-
     private static final Set<String> ILLEGAL_USERNAMES = new HashSet<>(Arrays.asList(
             "null", "undefined", "true", "false", "admin", "root", "", " ", "\t", "\n"
     ));
+    private final UserRoleRefSerivce userRoleRefSerivce;
+    private final UserPostRefSerivce userPostRefSerivce;
+    private final FileProvider fileProvider;
+    private final RoleUserMapper roleUserMapper;
+    private final UserConvert convert;
 
     public void validateUsername(String username) {
         if (username == null || ILLEGAL_USERNAMES.contains(username.trim().toLowerCase())) {
@@ -229,6 +224,7 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
     /**
      * 获取当前登录用户的信息(菜单.权限.消息
      * todo
+     *
      * @param uid 用户ID
      */
     public List<UserResourceVo> fetchModuleByUid(Long uid) {

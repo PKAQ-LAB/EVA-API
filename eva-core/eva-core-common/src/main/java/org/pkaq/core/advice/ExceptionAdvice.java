@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.Set;
+
 /**
  * @Description: 统一异常处理
  * @FileName: ExceptionAdvice.java
@@ -30,7 +31,8 @@ import java.util.Set;
 public class ExceptionAdvice {
     /**
      * hibernate validator参数校验失败时抛出的异常
-     // 处理方法参数上的 @Validated（如 service 层方法）
+     * // 处理方法参数上的 @Validated（如 service 层方法）
+     *
      * @param e
      * @return
      */
@@ -54,7 +56,8 @@ public class ExceptionAdvice {
 
     /**
      * hibernate validator参数校验失败时抛出的异常
-     // 处理 @Valid + @RequestBody 参数校验异常
+     * // 处理 @Valid + @RequestBody 参数校验异常
+     *
      * @param e
      * @return
      */
@@ -92,7 +95,8 @@ public class ExceptionAdvice {
 
     /**
      * 参数类型错误
-     // 缺少参数
+     * // 缺少参数
+     *
      * @param e 异常类型
      * @return Response
      */
@@ -110,7 +114,8 @@ public class ExceptionAdvice {
 
     /**
      * 400 - spring参数绑定校验错误
-     // 处理 @Valid + 表单对象（@ModelAttribute）验证异常
+     * // 处理 @Valid + 表单对象（@ModelAttribute）验证异常
+     *
      * @param e 异常类型
      * @return Response
      */
@@ -148,7 +153,7 @@ public class ExceptionAdvice {
         log.error("业务异常:" + msg);
 
         if (null == e.getBizCode()) {
-            return Response.failure(null, e.getMessage(), e.getData(),e.getArgs());
+            return Response.failure(null, e.getMessage(), e.getData(), e.getArgs());
         } else {
             return Response.failure(e.getBizCode(), e.getData(), e.getArgs());
         }

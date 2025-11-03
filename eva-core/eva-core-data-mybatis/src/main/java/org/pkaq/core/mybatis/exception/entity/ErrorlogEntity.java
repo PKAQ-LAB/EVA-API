@@ -9,6 +9,7 @@ import org.apache.ibatis.type.Alias;
 
 /**
  * 异常日志实体类
+ *
  * @author PKAQ
  */
 @Data

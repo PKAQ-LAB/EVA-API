@@ -15,7 +15,7 @@ import java.util.List;
  * @author PKAQ
  */
 @Mapper(config = MapConvertConfig.class)
-public interface UserConvert  {
+public interface UserConvert {
 
     UserListVo entityToListVo(UserEntity entity);
 

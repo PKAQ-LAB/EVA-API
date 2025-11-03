@@ -7,6 +7,7 @@ import java.util.Set;
 
 /**
  * 用于接收数组参数的虚拟对象
+ *
  * @author S.PKAQ
  */
 @Data

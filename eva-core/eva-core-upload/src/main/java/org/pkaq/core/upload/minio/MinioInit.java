@@ -17,15 +17,15 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Conditional(MinIOCondition.class)
 public class MinioInit implements CommandLineRunner {
-    private final MinIOFileUtil minIOFileUtil;
-
     private static final String TEMP = "_temp";
     private static final String STORAGE = "_storage";
     private static final String THUMBNAIL_NAME = "thumbnail_";
     private static final String DRAFT = "draft";
+    private final MinIOFileUtil minIOFileUtil;
 
     /**
      * 初始化存储桶
+     *
      * @param args
      * @throws Exception
      */

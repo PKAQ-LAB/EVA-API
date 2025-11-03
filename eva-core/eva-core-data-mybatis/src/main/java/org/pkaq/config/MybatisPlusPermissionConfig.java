@@ -8,7 +8,7 @@
 //import org.springframework.context.annotation.Bean;
 //import org.springframework.context.annotation.Configuration;
 //
-///**
+/// **
 // * mybatis plus 配置
 // * 仅在启用后配置
 // * @author PKAQ

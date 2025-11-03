@@ -6,6 +6,7 @@ import java.util.List;
 
 /**
  * 数据权限配置类
+ *
  * @author PKAQ
  */
 @Data

@@ -42,15 +42,15 @@ public class ErrorCtrl extends Ctrl {
     @GetMapping({"/get/{id}"})
     @Operation(summary = "根据id获取操作日志明细")
     public Response<Object> query(@Parameter(name = "id", description = "操作日志id")
-                          @PathVariable(name = "id") String id) {
+                                  @PathVariable(name = "id") String id) {
         return new Response().success(this.errorlogMapper.selectById(id));
     }
 
     @GetMapping("/list")
     @Operation(summary = "获取错误日志列表")
     public Response<?> list(@Parameter(name = "dateRange", description = "查询区间") DateRangeBo dateRange,
-                         @Parameter(name = "pageNo", description = "页码") Integer pageNo,
-                         @Parameter(name = "pageCount", description = "条数") Integer pageCount) throws SQLException {
+                            @Parameter(name = "pageNo", description = "页码") Integer pageNo,
+                            @Parameter(name = "pageCount", description = "条数") Integer pageCount) throws SQLException {
 
         QueryWrapper<ErrorlogEntity> wrapper = new QueryWrapper<>();
 

@@ -31,7 +31,7 @@ public abstract class StdMultiCtrl<T extends StdMultiService, E extends StdMulti
     @Operation(summary = "删除记录", description = "根据ID删除/批量删除记录")
     @NoRepeatSubmit
     public Response del(@Parameter(name = "ids", description = "[记录ID]")
-                            @RequestBody SingleArray<Long> ids) {
+                        @RequestBody SingleArray<Long> ids) {
 
         CommonCodes.NULL_ID.assertNotNull(ids.getParam());
 

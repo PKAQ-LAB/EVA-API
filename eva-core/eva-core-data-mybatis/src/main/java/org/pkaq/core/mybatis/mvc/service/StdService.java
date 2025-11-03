@@ -35,6 +35,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
 
     @Autowired(required = false)
     protected Convert<T> convert;
+
     /**
      * 切换锁定状态
      *
@@ -114,7 +115,6 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
     }
 
 
-
     /**
      * 合并保存,如果不存在id执行插入,存在ID执行更新
      */
@@ -153,7 +153,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
         codeCheck.setId(bo.getId());
 
 
-        if(this.isUnique(codeCheck)){
+        if (this.isUnique(codeCheck)) {
             CommonCodes.DUPLICATE_CODE_ERROR.newException();
         }
 

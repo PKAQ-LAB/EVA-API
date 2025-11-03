@@ -4,6 +4,7 @@ import lombok.Data;
 
 /**
  * 文件上传配置类
+ *
  * @author PKAQ
  */
 @Data

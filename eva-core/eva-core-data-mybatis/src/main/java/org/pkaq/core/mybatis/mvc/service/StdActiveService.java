@@ -111,7 +111,7 @@ public abstract class StdActiveService<M extends BaseMapper<T>, T extends Model>
         wrapper.orderByDesc("UTC_MODIFY");
 
         // 分页条件
-        PageResult<T> pagination = new PageResult<>(page,30);
+        PageResult<T> pagination = new PageResult<>(page, 30);
 
         return entity.selectPage(pagination, wrapper);
     }

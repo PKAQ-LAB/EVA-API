@@ -9,6 +9,7 @@ import java.util.function.Function;
 
 /**
  * 用户上下文工具类，用于在当前线程中获取用户信息
+ *
  * @author PKAQ
  */
 @Slf4j
@@ -156,7 +157,7 @@ public class ThreadUserHelper {
      * 获取岗位ID
      */
     public static long getPostId() {
-        return safeGetLong(ThreadUser::getPostId,"岗位id");
+        return safeGetLong(ThreadUser::getPostId, "岗位id");
     }
 
     // ====================== 角色与权限相关 ======================

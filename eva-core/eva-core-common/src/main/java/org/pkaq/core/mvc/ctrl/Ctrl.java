@@ -71,7 +71,7 @@ public abstract class Ctrl {
      * @return
      */
     protected <T> Response<T> success(T data, BizCode bizCode) {
-        return Response.success(bizCode.getMsg(),data);
+        return Response.success(bizCode.getMsg(), data);
     }
 
     /**

@@ -29,7 +29,7 @@ public abstract class StdActiveCtrl<T extends StdActiveService, E extends Model>
     @PostMapping("del")
     @Operation(summary = "删除记录", description = "根据ID删除/批量删除记录")
     public Response del(@Parameter(name = "ids", description = "[记录ID]")
-                            @RequestBody SingleArray<Long> ids) {
+                        @RequestBody SingleArray<Long> ids) {
 
         CommonCodes.NULL_ID.assertNotNull(ids.getParam());
 

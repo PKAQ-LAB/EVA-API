@@ -7,10 +7,11 @@ import java.util.List;
 
 /**
  * 通用分页对象
+ *
  * @author PKAQ
  */
 @Data
-public class PageVo<T> implements Vo{
+public class PageVo<T> implements Vo {
     private List<T> records = Collections.emptyList();
     /**
      * 总数

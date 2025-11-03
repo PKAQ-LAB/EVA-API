@@ -10,6 +10,7 @@ import java.util.Locale;
 
 /**
  * 国际化工具类
+ *
  * @author PKAQ
  */
 @Component
@@ -70,7 +71,7 @@ public class I18NHelper {
     }
 
     /**
-     * @param key           ：对应messages配置的key.
+     * @param key            ：对应messages配置的key.
      * @param args           : 数组参数.
      * @param defaultMessage : 没有设置key的时候的默认值.
      */

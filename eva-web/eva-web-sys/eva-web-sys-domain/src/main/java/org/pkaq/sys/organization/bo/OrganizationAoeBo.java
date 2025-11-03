@@ -1,4 +1,3 @@
-
 package org.pkaq.sys.organization.bo;
 
 import io.swagger.v3.oas.annotations.media.Schema;

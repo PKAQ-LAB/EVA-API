@@ -40,15 +40,15 @@ public class BizLogCtrl extends Ctrl {
     @GetMapping({"/get/{id}"})
     @Operation(description = "根据id获取操作日志明细")
     public Response<Object> query(@Parameter(name = "id", description = "操作日志id")
-                          @PathVariable(name = "id") String id) {
+                                  @PathVariable(name = "id") String id) {
         return success(this.bizLogSupporter.get(id));
     }
 
     @GetMapping("/list")
     @Operation(description = "获取日志列表")
     public Response<Object> list(@Parameter(name = "dateRange", description = "查询区间") DateRangeBo dateRange,
-                         @Parameter(name = "pageNo", description = "页码") Integer pageNo,
-                         @Parameter(name = "pageCount", description = "条数") Integer size) throws SQLException {
+                                 @Parameter(name = "pageNo", description = "页码") Integer pageNo,
+                                 @Parameter(name = "pageCount", description = "条数") Integer size) throws SQLException {
 
         QueryWrapper<MybatisBizLogEntity> wrapper = new QueryWrapper<>();
 

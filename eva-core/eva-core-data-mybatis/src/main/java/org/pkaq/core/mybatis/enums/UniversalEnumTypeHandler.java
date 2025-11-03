@@ -22,11 +22,15 @@ public class UniversalEnumTypeHandler<E extends Enum<E> & BaseEnum<?>> extends B
 
     private Class<E> type;
 
-    /** ⚠️ 必须要有无参构造，MyBatis 会通过反射调用这个构造函数 */
+    /**
+     * ⚠️ 必须要有无参构造，MyBatis 会通过反射调用这个构造函数
+     */
     public UniversalEnumTypeHandler() {
     }
 
-    /** MyBatis 也可能通过有参构造来传递枚举类型 */
+    /**
+     * MyBatis 也可能通过有参构造来传递枚举类型
+     */
     public UniversalEnumTypeHandler(Class<E> type) {
         this.type = type;
     }

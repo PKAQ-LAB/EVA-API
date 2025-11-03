@@ -25,30 +25,44 @@ public abstract class StdLineEntity implements Entity {
 
     private Long mainId;
 
-    /** 租户id **/
+    /**
+     * 租户id
+     **/
     private Long tenantId;
 
-    /** 创建人Id **/
+    /**
+     * 创建人Id
+     **/
     @TableField(fill = FieldFill.INSERT, jdbcType = JdbcType.VARCHAR)
     private Long createId;
 
-    /** 创建人 **/
+    /**
+     * 创建人
+     **/
     @TableField(fill = FieldFill.INSERT, jdbcType = JdbcType.VARCHAR)
     private String createBy;
 
-    /** 创建时间 **/
+    /**
+     * 创建时间
+     **/
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime utcCreate;
 
-    /** 修改人Id **/
+    /**
+     * 修改人Id
+     **/
     @TableField(fill = FieldFill.INSERT_UPDATE, jdbcType = JdbcType.VARCHAR)
     private Long modifyId;
 
-    /** 修改人 **/
+    /**
+     * 修改人
+     **/
     @TableField(fill = FieldFill.INSERT_UPDATE, jdbcType = JdbcType.VARCHAR)
     private String modifyBy;
 
-    /** 修改时间 **/
+    /**
+     * 修改时间
+     **/
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime utcModify;
 }

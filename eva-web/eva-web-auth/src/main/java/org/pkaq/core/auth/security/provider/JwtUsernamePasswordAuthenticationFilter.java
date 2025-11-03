@@ -4,7 +4,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.core.util.json.JsonUtil;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,6 +23,7 @@ import java.util.stream.Collectors;
 
 /**
  * 重新实现用户登录逻辑
+ *
  * @author PKAQ
  */
 public class JwtUsernamePasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
