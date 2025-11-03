@@ -26,7 +26,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -38,14 +37,15 @@ import java.util.Set;
 @Service
 @Schema(description = "租户管理")
 @AllArgsConstructor
-public class TenantService extends StdService<TenantMapper, TenantEntity, TenantConvert> implements ITenantService {
+public class TenantService extends StdService<TenantMapper, TenantEntity> implements ITenantService {
     private final UserMapper userMapper;
     private final UserService userService;
+    private final TenantConvert convert;
 
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     @Override
-    public void switchFrozen(SingleArray<Long> ids) {
-        if (null == ids || null == ids.getParam() || null == ids.getStatus()) {
+    public void switchFrozen(SingleArray<Long> ids, Integer frozen) {
+        if (null == ids || null == ids.getParam() || null == frozen) {
             CommonCodes.PARAM_ERROR.newException();
         }
 
@@ -58,12 +58,12 @@ public class TenantService extends StdService<TenantMapper, TenantEntity, Tenant
         this.mapper.update(updateWrapper);
 
         // 同时冻结用户
-        if (FrozenEnumm.FROZEN == ids.getStatus()) {
+        if (FrozenEnumm.FROZEN.getCode() == frozen) {
             this.mapper.frozenUser(ids);
         }
 
         // 同时解锁用户
-        if (FrozenEnumm.UN_FROZEN == ids.getStatus()) {
+        if (FrozenEnumm.UN_FROZEN.getCode() == frozen) {
             this.mapper.unfronzenUser(ids);
         }
     }

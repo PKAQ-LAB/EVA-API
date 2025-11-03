@@ -1,7 +1,6 @@
 package org.pkaq.sys.dict.convert;
 
 import org.mapstruct.Mapper;
-import org.pkaq.core.mvc.convert.Convert;
 import org.pkaq.core.mvc.convert.MapConvertConfig;
 import org.pkaq.sys.dict.bo.DictAoeBo;
 import org.pkaq.sys.dict.bo.DictAoeLineBo;
@@ -15,7 +14,7 @@ import java.util.List;
  * @author PKAQ
  */
 @Mapper(config = MapConvertConfig.class)
-public interface DictConvert extends Convert<DictEntity> {
+public interface DictConvert  {
 
     DictViewVo entityToVo(DictEntity dict);
 

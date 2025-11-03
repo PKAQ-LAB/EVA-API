@@ -2,28 +2,37 @@ package org.pkaq.core.mvc.convert;
 
 
 import org.pkaq.core.mvc.bo.Bo;
+import org.pkaq.core.mvc.vo.PageVo;
 import org.pkaq.core.mvc.vo.Vo;
-
-import java.util.List;
 
 /**
  * @author PKAQ
  */
-public interface Convert<T> {
-
-    default <V extends Vo> V entityToDetailVo(T entity) {
-        throw new UnsupportedOperationException("This method should be implemented in the sub-interface only.");
+public abstract class Convert<T> {
+    public T fromBo(Bo bo) {
+        if (bo == null) return null;
+        return dispatchBoToEntity(bo);
     }
 
-    default <B extends Bo> T boToEntity(B bo) {
-        throw new UnsupportedOperationException("This method should be implemented in the sub-interface only.");
+    public <V extends Vo> V toVo(T entity) {
+        if (entity == null) return null;
+        return dispatchEntityToVo(entity);
     }
 
-    default <V extends Vo> V entityToListVo(T entity) {
-        throw new UnsupportedOperationException("This method should be implemented in the sub-interface only.");
+    public PageVo toPageVo(Object entity) {
+        if (entity == null) return null;
+        return dispatchEntityToPageVo(entity);
     }
 
-    default List<? extends Vo> entityToListVo(List<T> entity) {
-        throw new UnsupportedOperationException("This method should be implemented in the sub-interface only.");
-    }
+    /**
+     * 子类必须实现：根据 Bo 实际类型分派转换逻辑
+     */
+    protected abstract T dispatchBoToEntity(Bo bo);
+
+    /**
+     * 子类必须实现：根据场景或类型返回不同的 Vo
+     */
+    protected abstract <V extends Vo> V dispatchEntityToVo(T entity);
+
+    protected abstract PageVo dispatchEntityToPageVo(Object entity);
 }

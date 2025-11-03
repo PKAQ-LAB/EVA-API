@@ -21,16 +21,14 @@ public class RoleEntity extends StdEntity {
     /**
      * 编码
      **/
-    private String code;
-
-
+    private String code = "";
     /**
      * 名称
      **/
-    private String name;
+    private String name = "";
 
     // 添加 ROLE_ 前缀 并转大写
-    public String getCod() {
+    public String getCode() {
 
         if (!this.code.startsWith(CommonConstant.AUTH_PREFIX)) {
             this.code = CommonConstant.AUTH_PREFIX + this.code;

@@ -3,8 +3,9 @@ package org.pkaq.core.mybatis.mvc.entity;
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import org.apache.ibatis.type.JdbcType;
-import org.pkaq.core.mvc.entity.Entity;
 import org.pkaq.core.enums.FrozenEnumm;
+import org.pkaq.core.mvc.entity.Entity;
+import org.pkaq.core.mybatis.enums.UniversalEnumTypeHandler;
 
 import java.time.LocalDateTime;
 

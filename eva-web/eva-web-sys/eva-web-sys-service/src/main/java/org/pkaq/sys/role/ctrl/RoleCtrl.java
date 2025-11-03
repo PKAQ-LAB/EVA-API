@@ -90,8 +90,7 @@ public class RoleCtrl extends StdCtrl<RoleService> {
     @GetMapping("/list")
     @Operation(summary = "分页查询", description = "列表查询")
     @BizLog(operateType = BizLogCodes.EDIT, description = "查询了角色列表[{0}]", args = {"param:0"})
-    public Response<Object> list(@Parameter(name = "page", description = "分页查询参数") RoleQueryBo page) {
+    public Response<Object> list(RoleQueryBo page) {
         return this.success(this.service.listPage(page));
     }
-
 }

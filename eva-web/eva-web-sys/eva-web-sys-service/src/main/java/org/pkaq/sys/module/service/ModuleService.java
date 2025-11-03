@@ -38,10 +38,13 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
-public class ModuleService extends StdService<ModuleMapper, ModuleEntity, ModuleConvert> {
+public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
     private final ModuleResourceMapper moduleResourceMapper;
 
     private final RoleResourceMapper roleResourceMapper;
+
+    private final ModuleConvert convert;
+
 
     /**
      * 根据ID批量删除
@@ -100,7 +103,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity, Module
             this.mapper.insert(module);
         } else {
             // 树原有信息
-            ModuleDetailVo originModule = this.get(moduleId);
+            ModuleDetailVo originModule = this.convert.entityToDetailVo(this.get(moduleId));
             // 处理冻结逻辑
             this.handleFrozenStatus(module, originModule, isRoot);
             // 2.父节点变更逻辑（重新设置叶子属性，重新调整排序）
@@ -120,7 +123,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity, Module
      * @return 模块信息
      */
     public ModuleDetailVo getModule(Long id) {
-        ModuleDetailVo md = this.get(id);
+        ModuleDetailVo md = this.convert.entityToDetailVo(this.get(id));
 
         // 获取资源信息
         LambdaQueryWrapper<ModuleResources> queryWrapper = new LambdaQueryWrapper<>();

@@ -11,7 +11,7 @@ import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.mvc.entity.Entity;
 import org.pkaq.core.mvc.vo.PageVo;
 import org.pkaq.core.mvc.vo.Vo;
-import org.pkaq.core.mybatis.mvc.service.ConvertService;
+import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.core.mybatis.util.PageResult;
 import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.core.upload.provider.FileProvider;
@@ -31,6 +31,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -42,7 +44,7 @@ import java.util.function.Function;
  */
 @Service
 @RequiredArgsConstructor
-public class UserService extends ConvertService<UserMapper, UserConvert> implements IUserService {
+public class UserService extends StdService<UserMapper, UserEntity> implements IUserService {
 
     private final UserRoleRefSerivce userRoleRefSerivce;
 
@@ -51,6 +53,18 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
     private final FileProvider fileProvider;
 
     private final RoleUserMapper roleUserMapper;
+
+    private final UserConvert convert;
+
+    private static final Set<String> ILLEGAL_USERNAMES = new HashSet<>(Arrays.asList(
+            "null", "undefined", "true", "false", "admin", "root", "", " ", "\t", "\n"
+    ));
+
+    public void validateUsername(String username) {
+        if (username == null || ILLEGAL_USERNAMES.contains(username.trim().toLowerCase())) {
+            throw new IllegalArgumentException("用户名非法或为空");
+        }
+    }
 
     /**
      * 修改密码
@@ -87,15 +101,15 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
      */
     @Override
     public List<UserListVo> listUser(UserQueryBo queryBo) {
-        UserEntity user = this.converter.boToEntity(queryBo);
+        UserEntity user = this.convert.boToEntity(queryBo);
         LambdaQueryWrapper<UserEntity> wrapper = Wrappers.lambdaQuery();
         wrapper.setEntity(user);
         wrapper.orderByDesc(UserEntity::getModifyBy);
-        return this.converter.entityToListVo(this.mapper.selectList(wrapper));
+        return this.convert.entityToListVo(this.mapper.selectList(wrapper));
     }
 
     public List<? extends Vo> listUser(UserQueryBo queryBo, Function<List<? extends Entity>, List<? extends Vo>> convert) {
-        UserEntity user = this.converter.boToEntity(queryBo);
+        UserEntity user = this.convert.boToEntity(queryBo);
         LambdaQueryWrapper<UserEntity> wrapper = Wrappers.lambdaQuery();
         wrapper.setEntity(user);
         wrapper.orderByDesc(UserEntity::getModifyBy);
@@ -108,10 +122,10 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
     @Override
     public PageVo<UserListVo> listPage(UserQueryBo queryBo) {
         LambdaQueryWrapper<UserEntity> wrapper = Wrappers.lambdaQuery();
-        wrapper.setEntity(this.converter.boToEntity(queryBo));
+        wrapper.setEntity(this.convert.boToEntity(queryBo));
         wrapper.orderByDesc(UserEntity::getUtcModify);
         PageResult<UserEntity> pagination = new PageResult<>(queryBo.getPageNo(), queryBo.getPageSize());
-        return this.mapper.selectPage(pagination, wrapper).map(this.converter::entityToListVo);
+        return this.mapper.selectPage(pagination, wrapper).map(this.convert::entityToListVo);
     }
 
     /**
@@ -138,7 +152,7 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
         if (null == user) {
             SysCodes.CANNOT_FIND_USER.newException();
         }
-        var uvo = this.converter.entityToDetailVo(user);
+        var uvo = this.convert.entityToDetailVo(user);
         // 权限列表
         var roleIds = this.roleUserMapper.selectRoleIds(id);
 
@@ -188,7 +202,7 @@ public class UserService extends ConvertService<UserMapper, UserConvert> impleme
         }
 
         // 保存用户
-        UserEntity entity = this.converter.boToEntity(user);
+        UserEntity entity = this.convert.boToEntity(user);
         if (isInsert) {
             this.mapper.insert(entity);
         } else {

@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
-public class RoleService extends StdService<RoleMapper, RoleEntity, RoleConvert> implements IRoleService {
+public class RoleService extends StdService<RoleMapper, RoleEntity> implements IRoleService {
 
     private final RoleResourceMapper roleResourceMapper;
 
@@ -52,6 +52,8 @@ public class RoleService extends StdService<RoleMapper, RoleEntity, RoleConvert>
     private final UserMapper userMapper;
 
     private final UserConvert userConvert;
+
+    private final RoleConvert roleConvert;
 
     /**
      * 根据请求的URL查询角色所属权限

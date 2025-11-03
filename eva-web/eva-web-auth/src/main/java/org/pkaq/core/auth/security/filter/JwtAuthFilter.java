@@ -1,7 +1,5 @@
 package org.pkaq.core.auth.security.filter;
 
-import cn.hutool.core.text.CharSequenceUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.JakartaServletUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -16,6 +14,7 @@ import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.threaduser.ThreadUser;
 import org.pkaq.core.threaduser.ThreadUserHelper;
+import org.pkaq.core.util.StrUtil;
 import org.pkaq.core.util.TokenUtil;
 import org.pkaq.core.util.json.JsonUtil;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -146,7 +145,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             logger.info(SecurityContextHolder.getContext().getAuthentication());
 //            if (StrUtil.isNotBlank(uid) && SecurityContextHolder.getContext().getAuthentication() == null) {
-            if (CharSequenceUtil.isNotBlank(account)) {
+            if (StrUtil.isNotBlank(account)) {
                 logger.debug("org.pkaq.security context was null, so authorizing user");
 
                 // 从redis中 根据用户id获取用户权限列表

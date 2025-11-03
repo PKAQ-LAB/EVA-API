@@ -4,7 +4,6 @@ import cn.hutool.core.text.CharSequenceUtil;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.pkaq.core.mvc.vo.StdTreeVo;
-import org.pkaq.core.mybatis.mvc.entity.StdTreeEntity;
 
 import java.util.*;
 import java.util.function.Function;

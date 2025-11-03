@@ -5,8 +5,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.auth.util.CacheTokenUtil;
-import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.codes.CommonCodes;
+import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.threaduser.ThreadUserHelper;
@@ -40,7 +40,6 @@ public class UrlLogoutSuccessHandler implements LogoutSuccessHandler {
         // 清空redis/caffeine中的token 刷新用户secret
         if (cacheToken) {
             this.tokenUtil.removeToken(ThreadUserHelper.getUserName());
-            ThreadUserHelper.remove();
         }
 
         // 清除cookie

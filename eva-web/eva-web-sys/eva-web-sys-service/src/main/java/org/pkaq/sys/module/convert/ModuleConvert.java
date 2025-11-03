@@ -1,7 +1,6 @@
 package org.pkaq.sys.module.convert;
 
 import org.mapstruct.Mapper;
-import org.pkaq.core.mvc.convert.Convert;
 import org.pkaq.core.mvc.convert.MapConvertConfig;
 import org.pkaq.core.mybatis.mvc.entity.StdTreeEntity;
 import org.pkaq.sys.module.bo.ModuleAoeBo;
@@ -20,7 +19,7 @@ import java.util.List;
  * @author PKAQ
  */
 @Mapper(config = MapConvertConfig.class)
-public interface ModuleConvert extends Convert<ModuleEntity> {
+public interface ModuleConvert  {
 
     List<ModuleListVo> entityToListVo(List<ModuleEntity> entity);
 

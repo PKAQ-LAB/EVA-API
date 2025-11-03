@@ -1,10 +1,8 @@
 package org.pkaq.core.mvc.bo;
 
 import lombok.Data;
-import org.pkaq.core.enums.FrozenEnumm;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -14,5 +12,4 @@ import java.util.Set;
 @Data
 public class SingleArray<T> implements Serializable {
     private Set<T> param;
-    private FrozenEnumm status;
 }

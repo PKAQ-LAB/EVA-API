@@ -6,7 +6,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.pkaq.core.mybatis.mvc.service.ConvertService;
+import lombok.RequiredArgsConstructor;
+import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.core.mybatis.util.PageResult;
 import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.post.bo.PostAoeBo;
@@ -20,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -28,7 +28,9 @@ import java.util.Set;
  */
 @Service
 @Schema(description = "岗位管理")
-public class PostService extends ConvertService<PostMapper, PostConvert> {
+@RequiredArgsConstructor
+public class PostService extends StdService<PostMapper, PostEntity> {
+    private final PostConvert postConvert;
 
     /**
      * 编码/供应商名称 唯一性校验
@@ -66,7 +68,7 @@ public class PostService extends ConvertService<PostMapper, PostConvert> {
 
         boolean isUpdate = CharSequenceUtil.isNotBlank(postEditBo.getId());
 
-        PostEntity dto = this.converter.aoeBoToEntity(postEditBo);
+        PostEntity dto = this.postConvert.aoeBoToEntity(postEditBo);
 
         // 检测通过 保存
         if (isUpdate) {
@@ -85,7 +87,7 @@ public class PostService extends ConvertService<PostMapper, PostConvert> {
         if (ObjectUtil.isNull(entity)) {
             SysCodes.RECORD_NOT_FOUND.newException();
         }
-        return this.converter.entityToDetailVo(entity);
+        return this.postConvert.entityToDetailVo(entity);
     }
 
     /**

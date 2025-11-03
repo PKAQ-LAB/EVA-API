@@ -26,8 +26,9 @@ import java.util.Set;
  */
 @Service
 @RequiredArgsConstructor
-public class OrganizationService extends StdService<OrganizationMapper, OrganizationEntity, OrganizationConvert> {
+public class OrganizationService extends StdService<OrganizationMapper, OrganizationEntity> {
     private final OrganizationConvert organizationConvert;
+
     /**
      * 查询组织结构树
      *
@@ -146,7 +147,7 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
      * @return 组织信息
      */
     public OrganizationDetailVo getOrg(long id) {
-        return this.get(id);
+        return this.organizationConvert.entityToDetailVo(this.get(id));
     }
 
     /**

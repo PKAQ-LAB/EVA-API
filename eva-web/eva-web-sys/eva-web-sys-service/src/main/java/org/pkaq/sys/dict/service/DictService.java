@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
-public class DictService extends StdService<DictMapper, DictEntity, DictConvert> implements IDictService {
+public class DictService extends StdService<DictMapper, DictEntity> implements IDictService {
     private final DictCacheHelper dictCacheHelper;
 
     private final DictViewMapper dictViewMapper;
@@ -44,7 +44,6 @@ public class DictService extends StdService<DictMapper, DictEntity, DictConvert>
     private final DictItemMapper dictItemMapper;
 
     private final DictConvert dictConvert;
-
     /**
      * 初始化字典数据缓存
      */
