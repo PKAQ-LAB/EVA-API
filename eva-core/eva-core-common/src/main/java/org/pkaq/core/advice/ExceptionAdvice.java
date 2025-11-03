@@ -37,6 +37,12 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ConstraintViolationException.class)
     public Response<Object> handleViolationException(ConstraintViolationException e) {
+        log.error("参数校验失败：" + e.getMessage());
+
+        if (log.isDebugEnabled()) {
+            e.printStackTrace();
+        }
+
         Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
         StringBuilder message = new StringBuilder();
 
@@ -56,6 +62,13 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Response<Object> handleMethodParamCheckException(MethodArgumentNotValidException e) {
+
+        log.error("参数校验失败：" + e.getMessage());
+
+        if (log.isDebugEnabled()) {
+            e.printStackTrace();
+        }
+
         return Response.failure(CommonCodes.PARAM_TYPEERROR.getCode(), e.getBindingResult().getFieldError().getDefaultMessage());
     }
 
@@ -69,6 +82,11 @@ public class ExceptionAdvice {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public Response<Object> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         log.error("参数解析失败：" + e.getMessage());
+
+        if (log.isDebugEnabled()) {
+            e.printStackTrace();
+        }
+
         return Response.failure(CommonCodes.PARAM_TYPEERROR);
     }
 
@@ -82,6 +100,11 @@ public class ExceptionAdvice {
     @ExceptionHandler({IllegalArgumentException.class, MissingServletRequestParameterException.class})
     public Response<Object> handleIllegalArgumentException(Exception e) {
         log.warn("参数类型错误：不支持当前请求的参数类型:" + e.getMessage());
+
+        if (log.isDebugEnabled()) {
+            e.printStackTrace();
+        }
+
         return Response.failure(CommonCodes.PARAM_TYPEERROR);
     }
 
@@ -95,6 +118,11 @@ public class ExceptionAdvice {
     @ExceptionHandler(BindException.class)
     public Response<Object> handleBindException(BindException e) {
         log.error("服务运行异常:" + e.getMessage());
+
+        if (log.isDebugEnabled()) {
+            e.printStackTrace();
+        }
+
         StringBuilder errorMsg = new StringBuilder();
         e.getAllErrors().forEach(
                 x -> errorMsg.append(x.getDefaultMessage()).append(",")
@@ -112,6 +140,10 @@ public class ExceptionAdvice {
     @ExceptionHandler(BizException.class)
     public Response<Object> handleBindException(BizException e) {
         String msg = ObjectUtil.defaultIfBlank(e.getMessage(), e.getEstr());
+
+        if (log.isDebugEnabled()) {
+            e.printStackTrace();
+        }
 
         log.error("业务异常:" + msg);
 
@@ -132,6 +164,11 @@ public class ExceptionAdvice {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public Response<Object> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
         log.warn("不支持当前请求方法:" + e.getMessage());
+
+        if (log.isDebugEnabled()) {
+            e.printStackTrace();
+        }
+
         return Response.failure(CommonCodes.REQUEST_METHOD_ERROR);
     }
 
@@ -145,6 +182,11 @@ public class ExceptionAdvice {
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     public Response<Object> handleHttpMediaTypeNotSupportedException(Exception e) {
         log.warn("不支持当前媒体类型:" + e.getMessage());
+
+        if (log.isDebugEnabled()) {
+            e.printStackTrace();
+        }
+
         return Response.failure(CommonCodes.REQUEST_MEDIA_ERROR);
     }
 
@@ -158,6 +200,11 @@ public class ExceptionAdvice {
     @ExceptionHandler(Exception.class)
     public Response<Object> handleException(Exception e) {
         log.error("服务运行异常:" + e.getMessage());
+
+        if (log.isDebugEnabled()) {
+            e.printStackTrace();
+        }
+
         return Response.failure(CommonCodes.SERVER_ERROR);
     }
 }
