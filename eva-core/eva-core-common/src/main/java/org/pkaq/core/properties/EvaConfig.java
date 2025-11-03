@@ -1,7 +1,6 @@
 package org.pkaq.core.properties;
 
 import lombok.Data;
-import org.pkaq.core.enums.ModeEnumm;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -22,8 +21,6 @@ public class EvaConfig {
      */
     private boolean i18n;
 
-    /** 模式 saas / singleton **/
-    private ModeEnumm mode;
     /**
      * 是否启用重复提交判断
      **/
@@ -36,6 +33,10 @@ public class EvaConfig {
      * 业务日志配置
      **/
     private ErrorLog errorLog;
+    /**
+     * 分页配置
+     */
+    private Page page = new Page();
     /**
      * 文件上传配置
      **/
