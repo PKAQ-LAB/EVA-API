@@ -34,8 +34,10 @@ spring:
 #    groups:
 #      enabled: true
 #    enabled: true
-# mybatis
+mybatis:
+  type-handlers-package: org.pkaq.core.mybatis.enums
 mybatis-plus:
+  type-handlers-package: org.pkaq.core.mybatis.enums
   mapper-locations: classpath*:/mapper/*.xml
   #实体扫描，多个package用逗号或者分号分隔
   typeAliasesPackage: org.pkaq.*.**.entity
@@ -172,6 +174,8 @@ eva:
     license: /license/license.lic
     # 项目的唯一识别码
     subject: eva
+springdoc:
+  default-flat-param-object: true
 management:
   endpoints:
     web:
