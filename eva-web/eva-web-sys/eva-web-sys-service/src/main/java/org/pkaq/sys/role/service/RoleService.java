@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.enums.FrozenEnumm;
+import org.pkaq.core.mvc.bo.Bo;
 import org.pkaq.core.mvc.bo.IdCodeBo;
 import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.core.mybatis.util.TreeHelper;
@@ -29,6 +30,8 @@ import org.pkaq.sys.user.convert.UserConvert;
 import org.pkaq.sys.user.entity.UserEntity;
 import org.pkaq.sys.user.mapper.UserMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
@@ -53,7 +56,6 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
 
     private final UserConvert userConvert;
 
-    private final RoleConvert roleConvert;
 
     /**
      * 根据请求的URL查询角色所属权限
@@ -80,9 +82,6 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
 
     /**
      * 校验编码是否唯一
-     *
-     * @param idCodeBo
-     * @return
      */
     @Override
     public boolean isUnique(IdCodeBo idCodeBo) {
@@ -93,10 +92,9 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
 
         var entityWrapper = Wrappers.<RoleEntity>lambdaQuery()
                 .eq(RoleEntity::getCode, idCodeBo.getCode())
-                .ne(RoleEntity::getId, idCodeBo.getId());
+                .ne(idCodeBo.getId() != null, RoleEntity::getId, idCodeBo.getId());
 
-        long records = this.mapper.selectCount(entityWrapper);
-        return records > 0;
+        return this.mapper.selectCount(entityWrapper) > 0;
     }
 
     /**

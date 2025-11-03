@@ -83,7 +83,7 @@ public class RoleCtrl extends StdCtrl<RoleService> {
     @BizLog(operateType = BizLogCodes.EDIT, description = "编辑了角色信息[{0}]", args = {"param:0"})
     public Response<Object> save(@Parameter(name = "formdata", description = "模型对象")
                                  @RequestBody RoleAoeBo bo) {
-        this.service.edit(bo);
+        this.service.editUniqueCode(bo);
         return success();
     }
 

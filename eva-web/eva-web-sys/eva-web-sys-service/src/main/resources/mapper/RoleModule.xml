@@ -41,7 +41,7 @@
     <select id="listGrantedResource" resultType="java.util.Map">
         SELECT
             r.ID,
-            r.MODULE_ID,
+            r.MAIN_ID,
             r.RESOURCE_DESC,
             r.RESOURCE_URL,
             r.RESOURCE_TYPE,
@@ -52,7 +52,7 @@
         FROM SYS_MODULE_RESOURCES r
                  LEFT JOIN SYS_ROLERES_REF rr
                            ON r.ID = rr.RESOURCE_ID AND rr.ROLE_ID = #{roleId}
-        ORDER BY r.MODULE_ID ASC;
+        ORDER BY r.MAIN_ID ASC;
     </select>
 
 </mapper>

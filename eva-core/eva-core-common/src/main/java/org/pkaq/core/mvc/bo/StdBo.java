@@ -13,6 +13,9 @@ import org.hibernate.validator.constraints.Length;
 public abstract class StdBo implements Bo {
     private Long id;
 
+    @Schema(description = "编码")
+    private String code;
+
     @Schema(description = "乐观锁")
     private int revision;
 

@@ -8,10 +8,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import org.pkaq.core.codes.CommonCodes;
-import org.pkaq.core.mvc.bo.Bo;
-import org.pkaq.core.mvc.bo.IdCodeBo;
-import org.pkaq.core.mvc.bo.PageBo;
-import org.pkaq.core.mvc.bo.SingleArray;
+import org.pkaq.core.mvc.bo.*;
 import org.pkaq.core.mvc.convert.Convert;
 import org.pkaq.core.mvc.vo.PageVo;
 import org.pkaq.core.mvc.vo.Vo;
@@ -138,6 +135,28 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
         if (null == bo) {
             CommonCodes.PARAM_ERROR.newException();
         }
+        this.mapper.insertOrUpdate(this.convert.fromBo(bo));
+    }
+
+    /**
+     * 新增/编辑一条信息,校验code唯一性
+     */
+
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public void editUniqueCode(StdBo bo) {
+        if (null == bo) {
+            CommonCodes.PARAM_ERROR.newException();
+        }
+
+        var codeCheck = new IdCodeBo();
+        codeCheck.setCode(Objects.requireNonNull(bo).getCode());
+        codeCheck.setId(bo.getId());
+
+
+        if(this.isUnique(codeCheck)){
+            CommonCodes.DUPLICATE_CODE_ERROR.newException();
+        }
+
         this.mapper.insertOrUpdate(this.convert.fromBo(bo));
     }
 

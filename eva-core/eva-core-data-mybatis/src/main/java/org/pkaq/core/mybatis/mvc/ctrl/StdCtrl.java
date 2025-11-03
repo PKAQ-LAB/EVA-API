@@ -32,7 +32,7 @@ public abstract class StdCtrl<T extends StdService> extends Ctrl {
     public Response<Object> checkUnique(@Parameter(name = "idCodeBo", description = "要进行校验的参数")
                                         @RequestBody IdCodeBo idCodeBo) {
         var exist = this.service.isUnique(idCodeBo);
-        return exist ? failure() : success();
+        return exist ? failure(CommonCodes.DUPLICATE_CODE_ERROR) : success();
     }
 
     @GetMapping("/get/{id}")

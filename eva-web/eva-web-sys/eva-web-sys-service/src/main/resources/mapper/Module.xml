@@ -227,7 +227,7 @@
         FROM SYS_ROLEUSER_REF ru
             JOIN SYS_ROLERES_REF rr ON ru.ROLE_ID = rr.ROLE_ID
             JOIN SYS_MODULE_RESOURCES r ON rr.RESOURCE_ID = r.ID
-            JOIN SYS_MODULE m ON r.MODULE_ID = m.ID
+            JOIN SYS_MODULE m ON r.MAIN_ID = m.ID
         WHERE ru.USER_ID = #{uid}
         AND
         <include refid="common.avalibleSQL">
