@@ -21,7 +21,6 @@ dependencies {
         libs.aop,
         libs.jwt,
         libs.json,
-        libs.ttl,
         libs.springdoc,
         libs.validation
 }

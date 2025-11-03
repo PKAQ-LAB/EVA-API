@@ -89,9 +89,6 @@ knife4j_ui = { module = "com.github.xiaoymin:knife4j-openapi3-ui", version.ref =
 # jwt
 jwt = { module = "com.nimbusds:nimbus-jose-jwt", version.ref = "jwt" }
 
-# 安全线程
-ttl = { module = "com.alibaba:transmittable-thread-local", version.ref = "ttl" }
-
 # ws
 websocket = { module = "org.springframework.boot:spring-boot-starter-websocket" }
 
