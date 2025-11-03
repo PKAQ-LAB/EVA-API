@@ -1,5 +1,6 @@
 package org.pkaq.core.auth.security.filter;
 
+import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.JakartaServletUtil;
 import jakarta.servlet.FilterChain;
@@ -145,14 +146,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             logger.info(SecurityContextHolder.getContext().getAuthentication());
 //            if (StrUtil.isNotBlank(uid) && SecurityContextHolder.getContext().getAuthentication() == null) {
-            if (StrUtil.isNotBlank(account)) {
+            if (CharSequenceUtil.isNotBlank(account)) {
                 logger.debug("org.pkaq.security context was null, so authorizing user");
 
                 // 从redis中 根据用户id获取用户权限列表
                 UserDetails userDetails;
                 try {
                     userDetails = this.userDetailsService.loadUserByUsername(account);
-                } catch (UsernameNotFoundException e) {
+                } catch (UsernameNotFoundException _) {
                     response.setCharacterEncoding("UTF-8");
                     response.setContentType("application/json");
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "您的登录已过期, 请重新登录.");
@@ -168,7 +169,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 ThreadUser currentUser = new ThreadUser().setUserId(uid)
                         .setName(account)
                         .setRoles(roles);
-                ThreadUserHelper.setCurrentUser(currentUser);
+
+                ThreadUserHelper.runWithUser(currentUser, () -> {
+                    try {
+                        chain.doFilter(request, response);
+                    } catch (IOException | ServletException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
 
 //                将用户信息设置到security 上下文中
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
