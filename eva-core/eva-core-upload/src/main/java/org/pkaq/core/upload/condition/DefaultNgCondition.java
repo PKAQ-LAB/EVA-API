@@ -1,6 +1,6 @@
 package org.pkaq.core.upload.condition;
 
-import cn.hutool.core.text.CharSequenceUtil;
+import org.pkaq.core.util.StrUtils;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
@@ -15,6 +15,6 @@ public class DefaultNgCondition implements Condition {
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
         String fileType = context.getEnvironment().getProperty("eva.file.type");
-        return CharSequenceUtil.isBlank(fileType) || "ng".equalsIgnoreCase(fileType) || "nginx".equalsIgnoreCase(fileType);
+        return StrUtils.isBlank(fileType) || "ng".equalsIgnoreCase(fileType) || "nginx".equalsIgnoreCase(fileType);
     }
 }

@@ -1,6 +1,5 @@
 package org.pkaq.sys.post.service;
 
-import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -9,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.core.mybatis.util.PageResult;
+import org.pkaq.core.util.StrUtils;
 import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.post.bo.PostAoeBo;
 import org.pkaq.sys.post.bo.PostQueryBo;
@@ -38,7 +38,7 @@ public class PostService extends StdService<PostMapper, PostEntity> {
     public boolean checkUnique(PostAoeBo postEditBo) {
         LambdaQueryWrapper<PostEntity> wrapper = Wrappers.lambdaQuery();
 
-        wrapper.ne(CharSequenceUtil.isNotBlank(postEditBo.getId()), PostEntity::getId, postEditBo.getId())
+        wrapper.ne(StrUtils.isNotBlank(postEditBo.getId()), PostEntity::getId, postEditBo.getId())
                 .and(w -> w.eq(PostEntity::getTitle, postEditBo.getTitle())
                         .or()
                         .eq(PostEntity::getCode, postEditBo.getCode()));
@@ -66,7 +66,7 @@ public class PostService extends StdService<PostMapper, PostEntity> {
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void edit(PostAoeBo postEditBo) {
 
-        boolean isUpdate = CharSequenceUtil.isNotBlank(postEditBo.getId());
+        boolean isUpdate = StrUtils.isNotBlank(postEditBo.getId());
 
         PostEntity dto = this.postConvert.aoeBoToEntity(postEditBo);
 

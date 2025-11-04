@@ -62,7 +62,7 @@ public class MinIOFileUtil implements FileProvider {
 //        // 存储后返回的信息
 //        String newFileName = "";
 //
-//        if (CharSequenceUtil.isNotEmpty(fileName)) {
+//        if (StrUtils.isNotEmpty(fileName)) {
 //            suffixName = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
 //            //非图片文件+:原名
 //            newFileName = snowflake.nextIdStr() + ":" + fileName;

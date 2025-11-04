@@ -3,7 +3,6 @@ package org.pkaq.core.log.pointcut;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.exceptions.UtilException;
-import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ReflectUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,6 +21,7 @@ import org.pkaq.core.log.base.LogSupporter;
 import org.pkaq.core.log.condition.BizlogSupporterCondition;
 import org.pkaq.core.log.events.BizLogEvent;
 import org.pkaq.core.threaduser.ThreadUserHelper;
+import org.pkaq.core.util.StrUtils;
 import org.pkaq.core.util.json.JsonUtil;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Conditional;
@@ -66,7 +66,7 @@ public class BizLogAdvice {
         var description = bizlog.description();
         // 如果是以{}包裹的字符串就使用i18n获取国际化文案
 
-        if (CharSequenceUtil.isNotBlank(description) && description.startsWith("{") && description.endsWith("}")) {
+        if (StrUtils.isNotBlank(description) && description.startsWith("{") && description.endsWith("}")) {
             description = i18NHelper.getMessage(description.replace("{", "").replace("}", ""), description);
         }
 
@@ -79,7 +79,7 @@ public class BizLogAdvice {
         var args = JsonUtil.toJson(joinPoint.getArgs());
         // 根据方法入参设置操作描述的格式化参数 并返回需要的响应参数名
         var descriptionArgs = bizlog.args();
-        if (CharSequenceUtil.isNotBlank(bizlog.bizId())) {
+        if (StrUtils.isNotBlank(bizlog.bizId())) {
             descriptionArgs = ArrayUtil.append(descriptionArgs, bizlog.bizId());
         }
         var formatArgs = new Object[descriptionArgs.length];
@@ -121,7 +121,7 @@ public class BizLogAdvice {
             if (BizLogCodes.CREATE.equals(operatorType)) {
                 processArgs(joinPoint.getArgs(), descriptionArgs, formatArgs);
             }
-            if (CharSequenceUtil.isNotBlank(bizlog.bizId())) {
+            if (StrUtils.isNotBlank(bizlog.bizId())) {
                 bizLogEntity.setBId(formatArgs[formatArgs.length - 1].toString());
             }
             bizLogEntity.setDescription(MessageFormat.format(description, formatArgs));

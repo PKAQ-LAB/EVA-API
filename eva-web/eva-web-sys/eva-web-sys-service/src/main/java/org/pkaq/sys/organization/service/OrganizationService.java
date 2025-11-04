@@ -103,7 +103,7 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
 //        }
 //        //如果是新增且orders属性为空则设置orders属性
 //        OrganizationEntity oldOrgin = null;
-//        if (CharSequenceUtil.isBlank(organization.getId())) {
+//        if (StrUtils.isBlank(organization.getId())) {
 //            organization.setSort(this.mapper.countPrantLeaf(pid));
 //        } else {
 //            oldOrgin = this.mapper.selectById(orgId);

@@ -1,7 +1,6 @@
 package org.pkaq.sys.module.service;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -12,6 +11,7 @@ import org.pkaq.core.exception.BizException;
 import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.core.mybatis.util.TreeHelper;
+import org.pkaq.core.util.StrUtils;
 import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.module.bo.ModuleAoeBo;
 import org.pkaq.sys.module.bo.ModuleQueryBo;
@@ -272,12 +272,12 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
             if (!isRoot) {
                 // 设置id组成的path ： 新的父级节点path 属性 + 其id
                 var newParent = this.mapper.selectById(pid);
-                var newPath = CharSequenceUtil.format("{}/{}", newParent.getPath(), moduleId);
+                var newPath = String.format("%s/%s", newParent.getPath(), moduleId);;
                 module.setPath(newPath);
 
                 mapper.updateById(module);
                 var oldPath = originModule.getPath();
-                if (CharSequenceUtil.isNotEmpty(oldPath)) {
+                if (StrUtils.isNotEmpty(oldPath)) {
                     this.mapper.refreshPath(oldPath, oldPath.length(), newPath);
                 }
             } else {

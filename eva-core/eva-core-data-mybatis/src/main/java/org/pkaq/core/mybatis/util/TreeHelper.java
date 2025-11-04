@@ -1,9 +1,9 @@
 package org.pkaq.core.mybatis.util;
 
-import cn.hutool.core.text.CharSequenceUtil;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.pkaq.core.mvc.vo.StdTreeVo;
+import org.pkaq.core.util.StrUtils;
 
 import java.util.*;
 import java.util.function.Function;
@@ -21,7 +21,7 @@ public class TreeHelper {
      * :注意: 这里如果子路径本身就是以与父路径相同开头的路径那么不会拼接父路径
      */
     public static String assemblePath(String parentPath, String currentPath, String oldParentPath) {
-        if (CharSequenceUtil.isNotBlank(oldParentPath)) {
+        if (StrUtils.isNotBlank(oldParentPath)) {
             //把子路径里原来的父路径替换成现在的父路径
             currentPath = currentPath.replace(oldParentPath, parentPath);
         } else {

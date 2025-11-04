@@ -1,6 +1,5 @@
 package org.pkaq.core.util.json;
 
-import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -8,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.exception.Exceptions;
+import org.pkaq.core.util.StrUtils;
 import org.pkaq.core.util.StringPool;
 
 import java.io.IOException;
@@ -171,7 +171,7 @@ public class JsonUtil {
     public static <T> List<T> parseArray(String content, Class<T> valueTypeRef) {
         try {
 
-            if (!StrUtil.startWithIgnoreCase(content, StringPool.BRACKET_START)) {
+            if (!StrUtils.startsWithIgnoreCase(content, StringPool.BRACKET_START)) {
                 content = StringPool.BRACKET_START + content + StringPool.BRACKET_END;
             }
 

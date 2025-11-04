@@ -1,6 +1,5 @@
 package org.pkaq.sys.post.ctrl;
 
-import cn.hutool.core.text.CharSequenceUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -10,6 +9,7 @@ import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
+import org.pkaq.core.util.StrUtils;
 import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.post.bo.PostAoeBo;
 import org.pkaq.sys.post.bo.PostQueryBo;
@@ -40,7 +40,7 @@ public class PostCtrl extends Ctrl {
     public Response<Object> checkUnique(@Parameter(name = "bo", required = true, description = "岗位管理新增/编辑/唯一校验请求参数")
                                         @RequestBody PostAoeBo bo) {
         // 参数校验
-        if (CharSequenceUtil.isAllBlank(bo.getCode(), bo.getTitle())) {
+        if (StrUtils.isAllBlank(bo.getCode(), bo.getTitle())) {
             return failure(SysCodes.MISS_CODE_OR_NAME);
         }
         boolean exists = this.postService.checkUnique(bo);

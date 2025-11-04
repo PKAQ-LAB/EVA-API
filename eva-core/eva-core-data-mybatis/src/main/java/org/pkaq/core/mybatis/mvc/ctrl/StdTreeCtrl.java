@@ -1,6 +1,5 @@
 package org.pkaq.core.mybatis.mvc.ctrl;
 
-import cn.hutool.core.text.CharSequenceUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.Getter;
@@ -10,6 +9,7 @@ import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.mybatis.mvc.entity.StdTreeEntity;
 import org.pkaq.core.mybatis.mvc.service.StdTreeService;
+import org.pkaq.core.util.StrUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,7 +31,7 @@ public abstract class StdTreeCtrl<T extends StdTreeService, E extends StdTreeEnt
     @Operation(summary = "校验code唯一性")
     public Response<Object> checkUnique(@Parameter(name = "entity", description = "要进行校验的参数")
                                         @RequestBody E entity) {
-        boolean exist = null != entity && CharSequenceUtil.isNotBlank(entity.getCode()) && this.service.count(entity) > 0;
+        boolean exist = null != entity && StrUtils.isNotBlank(entity.getCode()) && this.service.count(entity) > 0;
         return exist ? failure() : success();
     }
 

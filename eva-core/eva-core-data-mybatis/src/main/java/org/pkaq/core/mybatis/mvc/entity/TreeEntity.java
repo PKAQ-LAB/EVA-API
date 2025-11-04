@@ -1,12 +1,12 @@
 package org.pkaq.core.mybatis.mvc.entity;
 
-import cn.hutool.core.text.CharSequenceUtil;
 import com.baomidou.mybatisplus.annotation.SqlCondition;
 import com.baomidou.mybatisplus.annotation.TableField;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.pkaq.core.mvc.entity.Entity;
+import org.pkaq.core.util.StrUtils;
 
 import java.util.List;
 
@@ -69,7 +69,7 @@ public class TreeEntity implements Entity {
     private String locale;
 
     public String getLocale() {
-        return CharSequenceUtil.isNotBlank(this.path) ? "menu" + this.path.replaceAll("/", ".") : "";
+        return StrUtils.isNotBlank(this.path) ? "menu" + this.path.replaceAll("/", ".") : "";
     }
 
     public Long getKey() {

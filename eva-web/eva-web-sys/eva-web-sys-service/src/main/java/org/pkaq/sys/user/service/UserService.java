@@ -1,7 +1,6 @@
 package org.pkaq.sys.user.service;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.text.CharSequenceUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -15,6 +14,7 @@ import org.pkaq.core.mybatis.util.PageResult;
 import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.core.upload.provider.FileProvider;
 import org.pkaq.core.util.BCryptUtils;
+import org.pkaq.core.util.StrUtils;
 import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.post.service.UserPostRefSerivce;
 import org.pkaq.sys.role.entity.RoleUserEntity;
@@ -186,13 +186,13 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
             isInsert = false;
             UserEntity oldUser = this.mapper.selectById(userId);
             String avatar = oldUser.getAvatar();
-            if (CharSequenceUtil.isNotBlank(avatar) && !avatar.equals(user.getAvatar())) {
+            if (StrUtils.isNotBlank(avatar) && !avatar.equals(user.getAvatar())) {
                 fileProvider.delFromStorage(avatar);
             }
         }
 
         // 保存新的头像文件
-        if (CharSequenceUtil.isNotBlank(user.getAvatar())) {
+        if (StrUtils.isNotBlank(user.getAvatar())) {
             fileProvider.storageWithThumbnail(0.3f, user.getAvatar());
         }
 

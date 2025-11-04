@@ -1,6 +1,5 @@
 package org.pkaq.sys.tenant.ctrl;
 
-import cn.hutool.core.text.CharSequenceUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -12,6 +11,7 @@ import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.PageVo;
 import org.pkaq.core.mvc.vo.Response;
+import org.pkaq.core.util.StrUtils;
 import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.tenant.bo.TenantAoeBo;
 import org.pkaq.sys.tenant.bo.TenantCheckBo;
@@ -44,9 +44,9 @@ public class TenantCtrl extends Ctrl {
         var exist = this.service.checkUnique(checkBo);
 
         if (exist) {
-            if (CharSequenceUtil.isBlank(checkBo.getName())) {
+            if (StrUtils.isBlank(checkBo.getName())) {
                 return failure(SysCodes.TENANT_CODE_ALREADY_EXIST);
-            } else if (CharSequenceUtil.isBlank(checkBo.getCode())) {
+            } else if (StrUtils.isBlank(checkBo.getCode())) {
                 return failure(SysCodes.TENANT_NAME_ALREADY_EXIST);
             } else {
                 return failure(SysCodes.TENANT_CODE_OR_NAME_ALREADY_EXIST);

@@ -4,7 +4,6 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.resource.InputStreamResource;
 import cn.hutool.core.lang.Snowflake;
-import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.http.HttpUtil;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +14,7 @@ import org.pkaq.core.exception.BizException;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.upload.condition.FastDfsCondition;
 import org.pkaq.core.upload.provider.FileProvider;
+import org.pkaq.core.util.StrUtils;
 import org.pkaq.core.util.json.JsonUtil;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -63,7 +63,7 @@ public class DfsFileUtil implements FileProvider {
 
         String file_path = "";
 
-        if (CharSequenceUtil.isNotEmpty(fileName)) {
+        if (StrUtils.isNotEmpty(fileName)) {
             suffixName = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
             newFileName = snowflake.nextIdStr() + "." + suffixName;
         } else {
@@ -87,7 +87,7 @@ public class DfsFileUtil implements FileProvider {
             paramMap.put("output", "json");
             //自定义路径
 //            String curDate = DateUtil.format(new Date(), DatePattern.PURE_DATE_FORMAT);
-            if (CharSequenceUtil.isNotBlank(path)) {
+            if (StrUtils.isNotBlank(path)) {
                 paramMap.put("path", path);
             } else {
                 paramMap.put("path", suffixName);

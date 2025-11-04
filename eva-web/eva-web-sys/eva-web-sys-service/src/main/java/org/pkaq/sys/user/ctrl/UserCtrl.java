@@ -1,6 +1,5 @@
 package org.pkaq.sys.user.ctrl;
 
-import cn.hutool.core.text.CharSequenceUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -12,6 +11,7 @@ import org.pkaq.core.log.base.BizLogCodes;
 import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
+import org.pkaq.core.util.StrUtils;
 import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.role.service.UserRoleRefSerivce;
 import org.pkaq.sys.user.bo.*;
@@ -36,15 +36,15 @@ public class UserCtrl extends Ctrl {
     @Operation(summary = "校验账号唯一性")
     public Response<Object> checkUnique(@Parameter(name = "bo", description = "要进行校验的参数")
                                         @RequestBody @Valid UserCheckBo bo) {
-        if (CharSequenceUtil.isBlank(bo.getAccount()) && CharSequenceUtil.isBlank(bo.getCode())) {
+        if (StrUtils.isBlank(bo.getAccount()) && StrUtils.isBlank(bo.getCode())) {
             SysCodes.CHECKFIELD_ALREADY_EXIST.newException();
         }
         boolean exist = this.service.checkUnique(bo);
 
         if (exist) {
-            if (CharSequenceUtil.isBlank(bo.getAccount())) {
+            if (StrUtils.isBlank(bo.getAccount())) {
                 return failure(SysCodes.CODE_ALREADY_EXIST);
-            } else if (CharSequenceUtil.isBlank(bo.getCode())) {
+            } else if (StrUtils.isBlank(bo.getCode())) {
                 return failure(SysCodes.ACCOUNT_ALREADY_EXIST);
             } else {
                 return failure(SysCodes.ACCOUNT_OR_CODE_ALREADY_EXIST);

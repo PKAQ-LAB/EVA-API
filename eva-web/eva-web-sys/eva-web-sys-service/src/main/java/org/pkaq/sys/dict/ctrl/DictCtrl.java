@@ -1,6 +1,5 @@
 package org.pkaq.sys.dict.ctrl;
 
-import cn.hutool.core.text.CharSequenceUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -9,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
+import org.pkaq.core.util.StrUtils;
 import org.pkaq.sys.dict.bo.DictAoeBo;
 import org.pkaq.sys.dict.cache.DictCacheHelper;
 import org.pkaq.sys.dict.service.DictService;
@@ -53,7 +53,7 @@ public class DictCtrl extends Ctrl {
                                         @Parameter(name = "code", description = "类型编码")
                                         @PathVariable(value = "code", required = false) String code) {
         // 参数校验
-        if (0 == id && CharSequenceUtil.isBlank(code)) {
+        if (0 == id && StrUtils.isBlank(code)) {
             CommonCodes.PARAM_ERROR.newException();
         }
         DictAoeBo bo = new DictAoeBo();
@@ -67,7 +67,7 @@ public class DictCtrl extends Ctrl {
     @Operation(summary = "校验code")
     public Response<Object> checkUnique(@Parameter(name = "dictEntity", description = "要进行校验的参数")
                                         @RequestBody DictAoeBo bo) {
-        boolean exist = null != bo && CharSequenceUtil.isNotBlank(bo.getCode()) && this.service.checkUnique(bo);
+        boolean exist = null != bo && StrUtils.isNotBlank(bo.getCode()) && this.service.checkUnique(bo);
         return exist ? this.failure() : this.success();
     }
 

@@ -16,6 +16,10 @@ public class StrUtils {
         return StringUtils.isNotBlank(cs);
     }
 
+    public static boolean isAllBlank(final CharSequence... css) {
+        return StringUtils.isAllBlank(css);
+    }
+
     public static boolean isEmpty(final CharSequence cs) {
         return StringUtils.isEmpty(cs);
     }
@@ -34,5 +38,9 @@ public class StrUtils {
 
     public static <T extends CharSequence> T defaultIfBlank(final T str, final T defaultStr) {
         return StringUtils.defaultIfBlank(str, defaultStr);
+    }
+
+    public static boolean startsWithIgnoreCase(final CharSequence str, final CharSequence prefix) {
+        return Strings.CI.startsWith(str, prefix);
     }
 }
