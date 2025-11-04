@@ -2,7 +2,6 @@ package org.pkaq.sys.user.service;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.CharSequenceUtil;
-import cn.hutool.crypto.digest.BCrypt;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -15,6 +14,7 @@ import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.core.mybatis.util.PageResult;
 import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.core.upload.provider.FileProvider;
+import org.pkaq.core.util.BCryptUtils;
 import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.post.service.UserPostRefSerivce;
 import org.pkaq.sys.role.entity.RoleUserEntity;
@@ -71,13 +71,13 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
 
         UserEntity userEntity = this.mapper.selectById(uid);
 
-        if (!BCrypt.checkpw(rePwdBo.getOriginPassword(), userEntity.getPassword())) {
+        if (!BCryptUtils.checkpw(rePwdBo.getOriginPassword(), userEntity.getPassword())) {
             SysCodes.BAD_ORG_PASSWORD.newException();
         }
 
         UserEntity updateE = new UserEntity();
         updateE.setId(userEntity.getId());
-        updateE.setPassword(BCrypt.hashpw(rePwdBo.getNewPassword()));
+        updateE.setPassword(BCryptUtils.hashpw(rePwdBo.getNewPassword()));
         updateE.setRevision(rePwdBo.getRevision());
 
         this.mapper.updateById(updateE);
@@ -167,7 +167,7 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
         // 用户资料发生修改后 重新生成密码
         // 这里传递过来的密码是进行md5加密后的
         String pwd = user.getPassword();
-        pwd = BCrypt.hashpw(pwd);
+        pwd = BCryptUtils.hashpw(pwd);
         user.setPassword(pwd);
 
         // 新增手工生成主键
@@ -261,7 +261,7 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void createTenantAdmin(UserEntity user) {
         String pwd = user.getPassword();
-        pwd = BCrypt.hashpw(pwd);
+        pwd = BCryptUtils.hashpw(pwd);
         user.setPassword(pwd);
         this.mapper.insert(user);
     }
