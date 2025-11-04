@@ -13,10 +13,6 @@ dependencies {
         libs.servlet.api,
         libs.jasypt
 
-    api libs.cache,
-        libs.redis,
-        libs.caffeine
-
     api libs.hutool,
         libs.aop,
         libs.jwt,
