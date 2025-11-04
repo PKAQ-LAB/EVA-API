@@ -124,7 +124,7 @@ public abstract class StdTreeService<M extends StdTreeMapper<T>, T extends StdTr
         //新增
         if (null == oldOrgin) {
             //设置path路径 把path路径加上自己本身
-            //String path= StringUtils.isBlank(organization.getPath()) ? organization.getId() : organization.getPath() + "/" + organization.getId();
+            //String path= StrUtils.isBlank(organization.getPath()) ? organization.getId() : organization.getPath() + "/" + organization.getId();
             this.mapper.updateById(entity);
         } else {
             //刷新子节点相关数据

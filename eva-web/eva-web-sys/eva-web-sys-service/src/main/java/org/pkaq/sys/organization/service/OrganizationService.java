@@ -73,17 +73,17 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
 //        // 获取上级节点
 //        String pid = organization.getPid();
 //        String root = "0";
-//        if (!root.equals(pid) && StringUtils.isNotBlank(pid)) {
+//        if (!root.equals(pid) && StrUtils.isNotBlank(pid)) {
 //            // 查询新父节点信息
 //            OrganizationEntity parentOrg = this.get(pid);
 //            // 设置当前节点信息
-//            String parentPath = StringUtils.isNotBlank(organization.getId()) ? parentOrg.getPath() + "/" + organization.getId() : parentOrg.getPath();
+//            String parentPath = StrUtils.isNotBlank(organization.getId()) ? parentOrg.getPath() + "/" + organization.getId() : parentOrg.getPath();
 //            organization.setPath(parentPath);
 //
 //        } else {
 //            // 父节点为空, 根节点 设置为非叶子\
 //            pid = root;
-//            if (StringUtils.isNotBlank(organization.getId())) {
+//            if (StrUtils.isNotBlank(organization.getId())) {
 //                organization.setPath(organization.getId());
 //            }
 //            organization.setPid(pid);
@@ -113,7 +113,7 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
 //        //新增
 //        if (null == oldOrgin) {
 //            //设置path路径 把path路径加上自己本身
-//            //String path= StringUtils.isBlank(organization.getPath()) ? organization.getId() : organization.getPath() + "/" + organization.getId();
+//            //String path= StrUtils.isBlank(organization.getPath()) ? organization.getId() : organization.getPath() + "/" + organization.getId();
 //            this.mapper.updateById(organization);
 //        } else {
 //            //刷新子节点相关数据

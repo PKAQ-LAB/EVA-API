@@ -54,7 +54,7 @@ public class DynamicSecurityMetadataSource implements FilterInvocationSecurityMe
         var role_code = item.get("code");
         var resoure_path = item.get("resource_url");
 
-        if (StringUtils.isNotBlank(resoure_path)) {
+        if (StrUtils.isNotBlank(resoure_path)) {
             resoure_path = resoure_path.startsWith("/") ? resoure_path.substring(1) : resoure_path;
         }
 
@@ -95,7 +95,7 @@ public class DynamicSecurityMetadataSource implements FilterInvocationSecurityMe
             var path = item.get("path");
             var resoure_path = item.get("resource_url");
 
-            if (StringUtils.isNotBlank(resoure_path)) {
+            if (StrUtils.isNotBlank(resoure_path)) {
                 resoure_path = resoure_path.startsWith("/") ? resoure_path.substring(1) : resoure_path;
             }
 

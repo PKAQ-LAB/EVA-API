@@ -4,10 +4,10 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.exception.BizException;
 import org.pkaq.core.mvc.vo.Response;
+import org.pkaq.core.util.StrUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
@@ -144,7 +144,7 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.OK)
     @ExceptionHandler(BizException.class)
     public Response<Object> handleBindException(BizException e) {
-        String msg = StringUtils.defaultIfBlank(e.getMessage(), e.getEstr());
+        String msg = StrUtils.defaultIfBlank(e.getMessage(), e.getEstr());
         if (log.isDebugEnabled()) {
             e.printStackTrace();
         }

@@ -1,13 +1,12 @@
 package org.pkaq.core.advice;
 
-import cn.hutool.core.util.ObjectUtil;
-import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.codes.BizCode;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.i18n.I18NHelper;
 import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
+import org.pkaq.core.util.StrUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -46,7 +45,7 @@ public class CommonResponseAdvice implements ResponseBodyAdvice {
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
                                   Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
-        response.getHeaders().set("version", StringUtils.isNotEmpty(version) ? version : "unknown");
+        response.getHeaders().set("version", StrUtils.isNotEmpty(version) ? version : "unknown");
 
         var res = new Response<>();
 
@@ -65,8 +64,8 @@ public class CommonResponseAdvice implements ResponseBodyAdvice {
 
             var mtype = res.getMtype();
 
-            String code = ObjectUtil.defaultIfBlank(res.getCode(), "");
-            String message = ObjectUtil.defaultIfBlank(res.getMessage(), "");
+            String code = StrUtils.defaultIfBlank(res.getCode(), "");
+            String message = StrUtils.defaultIfBlank(res.getMessage(), "");
 
             if (mtype instanceof BizCode biz) {
                 // 非国际化类型提示

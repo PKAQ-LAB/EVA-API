@@ -3,7 +3,6 @@ package org.pkaq.core.util;
 import cn.hutool.extra.servlet.JakartaServletUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.properties.EvaConfig;
 import org.springframework.stereotype.Component;
@@ -50,7 +49,7 @@ public class TokenUtil {
 
         if (null != JakartaServletUtil.getCookie(request, CommonConstant.ACCESS_TOKEN_KEY)) {
             authToken = JakartaServletUtil.getCookie(request, CommonConstant.ACCESS_TOKEN_KEY).getValue();
-        } else if (StringUtils.isNotBlank(authHeader) && authHeader.startsWith(evaConfig.getJwt().getTokenHead())) {
+        } else if (StrUtils.isNotBlank(authHeader) && authHeader.startsWith(evaConfig.getJwt().getTokenHead())) {
             authToken = authHeader.substring(evaConfig.getJwt().getTokenHead().length());
         }
 

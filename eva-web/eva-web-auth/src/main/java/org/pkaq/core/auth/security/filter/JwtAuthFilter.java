@@ -14,7 +14,7 @@ import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.threaduser.ThreadUser;
 import org.pkaq.core.threaduser.ThreadUserHelper;
-import org.pkaq.core.util.StrUtil;
+import org.pkaq.core.util.StrUtils;
 import org.pkaq.core.util.TokenUtil;
 import org.pkaq.core.util.json.JsonUtil;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -70,7 +70,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             authToken = JakartaServletUtil.getCookie(request, CommonConstant.ACCESS_TOKEN_KEY).getValue();
         }
 
-        if (StringUtils.isNotBlank(authToken)) {
+        if (StrUtils.isNotBlank(authToken)) {
             Long uid = jwtUtil.getUid(authToken);
 
             /**
@@ -144,8 +144,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             logger.info("checking authentication ：" + account);
 
             logger.info(SecurityContextHolder.getContext().getAuthentication());
-//            if (StringUtils.isNotBlank(uid) && SecurityContextHolder.getContext().getAuthentication() == null) {
-            if (StringUtils.isNotBlank(account)) {
+//            if (StrUtils.isNotBlank(uid) && SecurityContextHolder.getContext().getAuthentication() == null) {
+            if (StrUtils.isNotBlank(account)) {
                 logger.debug("org.pkaq.security context was null, so authorizing user");
 
                 // 从redis中 根据用户id获取用户权限列表

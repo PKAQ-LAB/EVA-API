@@ -5,8 +5,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Strings;
 import org.pkaq.core.util.json.JsonUtil;
 import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
@@ -156,25 +154,25 @@ public class WebUtil extends WebUtils {
     public static String getIP(HttpServletRequest request) {
         Assert.notNull(request, "HttpServletRequest is null");
         String ip = request.getHeader("X-Requested-For");
-        if (StringUtils.isBlank(ip) || UN_KNOWN.equalsIgnoreCase(ip)) {
+        if (StrUtils.isBlank(ip) || UN_KNOWN.equalsIgnoreCase(ip)) {
             ip = request.getHeader("X-Forwarded-For");
         }
-        if (StringUtils.isBlank(ip) || UN_KNOWN.equalsIgnoreCase(ip)) {
+        if (StrUtils.isBlank(ip) || UN_KNOWN.equalsIgnoreCase(ip)) {
             ip = request.getHeader("Proxy-Client-IP");
         }
-        if (StringUtils.isBlank(ip) || UN_KNOWN.equalsIgnoreCase(ip)) {
+        if (StrUtils.isBlank(ip) || UN_KNOWN.equalsIgnoreCase(ip)) {
             ip = request.getHeader("WL-Proxy-Client-IP");
         }
-        if (StringUtils.isBlank(ip) || UN_KNOWN.equalsIgnoreCase(ip)) {
+        if (StrUtils.isBlank(ip) || UN_KNOWN.equalsIgnoreCase(ip)) {
             ip = request.getHeader("HTTP_CLIENT_IP");
         }
-        if (StringUtils.isBlank(ip) || UN_KNOWN.equalsIgnoreCase(ip)) {
+        if (StrUtils.isBlank(ip) || UN_KNOWN.equalsIgnoreCase(ip)) {
             ip = request.getHeader("HTTP_X_FORWARDED_FOR");
         }
-        if (StringUtils.isBlank(ip) || UN_KNOWN.equalsIgnoreCase(ip)) {
+        if (StrUtils.isBlank(ip) || UN_KNOWN.equalsIgnoreCase(ip)) {
             ip = request.getRemoteAddr();
         }
-        return StringUtils.isBlank(ip) ? null : ip.split(",")[0];
+        return StrUtils.isBlank(ip) ? null : ip.split(",")[0];
     }
 
 
@@ -201,7 +199,7 @@ public class WebUtil extends WebUtils {
      */
     public static String getRequestStr(HttpServletRequest request) throws IOException {
         String queryString = request.getQueryString();
-        if (StringUtils.isNotBlank(queryString)) {
+        if (StrUtils.isNotBlank(queryString)) {
             return new String(queryString.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8).replaceAll("&amp;", "&").replaceAll("%22", "\"");
         }
         return getRequestStr(request, getRequestBytes(request));
@@ -245,15 +243,15 @@ public class WebUtil extends WebUtils {
             charEncoding = String.valueOf(StandardCharsets.UTF_8);
         }
         String str = new String(buffer, charEncoding).trim();
-        if (StringUtils.isBlank(str)) {
+        if (StrUtils.isBlank(str)) {
             String sb = StringPool.EMPTY;
             Enumeration<String> parameterNames = request.getParameterNames();
             while (parameterNames.hasMoreElements()) {
                 String key = parameterNames.nextElement();
                 String value = request.getParameter(key);
-                sb = StringUtils.join(true, key, "=", value, "&");
+                sb = StrUtils.join(true, key, "=", value, "&");
             }
-            str = Strings.CS.removeEnd(sb, "&");
+            str = StrUtils.removeEnd(sb, "&");
         }
         return str.replaceAll("&amp;", "&");
     }
@@ -303,7 +301,7 @@ public class WebUtil extends WebUtils {
     public static String getRequestContent(HttpServletRequest request) {
         try {
             String queryString = request.getQueryString();
-            if (StringUtils.isNotBlank(queryString)) {
+            if (StrUtils.isNotBlank(queryString)) {
                 return new String(queryString.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8).replaceAll("&amp;", "&").replaceAll("%22", "\"");
             }
             String charEncoding = request.getCharacterEncoding();
@@ -312,16 +310,16 @@ public class WebUtil extends WebUtils {
             }
             byte[] buffer = getRequestBody(request.getInputStream()).getBytes();
             String str = new String(buffer, charEncoding).trim();
-            if (StringUtils.isBlank(str)) {
+            if (StrUtils.isBlank(str)) {
                 String sb = StringPool.EMPTY;
 
                 Enumeration<String> parameterNames = request.getParameterNames();
                 while (parameterNames.hasMoreElements()) {
                     String key = parameterNames.nextElement();
                     String value = request.getParameter(key);
-                    sb = StringUtils.join(true, key, "=", value, "&");
+                    sb = StrUtils.join(true, key, "=", value, "&");
                 }
-                str = Strings.CS.removeEnd(sb.toString(), "&");
+                str = StrUtils.removeEnd(sb.toString(), "&");
             }
             return str.replaceAll("&amp;", "&");
         } catch (Exception ex) {
