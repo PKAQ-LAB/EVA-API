@@ -1,6 +1,5 @@
 package org.pkaq.core.util;
 
-import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.StrUtil;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.Cookie;
@@ -202,7 +201,7 @@ public class WebUtil extends WebUtils {
     public static String getRequestStr(HttpServletRequest request) throws IOException {
         String queryString = request.getQueryString();
         if (StrUtil.isNotBlank(queryString)) {
-            return new String(queryString.getBytes(CharsetUtil.ISO_8859_1), CharsetUtil.UTF_8).replaceAll("&amp;", "&").replaceAll("%22", "\"");
+            return new String(queryString.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8).replaceAll("&amp;", "&").replaceAll("%22", "\"");
         }
         return getRequestStr(request, getRequestBytes(request));
     }
@@ -242,7 +241,7 @@ public class WebUtil extends WebUtils {
     public static String getRequestStr(HttpServletRequest request, byte[] buffer) throws IOException {
         String charEncoding = request.getCharacterEncoding();
         if (charEncoding == null) {
-            charEncoding = CharsetUtil.UTF_8;
+            charEncoding = String.valueOf(StandardCharsets.UTF_8);
         }
         String str = new String(buffer, charEncoding).trim();
         if (StrUtil.isBlank(str)) {
@@ -304,11 +303,11 @@ public class WebUtil extends WebUtils {
         try {
             String queryString = request.getQueryString();
             if (StrUtil.isNotBlank(queryString)) {
-                return new String(queryString.getBytes(CharsetUtil.ISO_8859_1), CharsetUtil.UTF_8).replaceAll("&amp;", "&").replaceAll("%22", "\"");
+                return new String(queryString.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8).replaceAll("&amp;", "&").replaceAll("%22", "\"");
             }
             String charEncoding = request.getCharacterEncoding();
             if (charEncoding == null) {
-                charEncoding = CharsetUtil.UTF_8;
+                charEncoding = String.valueOf(StandardCharsets.UTF_8);
             }
             byte[] buffer = getRequestBody(request.getInputStream()).getBytes();
             String str = new String(buffer, charEncoding).trim();

@@ -1,7 +1,6 @@
 package org.pkaq.core.auth.security.entrypoint;
 
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.extra.servlet.JakartaServletUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,6 +25,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -85,7 +85,7 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
 
         JakartaServletUtil.addCookie(httpServletResponse,
                 CommonConstant.USER_KEY,
-                URLEncoder.encode(mapper.writeValueAsString(user), CharsetUtil.UTF_8),
+                URLEncoder.encode(mapper.writeValueAsString(user), StandardCharsets.UTF_8),
                 evaConfig.getCookie().getMaxAge(),
                 "/",
                 evaConfig.getCookie().getDomain());
