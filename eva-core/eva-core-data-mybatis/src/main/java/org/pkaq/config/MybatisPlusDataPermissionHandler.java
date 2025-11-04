@@ -71,7 +71,7 @@
 //
 //            // 查询当前权限组拥有的数据权限
 //            // 根据权限拼接查询语句
-//            if (StrUtil.isNotBlank(permissionSQL)){
+//            if (StringUtils.isNotBlank(permissionSQL)){
 //                return new AndExpression(where, permission);
 //            }
 //        }

@@ -1,10 +1,10 @@
 package org.pkaq.core.advice;
 
-import cn.hutool.core.util.ObjectUtil;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.exception.BizException;
 import org.pkaq.core.mvc.vo.Response;
@@ -144,8 +144,7 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.OK)
     @ExceptionHandler(BizException.class)
     public Response<Object> handleBindException(BizException e) {
-        String msg = ObjectUtil.defaultIfBlank(e.getMessage(), e.getEstr());
-
+        String msg = StringUtils.defaultIfBlank(e.getMessage(), e.getEstr());
         if (log.isDebugEnabled()) {
             e.printStackTrace();
         }

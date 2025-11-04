@@ -1,9 +1,8 @@
 package org.pkaq.core.util;
 
-import cn.hutool.core.text.CharSequenceUtil;
-import cn.hutool.core.util.StrUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.pkaq.core.constant.CommonConstant;
 
 
@@ -21,7 +20,7 @@ public class RequestUtil {
     public static String getDeivce(HttpServletRequest request) {
         String device = request.getHeader(CommonConstant.DEVICE);
 
-        return StrUtil.isBlank(device) ? CommonConstant.UNKNOWN : device;
+        return StringUtils.isBlank(device) ? CommonConstant.UNKNOWN : device;
     }
 
     /**
@@ -33,7 +32,7 @@ public class RequestUtil {
     public static String getVersion(HttpServletRequest request) {
         String version = request.getHeader(CommonConstant.VERSION);
 
-        return StrUtil.isBlank(version) ? CommonConstant.UNKNOWN : version;
+        return StringUtils.isBlank(version) ? CommonConstant.UNKNOWN : version;
     }
 
     /**
@@ -55,7 +54,7 @@ public class RequestUtil {
      */
     public static long getModuleId(HttpServletRequest request) {
         String moduleId = request.getHeader(CommonConstant.MODULE_ID);
-        return CharSequenceUtil.isBlank(moduleId) ? 0 : Long.parseLong(moduleId);
+        return StringUtils.isBlank(moduleId) ? 0 : Long.parseLong(moduleId);
     }
 
     /**
@@ -66,6 +65,6 @@ public class RequestUtil {
      */
     public static String getModuleCode(HttpServletRequest request) {
         String mcdoe = request.getHeader(CommonConstant.MODULE_CODE);
-        return StrUtil.isBlank(mcdoe) ? "" : mcdoe;
+        return StringUtils.isBlank(mcdoe) ? "" : mcdoe;
     }
 }

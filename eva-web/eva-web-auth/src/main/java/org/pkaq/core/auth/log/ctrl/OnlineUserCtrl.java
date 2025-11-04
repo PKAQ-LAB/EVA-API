@@ -25,7 +25,7 @@ public class OnlineUserCtrl extends Ctrl {
     @Operation(description = "获取在线用户列表")
     public Response list(@Parameter(name = "uid", description = "查询固定用户") String account) {
 //        Response response = new Response();
-//        if (StrUtil.isNotBlank(account)) {
+//        if (StringUtils.isNotBlank(account)) {
 //            Object obj = this.tokenUtil.getToken(account);
 //
 //            List list = new ArrayList(1);

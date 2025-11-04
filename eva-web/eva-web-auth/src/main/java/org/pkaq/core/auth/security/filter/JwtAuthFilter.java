@@ -70,7 +70,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             authToken = JakartaServletUtil.getCookie(request, CommonConstant.ACCESS_TOKEN_KEY).getValue();
         }
 
-        if (StrUtil.isNotBlank(authToken)) {
+        if (StringUtils.isNotBlank(authToken)) {
             Long uid = jwtUtil.getUid(authToken);
 
             /**
@@ -144,8 +144,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             logger.info("checking authentication ：" + account);
 
             logger.info(SecurityContextHolder.getContext().getAuthentication());
-//            if (StrUtil.isNotBlank(uid) && SecurityContextHolder.getContext().getAuthentication() == null) {
-            if (StrUtil.isNotBlank(account)) {
+//            if (StringUtils.isNotBlank(uid) && SecurityContextHolder.getContext().getAuthentication() == null) {
+            if (StringUtils.isNotBlank(account)) {
                 logger.debug("org.pkaq.security context was null, so authorizing user");
 
                 // 从redis中 根据用户id获取用户权限列表
