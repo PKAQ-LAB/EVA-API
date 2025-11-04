@@ -50,5 +50,5 @@ eva:
     #生成证书的地址
     licPath: D:\eva_license\license.lic
 server:
-  undertow:
+  tomcat:
     url-charset: UTF-8

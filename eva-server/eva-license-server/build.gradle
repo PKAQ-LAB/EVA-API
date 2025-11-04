@@ -13,10 +13,8 @@ description = """license"""
 
 // 依赖配置
 dependencies {
-    // 使用undertow替代tomcat
-    implementation(libs.web){
-        exclude module: 'spring-boot-starter-tomcat'
-    }
+    implementation libs.web
+
     implementation project(":eva-core:eva-core-common"),
                    libs.truelicense
 

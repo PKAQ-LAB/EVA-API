@@ -32,11 +32,7 @@ dependencies {
                        project(":eva-web:eva-web-sys:eva-web-sys-service"),
                        libs.mysql
 
-    implementation(libs.web) {
-        exclude module: 'spring-boot-starter-tomcat'
-    }
-
-    implementation libs.undertow
+    implementation libs.web
 
     implementation libs.springdocui,
                    libs.prometheus,

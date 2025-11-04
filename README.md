@@ -15,16 +15,9 @@ yarn start
 
 3.访问`http://localhost`
 
-api(libs.web}"){
-		exclude module: 'spring-boot-starter-tomcat'
-	}
-libs.undertow}",
-
 ## 目录说明
 
 + EVA   
-    |-web : 前台UI   
-    |-mobile : 手机端工程  
     |-eva-web : 单体工程整合层,可将任意eva-*工程接入统一发布   
     ------- 服务包 -------
     |-eva-core : 核心包-框架核心    
@@ -36,20 +29,16 @@ libs.undertow}",
             |-logback : 日志配置
             |-mybatis-config : myabtis配置   
     |-eva-sys : 基础管理 + 鉴权   
-    |-eva-jxc : 进销存业务管理   
     ------- 可选增强包 -------
-    |-addon-weixin 微信接入  
-    |-addon-pay 支付接入
-    |-addon-cache 缓存   
     ------- 独立项目包 -------           
-    |-nerv-admin-server spring boot admin server端  
-    |-nerv-generator 代码生成器
-    |-nerv-license 证书生成/验证   
+    |-eva-server 
+  +   |-eva-admin-server spring boot admin server端  
+      |-eva-license-server 证书生成/验证   
     |-docs : 文档相关   
         |-db : pdm   
         |-doc : 开发文档   
         |-config : 环境配置   
-        |-electron : electron打包配置     
+         |-electron : electron打包配置     
         |-generator : mybatis generator    
         
 -----------------------------------------------------------------   

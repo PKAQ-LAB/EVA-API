@@ -70,7 +70,6 @@ security = { module = "org.springframework.boot:spring-boot-starter-security" }
 web = { module = "org.springframework.boot:spring-boot-starter-web" }
 
 # 中间件
-undertow = { module = "org.springframework.boot:spring-boot-starter-undertow" }
 servlet_api = { module = "jakarta.servlet:jakarta.servlet-api", version.ref = "servlet_api" }
 # 测试
 test = { module = "org.springframework.boot:spring-boot-starter-test" }

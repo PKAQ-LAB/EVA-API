@@ -7,11 +7,7 @@ jar {
 project.description = "tool for websocket"
 
 dependencies {
-    implementation(libs.websocket) {
-        exclude module: 'spring-boot-starter-tomcat'
-    }
-
-    implementation libs.undertow
+    implementation(libs.websocket)
 
     implementation project(":eva-core:eva-core-common")
 
