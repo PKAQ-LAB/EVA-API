@@ -1,6 +1,5 @@
 package org.pkaq.sys.user.service;
 
-import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -14,6 +13,7 @@ import org.pkaq.core.mybatis.util.PageResult;
 import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.core.upload.provider.FileProvider;
 import org.pkaq.core.util.BCryptUtils;
+import org.pkaq.core.util.CollUtils;
 import org.pkaq.core.util.StrUtils;
 import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.post.service.UserPostRefSerivce;
@@ -128,7 +128,7 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
      */
     @Override
     public void updateUser(Set<Long> ids) {
-        if (CollUtil.isEmpty(ids)) {
+        if (CollUtils.isEmpty(ids)) {
             CommonCodes.NULL_ID.newException();
         }
 
@@ -205,7 +205,7 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
         }
 
         // 保存权限
-        if (CollUtil.isNotEmpty(user.getRoleIds())) {
+        if (CollUtils.isNotEmpty(user.getRoleIds())) {
             UserGrantBo userGrantBo = new UserGrantBo();
             userGrantBo.setUserId(userId);
             userGrantBo.setRoleIds(user.getRoleIds());
@@ -213,7 +213,7 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
         }
 
         // 保存岗位
-        if (CollUtil.isNotEmpty(user.getRoleIds())) {
+        if (CollUtils.isNotEmpty(user.getRoleIds())) {
             UserPostBo postBo = new UserPostBo();
             postBo.setUserId(userId);
             postBo.setPostIds(user.getPostId());

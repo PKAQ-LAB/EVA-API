@@ -1,6 +1,5 @@
 package org.pkaq.core.auth.config;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.auth.security.entrypoint.*;
@@ -8,6 +7,7 @@ import org.pkaq.core.auth.security.filter.JwtAuthFilter;
 import org.pkaq.core.auth.security.provider.DynamiclAccessDecisionManager;
 import org.pkaq.core.auth.security.provider.JwtUsernamePasswordAuthenticationFilter;
 import org.pkaq.core.properties.EvaConfig;
+import org.pkaq.core.util.CollUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -66,7 +66,7 @@ public class WebSecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(CollUtil.isEmpty(evaConfig.getJwt().getCreditUrl()) ? List.of("*") : evaConfig.getJwt().getCreditUrl());
+        configuration.setAllowedOrigins(CollUtils.isEmpty(evaConfig.getJwt().getCreditUrl()) ? List.of("*") : evaConfig.getJwt().getCreditUrl());
         configuration.setAllowCredentials(false);
         configuration.setAllowedMethods(Arrays.asList("PUT", "DELETE", "GET", "POST", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));

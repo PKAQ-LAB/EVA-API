@@ -1,6 +1,5 @@
 package org.pkaq.sys.tenant.service;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.crypto.digest.BCrypt;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -13,6 +12,7 @@ import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.enums.FrozenEnumm;
 import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.core.mybatis.mvc.service.StdService;
+import org.pkaq.core.util.CollUtils;
 import org.pkaq.sys.tenant.bo.TenantAoeBo;
 import org.pkaq.sys.tenant.bo.TenantCheckBo;
 import org.pkaq.sys.tenant.convert.TenantConvert;
@@ -74,7 +74,7 @@ public class TenantService extends StdService<TenantMapper, TenantEntity> implem
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     @Override
     public void delete(Set<Long> ids) {
-        if (CollUtil.isNotEmpty(ids)) {
+        if (CollUtils.isNotEmpty(ids)) {
             CommonCodes.PARAM_ERROR.newException();
         }
         // 删除租户

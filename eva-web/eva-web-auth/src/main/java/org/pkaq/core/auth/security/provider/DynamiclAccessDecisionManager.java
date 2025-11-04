@@ -1,9 +1,9 @@
 package org.pkaq.core.auth.security.provider;
 
-import cn.hutool.core.collection.CollUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.pkaq.core.util.CollUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.access.AccessDeniedException;
@@ -55,7 +55,7 @@ public final class DynamiclAccessDecisionManager implements AuthorizationManager
 
             Collection<ConfigAttribute> attributes = this.securityMetadataSource.getAttributes(requestAuthorizationContext);
 
-            if (CollUtil.isNotEmpty(attributes)) {
+            if (CollUtils.isNotEmpty(attributes)) {
                 return new AuthorizationDecision(true);
             } else {
                 return new AuthorizationDecision(false);

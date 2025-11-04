@@ -1,8 +1,8 @@
 package org.pkaq.sys.role.service;
 
-import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
+import org.pkaq.core.util.CollUtils;
 import org.pkaq.sys.role.entity.RoleUserEntity;
 import org.pkaq.sys.role.mapper.RoleUserMapper;
 import org.pkaq.sys.user.bo.UserGrantBo;
@@ -21,7 +21,7 @@ public class UserRoleRefSerivce implements IUserRoleRefSerivce {
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void saveRoles(UserGrantBo bo) {
         // 保存权限
-        if (CollUtil.isNotEmpty(bo.getRoleIds())) {
+        if (CollUtils.isNotEmpty(bo.getRoleIds())) {
             // 先删除该用户原有的权限
             LambdaQueryWrapper<RoleUserEntity> deleteWrapper = new LambdaQueryWrapper<>();
             deleteWrapper.eq(RoleUserEntity::getUserId, bo.getUserId());

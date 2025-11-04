@@ -1,6 +1,5 @@
 package org.pkaq.sys.dict.service;
 
-import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
@@ -9,6 +8,7 @@ import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.log.annotation.BizLog;
 import org.pkaq.core.log.base.BizLogCodes;
 import org.pkaq.core.mybatis.mvc.service.StdService;
+import org.pkaq.core.util.CollUtils;
 import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.dict.bo.DictAoeBo;
 import org.pkaq.sys.dict.cache.DictCacheHelper;
@@ -151,7 +151,7 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
             dictAoeBo.setId(mainID);
             this.mapper.insert(dictConvert.boToEntity(dictAoeBo));
             // 保存子表
-            if (CollUtil.isNotEmpty(dictAoeBo.getLines())) {
+            if (CollUtils.isNotEmpty(dictAoeBo.getLines())) {
                 dictAoeBo.getLines().forEach(item -> {
                     item.setMainId(mainID);
                     dictItemMapper.insert(dictConvert.boToItemEntity(item));
@@ -170,7 +170,7 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
                 deleteWrapper.eq("MAIN_ID", id);
                 this.dictItemMapper.delete(deleteWrapper);
 
-                if (CollUtil.isNotEmpty(dictAoeBo.getLines())) {
+                if (CollUtils.isNotEmpty(dictAoeBo.getLines())) {
                     dictAoeBo.getLines().forEach(item -> {
                         item.setMainId(id);
                         dictItemMapper.insert(dictConvert.boToItemEntity(item));

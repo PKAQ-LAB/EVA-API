@@ -1,6 +1,5 @@
 package org.pkaq.core.upload.util;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.img.ImgUtil;
 import cn.hutool.core.io.FileUtil;
@@ -14,6 +13,7 @@ import org.pkaq.core.exception.BizException;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.upload.condition.DefaultNgCondition;
 import org.pkaq.core.upload.provider.FileProvider;
+import org.pkaq.core.util.CollUtils;
 import org.pkaq.core.util.StrUtils;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -209,7 +209,7 @@ public class NgFileUtil implements FileProvider {
             tmpFileList = (List<String>) valueWrapper.get();
         }
 
-        if (CollUtil.isEmpty(tmpFileList)) {
+        if (CollUtils.isEmpty(tmpFileList)) {
             return;
         }
 

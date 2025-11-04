@@ -1,6 +1,5 @@
 package org.pkaq.core.upload.util;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.resource.InputStreamResource;
 import cn.hutool.core.lang.Snowflake;
@@ -14,6 +13,7 @@ import org.pkaq.core.exception.BizException;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.upload.condition.FastDfsCondition;
 import org.pkaq.core.upload.provider.FileProvider;
+import org.pkaq.core.util.CollUtils;
 import org.pkaq.core.util.StrUtils;
 import org.pkaq.core.util.json.JsonUtil;
 import org.springframework.cache.Cache;
@@ -182,7 +182,7 @@ public class DfsFileUtil implements FileProvider {
 
         List<String> tmpFileList = null == cacheWrapper ? null : (List<String>) cacheWrapper.get();
 
-        if (null == cacheWrapper || CollUtil.isEmpty(tmpFileList)) {
+        if (null == cacheWrapper || CollUtils.isEmpty(tmpFileList)) {
             return;
         }
 

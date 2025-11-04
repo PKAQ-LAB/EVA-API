@@ -1,6 +1,5 @@
 package org.pkaq.sys.role.service;
 
-import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -12,6 +11,7 @@ import org.pkaq.core.mvc.bo.IdCodeBo;
 import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.core.mybatis.util.TreeHelper;
 import org.pkaq.core.threaduser.ThreadUserHelper;
+import org.pkaq.core.util.CollUtils;
 import org.pkaq.sys.module.mapper.ModuleMapper;
 import org.pkaq.sys.module.vo.ModuleDetailVo;
 import org.pkaq.sys.role.bo.RoleResourceRefBo;
@@ -145,7 +145,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
         );
 
         // 写入资源信息
-        if (CollUtil.isNotEmpty(role.getResourceId())) {
+        if (CollUtils.isNotEmpty(role.getResourceId())) {
             List<Long> resources = role.getResourceId();
 
             for (Long rid : resources) {
@@ -204,7 +204,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
         // 删除原有角色
         this.roleUserMapper.delete(new LambdaQueryWrapper<RoleUserEntity>().eq(RoleUserEntity::getRoleId, role.getRoleId()));
         // 插入新的权限信息
-        if (CollUtil.isNotEmpty(role.getUserId())) {
+        if (CollUtils.isNotEmpty(role.getUserId())) {
             List<Long> users = role.getUserId();
             for (Long user : users) {
                 var ref = new RoleUserEntity();

@@ -1,11 +1,11 @@
 package org.pkaq.sys.organization.service;
 
-import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.core.mybatis.mvc.service.StdService;
+import org.pkaq.core.util.CollUtils;
 import org.pkaq.sys.organization.bo.OrganizationAoeBo;
 import org.pkaq.sys.organization.bo.OrganizationQueryBo;
 import org.pkaq.sys.organization.bo.OrganizationSortBo;
@@ -51,9 +51,9 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
 
         List<OrganizationEntity> leafList = this.mapper.selectList(oew);
 
-        if (CollUtil.isNotEmpty(leafList)) {
-            List<Object> list = CollUtil.getFieldValues(leafList, "parentName");
-            String name = CollUtil.join(list, ",");
+        if (CollUtils.isNotEmpty(leafList)) {
+            List<Object> list = CollUtils.getFieldValues(leafList, "parentName");
+            String name = CollUtils.join(list, ",");
 
             CommonCodes.CHILD_EXIST.newException(name);
         } else {

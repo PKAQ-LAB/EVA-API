@@ -1,6 +1,5 @@
 package org.pkaq.core.log.pointcut;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.exceptions.UtilException;
 import cn.hutool.core.util.ArrayUtil;
@@ -21,6 +20,7 @@ import org.pkaq.core.log.base.LogSupporter;
 import org.pkaq.core.log.condition.BizlogSupporterCondition;
 import org.pkaq.core.log.events.BizLogEvent;
 import org.pkaq.core.threaduser.ThreadUserHelper;
+import org.pkaq.core.util.CollUtils;
 import org.pkaq.core.util.StrUtils;
 import org.pkaq.core.util.json.JsonUtil;
 import org.springframework.context.ApplicationEventPublisher;
@@ -213,7 +213,7 @@ public class BizLogAdvice {
      * @param result     方法的返回对象
      */
     private void processResult(Object result, Map<String, List<Integer>> rMap, Object[] formatArgs) {
-        if (CollUtil.isEmpty(rMap)) {
+        if (CollUtils.isEmpty(rMap)) {
             return;
         }
         try {

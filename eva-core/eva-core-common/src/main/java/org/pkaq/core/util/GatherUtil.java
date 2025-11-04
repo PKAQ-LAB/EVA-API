@@ -1,6 +1,5 @@
 package org.pkaq.core.util;
 
-import cn.hutool.core.collection.CollUtil;
 
 import java.util.*;
 import java.util.function.BinaryOperator;
@@ -23,7 +22,7 @@ public class GatherUtil {
      * @return 返回一个映射，其中键是通过给定的函数从集合元素中提取的，值为集合中的元素本身。
      */
     public static <T, K> Map<K, T> convertMap(Collection<T> from, Function<T, K> keyFunc) {
-        if (CollUtil.isEmpty(from)) {
+        if (CollUtils.isEmpty(from)) {
             return new HashMap<>();
         }
         return convertMap(from, keyFunc, Function.identity());
@@ -41,7 +40,7 @@ public class GatherUtil {
      * @return 返回一个映射，其中键和值通过给定的函数从集合元素中提取。
      */
     public static <T, K, V> Map<K, V> convertMap(Collection<T> from, Function<T, K> keyFunc, Function<T, V> valueFunc) {
-        if (CollUtil.isEmpty(from)) {
+        if (CollUtils.isEmpty(from)) {
             return new HashMap<>();
         }
         return convertMap(from, keyFunc, valueFunc, (v1, v2) -> v1);
@@ -61,7 +60,7 @@ public class GatherUtil {
      * @return 返回一个映射，其中键和值通过给定的函数从集合元素中提取，并处理键冲突。
      */
     public static <T, K, V> Map<K, V> convertMap(Collection<T> from, Function<T, K> keyFunc, Function<T, V> valueFunc, BinaryOperator<V> mergeFunction) {
-        if (CollUtil.isEmpty(from)) {
+        if (CollUtils.isEmpty(from)) {
             return new HashMap<>();
         }
         return convertMap(from, keyFunc, valueFunc, mergeFunction, HashMap::new);
@@ -82,7 +81,7 @@ public class GatherUtil {
      * @return 返回一个映射，其中键和值通过给定的函数从集合元素中提取，并处理键冲突和映射的实现类型。
      */
     public static <T, K, V> Map<K, V> convertMap(Collection<T> from, Function<T, K> keyFunc, Function<T, V> valueFunc, BinaryOperator<V> mergeFunction, Supplier<? extends Map<K, V>> supplier) {
-        if (CollUtil.isEmpty(from)) {
+        if (CollUtils.isEmpty(from)) {
             return new HashMap<>();
         }
         return from.stream().collect(Collectors.toMap(keyFunc, valueFunc, mergeFunction, supplier));
@@ -98,7 +97,7 @@ public class GatherUtil {
      * @return 返回一个列表，其中的元素通过给定的函数从集合元素中提取，并过滤掉空值。
      */
     public static <T, U> List<U> convertList(Collection<T> from, Function<T, U> func) {
-        if (CollUtil.isEmpty(from)) {
+        if (CollUtils.isEmpty(from)) {
             return new ArrayList<>();
         }
         return from.stream().map(func).filter(Objects::nonNull).collect(Collectors.toList());
@@ -114,7 +113,7 @@ public class GatherUtil {
      * @return 返回一个集合，其中的元素通过给定的函数从集合元素中提取，并过滤掉空值。
      */
     public static <T, U> Set<U> convertSet(Collection<T> from, Function<T, U> func) {
-        if (CollUtil.isEmpty(from)) {
+        if (CollUtils.isEmpty(from)) {
             return new HashSet<>();
         }
         return from.stream().map(func).filter(Objects::nonNull).collect(Collectors.toSet());

@@ -1,6 +1,5 @@
 package org.pkaq.core.mybatis.mvc.service;
 
-import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -14,6 +13,7 @@ import org.pkaq.core.mvc.vo.PageVo;
 import org.pkaq.core.mvc.vo.Vo;
 import org.pkaq.core.mybatis.mvc.entity.StdEntity;
 import org.pkaq.core.mybatis.util.PageResult;
+import org.pkaq.core.util.CollUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -217,7 +217,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
      */
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void delete(Set<Long> param) {
-        if (CollUtil.isNotEmpty(param)) {
+        if (CollUtils.isNotEmpty(param)) {
             CommonCodes.PARAM_ERROR.newException();
         }
 

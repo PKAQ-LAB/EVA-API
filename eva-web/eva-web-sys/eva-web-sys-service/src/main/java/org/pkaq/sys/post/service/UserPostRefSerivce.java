@@ -1,10 +1,10 @@
 package org.pkaq.sys.post.service;
 
-import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.log.annotation.BizLog;
 import org.pkaq.core.log.base.BizLogCodes;
+import org.pkaq.core.util.CollUtils;
 import org.pkaq.sys.post.entity.PostUserEntity;
 import org.pkaq.sys.post.mapper.PostUserMapper;
 import org.pkaq.sys.user.bo.UserPostBo;
@@ -24,7 +24,7 @@ public class UserPostRefSerivce {
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void savePosts(UserPostBo bo) {
         // 保存权限
-        if (CollUtil.isNotEmpty(bo.getPostIds())) {
+        if (CollUtils.isNotEmpty(bo.getPostIds())) {
             // 先删除该用户原有的权限
             LambdaQueryWrapper<PostUserEntity> deleteWrapper = new LambdaQueryWrapper<>();
             deleteWrapper.eq(PostUserEntity::getUserId, bo.getUserId());

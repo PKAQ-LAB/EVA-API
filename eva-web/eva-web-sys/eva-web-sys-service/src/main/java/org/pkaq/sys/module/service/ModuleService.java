@@ -1,6 +1,5 @@
 package org.pkaq.sys.module.service;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -11,6 +10,7 @@ import org.pkaq.core.exception.BizException;
 import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.core.mybatis.util.TreeHelper;
+import org.pkaq.core.util.CollUtils;
 import org.pkaq.core.util.StrUtils;
 import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.module.bo.ModuleAoeBo;
@@ -59,7 +59,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
 
         List<ModuleEntity> leafList = this.mapper.selectList(oew);
 
-        if (CollUtil.isNotEmpty(leafList)) {
+        if (CollUtils.isNotEmpty(leafList)) {
             // 获取存在子节点的节点名称
             String nameStr = leafList.stream()
                     .map(ModuleEntity::getName)
@@ -145,7 +145,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
         // 根据条件查询模块，返回Map<moduleId, ModuleDetailVo>
         Map<Long, ModuleDetailVo> moduleMap = this.mapper.selectModuleMapList(queryBo);
 
-        if (CollUtil.isEmpty(moduleMap)) {
+        if (CollUtils.isEmpty(moduleMap)) {
             return Collections.emptyList();
         }
         if (withResource) {
@@ -296,7 +296,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
     private void handleResources(Long moduleId, List<ModuleResourcesBo> resources) {
         long batchId = IdUtil.getSnowflakeNextId();
         // 更新资源信息
-        if (CollUtil.isNotEmpty(resources)) {
+        if (CollUtils.isNotEmpty(resources)) {
             var resource = this.convert.resourceBoToEntity(resources);
             resource.forEach(r -> {
                 r.setBatchId(batchId);

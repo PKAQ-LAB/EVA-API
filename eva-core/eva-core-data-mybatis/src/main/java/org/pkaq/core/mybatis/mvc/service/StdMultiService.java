@@ -1,6 +1,5 @@
 package org.pkaq.core.mybatis.mvc.service;
 
-import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -9,6 +8,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import org.pkaq.core.mybatis.mvc.entity.StdLineEntity;
 import org.pkaq.core.mybatis.mvc.entity.StdMultiEntity;
 import org.pkaq.core.mybatis.util.PageResult;
+import org.pkaq.core.util.CollUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -110,7 +110,7 @@ public abstract class StdMultiService<M extends BaseMapper<T>,
             entity.setId(mainId);
             this.mapper.insert(entity);
             // 保存子表
-            if (CollUtil.isNotEmpty(entity.getLines())) {
+            if (CollUtils.isNotEmpty(entity.getLines())) {
                 entity.getLines().forEach(item -> {
                     item.setMainId(mainId);
                     lineMapper.insert(item);
@@ -119,7 +119,7 @@ public abstract class StdMultiService<M extends BaseMapper<T>,
         } else {
             this.mapper.updateById(entity);
             // 更新子表， 先删除再插入
-            if (CollUtil.isNotEmpty(entity.getLines())) {
+            if (CollUtils.isNotEmpty(entity.getLines())) {
                 LambdaQueryWrapper<S> deleteWrapper = Wrappers.lambdaQuery();
                 deleteWrapper.eq(S::getMainId, id);
                 this.lineMapper.delete(deleteWrapper);
