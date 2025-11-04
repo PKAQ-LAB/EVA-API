@@ -1,6 +1,5 @@
 package org.pkaq.core.auth.security.filter;
 
-import cn.hutool.extra.servlet.JakartaServletUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +13,7 @@ import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.threaduser.ThreadUser;
 import org.pkaq.core.threaduser.ThreadUserHelper;
+import org.pkaq.core.util.CookieUtils;
 import org.pkaq.core.util.StrUtils;
 import org.pkaq.core.util.TokenUtil;
 import org.pkaq.core.util.json.JsonUtil;
@@ -32,6 +32,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
@@ -64,10 +65,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             authToken = null;
             logger.warn(e);
-        }
-
-        if (null != JakartaServletUtil.getCookie(request, CommonConstant.ACCESS_TOKEN_KEY)) {
-            authToken = JakartaServletUtil.getCookie(request, CommonConstant.ACCESS_TOKEN_KEY).getValue();
         }
 
         if (StrUtils.isNotBlank(authToken)) {
@@ -110,7 +107,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     // reponse请求头返回刷新后的token
                     response.setHeader(CommonConstant.ACCESS_TOKEN_KEY, newToken);
                     // 后台设置前台cookie值
-                    JakartaServletUtil.addCookie(response, CommonConstant.ACCESS_TOKEN_KEY,
+                    CookieUtils.addCookie(response, CommonConstant.ACCESS_TOKEN_KEY,
                             newToken,
                             evaConfig.getCookie().getMaxAge(),
                             "/",
@@ -123,7 +120,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 // this.clearCookie(response);
 
                 try (PrintWriter printWriter = response.getWriter()) {
-                    response.setCharacterEncoding("UTF-8");
+                    response.setCharacterEncoding(StandardCharsets.UTF_8);
                     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
                     printWriter.write(JsonUtil.toJson(
@@ -153,7 +150,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 try {
                     userDetails = this.userDetailsService.loadUserByUsername(account);
                 } catch (UsernameNotFoundException _) {
-                    response.setCharacterEncoding("UTF-8");
+                    response.setCharacterEncoding(StandardCharsets.UTF_8);
                     response.setContentType("application/json");
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "您的登录已过期, 请重新登录.");
                     return;
@@ -194,21 +191,21 @@ public class JwtAuthFilter extends OncePerRequestFilter {
      * @param response
      */
     public void clearCookie(HttpServletResponse response) {
-        JakartaServletUtil.addCookie(response,
+        CookieUtils.addCookie(response,
                 CommonConstant.ACCESS_TOKEN_KEY,
                 null,
                 0,
                 "/",
                 evaConfig.getCookie().getDomain());
 
-        JakartaServletUtil.addCookie(response,
+        CookieUtils.addCookie(response,
                 CommonConstant.REFRESH_TOKEN_KEY,
                 null,
                 0,
                 "/",
                 evaConfig.getCookie().getDomain());
 
-        JakartaServletUtil.addCookie(response,
+        CookieUtils.addCookie(response,
                 CommonConstant.USER_KEY,
                 null,
                 0,

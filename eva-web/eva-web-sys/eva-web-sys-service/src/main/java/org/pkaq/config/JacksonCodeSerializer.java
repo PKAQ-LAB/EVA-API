@@ -1,6 +1,5 @@
 package org.pkaq.config;
 
-import cn.hutool.extra.spring.SpringUtil;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -8,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 import lombok.NoArgsConstructor;
+import org.pkaq.core.util.SpringUtils;
 import org.pkaq.sys.dict.annotation.Dict;
 import org.pkaq.sys.dict.cache.DictCacheHelper;
 import org.slf4j.Logger;
@@ -49,7 +49,7 @@ public class JacksonCodeSerializer extends JsonSerializer<String> implements Con
         }
 
         try {
-            DictCacheHelper dictCacheHelper = SpringUtil.getBean(DictCacheHelper.class);
+            DictCacheHelper dictCacheHelper = SpringUtils.getBean(DictCacheHelper.class);
             if (dictCacheHelper != null && StringUtils.hasText(codeKey)) {
                 String translated = dictCacheHelper.get(codeKey).getOrDefault(value, value);
                 gen.writeString(translated);

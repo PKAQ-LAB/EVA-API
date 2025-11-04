@@ -1,9 +1,8 @@
 package org.pkaq.core.exception;
 
 
-import cn.hutool.core.io.FastStringWriter;
-
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.UndeclaredThrowableException;
 
@@ -59,7 +58,7 @@ public class Exceptions {
      * @return {String}
      */
     public static String getStackTraceAsString(Throwable ex) {
-        FastStringWriter stringWriter = new FastStringWriter();
+        StringWriter stringWriter = new StringWriter();
         ex.printStackTrace(new PrintWriter(stringWriter));
         return stringWriter.toString();
     }

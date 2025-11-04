@@ -1,7 +1,5 @@
 package org.pkaq.core.auth.security.entrypoint;
 
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.extra.servlet.JakartaServletUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,6 +14,8 @@ import org.pkaq.core.log.base.BizLogEntity;
 import org.pkaq.core.log.base.BizLogSupporter;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.properties.EvaConfig;
+import org.pkaq.core.util.CookieUtils;
+import org.pkaq.core.util.DateUtils;
 import org.pkaq.core.util.RequestUtil;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
@@ -53,7 +53,7 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
                                         Authentication authentication) throws IOException {
         var cacheToken = evaConfig.getJwt().isPersistence();
 
-        httpServletResponse.setCharacterEncoding("UTF-8");
+        httpServletResponse.setCharacterEncoding(StandardCharsets.UTF_8);
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
         httpServletResponse.setStatus(HttpServletResponse.SC_OK);
 
@@ -69,35 +69,22 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
             tokenUtil.saveToken(user.getId(), tokenUtil.buildCacheValue(request, user.getId(), access_token));
         }
 
-        JakartaServletUtil.addCookie(httpServletResponse,
-                CommonConstant.ACCESS_TOKEN_KEY,
-                access_token,
-                evaConfig.getCookie().getMaxAge(),
-                "/",
-                evaConfig.getCookie().getDomain());
+        String domain = evaConfig.getCookie().getDomain();
+        int maxAge = evaConfig.getCookie().getMaxAge();
+        String path = "/";
 
-        JakartaServletUtil.addCookie(httpServletResponse,
-                CommonConstant.REFRESH_TOKEN_KEY,
-                refresh_token,
-                evaConfig.getCookie().getMaxAge(),
-                "/",
-                evaConfig.getCookie().getDomain());
+        CookieUtils.addCookie(httpServletResponse, CommonConstant.ACCESS_TOKEN_KEY, access_token, maxAge, path, domain);
+        CookieUtils.addCookie(httpServletResponse, CommonConstant.REFRESH_TOKEN_KEY, refresh_token, maxAge, path, domain);
+        CookieUtils.addCookie(httpServletResponse, CommonConstant.USER_KEY, URLEncoder.encode(mapper.writeValueAsString(user), StandardCharsets.UTF_8), maxAge, path, domain);
 
-        JakartaServletUtil.addCookie(httpServletResponse,
-                CommonConstant.USER_KEY,
-                URLEncoder.encode(mapper.writeValueAsString(user), StandardCharsets.UTF_8),
-                evaConfig.getCookie().getMaxAge(),
-                "/",
-                evaConfig.getCookie().getDomain());
-
-        Map<String, Object> map = new HashMap<>(2);
+        Map<String, Object> map = HashMap.newHashMap(3);
         map.put(CommonConstant.USER_KEY, user);
         map.put(CommonConstant.ACCESS_TOKEN_KEY, access_token);
         map.put(CommonConstant.REFRESH_TOKEN_KEY, refresh_token);
 
         BizLogEntity bizLogEntity = new BizLogEntity();
         bizLogEntity.setDescription(user.getAccount() + " 登录了系统")
-                .setOperateDatetime(DateUtil.now())
+                .setOperateDatetime(DateUtils.now())
                 .setDevice(RequestUtil.getDeivce(request))
                 .setVersion(RequestUtil.getVersion(request))
                 .setOperator(user.getAccount())
@@ -109,7 +96,7 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
 
         try (PrintWriter printWriter = httpServletResponse.getWriter()) {
             printWriter.write(mapper.writeValueAsString(
-                            new Response()
+                    Response
                                     .success(map, CommonCodes.LOGIN_SUCCESS_WELCOME, user.getName())
                     )
             );

@@ -1,6 +1,5 @@
 package org.pkaq.core.license;
 
-import cn.hutool.core.date.DateUtil;
 import de.schlichtherle.license.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,9 +71,9 @@ public class LicenseGenerator {
         content.setConsumerType(licenseConfig.getConsumerType());
         content.setHolder(DEFAULT_HOLDERAND_ISSUER);
         content.setIssuer(DEFAULT_HOLDERAND_ISSUER);
-        content.setIssued(DateUtil.parseDateTime(licenseConfig.getIssuedTime()));
-        content.setNotBefore(DateUtil.parseDateTime(licenseConfig.getNotBefore()));
-        content.setNotAfter(DateUtil.parseDateTime(licenseConfig.getNotAfter()));
+        content.setIssued(DateUtils.parseDateTime(licenseConfig.getIssuedTime()));
+        content.setNotBefore(DateUtils.parseDateTime(licenseConfig.getNotBefore()));
+        content.setNotAfter(DateUtils.parseDateTime(licenseConfig.getNotAfter()));
         content.setInfo(licenseConfig.getInfo());
         // 扩展字段
         Map<String, String> map = new HashMap<>(4);

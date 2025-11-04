@@ -1,6 +1,5 @@
 package org.pkaq.core.advice;
 
-import cn.hutool.crypto.SecureUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +9,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.exception.BizException;
+import org.pkaq.core.util.SecureUtils;
 import org.pkaq.core.util.TokenUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.Cache;
@@ -46,7 +46,7 @@ public class NoRepeatSubmitAdvice {
             // 请求类型
             String method = request.getMethod();
             var key = method + ":" + tokenUtil.getToken(request) + "-" + request.getServletPath();
-            key = SecureUtil.md5(key);
+            key = SecureUtils.md5(key);
 
 
             // 如果缓存中有这个url视为重复提交

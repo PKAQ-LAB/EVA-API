@@ -1,11 +1,11 @@
 package org.pkaq.core.util.json;
 
-import cn.hutool.core.date.DatePattern;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.pkaq.core.util.DatePatterns;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -30,7 +30,7 @@ public class JacksonObjectMapper extends ObjectMapper implements Serializable {
         super.setTimeZone(TimeZone.getTimeZone(ZoneId.systemDefault()));
         //序列化时，日期的统一格式
         //TODO
-        super.setDateFormat(new SimpleDateFormat(DatePattern.NORM_DATETIME_PATTERN, Locale.CHINA));
+        super.setDateFormat(new SimpleDateFormat(DatePatterns.NORM_DATETIME_PATTERN, Locale.CHINA));
         //序列化处理
         super.configure(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS.mappedFeature(), true);
         super.configure(JsonReadFeature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER.mappedFeature(), true);

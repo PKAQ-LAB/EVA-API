@@ -1,6 +1,5 @@
 package org.pkaq.sys.tenant.service;
 
-import cn.hutool.crypto.digest.BCrypt;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -12,6 +11,7 @@ import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.enums.FrozenEnumm;
 import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.core.mybatis.mvc.service.StdService;
+import org.pkaq.core.util.BCryptUtils;
 import org.pkaq.core.util.CollUtils;
 import org.pkaq.sys.tenant.bo.TenantAoeBo;
 import org.pkaq.sys.tenant.bo.TenantCheckBo;
@@ -109,7 +109,7 @@ public class TenantService extends StdService<TenantMapper, TenantEntity> implem
             UserEntity user = new UserEntity();
             user.setFrozen(FrozenEnumm.READ_ONLY);
             user.setAccount(editBo.getAdminAccount());
-            user.setPassword(BCrypt.hashpw(editBo.getAdminPass()));
+            user.setPassword(BCryptUtils.hashpw(editBo.getAdminPass()));
             user.setTenantId(editBo.getId());
             this.userService.createTenantAdmin(user);
         } else {

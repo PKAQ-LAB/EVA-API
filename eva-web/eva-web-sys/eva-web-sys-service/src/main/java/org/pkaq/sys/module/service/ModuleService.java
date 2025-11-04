@@ -1,8 +1,8 @@
 package org.pkaq.sys.module.service;
 
-import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.enums.FrozenEnumm;
@@ -294,7 +294,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
      * @param resources
      */
     private void handleResources(Long moduleId, List<ModuleResourcesBo> resources) {
-        long batchId = IdUtil.getSnowflakeNextId();
+        long batchId = IdWorker.getId();
         // 更新资源信息
         if (CollUtils.isNotEmpty(resources)) {
             var resource = this.convert.resourceBoToEntity(resources);

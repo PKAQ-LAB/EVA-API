@@ -1,10 +1,5 @@
 package org.pkaq.core.upload.util;
 
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.img.ImgUtil;
-import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.lang.Snowflake;
-import cn.hutool.core.util.IdUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.codes.CommonCodes;
@@ -13,8 +8,7 @@ import org.pkaq.core.exception.BizException;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.upload.condition.DefaultNgCondition;
 import org.pkaq.core.upload.provider.FileProvider;
-import org.pkaq.core.util.CollUtils;
-import org.pkaq.core.util.StrUtils;
+import org.pkaq.core.util.*;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Conditional;
@@ -22,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
@@ -39,7 +34,7 @@ public class NgFileUtil implements FileProvider {
     private static final String THUMBNAIL_NAME = "thumbnail_";
     private static final long SNOW = 16;
     private static final long FLAKE = 18;
-    private final Snowflake snowflake = IdUtil.getSnowflake(SNOW, FLAKE);
+    private final Snowflake snowflake = new Snowflake(SNOW, FLAKE);
     private final CacheManager cacheManager;
 
     private final EvaConfig evaConfig;
@@ -62,7 +57,7 @@ public class NgFileUtil implements FileProvider {
 
         if (StrUtils.isNotBlank(fileName)) {
             suffixName = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
-            newFileName = snowflake.nextIdStr() + "." + suffixName;
+            newFileName = snowflake.nextId() + "." + suffixName;
         } else {
             log.error(CommonCodes.FILEIO_ERROR.getMsg());
             throw new BizException(CommonCodes.FILENAME_ERROR);
@@ -106,7 +101,7 @@ public class NgFileUtil implements FileProvider {
      * @return
      */
     @Override
-    public List<String> storage(String... filenames) {
+    public List<String> storage(String... filenames) throws IOException {
         String tempPath = evaConfig.getUpload().getTempPath();
 
         for (String filename : filenames) {
@@ -115,7 +110,7 @@ public class NgFileUtil implements FileProvider {
                 continue;
             }
             File distFile = new File(evaConfig.getUpload().getStoragePath(), filename);
-            FileUtil.move(sourceFile, distFile, true);
+            FileUtils.move(sourceFile, distFile, true);
             distFile.setReadable(true, false);
         }
 
@@ -128,7 +123,7 @@ public class NgFileUtil implements FileProvider {
      * @param filenames
      */
     @Override
-    public void storageWithThumbnail(float scale, String... filenames) {
+    public void storageWithThumbnail(float scale, String... filenames) throws IOException {
         String tempPath = evaConfig.getUpload().getTempPath();
 
         for (String filename : filenames) {
@@ -138,7 +133,7 @@ public class NgFileUtil implements FileProvider {
 
             File distFileThumbnail = new File(evaConfig.getUpload().getStoragePath(), THUMBNAIL_NAME + filename);
             this.thumbnail(sourceFile, distFileThumbnail, scale);
-            FileUtil.move(sourceFile, distFile, true);
+            FileUtils.move(sourceFile, distFile, true);
             distFile.setReadable(true, false);
             distFileThumbnail.setReadable(true, false);
         }
@@ -151,9 +146,9 @@ public class NgFileUtil implements FileProvider {
      * @param scale
      */
     @Override
-    public void thumbnail(File file, float scale) {
+    public void thumbnail(File file, float scale) throws IOException {
         File destFile = new File(file.getParent(), THUMBNAIL_NAME + file.getName());
-        ImgUtil.scale(file, destFile, scale);
+        ImageUtils.scale(file, destFile, scale);
         destFile.setReadable(true, false);
     }
 
@@ -165,8 +160,8 @@ public class NgFileUtil implements FileProvider {
      * @param scale
      */
     @Override
-    public void thumbnail(File file, File dest, float scale) {
-        ImgUtil.scale(file, dest, scale);
+    public void thumbnail(File file, File dest, float scale) throws IOException {
+        ImageUtils.scale(file, dest, scale);
     }
 
     /**
@@ -201,7 +196,7 @@ public class NgFileUtil implements FileProvider {
 
         Cache cache = cacheManager.getCache(CommonConstant.CACHE_UPLOADFILES);
 
-        String k = CommonConstant.FILE_CACHE_PREFIX + DateUtil.format(DateUtil.offsetHour(new Date(), -2), "HH");
+        String k = CommonConstant.FILE_CACHE_PREFIX + DateUtils.format(DateUtils.addHours(new Date(), -2), "HH");
         List<String> tmpFileList = new ArrayList<>();
 
         Cache.ValueWrapper valueWrapper = cache.get(k);
@@ -214,8 +209,8 @@ public class NgFileUtil implements FileProvider {
         }
 
         for (String item : tmpFileList) {
-            if (!FileUtil.isDirEmpty(tempFileFolder)) {
-                FileUtil.del(new File(tempFileFolder, item));
+            if (!FileUtils.isDirEmpty(tempFileFolder)) {
+                FileUtils.del(new File(tempFileFolder, item));
             }
         }
 
@@ -238,7 +233,7 @@ public class NgFileUtil implements FileProvider {
     private void cachePut(String v) {
         Cache cache = cacheManager.getCache(CommonConstant.CACHE_UPLOADFILES);
 
-        String k = CommonConstant.FILE_CACHE_PREFIX + DateUtil.format(new Date(), "HH");
+        String k = CommonConstant.FILE_CACHE_PREFIX + DateUtils.format(new Date(), "HH");
 
         Cache.ValueWrapper valueWrapper = cache.get(k);
 

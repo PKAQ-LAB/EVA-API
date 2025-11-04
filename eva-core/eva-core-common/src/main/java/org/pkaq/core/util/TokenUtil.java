@@ -1,6 +1,5 @@
 package org.pkaq.core.util;
 
-import cn.hutool.extra.servlet.JakartaServletUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.constant.CommonConstant;
@@ -37,7 +36,7 @@ public class TokenUtil {
     }
 
     /**
-     * 获取token
+     * 获取token 先拿cookie再找header
      *
      * @param request
      * @return
@@ -47,9 +46,9 @@ public class TokenUtil {
 
         var authHeader = request.getHeader(evaConfig.getJwt().getHeader());
 
-        if (null != JakartaServletUtil.getCookie(request, CommonConstant.ACCESS_TOKEN_KEY)) {
-            authToken = JakartaServletUtil.getCookie(request, CommonConstant.ACCESS_TOKEN_KEY).getValue();
-        } else if (StrUtils.isNotBlank(authHeader) && authHeader.startsWith(evaConfig.getJwt().getTokenHead())) {
+        authToken = CookieUtils.getCookie(request, tokenKey);
+
+         if (StrUtils.isBlank(authToken) && StrUtils.isNotBlank(authHeader) && authHeader.startsWith(evaConfig.getJwt().getTokenHead())) {
             authToken = authHeader.substring(evaConfig.getJwt().getTokenHead().length());
         }
 

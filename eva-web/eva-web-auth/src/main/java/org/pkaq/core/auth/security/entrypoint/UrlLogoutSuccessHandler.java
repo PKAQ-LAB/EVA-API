@@ -1,6 +1,5 @@
 package org.pkaq.core.auth.security.entrypoint;
 
-import cn.hutool.extra.servlet.JakartaServletUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +9,7 @@ import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.threaduser.ThreadUserHelper;
+import org.pkaq.core.util.CookieUtils;
 import org.pkaq.core.util.json.JsonUtil;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
@@ -17,6 +17,7 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * 自定义注销成功处理器
@@ -41,31 +42,14 @@ public class UrlLogoutSuccessHandler implements LogoutSuccessHandler {
         if (cacheToken) {
             this.tokenUtil.removeToken(ThreadUserHelper.getUserName());
         }
+        String domain = evaConfig.getCookie().getDomain();
 
-        // 清除cookie
-        JakartaServletUtil.addCookie(httpServletResponse,
-                CommonConstant.ACCESS_TOKEN_KEY,
-                null,
-                0,
-                "/",
-                evaConfig.getCookie().getDomain());
-
-        JakartaServletUtil.addCookie(httpServletResponse,
-                CommonConstant.REFRESH_TOKEN_KEY,
-                null,
-                0,
-                "/",
-                evaConfig.getCookie().getDomain());
+        CookieUtils.clearCookie(httpServletResponse, CommonConstant.ACCESS_TOKEN_KEY, "/", domain);
+        CookieUtils.clearCookie(httpServletResponse, CommonConstant.REFRESH_TOKEN_KEY, "/", domain);
+        CookieUtils.clearCookie(httpServletResponse, CommonConstant.USER_KEY, "/", domain);
 
 
-        JakartaServletUtil.addCookie(httpServletResponse,
-                CommonConstant.USER_KEY,
-                null,
-                0,
-                "/",
-                evaConfig.getCookie().getDomain());
-
-        httpServletResponse.setCharacterEncoding("UTF-8");
+        httpServletResponse.setCharacterEncoding(StandardCharsets.UTF_8);
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
         httpServletResponse.setStatus(HttpServletResponse.SC_OK);
 

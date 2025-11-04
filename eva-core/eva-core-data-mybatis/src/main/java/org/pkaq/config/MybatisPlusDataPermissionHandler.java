@@ -1,7 +1,5 @@
 //package io.nerv.config;
 //
-//import cn.hutool.core.collection.CollUtil;
-//import cn.hutool.core.util.StrUtil;
 //import com.baomidou.mybatisplus.extension.plugins.handler.DataPermissionHandler;
 //import io.nerv.core.annotation.Ignore;
 //import io.nerv.core.enums.DataPermissionEnumm;
@@ -17,6 +15,8 @@
 //import net.sf.jsqlparser.expression.Expression;
 //import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 //import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+//import org.pkaq.core.util.CollUtils;
+//import org.pkaq.core.util.StrUtils;
 //
 //import java.lang.reflect.Method;
 //import java.util.Arrays;
@@ -106,7 +106,7 @@
 //     */
 //    public boolean isExcluded(String statementId){
 //        List<String> excludeTables = evaConfig.getDataPermission().getExcludeStatements();
-//        return CollUtil.isNotEmpty(excludeTables)
+//        return CollUtils.isNotEmpty(excludeTables)
 //                &&
 //                excludeTables.stream()
 //                        .filter(item -> statementId.equals(item))

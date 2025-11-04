@@ -1,14 +1,13 @@
 package org.pkaq.core.auth.security.provider;
 
-import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.collection.ConcurrentHashSet;
-import cn.hutool.core.util.ArrayUtil;
-import cn.hutool.core.util.StrUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.threaduser.ThreadUserHelper;
+import org.pkaq.core.util.ArrayUtils;
+import org.pkaq.core.util.CollUtils;
+import org.pkaq.core.util.StrUtils;
 import org.pkaq.sys.role.service.RoleService;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -47,7 +46,7 @@ public class DynamicSecurityMetadataSource implements FilterInvocationSecurityMe
     /**
      * 资源权限 资源路径 - 角色 的map
      */
-    private volatile Set<String> pathPermSet = new ConcurrentHashSet<>();
+    private volatile Set<String> pathPermSet = ConcurrentHashMap.newKeySet();;
 
     private Collection<ConfigAttribute> getValues(Map<String, String> item) {
         var path = item.get("path");
@@ -120,8 +119,8 @@ public class DynamicSecurityMetadataSource implements FilterInvocationSecurityMe
         String requestUrl = new UrlPathHelper().getPathWithinApplication(request);
 
         var roles = ThreadUserHelper.getUserRoles();
-
-        if (ArrayUtil.isNotEmpty(roles)) {
+        ArrayUtils.isEmpty(roles);
+        if (ArrayUtils.isNotEmpty(roles)) {
 
             /**
              *    严格鉴权模式 仅允许访问授权资源 未授权资源一律禁止访问
@@ -157,7 +156,7 @@ public class DynamicSecurityMetadataSource implements FilterInvocationSecurityMe
 //      未配置过权限的页面都不需要鉴权，jwtauthfilter已经进行了登录鉴权
 //      该过滤器是过滤链中的最后一个，该处判断返回ROLE_USER会使 premitall 无效
 //      如需配置非授权接口均不可访问需修改此处
-        if (CollectionUtil.isEmpty(set)) {
+        if (CollUtils.isEmpty(set)) {
             return null;
         }
         return set;

@@ -3,6 +3,8 @@ package org.pkaq.core.util;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 
+import java.util.Objects;
+
 /**
  * 字符串工具类
  * @author from apache.common3
@@ -34,6 +36,10 @@ public class StrUtils {
 
     public static String removeEnd(final String str, final CharSequence remove) {
         return Strings.CS.removeEnd(str, remove);
+    }
+
+    public static String toStringOrNull(Object obj) {
+        return Objects.toString(obj, null);
     }
 
     public static <T extends CharSequence> T defaultIfBlank(final T str, final T defaultStr) {

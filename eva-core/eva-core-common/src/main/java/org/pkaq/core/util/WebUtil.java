@@ -42,7 +42,7 @@ public class WebUtil extends WebUtils {
      * @return 是否ajax请求
      */
     public static boolean isBody(HandlerMethod handlerMethod) {
-        ResponseBody responseBody = ClassUtil.getAnnotation(handlerMethod, ResponseBody.class);
+        ResponseBody responseBody = ClassUtils.getAnnotation(handlerMethod, ResponseBody.class);
         return responseBody != null;
     }
 
@@ -126,7 +126,7 @@ public class WebUtil extends WebUtils {
      * @param contentType contentType
      */
     public static void renderJson(HttpServletResponse response, Object result, String contentType) {
-        response.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding(StandardCharsets.UTF_8);
         response.setContentType(contentType);
         try (PrintWriter out = response.getWriter()) {
             out.append(JsonUtil.toJson(result));

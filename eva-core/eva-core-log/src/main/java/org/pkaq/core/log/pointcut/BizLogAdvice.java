@@ -1,9 +1,5 @@
 package org.pkaq.core.log.pointcut;
 
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.exceptions.UtilException;
-import cn.hutool.core.util.ArrayUtil;
-import cn.hutool.core.util.ReflectUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +16,7 @@ import org.pkaq.core.log.base.LogSupporter;
 import org.pkaq.core.log.condition.BizlogSupporterCondition;
 import org.pkaq.core.log.events.BizLogEvent;
 import org.pkaq.core.threaduser.ThreadUserHelper;
-import org.pkaq.core.util.CollUtils;
-import org.pkaq.core.util.StrUtils;
+import org.pkaq.core.util.*;
 import org.pkaq.core.util.json.JsonUtil;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Conditional;
@@ -80,7 +75,7 @@ public class BizLogAdvice {
         // 根据方法入参设置操作描述的格式化参数 并返回需要的响应参数名
         var descriptionArgs = bizlog.args();
         if (StrUtils.isNotBlank(bizlog.bizId())) {
-            descriptionArgs = ArrayUtil.append(descriptionArgs, bizlog.bizId());
+            descriptionArgs = ArrayUtils.add(descriptionArgs, bizlog.bizId());
         }
         var formatArgs = new Object[descriptionArgs.length];
         var rMap = processArgs(joinPoint.getArgs(), descriptionArgs, formatArgs);
@@ -91,7 +86,7 @@ public class BizLogAdvice {
         }
         BizLogEntity bizLogEntity = new BizLogEntity();
         bizLogEntity.setOperator(ThreadUserHelper.getUserName())
-                .setOperateDatetime(DateUtil.now())
+                .setOperateDatetime(DateUtils.now())
                 .setOperateType(operatorType.getCode())
                 .setClassName(className)
                 .setMethod(methodName)
@@ -189,7 +184,7 @@ public class BizLogAdvice {
                         var obj = args[k];
                         try {
                             val = getFieldValue(obj, n);
-                        } catch (UtilException e) {
+                        } catch (Exception e) {
                             val = "";
                             log.error("根据方法实参构造格式化参数异常:" + e.getMessage());
                         }
@@ -222,7 +217,7 @@ public class BizLogAdvice {
                 if (!formatResult.equalsIgnoreCase(k)) {
                     try {
                         value = getFieldValue(result, k);
-                    } catch (UtilException e) {
+                    } catch (Exception e) {
                         value = "";
                         log.error("根据返回对象构造格式化参数异常:" + e.getMessage());
                     }
@@ -265,6 +260,6 @@ public class BizLogAdvice {
      * @return 属性值
      */
     private Object getFieldValue(Object object, String param) {
-        return ReflectUtil.getFieldValue(object, param);
+        return ReflectUtils.getFieldValue(object, param);
     }
 }

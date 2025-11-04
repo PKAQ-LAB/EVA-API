@@ -10,6 +10,7 @@ import org.pkaq.core.constant.CommonConstant;
  */
 @Slf4j
 public class RequestUtil {
+
     /**
      * 获取请求设备类型
      *

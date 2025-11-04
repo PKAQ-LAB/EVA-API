@@ -1,6 +1,5 @@
 package org.pkaq.core.upload.ctrl;
 
-import cn.hutool.core.map.MapUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.mvc.vo.Response;
@@ -11,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Map;
 
 /**
  * 文件上传Ctrl
@@ -36,6 +37,6 @@ public class FileUploadCtrl {
     @PostMapping("/file")
     public Response<Object> upload(MultipartFile file, String path) throws Exception {
         String filePath = fileUploadProvider.upload(file, path);
-        return Response.success(MapUtil.of("pname", filePath));
+        return Response.success(Map.of("pname", filePath));
     }
 }

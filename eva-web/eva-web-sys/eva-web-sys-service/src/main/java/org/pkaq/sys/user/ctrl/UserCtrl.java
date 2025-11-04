@@ -18,6 +18,8 @@ import org.pkaq.sys.user.bo.*;
 import org.pkaq.sys.user.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 /**
  * 用户管理实体类
  *

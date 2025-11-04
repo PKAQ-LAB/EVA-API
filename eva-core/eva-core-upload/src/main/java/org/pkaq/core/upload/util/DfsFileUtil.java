@@ -1,10 +1,5 @@
 package org.pkaq.core.upload.util;
 
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.io.resource.InputStreamResource;
-import cn.hutool.core.lang.Snowflake;
-import cn.hutool.core.util.IdUtil;
-import cn.hutool.http.HttpUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.codes.CommonCodes;
@@ -14,12 +9,16 @@ import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.upload.condition.FastDfsCondition;
 import org.pkaq.core.upload.provider.FileProvider;
 import org.pkaq.core.util.CollUtils;
+import org.pkaq.core.util.DateUtils;
+import org.pkaq.core.util.Snowflake;
 import org.pkaq.core.util.StrUtils;
 import org.pkaq.core.util.json.JsonUtil;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Conditional;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -35,6 +34,7 @@ import java.util.*;
 @Conditional(FastDfsCondition.class)
 @RequiredArgsConstructor
 public class DfsFileUtil implements FileProvider {
+    private final RestTemplate restTemplate;
 
     // 删除接口
     private static final String DELETE_API = "/delete";
@@ -42,7 +42,7 @@ public class DfsFileUtil implements FileProvider {
     private static final String UPLOAD_API = "/upload";
     private static final long SNOW = 16;
     private static final long FLAKE = 18;
-    private final Snowflake snowflake = IdUtil.getSnowflake(SNOW, FLAKE);
+    private final Snowflake snowflake = new Snowflake(SNOW, FLAKE);
     private final CacheManager cacheManager;
     private final EvaConfig evaConfig;
 
@@ -65,7 +65,7 @@ public class DfsFileUtil implements FileProvider {
 
         if (StrUtils.isNotEmpty(fileName)) {
             suffixName = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
-            newFileName = snowflake.nextIdStr() + "." + suffixName;
+            newFileName = snowflake.nextId() + "." + suffixName;
         } else {
             log.error(CommonCodes.FILEIO_ERROR.getMsg());
             throw new BizException(CommonCodes.FILENAME_ERROR);
@@ -80,13 +80,13 @@ public class DfsFileUtil implements FileProvider {
                 throw new BizException(CommonCodes.FILEIO_ERROR);
             }
 
-            Map<String, Object> paramMap = new HashMap<>(3);
+            Map<String, Object> paramMap = HashMap.newHashMap(3);
             //文件
             paramMap.put("file", isr);
             //输出
             paramMap.put("output", "json");
             //自定义路径
-//            String curDate = DateUtil.format(new Date(), DatePattern.PURE_DATE_FORMAT);
+//            String curDate = DateUtils.format(new Date(), DatePattern.PURE_DATE_FORMAT);
             if (StrUtils.isNotBlank(path)) {
                 paramMap.put("path", path);
             } else {
@@ -158,7 +158,7 @@ public class DfsFileUtil implements FileProvider {
      */
     @Override
     public void delFromStorage(String path) {
-        HttpUtil.post(evaConfig.getUpload().getServerUrl() + DELETE_API, path);
+        restTemplate.postForEntity(evaConfig.getUpload().getServerUrl() + DELETE_API, path, String.class);
     }
 
     /**
@@ -167,7 +167,7 @@ public class DfsFileUtil implements FileProvider {
      * @return
      */
     public String transfer(Map<String, Object> map) {
-        return HttpUtil.post(evaConfig.getUpload().getServerUrl() + UPLOAD_API, map);
+        return restTemplate.postForObject(evaConfig.getUpload().getServerUrl() + UPLOAD_API, map, String.class);
     }
 
     /**
@@ -177,7 +177,7 @@ public class DfsFileUtil implements FileProvider {
     public void tempClean() {
         Cache cache = cacheManager.getCache(CommonConstant.CACHE_UPLOADFILES);
 
-        String k = CommonConstant.FILE_CACHE_PREFIX + DateUtil.format(DateUtil.offsetHour(new Date(), -2), "HH");
+        String k = CommonConstant.FILE_CACHE_PREFIX + DateUtils.format(DateUtils.addHours(new Date(), -2), "HH");
         var cacheWrapper = cache.get(k);
 
         List<String> tmpFileList = null == cacheWrapper ? null : (List<String>) cacheWrapper.get();
@@ -187,7 +187,7 @@ public class DfsFileUtil implements FileProvider {
         }
 
         for (String item : tmpFileList) {
-            HttpUtil.post(evaConfig.getUpload().getServerUrl() + DELETE_API, item);
+            restTemplate.postForObject(evaConfig.getUpload().getServerUrl() + UPLOAD_API, item, String.class);
         }
 
         // 删除完毕 从缓存中移除此key
@@ -209,7 +209,7 @@ public class DfsFileUtil implements FileProvider {
     private void cachePut(String v) {
         Cache cache = cacheManager.getCache(CommonConstant.CACHE_UPLOADFILES);
 
-        String k = CommonConstant.FILE_CACHE_PREFIX + DateUtil.format(new Date(), "HH");
+        String k = CommonConstant.FILE_CACHE_PREFIX + DateUtils.format(new Date(), "HH");
         Cache.ValueWrapper valueWrapper = cache.get(k);
 
         List<String> tmpFileList = new ArrayList<>();

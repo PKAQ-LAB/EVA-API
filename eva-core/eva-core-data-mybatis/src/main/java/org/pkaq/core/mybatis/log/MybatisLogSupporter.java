@@ -1,6 +1,5 @@
 package org.pkaq.core.mybatis.log;
 
-import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +10,7 @@ import org.pkaq.core.log.condition.MybatisSupporterCondition;
 import org.pkaq.core.mvc.bo.DateRangeBo;
 import org.pkaq.core.mybatis.log.entity.MybatisBizLogEntity;
 import org.pkaq.core.mybatis.log.mapper.MybatisSupporterMapper;
+import org.pkaq.core.util.BeanUtils;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
@@ -33,7 +33,7 @@ public class MybatisLogSupporter implements BizLogSupporter {
     @Override
     public void save(BizLogEntity bizLogEntity) {
         MybatisBizLogEntity mybatisBizLogEntity = new MybatisBizLogEntity();
-        BeanUtil.copyProperties(bizLogEntity, mybatisBizLogEntity);
+        BeanUtils.copyProperties(bizLogEntity, mybatisBizLogEntity);
 
         this.mybatisSupporterMapper.insert(mybatisBizLogEntity);
     }

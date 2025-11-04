@@ -27,7 +27,7 @@ public class UrlAuthenticationFailureHandler implements AuthenticationFailureHan
     public void onAuthenticationFailure(HttpServletRequest httpServletRequest,
                                         HttpServletResponse httpServletResponse,
                                         AuthenticationException e) throws IOException {
-        httpServletResponse.setCharacterEncoding("UTF-8");
+        httpServletResponse.setCharacterEncoding(StandardCharsets.UTF_8);
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
         httpServletResponse.setStatus(HttpServletResponse.SC_OK);
 

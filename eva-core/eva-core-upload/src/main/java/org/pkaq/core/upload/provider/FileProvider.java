@@ -4,6 +4,7 @@ package org.pkaq.core.upload.provider;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public interface FileProvider {
      * @param filenames
      * @return
      */
-    List<String> storage(String... filenames);
+    List<String> storage(String... filenames) throws IOException;
 
     /**
      * 存储图片并且生成缩略图
@@ -33,7 +34,7 @@ public interface FileProvider {
      * @param scale
      * @param filenames
      */
-    void storageWithThumbnail(float scale, String... filenames);
+    void storageWithThumbnail(float scale, String... filenames) throws IOException;
 
     /**
      * 生成缩略图
@@ -41,7 +42,7 @@ public interface FileProvider {
      * @param file
      * @param scale
      */
-    void thumbnail(File file, float scale);
+    void thumbnail(File file, float scale) throws IOException;
 
     /**
      * 生成缩略图,可指定缩放
@@ -50,7 +51,7 @@ public interface FileProvider {
      * @param dest
      * @param scale
      */
-    void thumbnail(File file, File dest, float scale);
+    void thumbnail(File file, File dest, float scale) throws IOException;
 
     /**
      * 删除文件

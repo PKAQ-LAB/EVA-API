@@ -1,7 +1,7 @@
 package org.pkaq.core.auth.security.domain;
 
-import cn.hutool.core.bean.BeanUtil;
 import org.pkaq.core.auth.domain.JwtUserDetail;
+import org.pkaq.core.util.BeanUtils;
 import org.pkaq.sys.role.entity.RoleEntity;
 import org.pkaq.sys.user.entity.UserEntity;
 
@@ -37,7 +37,7 @@ public final class JwtUserFactory {
         return authorities.stream()
                 .map(item -> {
                     GrantedRoles grantedRoles = new GrantedRoles();
-                    BeanUtil.copyProperties(item, grantedRoles);
+                    BeanUtils.copyProperties(item, grantedRoles);
                     return new JwtGrantedAuthority(item.getCode(), grantedRoles);
                 })
                 .collect(Collectors.toList());

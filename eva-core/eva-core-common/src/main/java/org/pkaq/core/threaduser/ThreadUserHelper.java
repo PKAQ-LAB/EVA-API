@@ -1,8 +1,8 @@
 package org.pkaq.core.threaduser;
 
-import cn.hutool.core.util.ArrayUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.constant.CommonConstant;
+import org.pkaq.core.util.ArrayUtils;
 
 import java.util.*;
 import java.util.function.Function;
@@ -206,7 +206,7 @@ public class ThreadUserHelper {
      */
     public static boolean isAdmin() {
         String[] roles = getUserRoles();
-        return roles != null && ArrayUtil.contains(roles, CommonConstant.ADMIN_ROLE_NAME);
+        return roles != null && ArrayUtils.contains(roles, CommonConstant.ADMIN_ROLE_NAME);
     }
 
     // ====================== 模块信息 ======================

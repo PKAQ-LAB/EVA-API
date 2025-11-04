@@ -1,8 +1,8 @@
 package org.pkaq.core.license;
 
-import cn.hutool.core.net.NetUtil;
 import de.schlichtherle.license.*;
 import lombok.extern.slf4j.Slf4j;
+import org.pkaq.core.util.NetUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -91,6 +91,6 @@ public class LicenseVerify {
      * @param inetAddress
      */
     private String getLocalMac(InetAddress inetAddress) {
-        return NetUtil.getMacAddress(inetAddress).toUpperCase();
+        return NetUtils.getMacAddress(inetAddress).toUpperCase();
     }
 }

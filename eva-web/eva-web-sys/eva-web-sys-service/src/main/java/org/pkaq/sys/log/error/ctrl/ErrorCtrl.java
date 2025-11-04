@@ -1,8 +1,6 @@
 package org.pkaq.sys.log.error.ctrl;
 
-import cn.hutool.core.date.DatePattern;
-import cn.hutool.core.date.DateUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,6 +13,8 @@ import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.mybatis.exception.entity.ErrorlogEntity;
 import org.pkaq.core.mybatis.exception.mapper.ErrorlogMapper;
+import org.pkaq.core.util.DatePatterns;
+import org.pkaq.core.util.DateUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,7 +43,7 @@ public class ErrorCtrl extends Ctrl {
     @Operation(summary = "根据id获取操作日志明细")
     public Response<Object> query(@Parameter(name = "id", description = "操作日志id")
                                   @PathVariable(name = "id") String id) {
-        return new Response().success(this.errorlogMapper.selectById(id));
+        return Response.success(this.errorlogMapper.selectById(id));
     }
 
     @GetMapping("/list")
@@ -52,13 +52,13 @@ public class ErrorCtrl extends Ctrl {
                             @Parameter(name = "pageNo", description = "页码") Integer pageNo,
                             @Parameter(name = "pageCount", description = "条数") Integer pageCount) throws SQLException {
 
-        QueryWrapper<ErrorlogEntity> wrapper = new QueryWrapper<>();
+        LambdaQueryWrapper<ErrorlogEntity> wrapper = new LambdaQueryWrapper<>();
 
         Date begin = dateRange.getBegin();
         Date end = dateRange.getEnd();
 
         if (null == begin) {
-            begin = DateUtil.offsetDay(new Date(), -7);
+            begin = DateUtils.addDay(new Date(), -7);
         }
         if (null == end) {
             end = new Date();
@@ -67,20 +67,20 @@ public class ErrorCtrl extends Ctrl {
         String dbType = databaseIdProvider.getDatabaseId(dataSource);
 
         if ("oracle".equalsIgnoreCase(dbType)) {
-            wrapper.ge("REQUEST_TIME", DateUtil.format(begin, DatePattern.NORM_DATE_PATTERN));
-            wrapper.le("REQUEST_TIME", DateUtil.format(end, DatePattern.NORM_DATE_PATTERN));
+            wrapper.ge(ErrorlogEntity::getRequestTime, DateUtils.format(begin, DatePatterns.NORM_DATE_PATTERN));
+            wrapper.le(ErrorlogEntity::getRequestTime, DateUtils.format(end, DatePatterns.NORM_DATE_PATTERN));
         } else if ("mysql".equalsIgnoreCase(dbType)) {
-            wrapper.ge("REQUEST_TIME", begin);
-            wrapper.le("REQUEST_TIME", end);
+            wrapper.ge(ErrorlogEntity::getRequestTime, begin);
+            wrapper.le(ErrorlogEntity::getRequestTime, end);
         }
 
-        wrapper.orderByDesc("REQUEST_TIME");
+        wrapper.orderByDesc(ErrorlogEntity::getRequestTime);
 
         IPage pagination = new Page();
         pagination.setCurrent(pageNo == null ? 1 : pageNo);
         pagination.setSize(pageCount == null ? 10 : pageCount);
 
-        return new Response().success(this.errorlogMapper.selectPage(pagination, wrapper));
+        return Response.success(this.errorlogMapper.selectPage(pagination, wrapper));
     }
 
 }

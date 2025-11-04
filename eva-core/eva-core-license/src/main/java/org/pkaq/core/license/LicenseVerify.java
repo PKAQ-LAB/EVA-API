@@ -1,14 +1,14 @@
 package org.pkaq.core.license;
 
-import cn.hutool.core.io.resource.ClassPathResource;
-import cn.hutool.core.net.NetUtil;
 import de.schlichtherle.license.LicenseContent;
 import de.schlichtherle.license.LicenseContentException;
 import de.schlichtherle.license.LicenseManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.properties.EvaConfig;
+import org.pkaq.core.util.NetUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -96,6 +96,6 @@ public class LicenseVerify {
      * @param inetAddress
      */
     private String getLocalMac(InetAddress inetAddress) {
-        return NetUtil.getMacAddress(inetAddress).toUpperCase();
+        return NetUtils.getMacAddress(inetAddress).toUpperCase();
     }
 }

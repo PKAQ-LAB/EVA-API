@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -192,8 +193,13 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
         }
 
         // 保存新的头像文件
+        // TODO 异步
         if (StrUtils.isNotBlank(user.getAvatar())) {
-            fileProvider.storageWithThumbnail(0.3f, user.getAvatar());
+            try {
+                fileProvider.storageWithThumbnail(0.3f, user.getAvatar());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         // 保存用户

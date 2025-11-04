@@ -13,8 +13,7 @@ dependencies {
         libs.servlet.api,
         libs.jasypt
 
-    api libs.hutool,
-        libs.aop,
+    api libs.aop,
         libs.jwt,
         libs.json,
         libs.springdoc,

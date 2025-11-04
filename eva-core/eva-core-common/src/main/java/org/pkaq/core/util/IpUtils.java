@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 /**
  * 获取IP
  */
-public class IpUtil {
+public class IpUtils {
     public static String getIPAddress(HttpServletRequest request) {
         String ip = null;
 

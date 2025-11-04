@@ -1,6 +1,5 @@
 package org.pkaq.core.auth.config;
 
-import cn.hutool.core.util.ArrayUtil;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.auth.security.entrypoint.*;
 import org.pkaq.core.auth.security.filter.JwtAuthFilter;
@@ -174,7 +173,7 @@ public class WebSecurityConfig {
             };
 
             if (null != webstatic) {
-                paths = ArrayUtil.addAll(webstatic, staticPath);
+                paths = ArrayUtils.addAll(webstatic, staticPath);
             }
 
             web.ignoring()

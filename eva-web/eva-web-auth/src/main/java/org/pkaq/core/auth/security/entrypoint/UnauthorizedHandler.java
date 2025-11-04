@@ -37,7 +37,7 @@ public class UnauthorizedHandler implements AuthenticationEntryPoint, Serializab
                          AuthenticationException authException) throws IOException {
         //返回json形式的错误信息
 
-        response.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding(StandardCharsets.UTF_8);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_OK);
 

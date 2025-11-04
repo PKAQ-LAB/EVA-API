@@ -17,7 +17,7 @@ dependencies {
     implementation(libs.web){
         exclude module: 'spring-boot-starter-tomcat'
     }
-    implementation  libs.hutool,
-                    libs.truelicense
+    implementation project(":eva-core:eva-core-common"),
+                   libs.truelicense
 
 }

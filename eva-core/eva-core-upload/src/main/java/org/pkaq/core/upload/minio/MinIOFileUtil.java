@@ -1,15 +1,14 @@
 package org.pkaq.core.upload.minio;
 
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.img.ImgUtil;
-import cn.hutool.core.io.FileTypeUtil;
-import cn.hutool.core.io.IoUtil;
-import cn.hutool.core.io.NioUtil;
 import io.minio.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.upload.condition.MinIOCondition;
 import org.pkaq.core.upload.provider.FileProvider;
+import org.pkaq.core.util.DateUtils;
+import org.pkaq.core.util.FileTypeUtils;
+import org.pkaq.core.util.IOUtils;
+import org.pkaq.core.util.ImageUtils;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -44,8 +43,8 @@ public class MinIOFileUtil implements FileProvider {
     @Override
     public String upload(MultipartFile file, String path) throws Exception {
         // 判断桶是否存在 fileType/yyyyMM
-        String fileType = FileTypeUtil.getType(file.getInputStream());
-        String times = DateUtil.format(new Date(), "yyyyMM");
+        String fileType = FileTypeUtils.getType(file.getInputStream());
+        String times = DateUtils.format(new Date(), "yyyyMM");
         String dirName = TEMP + fileType + "/" + times;
 
         // 目标桶不存在 新建
@@ -133,7 +132,7 @@ public class MinIOFileUtil implements FileProvider {
                         ByteArrayOutputStream outThumbnail = new ByteArrayOutputStream();
 
                         // 缩放后默认变成jpeg格式 用原来的后缀也能打开
-                        ImgUtil.scale(in, outThumbnail, scale);
+                        ImageUtils.scale(in, outThumbnail, scale);
                         var suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
 
                         // 缩略图的路径要与原图路径一致 所以不能根据当前时间生成文件夹
@@ -201,7 +200,7 @@ public class MinIOFileUtil implements FileProvider {
     @Override
     public void downLoad(String fileName, OutputStream out) {
         try (GetObjectResponse in = minioClient.getObject(GetObjectArgs.builder().bucket(fileName).object(fileName).build())) {
-            IoUtil.copy(in, out, NioUtil.DEFAULT_BUFFER_SIZE);
+            IOUtils.copy(in, out, IOUtils.DEFAULT_BUFFER_SIZE);
             out.flush();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -283,7 +282,7 @@ public class MinIOFileUtil implements FileProvider {
      */
     public String uploadObject(InputStream in, String bucketName, String fileName, boolean formatName, String contentType) {
         try {
-            fileName = !formatName ? fileName : DateUtil.format(new Date(), "yyyy-MM") + "/" + DateUtil.format(new Date(), "dd") + "/" + fileName;
+            fileName = !formatName ? fileName : DateUtils.format(new Date(), "yyyy-MM") + "/" + DateUtils.format(new Date(), "dd") + "/" + fileName;
             //上传
             this.minioClient.putObject(
                     PutObjectArgs.builder().bucket(bucketName).object(fileName).stream(
@@ -325,7 +324,7 @@ public class MinIOFileUtil implements FileProvider {
      */
     private boolean isPicture(MultipartFile file) throws IOException {
         String suffixStr = ".bmp .dib .gif .jfif .jpe .jpeg .jpg .png .tif .tiff .ico";
-        String fileType = FileTypeUtil.getType(file.getInputStream());
+        String fileType = FileTypeUtils.getType(file.getInputStream());
         return suffixStr.contains(fileType);
     }
 }

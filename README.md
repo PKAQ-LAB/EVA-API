@@ -60,7 +60,6 @@ libs.undertow}",
  - 数据库版本管理: Flyway
  - JSON: jackson
  - 日志: Logback
- - 工具包: Hutool
  - ORM: Mybatis, Mybatis-plus
 
 JWT:

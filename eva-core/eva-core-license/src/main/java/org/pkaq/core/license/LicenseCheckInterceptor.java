@@ -35,7 +35,7 @@ public class LicenseCheckInterceptor implements AsyncHandlerInterceptor {
         if (verifyResult) {
             return true;
         } else {
-            response.setCharacterEncoding("UTF-8");
+            response.setCharacterEncoding(StandardCharsets.UTF_8);
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setStatus(HttpServletResponse.SC_OK);
 

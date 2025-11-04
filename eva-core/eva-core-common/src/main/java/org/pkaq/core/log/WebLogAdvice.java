@@ -1,6 +1,5 @@
 package org.pkaq.core.log;
 
-import cn.hutool.core.exceptions.ExceptionUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +9,8 @@ import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.pkaq.core.util.IpUtil;
+import org.pkaq.core.util.ExceptionUtils;
+import org.pkaq.core.util.IpUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -46,7 +46,7 @@ public class WebLogAdvice {
 
         if (null != attributes) {
             HttpServletRequest request = attributes.getRequest();
-            var ip = IpUtil.getIPAddress(request);
+            var ip = IpUtils.getIPAddress(request);
             var className = joinPoint.getTarget().getClass().getName();
             var methodName = joinPoint.getSignature().getName();
 
@@ -91,7 +91,7 @@ public class WebLogAdvice {
      */
     @AfterThrowing(pointcut = "webLog()", throwing = "ex")
     public void doWhenThrowing(JoinPoint joinPoint, Throwable ex) {
-        String jsontStack = ExceptionUtil.stacktraceToString(ex);
+        String jsontStack = ExceptionUtils.stackTraceToString(ex);
         log.error(jsontStack);
         this.print(joinPoint);
     }

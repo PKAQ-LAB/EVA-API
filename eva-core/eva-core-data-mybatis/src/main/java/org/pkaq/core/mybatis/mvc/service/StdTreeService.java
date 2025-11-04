@@ -1,6 +1,5 @@
 package org.pkaq.core.mybatis.mvc.service;
 
-import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import org.pkaq.core.codes.CommonCodes;
@@ -8,6 +7,7 @@ import org.pkaq.core.enums.DelEnumm;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.mybatis.mvc.entity.StdTreeEntity;
 import org.pkaq.core.mybatis.mvc.mapper.StdTreeMapper;
+import org.pkaq.core.util.CollUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,9 +59,9 @@ public abstract class StdTreeService<M extends StdTreeMapper<T>, T extends StdTr
 
         List<T> leafList = this.mapper.selectList(oew);
 
-        if (CollectionUtil.isNotEmpty(leafList)) {
-            List<Object> list = CollectionUtil.getFieldValues(leafList, "parentName");
-            String name = CollectionUtil.join(list, ",");
+        if (CollUtils.isNotEmpty(leafList)) {
+            List<Object> list = CollUtils.getFieldValues(leafList, "parentName");
+            String name = CollUtils.join(list, ",");
             response = new Response().failure(CommonCodes.CHILD_EXIST, name);
         } else {
             this.mapper.deleteBatchIds(ids);

@@ -1,6 +1,5 @@
 package org.pkaq.sys.post.service;
 
-import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -8,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.core.mybatis.util.PageResult;
+import org.pkaq.core.util.ObjectUtils;
 import org.pkaq.core.util.StrUtils;
 import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.post.bo.PostAoeBo;
@@ -84,7 +84,7 @@ public class PostService extends StdService<PostMapper, PostEntity> {
     public PostDetailVo get(String id) {
 
         PostEntity entity = this.mapper.selectById(id);
-        if (ObjectUtil.isNull(entity)) {
+        if (ObjectUtils.isNull(entity)) {
             SysCodes.RECORD_NOT_FOUND.newException();
         }
         return this.postConvert.entityToDetailVo(entity);

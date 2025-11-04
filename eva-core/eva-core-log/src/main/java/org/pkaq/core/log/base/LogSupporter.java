@@ -1,12 +1,12 @@
 package org.pkaq.core.log.base;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.util.ReflectUtil;
-import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.pkaq.core.log.bo.LogQueryBo;
 import org.pkaq.core.log.events.LogEvent;
+import org.pkaq.core.util.BeanUtils;
+import org.pkaq.core.util.ReflectUtils;
+import org.pkaq.core.util.StrUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
@@ -90,8 +90,8 @@ public interface LogSupporter<T extends LogEntity, E extends LogEvent> {
         if (checkMatch(event) && Objects.nonNull(logEntity)) {
             try {
                 // 给日志的描述加上失败标记
-                Field field = ReflectUtil.getField(logEntity.getClass(), "description");
-                String des = StrUtil.toStringOrNull(ReflectUtil.getFieldValue(logEntity, field));
+                Field field = ReflectUtils.getField(logEntity.getClass(), "description");
+                String des = StrUtils.toStringOrNull(ReflectUtils.getFieldValue(logEntity, field));
                 field.set(logEntity, "%s%s".formatted(FAILURE_PREFIX, des));
             } catch (Exception ignored) {
                 // 设置参数失败，不处理
@@ -116,7 +116,7 @@ public interface LogSupporter<T extends LogEntity, E extends LogEvent> {
         try {
             var clazz = (Class) getRealTE()[0];
             var actualObj = clazz.getDeclaredConstructor().newInstance();
-            BeanUtil.copyProperties(t, actualObj);
+            BeanUtils.copyProperties(t, actualObj);
             return actualObj;
         } catch (Exception ignored) {
             return null;

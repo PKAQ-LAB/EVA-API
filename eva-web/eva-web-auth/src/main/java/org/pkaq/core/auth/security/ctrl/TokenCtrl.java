@@ -1,6 +1,5 @@
 package org.pkaq.core.auth.security.ctrl;
 
-import cn.hutool.extra.servlet.JakartaServletUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +9,7 @@ import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.jwt.JwtUtil;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.properties.EvaConfig;
+import org.pkaq.core.util.CookieUtils;
 import org.pkaq.core.util.TokenUtil;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+/**
+ * @author PKAQ
+ */
 @RestController
 @RequiredArgsConstructor
 public class TokenCtrl {
@@ -35,7 +38,7 @@ public class TokenCtrl {
      * @return
      */
     @PostMapping("/auth/getAlpha")
-    public Response refreshToken(HttpServletRequest request, HttpServletResponse response) {
+    public Response<Object> refreshToken(HttpServletRequest request, HttpServletResponse response) {
         String refreshTk = tokenUtil.getRefreshToken(request);
 
         // 是否持久化token
@@ -52,7 +55,7 @@ public class TokenCtrl {
         }
 
         // 获取当前用户 account
-        Long uid = jwtUtil.getUid(refreshTk);
+        long uid = jwtUtil.getUid(refreshTk);
         String account = jwtUtil.getAccount(refreshTk);
         // 签发新 access token
         String new_alpha = jwtUtil.build(evaConfig.getJwt().getAlphaTtl(), uid, account);
@@ -61,19 +64,11 @@ public class TokenCtrl {
         String new_bravo = jwtUtil.build(evaConfig.getJwt().getBravoTtl(), uid, account);
 
         // 替换客户端的旧token
-        JakartaServletUtil.addCookie(response,
-                CommonConstant.ACCESS_TOKEN_KEY,
-                new_alpha,
-                0,
-                "/",
-                evaConfig.getCookie().getDomain());
+        String domain = evaConfig.getCookie().getDomain();
+        String path = "/";
 
-        JakartaServletUtil.addCookie(response,
-                CommonConstant.REFRESH_TOKEN_KEY,
-                new_bravo,
-                0,
-                "/",
-                evaConfig.getCookie().getDomain());
+        CookieUtils.addCookie(response, CommonConstant.ACCESS_TOKEN_KEY, new_alpha, 0, path, domain);
+        CookieUtils.addCookie(response, CommonConstant.REFRESH_TOKEN_KEY, new_bravo, 0, path, domain);
 
         // 持久化 token
         if (cacheToken) {
@@ -83,7 +78,7 @@ public class TokenCtrl {
         var map = Map.of(CommonConstant.ACCESS_TOKEN_KEY, new_alpha,
                 CommonConstant.REFRESH_TOKEN_KEY, new_bravo);
 
-        return new Response().success(map);
+        return Response.success(map);
 
     }
 
@@ -93,26 +88,10 @@ public class TokenCtrl {
      * @param response
      */
     public void clearCookie(HttpServletResponse response) {
-        JakartaServletUtil.addCookie(response,
-                CommonConstant.ACCESS_TOKEN_KEY,
-                null,
-                0,
-                "/",
-                evaConfig.getCookie().getDomain());
+        String domain = evaConfig.getCookie().getDomain();
 
-        JakartaServletUtil.addCookie(response,
-                CommonConstant.REFRESH_TOKEN_KEY,
-                null,
-                0,
-                "/",
-                evaConfig.getCookie().getDomain());
-
-        JakartaServletUtil.addCookie(response,
-                CommonConstant.USER_KEY,
-                null,
-                0,
-                "/",
-                evaConfig.getCookie().getDomain());
-
+        CookieUtils.clearCookie(response, CommonConstant.ACCESS_TOKEN_KEY, "/", domain);
+        CookieUtils.clearCookie(response, CommonConstant.REFRESH_TOKEN_KEY, "/", domain);
+        CookieUtils.clearCookie(response, CommonConstant.USER_KEY, "/", domain);
     }
 }

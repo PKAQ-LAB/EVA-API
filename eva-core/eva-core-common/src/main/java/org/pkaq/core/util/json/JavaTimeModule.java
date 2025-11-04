@@ -1,6 +1,5 @@
 package org.pkaq.core.util.json;
 
-import cn.hutool.core.date.DatePattern;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.PackageVersion;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
@@ -9,6 +8,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
+import org.pkaq.core.util.DatePatterns;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -23,12 +23,13 @@ public class JavaTimeModule extends SimpleModule {
 
     public JavaTimeModule() {
         super(PackageVersion.VERSION);
-        this.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DatePattern.NORM_DATETIME_FORMATTER));
-        this.addDeserializer(LocalDate.class, new LocalDateDeserializer(DatePattern.NORM_DATE_FORMATTER));
-        this.addDeserializer(LocalTime.class, new LocalTimeDeserializer(DatePattern.NORM_TIME_FORMATTER));
-        this.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DatePattern.NORM_DATETIME_FORMATTER));
-        this.addSerializer(LocalDate.class, new LocalDateSerializer(DatePattern.NORM_DATE_FORMATTER));
-        this.addSerializer(LocalTime.class, new LocalTimeSerializer(DatePattern.NORM_TIME_FORMATTER));
+        this.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DatePatterns.NORM_DATETIME_FORMATTER));
+        this.addDeserializer(LocalDate.class, new LocalDateDeserializer(DatePatterns.NORM_DATE_FORMATTER));
+        this.addDeserializer(LocalTime.class, new LocalTimeDeserializer(DatePatterns.NORM_TIME_FORMATTER));
+
+        this.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DatePatterns.NORM_DATETIME_FORMATTER));
+        this.addSerializer(LocalDate.class, new LocalDateSerializer(DatePatterns.NORM_DATE_FORMATTER));
+        this.addSerializer(LocalTime.class, new LocalTimeSerializer(DatePatterns.NORM_TIME_FORMATTER));
     }
 
 }
