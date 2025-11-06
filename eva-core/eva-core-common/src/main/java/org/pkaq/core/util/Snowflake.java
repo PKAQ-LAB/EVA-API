@@ -1,5 +1,8 @@
 package org.pkaq.core.util;
 
+import org.pkaq.core.codes.CommonCodes;
+import org.pkaq.core.exception.BizException;
+
 import java.net.NetworkInterface;
 import java.security.SecureRandom;
 import java.time.Instant;
@@ -33,7 +36,7 @@ public class Snowflake {
     // Create Snowflake with a nodeId and custom epoch
     public Snowflake(long nodeId, long customEpoch) {
         if(nodeId < 0 || nodeId > maxNodeId) {
-            throw new IllegalArgumentException(String.format("NodeId must be between %d and %d", 0, maxNodeId));
+            throw new BizException(CommonCodes.SERVER_ERROR_IDGET_LREM, 0, maxNodeId);
         }
         this.nodeId = nodeId;
         this.customEpoch = customEpoch;
@@ -54,7 +57,7 @@ public class Snowflake {
         long currentTimestamp = timestamp();
 
         if(currentTimestamp < lastTimestamp) {
-            throw new IllegalStateException("Invalid System Clock!");
+            throw new BizException(CommonCodes.SERVER_ERROR_IDGET_ISC);
         }
 
         if (currentTimestamp == lastTimestamp) {

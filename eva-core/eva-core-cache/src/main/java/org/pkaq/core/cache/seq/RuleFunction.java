@@ -1,5 +1,8 @@
 package org.pkaq.core.cache.seq;
 
+import org.pkaq.core.cache.CacheCodes;
+import org.pkaq.core.exception.BizException;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -38,7 +41,8 @@ public class RuleFunction {
             case "D" -> "yyyyMMdd";
             case "M" -> "yyyyMM";
             case "Y" -> "yyyy";
-            default -> throw new IllegalArgumentException("Unsupported reset period: " + resetPeriod);
+            default ->
+                    throw new BizException(CacheCodes.SERVER_ERROR_CACHE_PERIOD, "Unsupported reset period: " + resetPeriod);
         };
     }
 }

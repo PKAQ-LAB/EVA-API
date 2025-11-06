@@ -3,9 +3,11 @@ package org.pkaq.core.mybatis.enums;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedTypes;
+import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.enums.BaseEnum;
 import org.pkaq.core.enums.DelEnumm;
 import org.pkaq.core.enums.FrozenEnumm;
+import org.pkaq.core.exception.BizException;
 
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
@@ -62,7 +64,7 @@ public class UniversalEnumTypeHandler<E extends Enum<E> & BaseEnum<?>> extends B
     private E codeOf(Object code) {
         if (type == null) {
             // MyBatis 3.5.9+ 会通过有参构造传递 type，不会走这里
-            throw new IllegalStateException("Enum type not initialized in UniversalEnumTypeHandler");
+            throw new BizException(CommonCodes.SERVER_ERROR_ENUM_NOTINIT);
         }
 
         for (E e : type.getEnumConstants()) {
@@ -70,6 +72,6 @@ public class UniversalEnumTypeHandler<E extends Enum<E> & BaseEnum<?>> extends B
                 return e;
             }
         }
-        throw new IllegalArgumentException("No enum constant " + type.getName() + "." + code);
+        throw new BizException(CommonCodes.SERVER_ERROR_ENUM_404);
     }
 }

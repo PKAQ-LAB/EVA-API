@@ -1,5 +1,8 @@
 package org.pkaq.core.util;
 
+import org.pkaq.core.codes.CommonCodes;
+import org.pkaq.core.exception.BizException;
+
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 
@@ -137,13 +140,13 @@ public class BCryptUtils {
      * @return base64-encoded string
      * @throws IllegalArgumentException if the length is invalid
      */
-    private static String encode_base64(byte[] d, int len) throws IllegalArgumentException {
+    private static String encode_base64(byte[] d, int len) throws BizException {
         int off = 0;
         StringBuilder rs = new StringBuilder();
         int c1, c2;
 
         if (len <= 0 || len > d.length)
-            throw new IllegalArgumentException("Invalid len");
+            throw new BizException(CommonCodes.SERVER_ERROR_BCR_LEN);
 
         while (off < len) {
             c1 = d[off++] & 0xff;
@@ -191,14 +194,14 @@ public class BCryptUtils {
      * @throws IllegalArgumentException if maxolen is invalid
      */
     @SuppressWarnings("SameParameterValue")
-    private static byte[] decodeBase64(String s, int maxolen) throws IllegalArgumentException {
+    private static byte[] decodeBase64(String s, int maxolen) throws BizException {
         final StringBuilder rs = new StringBuilder();
         int off = 0, slen = s.length(), olen = 0;
         byte[] ret;
         byte c1, c2, c3, c4, o;
 
         if (maxolen <= 0)
-            throw new IllegalArgumentException("Invalid maxolen");
+            throw new BizException(CommonCodes.SERVER_ERROR_BCR_MAX);
 
         while (off < slen - 1 && olen < maxolen) {
             c1 = char64(s.charAt(off++));
@@ -364,10 +367,10 @@ public class BCryptUtils {
         byte[] ret;
 
         if (log_rounds < 4 || log_rounds > 30)
-            throw new IllegalArgumentException("Bad number of rounds");
+            throw new BizException(CommonCodes.SERVER_ERROR_BCR_BNOR);
         rounds = 1 << log_rounds;
         if (salt.length != BCRYPT_SALT_LEN)
-            throw new IllegalArgumentException("Bad salt length");
+            throw new BizException(CommonCodes.SERVER_ERROR_BCR_BSL);
 
         init_key();
         ekskey(salt, password);
@@ -418,7 +421,7 @@ public class BCryptUtils {
         StringBuilder rs = new StringBuilder();
 
         if (salt.charAt(0) != '$' || salt.charAt(1) != '2')
-            throw new IllegalArgumentException("Invalid salt version");
+            throw new BizException(CommonCodes.SERVER_ERROR_BCR_ISV);
         if (salt.charAt(2) == '$')
             off = 3;
         else {
@@ -426,13 +429,13 @@ public class BCryptUtils {
             // pr#1560@Github
             // 修正一个在Blowfish实现上的安全风险
             if ((minor != 'a' && minor != 'x' && minor != 'y' && minor != 'b') || salt.charAt(3) != '$')
-                throw new IllegalArgumentException("Invalid salt revision");
+                throw new BizException(CommonCodes.SERVER_ERROR_BCR_ISR);
             off = 4;
         }
 
         // Extract number of rounds
         if (salt.charAt(off + 2) > '$')
-            throw new IllegalArgumentException("Missing salt rounds");
+            throw new BizException(CommonCodes.SERVER_ERROR_BCR_MSR);
         rounds = Integer.parseInt(salt.substring(off, off + 2));
 
         real_salt = salt.substring(off + 3, off + 25);
@@ -449,7 +452,7 @@ public class BCryptUtils {
         if (rounds < 10)
             rs.append("0");
         if (rounds > 30) {
-            throw new IllegalArgumentException("rounds exceeds maximum (30)");
+            throw new BizException(CommonCodes.SERVER_ERROR_BCR_REM);
         }
         rs.append(rounds);
         rs.append("$");
@@ -475,7 +478,7 @@ public class BCryptUtils {
         if (log_rounds < 10)
             rs.append("0");
         if (log_rounds > 30) {
-            throw new IllegalArgumentException("log_rounds exceeds maximum (30)");
+            throw new BizException(CommonCodes.SERVER_ERROR_BCR_LREM);
         }
         rs.append(log_rounds);
         rs.append("$");

@@ -14,11 +14,43 @@ import org.pkaq.core.exception.BizAssert;
 @AllArgsConstructor
 public enum CommonCodes implements BizAssert {
     SERVER_ERROR("服务器发生错误,请联系管理员", "0x000-00000"),
+    SERVER_ERROR_CONVERT("服务器发生错误,请联系管理员", "0x000-00001"),
+    SERVER_ERROR_ENUM_UNKNOWN_CODE("服务器发生错误,请联系管理员", "0x000-00003"),
+//    Enum type not initialized in UniversalEnumTypeHandler
+    SERVER_ERROR_ENUM_NOTINIT("服务器发生错误,请联系管理员", "0x000-00004"),
+//    No enum constant
+    SERVER_ERROR_ENUM_404("服务器发生错误,请联系管理员", "0x000-00005"),
+//    Invalid len
+    SERVER_ERROR_BCR_LEN("服务器发生错误,请联系管理员", "0x000-00006"),
+    //Invalid maxolen
+    SERVER_ERROR_BCR_MAX("服务器发生错误,请联系管理员", "0x000-00007"),
+//    Bad number of rounds
+    SERVER_ERROR_BCR_BNOR("服务器发生错误,请联系管理员", "0x000-00008"),
+//    Bad salt length
+    SERVER_ERROR_BCR_BSL("服务器发生错误,请联系管理员", "0x000-00009"),
+//    Invalid salt version
+    SERVER_ERROR_BCR_ISV("服务器发生错误,请联系管理员", "0x000-00010"),
+//    Invalid salt revision
+    SERVER_ERROR_BCR_ISR("服务器发生错误,请联系管理员", "0x000-00011"),
+//    Missing salt rounds
+    SERVER_ERROR_BCR_MSR("服务器发生错误,请联系管理员", "0x000-00012"),
+//    rounds exceeds maximum (30)
+    SERVER_ERROR_BCR_REM("服务器发生错误,请联系管理员", "0x000-00013"),
+//    log_rounds exceeds maximum (30)
+    SERVER_ERROR_BCR_LREM("服务器发生错误,请联系管理员", "0x000-00014"),
+//    NodeId must be between %d and %d
+    SERVER_ERROR_IDGET_LREM("服务器发生错误,请联系管理员", "0x000-00015"),
+//    Invalid System Clock!
+    SERVER_ERROR_IDGET_ISC("服务器发生错误,请联系管理员", "0x000-00016"),
+
+
+
     CAN_NOT_FIND_RECORD("无法找到指定记录 [{0}]", "0x000-02001"),
     CHILD_EXIST("[{0}] 存在子节点，无法删除", "0x000-02002"),
     PARENT_NOT_AVAILABLE("父节点为禁用状态，无法启用", "0x000-02"),
     NULL_ID("所需记录ID为空值", "0x001"),
     NULL_PARAM_ID("所需记录 [ {0} ] 为空值", "0x002"),
+
     /**
      * 请求成功 000x
      **/
@@ -70,11 +102,14 @@ public enum CommonCodes implements BizAssert {
     /**
      * 上传相关 430x ~ 432x
      **/
-    FILEIO_ERROR("文件读取时发生错误", "4306"),
-    FILENAME_ERROR("文件名称错误", "4307"),
-    FILESAVE_ERROR("文件保存失败", "4308"),
-    FILETYPE_NOT_SUPPORTED("不支持的文件格式", "4309"),
-    FILE_SIZE_EXCEEDS_LIMIT("文件大小超出限制", "4310"),
+    FILEIO_ERROR("文件读取时发生错误", "0x0500-00001"),
+    FILENAME_ERROR("文件名称错误", "0x0500-00002"),
+    FILESAVE_ERROR("文件保存失败", "0x0500-00003"),
+    FILEDEL_ERROR("文件删除失败", "0x0500-00004"),
+    FILE_SRCORDESTNULL_ERROR("源文件或目标文件缺失", "0x0500-00005"),
+    FILETYPE_NOT_SUPPORTED("不支持的文件格式", "0x0500-00006"),
+    FILE_SIZE_EXCEEDS_LIMIT("文件大小超出限制", "0x0500-00007"),
+    FILE_CANNOT_READPIC("无法读取图片数据，可能不是有效的图像格式", "0x0500-00008"),
 
     /**
      * 微信 440x ~ 442x

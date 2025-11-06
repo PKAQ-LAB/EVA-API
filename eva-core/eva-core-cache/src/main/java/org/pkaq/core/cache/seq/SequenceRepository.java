@@ -1,5 +1,7 @@
 package org.pkaq.core.cache.seq;
 
+import org.pkaq.core.cache.CacheCodes;
+import org.pkaq.core.exception.BizException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -46,7 +48,7 @@ public class SequenceRepository {
                 duration = 365;
                 yield TimeUnit.DAYS;
             }
-            default -> throw new IllegalArgumentException("Unsupported reset period: " + resetPeriod);
+            default -> throw new BizException(CacheCodes.SERVER_ERROR_CACHE_PERIOD, "Unsupported reset period: " + resetPeriod);
         };
         redisTemplate.expire(redisKey, duration, timeUnit);
     }
