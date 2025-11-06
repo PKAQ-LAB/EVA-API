@@ -4,6 +4,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.pkaq.core.codes.CommonCodes;
+import org.pkaq.core.exception.BizException;
 import org.pkaq.core.util.json.JsonUtil;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -63,7 +65,7 @@ public class JwtUsernamePasswordAuthenticationFilter extends UsernamePasswordAut
         try {
             params = request.getReader().lines().collect(Collectors.joining());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new BizException(CommonCodes.SERVER_ERROR);
         }
         Map<String, String> param = JsonUtil.parse(params, Map.class);
 

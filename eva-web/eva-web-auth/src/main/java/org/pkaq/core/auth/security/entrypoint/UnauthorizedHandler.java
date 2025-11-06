@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 
 /**
  * 鉴权失败时的响应
@@ -43,7 +44,7 @@ public class UnauthorizedHandler implements AuthenticationEntryPoint, Serializab
 
         try (PrintWriter printWriter = response.getWriter()) {
             printWriter.write(JsonUtil.toJson(
-                    new Response()
+                    Response
                             .failure(AuthCodes.LOGIN_EXPIRED)));
             printWriter.flush();
         }

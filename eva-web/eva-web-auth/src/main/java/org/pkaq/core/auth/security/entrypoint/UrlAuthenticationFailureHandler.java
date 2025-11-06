@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 
 /**
  * 自定义登录失败处理器
@@ -40,7 +41,7 @@ public class UrlAuthenticationFailureHandler implements AuthenticationFailureHan
 
         try (PrintWriter printWriter = httpServletResponse.getWriter()) {
             printWriter.write(JsonUtil.toJson(
-                    new Response().failure(bizcode)
+                    Response.failure(bizcode)
             ));
             printWriter.flush();
         }

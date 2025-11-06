@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.codes.CommonCodes;
+import org.pkaq.core.exception.BizException;
 import org.pkaq.core.mvc.entity.Entity;
 import org.pkaq.core.mvc.vo.PageVo;
 import org.pkaq.core.mvc.vo.Vo;
@@ -58,7 +59,7 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
 
     public void validateUsername(String username) {
         if (username == null || ILLEGAL_USERNAMES.contains(username.trim().toLowerCase())) {
-            throw new IllegalArgumentException("用户名非法或为空");
+            throw new BizException(SysCodes.USER_ACCOUNT_ILLEGAL);
         }
     }
 
@@ -198,7 +199,7 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
             try {
                 fileProvider.storageWithThumbnail(0.3f, user.getAvatar());
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new BizException(CommonCodes.SERVER_ERROR);
             }
         }
 

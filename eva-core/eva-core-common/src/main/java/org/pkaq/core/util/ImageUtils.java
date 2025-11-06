@@ -1,5 +1,8 @@
 package org.pkaq.core.util;
 
+import org.pkaq.core.codes.CommonCodes;
+import org.pkaq.core.exception.BizException;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -20,7 +23,7 @@ public class ImageUtils {
      */
     public static void scale(File srcFile, File destFile, double scale) throws IOException {
         if (srcFile == null || destFile == null) {
-            throw new IllegalArgumentException("srcFile 和 destFile 不能为空");
+            throw new BizException(CommonCodes.FILE_SRCORDESTNULL_ERROR);
         }
 
         try (InputStream in = new FileInputStream(srcFile);
@@ -39,12 +42,12 @@ public class ImageUtils {
      */
     public static void scale(InputStream srcStream, OutputStream destStream, float scale) throws IOException {
         if (srcStream == null || destStream == null) {
-            throw new IllegalArgumentException("输入流或输出流不能为空");
+            throw new BizException(CommonCodes.FILE_SRCORDESTNULL_ERROR);
         }
 
         BufferedImage srcImage = ImageIO.read(srcStream);
         if (srcImage == null) {
-            throw new IOException("无法读取图片数据，可能不是有效的图像格式");
+            throw new BizException(CommonCodes.FILE_CANNOT_READPIC);
         }
 
         int width = Math.max(1, Math.round(srcImage.getWidth() * scale));

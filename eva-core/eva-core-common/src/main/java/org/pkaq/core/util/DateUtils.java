@@ -26,8 +26,13 @@ public class DateUtils {
     }
 
     public static Date parseDate(String date) throws ParseException {
+        return org.apache.commons.lang3.time.DateUtils.parseDate(date, DatePatterns.NORM_DATE_PATTERN);
+    }
+
+    public static Date parseDateTime(String date) throws ParseException {
         return org.apache.commons.lang3.time.DateUtils.parseDate(date, DatePatterns.NORM_DATETIME_PATTERN);
     }
+
 
     public static Date parseDate(String date, String pattern) throws ParseException {
         return org.apache.commons.lang3.time.DateUtils.parseDate(date, pattern);

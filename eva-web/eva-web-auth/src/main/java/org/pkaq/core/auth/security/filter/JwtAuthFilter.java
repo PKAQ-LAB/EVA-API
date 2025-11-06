@@ -7,7 +7,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.auth.AuthCodes;
 import org.pkaq.core.auth.util.CacheTokenUtil;
+import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.constant.CommonConstant;
+import org.pkaq.core.exception.BizException;
 import org.pkaq.core.jwt.JwtUtil;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.properties.EvaConfig;
@@ -170,7 +172,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     try {
                         chain.doFilter(request, response);
                     } catch (IOException | ServletException e) {
-                        throw new RuntimeException(e);
+                        throw new BizException(CommonCodes.SERVER_ERROR);
                     }
                 });
 

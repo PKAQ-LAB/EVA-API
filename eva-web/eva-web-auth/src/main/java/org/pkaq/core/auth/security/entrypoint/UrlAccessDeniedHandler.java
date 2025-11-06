@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 
 /**
  * 自定义权限不足处理器
@@ -30,7 +31,7 @@ public class UrlAccessDeniedHandler implements AccessDeniedHandler {
 
         try (PrintWriter printWriter = response.getWriter()) {
             printWriter.write(JsonUtil.toJson(
-                    new Response()
+                    Response
                             .failure(CommonCodes.PERMISSION_DENY)));
             printWriter.flush();
         }

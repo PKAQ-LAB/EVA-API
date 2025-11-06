@@ -1,10 +1,8 @@
 package org.pkaq.sys.role.convert;
 
 import org.mapstruct.Mapper;
-import org.pkaq.core.mvc.bo.Bo;
 import org.pkaq.core.mvc.convert.Convert;
 import org.pkaq.core.mvc.convert.MapConvertConfig;
-import org.pkaq.core.mvc.vo.Vo;
 import org.pkaq.sys.module.entity.ModuleEntity;
 import org.pkaq.sys.role.bo.RoleAoeBo;
 import org.pkaq.sys.role.bo.RoleQueryBo;
@@ -19,28 +17,17 @@ import java.util.List;
  * @author PKAQ
  */
 @Mapper(componentModel = "spring", config = MapConvertConfig.class)
-public abstract class RoleConvert extends Convert<RoleEntity> {
-    @Override
-    protected RoleEntity dispatchBoToEntity(Bo bo) {
-        return switch (bo) {
-            case RoleQueryBo param -> fromBo(param);
-            case RoleAoeBo param -> fromBo(param);
-            case null, default -> throw new IllegalArgumentException("Unsupported Bo type: " + bo.getClass());
-        };
-    }
-
-    @Override
-    protected Vo dispatchEntityToVo(RoleEntity entity) {
-        return toVo(entity);
-    }
+public abstract class RoleConvert extends Convert {
 
     public abstract RoleEntity fromBo(RoleQueryBo queryBo);
+
+    public abstract RoleDetailVo toVo(RoleEntity roleEntity);
+
+    public abstract RoleListVo toListItemVo(RoleEntity roleEntity);
 
     public abstract List<RoleListVo> toListVo(List<RoleEntity> roleEntities);
 
     public abstract RoleEntity fromBo(RoleAoeBo roleAoeBo);
-
-    public abstract RoleDetailVo toVo(RoleEntity roleEntity);
 
     public abstract List<RoleGrantedModuleVo> entityToModuleList(List<ModuleEntity> entities);
 

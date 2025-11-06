@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.mvc.bo.*;
 import org.pkaq.core.mvc.convert.Convert;
+//import org.pkaq.core.mvc.convert.ConvertRegistry;
 import org.pkaq.core.mvc.vo.PageVo;
 import org.pkaq.core.mvc.vo.Vo;
 import org.pkaq.core.mybatis.mvc.entity.StdEntity;
@@ -33,8 +34,11 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
     @Autowired
     protected M mapper;
 
+//    @Autowired
+//    protected ConvertRegistry convertRegistry;
+
     @Autowired(required = false)
-    protected Convert<T> convert;
+    protected Convert convert;
 
     /**
      * 切换锁定状态
@@ -135,7 +139,8 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
         if (null == bo) {
             CommonCodes.PARAM_ERROR.newException();
         }
-        this.mapper.insertOrUpdate(this.convert.fromBo(bo));
+        T entity = this.convert.fromBo(bo);
+        this.mapper.insertOrUpdate(entity);
     }
 
     /**
@@ -157,7 +162,8 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
             CommonCodes.DUPLICATE_CODE_ERROR.newException();
         }
 
-        this.mapper.insertOrUpdate(this.convert.fromBo(bo));
+        T entity = this.convert.fromBo(bo);
+        this.mapper.insertOrUpdate(entity);
     }
 
     /**
@@ -184,14 +190,14 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
             CommonCodes.PARAM_ERROR.newException();
         }
 
-
         LambdaQueryWrapper<T> wrapper = Wrappers.lambdaQuery();
-        var entity = this.convert.fromBo(page);
+        T entity = this.convert.fromBo(page);
+
         wrapper.setEntity(entity);
         wrapper.orderByDesc(T::getUtcModify);
 
         PageResult<T> pagination = new PageResult<>(page.getPageNo(), page.getPageSize());
-        return this.convert.toPageVo(this.mapper.selectPage(pagination, wrapper));
+        return this.mapper.selectPage(pagination, wrapper).map(this.convert::toVo) ;
     }
 
 

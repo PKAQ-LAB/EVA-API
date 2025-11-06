@@ -1,5 +1,8 @@
 package org.pkaq.core.util;
 
+import org.pkaq.core.codes.CommonCodes;
+import org.pkaq.core.exception.BizException;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -39,7 +42,7 @@ public class FileUtils {
                             try {
                                 Files.deleteIfExists(p);
                             } catch (IOException e) {
-                                throw new RuntimeException("删除失败: " + p, e);
+                                throw new BizException(CommonCodes.FILEDEL_ERROR);
                             }
                         });
             } else {

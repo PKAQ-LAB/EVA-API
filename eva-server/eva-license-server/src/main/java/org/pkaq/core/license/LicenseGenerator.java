@@ -2,6 +2,7 @@ package org.pkaq.core.license;
 
 import de.schlichtherle.license.*;
 import lombok.extern.slf4j.Slf4j;
+import org.pkaq.core.util.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

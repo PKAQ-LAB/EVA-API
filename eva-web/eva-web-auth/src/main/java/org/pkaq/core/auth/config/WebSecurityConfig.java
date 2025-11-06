@@ -6,6 +6,7 @@ import org.pkaq.core.auth.security.filter.JwtAuthFilter;
 import org.pkaq.core.auth.security.provider.DynamiclAccessDecisionManager;
 import org.pkaq.core.auth.security.provider.JwtUsernamePasswordAuthenticationFilter;
 import org.pkaq.core.properties.EvaConfig;
+import org.pkaq.core.util.ArrayUtils;
 import org.pkaq.core.util.CollUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
