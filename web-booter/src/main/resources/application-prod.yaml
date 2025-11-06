@@ -7,6 +7,13 @@ logging:
   # 日志文件配置
   file:
     path: /opt/data/logs/webapp.log
+  level:
+    root: WARN
+    org:
+      springframework:
+        boot:
+          autoconfigure:
+            logging: WARN
 # 数据源
 spring:
   datasource:

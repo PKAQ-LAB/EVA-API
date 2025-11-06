@@ -8,11 +8,12 @@ logging:
   file:
     name: d:/applogs/webapp.log
   level:
+    root: debug
     org:
       springframework:
         boot:
           autoconfigure:
-            logging: info
+            logging: debug
 #  监控
 spring:
   #  boot:

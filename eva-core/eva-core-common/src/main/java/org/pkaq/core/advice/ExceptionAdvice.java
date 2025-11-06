@@ -204,7 +204,6 @@ public class ExceptionAdvice {
     @ExceptionHandler(Exception.class)
     public Response<Object> handleException(Exception e) {
         log.error("服务运行异常:" + e.getMessage());
-
         if (log.isDebugEnabled()) {
             e.printStackTrace();
         }

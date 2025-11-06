@@ -9,7 +9,6 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.mvc.bo.*;
 import org.pkaq.core.mvc.convert.Convert;
-//import org.pkaq.core.mvc.convert.ConvertRegistry;
 import org.pkaq.core.mvc.vo.PageVo;
 import org.pkaq.core.mvc.vo.Vo;
 import org.pkaq.core.mybatis.mvc.entity.StdEntity;
@@ -23,6 +22,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+
 /**
  * service 基类
  * 抛出exception异常时 回滚事务
@@ -33,9 +33,6 @@ import java.util.Set;
 public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
     @Autowired
     protected M mapper;
-
-//    @Autowired
-//    protected ConvertRegistry convertRegistry;
 
     @Autowired(required = false)
     protected Convert convert;
