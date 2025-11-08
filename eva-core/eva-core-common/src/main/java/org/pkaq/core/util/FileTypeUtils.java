@@ -21,7 +21,7 @@ public class FileTypeUtils {
         MAGIC_NUMBER_MAP.put("25504446", "pdf");
         MAGIC_NUMBER_MAP.put("504B0304", "zip");
         MAGIC_NUMBER_MAP.put("504B34", "zip");
-        MAGIC_NUMBER_MAP.put("504B0506", "zip"); 
+        MAGIC_NUMBER_MAP.put("504B0506", "zip");
         MAGIC_NUMBER_MAP.put("504B0708", "zip");
         MAGIC_NUMBER_MAP.put("52617221", "rar");
         MAGIC_NUMBER_MAP.put("1F8B08", "gz");
@@ -39,7 +39,8 @@ public class FileTypeUtils {
     }
 
     /**
-     * 获取文件类型（扩展名）  
+     * 获取文件类型（扩展名）
+     *
      * @param inputStream 文件输入流
      * @return 扩展名，例如 "jpg", "png", "pdf"，无法识别返回 null
      * @throws IOException

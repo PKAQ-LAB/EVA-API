@@ -16,33 +16,32 @@ public enum CommonCodes implements BizAssert {
     SERVER_ERROR("服务器发生错误,请联系管理员", "0x000-00000"),
     SERVER_ERROR_CONVERT("服务器发生错误,请联系管理员", "0x000-00001"),
     SERVER_ERROR_ENUM_UNKNOWN_CODE("服务器发生错误,请联系管理员", "0x000-00003"),
-//    Enum type not initialized in UniversalEnumTypeHandler
+    //    Enum type not initialized in UniversalEnumTypeHandler
     SERVER_ERROR_ENUM_NOTINIT("服务器发生错误,请联系管理员", "0x000-00004"),
-//    No enum constant
+    //    No enum constant
     SERVER_ERROR_ENUM_404("服务器发生错误,请联系管理员", "0x000-00005"),
-//    Invalid len
+    //    Invalid len
     SERVER_ERROR_BCR_LEN("服务器发生错误,请联系管理员", "0x000-00006"),
     //Invalid maxolen
     SERVER_ERROR_BCR_MAX("服务器发生错误,请联系管理员", "0x000-00007"),
-//    Bad number of rounds
+    //    Bad number of rounds
     SERVER_ERROR_BCR_BNOR("服务器发生错误,请联系管理员", "0x000-00008"),
-//    Bad salt length
+    //    Bad salt length
     SERVER_ERROR_BCR_BSL("服务器发生错误,请联系管理员", "0x000-00009"),
-//    Invalid salt version
+    //    Invalid salt version
     SERVER_ERROR_BCR_ISV("服务器发生错误,请联系管理员", "0x000-00010"),
-//    Invalid salt revision
+    //    Invalid salt revision
     SERVER_ERROR_BCR_ISR("服务器发生错误,请联系管理员", "0x000-00011"),
-//    Missing salt rounds
+    //    Missing salt rounds
     SERVER_ERROR_BCR_MSR("服务器发生错误,请联系管理员", "0x000-00012"),
-//    rounds exceeds maximum (30)
+    //    rounds exceeds maximum (30)
     SERVER_ERROR_BCR_REM("服务器发生错误,请联系管理员", "0x000-00013"),
-//    log_rounds exceeds maximum (30)
+    //    log_rounds exceeds maximum (30)
     SERVER_ERROR_BCR_LREM("服务器发生错误,请联系管理员", "0x000-00014"),
-//    NodeId must be between %d and %d
+    //    NodeId must be between %d and %d
     SERVER_ERROR_IDGET_LREM("服务器发生错误,请联系管理员", "0x000-00015"),
-//    Invalid System Clock!
+    //    Invalid System Clock!
     SERVER_ERROR_IDGET_ISC("服务器发生错误,请联系管理员", "0x000-00016"),
-
 
 
     CAN_NOT_FIND_RECORD("无法找到指定记录 [{0}]", "0x000-02001"),

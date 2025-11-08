@@ -34,14 +34,13 @@ import java.util.*;
 @Conditional(FastDfsCondition.class)
 @RequiredArgsConstructor
 public class DfsFileUtil implements FileProvider {
-    private final RestTemplate restTemplate;
-
     // 删除接口
     private static final String DELETE_API = "/delete";
     // 上传接口
     private static final String UPLOAD_API = "/upload";
     private static final long SNOW = 16;
     private static final long FLAKE = 18;
+    private final RestTemplate restTemplate;
     private final Snowflake snowflake = new Snowflake(SNOW, FLAKE);
     private final CacheManager cacheManager;
     private final EvaConfig evaConfig;

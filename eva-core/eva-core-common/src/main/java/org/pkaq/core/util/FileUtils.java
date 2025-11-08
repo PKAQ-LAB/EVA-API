@@ -15,7 +15,7 @@ public class FileUtils {
         Files.move(
                 src.toPath(),
                 target.toPath(),
-                isOverride? StandardCopyOption.REPLACE_EXISTING: StandardCopyOption.COPY_ATTRIBUTES
+                isOverride ? StandardCopyOption.REPLACE_EXISTING : StandardCopyOption.COPY_ATTRIBUTES
         );
     }
 

@@ -7,6 +7,7 @@ import java.util.Objects;
 
 /**
  * 字符串工具类
+ *
  * @author from apache.common3
  */
 public class StrUtils {

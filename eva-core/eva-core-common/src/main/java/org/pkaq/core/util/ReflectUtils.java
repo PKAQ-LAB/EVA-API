@@ -7,11 +7,13 @@ import java.lang.reflect.Field;
  */
 public final class ReflectUtils {
 
-    private ReflectUtils() {}
+    private ReflectUtils() {
+    }
+
     /**
      * 获取对象指定字段的值（支持私有字段）
      *
-     * @param obj 对象实例
+     * @param obj   对象实例
      * @param field Field 对象
      * @return 字段值；如果获取失败则返回 null
      */
@@ -26,10 +28,11 @@ public final class ReflectUtils {
             return null;
         }
     }
+
     /**
      * 获取对象指定字段的值（支持私有字段）
      *
-     * @param obj 对象实例
+     * @param obj       对象实例
      * @param fieldName 字段名
      * @return 字段值；如果获取失败则返回 null
      */

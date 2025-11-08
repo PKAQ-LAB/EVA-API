@@ -96,7 +96,7 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
 
         try (PrintWriter printWriter = httpServletResponse.getWriter()) {
             printWriter.write(mapper.writeValueAsString(
-                    Response
+                            Response
                                     .success(map, CommonCodes.LOGIN_SUCCESS_WELCOME, user.getName())
                     )
             );

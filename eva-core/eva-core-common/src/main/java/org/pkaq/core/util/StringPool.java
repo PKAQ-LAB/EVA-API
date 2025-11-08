@@ -3,7 +3,7 @@ package org.pkaq.core.util;
 /**
  * @author PKAQ
  */
-public interface StringPool{
+public interface StringPool {
     /**
      * 字符常量：空格符 {@code ' '}
      */

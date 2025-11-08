@@ -272,7 +272,8 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
             if (!isRoot) {
                 // 设置id组成的path ： 新的父级节点path 属性 + 其id
                 var newParent = this.mapper.selectById(pid);
-                var newPath = String.format("%s/%s", newParent.getPath(), moduleId);;
+                var newPath = String.format("%s/%s", newParent.getPath(), moduleId);
+                ;
                 module.setPath(newPath);
 
                 mapper.updateById(module);

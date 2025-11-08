@@ -13,7 +13,7 @@ import org.pkaq.core.exception.BizAssert;
 @Getter
 @AllArgsConstructor
 public enum CacheCodes implements BizAssert {
-//    Unsupported reset period
+    //    Unsupported reset period
     SERVER_ERROR_CACHE_PERIOD("服务器发生错误,请联系管理员", "0x000-07000");
 
     /**

@@ -48,7 +48,8 @@ public class SequenceRepository {
                 duration = 365;
                 yield TimeUnit.DAYS;
             }
-            default -> throw new BizException(CacheCodes.SERVER_ERROR_CACHE_PERIOD, "Unsupported reset period: " + resetPeriod);
+            default ->
+                    throw new BizException(CacheCodes.SERVER_ERROR_CACHE_PERIOD, "Unsupported reset period: " + resetPeriod);
         };
         redisTemplate.expire(redisKey, duration, timeUnit);
     }

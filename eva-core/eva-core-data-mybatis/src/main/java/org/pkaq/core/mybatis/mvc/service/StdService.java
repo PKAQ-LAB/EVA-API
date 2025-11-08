@@ -194,7 +194,7 @@ public abstract class StdService<M extends BaseMapper<T>, T extends StdEntity> {
         wrapper.orderByDesc(T::getUtcModify);
 
         PageResult<T> pagination = new PageResult<>(page.getPageNo(), page.getPageSize());
-        return this.mapper.selectPage(pagination, wrapper).map(this.convert::toVo) ;
+        return this.mapper.selectPage(pagination, wrapper).map(this.convert::toVo);
     }
 
 

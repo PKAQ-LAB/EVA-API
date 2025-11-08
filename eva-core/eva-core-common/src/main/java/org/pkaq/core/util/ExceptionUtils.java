@@ -6,7 +6,8 @@ import java.util.Arrays;
 
 public final class ExceptionUtils {
 
-    private ExceptionUtils() {}
+    private ExceptionUtils() {
+    }
 
     /**
      * 将异常堆栈转换为字符串
@@ -24,7 +25,7 @@ public final class ExceptionUtils {
     /**
      * 将异常堆栈转换为字符串，只包含指定包名前缀的堆栈
      *
-     * @param e 异常对象
+     * @param e             异常对象
      * @param packagePrefix 需要保留的包名前缀（如 "com.myapp"）
      * @return 过滤后的堆栈字符串
      */

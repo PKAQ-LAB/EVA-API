@@ -46,7 +46,8 @@ public class DynamicSecurityMetadataSource implements FilterInvocationSecurityMe
     /**
      * 资源权限 资源路径 - 角色 的map
      */
-    private volatile Set<String> pathPermSet = ConcurrentHashMap.newKeySet();;
+    private volatile Set<String> pathPermSet = ConcurrentHashMap.newKeySet();
+    ;
 
     private Collection<ConfigAttribute> getValues(Map<String, String> item) {
         var path = item.get("path");

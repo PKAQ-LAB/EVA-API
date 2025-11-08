@@ -5,6 +5,7 @@ import org.pkaq.core.exception.BizException;
 
 /**
  * 自定义美剧映射
+ *
  * @author PKAQ
  */
 public interface BaseEnum<T> {
