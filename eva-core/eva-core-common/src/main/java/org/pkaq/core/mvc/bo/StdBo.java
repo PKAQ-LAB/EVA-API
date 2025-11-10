@@ -17,12 +17,12 @@ public abstract class StdBo implements Bo {
     private String code;
 
     @Schema(description = "乐观锁")
-    private int revision;
+    private Integer revision;
 
     /**
      * 是否冻结（0 - 未冻结，1 - 冻结， -1 - 不可编辑）
      **/
-    private int frozen;
+    private Integer frozen;
 
     @Schema(description = "展示顺序")
     private double sort;

@@ -23,7 +23,7 @@ public abstract class StdEntity implements Entity {
      **/
     @Version
     @TableField("revision")
-    private int revision;
+    private Integer revision;
 
     /**
      * 逻辑删除 (0-未删除、timestamp-删除)
