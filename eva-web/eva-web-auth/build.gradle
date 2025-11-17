@@ -12,6 +12,6 @@ dependencies {
             project(":eva-core:eva-core-log"),
             project(":eva-core:eva-core-data-mybatis"),
             project(":eva-web:eva-web-sys:eva-web-sys-service"),
-            libs.mysql,
+            libs.postgre,
             libs.security
 }

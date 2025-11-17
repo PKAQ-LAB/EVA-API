@@ -14,6 +14,7 @@ truelicense = "1.33"
 caffeine = "3.2.3"
 security_test = "6.5.6"
 jwt = "10.6"
+postgre="42.7.8"
 #oracle = "19.26.0.0"
 #orai18n = "12.1.0.2.0"
 springdoc = "2.8.14"
@@ -38,6 +39,7 @@ mapstruct-processor = { group = "org.mapstruct", name = "mapstruct-processor", v
 
 # 数据库
 mysql = { module = "com.mysql:mysql-connector-j", version.ref = "mysql" }
+postgre = { module = "org.postgresql:postgresql", version.ref = "postgre"}
 #oracle = { module = "com.oracle.database.jdbc:ojdbc10", version.ref = "oracle" }
 #orai18n = { module = "cn.easyproject:orai18n", version.ref = "orai18n" }
 
