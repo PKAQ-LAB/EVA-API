@@ -13,6 +13,9 @@
         <if test="_databaseId == 'oracle'">
             nvl(DATA_PERMISSION_TYPE, '0000') DATA_PERMISSION_TYPE,
         </if>
+        <if test="_databaseId == 'postgre'">
+            coalesce(DATA_PERMISSION_TYPE, '0000') AS DATA_PERMISSION_TYPE,
+        </if>
         DATA_PERMISSION_DEPTID
         from SYS_ROLE R, SYS_ROLEUSER_REF RU
         <where>
@@ -33,6 +36,9 @@
         </if>
         <if test="_databaseId =='oracle'">
             nvl(DATA_PERMISSION_TYPE, '0000') DATA_PERMISSION_TYPE,
+        </if>
+        <if test="_databaseId == 'postgre'">
+            coalesce(DATA_PERMISSION_TYPE, '0000') AS DATA_PERMISSION_TYPE,
         </if>
         sr.DATA_PERMISSION_DEPTID
         from

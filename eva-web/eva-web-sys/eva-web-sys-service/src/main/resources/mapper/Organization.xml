@@ -36,6 +36,9 @@
                         <if test="_databaseId == 'oracle'">
                             ( name like '%'||#{organization.name}||'%' )
                         </if>
+                        <if test="_databaseId == 'postgre'">
+                            ( name LIKE '%' || #{organization.name} || '%' )
+                        </if>
                     </when>
                     <otherwise>
                         and (parent_ID = '0' or parent_ID is null)
@@ -79,6 +82,9 @@
         <if test="_databaseId == 'oracle'">
             ( path like #{id}||'%' or id = #{id} )
         </if>
+        <if test="_databaseId == 'postgre'">
+            ( path LIKE #{id} || '%' OR id = #{id} )
+        </if>
         and deleted = '0000'
     </update>
     <!--  刷新子节点名称-->
@@ -91,6 +97,9 @@
         </if>
         <if test="_databaseId == 'oracle'">
             ( parent_id like #{id}||'%' or id = #{id} )
+        </if>
+        <if test="_databaseId == 'postgre'">
+            ( parent_id LIKE #{id} || '%' OR id = #{id} )
         </if>
         and
         deleted = '0000'
@@ -106,6 +115,9 @@
         </if>
         <if test="_databaseId == 'oracle'">
             ( path like '%'||#{oldorgin.id}||'%' or id = #{oldorgin.id} )
+        </if>
+        <if test="_databaseId == 'postgre'">
+            ( path LIKE '%' || #{oldorgin.id, jdbcType=VARCHAR} || '%' OR id = #{oldorgin.id} )
         </if>
         and
         id != #{oldorgin.id,jdbcType=VARCHAR}

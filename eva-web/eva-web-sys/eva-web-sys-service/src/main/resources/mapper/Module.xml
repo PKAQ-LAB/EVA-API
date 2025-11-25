@@ -102,6 +102,9 @@
                     <if test="_databaseId == 'oracle'">
                         '%'||#{module.name}||'%'
                     </if>
+                    <if test="_databaseId == 'postgre'">
+                        '%' || #{module.name, jdbcType=VARCHAR} || '%'
+                    </if>
                 </if>
             </if>
         </where>
@@ -140,6 +143,9 @@
                     </if>
                     <if test="_databaseId == 'oracle'">
                         '%'||#{module.name}||'%'
+                    </if>
+                    <if test="_databaseId == 'postgre'">
+                        '%' || #{module.name, jdbcType=VARCHAR} || '%'
                     </if>
                 </if>
             </if>
@@ -185,6 +191,9 @@
         <if test="_databaseId == 'oracle'">
             nvl(max(orders),0)
         </if>
+        <if test="_databaseId == 'postgre'">
+            coalesce(max(orders), 0)
+        </if>
         from
         sys_module where
         <choose>
@@ -206,6 +215,9 @@
         </if>
         <if test="_databaseId == 'oracle'">
             #{id}||'%' or id = #{id}
+        </if>
+        <if test="_databaseId == 'postgre'">
+            #{id} || '%' or id = #{id}
         </if>
     </update>
 
@@ -267,18 +279,24 @@
         <if test="_databaseId == 'oracle'">
             #{id}||'%'
         </if>
+        <if test="_databaseId == 'postgre'">
+            #{id} || '%'
+        </if>
     </update>
     <!--  刷新子节点的path_name  和 path -->
     <update id="updateChildPathInfo">
         update sys_module set
-        PATH_NAME=REPLACE(PARENT_NAME,#{oldModule.name,jdbcType=VARCHAR},#{newModule.name,jdbcType=VARCHAR}),
-        PATH=REPLACE(PATH,#{oldModule.path,jdbcType=VARCHAR},#{newModule.path,jdbcType=VARCHAR})
+            PATH_NAME=REPLACE(PARENT_NAME,#{oldModule.name,jdbcType=VARCHAR},#{newModule.name,jdbcType=VARCHAR}),
+            PATH=REPLACE(PATH,#{oldModule.path,jdbcType=VARCHAR},#{newModule.path,jdbcType=VARCHAR})
         where path like
         <if test="_databaseId == 'mysql'">
             concat('%',#{oldModule.path,jdbcType=VARCHAR},'%')
         </if>
         <if test="_databaseId =='oracle'">
             '%'||#{oldModule.path}||'%'
+        </if>
+        <if test="_databaseId == 'postgre'">
+            '%' || #{oldModule.path, jdbcType=VARCHAR} || '%'
         </if>
         and id != #{oldModule.id,jdbcType=VARCHAR}
     </update>
