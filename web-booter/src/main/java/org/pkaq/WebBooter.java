@@ -8,6 +8,8 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 
+import java.util.Arrays;
+
 /**
  * 启动类
  *
@@ -19,7 +21,8 @@ import org.springframework.core.env.Environment;
 @ComponentScan(basePackages = {"org.pkaq.*"})
 public class WebBooter implements CommandLineRunner {
 
-    public static void main(String[] args) {
+    static void main(String[] args) {
+
         var application = SpringApplication.run(WebBooter.class, args);
 
         Environment env = application.getEnvironment();

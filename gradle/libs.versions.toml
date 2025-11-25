@@ -3,8 +3,8 @@ spring_dep = "1.1.7"
 spring_boot = "4.0.0"
 aop = "3.5.8"
 mysql = "9.5.0"
-mybatis_plus_starter = "3.5.14"
-mybatis_plus_jsqlparser = "3.5.14"
+mybatis_plus_starter = "3.5.15-SNAPSHOT"
+mybatis_plus_jsqlparser = "3.5.15-SNAPSHOT"
 lombok = "1.18.42"
 knife4j = "4.5.0"
 jaxb_api = "2.3.1"
@@ -32,14 +32,14 @@ p6spy = { module = "p6spy:p6spy", version.ref = "p6spy" }
 # 数据库版本
 flyway = { module = "org.flywaydb:flyway-mysql", version.ref = "flyway" }
 # ORM
-mybatis_plus_starter = { module = "com.baomidou:mybatis-plus-spring-boot3-starter", version.ref = "mybatis_plus_starter" }
+mybatis_plus_starter = { module = "com.baomidou:mybatis-plus-spring-boot4-starter", version.ref = "mybatis_plus_starter" }
 mybatis_plus_jsqlparser = { module = "com.baomidou:mybatis-plus-jsqlparser", version.ref = "mybatis_plus_jsqlparser" }
 
 mapstruct = { group = "org.mapstruct", name = "mapstruct", version.ref = "mapstruct" }
 mapstruct-processor = { group = "org.mapstruct", name = "mapstruct-processor", version.ref = "mapstruct" }
 
 # 数据库
-mysql = { module = "com.mysql:mysql-connector-j", version.ref = "mysql" }
+#mysql = { module = "com.mysql:mysql-connector-j", version.ref = "mysql" }
 postgre = { module = "org.postgresql:postgresql", version.ref = "postgre"}
 #oracle = { module = "com.oracle.database.jdbc:ojdbc10", version.ref = "oracle" }
 #orai18n = { module = "cn.easyproject:orai18n", version.ref = "orai18n" }

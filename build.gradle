@@ -52,6 +52,7 @@ subprojects {
 
     repositories {
         mavenLocal()
+        maven { url 'https://central.sonatype.com/repository/maven-snapshots/' }
 //        maven {
 //            url "http://yy.pkaq.org:8082/artifactory/yunyue-public/"
 //            allowInsecureProtocol = true
