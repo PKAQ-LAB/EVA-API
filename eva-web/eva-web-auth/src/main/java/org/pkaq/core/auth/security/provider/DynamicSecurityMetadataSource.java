@@ -5,188 +5,124 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.threaduser.ThreadUserHelper;
-import org.pkaq.core.util.ArrayUtils;
-import org.pkaq.core.util.CollUtils;
-import org.pkaq.core.util.StrUtils;
 import org.pkaq.sys.role.service.RoleService;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.security.access.ConfigAttribute;
-import org.springframework.security.access.SecurityConfig;
-import org.springframework.security.web.FilterInvocation;
-import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authorization.AuthorizationDecision;
+import org.springframework.security.authorization.AuthorizationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 import org.springframework.web.util.UrlPathHelper;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 /**
- * 动态获取url权限配置
- *
- * @author
+ * 动态 URL 权限管理器（Spring Security 7.x）
  */
 @Slf4j
 @Component
 @RequiredArgsConstructor
 @ConditionalOnProperty(prefix = "eva.resource-permission", name = "enable", havingValue = "true")
-public class DynamicSecurityMetadataSource implements FilterInvocationSecurityMetadataSource, InitializingBean {
+public class DynamicSecurityMetadataSource implements AuthorizationManager<RequestAuthorizationContext> {
+
     private final RoleService roleService;
-
     private final EvaConfig evaConfig;
-    // 构造器注入
-    private final HandlerMappingIntrospector introspector;
-    /**
-     * 资源权限 角色 - 资源路径 的map
-     */
-    private volatile Map<String, Collection<ConfigAttribute>> rolePermMap = new ConcurrentHashMap<>();
 
-    /**
-     * 资源权限 资源路径 - 角色 的map
-     */
-    private volatile Set<String> pathPermSet = ConcurrentHashMap.newKeySet();
-    ;
+    /** 角色 -> 可访问 URL 集合（严格模式） */
+    private final Map<String, Set<String>> rolePermMap = new ConcurrentHashMap<>();
 
-    private Collection<ConfigAttribute> getValues(Map<String, String> item) {
-        var path = item.get("path");
-        var role_code = item.get("code");
-        var resoure_path = item.get("resource_url");
+    /** 可访问 URL 集合（简单模式） */
+    private final Set<String> pathPermSet = ConcurrentHashMap.newKeySet();
 
-        if (StrUtils.isNotBlank(resoure_path)) {
-            resoure_path = resoure_path.startsWith("/") ? resoure_path.substring(1) : resoure_path;
-        }
+    private final UrlPathHelper urlPathHelper = new UrlPathHelper();
 
-        path = path.endsWith("/") ? path + resoure_path : path + "/" + resoure_path;
-
-        Collection<ConfigAttribute> values = rolePermMap.get(role_code);
-
-        ConfigAttribute securityConfig = new SecurityConfig(path);
-
-        if (null == values) {
-            values = new ArrayList<>();
-        }
-
-        values.add(securityConfig);
-
-        return values;
-    }
-
-    /**
-     * 加载资源，初始化资源变量
-     * 角色 - url+资源路径
-     */
-    public void loadResourceRoleUrlPermMap(List<Map<String, String>> menusUrl) {
-
-        menusUrl.stream().forEach(item -> {
-            var role_code = item.get("code");
-            rolePermMap.put(role_code, this.getValues(item));
-        });
-    }
-
-    /**
-     * 加载资源，初始化资源变量
-     * url+资源路径 - 角色
-     */
-    public void loadResourceUrlRolePermMap(List<Map<String, String>> menusUrl) {
-
-        menusUrl.stream().forEach(item -> {
-            var path = item.get("path");
-            var resoure_path = item.get("resource_url");
-
-            if (StrUtils.isNotBlank(resoure_path)) {
-                resoure_path = resoure_path.startsWith("/") ? resoure_path.substring(1) : resoure_path;
-            }
-
-            path = path.endsWith("/") ? path + resoure_path : path + "/" + resoure_path;
-
-            pathPermSet.add(path);
-        });
-    }
-
-    @Override
-    public Collection<ConfigAttribute> getAttributes(Object o) throws IllegalArgumentException {
-
+    /** 初始化资源权限 */
+    public void loadResources() {
         if (!evaConfig.getResourcePermission().isEnable()) {
-            return null;
+            return;
         }
 
-        // 角色列表
-        Collection<ConfigAttribute> set = new ArrayList<>();
-        // 获取请求地址
+        List<Map<String, String>> menusUrl = this.roleService.listRoleNamesWithPath();
 
-        HttpServletRequest request = ((RequestAuthorizationContext) o).getRequest();
-        String requestUrl = new UrlPathHelper().getPathWithinApplication(request);
+        if (evaConfig.getResourcePermission().isStrict()) {
+            menusUrl.forEach(item -> {
+                String roleCode = item.get("code");
+                String path = buildFullPath(item);
+                rolePermMap.computeIfAbsent(roleCode, k -> new HashSet<>()).add(path);
+            });
+        } else {
+            menusUrl.forEach(item -> {
+                String path = buildFullPath(item);
+                pathPermSet.add(path);
+            });
+        }
+    }
 
-        var roles = ThreadUserHelper.getUserRoles();
-        ArrayUtils.isEmpty(roles);
-        if (ArrayUtils.isNotEmpty(roles)) {
+    private String buildFullPath(Map<String, String> item) {
+        String path = item.get("path");
+        String resourcePath = item.get("resource_url");
 
-            /**
-             *    严格鉴权模式 仅允许访问授权资源 未授权资源一律禁止访问
-             *    根据用户角色获取所有可访问资源路径 置入 Collection<ConfigAttribute>
-             */
-            if (evaConfig.getResourcePermission().isStrict()) {
-                Arrays.stream(roles).forEach(item -> {
-                    if (null != rolePermMap.get(item)) {
-                        set.addAll(rolePermMap.get(item));
-                    }
-                });
-            } else {
-                /**
-                 *  简单鉴权模式 可访问所有无权限要求的资源
-                 *  根据资源路径获取访问该资源需要的所有角色 置入 Collection<ConfigAttribute>
-                 */
+        if (resourcePath != null && !resourcePath.isBlank()) {
+            resourcePath = resourcePath.startsWith("/") ? resourcePath.substring(1) : resourcePath;
+        }
 
-                pathPermSet.forEach((v) -> {
-//                    RequestMatcher urlMatcher = new MvcRequestMatcher(introspector, v);
-//                    if (urlMatcher.matches(request) || StrUtil.equals(requestUrl, v)) {
-//                        ConfigAttribute securityConfig = new SecurityConfig(v);
-//                        set.add(securityConfig);
-//                    }
-//                    var urlMatcher = new AntPathRequestMatcher(v);
-//                    if (urlMatcher.matches(request) || StrUtil.equals(requestUrl, v)) {
-//                        ConfigAttribute securityConfig = new SecurityConfig(v);
-//                        set.add(securityConfig);
-//                    }
-                });
+        path = path.endsWith("/") ? path + resourcePath : path + "/" + resourcePath;
+        return path;
+    }
+
+    @Override
+    public AuthorizationDecision authorize(Supplier<? extends Authentication> authenticationSupplier,
+                                           RequestAuthorizationContext requestContext) {
+
+        try {
+            Authentication authentication = authenticationSupplier.get();
+            Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+
+            HttpServletRequest request = requestContext.getRequest();
+            String requestUrl = urlPathHelper.getPathWithinApplication(request);
+
+            log.info("权限决策：请求地址 [{}]，用户权限 [{}]", requestUrl, authorities);
+
+            // 预检请求直接放行
+            if (HttpMethod.OPTIONS.matches(request.getMethod())) {
+                return new AuthorizationDecision(true);
             }
+
+            // 严格模式：根据用户角色匹配 URL
+            if (evaConfig.getResourcePermission().isStrict()) {
+                String[] userRoles = ThreadUserHelper.getUserRoles();
+                if (userRoles == null || userRoles.length == 0) {
+                    return new AuthorizationDecision(false);
+                }
+
+                boolean granted = Arrays.stream(userRoles)
+                        .anyMatch(role -> {
+                            Set<String> urls = rolePermMap.get(role);
+                            return urls != null && urls.contains(requestUrl);
+                        });
+
+                return new AuthorizationDecision(granted);
+
+            } else { // 简单模式：判断 URL 是否在 pathPermSet
+                if (pathPermSet.isEmpty()) {
+                    return new AuthorizationDecision(false);
+                }
+                boolean granted = pathPermSet.contains(requestUrl);
+                return new AuthorizationDecision(granted);
+            }
+
+        } catch (Exception ex) {
+            log.error("权限决策异常", ex);
+            return new AuthorizationDecision(false);
         }
-
-//      未配置过权限的页面都不需要鉴权，jwtauthfilter已经进行了登录鉴权
-//      该过滤器是过滤链中的最后一个，该处判断返回ROLE_USER会使 premitall 无效
-//      如需配置非授权接口均不可访问需修改此处
-        if (CollUtils.isEmpty(set)) {
-            return null;
-        }
-        return set;
     }
 
-    @Override
-    public Collection<ConfigAttribute> getAllConfigAttributes() {
-        return null;
-    }
-
-    @Override
-    public boolean supports(Class<?> aClass) {
-        return FilterInvocation.class.isAssignableFrom(aClass);
-    }
-
-    /**
-     * 启动时加载资源
-     */
-    @Override
+    /** 启动时加载资源 */
     public void afterPropertiesSet() {
-        // 加载权限和路径关系
-        if (evaConfig.getResourcePermission().isEnable()) {
-            List<Map<String, String>> menusUrl = this.roleService.listRoleNamesWithPath();
-
-            if (evaConfig.getResourcePermission().isStrict()) {
-                loadResourceRoleUrlPermMap(menusUrl);
-            } else {
-                loadResourceUrlRolePermMap(menusUrl);
-            }
-        }
+        loadResources();
     }
 }

@@ -20,7 +20,7 @@ public class AuthenticationManagerConfig extends GlobalAuthenticationConfigurerA
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
-    public void init(AuthenticationManagerBuilder auth) throws Exception {
+    public void init(AuthenticationManagerBuilder auth) {
         auth.authenticationProvider(loginAuthenticationProvider)
                 // 设置UserDetailsService
                 .userDetailsService(userDetailsService)

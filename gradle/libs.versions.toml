@@ -1,6 +1,7 @@
 [versions]
 spring_dep = "1.1.7"
 spring_boot = "4.0.0"
+aop = "3.5.8"
 mysql = "9.5.0"
 mybatis_plus_starter = "3.5.14"
 mybatis_plus_jsqlparser = "3.5.14"
@@ -63,7 +64,7 @@ redis = { module = "org.springframework.boot:spring-boot-starter-data-redis" }
 cache = { module = "org.springframework.boot:spring-boot-starter-cache" }
 
 # AOP
-aop = { module = "org.springframework.boot:spring-boot-starter-aop" }
+aop = { module = "org.springframework.boot:spring-boot-starter-aop", version.ref="aop" }
 
 jdbc = { module = "org.springframework.boot:spring-boot-starter-jdbc" }
 

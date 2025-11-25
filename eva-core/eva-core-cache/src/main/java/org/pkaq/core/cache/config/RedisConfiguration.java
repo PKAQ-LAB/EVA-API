@@ -13,7 +13,7 @@ import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.cache.RedisCacheWriter;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.JacksonJsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
@@ -44,7 +44,7 @@ public class RedisConfiguration {
         //key序列化
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         //value序列化
-        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(Object.class));
+        redisTemplate.setValueSerializer(new JacksonJsonRedisSerializer<>(Object.class));
 
         redisTemplate.afterPropertiesSet();
         return redisTemplate;
@@ -88,7 +88,7 @@ public class RedisConfiguration {
                 //设置key序列化器
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
                 //设置value序列化器
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer((new Jackson2JsonRedisSerializer<>(Object.class))));
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer((new JacksonJsonRedisSerializer<>(Object.class))));
 
         log.debug("自定义RedisCacheManager加载完成");
 

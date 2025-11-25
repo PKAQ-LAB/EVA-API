@@ -6,9 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.util.CollUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.ConfigAttribute;
-import org.springframework.security.access.SecurityMetadataSource;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.core.Authentication;
@@ -29,38 +26,52 @@ import java.util.function.Supplier;
 @RequiredArgsConstructor
 @ConditionalOnProperty(prefix = "eva.resource-permission", name = "enable", havingValue = "true")
 public final class DynamiclAccessDecisionManager implements AuthorizationManager<RequestAuthorizationContext> {
-    private final SecurityMetadataSource securityMetadataSource;
+    // 使用你自己的 URL -> 权限映射
+    private final Map<String, Collection<String>> urlPermissionMap;
 
     @Override
-    public AuthorizationDecision check(Supplier<Authentication> authentication, RequestAuthorizationContext requestAuthorizationContext) {
+    public AuthorizationDecision authorize(
+            Supplier<? extends Authentication> authenticationSupplier,
+            RequestAuthorizationContext requestContext) {
+
         try {
             // 当前用户的权限信息 比如角色
-            Collection<? extends GrantedAuthority> authorities = authentication.get().getAuthorities();
-            //
+            Authentication authentication = authenticationSupplier.get();
+            Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+
             //authentication.get().isAuthenticated();
             // 当前请求上下文
             // 我们可以获取携带的参数
-            Map<String, String> variables = requestAuthorizationContext.getVariables();
-            // 我们可以获取原始request对象
-            HttpServletRequest request = requestAuthorizationContext.getRequest();
+            HttpServletRequest request = requestContext.getRequest();
+            Map<String, String> variables = requestContext.getVariables();
             String requestUrl = new UrlPathHelper().getPathWithinApplication(request);
+            String httpMethod = request.getMethod();
 
-            log.info(" ：：权限决策 ：：");
+            log.info("：：权限决策 ：：");
             log.info(" 请求地址: [{}] , 当前权限： [{}] , 携带参数: [{}] ", requestUrl, authorities, variables);
 
-            // 预检请求  或未开启资源权限 直接放行
-            if (request.getMethod().equals(HttpMethod.OPTIONS)) {
+            // 预检请求直接放行
+            if (HttpMethod.OPTIONS.matches(httpMethod)) {
                 return new AuthorizationDecision(true);
             }
 
-            Collection<ConfigAttribute> attributes = this.securityMetadataSource.getAttributes(requestAuthorizationContext);
+            // 根据 URL 获取需要的权限
+            Collection<String> requiredPermissions = urlPermissionMap.get(requestUrl);
 
-            if (CollUtils.isNotEmpty(attributes)) {
-                return new AuthorizationDecision(true);
-            } else {
+            // 如果没有配置权限，默认拒绝
+            if (CollUtils.isEmpty(requiredPermissions)) {
                 return new AuthorizationDecision(false);
             }
-        } catch (AccessDeniedException ex) {
+
+            // 判断当前用户是否拥有任意一个权限
+            boolean granted = authorities.stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .anyMatch(requiredPermissions::contains);
+
+            return new AuthorizationDecision(granted);
+
+        } catch (Exception ex) {
+            log.error("权限决策异常", ex);
             return new AuthorizationDecision(false);
         }
     }

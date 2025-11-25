@@ -69,7 +69,7 @@ public class ErrorCtrl extends Ctrl {
         if ("oracle".equalsIgnoreCase(dbType)) {
             wrapper.ge(ErrorlogEntity::getRequestTime, DateUtils.format(begin, DatePatterns.NORM_DATE_PATTERN));
             wrapper.le(ErrorlogEntity::getRequestTime, DateUtils.format(end, DatePatterns.NORM_DATE_PATTERN));
-        } else if ("mysql".equalsIgnoreCase(dbType)) {
+        } else {
             wrapper.ge(ErrorlogEntity::getRequestTime, begin);
             wrapper.le(ErrorlogEntity::getRequestTime, end);
         }
