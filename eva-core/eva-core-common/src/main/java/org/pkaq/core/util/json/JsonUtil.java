@@ -24,7 +24,7 @@ import java.util.Map;
  */
 @Slf4j
 public class JsonUtil {
-    private static ObjectMapper objectMapper = new JacksonObjectMapper();
+    private static final ObjectMapper objectMapper = new JacksonObjectMapper();
 
     /**
      * 将对象序列化成json字符串
