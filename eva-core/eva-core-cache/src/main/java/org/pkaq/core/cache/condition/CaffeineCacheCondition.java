@@ -14,6 +14,6 @@ public class CaffeineCacheCondition implements Condition {
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
         String cacheType = context.getEnvironment().getProperty("eva.cache.type");
 
-        return null == cacheType || cacheType.isEmpty() || "caffeine".equals(cacheType);
+        return "caffeine".equals(cacheType);
     }
 }

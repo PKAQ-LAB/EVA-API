@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.cache.condition.RedisCacheCondition;
 import org.pkaq.core.properties.EvaConfig;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
@@ -11,7 +12,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.cache.RedisCacheWriter;
+import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.JacksonJsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
@@ -37,6 +40,7 @@ public class RedisConfiguration {
      * @Description: 防止redis入库序列化乱码的问题
      */
     @Bean
+    @ConditionalOnMissingBean(RedisTemplate.class)
     public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         log.debug("初始化 Redis 緩存 --- --- --- -->");
         RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<>();
@@ -51,6 +55,27 @@ public class RedisConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(ReactiveRedisTemplate.class)
+    public ReactiveRedisTemplate<String, Object> reactiveRedisTemplate(
+            ReactiveRedisConnectionFactory factory) {
+
+        // String序列化器 (用于Key)
+        StringRedisSerializer stringSerializer = new StringRedisSerializer();
+
+        // 配置序列化上下文
+        RedisSerializationContext<String, Object> serializationContext =
+                RedisSerializationContext.<String, Object>newSerializationContext()
+                        .key(stringSerializer)
+                        .value(new JacksonJsonRedisSerializer<>(Object.class))
+                        .hashKey(stringSerializer)
+                        .hashValue(new JacksonJsonRedisSerializer<>(Object.class))
+                        .build();
+
+        return new ReactiveRedisTemplate<>(factory, serializationContext);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(CacheManager.class)
     public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
         log.debug("初始化 redis 緩存 --- --- --- -->");
         RedisCacheConfiguration defaultCache = buildCache(60 * 30L);
