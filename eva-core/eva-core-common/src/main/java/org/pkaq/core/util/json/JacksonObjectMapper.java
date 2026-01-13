@@ -5,6 +5,8 @@ import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 import org.pkaq.core.util.DatePatterns;
 
 import java.io.Serializable;
@@ -26,8 +28,15 @@ public class JacksonObjectMapper extends ObjectMapper implements Serializable {
 
         //设置为中国上海时区
         super.setTimeZone(TimeZone.getTimeZone(ZoneId.systemDefault()));
-        //序列化时，日期的统一格式
-        //TODO
+
+        // 禁用将日期序列化为时间戳
+        super.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        // 配置多态类型验证器 (安全性考虑)
+        // 限制只允许特定基类型，防止反序列化漏洞
+        PolymorphicTypeValidator typeValidator = BasicPolymorphicTypeValidator.builder()
+                .allowIfBaseType(Object.class)
+                .build();
         super.setDateFormat(new SimpleDateFormat(DatePatterns.NORM_DATETIME_PATTERN, Locale.CHINA));
         //序列化处理
         super.configure(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS.mappedFeature(), true);
@@ -40,8 +49,13 @@ public class JacksonObjectMapper extends ObjectMapper implements Serializable {
         super.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
         //反序列化时，属性不存在的兼容处理s
         super.getDeserializationConfig().withoutFeatures(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        //日期格式化
+        //序列化时，日期的统一格式
+        // 注册Java 8时间模块
         super.registerModule(new JavaTimeModule());
+        super.activateDefaultTyping(
+                typeValidator,
+                ObjectMapper.DefaultTyping.NON_FINAL
+        );
         super.findAndRegisterModules();
     }
 
