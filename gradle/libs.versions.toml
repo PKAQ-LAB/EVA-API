@@ -50,7 +50,7 @@ jaxb_api = { module = "javax.xml.bind:jaxb-api", version.ref = "jaxb_api" }
 truelicense = { module = "de.schlichtherle.truelicense:truelicense-core", version.ref = "truelicense" }
 
 # 配置加密
-jasypt = { module = "com.github.ulisesbocchio:jasypt-spring-boot-starter", version.ref = "jasypt" }
+#jasypt = { module = "com.github.ulisesbocchio:jasypt-spring-boot-starter", version.ref = "jasypt" }
 
 # 验证
 validation = { module = "org.springframework.boot:spring-boot-starter-validation" }

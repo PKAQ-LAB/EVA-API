@@ -6,7 +6,7 @@ plugins {
 
 allprojects {
     group = 'org.pkaq'
-    version = '3.0.2'
+    version = '4.0.1'
 }
 
 subprojects {
@@ -52,7 +52,7 @@ subprojects {
 
     repositories {
         mavenLocal()
-        maven { url 'https://central.sonatype.com/repository/maven-snapshots/' }
+//        maven { url 'https://central.sonatype.com/repository/maven-snapshots/' }
 //        maven {
 //            url "http://yy.pkaq.org:8082/artifactory/yunyue-public/"
 //            allowInsecureProtocol = true
