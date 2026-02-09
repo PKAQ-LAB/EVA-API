@@ -9,10 +9,6 @@ jar {
 project.description='eva common class'
 
 dependencies {
-    api libs.jaxb.api,
-        libs.servlet.api
-//        libs.jasypt
-
     api libs.aop,
         libs.jwt,
         libs.json,

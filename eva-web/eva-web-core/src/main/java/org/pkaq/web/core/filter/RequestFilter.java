@@ -1,4 +1,4 @@
-package org.pkaq.core.filter;
+package org.pkaq.web.core.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

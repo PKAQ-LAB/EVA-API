@@ -76,43 +76,6 @@ public class ExceptionAdvice {
     }
 
     /**
-     * 400异常.- 参数错误
-     *
-     * @param e 异常类型
-     * @return Response
-     */
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public Response<Object> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
-        log.error("参数解析失败：" + e.getMessage());
-
-        if (log.isDebugEnabled()) {
-            e.printStackTrace();
-        }
-
-        return Response.failure(CommonCodes.PARAM_TYPE_ERROR);
-    }
-
-    /**
-     * 参数类型错误
-     * // 缺少参数
-     *
-     * @param e 异常类型
-     * @return Response
-     */
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({IllegalArgumentException.class, MissingServletRequestParameterException.class})
-    public Response<Object> handleIllegalArgumentException(Exception e) {
-        log.warn("参数类型错误：不支持当前请求的参数类型:" + e.getMessage());
-
-        if (log.isDebugEnabled()) {
-            e.printStackTrace();
-        }
-
-        return Response.failure(CommonCodes.PARAM_TYPE_ERROR);
-    }
-
-    /**
      * 400 - spring参数绑定校验错误
      * // 处理 @Valid + 表单对象（@ModelAttribute）验证异常
      *
@@ -156,42 +119,6 @@ public class ExceptionAdvice {
         } else {
             return Response.failure(e.getBizCode(), e.getData(), e.getArgs());
         }
-    }
-
-    /**
-     * 405 - Method Not Allowed.
-     *
-     * @param e 异常类型
-     * @return Response
-     */
-    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
-    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public Response<Object> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
-        log.warn("不支持当前请求方法:" + e.getMessage());
-
-        if (log.isDebugEnabled()) {
-            e.printStackTrace();
-        }
-
-        return Response.failure(CommonCodes.REQUEST_METHOD_ERROR);
-    }
-
-    /**
-     * 415 - Unsupported Media Type.
-     *
-     * @param e 异常类型
-     * @return Response
-     */
-    @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
-    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
-    public Response<Object> handleHttpMediaTypeNotSupportedException(Exception e) {
-        log.warn("不支持当前媒体类型:" + e.getMessage());
-
-        if (log.isDebugEnabled()) {
-            e.printStackTrace();
-        }
-
-        return Response.failure(CommonCodes.REQUEST_MEDIA_ERROR);
     }
 
     /**

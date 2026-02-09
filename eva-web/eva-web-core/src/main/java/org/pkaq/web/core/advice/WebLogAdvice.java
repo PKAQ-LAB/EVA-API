@@ -1,4 +1,4 @@
-package org.pkaq.core.log;
+package org.pkaq.web.core.advice;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +10,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.pkaq.core.util.ExceptionUtils;
-import org.pkaq.core.util.IpUtils;
+import org.pkaq.web.core.utils.IpUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;

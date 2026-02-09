@@ -1,8 +1,9 @@
-package org.pkaq.core.util;
+package org.pkaq.web.core.utils;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.constant.CommonConstant;
+import org.pkaq.core.util.StrUtils;
 
 
 /**

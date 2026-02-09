@@ -2,7 +2,7 @@ if (project.file('../../publish.gradle').exists()) {
     apply from: '../../publish.gradle'
 }
 jar {
-    archiveBaseName = 'eva-web-sys'
+    archiveBaseName = 'eva-web-sys-service'
 }
 
 project.description = 'sys jar with authority and system management'
@@ -10,7 +10,7 @@ project.description = 'sys jar with authority and system management'
 dependencies {
     api project(":eva-web:eva-web-sys:eva-web-sys-domain")
 
-    implementation project(":eva-core:eva-core-common"),
+    implementation project(":eva-web:eva-web-core"),
                    project(":eva-core:eva-core-cache"),
                    project(":eva-core:eva-core-data-mybatis"),
                    project(":eva-core:eva-core-log"),

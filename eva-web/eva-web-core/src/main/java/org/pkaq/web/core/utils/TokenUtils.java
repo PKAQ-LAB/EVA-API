@@ -1,9 +1,10 @@
-package org.pkaq.core.util;
+package org.pkaq.web.core.utils;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.properties.EvaConfig;
+import org.pkaq.core.util.StrUtils;
 import org.springframework.stereotype.Component;
 
 
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @RequiredArgsConstructor
-public class TokenUtil {
+public class TokenUtils {
     private final EvaConfig evaConfig;
 
     /**

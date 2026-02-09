@@ -76,6 +76,7 @@ web = { module = "org.springframework.boot:spring-boot-starter-web" }
 servlet_api = { module = "jakarta.servlet:jakarta.servlet-api", version.ref = "servlet_api" }
 # 测试
 test = { module = "org.springframework.boot:spring-boot-starter-test" }
+webtest = { module = "org.springframework.boot:spring-boot-webmvc-test" }
 security_test = { module = "org.springframework.security:spring-security-test", version.ref = "security_test" }
 
 # 接口文档

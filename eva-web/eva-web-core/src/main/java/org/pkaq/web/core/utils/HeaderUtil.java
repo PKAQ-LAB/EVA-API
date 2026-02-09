@@ -1,4 +1,4 @@
-package org.pkaq.core.util;
+package org.pkaq.web.core.utils;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.pkaq.core.constant.CommonConstant;

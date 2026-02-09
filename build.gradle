@@ -73,6 +73,7 @@ subprojects {
         annotationProcessor libs.mapstruct.processor
 
         testImplementation libs.test,
+                           libs.webtest,
                            libs.security.test
 
      }

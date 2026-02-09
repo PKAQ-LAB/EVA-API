@@ -17,3 +17,4 @@ include ':eva-web:eva-web-auth'
 
 include 'eva-web:eva-web-sys:eva-web-sys-domain'
 include ':eva-web:eva-web-sys:eva-web-sys-service'
+include 'eva-web:eva-web-core'

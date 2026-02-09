@@ -15,10 +15,10 @@ import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.threaduser.ThreadUser;
 import org.pkaq.core.threaduser.ThreadUserHelper;
-import org.pkaq.core.util.CookieUtils;
 import org.pkaq.core.util.StrUtils;
-import org.pkaq.core.util.TokenUtil;
 import org.pkaq.core.util.json.JsonUtil;
+import org.pkaq.web.core.utils.CookieUtils;
+import org.pkaq.web.core.utils.TokenUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -52,7 +52,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final CacheTokenUtil cacheTokenUtil;
 
-    private final TokenUtil tokenUtil;
+    private final TokenUtils tokenUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {

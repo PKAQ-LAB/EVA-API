@@ -1,4 +1,4 @@
-package org.pkaq.core.advice;
+package org.pkaq.web.core.advice;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +10,7 @@ import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.exception.BizException;
 import org.pkaq.core.util.SecureUtils;
-import org.pkaq.core.util.TokenUtil;
+import org.pkaq.web.core.utils.TokenUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -34,7 +34,7 @@ public class NoRepeatSubmitAdvice {
 
     private final CacheManager cacheManager;
 
-    private final TokenUtil tokenUtil;
+    private final TokenUtils tokenUtil;
 
     @Around("@annotation(org.pkaq.core.annotation.NoRepeatSubmit)")
     public Object arround(ProceedingJoinPoint pjp) {

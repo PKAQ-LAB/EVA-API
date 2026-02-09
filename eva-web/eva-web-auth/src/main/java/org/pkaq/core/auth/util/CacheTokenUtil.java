@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.pkaq.core.cache.util.RedisUtil;
 import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.jwt.JwtUtil;
-import org.pkaq.core.util.RequestUtil;
+import org.pkaq.web.core.utils.RequestUtil;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.caffeine.CaffeineCache;

@@ -9,8 +9,8 @@ import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.jwt.JwtUtil;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.properties.EvaConfig;
-import org.pkaq.core.util.CookieUtils;
-import org.pkaq.core.util.TokenUtil;
+import org.pkaq.web.core.utils.CookieUtils;
+import org.pkaq.web.core.utils.TokenUtils;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,7 +26,7 @@ public class TokenCtrl {
     private final JwtUtil jwtUtil;
     private final EvaConfig evaConfig;
     private final CacheTokenUtil cacheTokenUtil;
-    private final TokenUtil tokenUtil;
+    private final TokenUtils tokenUtil;
 
     /**
      * 使用refresh token 换取 access token

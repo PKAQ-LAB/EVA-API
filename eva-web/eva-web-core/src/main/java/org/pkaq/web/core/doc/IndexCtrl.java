@@ -1,4 +1,4 @@
-package org.pkaq.core.mvc;
+package org.pkaq.web.core.doc;
 
 import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.servlet.http.HttpServletResponse;
