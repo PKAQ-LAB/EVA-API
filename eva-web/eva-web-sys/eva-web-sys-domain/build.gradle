@@ -12,5 +12,4 @@ jar {
 
 dependencies {
     implementation project(":eva-web:eva-web-core")
-    implementation libs.springdoc
 }

@@ -14,6 +14,5 @@ dependencies {
                    project(":eva-core:eva-core-cache"),
                    project(":eva-core:eva-core-data-mybatis"),
                    project(":eva-core:eva-core-log"),
-                   project(":eva-core:eva-core-upload"),
-                   libs.postgre
+                   project(":eva-core:eva-core-upload")
 }

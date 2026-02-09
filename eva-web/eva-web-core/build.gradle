@@ -1,0 +1,14 @@
+if (project.file('../../publish.gradle').exists()) {
+    apply from: '../../publish.gradle'
+}
+jar {
+    archiveBaseName = 'eva-web-core'
+}
+
+project.description = 'eva web core jar'
+
+dependencies {
+    api libs.servlet.api
+
+    api project(":eva-core:eva-core-common")
+}
