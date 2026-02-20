@@ -13,8 +13,7 @@ dependencies {
                    project(":eva-core:eva-core-log"),
                    libs.jdbc,
                    libs.p6spy,
-                   libs.flyway,
-                   libs.springdoc
+                   libs.flyway
 
     api libs.mybatis.plus.starter,
         libs.mybatis.plus.jsqlparser
