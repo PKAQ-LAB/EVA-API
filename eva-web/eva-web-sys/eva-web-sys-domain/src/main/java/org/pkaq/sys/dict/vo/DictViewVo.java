@@ -7,7 +7,7 @@ import org.pkaq.core.mvc.vo.Vo;
 /**
  * 字典视图
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @Data
 public class DictViewVo implements Vo {

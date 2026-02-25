@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * 角色模块关系表
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @Data
 @Schema(title = "角色模块关系")

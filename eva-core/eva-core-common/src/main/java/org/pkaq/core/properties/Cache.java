@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Cache配置
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @Data
 public class Cache {

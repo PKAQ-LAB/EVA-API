@@ -17,7 +17,7 @@ import java.util.Map;
 /**
  * 初始化字典信息
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @Data
 @Component

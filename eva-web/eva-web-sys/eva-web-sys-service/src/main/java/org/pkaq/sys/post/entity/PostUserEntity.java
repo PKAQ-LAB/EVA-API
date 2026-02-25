@@ -9,7 +9,7 @@ import org.apache.ibatis.type.Alias;
 /**
  * 角色用户关系表
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @Data
 @Alias("postUser")

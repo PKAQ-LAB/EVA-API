@@ -18,7 +18,7 @@ import java.util.Map;
 /**
  * 模块管理module
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @Mapper
 @Repository

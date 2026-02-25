@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 /**
  * 树形结构实体基类
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @Data
 @EqualsAndHashCode(callSuper = false)

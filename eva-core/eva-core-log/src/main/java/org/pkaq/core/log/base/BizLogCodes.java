@@ -7,7 +7,7 @@ import org.pkaq.core.codes.BizCode;
 /**
  * 业务日志类型
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @Getter
 @AllArgsConstructor

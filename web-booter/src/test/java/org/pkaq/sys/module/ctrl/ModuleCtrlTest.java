@@ -11,7 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * 模块管理测试类
  *
- * @author: S.PKAQ
+ * @author PKAQ
  * @Datetime: 2018/4/19 23:40
  */
 public class ModuleCtrlTest extends BaseTest {

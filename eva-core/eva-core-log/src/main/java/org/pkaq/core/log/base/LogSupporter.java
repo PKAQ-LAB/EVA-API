@@ -20,7 +20,7 @@ import java.util.Objects;
 /**
  * 日志持久化接口
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 public interface LogSupporter<T extends LogEntity, E extends LogEvent> {
     String FAILURE_PREFIX = "【操作失败】";

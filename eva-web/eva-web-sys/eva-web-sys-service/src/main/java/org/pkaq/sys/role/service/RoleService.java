@@ -36,7 +36,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @Service
 @RequiredArgsConstructor

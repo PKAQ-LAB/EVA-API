@@ -7,7 +7,7 @@ import org.apache.ibatis.type.Alias;
 /**
  * 角色模块关系表
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @Data
 @Alias("roleModule")

@@ -5,7 +5,7 @@ import lombok.Data;
 /**
  * license 配置
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @Data
 public class License {

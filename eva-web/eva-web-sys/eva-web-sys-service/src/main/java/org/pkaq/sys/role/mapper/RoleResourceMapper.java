@@ -17,7 +17,7 @@ import java.util.Set;
 /**
  * 角色模块关系mapper
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @Mapper
 @Repository

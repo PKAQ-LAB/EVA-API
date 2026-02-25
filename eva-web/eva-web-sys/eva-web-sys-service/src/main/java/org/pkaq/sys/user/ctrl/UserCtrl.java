@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 /**
  * 用户管理实体类
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @Tag(name = "用户管理")
 @RestController

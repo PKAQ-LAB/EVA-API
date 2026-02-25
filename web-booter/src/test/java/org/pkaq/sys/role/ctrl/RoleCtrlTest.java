@@ -11,7 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * 角色管理单元测试
  *
- * @author: S.PKAQ
+ * @author PKAQ
  * @Datetime: 2018/4/18 7:04
  */
 public class RoleCtrlTest extends BaseTest {

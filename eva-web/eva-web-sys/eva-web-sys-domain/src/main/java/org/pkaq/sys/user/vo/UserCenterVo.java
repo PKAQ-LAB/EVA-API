@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @Data
 @EqualsAndHashCode(callSuper = false)

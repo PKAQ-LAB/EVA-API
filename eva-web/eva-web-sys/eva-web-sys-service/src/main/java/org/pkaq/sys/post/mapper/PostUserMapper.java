@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 /**
  * 岗位用户关系mapper
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @Mapper
 @Repository

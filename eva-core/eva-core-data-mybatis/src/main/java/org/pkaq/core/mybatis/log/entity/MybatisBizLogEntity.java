@@ -11,7 +11,7 @@ import org.pkaq.core.log.base.BizLogEntity;
 /**
  * 业务日志 mybatis实体类
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @Data
 @Alias("bizlog")

@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.util.Arrays;
 
 /**
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @Getter
 @AllArgsConstructor

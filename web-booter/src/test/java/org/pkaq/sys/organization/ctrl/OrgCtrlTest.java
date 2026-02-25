@@ -11,7 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * 组织管理单元测试
  *
- * @author: S.PKAQ
+ * @author PKAQ
  * @Datetime: 2018/4/19 23:40
  */
 public class OrgCtrlTest extends BaseTest {

@@ -42,7 +42,7 @@ import java.util.function.Function;
 /**
  * 用户管理
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @Service
 @RequiredArgsConstructor

@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 /**
  * 实体类基类，用于存放公共属性
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @Data
 public abstract class StdEntity implements Entity {

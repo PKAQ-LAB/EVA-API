@@ -13,7 +13,7 @@ import java.sql.Date;
 /**
  * 用户管理实体类
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @Data
 @Alias("user")

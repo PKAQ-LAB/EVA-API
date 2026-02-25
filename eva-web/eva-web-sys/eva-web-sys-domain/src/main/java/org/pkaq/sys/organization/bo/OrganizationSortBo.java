@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 import org.pkaq.core.mvc.bo.Bo;
 
 /**
- * @author: S.PKAQ
+ * @author PKAQ
  */
 
 @Data

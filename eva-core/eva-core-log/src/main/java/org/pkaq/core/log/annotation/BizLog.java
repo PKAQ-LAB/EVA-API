@@ -7,7 +7,7 @@ import java.lang.annotation.*;
 /**
  * 业务日志注解
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 // 该注解能被声明在一个方法参数 或者 类的方法前
 @Target({ElementType.PARAMETER, ElementType.METHOD})

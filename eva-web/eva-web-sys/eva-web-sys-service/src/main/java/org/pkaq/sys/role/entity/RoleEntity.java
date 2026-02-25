@@ -10,7 +10,7 @@ import org.pkaq.core.mybatis.mvc.entity.StdEntity;
 /**
  * 角色管理模型类
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @Data
 @Alias("role")

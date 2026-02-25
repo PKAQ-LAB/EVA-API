@@ -7,7 +7,7 @@ import org.hibernate.validator.constraints.Length;
 /**
  * 实体类基类，用于存放公共属性
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @Data
 public abstract class StdBo implements Bo {

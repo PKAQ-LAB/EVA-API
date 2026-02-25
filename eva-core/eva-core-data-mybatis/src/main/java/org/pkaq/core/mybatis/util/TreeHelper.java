@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 /**
  * 树形数据工具类
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TreeHelper {

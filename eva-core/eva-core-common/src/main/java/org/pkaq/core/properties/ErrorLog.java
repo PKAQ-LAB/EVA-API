@@ -5,7 +5,7 @@ import lombok.Data;
 /**
  * 错误日志配置读取类
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @Data
 public class ErrorLog {

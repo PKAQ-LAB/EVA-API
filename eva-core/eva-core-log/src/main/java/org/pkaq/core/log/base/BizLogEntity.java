@@ -8,7 +8,7 @@ import lombok.experimental.Accessors;
 /**
  * 业务日志模型类
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @EqualsAndHashCode(callSuper = true)
 @Data

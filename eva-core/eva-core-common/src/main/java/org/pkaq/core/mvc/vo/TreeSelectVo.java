@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * antd treeSelect需要的数据结构
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @Data
 public class TreeSelectVo {

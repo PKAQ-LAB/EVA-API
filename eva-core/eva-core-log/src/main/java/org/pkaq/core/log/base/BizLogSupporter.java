@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * 业务日志持久化接口
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 public interface BizLogSupporter {
     /**

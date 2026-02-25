@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * 组织管理实体类
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 
 @Data

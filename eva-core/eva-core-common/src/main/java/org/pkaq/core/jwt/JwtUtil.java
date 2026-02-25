@@ -21,7 +21,7 @@ import java.util.Date;
 /**
  * JWT 工具类
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @Data
 @Component

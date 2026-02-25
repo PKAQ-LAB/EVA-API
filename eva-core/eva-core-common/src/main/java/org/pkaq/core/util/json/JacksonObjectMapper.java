@@ -52,10 +52,6 @@ public class JacksonObjectMapper extends ObjectMapper implements Serializable {
         //序列化时，日期的统一格式
         // 注册Java 8时间模块
         super.registerModule(new JavaTimeModule());
-        super.activateDefaultTyping(
-                typeValidator,
-                ObjectMapper.DefaultTyping.NON_FINAL
-        );
         super.findAndRegisterModules();
     }
 

@@ -8,7 +8,7 @@ import org.pkaq.core.mvc.vo.StdVo;
 /**
  * 角色列表vo
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @EqualsAndHashCode(callSuper = true)
 @Data

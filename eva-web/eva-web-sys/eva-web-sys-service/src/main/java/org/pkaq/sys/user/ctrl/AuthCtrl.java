@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @Slf4j
 @Tag(name = "用户信息")

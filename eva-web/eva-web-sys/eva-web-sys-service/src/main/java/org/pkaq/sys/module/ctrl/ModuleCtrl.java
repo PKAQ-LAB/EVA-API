@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 /**
  * 模块管理controller
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @Tag(name = "模块管理")
 @RestController

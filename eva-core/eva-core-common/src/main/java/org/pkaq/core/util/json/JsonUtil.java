@@ -27,6 +27,30 @@ public class JsonUtil {
     private static final ObjectMapper objectMapper = new JacksonObjectMapper();
 
     /**
+     * 标准化 JSON 请求体
+     * 移除 \r\n 和所有格式化
+     */
+    public static String normalizeJsonBody(String body) {
+        if (body == null || body.isEmpty()) {
+            return "";
+        }
+
+        try {
+            // ✅ 解析 JSON
+            JsonNode jsonNode = objectMapper.readTree(body);
+
+            // ✅ 重新序列化为紧凑格式（无空白、无 \r\n）
+            return objectMapper.writeValueAsString(jsonNode);
+
+        } catch (Exception e) {
+            // 不是 JSON，直接移除换行符
+            return body.replace("\r\n", "")
+                    .replace("\r", "")
+                    .replace("\n", "");
+        }
+    }
+
+    /**
      * 将对象序列化成json字符串
      *
      * @param value javaBean

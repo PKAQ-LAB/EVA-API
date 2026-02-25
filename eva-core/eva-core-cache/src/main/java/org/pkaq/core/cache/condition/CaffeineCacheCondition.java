@@ -7,7 +7,7 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 /**
  * 缓存启用条件， 默认使用 caffeine 缓存
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 public class CaffeineCacheCondition implements Condition {
     @Override

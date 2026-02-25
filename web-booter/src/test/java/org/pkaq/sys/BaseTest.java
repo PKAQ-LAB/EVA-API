@@ -11,7 +11,7 @@ import org.springframework.web.context.WebApplicationContext;
 /**
  * 单元测试基类
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @SpringBootTest
 @AutoConfigureMockMvc

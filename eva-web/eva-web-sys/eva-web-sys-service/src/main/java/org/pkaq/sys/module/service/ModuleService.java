@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 /**
  * 模块管理service
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @Service
 @RequiredArgsConstructor

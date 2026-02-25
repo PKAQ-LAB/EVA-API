@@ -22,8 +22,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.Set;
 
 /**
- * @Description: 统一异常处理
- * @FileName: ExceptionAdvice.java
+ * 统一异常处理
+ * @author PKAQ
  */
 @RestControllerAdvice
 @Slf4j
@@ -33,8 +33,6 @@ public class ExceptionAdvice {
      * hibernate validator参数校验失败时抛出的异常
      * // 处理方法参数上的 @Validated（如 service 层方法）
      *
-     * @param e
-     * @return
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ConstraintViolationException.class)
@@ -58,8 +56,6 @@ public class ExceptionAdvice {
      * hibernate validator参数校验失败时抛出的异常
      * // 处理 @Valid + @RequestBody 参数校验异常
      *
-     * @param e
-     * @return
      */
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

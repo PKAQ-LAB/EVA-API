@@ -10,7 +10,7 @@ import java.io.IOException;
 /**
  * 默认控制器 访问swagger首页
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @Controller
 public class IndexCtrl {

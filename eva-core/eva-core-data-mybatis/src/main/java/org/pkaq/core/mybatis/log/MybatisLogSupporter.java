@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * mybatis 存储实现类
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @Slf4j
 @Component

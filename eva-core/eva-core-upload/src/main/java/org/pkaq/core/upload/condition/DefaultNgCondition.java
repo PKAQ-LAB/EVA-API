@@ -8,7 +8,7 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 /**
  * 文件上传启用条件， 默认使用 ng
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 public class DefaultNgCondition implements Condition {
 

@@ -8,7 +8,7 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 /**
  * 文件上传启用条件，阿里云对象存储
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 public class AliOssCondition implements Condition {
 

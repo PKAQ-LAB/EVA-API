@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 /**
  * 字典管理service
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @Service
 @RequiredArgsConstructor

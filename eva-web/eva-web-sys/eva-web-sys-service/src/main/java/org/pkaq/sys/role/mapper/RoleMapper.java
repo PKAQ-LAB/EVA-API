@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * 角色管理mapper
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @Mapper
 @Repository

@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * 用户管理实体类
  *
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @Data
 @Schema(title = "用户管理列表Vo")

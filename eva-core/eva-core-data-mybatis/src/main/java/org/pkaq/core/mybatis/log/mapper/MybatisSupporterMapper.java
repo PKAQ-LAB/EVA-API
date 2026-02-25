@@ -6,7 +6,7 @@ import org.pkaq.core.mybatis.log.entity.MybatisBizLogEntity;
 import org.springframework.stereotype.Repository;
 
 /**
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @Mapper
 @Repository

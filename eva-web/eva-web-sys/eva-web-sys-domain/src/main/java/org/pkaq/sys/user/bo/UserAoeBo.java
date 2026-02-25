@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author: S.PKAQ
+ * @author PKAQ
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
