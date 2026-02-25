@@ -17,13 +17,12 @@ import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.util.DateUtils;
 import org.pkaq.web.core.utils.CookieUtils;
 import org.pkaq.web.core.utils.RequestUtil;
-import org.springframework.http.MediaType;
+import org.pkaq.web.core.utils.ResponseUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -53,9 +52,6 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
                                         Authentication authentication) throws IOException {
         var cacheToken = evaConfig.getJwt().isPersistence();
 
-        httpServletResponse.setCharacterEncoding(StandardCharsets.UTF_8);
-        httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        httpServletResponse.setStatus(HttpServletResponse.SC_OK);
 
         //表单输入的用户名
         JwtUserDetail user = (JwtUserDetail) authentication.getPrincipal();
@@ -94,13 +90,8 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
 
         bizLogSupporter.save(bizLogEntity);
 
-        try (PrintWriter printWriter = httpServletResponse.getWriter()) {
-            printWriter.write(mapper.writeValueAsString(
-                            Response
-                                    .success(map, CommonCodes.LOGIN_SUCCESS_WELCOME, user.getName())
-                    )
-            );
-            printWriter.flush();
-        }
+        ResponseUtil.OK(httpServletResponse, mapper.writeValueAsString(
+                Response
+                        .success(map, CommonCodes.LOGIN_SUCCESS_WELCOME, user.getName())));
     }
 }

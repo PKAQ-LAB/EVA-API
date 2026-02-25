@@ -5,21 +5,18 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.pkaq.core.auth.AuthCodes;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.util.json.JsonUtil;
-import org.springframework.http.MediaType;
+import org.pkaq.web.core.utils.ResponseUtil;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 
 /**
  * 鉴权失败时的响应
  * AuthenticationEntryPoint 用来解决匿名用户访问无权限资源时的异常
  *
- * @author: S.PKAQ
  */
 @Component
 public class UnauthorizedHandler implements AuthenticationEntryPoint, Serializable {
@@ -38,15 +35,8 @@ public class UnauthorizedHandler implements AuthenticationEntryPoint, Serializab
                          AuthenticationException authException) throws IOException {
         //返回json形式的错误信息
 
-        response.setCharacterEncoding(StandardCharsets.UTF_8);
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setStatus(HttpServletResponse.SC_OK);
-
-        try (PrintWriter printWriter = response.getWriter()) {
-            printWriter.write(JsonUtil.toJson(
-                    Response
-                            .failure(AuthCodes.LOGIN_EXPIRED)));
-            printWriter.flush();
-        }
+        ResponseUtil.OK(response, JsonUtil.toJson(
+                Response
+                        .failure(AuthCodes.LOGIN_EXPIRED)));
     }
 }

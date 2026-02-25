@@ -6,15 +6,13 @@ import org.pkaq.core.auth.AuthCodes;
 import org.pkaq.core.codes.BizCode;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.util.json.JsonUtil;
-import org.springframework.http.MediaType;
+import org.pkaq.web.core.utils.ResponseUtil;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
 
 /**
  * 自定义登录失败处理器
@@ -28,9 +26,6 @@ public class UrlAuthenticationFailureHandler implements AuthenticationFailureHan
     public void onAuthenticationFailure(HttpServletRequest httpServletRequest,
                                         HttpServletResponse httpServletResponse,
                                         AuthenticationException e) throws IOException {
-        httpServletResponse.setCharacterEncoding(StandardCharsets.UTF_8);
-        httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        httpServletResponse.setStatus(HttpServletResponse.SC_OK);
 
         BizCode bizcode = AuthCodes.LOGIN_FAILED;
 
@@ -38,12 +33,8 @@ public class UrlAuthenticationFailureHandler implements AuthenticationFailureHan
             bizcode = AuthCodes.ACCOUNT_OR_PWD_ERROR;
         }
 
-
-        try (PrintWriter printWriter = httpServletResponse.getWriter()) {
-            printWriter.write(JsonUtil.toJson(
-                    Response.failure(bizcode)
-            ));
-            printWriter.flush();
-        }
+        ResponseUtil.OK(httpServletResponse,JsonUtil.toJson(
+                Response.failure(bizcode)
+        ));
     }
 }

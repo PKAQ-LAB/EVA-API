@@ -11,13 +11,12 @@ import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.core.util.json.JsonUtil;
 import org.pkaq.web.core.utils.CookieUtils;
-import org.springframework.http.MediaType;
+import org.pkaq.web.core.utils.ResponseUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 /**
  * 自定义注销成功处理器
@@ -48,11 +47,7 @@ public class UrlLogoutSuccessHandler implements LogoutSuccessHandler {
         CookieUtils.clearCookie(httpServletResponse, CommonConstant.REFRESH_TOKEN_KEY, "/", domain);
         CookieUtils.clearCookie(httpServletResponse, CommonConstant.USER_KEY, "/", domain);
 
+        ResponseUtil.OK(httpServletResponse, JsonUtil.toJson(Response.failure(CommonCodes.LOGINOUT_SUCCESS)));
 
-        httpServletResponse.setCharacterEncoding(StandardCharsets.UTF_8);
-        httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        httpServletResponse.setStatus(HttpServletResponse.SC_OK);
-
-        httpServletResponse.getWriter().write(JsonUtil.toJson(new Response().failure(CommonCodes.LOGINOUT_SUCCESS)));
     }
 }

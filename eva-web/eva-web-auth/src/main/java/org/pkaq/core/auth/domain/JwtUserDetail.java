@@ -10,7 +10,6 @@ import java.util.Collection;
 /**
  * JwtUser
  *
- * @author: S.PKAQ
  */
 @Data
 public class JwtUserDetail implements UserDetails {
