@@ -33,8 +33,6 @@ public class UrlAuthenticationFailureHandler implements AuthenticationFailureHan
             bizcode = AuthCodes.ACCOUNT_OR_PWD_ERROR;
         }
 
-        ResponseUtil.OK(httpServletResponse,JsonUtil.toJson(
-                Response.failure(bizcode)
-        ));
+        ResponseUtil.write(httpServletResponse,Response.failure(bizcode));
     }
 }

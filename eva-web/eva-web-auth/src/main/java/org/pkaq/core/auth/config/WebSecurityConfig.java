@@ -51,10 +51,10 @@ public class WebSecurityConfig {
     private final UnauthorizedHandler unauthorizedHandler;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JwtAuthFilter jwtAuthFilter;
-    @Value("${eva.security.anonymous}")
-    private String[] anonymous;
-    @Value("${eva.security.webstatic}")
-    private String[] webstatic;
+
+    @Value("${server.servlet.context-path:/}")
+    private String contextPath;
+
     @Autowired(required = false)
     private DynamiclAccessDecisionManager urlAccessDecisionManager;
 
@@ -88,7 +88,8 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain httpSecurityConfigure(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain httpSecurityConfigure(HttpSecurity httpSecurity) {
+
         httpSecurity.cors(Customizer.withDefaults())
                 // 关闭csrf 由于使用的是JWT，我们这里不需要csrf
                 .csrf(AbstractHttpConfigurer::disable)
@@ -108,7 +109,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(Customizer.withDefaults());
 
         // 允许匿名访问的url
-        httpSecurity.authorizeHttpRequests(auth -> auth.requestMatchers(anonymous).permitAll());
+        httpSecurity.authorizeHttpRequests(auth -> auth.requestMatchers(evaConfig.getSecurity().getAnonymous()).permitAll());
 
         if (null != urlAccessDecisionManager) {
             httpSecurity.authorizeHttpRequests(auth -> auth.anyRequest().access(urlAccessDecisionManager));
@@ -116,7 +117,7 @@ public class WebSecurityConfig {
             httpSecurity.authorizeHttpRequests(auth -> auth.anyRequest().authenticated());
         }
 
-        httpSecurity.logout(logout -> logout.logoutUrl("/auth/logout").logoutSuccessHandler(urlLogoutSuccessHandler));
+        httpSecurity.logout(logout -> logout.logoutUrl(contextPath+"/auth/logout").logoutSuccessHandler(urlLogoutSuccessHandler));
 
         httpSecurity.exceptionHandling(ex ->
                 ex.authenticationEntryPoint(unauthorizedHandler)
@@ -124,7 +125,7 @@ public class WebSecurityConfig {
 
         httpSecurity
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JwtUsernamePasswordAuthenticationFilter("/auth/login",
+                .addFilterBefore(new JwtUsernamePasswordAuthenticationFilter(contextPath+"/auth/login",
                                 authenticationConfiguration.getAuthenticationManager(),
                                 urlAuthenticationSuccessHandler,
                                 urlAuthenticationFailureHandler),
@@ -173,8 +174,8 @@ public class WebSecurityConfig {
                     "/*/api-docs/**"
             };
 
-            if (null != webstatic) {
-                paths = ArrayUtils.addAll(webstatic, staticPath);
+            if (null != evaConfig.getSecurity().getWebstatic()) {
+                paths = ArrayUtils.addAll(evaConfig.getSecurity().getWebstatic(), staticPath);
             }
 
             web.ignoring()

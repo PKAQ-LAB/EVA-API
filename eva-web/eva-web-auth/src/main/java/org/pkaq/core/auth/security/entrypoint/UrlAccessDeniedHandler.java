@@ -24,9 +24,8 @@ public class UrlAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException e) throws IOException {
 
-        ResponseUtil.OK(response, JsonUtil.toJson(JsonUtil.toJson(
-                Response
-                        .failure(CommonCodes.PERMISSION_DENY))));
+        ResponseUtil.write(response, Response
+                .failure(CommonCodes.PERMISSION_DENY));
     }
 
 }

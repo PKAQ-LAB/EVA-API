@@ -35,8 +35,7 @@ public class UnauthorizedHandler implements AuthenticationEntryPoint, Serializab
                          AuthenticationException authException) throws IOException {
         //返回json形式的错误信息
 
-        ResponseUtil.OK(response, JsonUtil.toJson(
-                Response
-                        .failure(AuthCodes.LOGIN_EXPIRED)));
+        ResponseUtil.write(response, Response
+                .failure(AuthCodes.LOGIN_EXPIRED));
     }
 }

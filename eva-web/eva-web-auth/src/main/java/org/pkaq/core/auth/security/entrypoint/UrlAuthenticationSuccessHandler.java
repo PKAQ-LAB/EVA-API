@@ -1,6 +1,5 @@
 package org.pkaq.core.auth.security.entrypoint;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +14,7 @@ import org.pkaq.core.log.base.BizLogSupporter;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.util.DateUtils;
+import org.pkaq.core.util.json.JsonUtil;
 import org.pkaq.web.core.utils.CookieUtils;
 import org.pkaq.web.core.utils.RequestUtil;
 import org.pkaq.web.core.utils.ResponseUtil;
@@ -44,8 +44,6 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
 
     private final CacheTokenUtil tokenUtil;
 
-    private final ObjectMapper mapper;
-
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse httpServletResponse,
@@ -71,7 +69,7 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
 
         CookieUtils.addCookie(httpServletResponse, CommonConstant.ACCESS_TOKEN_KEY, access_token, maxAge, path, domain);
         CookieUtils.addCookie(httpServletResponse, CommonConstant.REFRESH_TOKEN_KEY, refresh_token, maxAge, path, domain);
-        CookieUtils.addCookie(httpServletResponse, CommonConstant.USER_KEY, URLEncoder.encode(mapper.writeValueAsString(user), StandardCharsets.UTF_8), maxAge, path, domain);
+        CookieUtils.addCookie(httpServletResponse, CommonConstant.USER_KEY, URLEncoder.encode(JsonUtil.toJson(user), StandardCharsets.UTF_8), maxAge, path, domain);
 
         Map<String, Object> map = HashMap.newHashMap(3);
         map.put(CommonConstant.USER_KEY, user);
@@ -90,8 +88,7 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
 
         bizLogSupporter.save(bizLogEntity);
 
-        ResponseUtil.OK(httpServletResponse, mapper.writeValueAsString(
-                Response
-                        .success(map, CommonCodes.LOGIN_SUCCESS_WELCOME, user.getName())));
+        ResponseUtil.write(httpServletResponse, Response
+                .success(map, CommonCodes.LOGIN_SUCCESS_WELCOME, user.getName()));
     }
 }

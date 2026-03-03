@@ -2,58 +2,39 @@ package org.pkaq.web.core.utils;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.pkaq.core.mvc.vo.Response;
+import org.pkaq.core.util.json.JsonUtil;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * 统一响应工具类
  */
 @Slf4j
 public class ResponseUtil {
-    public static void json(HttpServletResponse response,
-                                 HttpStatus status,
-                                 String message) throws IOException {
-        // 检查响应是否已提交
+    public static void write(HttpServletResponse response,
+                             Response<?> body) throws IOException {
+        write(response, HttpStatus.OK, body);
+    }
+
+    public static void write(HttpServletResponse response,
+                             HttpStatus status,
+                             Response<?> body) throws IOException {
+
         if (response.isCommitted()) {
             log.warn("响应已提交，无法再次写入");
             return;
         }
-        if (status != null) {
-            response.setStatus(status.value());
-        }
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        response.getWriter().write(message);
+
+        response.setStatus(status.value());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding(StandardCharsets.UTF_8);
+
+        String json = JsonUtil.toJson(body);
+        response.getWriter().write(json);
         response.getWriter().flush();
     }
-
-    public static void OK(HttpServletResponse response,
-                            String message) throws IOException {
-        // 检查响应是否已提交
-        if (response.isCommitted()) {
-            log.warn("响应已提交，无法再次写入");
-            return;
-        }
-        response.setStatus(HttpStatus.OK.value());
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        response.getWriter().write(message);
-        response.getWriter().flush();
-    }
-
-    public static void fail(HttpServletResponse response,
-                          String message) throws IOException {
-        // 检查响应是否已提交
-        if (response.isCommitted()) {
-            log.warn("响应已提交，无法再次写入");
-            return;
-        }
-        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        response.getWriter().write(message);
-        response.getWriter().flush();
-    }
-
 }

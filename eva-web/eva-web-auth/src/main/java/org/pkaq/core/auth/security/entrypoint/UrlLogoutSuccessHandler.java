@@ -47,7 +47,7 @@ public class UrlLogoutSuccessHandler implements LogoutSuccessHandler {
         CookieUtils.clearCookie(httpServletResponse, CommonConstant.REFRESH_TOKEN_KEY, "/", domain);
         CookieUtils.clearCookie(httpServletResponse, CommonConstant.USER_KEY, "/", domain);
 
-        ResponseUtil.OK(httpServletResponse, JsonUtil.toJson(Response.failure(CommonCodes.LOGINOUT_SUCCESS)));
+        ResponseUtil.write(httpServletResponse,Response.failure(CommonCodes.LOGINOUT_SUCCESS));
 
     }
 }
