@@ -7,11 +7,11 @@
     <select id="list" resultType="org.pkaq.sys.post.vo.PostListVo">
         SELECT
             y.ID,
-            y.`CODE`,
-            y.`TITLE`,
-            y.`LEVEL`,
+            y.CODE,
+            y.TITLE,
+            y.LEVEL,
             y.PID,
-            y.`SORT`,
+            y.SORT,
             s.TITLE AS PARENT_NAME,
             y.REMARK
         FROM

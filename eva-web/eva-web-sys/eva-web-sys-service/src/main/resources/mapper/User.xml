@@ -85,7 +85,12 @@
 
     <select id="availableCounts" resultType="java.lang.Integer">
         SELECT
+        <if test="_databaseId == 'mysql'">
             T.AUTH_USER_COUNT - IFNULL(U.USER_COUNT, 0) AS ct
+        </if>
+        <if test="_databaseId == 'postgre'">
+            T.AUTH_USER_COUNT - COALESCE(U.USER_COUNT, 0) AS ct
+        </if>
         FROM SYS_TENANT T
              LEFT JOIN (
                 SELECT
