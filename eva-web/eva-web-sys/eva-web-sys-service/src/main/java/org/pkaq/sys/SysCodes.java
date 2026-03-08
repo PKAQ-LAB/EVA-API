@@ -20,7 +20,7 @@ public enum SysCodes implements BizAssert {
     CODE_ALREADY_EXIST("编码已存在", "0x001-01005"),
     ACCOUNT_OR_CODE_ALREADY_EXIST("账户名或者编码已存在", "0x001-01006"),
     USER_ACCOUNT_LIMIT("用户超出授权数量", "0x001-01007"),
-    USER_ACCOUNT_ILLEGAL("用户名非法或为空", "0x001-01008"),
+    USER_ACCOUNT_ILLEGAL("非法的用户名", "0x001-01008"),
 
     /**
      * 租户相关 0100x-02

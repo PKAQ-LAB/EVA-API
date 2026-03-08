@@ -19,6 +19,6 @@ public class PostQueryBo extends PageBo {
     private String level;
 
     @Schema(description = "租户id")
-    private String tenantId;
+    private Long tenantId;
 
 }

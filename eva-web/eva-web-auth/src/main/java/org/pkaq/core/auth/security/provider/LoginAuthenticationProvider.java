@@ -3,9 +3,9 @@ package org.pkaq.core.auth.security.provider;
 import lombok.Getter;
 import lombok.Setter;
 import org.pkaq.core.auth.AuthCodes;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -69,12 +69,12 @@ public class LoginAuthenticationProvider extends AbstractUserDetailsAuthenticati
                                                   UsernamePasswordAuthenticationToken authentication) {
         AuthCodes.LOGIN_ERROR.assertNotNull(authentication.getCredentials(), AuthCodes.ACCOUNT_OR_PWD_ERROR);
 
-        String presentedPassword = authentication.getCredentials().toString();
+        String presentedPassword = String.valueOf(authentication.getCredentials());
 
         boolean matches = this.bCryptPasswordEncoder.matches(presentedPassword, userDetails.getPassword());
 
         if (!matches) {
-            AuthCodes.ACCOUNT_OR_PWD_ERROR.newException(AuthenticationException.class);
+            throw new BadCredentialsException(AuthCodes.ACCOUNT_OR_PWD_ERROR.getMsg());
         }
 
     }

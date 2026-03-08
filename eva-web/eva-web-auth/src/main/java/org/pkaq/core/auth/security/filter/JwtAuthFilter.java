@@ -18,9 +18,9 @@ import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.core.util.StrUtils;
 import org.pkaq.core.util.json.JsonUtil;
 import org.pkaq.web.core.utils.CookieUtils;
+import org.pkaq.web.core.utils.ResponseUtil;
 import org.pkaq.web.core.utils.TokenUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
@@ -33,8 +33,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
@@ -109,11 +107,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     // reponse请求头返回刷新后的token
                     response.setHeader(CommonConstant.ACCESS_TOKEN_KEY, newToken);
                     // 后台设置前台cookie值
-                    CookieUtils.addCookie(response, CommonConstant.ACCESS_TOKEN_KEY,
-                            newToken,
-                            evaConfig.getCookie().getMaxAge(),
-                            "/",
-                            evaConfig.getCookie().getDomain());
+                    CookieUtils.addCookie(response, CommonConstant.ACCESS_TOKEN_KEY, newToken, evaConfig.getCookie().getMaxAge(), "/", evaConfig.getCookie().getDomain());
                 }
             } catch (AuthenticationException e) {
                 logger.warn("鉴权失败 Token已过期", e);
@@ -121,15 +115,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 // 清除cookie
                 // this.clearCookie(response);
 
-                try (PrintWriter printWriter = response.getWriter()) {
-                    response.setCharacterEncoding(StandardCharsets.UTF_8);
-                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-
-                    printWriter.write(JsonUtil.toJson(
-                            new Response().failure(AuthCodes.LOGIN_EXPIRED))
-                    );
-                    printWriter.flush();
-                }
+                ResponseUtil.write(response, Response.failure(AuthCodes.LOGIN_EXPIRED));
                 return;
             }
         } else {
@@ -152,21 +138,18 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 try {
                     userDetails = this.userDetailsService.loadUserByUsername(account);
                 } catch (UsernameNotFoundException _) {
-                    response.setCharacterEncoding(StandardCharsets.UTF_8);
-                    response.setContentType("application/json");
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "您的登录已过期, 请重新登录.");
+                    ResponseUtil.write(response, Response.failure(AuthCodes.LOGIN_EXPIRED));
+                    return;
+                } catch (Exception e) {
+                    ResponseUtil.write(response, Response.failure(AuthCodes.LOGIN_EXPIRED));
                     return;
                 }
 
                 logger.info("authenticated user " + account + ", setting org.pkaq.security context");
                 // 验证通过 将用户信息存入 threadlocal
-                String[] roles = userDetails.getAuthorities().stream()
-                        .map(GrantedAuthority::getAuthority)
-                        .toArray(String[]::new);
+                String[] roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toArray(String[]::new);
 
-                ThreadUser currentUser = new ThreadUser().setUserId(uid)
-                        .setName(account)
-                        .setRoles(roles);
+                ThreadUser currentUser = new ThreadUser().setUserId(uid).setName(account).setRoles(roles);
 
                 ThreadUserHelper.runWithUser(currentUser, () -> {
                     try {
@@ -177,8 +160,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 });
 
 //                将用户信息设置到security 上下文中
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -193,26 +175,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
      * @param response
      */
     public void clearCookie(HttpServletResponse response) {
-        CookieUtils.addCookie(response,
-                CommonConstant.ACCESS_TOKEN_KEY,
-                null,
-                0,
-                "/",
-                evaConfig.getCookie().getDomain());
+        CookieUtils.addCookie(response, CommonConstant.ACCESS_TOKEN_KEY, null, 0, "/", evaConfig.getCookie().getDomain());
 
-        CookieUtils.addCookie(response,
-                CommonConstant.REFRESH_TOKEN_KEY,
-                null,
-                0,
-                "/",
-                evaConfig.getCookie().getDomain());
+        CookieUtils.addCookie(response, CommonConstant.REFRESH_TOKEN_KEY, null, 0, "/", evaConfig.getCookie().getDomain());
 
-        CookieUtils.addCookie(response,
-                CommonConstant.USER_KEY,
-                null,
-                0,
-                "/",
-                evaConfig.getCookie().getDomain());
+        CookieUtils.addCookie(response, CommonConstant.USER_KEY, null, 0, "/", evaConfig.getCookie().getDomain());
 
     }
 }

@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.pkaq.core.auth.AuthCodes;
 import org.pkaq.core.mvc.vo.Response;
-import org.pkaq.core.util.json.JsonUtil;
 import org.pkaq.web.core.utils.ResponseUtil;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -17,6 +16,7 @@ import java.io.Serializable;
  * 鉴权失败时的响应
  * AuthenticationEntryPoint 用来解决匿名用户访问无权限资源时的异常
  *
+ * @author PKAQ
  */
 @Component
 public class UnauthorizedHandler implements AuthenticationEntryPoint, Serializable {

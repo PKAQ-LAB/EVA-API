@@ -5,12 +5,14 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.codes.CommonCodes;
+import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.exception.BizException;
 import org.pkaq.core.mvc.entity.Entity;
 import org.pkaq.core.mvc.vo.PageVo;
 import org.pkaq.core.mvc.vo.Vo;
 import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.core.mybatis.util.PageResult;
+import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.core.upload.provider.FileProvider;
 import org.pkaq.core.util.BCryptUtils;
@@ -56,6 +58,7 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
     private final FileProvider fileProvider;
     private final RoleUserMapper roleUserMapper;
     private final UserConvert convert;
+    private final EvaConfig evaConfig;
 
     public void validateUsername(String username) {
         if (username == null || ILLEGAL_USERNAMES.contains(username.trim().toLowerCase())) {
@@ -166,6 +169,9 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     @Override
     public void saveUser(UserAoeBo user) {
+        // 校验用户名合法性
+        this.validateUsername(user.getAccount());
+
         // 用户资料发生修改后 重新生成密码
         // 这里传递过来的密码是进行md5加密后的
         String pwd = user.getPassword();
@@ -174,15 +180,18 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
 
         // 新增手工生成主键
         // 编辑， 删除原有头像文件，保存新的头像文件
-        long userId = user.getId();
+        Long userId = user.getId();
         boolean isInsert = true;
-        if (0 == userId) {
+        if (null == userId || 0 == userId) {
             userId = IdWorker.getId();
             user.setId(userId);
-            var tid = ThreadUserHelper.getTenantId();
-            var leftCt = this.mapper.availableCounts(tid);
-            if (leftCt < 1) {
-                SysCodes.USER_ACCOUNT_LIMIT.newException();
+            // 单例模式 不限用户数量
+            if (CommonConstant.MODE_SINGLETON.equals(evaConfig.getMode())) {
+                var tid = ThreadUserHelper.getTenantId();
+                Integer leftCt = this.mapper.availableCounts(tid);
+                if (leftCt == null || leftCt < 1) {
+                    SysCodes.USER_ACCOUNT_LIMIT.newException();
+                }
             }
         } else {
             isInsert = false;
@@ -267,6 +276,9 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
 
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void createTenantAdmin(UserEntity user) {
+        // 校验用户名合法性
+        this.validateUsername(user.getAccount());
+
         String pwd = user.getPassword();
         pwd = BCryptUtils.hashpw(pwd);
         user.setPassword(pwd);

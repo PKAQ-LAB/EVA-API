@@ -19,13 +19,28 @@
     </resultMap>
     <!-- 删除片段 -->
     <sql id="avalibleSQL">
-        ${prefix}.deleted = 0 OR ${prefix}.deleted IS NULL
+        <if test="prefix != null and prefix != ''">
+            ${prefix}.deleted = 0 OR ${prefix}.deleted IS NULL
+        </if>
+        <if test="prefix == null or prefix == ''">
+            deleted = 0 OR deleted IS NULL
+        </if>
     </sql>
     <sql id="deletedSQL">
-        DELETED > 0
+        <if test="prefix != null and prefix != ''">
+            ${prefix}.DELETED > 0
+        </if>
+        <if test="prefix == null or prefix == ''">
+            DELETED > 0
+        </if>
     </sql>
     <!-- 非冻结片段 -->
     <sql id="unFrozenSQL">
-        FROZEN != 1
+        <if test="prefix != null and prefix != ''">
+            ${prefix}.FROZEN != 1
+        </if>
+        <if test="prefix == null or prefix == ''">
+            FROZEN != 1
+        </if>
     </sql>
 </mapper>

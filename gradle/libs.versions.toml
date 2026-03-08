@@ -39,7 +39,7 @@ mapstruct = { group = "org.mapstruct", name = "mapstruct", version.ref = "mapstr
 mapstruct-processor = { group = "org.mapstruct", name = "mapstruct-processor", version.ref = "mapstruct" }
 
 # 数据库
-#mysql = { module = "com.mysql:mysql-connector-j", version.ref = "mysql" }
+mysql = { module = "com.mysql:mysql-connector-j", version.ref = "mysql" }
 postgre = { module = "org.postgresql:postgresql", version.ref = "postgre"}
 #oracle = { module = "com.oracle.database.jdbc:ojdbc10", version.ref = "oracle" }
 #orai18n = { module = "cn.easyproject:orai18n", version.ref = "orai18n" }

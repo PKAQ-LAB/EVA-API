@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.pkaq.core.auth.AuthCodes;
 import org.pkaq.core.codes.BizCode;
 import org.pkaq.core.mvc.vo.Response;
-import org.pkaq.core.util.json.JsonUtil;
 import org.pkaq.web.core.utils.ResponseUtil;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
@@ -33,6 +32,6 @@ public class UrlAuthenticationFailureHandler implements AuthenticationFailureHan
             bizcode = AuthCodes.ACCOUNT_OR_PWD_ERROR;
         }
 
-        ResponseUtil.write(httpServletResponse,Response.failure(bizcode));
+        ResponseUtil.write(httpServletResponse,Response.failure(bizcode.getCode(), bizcode.getMsg()));
     }
 }

@@ -33,7 +33,7 @@ public abstract class StdLineEntity implements Entity {
     /**
      * 创建人Id
      **/
-    @TableField(fill = FieldFill.INSERT, jdbcType = JdbcType.VARCHAR)
+    @TableField(fill = FieldFill.INSERT)
     private Long createId;
 
     /**
@@ -51,7 +51,7 @@ public abstract class StdLineEntity implements Entity {
     /**
      * 修改人Id
      **/
-    @TableField(fill = FieldFill.INSERT_UPDATE, jdbcType = JdbcType.VARCHAR)
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private Long modifyId;
 
     /**

@@ -31,7 +31,7 @@ spring:
     password: eva
     #    GsyjJCmmNRiHRVGmXdy+QErynoqC/cOBlt5V9dPZ+c2g2XwPc5+BbKrSxWLsyCGG
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.10.12:12306/eva?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&autoReconnect=true&failOverReadOnly=false
+    url: jdbc:mysql://14.103.109.216:12306/eva?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&autoReconnect=true&failOverReadOnly=false
     hikari:
       minimum-idle: 10
       maximum-pool-size: 50

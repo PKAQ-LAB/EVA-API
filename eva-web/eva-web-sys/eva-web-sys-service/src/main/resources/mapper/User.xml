@@ -85,17 +85,26 @@
 
     <select id="availableCounts" resultType="java.lang.Integer">
         SELECT
+        <if test="_databaseId == 'mysql'">
             T.AUTH_USER_COUNT - IFNULL(U.USER_COUNT, 0) AS ct
+        </if>
+        <if test="_databaseId == 'postgre'">
+            T.AUTH_USER_COUNT - COALESCE(U.USER_COUNT, 0) AS ct
+        </if>
         FROM SYS_TENANT T
              LEFT JOIN (
                 SELECT
                     TENANT_ID, COUNT(*) AS USER_COUNT
                 FROM SYS_USER
                     WHERE
-                        <include refid="common.avalibleSQL"/> and TENANT_ID = #{tid}
+                        <include refid="common.avalibleSQL">
+                            <property name="prefix" value="SYS_USER"/>
+                        </include> and TENANT_ID = #{tid}
                 GROUP BY TENANT_ID
         ) U ON U.TENANT_ID = T.ID
                 WHERE
-                    <include refid="common.avalibleSQL"/> and T.ID = #{tid}
+                    <include refid="common.avalibleSQL">
+                        <property name="prefix" value="T"/>
+                    </include> and T.ID = #{tid}
     </select>
 </mapper>

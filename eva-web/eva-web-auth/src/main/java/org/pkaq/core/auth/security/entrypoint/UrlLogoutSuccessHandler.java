@@ -9,7 +9,6 @@ import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.threaduser.ThreadUserHelper;
-import org.pkaq.core.util.json.JsonUtil;
 import org.pkaq.web.core.utils.CookieUtils;
 import org.pkaq.web.core.utils.ResponseUtil;
 import org.springframework.security.core.Authentication;

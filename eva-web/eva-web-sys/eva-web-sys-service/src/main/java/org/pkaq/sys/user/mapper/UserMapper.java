@@ -48,5 +48,5 @@ public interface UserMapper extends BaseMapper<UserEntity> {
     /**
      * 查询剩余可用授权用户数
      */
-    int availableCounts(long tid);
+    Integer availableCounts(long tid);
 }

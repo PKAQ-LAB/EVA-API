@@ -71,7 +71,7 @@ server:
   #  2.3.0 新支持, 优雅关机
   shutdown: graceful
 eva:
-  mode: SAAS
+  mode: Singleton
   i18n: true
   norepeat-check: false
   # 该配置必须在jwt配置前 30天有效
@@ -111,6 +111,23 @@ eva:
     #    * 存在 放行
     #    * 不存在 返回权限不足
     strict: false
+  ## 租户模式
+  tenant:
+    ignore_tables:
+      - sys_dict
+      - sys_dict_item
+      - v_dict
+      - sys_role_user
+      - sys_role_module
+      - sys_role_configuration
+      - sys_module
+      - sys_module_resources
+      - v_granted_module
+      - sys_black_list
+      - config_design_variable
+      - config_import_template
+      - sys_tenant
+      - sys_allowed_resources
   # 数据权限
   datapermission:
     # 是否开启数据权限控制
