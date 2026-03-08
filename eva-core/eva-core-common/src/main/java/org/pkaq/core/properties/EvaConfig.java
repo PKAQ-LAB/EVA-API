@@ -15,7 +15,15 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "eva")
 @EnableConfigurationProperties(EvaConfig.class)
 public class EvaConfig {
+    /**
+     * 单例还是多租户模式
+     */
+    private String mode;
 
+    /**
+     * 多租户模式专属配置
+     */
+    private Tenant tenant;
     /**
      * 是否开启国际化
      */
