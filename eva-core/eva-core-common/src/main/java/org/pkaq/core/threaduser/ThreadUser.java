@@ -27,10 +27,8 @@ public class ThreadUser implements Serializable {
     private String name;
     // 用户名称
     private String[] roles;
-    // 用户拥有的角色以及角色的数据权限类型
+    // 用户拥有的角色
     private Map<Long, GrantedRoles> rolesMap;
-    // 用户拥有的数据权限
-    private String dataPermission;
     // 用户的租户id
     private long tenantId;
     // 用户的租户code
@@ -57,10 +55,6 @@ public class ThreadUser implements Serializable {
         private String name;
 
         private String code;
-
-        private String dataPermissionType;
-
-        private String dataPermissionDeptid;
     }
 }
 

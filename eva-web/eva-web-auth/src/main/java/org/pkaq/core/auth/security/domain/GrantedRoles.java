@@ -11,8 +11,4 @@ public class GrantedRoles {
 
     private String code;
 
-    private String dataPermissionType;
-
-    private String dataPermissionDeptid;
-
 }
