@@ -145,7 +145,7 @@ public class Response<T> {
      */
     public static <T> Response<T> failure(BizCode bizCode) {
         log.warn("创建失败响应对象，业务代码: {}", bizCode);
-        return new Response<T>().setSuccess(false).setMtype(bizCode);
+        return new Response<T>().setSuccess(false).setCode(bizCode.getCode()).setMessage(bizCode.getMsg()).setMtype(bizCode);
     }
 
     /**
@@ -158,7 +158,7 @@ public class Response<T> {
      */
     public static <T> Response<T> failure(BizCode bizCode, T data) {
         log.warn("创建失败响应对象，业务代码: {}, 数据: {}", bizCode, data);
-        return new Response<T>().setSuccess(false).setMtype(bizCode).setData(data);
+        return new Response<T>().setSuccess(false).setCode(bizCode.getCode()).setMessage(bizCode.getMsg()).setMtype(bizCode).setData(data);
     }
 
     /**
@@ -172,7 +172,7 @@ public class Response<T> {
      */
     public static <T> Response<T> failure(BizCode bizCode, T data, Object... args) {
         log.warn("创建失败响应对象，业务代码: {}, 数据: {}, 参数: {}", bizCode, data, args);
-        return new Response<T>().setSuccess(false).setMtype(bizCode).setData(data).setArgs(args);
+        return new Response<T>().setSuccess(false).setCode(bizCode.getCode()).setMessage(bizCode.getMsg()).setMtype(bizCode).setData(data).setArgs(args);
     }
 
     /**

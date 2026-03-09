@@ -32,7 +32,7 @@ public interface UserMapper extends BaseMapper<UserEntity> {
      * 根据用户account 获取包含权限列表的用户信息
      */
     @Ignore
-    UserDetailVo getUserWithRole(UserEntity user);
+    UserEntity getUserWithRole(UserEntity user);
 
     /**
      * 根据用户userId 获取包含权限列表 菜单列表的用户信息

@@ -91,7 +91,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                         logger.warn("鉴权失败 缓存中无法找到对应token");
                         // 清除cookie
                         this.clearCookie(response);
-                        AuthCodes.LOGIN_EXPIRED.newException(AuthenticationException.class);
+                        ResponseUtil.write(response, Response.failure(AuthCodes.LOGIN_EXPIRED));
                     }
                 }
 

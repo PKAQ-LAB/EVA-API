@@ -7,8 +7,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
 import org.pkaq.core.mybatis.mvc.entity.StdEntity;
+import org.pkaq.sys.role.entity.RoleEntity;
 
 import java.sql.Date;
+import java.util.List;
 
 /**
  * 用户管理实体类
@@ -35,11 +37,6 @@ public class UserEntity extends StdEntity {
      * 密码
      **/
     private String password;
-
-    /**
-     * 盐
-     **/
-    private String salt;
 
     /**
      * 用户头像
@@ -83,5 +80,11 @@ public class UserEntity extends StdEntity {
      * 所属部门
      **/
     private Long deptId;
+
+    /**
+     * 用户拥有的角色（非数据库字段）
+     **/
+    @TableField(exist = false)
+    private List<RoleEntity> roles;
 
 }

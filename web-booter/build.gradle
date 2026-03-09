@@ -30,7 +30,7 @@ dependencies {
     implementation     project(":eva-core:eva-core-common"),
                        project(":eva-core:eva-core-data-mybatis"),
                        project(":eva-web:eva-web-sys:eva-web-sys-service"),
-                       //project(":eva-web:eva-web-auth"),
+                       project(":eva-web:eva-web-auth"),
                        libs.postgre
 
     implementation libs.web

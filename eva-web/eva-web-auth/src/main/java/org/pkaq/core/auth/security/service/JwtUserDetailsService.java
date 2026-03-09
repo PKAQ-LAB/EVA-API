@@ -38,7 +38,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 
         var u = userMapper.getUserWithRole(user);
 
-        AuthCodes.ACCOUNT_NOT_EXIST.assertNotNull(user);
-        return JwtUserFactory.create(user);
+        AuthCodes.ACCOUNT_NOT_EXIST.assertNotNull(u);
+        return JwtUserFactory.create(u);
     }
 }

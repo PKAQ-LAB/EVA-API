@@ -157,6 +157,26 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
     }
 
     /**
+     * 根据用户ID查询用户拥有权限的模块树（含资源）
+     *
+     * @param uid 用户ID
+     * @return 模块树列表
+     */
+    public Collection<ModuleDetailVo> fetchUserModules(Long uid) {
+        Map<Long, ModuleDetailVo> moduleMap = this.mapper.listGrantedModules(uid);
+
+        if (CollUtils.isEmpty(moduleMap)) {
+            return Collections.emptyList();
+        }
+
+        // 填充资源信息
+        this.handleFetchResource(moduleMap);
+
+        // 构造树形结构返回
+        return TreeHelper.buildTree(moduleMap.values());
+    }
+
+    /**
      * 交换两个orders值
      *
      * @param bo 进行交换的两个实体

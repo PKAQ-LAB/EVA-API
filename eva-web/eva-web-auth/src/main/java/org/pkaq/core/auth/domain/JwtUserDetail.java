@@ -51,12 +51,11 @@ public class JwtUserDetail implements UserDetails {
      **/
     private String nickName;
 
-    public JwtUserDetail(Long id, String account, String password, Long deptId, String deptName, String name, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
+    public JwtUserDetail(Long id, String account, String password, Long deptId, String name, String nickName, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.account = account;
         this.password = password;
         this.deptId = deptId;
-        this.deptName = deptName;
         this.name = name;
         this.nickName = nickName;
         this.accountNonLocked = !accountNonLocked;
