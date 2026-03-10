@@ -9,6 +9,5 @@ project.description = 'eva log support'
 dependencies {
     implementation  project(":eva-core:eva-core-common")
 
-    implementation libs.mybatis.plus.starter,
-                   libs.jdbc
+    compileOnly libs.jdbc
 }

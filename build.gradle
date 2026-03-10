@@ -52,6 +52,14 @@ subprojects {
 
     repositories {
         mavenLocal()
+        maven {
+            url "http://dev.jm-sk.com:12081/"
+            allowInsecureProtocol = true
+            credentials {
+                username = 'admin'
+                password = '7u8i9o0p'
+            }
+        }
 //        maven { url 'https://central.sonatype.com/repository/maven-snapshots/' }
 //        maven {
 //            url "http://yy.pkaq.org:8082/artifactory/yunyue-public/"

@@ -2,7 +2,6 @@ package org.pkaq.core.log.base;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
@@ -10,10 +9,9 @@ import lombok.experimental.Accessors;
  *
  * @author PKAQ
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
 @Accessors(chain = true)
-public class BizLogEntity extends LogEntity {
+public class BizLogEntity {
     /**
      * 操作人
      **/

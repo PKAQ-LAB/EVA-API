@@ -1,52 +1,46 @@
 package org.pkaq.core.log.supporter.jdbc;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.log.base.BizLogEntity;
-import org.pkaq.core.log.base.BizLogSupporter;
-import org.pkaq.core.log.constant.LogConstant;
-import org.pkaq.core.log.events.BizLogEvent;
+import org.pkaq.core.log.base.LogSupporter;
+import org.pkaq.core.log.condition.JdbcSupporterCondition;
 import org.pkaq.core.mvc.bo.DateRangeBo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.event.EventListener;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
- * 基于数据库的日志持久话类
+ * 基于JDBC的日志持久化类
  *
  * @author PKAQ
  */
-public class JdbcSupporter implements BizLogSupporter {
-    private BizLogEntity bizLogEntity;
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+@Slf4j
+@Component
+@Conditional(JdbcSupporterCondition.class)
+@RequiredArgsConstructor
+public class JdbcSupporter implements LogSupporter {
 
-    public JdbcSupporter(BizLogEntity bizLogEntity) {
-        this.bizLogEntity = bizLogEntity;
-    }
+    private final JdbcTemplate jdbcTemplate;
 
     @Override
     public void save(BizLogEntity entity) {
-        String sql = "";
-        this.jdbcTemplate.execute(sql);
+        // TODO 实现JDBC日志保存
+        log.info(entity.toString());
     }
 
-    /**
-     * 日志保存
-     *
-     * @param event
-     */
-    @Async
-    @EventListener(value = BizLogEvent.class)
-    public void listener(BizLogEvent event) {
-        Map<String, Object> source = (Map<String, Object>) event.getSource();
-        BizLogEntity errorEntity = (BizLogEntity) source.get(LogConstant.EVENT_LOG);
-        this.save(errorEntity);
+    @Override
+    public String get(String id) {
+        return "";
+    }
+
+    @Override
+    public Object list(DateRangeBo dateRangeBo) {
+        return Collections.emptyList();
     }
 
     @Override
@@ -71,31 +65,17 @@ public class JdbcSupporter implements BizLogSupporter {
 
     @Override
     public void cleanAll() {
-        // TODO document why this method is empty
     }
 
     @Override
     public void cleanBefore(Date dateTime) {
-        // TODO document why this method is empty
     }
 
     @Override
     public void cleanBetween(Date begin, Date end) {
-        // TODO document why this method is empty
     }
 
     @Override
     public void print() {
-        // TODO document why this method is empty
-    }
-
-    @Override
-    public String get(String id) {
-        return "";
-    }
-
-    @Override
-    public IPage list(DateRangeBo dateRangeBo) {
-        return null;
     }
 }
