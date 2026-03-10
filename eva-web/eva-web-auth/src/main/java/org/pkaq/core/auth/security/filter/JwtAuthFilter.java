@@ -151,6 +151,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
                 ThreadUser currentUser = new ThreadUser().setUserId(uid).setName(account).setRoles(roles);
 
+                // 将用户信息设置到security 上下文中
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+
                 ThreadUserHelper.runWithUser(currentUser, () -> {
                     try {
                         chain.doFilter(request, response);
@@ -158,15 +164,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                         throw new BizException(CommonCodes.SERVER_ERROR);
                     }
                 });
-
-//                将用户信息设置到security 上下文中
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
+        } else {
+            // 没有有效的token，让Spring Security的后续过滤器处理认证
+            chain.doFilter(request, response);
         }
-        chain.doFilter(request, response);
     }
 
     /**

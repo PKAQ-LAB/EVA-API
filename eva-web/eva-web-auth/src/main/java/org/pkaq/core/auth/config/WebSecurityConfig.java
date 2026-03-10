@@ -11,6 +11,7 @@ import org.pkaq.core.util.CollUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.security.autoconfigure.web.servlet.PathRequest;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -149,6 +150,17 @@ public class WebSecurityConfig {
 //    }
 
     /**
+     * 禁止 JwtAuthFilter 被 Spring Boot 自动注册为 Servlet Filter
+     * 确保它只在 Spring Security 过滤链中运行, 使 web.ignoring() 配置生效
+     */
+    @Bean
+    public FilterRegistrationBean<JwtAuthFilter> jwtAuthFilterRegistration(JwtAuthFilter filter) {
+        FilterRegistrationBean<JwtAuthFilter> registration = new FilterRegistrationBean<>(filter);
+        registration.setEnabled(false);
+        return registration;
+    }
+
+    /**
      * 虽然登录请求可以被所有人访问，但是不能放在这里（而应该通过允许匿名访问的方式来给请求放行）。
      * 如果放在这里，登录请求将不走 SecurityContextPersistenceFilter 过滤器，也就意味着不会将登录用户信息存入 session，
      * 进而导致后续请求无法获取到登录用户信息。
@@ -156,7 +168,6 @@ public class WebSecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityConfigure() {
         return web -> {
-            String[] paths = null;
             var staticPath = new String[]{
                     "/",
                     "/static/**",
@@ -174,9 +185,7 @@ public class WebSecurityConfig {
                     "/*/api-docs/**"
             };
 
-            if (null != evaConfig.getSecurity().getWebstatic()) {
-                paths = ArrayUtils.addAll(evaConfig.getSecurity().getWebstatic(), staticPath);
-            }
+            var paths = ArrayUtils.addAll(staticPath, evaConfig.getSecurity().getWebstatic());
 
             web.ignoring()
                     // allow anonymous resource requests

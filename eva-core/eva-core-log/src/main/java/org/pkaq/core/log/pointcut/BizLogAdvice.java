@@ -93,11 +93,7 @@ public class BizLogAdvice {
                 .setParams(args)
                 .setMCode(ThreadUserHelper.getMcode())
                 .setDevice(ThreadUserHelper.getDevice())
-                .setVersion(ThreadUserHelper.getVersion())
-                .setCreateId(ThreadUserHelper.getUserId())
-                .setPostId(ThreadUserHelper.getPostId())
-                .setOrgId(ThreadUserHelper.getOrgId())
-                .setTenantId(ThreadUserHelper.getTenantId());
+                .setVersion(ThreadUserHelper.getVersion());
 
         Object result;
         try {
