@@ -5,16 +5,18 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.codes.CommonCodes;
+import org.pkaq.core.errorlog.ErrorLogEntity;
+import org.pkaq.core.errorlog.ErrorLogEvent;
 import org.pkaq.core.exception.BizException;
 import org.pkaq.core.mvc.vo.Response;
+import org.pkaq.core.threaduser.ThreadUserHelper;
+import org.pkaq.core.util.DateUtils;
+import org.pkaq.core.util.ExceptionUtils;
 import org.pkaq.core.util.StrUtils;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
-import org.springframework.web.HttpMediaTypeNotSupportedException;
-import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -29,6 +31,8 @@ import java.util.Set;
 @Slf4j
 @RequiredArgsConstructor
 public class ExceptionAdvice {
+    private final ApplicationEventPublisher eventPublisher;
+
     /**
      * hibernate validator参数校验失败时抛出的异常
      * // 处理方法参数上的 @Validated（如 service 层方法）
@@ -110,6 +114,8 @@ public class ExceptionAdvice {
 
         log.error("业务异常:" + msg);
 
+        publishErrorLog(e);
+
         if (null == e.getBizCode()) {
             return Response.failure(null, e.getMessage(), e.getData(), e.getArgs());
         } else {
@@ -131,6 +137,46 @@ public class ExceptionAdvice {
             e.printStackTrace();
         }
 
+        publishErrorLog(e);
+
         return Response.failure(CommonCodes.SERVER_ERROR);
+    }
+
+    /**
+     * 发布错误日志事件，由 ErrorLogSupporter 异步持久化
+     * IP和请求参数由 eva-web-core 的 ErrorLogEnricher 补充
+     */
+    private void publishErrorLog(Exception e) {
+        try {
+            StackTraceElement ste = e.getStackTrace().length > 0 ? e.getStackTrace()[0] : null;
+
+            var entity = new ErrorLogEntity()
+                    .setRequestTime(DateUtils.now())
+                    .setClassName(ste != null ? ste.getClassName() : "")
+                    .setMethod(ste != null ? ste.getMethodName() : "")
+                    .setExDesc(ExceptionUtils.stackTraceToString(e, "org.pkaq"))
+                    .setLoginUser(safeGetUserName())
+                    .setTenantId(safeGetTenantId());
+
+            eventPublisher.publishEvent(new ErrorLogEvent(entity));
+        } catch (Exception ignored) {
+            // 发布错误日志事件失败不应影响正常异常处理
+        }
+    }
+
+    private String safeGetUserName() {
+        try {
+            return ThreadUserHelper.getUserName();
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    private long safeGetTenantId() {
+        try {
+            return ThreadUserHelper.getTenantId();
+        } catch (Exception e) {
+            return 0;
+        }
     }
 }
