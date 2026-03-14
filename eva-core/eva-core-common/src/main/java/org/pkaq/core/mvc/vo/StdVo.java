@@ -26,10 +26,10 @@ public class StdVo implements Vo {
     private double sort;
 
     @Schema(description = "租户id")
-    private String tenantId;
+    private Long tenantId;
 
     @Schema(description = "创建人Id")
-    private String createId;
+    private Long createId;
 
     @Schema(description = "创建人")
     private String createBy;
@@ -39,7 +39,7 @@ public class StdVo implements Vo {
     private LocalDateTime utcCreate;
 
     @Schema(description = "修改人Id")
-    private String modifyId;
+    private Long modifyId;
 
     @Schema(description = "修改人")
     private String modifyBy;

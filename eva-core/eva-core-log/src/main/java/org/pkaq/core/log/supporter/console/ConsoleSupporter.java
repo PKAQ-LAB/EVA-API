@@ -1,106 +1,83 @@
 package org.pkaq.core.log.supporter.console;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.log.base.BizLogEntity;
-import org.pkaq.core.log.base.BizLogSupporter;
+import org.pkaq.core.log.base.LogSupporter;
 import org.pkaq.core.log.condition.DefaultSupporterCondition;
-import org.pkaq.core.log.constant.LogConstant;
-import org.pkaq.core.log.events.BizLogEvent;
 import org.pkaq.core.mvc.bo.DateRangeBo;
+import org.pkaq.core.mvc.vo.PageVo;
 import org.springframework.context.annotation.Conditional;
-import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 控制台日志实现类
+ * 仅输出到控制台，不持久化，查询方法均返回空结果
  *
  * @author PKAQ
  */
 @Slf4j
 @Component
 @Conditional(DefaultSupporterCondition.class)
-public class ConsoleSupporter implements BizLogSupporter {
-    private BizLogEntity bizLogEntity;
-
-    public ConsoleSupporter() {
-        super();
-    }
-
-    public ConsoleSupporter(BizLogEntity bizLogEntity) {
-        this.bizLogEntity = bizLogEntity;
-    }
+public class ConsoleSupporter implements LogSupporter {
 
     @Override
     public void save(BizLogEntity bizLogEntity) {
-
+        log.info(bizLogEntity.toString());
     }
 
-    /**
-     * 日志保存
-     *
-     * @param event
-     */
-    @Async
-    @EventListener(value = BizLogEvent.class)
-    public void listener(BizLogEvent event) {
-        Map<String, Object> source = (Map<String, Object>) event.getSource();
-        BizLogEntity errorEntity = (BizLogEntity) source.get(LogConstant.EVENT_LOG);
-        this.save(errorEntity);
+    @Override
+    public BizLogEntity get(String id) {
+        log.warn("ConsoleSupporter不支持查询操作");
+        return null;
+    }
+
+    @Override
+    public PageVo<BizLogEntity> list(DateRangeBo dateRangeBo, int pageNo, int pageSize) {
+        log.warn("ConsoleSupporter不支持查询操作");
+        return new PageVo<>();
     }
 
     @Override
     public List<BizLogEntity> getLog() {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
     public List<BizLogEntity> getLogByType(String type) {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
     public List<BizLogEntity> getLogAfter(Date dateTime) {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
     public List<BizLogEntity> getLogBetween(Date begin, Date end) {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
     public void cleanAll() {
-
+        // 控制台模式无需清理
     }
 
     @Override
     public void cleanBefore(Date dateTime) {
-
+        // 控制台模式无需清理
     }
 
     @Override
     public void cleanBetween(Date begin, Date end) {
-
+        // 控制台模式无需清理
     }
 
     @Override
     public void print() {
-        log.info("Biz log: " + this.bizLogEntity.getDescription());
-    }
-
-    @Override
-    public String get(String id) {
-        return "";
-    }
-
-    @Override
-    public IPage list(DateRangeBo dateRangeBo) {
-        return null;
+        log.info("ConsoleSupporter: print()");
     }
 }

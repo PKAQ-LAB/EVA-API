@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import org.apache.ibatis.type.Alias;
+import org.pkaq.core.errorlog.ErrorLogEntity;
 
 /**
  * 异常日志实体类
@@ -13,42 +15,11 @@ import org.apache.ibatis.type.Alias;
  * @author PKAQ
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Alias("errorlog")
 @TableName("log_error")
 @Accessors(chain = true)
-public class ErrorlogEntity {
+public class ErrorlogEntity extends ErrorLogEntity {
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
-    /**
-     * 操作人
-     **/
-    private String requestTime;
-    /**
-     * 操作人
-     **/
-    private String ip;
-    /**
-     * 操作人
-     **/
-    private String spendTime;
-    /**
-     * 操作人
-     **/
-    private String className;
-    /**
-     * 操作人
-     **/
-    private String method;
-    /**
-     * 操作人
-     **/
-    private String params;
-    /**
-     * 操作人
-     **/
-    private String exDesc;
-    /**
-     * 操作人
-     **/
-    private String loginUser;
 }

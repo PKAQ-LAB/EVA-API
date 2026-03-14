@@ -10,7 +10,7 @@ import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.jwt.JwtUtil;
 import org.pkaq.core.log.base.BizLogEntity;
-import org.pkaq.core.log.base.BizLogSupporter;
+import org.pkaq.core.log.base.LogSupporter;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.util.DateUtils;
@@ -40,7 +40,7 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
 
     private final EvaConfig evaConfig;
 
-    private final BizLogSupporter bizLogSupporter;
+    private final LogSupporter logSupporter;
 
     private final CacheTokenUtil tokenUtil;
 
@@ -86,7 +86,7 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
 
         log.info(bizLogEntity.toString());
 
-        bizLogSupporter.save(bizLogEntity);
+        logSupporter.save(bizLogEntity);
 
         ResponseUtil.write(httpServletResponse, Response
                 .success(map, CommonCodes.LOGIN_SUCCESS_WELCOME, user.getName()));

@@ -1,10 +1,8 @@
 package org.pkaq.core.log.base;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import org.pkaq.core.log.bo.LogQueryBo;
-import org.pkaq.core.log.events.LogEvent;
-import org.pkaq.core.util.BeanUtils;
+import org.pkaq.core.log.events.BizLogEvent;
+import org.pkaq.core.mvc.bo.DateRangeBo;
+import org.pkaq.core.mvc.vo.PageVo;
 import org.pkaq.core.util.ReflectUtils;
 import org.pkaq.core.util.StrUtils;
 import org.springframework.scheduling.annotation.Async;
@@ -12,52 +10,50 @@ import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
 /**
  * 日志持久化接口
+ * 提供日志的保存、查询、清理等操作，以及事务事件监听的默认实现
  *
  * @author PKAQ
  */
-public interface LogSupporter<T extends LogEntity, E extends LogEvent> {
+public interface LogSupporter {
     String FAILURE_PREFIX = "【操作失败】";
 
     /**
-     * 得到真正的T和E的type
-     *
-     * @return
-     */
-    Type[] getRealTE();
-
-    /**
      * 保存日志
+     *
+     * @param bizLogEntity 业务日志实体
      */
-    void save(T t);
+    void save(BizLogEntity bizLogEntity);
 
     /**
-     * 获取日志
+     * 根据ID获取日志详情
+     *
+     * @param id 日志ID
+     * @return 日志实体
      */
-    List<? extends T> getLog();
+    BizLogEntity get(String id);
 
     /**
-     * 获取日志详情
+     * 分页查询日志列表（含日期范围过滤、按操作时间降序排列）
+     *
+     * @param dateRangeBo 日期范围
+     * @param pageNo      页码
+     * @param pageSize    每页条数
+     * @return 分页结果
      */
-    T getLogById(String id);
+    PageVo<? extends BizLogEntity> list(DateRangeBo dateRangeBo, int pageNo, int pageSize);
 
     /**
-     * 根据查询条件获取分页日志列表
+     * 获取所有日志
+     *
+     * @return 日志集合
      */
-    IPage<T> getLogByQuery(LogQueryBo<T> queryBo);
-
-    /**
-     * 根据查询条件获取分页日志列表, 指定返回的对象类型
-     */
-    default <U> IPage<U> getLogByQuery(LogQueryBo<T> queryBo, Class<U> uClass) {
-        return new Page<>(queryBo.getPageNo(), queryBo.getPageSize());
-    }
+    List<? extends BizLogEntity> getLog();
 
     /**
      * 获取指定操作类型的日志
@@ -65,63 +61,7 @@ public interface LogSupporter<T extends LogEntity, E extends LogEvent> {
      * @param type 操作类型
      * @return 符合条件的结果集
      */
-    List<? extends T> getLogByType(String type);
-
-    /**
-     * 监听有事务且成功提交 或者 没有事务<br/>
-     * 异步保存操作日志
-     */
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
-    @Async("log_task")
-    default void listenerCommit(E event) {
-        // 接收的类型匹配才进行保存操作
-        if (checkMatch(event)) this.save((T) event.getSource());
-    }
-
-    /**
-     * 监听存在事务且事务回滚的BizLogEvent事件<br/>
-     * 异步保存失败操作日志
-     */
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_ROLLBACK)
-    @Async("log_task")
-    default void listenerRollback(E event) {
-        T logEntity = (T) event.getSource();
-        // 接收的类型匹配才进行保存操作
-        if (checkMatch(event) && Objects.nonNull(logEntity)) {
-            try {
-                // 给日志的描述加上失败标记
-                Field field = ReflectUtils.getField(logEntity.getClass(), "description");
-                String des = StrUtils.toStringOrNull(ReflectUtils.getFieldValue(logEntity, field));
-                field.set(logEntity, "%s%s".formatted(FAILURE_PREFIX, des));
-            } catch (Exception ignored) {
-                // 设置参数失败，不处理
-            } finally {
-                this.save(logEntity);
-            }
-        }
-
-    }
-
-    default boolean checkMatch(E event) {
-        try {
-            var actualTypeE = getRealTE()[1].getTypeName();
-            var parameE = event.getClass().getName();
-            return actualTypeE.contains(parameE);
-        } catch (Exception ignored) {
-            return false;
-        }
-    }
-
-    default Object getActualTObj(T t) {
-        try {
-            var clazz = (Class) getRealTE()[0];
-            var actualObj = clazz.getDeclaredConstructor().newInstance();
-            BeanUtils.copyProperties(t, actualObj);
-            return actualObj;
-        } catch (Exception ignored) {
-            return null;
-        }
-    }
+    List<? extends BizLogEntity> getLogByType(String type);
 
     /**
      * 获取某个时间之后的日志
@@ -129,7 +69,7 @@ public interface LogSupporter<T extends LogEntity, E extends LogEvent> {
      * @param dateTime 时间点
      * @return 符合条件的日志集合
      */
-    List<? extends T> getLogAfter(Date dateTime);
+    List<? extends BizLogEntity> getLogAfter(Date dateTime);
 
     /**
      * 获取某个日期区间的日志
@@ -138,7 +78,7 @@ public interface LogSupporter<T extends LogEntity, E extends LogEvent> {
      * @param end   结束日期区间
      * @return 所查询区间的日志
      */
-    List<? extends T> getLogBetween(Date begin, Date end);
+    List<? extends BizLogEntity> getLogBetween(Date begin, Date end);
 
     /**
      * 清除所有日志
@@ -164,4 +104,40 @@ public interface LogSupporter<T extends LogEntity, E extends LogEvent> {
      * 打印当前操作日志
      */
     void print();
+
+    /**
+     * 监听有事务且成功提交 或者 没有事务<br/>
+     * 异步保存操作日志
+     *
+     * @param event 业务日志事件
+     */
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
+    @Async("log_task")
+    default void listenerCommit(BizLogEvent event) {
+        this.save((BizLogEntity) event.getSource());
+    }
+
+    /**
+     * 监听存在事务且事务回滚的BizLogEvent事件<br/>
+     * 异步保存失败操作日志
+     *
+     * @param event 业务日志事件
+     */
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_ROLLBACK)
+    @Async("log_task")
+    default void listenerRollback(BizLogEvent event) {
+        BizLogEntity logEntity = (BizLogEntity) event.getSource();
+        if (Objects.nonNull(logEntity)) {
+            try {
+                // 给日志的描述加上失败标记
+                Field field = ReflectUtils.getField(logEntity.getClass(), "description");
+                String des = StrUtils.toStringOrNull(ReflectUtils.getFieldValue(logEntity, field));
+                field.set(logEntity, "%s%s".formatted(FAILURE_PREFIX, des));
+            } catch (Exception ignored) {
+                // 设置参数失败，不处理
+            } finally {
+                this.save(logEntity);
+            }
+        }
+    }
 }
