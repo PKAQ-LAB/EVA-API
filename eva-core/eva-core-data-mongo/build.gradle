@@ -1,0 +1,15 @@
+if (project.file('../../publish.gradle').exists()) {
+    apply from: '../../publish.gradle'
+}
+
+jar {
+    archiveBaseName = 'eva-core-data-mongo'
+}
+
+project.description = 'eva mongodb support'
+
+dependencies {
+    implementation project(":eva-core:eva-core-common"),
+                   project(":eva-core:eva-core-log"),
+                   libs.mongo
+}

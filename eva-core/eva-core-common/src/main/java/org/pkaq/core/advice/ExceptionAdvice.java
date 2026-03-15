@@ -5,8 +5,6 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.codes.CommonCodes;
-import org.pkaq.core.errorlog.ErrorLogEntity;
-import org.pkaq.core.errorlog.ErrorLogEvent;
 import org.pkaq.core.exception.BizException;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.threaduser.ThreadUserHelper;
@@ -114,7 +112,7 @@ public class ExceptionAdvice {
 
         log.error("业务异常:" + msg);
 
-        publishErrorLog(e);
+        publishExceptionInfo(e);
 
         if (null == e.getBizCode()) {
             return Response.failure(null, e.getMessage(), e.getData(), e.getArgs());
@@ -137,20 +135,21 @@ public class ExceptionAdvice {
             e.printStackTrace();
         }
 
-        publishErrorLog(e);
+        publishExceptionInfo(e);
 
         return Response.failure(CommonCodes.SERVER_ERROR);
     }
 
     /**
-     * 发布错误日志事件，由 ErrorLogSupporter 异步持久化
+     * 发布异常元数据事件
+     * Spring 4.2+ 支持直接发布 POJO，监听器通过 @EventListener(ExceptionInfo.class) 接收
      * IP和请求参数由 eva-web-core 的 ErrorLogEnricher 补充
      */
-    private void publishErrorLog(Exception e) {
+    private void publishExceptionInfo(Exception e) {
         try {
             StackTraceElement ste = e.getStackTrace().length > 0 ? e.getStackTrace()[0] : null;
 
-            var entity = new ErrorLogEntity()
+            var info = new ExceptionInfo()
                     .setRequestTime(DateUtils.now())
                     .setClassName(ste != null ? ste.getClassName() : "")
                     .setMethod(ste != null ? ste.getMethodName() : "")
@@ -158,9 +157,9 @@ public class ExceptionAdvice {
                     .setLoginUser(safeGetUserName())
                     .setTenantId(safeGetTenantId());
 
-            eventPublisher.publishEvent(new ErrorLogEvent(entity));
+            eventPublisher.publishEvent(info);
         } catch (Exception ignored) {
-            // 发布错误日志事件失败不应影响正常异常处理
+            // 发布异常事件失败不应影响正常异常处理
         }
     }
 

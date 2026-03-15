@@ -1,9 +1,9 @@
 package org.pkaq.core.log.base;
 
-import org.pkaq.core.errorlog.ErrorLogEntity;
-import org.pkaq.core.errorlog.ErrorLogEvent;
+import org.pkaq.core.advice.ExceptionInfo;
 import org.pkaq.core.mvc.bo.DateRangeBo;
 import org.pkaq.core.mvc.vo.PageVo;
+import org.pkaq.core.util.BeanUtils;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 
@@ -40,13 +40,15 @@ public interface ErrorLogSupporter {
     PageVo<? extends ErrorLogEntity> list(DateRangeBo dateRangeBo, int pageNo, int pageSize);
 
     /**
-     * 监听错误日志事件，异步保存
+     * 监听异常事件，转换为错误日志实体后异步保存
      *
-     * @param event 错误日志事件
+     * @param info 异常元数据（由 ExceptionAdvice 发布）
      */
     @EventListener
     @Async("log_task")
-    default void onErrorLogEvent(ErrorLogEvent event) {
-        this.save((ErrorLogEntity) event.getSource());
+    default void onExceptionEvent(ExceptionInfo info) {
+        var entity = new ErrorLogEntity();
+        BeanUtils.copyProperties(info, entity);
+        this.save(entity);
     }
 }

@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import org.apache.ibatis.type.Alias;
-import org.pkaq.core.errorlog.ErrorLogEntity;
+import org.pkaq.core.log.base.ErrorLogEntity;
 
 /**
  * 异常日志实体类

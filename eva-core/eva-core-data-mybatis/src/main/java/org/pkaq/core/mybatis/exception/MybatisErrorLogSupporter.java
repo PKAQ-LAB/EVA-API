@@ -3,7 +3,7 @@ package org.pkaq.core.mybatis.exception;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.pkaq.core.errorlog.ErrorLogEntity;
+import org.pkaq.core.log.base.ErrorLogEntity;
 import org.pkaq.core.log.base.ErrorLogSupporter;
 import org.pkaq.core.log.condition.ErrorlogSupporterCondition;
 import org.pkaq.core.mvc.bo.DateRangeBo;
