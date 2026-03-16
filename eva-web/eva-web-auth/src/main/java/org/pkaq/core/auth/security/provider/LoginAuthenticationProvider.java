@@ -1,4 +1,4 @@
-package org.pkaq.core.auth.security.provider;
+﻿package org.pkaq.core.auth.security.provider;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 /**
- * 自定义登录验证逻辑
+ * 鑷畾涔夌櫥褰曢獙璇侀€昏緫
  *
  * @author
  */
@@ -36,7 +36,7 @@ public class LoginAuthenticationProvider extends AbstractUserDetailsAuthenticati
     }
 
     /**
-     * 查询用户
+     * 鏌ヨ鐢ㄦ埛
      *
      * @param username
      * @param authentication
@@ -53,13 +53,13 @@ public class LoginAuthenticationProvider extends AbstractUserDetailsAuthenticati
 
         UserDetails user = this.getUserDetailsService().loadUserByUsername(username);
 
-        AuthCodes.ACCOUNT_NOT_EXIST.assertNotNull(user);
+        AuthCodes.ACCOUNT_OR_PWD_ERROR.assertNotNull(user);
 
         return user;
     }
 
     /**
-     * 校验密码
+     * 鏍￠獙瀵嗙爜
      *
      * @param userDetails
      * @param authentication
@@ -84,3 +84,4 @@ public class LoginAuthenticationProvider extends AbstractUserDetailsAuthenticati
         return (UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication));
     }
 }
+

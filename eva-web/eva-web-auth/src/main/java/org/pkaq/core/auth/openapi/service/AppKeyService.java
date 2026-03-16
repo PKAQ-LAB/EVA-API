@@ -1,8 +1,8 @@
-package org.pkaq.core.auth.openapi.service;
+﻿package org.pkaq.core.auth.openapi.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.pkaq.core.auth.openapi.entity.AppCredential;
+import org.pkaq.core.auth.openapi.entity.AppCredentialEntity;
 import org.pkaq.core.auth.openapi.mapper.AppCredentialMapper;
 import org.springframework.stereotype.Service;
 
@@ -24,10 +24,10 @@ public class AppKeyService {
      * @param appKey AppKey
      * @return AppCredential对象, 不存在返回null
      */
-    public AppCredential getCredential(String appKey) {
+    public AppCredentialEntity getCredential(String appKey) {
         log.debug("获取AppKey凭证 - appKey: {}", appKey);
 
-        AppCredential credential = appCredentialMapper.findByAppKey(appKey);
+        AppCredentialEntity credential = appCredentialMapper.findByAppKey(appKey);
         if (credential != null) {
             log.debug("数据库加载凭证 - appKey: {}, appName: {}", appKey, credential.getAppName());
         } else {
@@ -43,7 +43,7 @@ public class AppKeyService {
      * @param credential AppCredential对象
      * @return 创建后的对象
      */
-    public AppCredential createCredential(AppCredential credential) {
+    public AppCredentialEntity createCredential(AppCredentialEntity credential) {
         log.info("创建AppKey凭证 - 应用: {}, appKey: {}", credential.getAppName(), credential.getAppKey());
 
         try {
@@ -62,7 +62,7 @@ public class AppKeyService {
      * @param credential AppCredential对象
      * @return 是否更新成功
      */
-    public boolean updateCredential(AppCredential credential) {
+    public boolean updateCredential(AppCredentialEntity credential) {
         log.info("更新AppKey凭证 - appKey: {}", credential.getAppKey());
 
         try {

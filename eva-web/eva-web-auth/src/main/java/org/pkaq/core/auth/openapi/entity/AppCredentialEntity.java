@@ -1,4 +1,4 @@
-package org.pkaq.core.auth.openapi.entity;
+﻿package org.pkaq.core.auth.openapi.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @Alias("openApiAppCredential")
 @TableName("api_app_credential")
 @EqualsAndHashCode(callSuper = true)
-public class AppCredential extends StdEntity {
+public class AppCredentialEntity extends StdEntity {
 
     /**
      * AppKey(唯一标识)

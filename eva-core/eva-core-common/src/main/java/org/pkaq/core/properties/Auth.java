@@ -1,4 +1,4 @@
-package org.pkaq.core.properties;
+﻿package org.pkaq.core.properties;
 
 import lombok.Data;
 import org.springframework.util.AntPathMatcher;
@@ -47,6 +47,14 @@ public class Auth {
         return signature.getTimestampToleranceSeconds();
     }
 
+    public String getSignatureAlgorithm() {
+        if (signature == null || signature.getAlgorithm() == null || signature.getAlgorithm().isBlank()) {
+            return "HmacSHA256";
+        }
+
+        return signature.getAlgorithm();
+    }
+
     public boolean matchJwtPath(String path) {
         if (!isJwtEnabled()) {
             return false;
@@ -86,6 +94,8 @@ public class Auth {
     public static class Signature {
         // 时间戳容忍度(秒)
         private Long timestampToleranceSeconds;
+
+        // 签名算法
+        private String algorithm;
     }
 }
-

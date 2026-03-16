@@ -1,4 +1,4 @@
-package org.pkaq.core.auth.security.service;
+﻿package org.pkaq.core.auth.security.service;
 
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.auth.AuthCodes;
@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 /**
- * 自定义用户认证
+ * 鑷畾涔夌敤鎴疯璇?
  *
  * @author PKAQ
  */
@@ -22,7 +22,7 @@ public class JwtUserDetailsService implements UserDetailsService {
     private final UserMapper userMapper;
 
     /**
-     * 提供一种从用户名可以查到用户并返回的方法
+     * 鎻愪緵涓€绉嶄粠鐢ㄦ埛鍚嶅彲浠ユ煡鍒扮敤鎴峰苟杩斿洖鐨勬柟娉?
      *
      * @param account
      * @return UserDetails
@@ -38,7 +38,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 
         var u = userMapper.getUserWithRole(user);
 
-        AuthCodes.ACCOUNT_NOT_EXIST.assertNotNull(u);
+        AuthCodes.ACCOUNT_OR_PWD_ERROR.assertNotNull(u);
         return JwtUserFactory.create(u);
     }
 }

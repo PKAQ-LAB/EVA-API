@@ -1,4 +1,4 @@
-package org.pkaq.core.auth.openapi.filter;
+﻿package org.pkaq.core.auth.openapi.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -8,9 +8,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.pkaq.core.auth.openapi.OpenApiCodes;
+import org.pkaq.core.auth.AuthCodes;
 import org.pkaq.core.auth.openapi.consts.OpenApiConsts;
-import org.pkaq.core.auth.openapi.entity.AppCredential;
+import org.pkaq.core.auth.openapi.entity.AppCredentialEntity;
 import org.pkaq.core.auth.openapi.exception.AppKeyAuthenticationException;
 import org.pkaq.core.auth.openapi.security.SignatureValidator;
 import org.pkaq.core.auth.openapi.service.AppKeyService;
@@ -95,7 +95,7 @@ public class AppKeyAuthenticationFilter extends OncePerRequestFilter {
             timestamp = Long.parseLong(timestampStr);
         } catch (NumberFormatException e) {
             log.warn("无效的时间戳格式: {}", timestampStr);
-            OpenApiCodes.INVALID_TIMESTAMP_FORMAT.newException();
+            AuthCodes.OPENAPI_INVALID_TIMESTAMP_FORMAT.newException();
             return;
         }
 
@@ -110,16 +110,16 @@ public class AppKeyAuthenticationFilter extends OncePerRequestFilter {
             body = JsonUtil.normalizeJsonBody(body);
             request.setAttribute(OpenApiConsts.REQUEST_BODY, body);
 
-            AppCredential credential = appKeyService.getCredential(appKey);
+            AppCredentialEntity credential = appKeyService.getCredential(appKey);
             if (credential == null) {
                 log.warn("AppKey未找到: {}", appKey);
-                OpenApiCodes.APP_KEY_NOT_FOUND.newException();
+                AuthCodes.OPENAPI_APP_KEY_NOT_FOUND.newException();
             }
 
             if (!credential.isValid()) {
                 log.warn("无效或过期的AppKey: {}, 状态: {}, 过期时间: {}",
                         appKey, credential.getStatus(), credential.getExpireTime());
-                OpenApiCodes.INVALID_OR_EXPIRED_APP_KEY.newException();
+                AuthCodes.OPENAPI_INVALID_OR_EXPIRED_APP_KEY.newException();
             }
 
             boolean validSignature = signatureValidator.validateSignature(
@@ -133,12 +133,12 @@ public class AppKeyAuthenticationFilter extends OncePerRequestFilter {
 
             if (!validSignature) {
                 log.warn("无效的签名 - AppKey: {}, 路径: {}", appKey, requestPath);
-                OpenApiCodes.INVALID_SIGNATURE.newException();
+                AuthCodes.OPENAPI_INVALID_SIGNATURE.newException();
             }
 
             if (!credential.hasApiPermission(requestPath)) {
                 log.warn("AppKey无权限访问 - AppKey: {}, 路径: {}", appKey, requestPath);
-                OpenApiCodes.NO_PERMISSION.newException();
+                AuthCodes.OPENAPI_NO_PERMISSION.newException();
             }
 
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
@@ -155,10 +155,10 @@ public class AppKeyAuthenticationFilter extends OncePerRequestFilter {
 
         } catch (AppKeyAuthenticationException e) {
             log.error("认证失败: {}", e.getMessage());
-            OpenApiCodes.AUTHENTICATION_FAILED.newException();
+            AuthCodes.OPENAPI_AUTHENTICATION_FAILED.newException();
         } catch (Exception e) {
             log.error("认证异常错误", e);
-            OpenApiCodes.UNEXPECTED_AUTH_ERROR.newException();
+            AuthCodes.OPENAPI_UNEXPECTED_AUTH_ERROR.newException();
         }
     }
 
@@ -179,4 +179,6 @@ public class AppKeyAuthenticationFilter extends OncePerRequestFilter {
                 || path.equals("/favicon.ico");
     }
 }
+
+
 

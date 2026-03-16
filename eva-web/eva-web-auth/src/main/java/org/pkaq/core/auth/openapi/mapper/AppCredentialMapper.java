@@ -1,9 +1,9 @@
-package org.pkaq.core.auth.openapi.mapper;
+﻿package org.pkaq.core.auth.openapi.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
-import org.pkaq.core.auth.openapi.entity.AppCredential;
+import org.pkaq.core.auth.openapi.entity.AppCredentialEntity;
 
 /**
  * OpenAPI凭证Mapper
@@ -11,7 +11,7 @@ import org.pkaq.core.auth.openapi.entity.AppCredential;
  * @author PKAQ
  */
 @Mapper
-public interface AppCredentialMapper extends BaseMapper<AppCredential> {
+public interface AppCredentialMapper extends BaseMapper<AppCredentialEntity> {
 
     /**
      * 根据AppKey查询凭证
@@ -20,7 +20,7 @@ public interface AppCredentialMapper extends BaseMapper<AppCredential> {
      * @return AppCredential对象, 不存在返回null
      */
     @Select("SELECT * FROM api_app_credential WHERE app_key = #{appKey}")
-    AppCredential findByAppKey(String appKey);
+    AppCredentialEntity findByAppKey(String appKey);
 
     /**
      * 检查AppKey是否存在

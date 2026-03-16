@@ -1,7 +1,7 @@
-package org.pkaq.core.auth.openapi.security;
+﻿package org.pkaq.core.auth.openapi.security;
 
 import lombok.extern.slf4j.Slf4j;
-import org.pkaq.core.auth.openapi.OpenApiCodes;
+import org.pkaq.core.auth.AuthCodes;
 import org.pkaq.core.properties.EvaConfig;
 import org.springframework.stereotype.Component;
 
@@ -15,22 +15,12 @@ import java.time.Instant;
 /**
  * 签名校验器
  *
- * <p>签名算法: HmacSHA256(AppKey + Timestamp + RequestPath + RequestBody, AppSecret)
- *
  * @author PKAQ
  */
 @Slf4j
 @Component
 public class SignatureValidator {
 
-    /**
-     * 签名算法
-     */
-    private static final String ALGORITHM = "HmacSHA256";
-
-    /**
-     * 时间戳容忍度(秒), 默认300秒
-     */
     private final EvaConfig evaConfig;
 
     public SignatureValidator(EvaConfig evaConfig) {
@@ -56,7 +46,7 @@ public class SignatureValidator {
             long diff = Math.abs(currentTimestamp - timestamp);
             log.warn("无效的时间戳 - 提供: {}, 当前: {}, 差异: {}s, 容忍度: {}s",
                     timestamp, currentTimestamp, diff, getTimestampToleranceSeconds());
-            OpenApiCodes.TIMESTAMP_OUT_OF_TOLERANCE.newException();
+            AuthCodes.OPENAPI_TIMESTAMP_OUT_OF_TOLERANCE.newException();
         }
 
         String serverSignature;
@@ -64,7 +54,7 @@ public class SignatureValidator {
             serverSignature = generateSignature(appKey, appSecret, timestamp, requestPath, requestBody);
         } catch (Exception e) {
             log.error("生成签名失败", e);
-            OpenApiCodes.SIGNATURE_GENERATION_FAILED.newException();
+            AuthCodes.OPENAPI_SIGNATURE_GENERATION_FAILED.newException();
             return false;
         }
 
@@ -74,7 +64,7 @@ public class SignatureValidator {
             if (log.isDebugEnabled()) {
                 log.debug("期望签名: {}, 实际签名: {}", serverSignature, signature);
             }
-            OpenApiCodes.INVALID_SIGNATURE.newException();
+            AuthCodes.OPENAPI_INVALID_SIGNATURE.newException();
         } else {
             log.debug("签名验证通过 - AppKey: {}, 路径: {}", appKey, requestPath);
         }
@@ -100,8 +90,9 @@ public class SignatureValidator {
         String signContent = buildSignContent(appKey, timestamp, requestPath, requestBody);
         log.info("签名内容: {}", signContent);
 
-        Mac mac = Mac.getInstance(ALGORITHM);
-        SecretKeySpec secretKey = new SecretKeySpec(appSecret.getBytes(StandardCharsets.UTF_8), ALGORITHM);
+        String algorithm = evaConfig.getAuth().getSignatureAlgorithm();
+        Mac mac = Mac.getInstance(algorithm);
+        SecretKeySpec secretKey = new SecretKeySpec(appSecret.getBytes(StandardCharsets.UTF_8), algorithm);
         mac.init(secretKey);
 
         byte[] hmacBytes = mac.doFinal(signContent.getBytes(StandardCharsets.UTF_8));
