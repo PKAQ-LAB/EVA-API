@@ -4,13 +4,12 @@ if (project.file('../../publish.gradle').exists()) {
 jar {
     archiveBaseName = 'eva-web-auth'
 }
-project.description = 'we jar with system management'
+project.description = 'web auth module'
 
 dependencies {
     api     project(":eva-web:eva-web-core"),
             project(":eva-core:eva-core-cache"),
             project(":eva-core:eva-core-log"),
             project(":eva-core:eva-core-data-mybatis"),
-            project(":eva-web:eva-web-sys:eva-web-sys-service"),
             libs.security
 }

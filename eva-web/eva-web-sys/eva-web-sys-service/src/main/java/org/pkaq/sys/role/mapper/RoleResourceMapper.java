@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 角色模块关系mapper
+ * 角色模块关系Mapper
  *
  * @author PKAQ
  */
@@ -25,40 +25,34 @@ import java.util.Set;
 public interface RoleResourceMapper extends BaseMapper<RoleResourceEntity> {
 
     /**
-     * 获取已选且是叶子节点的模块
+     * 获取已选择且为叶子节点的模块
      *
-     * @param bo
-     * @return
+     * @param bo 参数
+     * @return 模块列表
      */
     List<RoleResourceEntity> roleModuleList(@Param("entity") RoleResourceRefBo bo);
 
     /**
-     * 根据URL返回匹配的权限名称
+     * 查询资源并对该角色已拥有的资源打标记
      *
-     * @return
-     */
-    List<Map<String, String>> listRoleNamesWithPath();
-
-    /**
-     * 查询资源 并对该角色已拥有的资源打标记
-     *
-     * @param roleId
-     * @return
+     * @param roleId 角色ID
+     * @return 资源列表
      */
     @MapKey("MODULE_ID")
     Map<Long, List<ModuleResourcesVo>> listGrantedResource(Long roleId);
 
     /**
-     * 删除权限中失效的的引用关系
+     * 删除权限中失效的引用关系
      *
-     * @param moduleId
+     * @param moduleId 模块ID
      */
     void purgeBrokenRoleResourceRefs(Long moduleId);
 
     /**
      * 删除授权的资源
      *
-     * @param ids
+     * @param ids 模块ID集合
+     * @return 影响行数
      */
     int deleteByModuleIds(@Param("moduleIds") Set<Long> ids);
 }

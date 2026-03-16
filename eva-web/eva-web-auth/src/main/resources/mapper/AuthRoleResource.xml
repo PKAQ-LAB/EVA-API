@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.pkaq.core.auth.role.mapper.AuthRoleResourceMapper">
+    <select id="listRoleNamesWithPath" resultType="java.util.Map">
+        SELECT DISTINCT m.path, r.code, mr.resource_url
+        FROM sys_module_resources mr,
+             sys_role_module rm,
+             sys_module m,
+             sys_role r
+        WHERE rm.MODULE_ID = m.ID
+          AND rm.ROLE_ID = r.ID
+          AND m.id = mr.module_id
+          AND rm.RESOURCE_ID = mr.ID
+          AND m.isleaf = '1'
+    </select>
+</mapper>

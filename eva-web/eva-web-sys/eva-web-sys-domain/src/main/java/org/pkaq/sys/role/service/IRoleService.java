@@ -6,12 +6,9 @@ import org.pkaq.sys.role.bo.RoleUserRefBo;
 import org.pkaq.sys.role.vo.RoleGrantedModuleVo;
 import org.pkaq.sys.role.vo.RoleGrantedUserVo;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public interface IRoleService {
-    List<Map<String, String>> listRoleNamesWithPath();
 
     void delete(Set<Long> ids);
 

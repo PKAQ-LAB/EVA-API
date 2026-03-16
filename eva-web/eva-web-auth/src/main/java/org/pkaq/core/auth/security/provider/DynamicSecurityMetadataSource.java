@@ -3,9 +3,9 @@ package org.pkaq.core.auth.security.provider;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.pkaq.core.auth.role.service.AuthRolePermissionService;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.threaduser.ThreadUserHelper;
-import org.pkaq.sys.role.service.RoleService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authorization.AuthorizationDecision;
@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 /**
- * 动态 URL 权限管理器（Spring Security 7.x）
+ * 动态URL权限管理器（Spring Security 7.x）
  */
 @Slf4j
 @Component
@@ -29,13 +29,13 @@ import java.util.function.Supplier;
 @ConditionalOnProperty(prefix = "eva.resource-permission", name = "enable", havingValue = "true")
 public class DynamicSecurityMetadataSource implements AuthorizationManager<RequestAuthorizationContext> {
 
-    private final RoleService roleService;
+    private final AuthRolePermissionService rolePermissionService;
     private final EvaConfig evaConfig;
 
-    /** 角色 -> 可访问 URL 集合（严格模式） */
+    /** 角色 -> 可访问URL集合(严格模式) */
     private final Map<String, Set<String>> rolePermMap = new ConcurrentHashMap<>();
 
-    /** 可访问 URL 集合（简单模式） */
+    /** 可访问URL集合(简化模式) */
     private final Set<String> pathPermSet = ConcurrentHashMap.newKeySet();
 
     private final UrlPathHelper urlPathHelper = new UrlPathHelper();
@@ -46,7 +46,7 @@ public class DynamicSecurityMetadataSource implements AuthorizationManager<Reque
             return;
         }
 
-        List<Map<String, String>> menusUrl = this.roleService.listRoleNamesWithPath();
+        List<Map<String, String>> menusUrl = rolePermissionService.listRoleNamesWithPath();
 
         if (evaConfig.getResourcePermission().isStrict()) {
             menusUrl.forEach(item -> {
@@ -85,14 +85,14 @@ public class DynamicSecurityMetadataSource implements AuthorizationManager<Reque
             HttpServletRequest request = requestContext.getRequest();
             String requestUrl = urlPathHelper.getPathWithinApplication(request);
 
-            log.info("权限决策：请求地址 [{}]，用户权限 [{}]", requestUrl, authorities);
+            log.info("权限决策：请求地址 [{}]，用户权限[{}]", requestUrl, authorities);
 
             // 预检请求直接放行
             if (HttpMethod.OPTIONS.matches(request.getMethod())) {
                 return new AuthorizationDecision(true);
             }
 
-            // 严格模式：根据用户角色匹配 URL
+            // 严格模式：根据用户角色匹配URL
             if (evaConfig.getResourcePermission().isStrict()) {
                 String[] userRoles = ThreadUserHelper.getUserRoles();
                 if (userRoles == null || userRoles.length == 0) {
@@ -107,7 +107,7 @@ public class DynamicSecurityMetadataSource implements AuthorizationManager<Reque
 
                 return new AuthorizationDecision(granted);
 
-            } else { // 简单模式：判断 URL 是否在 pathPermSet
+            } else { // 简化模式：判断URL是否在pathPermSet
                 if (pathPermSet.isEmpty()) {
                     return new AuthorizationDecision(false);
                 }

@@ -52,15 +52,6 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
 
     private final UserConvert userConvert;
 
-
-    /**
-     * 根据请求的URL查询角色所属权限
-     */
-    @Override
-    public List<Map<String, String>> listRoleNamesWithPath() {
-        return this.roleResourceMapper.listRoleNamesWithPath();
-    }
-
     /**
      * 批量删除角色
      */
@@ -68,11 +59,11 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
     public void delete(Set<Long> ids) {
         QueryWrapper queryWrapper = new QueryWrapper<>();
         queryWrapper.in("role_id", ids);
-        // 删除该角色 授权的用户(可能有其它角色绑定)
+        // 删除角色授权的用户，可能有其他角色绑定
         this.roleUserMapper.delete(queryWrapper);
-        // 删除该角色 授权的模块以及资源
+        // 删除角色授权的模块及资源
         this.roleResourceMapper.delete(queryWrapper);
-        //删除角色
+        // 删除角色
         this.mapper.deleteByIds(ids);
     }
 
@@ -81,7 +72,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
      */
     @Override
     public boolean isUnique(IdCodeBo idCodeBo) {
-        // 添加 ROLE_ 前缀 并转大写
+        // 添加 ROLE_ 前缀并转大写
         if (!idCodeBo.getCode().startsWith(CommonConstant.AUTH_PREFIX)) {
             idCodeBo.setCode((CommonConstant.AUTH_PREFIX + idCodeBo.getCode()).toUpperCase());
         }
@@ -94,7 +85,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
     }
 
     /**
-     * 获取该角色绑定的所有模块 资源
+     * 获取角色绑定的所有模块资源
      *
      * @param roleModule 权限条件
      */
@@ -103,13 +94,13 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
         if (null == roleModule || roleModule.getRoleId() == null) {
             CommonCodes.PARAM_ERROR.newException();
         }
-        // 获取角色范围内的不重复菜单
+        // 获取角色范围内的模块
         var curUid = ThreadUserHelper.getUserId();
         var roleId = roleModule.getRoleId();
 
         Map<Long, ModuleDetailVo> moduleMap = this.moduleMapper.listGrantedModules(curUid);
 
-        // 查询该角色拥有的所有资源
+        // 查询角色拥有的资源
         var resourceMap = this.roleResourceMapper.listGrantedResource(roleId);
 
         var moduleChecked = new HashSet<Long>();
@@ -117,11 +108,11 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
         resourceMap.forEach((k, v) -> {
             var module = moduleMap.get(k);
             module.setResources(v);
-            // 收集模块的选中id
+            // 收集模块选中id
             moduleChecked.add(k);
         });
 
-        // 菜单转换为树形结构
+        // 菜单转换为树
         var moduleTree = TreeHelper.buildTree(moduleMap.values());
 
         RoleGrantedModuleVo roleModuleVo = new RoleGrantedModuleVo();
@@ -159,7 +150,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
     }
 
     /**
-     * 获取该角色绑定的所有用户
+     * 获取角色绑定的所有用户
      *
      * @param roleId 权限条件
      * @return
@@ -173,10 +164,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
 
         List<UserEntity> users = this.userMapper.selectList(userWrapper);
 
-        // 获取已选的用户
-        RoleUserEntity roleUserEntity = new RoleUserEntity();
-        roleUserEntity.setRoleId(roleId);
-
+        // 获取已选用户
         LambdaQueryWrapper<RoleUserEntity> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(RoleUserEntity::getRoleId, roleId);
         wrapper.select(RoleUserEntity::getUserId);

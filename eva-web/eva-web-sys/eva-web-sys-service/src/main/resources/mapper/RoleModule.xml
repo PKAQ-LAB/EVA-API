@@ -25,18 +25,6 @@
         order by m.id
     </select>
 
-    <select id="listRoleNamesWithPath" resultType="java.util.Map">
-        SELECT DISTINCT m.path, r.code, mr.resource_url
-        FROM sys_module_resources mr,
-             sys_role_module rm,
-             sys_module m,
-             sys_role r
-        WHERE rm.MODULE_ID = m.ID
-          AND rm.ROLE_ID = r.ID
-          AND m.id = mr.module_id
-          AND rm.RESOURCE_ID = mr.ID
-          AND m.isleaf = '1'
-    </select>
     <!--    查询资源 并对该角色已拥有的资源打标记-->
     <select id="listGrantedResource" resultType="java.util.Map">
         SELECT

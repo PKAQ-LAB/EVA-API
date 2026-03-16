@@ -4,12 +4,15 @@
     <resultMap id="BaseResultMap" type="org.pkaq.sys.user.vo.UserDetailVo" extends="common.resultMap">
         <id property="id" column="ID"/>
     </resultMap>
-    <!-- 获取包含权限列表的用户信息-->
-    <resultMap id="UserWithRole" type="user" extends="BaseResultMap">
-        <collection property="roles" column="{userId=id}" select="org.pkaq.sys.role.mapper.RoleMapper.selectByUserId" ofType="role"/>
+    <!-- 获取包含模块权限列表的用户信息 -->
+    <resultMap id="UserWithModuleAndRole" type="user" extends="BaseResultMap">
+        <collection property="roles" column="{userId=id}"
+                    select="org.pkaq.sys.role.mapper.RoleMapper.selectByUserId" ofType="role"/>
+        <collection property="modules" column="{userId=id}"
+                    select="org.pkaq.sys.module.mapper.ModuleMapper.getRoleModuleByUserId" ofType="module"/>
     </resultMap>
 
-    <!-- 获取包含权限列表的用户信息-->
+    <!-- 获取包含权限列表的用户信息 -->
     <resultMap id="UserWithRoleId" type="user" extends="BaseResultMap">
         <collection property="roles" javaType="java.util.List" ofType="roleUser">
             <id column="R_ID" property="id" jdbcType="VARCHAR"/>
@@ -17,15 +20,7 @@
         </collection>
     </resultMap>
 
-    <!-- 获取包含模块 权限列表的用户信息-->
-    <resultMap id="UserWithModuleAndRole" type="user" extends="BaseResultMap">
-        <collection property="roles" column="{userId=id}" select="org.pkaq.sys.role.mapper.RoleMapper.selectByUserId"
-                    ofType="role"/>
-        <collection property="modules" column="{userId=id}"
-                    select="org.pkaq.sys.module.mapper.ModuleMapper.getRoleModuleByUserId" ofType="module"/>
-    </resultMap>
-
-    <!-- 根据id更新用户锁定状态   -->
+    <!-- 根据id更新用户锁定状态 -->
     <update id="change">
         update sys_user set frozen = abs(frozen - 1)
         <where>
@@ -62,21 +57,8 @@
             </if>
         </where>
     </select>
-    <!-- 根据用户 账号/电话/邮箱 获取包含权限列表的用户信息 -->
-    <select id="getUserWithRole" resultMap="UserWithRole">
-        select * from SYS_USER su
-        <where>
-            <if test="null != id and id != ''">
-                su.id = #{id,jdbcType=VARCHAR}
-            </if>
-            <if test="null != account and account != ''">
-                and (su.account = #{account,jdbcType=VARCHAR} or
-                su.tel = #{account,jdbcType=VARCHAR} or
-                su.email = #{account,jdbcType=VARCHAR} )
-            </if>
-        </where>
-    </select>
-    <!-- 根据用户ID 获取包含模块 权限列表的用户信息-->
+
+    <!-- 根据用户ID获取包含模块权限列表的用户信息 -->
     <select id="getUserWithModuleAndRoleById" resultMap="UserWithModuleAndRole">
         select *
         from SYS_USER

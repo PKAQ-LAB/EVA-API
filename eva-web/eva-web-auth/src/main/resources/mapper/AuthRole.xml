@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.pkaq.core.auth.role.mapper.AuthRoleMapper">
+    <select id="selectByUserId" resultType="authRole">
+        select  R.ID,
+                R.NAME,
+                R.CODE,
+                RU.USER_ID
+        from SYS_ROLE R, SYS_ROLEUSER_REF RU
+        <where>
+            R.ID= RU.ROLE_ID
+            and
+            R.FROZEN != 1
+            and
+            RU.USER_ID=#{userId,jdbcType=VARCHAR}
+        </where>
+    </select>
+</mapper>

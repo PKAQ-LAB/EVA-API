@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.pkaq.core.auth.user.mapper.AuthUserMapper">
+    <resultMap id="UserWithRole" type="authUser">
+        <collection property="roles" column="{userId=id}" select="org.pkaq.core.auth.role.mapper.AuthRoleMapper.selectByUserId" ofType="authRole"/>
+    </resultMap>
+
+    <select id="getUserWithRole" resultMap="UserWithRole">
+        select * from SYS_USER su
+        <where>
+            <if test="null != id and id != ''">
+                su.id = #{id,jdbcType=VARCHAR}
+            </if>
+            <if test="null != account and account != ''">
+                and (su.account = #{account,jdbcType=VARCHAR} or
+                su.tel = #{account,jdbcType=VARCHAR} or
+                su.email = #{account,jdbcType=VARCHAR} )
+            </if>
+        </where>
+    </select>
+</mapper>
