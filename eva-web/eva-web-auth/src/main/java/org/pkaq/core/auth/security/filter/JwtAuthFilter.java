@@ -55,6 +55,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
 
+        String requestPath = request.getRequestURI();
+        if (!evaConfig.getAuth().matchJwtPath(requestPath)) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         var isvalid = false;
         var inCache = false;
         var cacheToken = evaConfig.getJwt().isPersistence();
@@ -185,3 +191,4 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     }
 }
+

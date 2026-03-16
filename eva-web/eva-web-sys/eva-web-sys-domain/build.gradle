@@ -1,5 +1,5 @@
-if (project.file('../../publish.gradle').exists()) {
-    apply from: '../../publish.gradle'
+if (project.file('../../../publish.gradle').exists()) {
+    apply from: '../../../publish.gradle'
 }
 
 

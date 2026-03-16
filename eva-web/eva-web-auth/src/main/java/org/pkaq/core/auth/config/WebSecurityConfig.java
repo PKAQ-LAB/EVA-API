@@ -1,6 +1,7 @@
 package org.pkaq.core.auth.config;
 
 import lombok.RequiredArgsConstructor;
+import org.pkaq.core.auth.openapi.filter.AppKeyAuthenticationFilter;
 import org.pkaq.core.auth.security.entrypoint.*;
 import org.pkaq.core.auth.security.filter.JwtAuthFilter;
 import org.pkaq.core.auth.security.provider.DynamiclAccessDecisionManager;
@@ -52,6 +53,7 @@ public class WebSecurityConfig {
     private final UnauthorizedHandler unauthorizedHandler;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JwtAuthFilter jwtAuthFilter;
+    private final AppKeyAuthenticationFilter appKeyAuthenticationFilter;
 
     @Value("${server.servlet.context-path:/}")
     private String contextPath;
@@ -67,7 +69,9 @@ public class WebSecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(CollUtils.isEmpty(evaConfig.getJwt().getCreditUrl()) ? List.of("*") : evaConfig.getJwt().getCreditUrl());
+        configuration.setAllowedOrigins(CollUtils.isEmpty(evaConfig.getJwt().getCreditUrl())
+                ? List.of("*")
+                : evaConfig.getJwt().getCreditUrl());
         configuration.setAllowCredentials(false);
         configuration.setAllowedMethods(Arrays.asList("PUT", "DELETE", "GET", "POST", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
@@ -92,7 +96,7 @@ public class WebSecurityConfig {
     public SecurityFilterChain httpSecurityConfigure(HttpSecurity httpSecurity) {
 
         httpSecurity.cors(Customizer.withDefaults())
-                // 关闭csrf 由于使用的是JWT，我们这里不需要csrf
+                // 关闭csrf 由于使用的是JWT，这里不需要csrf
                 .csrf(AbstractHttpConfigurer::disable)
                 .headers(header -> {
                     //允许加载iframe内容 X-Frame-Options
@@ -102,15 +106,19 @@ public class WebSecurityConfig {
                     });
                     header.cacheControl(Customizer.withDefaults());
                     // 适配IE
-                    header.addHeaderWriter(new StaticHeadersWriter("P3P", "CP='CAO IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'"));
+                    header.addHeaderWriter(new StaticHeadersWriter("P3P",
+                            "CP='CAO IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'"));
                     header.xssProtection(Customizer.withDefaults());
                 })
-                // 基于token，所以不需要session
+                // 基于token，不需要session
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(Customizer.withDefaults());
 
         // 允许匿名访问的url
-        httpSecurity.authorizeHttpRequests(auth -> auth.requestMatchers(evaConfig.getSecurity().getAnonymous()).permitAll());
+        String[] anonymousPaths = evaConfig.getAuth().getAnonymous();
+        if (anonymousPaths != null && anonymousPaths.length > 0) {
+            httpSecurity.authorizeHttpRequests(auth -> auth.requestMatchers(anonymousPaths).permitAll());
+        }
 
         if (null != urlAccessDecisionManager) {
             httpSecurity.authorizeHttpRequests(auth -> auth.anyRequest().access(urlAccessDecisionManager));
@@ -118,19 +126,29 @@ public class WebSecurityConfig {
             httpSecurity.authorizeHttpRequests(auth -> auth.anyRequest().authenticated());
         }
 
-        httpSecurity.logout(logout -> logout.logoutUrl(contextPath+"/auth/logout").logoutSuccessHandler(urlLogoutSuccessHandler));
+        httpSecurity.logout(logout -> logout.logoutUrl(contextPath + "/auth/logout").logoutSuccessHandler(urlLogoutSuccessHandler));
 
         httpSecurity.exceptionHandling(ex ->
                 ex.authenticationEntryPoint(unauthorizedHandler)
                         .accessDeniedHandler(urlAccessDeniedHandler));
 
-        httpSecurity
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JwtUsernamePasswordAuthenticationFilter(contextPath+"/auth/login",
-                                authenticationConfiguration.getAuthenticationManager(),
-                                urlAuthenticationSuccessHandler,
-                                urlAuthenticationFailureHandler),
-                        UsernamePasswordAuthenticationFilter.class);
+        if (evaConfig.getAuth().isOpenApiEnabled()) {
+            if (evaConfig.getAuth().isJwtEnabled()) {
+                httpSecurity.addFilterBefore(appKeyAuthenticationFilter, JwtAuthFilter.class);
+            } else {
+                httpSecurity.addFilterBefore(appKeyAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+            }
+        }
+
+        if (evaConfig.getAuth().isJwtEnabled()) {
+            httpSecurity
+                    .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                    .addFilterBefore(new JwtUsernamePasswordAuthenticationFilter(contextPath + "/auth/login",
+                                    authenticationConfiguration.getAuthenticationManager(),
+                                    urlAuthenticationSuccessHandler,
+                                    urlAuthenticationFailureHandler),
+                            UsernamePasswordAuthenticationFilter.class);
+        }
 
 //            @Secured( value={"ROLE_ANONYMOUS"})
         httpSecurity.anonymous(anonymous -> anonymous.authorities("ROLE_ANONYMOUS"));
@@ -148,10 +166,8 @@ public class WebSecurityConfig {
 //
 //        return http.build();
 //    }
-
     /**
-     * 禁止 JwtAuthFilter 被 Spring Boot 自动注册为 Servlet Filter
-     * 确保它只在 Spring Security 过滤链中运行, 使 web.ignoring() 配置生效
+     * 禁止 JwtAuthFilter 被Spring Boot自动注册为Servlet Filter
      */
     @Bean
     public FilterRegistrationBean<JwtAuthFilter> jwtAuthFilterRegistration(JwtAuthFilter filter) {
@@ -161,9 +177,18 @@ public class WebSecurityConfig {
     }
 
     /**
-     * 虽然登录请求可以被所有人访问，但是不能放在这里（而应该通过允许匿名访问的方式来给请求放行）。
-     * 如果放在这里，登录请求将不走 SecurityContextPersistenceFilter 过滤器，也就意味着不会将登录用户信息存入 session，
-     * 进而导致后续请求无法获取到登录用户信息。
+     * 禁止 AppKeyAuthenticationFilter 被Spring Boot自动注册为Servlet Filter
+     */
+    @Bean
+    public FilterRegistrationBean<AppKeyAuthenticationFilter> appKeyAuthenticationFilterRegistration(
+            AppKeyAuthenticationFilter filter) {
+        FilterRegistrationBean<AppKeyAuthenticationFilter> registration = new FilterRegistrationBean<>(filter);
+        registration.setEnabled(false);
+        return registration;
+    }
+
+    /**
+     * 忽略静态资源
      */
     @Bean
     public WebSecurityCustomizer webSecurityConfigure() {
@@ -185,7 +210,10 @@ public class WebSecurityConfig {
                     "/*/api-docs/**"
             };
 
-            var paths = ArrayUtils.addAll(staticPath, evaConfig.getSecurity().getWebstatic());
+            String[] paths = staticPath;
+            if (null != evaConfig.getAuth().getWebstatic()) {
+                paths = ArrayUtils.addAll(evaConfig.getAuth().getWebstatic(), staticPath);
+            }
 
             web.ignoring()
                     // allow anonymous resource requests
@@ -194,3 +222,4 @@ public class WebSecurityConfig {
         };
     }
 }
+

@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Configuration;
 
 /**
- * 业务日志配置读取类
+ * 业务配置读取类
  *
  * @author PKAQ
  */
@@ -38,7 +38,7 @@ public class EvaConfig {
      **/
     private BizLog bizlog;
     /**
-     * 业务日志配置
+     * 错误日志配置
      **/
     private ErrorLog errorLog;
     /**
@@ -58,9 +58,9 @@ public class EvaConfig {
      **/
     private Cookie cookie;
     /**
-     * 访问鉴权配置
+     * 鉴权配置
      **/
-    private Security security;
+    private Auth auth;
     /**
      * 数据权限配置
      **/
@@ -96,6 +96,10 @@ public class EvaConfig {
 
     public Cookie getCookie() {
         return null == this.cookie ? new Cookie() : cookie;
+    }
+
+    public Auth getAuth() {
+        return null == this.auth ? new Auth() : auth;
     }
 
     public DataPermission getDataPermission() {

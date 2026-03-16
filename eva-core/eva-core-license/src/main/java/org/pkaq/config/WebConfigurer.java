@@ -34,7 +34,7 @@ public class WebConfigurer implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(licenseCheckInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns(evaConfig.getSecurity().getPermit());
+                .excludePathPatterns(evaConfig.getAuth().getPermit());
     }
 
     // 解决乱码问题 StringHttpMessageConverter默认编码为ISO-8859-1
@@ -43,3 +43,4 @@ public class WebConfigurer implements WebMvcConfigurer {
         return new StringHttpMessageConverter(StandardCharsets.UTF_8);
     }
 }
+
