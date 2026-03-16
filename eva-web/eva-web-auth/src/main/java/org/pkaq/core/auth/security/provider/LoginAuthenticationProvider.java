@@ -1,4 +1,4 @@
-﻿package org.pkaq.core.auth.security.provider;
+package org.pkaq.core.auth.security.provider;
 
 import lombok.Getter;
 import lombok.Setter;

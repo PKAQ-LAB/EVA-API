@@ -1,4 +1,4 @@
-﻿package org.pkaq.core.auth.openapi.mapper;
+package org.pkaq.core.auth.openapi.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;

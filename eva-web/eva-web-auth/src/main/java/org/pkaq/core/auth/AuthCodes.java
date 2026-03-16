@@ -1,4 +1,4 @@
-﻿package org.pkaq.core.auth;
+package org.pkaq.core.auth;
 
 import lombok.Getter;
 import org.pkaq.core.exception.BizAssert;

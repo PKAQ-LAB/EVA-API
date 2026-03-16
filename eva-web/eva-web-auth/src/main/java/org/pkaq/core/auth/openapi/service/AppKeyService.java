@@ -1,4 +1,4 @@
-﻿package org.pkaq.core.auth.openapi.service;
+package org.pkaq.core.auth.openapi.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

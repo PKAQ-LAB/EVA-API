@@ -1,4 +1,4 @@
-﻿package org.pkaq.core.properties;
+package org.pkaq.core.properties;
 
 import lombok.Data;
 import org.springframework.util.AntPathMatcher;
@@ -36,7 +36,7 @@ public class Auth {
     }
 
     public boolean isOpenApiEnabled() {
-        return null != openApiEnabled && openApiEnabled;
+        return null == openApiEnabled || openApiEnabled;
     }
 
     public long getSignatureTimestampToleranceSeconds() {

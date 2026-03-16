@@ -1,4 +1,4 @@
-﻿package org.pkaq.core.auth.openapi.security;
+package org.pkaq.core.auth.openapi.security;
 
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.auth.AuthCodes;

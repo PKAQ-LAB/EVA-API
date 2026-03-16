@@ -21,6 +21,7 @@ import org.pkaq.web.core.utils.CookieUtils;
 import org.pkaq.web.core.utils.ResponseUtil;
 import org.pkaq.web.core.utils.TokenUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
@@ -40,6 +41,7 @@ import java.util.Map;
  */
 @Component
 @RequiredArgsConstructor
+@Order(200)
 public class JwtAuthFilter extends OncePerRequestFilter {
     @Qualifier("jwtUserDetailsService")
     private final UserDetailsService userDetailsService;

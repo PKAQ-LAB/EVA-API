@@ -1,4 +1,4 @@
-﻿package org.pkaq.core.auth.security.service;
+package org.pkaq.core.auth.security.service;
 
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.auth.AuthCodes;

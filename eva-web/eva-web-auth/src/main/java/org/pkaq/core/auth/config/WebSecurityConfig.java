@@ -133,11 +133,7 @@ public class WebSecurityConfig {
                         .accessDeniedHandler(urlAccessDeniedHandler));
 
         if (evaConfig.getAuth().isOpenApiEnabled()) {
-            if (evaConfig.getAuth().isJwtEnabled()) {
-                httpSecurity.addFilterBefore(appKeyAuthenticationFilter, JwtAuthFilter.class);
-            } else {
-                httpSecurity.addFilterBefore(appKeyAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-            }
+            httpSecurity.addFilterBefore(appKeyAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         }
 
         if (evaConfig.getAuth().isJwtEnabled()) {

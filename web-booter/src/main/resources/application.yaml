@@ -93,12 +93,15 @@ eva:
     # 过期阈值 默认6小时
     threshold: 21600000
   # 访问权限
-  security:
+  auth:
+    jwtEnabled: true
+    openApiEnabled: true
     webstatic:
     # 无需鉴权路径(无条件访问)
     anonymous: /auth/login,/auth/logout,/wx/**,/doc/**,/actuator/**,/swagger-resources/**,/v3/api-docs/swagger-config
     # 无需资源鉴权的路径
     permit: /auth/**,/wx/**,/doc/**,/actuator/**,/license/**
+    openAPIPaths: /apr/**
   # 资源权限
   resource-permission:
     # 是否启用

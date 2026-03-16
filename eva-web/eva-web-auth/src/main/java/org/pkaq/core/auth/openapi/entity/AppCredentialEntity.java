@@ -1,4 +1,4 @@
-﻿package org.pkaq.core.auth.openapi.entity;
+package org.pkaq.core.auth.openapi.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;

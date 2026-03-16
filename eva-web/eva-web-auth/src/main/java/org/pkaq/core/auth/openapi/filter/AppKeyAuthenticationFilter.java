@@ -1,4 +1,4 @@
-﻿package org.pkaq.core.auth.openapi.filter;
+package org.pkaq.core.auth.openapi.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
