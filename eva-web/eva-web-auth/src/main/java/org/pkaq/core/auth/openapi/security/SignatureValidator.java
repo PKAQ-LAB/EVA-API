@@ -90,7 +90,7 @@ public class SignatureValidator {
         String signContent = buildSignContent(appKey, timestamp, requestPath, requestBody);
         log.info("签名内容: {}", signContent);
 
-        String algorithm = evaConfig.getAuth().getSignatureAlgorithm();
+        String algorithm = evaConfig.getAuth().getOpenApi().getSignatureAlgorithm();
         Mac mac = Mac.getInstance(algorithm);
         SecretKeySpec secretKey = new SecretKeySpec(appSecret.getBytes(StandardCharsets.UTF_8), algorithm);
         mac.init(secretKey);
@@ -130,7 +130,7 @@ public class SignatureValidator {
     }
 
     private long getTimestampToleranceSeconds() {
-        return evaConfig.getAuth().getSignatureTimestampToleranceSeconds();
+        return evaConfig.getAuth().getOpenApi().getSignatureTimestampToleranceSeconds();
     }
 
     /**

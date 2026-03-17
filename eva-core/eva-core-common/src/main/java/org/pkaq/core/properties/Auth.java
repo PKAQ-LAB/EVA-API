@@ -16,62 +16,45 @@ public class Auth {
     // 无需资源鉴权的路径
     private String[] permit;
 
-    // 是否启用jwt认证
-    private Boolean jwtEnabled;
+    // JWT配置
+    private Jwt jwt;
 
-    // 是否启用OpenAPI认证
-    private Boolean openApiEnabled;
-
-    // 基于jwt的认证路径(默认全量)
-    private String[] jwtAuthPaths;
-
-    // 基于appKey / security的认证路径
-    private String[] openAPIPaths;
-
-    // OpenAPI签名配置
-    private Signature signature;
+    // OpenAPI配置
+    private OpenApi openApi;
 
     public boolean isJwtEnabled() {
-        return null == jwtEnabled || jwtEnabled;
+        return getJwt().isEnabled();
     }
 
     public boolean isOpenApiEnabled() {
-        return null == openApiEnabled || openApiEnabled;
+        return getOpenApi().isEnabled();
     }
 
     public long getSignatureTimestampToleranceSeconds() {
-        if (signature == null || signature.getTimestampToleranceSeconds() == null) {
-            return 300L;
-        }
-
-        return signature.getTimestampToleranceSeconds();
+        return getOpenApi().getSignatureTimestampToleranceSeconds();
     }
 
     public String getSignatureAlgorithm() {
-        if (signature == null || signature.getAlgorithm() == null || signature.getAlgorithm().isBlank()) {
-            return "HmacSHA256";
-        }
-
-        return signature.getAlgorithm();
+        return getOpenApi().getSignatureAlgorithm();
     }
 
     public boolean matchJwtPath(String path) {
-        if (!isJwtEnabled()) {
-            return false;
-        }
-
-        return matchPath(path, jwtAuthPaths);
+        return getJwt().matchPath(path);
     }
 
     public boolean matchOpenApiPath(String path) {
-        if (!isOpenApiEnabled()) {
-            return false;
-        }
-
-        return matchPath(path, openAPIPaths);
+        return getOpenApi().matchPath(path);
     }
 
-    private boolean matchPath(String path, String[] patterns) {
+    public Jwt getJwt() {
+        return null == jwt ? new Jwt() : jwt;
+    }
+
+    public OpenApi getOpenApi() {
+        return null == openApi ? new OpenApi() : openApi;
+    }
+
+    private static boolean matchPath(String path, String[] patterns) {
         if (path == null) {
             return false;
         }
@@ -88,6 +71,91 @@ public class Auth {
         }
 
         return false;
+    }
+
+    @Data
+    public static class Jwt {
+        // 是否启用JWT认证
+        private Boolean enabled;
+
+        // 基于JWT的认证路径(默认全量)
+        private String[] paths;
+
+        public boolean isEnabled() {
+            return null == enabled || enabled;
+        }
+
+        public boolean matchPath(String path) {
+            if (!isEnabled()) {
+                return false;
+            }
+
+            return Auth.matchPath(path, paths);
+        }
+    }
+
+    @Data
+    public static class OpenApi {
+        // 是否启用OpenAPI认证
+        private Boolean enabled;
+
+        // OpenAPI认证路径(默认全量)
+        private String[] paths;
+
+        // OpenAPI Header配置
+        private Headers headers;
+
+        // OpenAPI签名配置
+        private Signature signature;
+
+        public boolean isEnabled() {
+            return null == enabled || enabled;
+        }
+
+        public Headers getHeaders() {
+            return null == headers ? new Headers() : headers;
+        }
+
+        public Signature getSignature() {
+            return null == signature ? new Signature() : signature;
+        }
+
+        public long getSignatureTimestampToleranceSeconds() {
+            if (getSignature().getTimestampToleranceSeconds() == null) {
+                return 300L;
+            }
+
+            return getSignature().getTimestampToleranceSeconds();
+        }
+
+        public String getSignatureAlgorithm() {
+            String algorithm = getSignature().getAlgorithm();
+            if (algorithm == null || algorithm.isBlank()) {
+                return "HmacSHA256";
+            }
+
+            return algorithm;
+        }
+
+        public boolean matchPath(String path) {
+            if (!isEnabled()) {
+                return false;
+            }
+
+            return Auth.matchPath(path, paths);
+        }
+    }
+
+    @Data
+    public static class Headers {
+        // AppKey Header
+        private String appKey = "X-App-Key";
+
+        // Timestamp Header
+        private String timestamp = "X-Timestamp";
+
+        // Signature Header
+        private String signature = "X-Signature";
     }
 
     @Data

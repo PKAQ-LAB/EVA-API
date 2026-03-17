@@ -39,10 +39,6 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class AppKeyAuthenticationFilter extends OncePerRequestFilter {
 
-    private static final String HEADER_APP_KEY = "X-App-Key";
-    private static final String HEADER_TIMESTAMP = "X-Timestamp";
-    private static final String HEADER_SIGNATURE = "X-Signature";
-
     private final AppKeyService appKeyService;
     private final SignatureValidator signatureValidator;
     private final EvaConfig evaConfig;
@@ -80,9 +76,11 @@ public class AppKeyAuthenticationFilter extends OncePerRequestFilter {
 
         String requestPath = request.getRequestURI();
 
-        String appKey = request.getHeader(HEADER_APP_KEY);
-        String timestampStr = request.getHeader(HEADER_TIMESTAMP);
-        String signature = request.getHeader(HEADER_SIGNATURE);
+        var openApiConfig = evaConfig.getAuth().getOpenApi();
+        var headerConfig = openApiConfig.getHeaders();
+        String appKey = request.getHeader(headerConfig.getAppKey());
+        String timestampStr = request.getHeader(headerConfig.getTimestamp());
+        String signature = request.getHeader(headerConfig.getSignature());
 
         log.debug("处理请求 - appKey: {}, 路径: {}, 时间戳: {}", appKey, requestPath, timestampStr);
 
