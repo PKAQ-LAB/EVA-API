@@ -9,6 +9,7 @@ project.description = 'eva web core jar'
 
 dependencies {
     api libs.servlet.api
+    api libs.web
 
     api project(":eva-core:eva-core-common")
 }

@@ -16,6 +16,7 @@ import org.pkaq.core.auth.openapi.security.SignatureValidator;
 import org.pkaq.core.auth.openapi.service.AppKeyService;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.util.json.JsonUtil;
+import org.pkaq.web.core.filter.CachedBodyHttpServletRequest;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

@@ -1,4 +1,4 @@
-package org.pkaq.core.auth.openapi.filter;
+package org.pkaq.web.core.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -16,6 +16,7 @@ import java.io.IOException;
  * 缓存请求体过滤器
  *
  * @author PKAQ
+ * @date 2026-03-17
  */
 @Slf4j
 @Component
@@ -35,7 +36,7 @@ public class CachedBodyFilter extends OncePerRequestFilter {
                 || "PUT".equalsIgnoreCase(method)
                 || "PATCH".equalsIgnoreCase(method)) {
 
-            log.trace("包装请求以支持Body重复读取 - method: {}, path: {}", method, path);
+            log.trace("包装请求以支持 Body 重复读取 - method: {}, path: {}", method, path);
 
             try {
                 CachedBodyHttpServletRequest wrappedRequest = new CachedBodyHttpServletRequest(request);

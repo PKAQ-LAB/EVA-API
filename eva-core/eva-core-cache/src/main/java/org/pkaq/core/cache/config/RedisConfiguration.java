@@ -37,7 +37,7 @@ public class RedisConfiguration {
 
     /**
      * @return 返回类型
-     * @Description: 防止redis入库序列化乱码的问题
+     *  防止redis入库序列化乱码的问题
      */
     @Bean
     @ConditionalOnMissingBean(RedisTemplate.class)
