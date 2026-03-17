@@ -1,5 +1,6 @@
 package org.pkaq.sys.dict.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,7 +20,8 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 public class DictItemEntity extends StdEntity implements Serializable {
 
-    private String mainId;
+    @TableField("MAIN_ID")
+    private Long dictId;
 
     private String dCode;
 

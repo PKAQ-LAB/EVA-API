@@ -13,8 +13,8 @@
     </resultMap>
     <!-- 带子表数据查询 -->
     <resultMap id="LineResultMap" type="dict" extends="BaseResultMap">
-        <collection property="lines" ofType="dictItem" column="{mainId=id}"
-                    select="org.pkaq.sys.dict.mapper.DictItemMapper.listItemByMainId"/>
+        <collection property="lines" ofType="dictItem" column="{dictId=id}"
+                    select="org.pkaq.sys.dict.mapper.DictItemMapper.listItemByDictId"/>
     </resultMap>
 
     <sql id="column">

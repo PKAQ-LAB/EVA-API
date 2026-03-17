@@ -2,6 +2,7 @@ package org.pkaq.sys.dict.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.pkaq.sys.dict.entity.DictItemEntity;
 import org.springframework.stereotype.Repository;
 
@@ -16,7 +17,7 @@ import java.util.List;
 @Repository
 public interface DictItemMapper extends BaseMapper<DictItemEntity> {
     /**
-     * 根据mainId查询
+     * 根据字典ID查询
      */
-    List<DictItemEntity> listItemByMainId();
+    List<DictItemEntity> listItemByDictId(@Param("dictId") Long dictId);
 }

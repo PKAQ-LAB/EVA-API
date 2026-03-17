@@ -153,7 +153,7 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
             // 保存子表
             if (CollUtils.isNotEmpty(dictAoeBo.getLines())) {
                 dictAoeBo.getLines().forEach(item -> {
-                    item.setMainId(mainID);
+                    item.setDictId(mainID);
                     dictItemMapper.insert(dictConvert.boToItemEntity(item));
                 });
             }
@@ -172,7 +172,7 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
 
                 if (CollUtils.isNotEmpty(dictAoeBo.getLines())) {
                     dictAoeBo.getLines().forEach(item -> {
-                        item.setMainId(id);
+                        item.setDictId(id);
                         dictItemMapper.insert(dictConvert.boToItemEntity(item));
                     });
                 }
