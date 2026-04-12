@@ -16,3 +16,5 @@
 /gradle/wrapper/*.jar
 /gradle/wrapper/*.properties
 
+.claude
+.trae
