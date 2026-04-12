@@ -15,18 +15,20 @@ import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.util.DateUtils;
 import org.pkaq.core.util.json.JsonUtil;
+import org.pkaq.core.auth.security.vo.LoginSuccessVo;
+import org.pkaq.core.auth.security.vo.LoginUserInfoVo;
 import org.pkaq.web.core.utils.CookieUtils;
 import org.pkaq.web.core.utils.RequestUtil;
 import org.pkaq.web.core.utils.ResponseUtil;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 /**
  * 自定义登录成功处理器
@@ -67,14 +69,15 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         int maxAge = evaConfig.getCookie().getMaxAge();
         String path = "/";
 
+        LoginUserInfoVo userInfo = buildLoginUserInfo(user);
+        LoginSuccessVo loginSuccessVo = new LoginSuccessVo();
+        loginSuccessVo.setUserInfo(userInfo);
+        loginSuccessVo.setAccessToken(access_token);
+        loginSuccessVo.setRefreshToken(refresh_token);
+
         CookieUtils.addCookie(httpServletResponse, CommonConstant.ACCESS_TOKEN_KEY, access_token, maxAge, path, domain);
         CookieUtils.addCookie(httpServletResponse, CommonConstant.REFRESH_TOKEN_KEY, refresh_token, maxAge, path, domain);
-        CookieUtils.addCookie(httpServletResponse, CommonConstant.USER_KEY, URLEncoder.encode(JsonUtil.toJson(user), StandardCharsets.UTF_8), maxAge, path, domain);
-
-        Map<String, Object> map = HashMap.newHashMap(3);
-        map.put(CommonConstant.USER_KEY, user);
-        map.put(CommonConstant.ACCESS_TOKEN_KEY, access_token);
-        map.put(CommonConstant.REFRESH_TOKEN_KEY, refresh_token);
+        CookieUtils.addCookie(httpServletResponse, CommonConstant.USER_KEY, URLEncoder.encode(JsonUtil.toJson(userInfo), StandardCharsets.UTF_8), maxAge, path, domain);
 
         BizLogEntity bizLogEntity = new BizLogEntity();
         bizLogEntity.setDescription(user.getAccount() + " 登录了系统")
@@ -89,6 +92,35 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         logSupporter.save(bizLogEntity);
 
         ResponseUtil.write(httpServletResponse, Response
-                .success(map, CommonCodes.LOGIN_SUCCESS_WELCOME, user.getName()));
+                .success(loginSuccessVo, CommonCodes.LOGIN_SUCCESS_WELCOME, user.getName()));
+    }
+
+    /**
+     * 构造登录成功后返回的轻量用户信息。
+     */
+    private LoginUserInfoVo buildLoginUserInfo(JwtUserDetail user) {
+        LoginUserInfoVo userInfo = new LoginUserInfoVo();
+        userInfo.setId(user.getId());
+        userInfo.setAccount(user.getAccount());
+        userInfo.setUsername(user.getUsername());
+        userInfo.setDeptId(user.getDeptId());
+        userInfo.setDeptName(user.getDeptName());
+        userInfo.setName(user.getName());
+        userInfo.setNickName(user.getNickName());
+        userInfo.setAuthorities(extractAuthorities(user));
+        return userInfo;
+    }
+
+    /**
+     * 提取角色编码列表。
+     */
+    private List<String> extractAuthorities(JwtUserDetail user) {
+        if (user.getAuthorities() == null) {
+            return List.of();
+        }
+        return user.getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList();
     }
 }

@@ -18,6 +18,7 @@ import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.threaduser.ThreadUser;
 import org.pkaq.core.threaduser.ThreadUserHelper;
+import org.pkaq.core.util.ArrayUtils;
 import org.pkaq.core.util.StrUtils;
 import org.pkaq.core.util.json.JsonUtil;
 import org.pkaq.web.core.utils.CookieUtils;
@@ -193,7 +194,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
      */
     private boolean isPermitPath(String path) {
         String[] permitPaths = evaConfig.getAuth().getPermit();
-        if (permitPaths == null || permitPaths.length == 0) {
+        if (ArrayUtils.isEmpty(permitPaths)) {
             return false;
         }
         for (String pattern : permitPaths) {

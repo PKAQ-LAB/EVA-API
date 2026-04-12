@@ -1,0 +1,382 @@
+{
+  "info": {
+    "_postman_id": "d7af83a7-cf4a-4f0d-961e-601352d2633a",
+    "name": "EVA Auth perm_ver",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "用于验证 eva-web-auth 中基于 perm_ver 的旧 token 失效逻辑。导入后先设置 baseUrl、account、password、newRoleIds。newRoleIds 必须填写为当前用户可被保存的一组有效角色ID，例如 [1,2]。"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:9016"
+    },
+    {
+      "key": "account",
+      "value": "admin"
+    },
+    {
+      "key": "password",
+      "value": "0192023a7bbd73250516f069df18b500"
+    },
+    {
+      "key": "userId",
+      "value": ""
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "refreshToken",
+      "value": ""
+    },
+    {
+      "key": "staleAccessToken",
+      "value": ""
+    },
+    {
+      "key": "newRoleIds",
+      "value": "[1]"
+    },
+    {
+      "key": "expectedPermVerChangedCode",
+      "value": "0x000-00023"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('login status is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "var json = pm.response.json();",
+              "pm.test('login response success', function () {",
+              "    pm.expect(json.success).to.eql(true);",
+              "});",
+              "",
+              "var data = json.data || {};",
+              "var user = data.user || {};",
+              "pm.collectionVariables.set('accessToken', data.access_token || '');",
+              "pm.collectionVariables.set('refreshToken', data.refresh_token || '');",
+              "pm.collectionVariables.set('staleAccessToken', data.access_token || '');",
+              "pm.collectionVariables.set('userId', user.id || user.userId || '');",
+              "",
+              "pm.test('login token captured', function () {",
+              "    pm.expect(pm.collectionVariables.get('accessToken')).to.not.eql('');",
+              "});",
+              "",
+              "pm.test('userId captured', function () {",
+              "    pm.expect(pm.collectionVariables.get('userId')).to.not.eql('');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"account\": \"{{account}}\",\n  \"password\": \"{{password}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        },
+        "description": "登录并捕获 accessToken、refreshToken、userId，同时将首次 accessToken 记为 staleAccessToken。"
+      }
+    },
+    {
+      "name": "2. Access Protected API With Current Token",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('protected api status is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "var json = pm.response.json();",
+              "pm.test('protected api still succeeds before role change', function () {",
+              "    pm.expect(json.success).to.eql(true);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{accessToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/auth/fetchMenus",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "auth",
+            "fetchMenus"
+          ]
+        },
+        "description": "用当前 token 访问受保护接口，确认角色变更前请求正常。"
+      }
+    },
+    {
+      "name": "3. Grant Roles To Current User",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('userId exists before grant', function () {",
+              "    pm.expect(pm.collectionVariables.get('userId')).to.not.eql('');",
+              "});"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('grant status is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "var json = pm.response.json();",
+              "pm.test('grant request succeeds', function () {",
+              "    pm.expect(json.success).to.eql(true);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{accessToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": {{userId}},\n  \"roleIds\": {{newRoleIds}}\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/sys/account/grant",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "sys",
+            "account",
+            "grant"
+          ]
+        },
+        "description": "对当前用户重新授权。该操作会触发 sys_user.perm_ver + 1，使旧 token 失效。newRoleIds 需要提前设置为合法角色ID数组。"
+      }
+    },
+    {
+      "name": "4. Access Protected API With Stale Token",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('stale token request status is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "var json = pm.response.json();",
+              "pm.test('stale token is rejected by perm_ver', function () {",
+              "    pm.expect(json.success).to.eql(false);",
+              "    pm.expect(json.code).to.eql(pm.collectionVariables.get('expectedPermVerChangedCode'));",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{staleAccessToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/auth/fetchMenus",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "auth",
+            "fetchMenus"
+          ]
+        },
+        "description": "继续使用角色变更前签发的旧 token 访问受保护接口，预期返回 PERM_VER_CHANGED。"
+      }
+    },
+    {
+      "name": "5. Re-Login After perm_ver Changed",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('re-login status is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "var json = pm.response.json();",
+              "pm.test('re-login response success', function () {",
+              "    pm.expect(json.success).to.eql(true);",
+              "});",
+              "",
+              "var data = json.data || {};",
+              "pm.collectionVariables.set('accessToken', data.access_token || '');",
+              "pm.collectionVariables.set('refreshToken', data.refresh_token || '');",
+              "",
+              "pm.test('new access token captured', function () {",
+              "    pm.expect(pm.collectionVariables.get('accessToken')).to.not.eql('');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"account\": \"{{account}}\",\n  \"password\": \"{{password}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        },
+        "description": "重新登录获取新 token。"
+      }
+    },
+    {
+      "name": "6. Access Protected API With New Token",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('new token protected api status is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "var json = pm.response.json();",
+              "pm.test('new token can access protected api', function () {",
+              "    pm.expect(json.success).to.eql(true);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{accessToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/auth/fetchMenus",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "auth",
+            "fetchMenus"
+          ]
+        },
+        "description": "使用重新登录后的新 token 再次访问受保护接口，应恢复正常。"
+      }
+    }
+  ]
+}
