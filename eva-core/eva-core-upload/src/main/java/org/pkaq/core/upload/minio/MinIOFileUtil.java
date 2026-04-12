@@ -100,7 +100,7 @@ public class MinIOFileUtil implements FileProvider {
                         CopyObjectArgs.builder()
                                 .bucket(fileName)
                                 .object(fileName)
-                                .source(CopySource.builder()
+                                .source(SourceObject.builder()
                                         .bucket(TEMP)
                                         .object(fileName)
                                         .build())
@@ -286,7 +286,7 @@ public class MinIOFileUtil implements FileProvider {
             //上传
             this.minioClient.putObject(
                     PutObjectArgs.builder().bucket(bucketName).object(fileName).stream(
-                                    in, in.available(), -1)
+                                    in, (long) in.available(), -1L)
                             .contentType(contentType)
                             .build());
             in.close();
