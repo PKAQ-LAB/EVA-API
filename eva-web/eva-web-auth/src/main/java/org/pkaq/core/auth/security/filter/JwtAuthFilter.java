@@ -64,7 +64,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain chain) throws ServletException, IOException {
 
-        String requestPath = request.getRequestURI();
+        String requestPath = resolveRequestPath(request);
         if (!evaConfig.getAuth().matchJwtPath(requestPath)) {
             chain.doFilter(request, response);
             return;
@@ -202,6 +202,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             }
         }
         return false;
+    }
+
+    /**
+     * 获取去除 context-path 后的请求路径。
+     */
+    private String resolveRequestPath(HttpServletRequest request) {
+        String servletPath = request.getServletPath();
+        if (StrUtils.isNotBlank(servletPath)) {
+            return servletPath;
+        }
+        return request.getRequestURI();
     }
 
     /**

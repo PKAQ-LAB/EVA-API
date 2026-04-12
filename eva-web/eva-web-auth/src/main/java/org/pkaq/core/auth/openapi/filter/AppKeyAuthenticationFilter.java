@@ -74,7 +74,7 @@ public class AppKeyAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        String requestPath = request.getRequestURI();
+        String requestPath = resolveRequestPath(request);
 
         var openApiConfig = evaConfig.getAuth().getOpenApi();
         var headerConfig = openApiConfig.getHeaders();
@@ -163,7 +163,7 @@ public class AppKeyAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        String path = request.getRequestURI();
+        String path = resolveRequestPath(request);
         if (!evaConfig.getAuth().matchOpenApiPath(path)) {
             return true;
         }
@@ -176,6 +176,17 @@ public class AppKeyAuthenticationFilter extends OncePerRequestFilter {
                 || path.startsWith("/doc.html")
                 || path.startsWith("/webjars")
                 || path.equals("/favicon.ico");
+    }
+
+    /**
+     * 获取去除 context-path 后的请求路径。
+     */
+    private String resolveRequestPath(HttpServletRequest request) {
+        String servletPath = request.getServletPath();
+        if (servletPath != null && !servletPath.isBlank()) {
+            return servletPath;
+        }
+        return request.getRequestURI();
     }
 }
 

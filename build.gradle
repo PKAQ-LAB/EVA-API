@@ -83,6 +83,7 @@ subprojects {
         testImplementation libs.test,
                            libs.webtest,
                            libs.security.test
+        testRuntimeOnly libs.junit.platform.launcher
 
      }
 }

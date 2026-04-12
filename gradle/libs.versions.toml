@@ -24,6 +24,7 @@ prometheus = "1.16.4"
 versioncheck = "0.53.0"
 mapstruct = "1.6.3"
 servlet_api = "6.1.0"
+junit_platform = "1.14.0"
 
 [libraries]
 boot = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring_boot" }
@@ -79,6 +80,7 @@ servlet_api = { module = "jakarta.servlet:jakarta.servlet-api", version.ref = "s
 test = { module = "org.springframework.boot:spring-boot-starter-test" }
 webtest = { module = "org.springframework.boot:spring-boot-webmvc-test" }
 security_test = { module = "org.springframework.security:spring-security-test", version.ref = "security_test" }
+junit_platform_launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit_platform" }
 
 # 接口文档
 springdoc = { module = "org.springdoc:springdoc-openapi-starter-webmvc-api", version.ref = "springdoc" }
