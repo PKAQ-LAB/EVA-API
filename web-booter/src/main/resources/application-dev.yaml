@@ -38,7 +38,7 @@ spring:
   # redis 配置
   data:
     redis:
-      host: 14.103.109.216
+      host: 114.246.241.186
       database: 0
       timeout: 10000
       password: 7u8i9o0p
@@ -46,7 +46,7 @@ spring:
   # 数据源
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:p6spy:postgresql://14.103.109.216:5432/eva?currentSchema=eva
+    url: jdbc:p6spy:postgresql://114.246.241.186:5432/eva?currentSchema=eva
     username: eva
     password: 7u8i9o0p
     #    GsyjJCmmNRiHRVGmXdy+QErynoqC/cOBlt5V9dPZ+c2g2XwPc5+BbKrSxWLsyCGG

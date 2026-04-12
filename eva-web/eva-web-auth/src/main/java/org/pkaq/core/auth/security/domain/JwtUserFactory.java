@@ -22,7 +22,7 @@ public final class JwtUserFactory {
     }
 
     public static JwtUserDetail create(AuthUserEntity user) {
-        return new JwtUserDetail(
+        var detail = new JwtUserDetail(
                 user.getId(),
                 user.getAccount(),
                 user.getPassword(),
@@ -31,6 +31,14 @@ public final class JwtUserFactory {
                 user.getNickName(),
                 FrozenEnumm.FROZEN == user.getFrozen(),
                 CollUtils.isEmpty(user.getRoles()) ? Collections.emptyList() : mapToGrantedAuthorities(user.getRoles()));
+
+        // 设置角色ID列表和权限版本号（用于写入JWT）
+        if (CollUtils.isNotEmpty(user.getRoles())) {
+            detail.setRoleIds(user.getRoles().stream().map(AuthRoleEntity::getId).toList());
+        }
+        detail.setPermVer(user.getPermVer() != null ? user.getPermVer() : 0L);
+
+        return detail;
     }
 
     private static List<JwtGrantedAuthority> mapToGrantedAuthorities(List<AuthRoleEntity> authorities) {

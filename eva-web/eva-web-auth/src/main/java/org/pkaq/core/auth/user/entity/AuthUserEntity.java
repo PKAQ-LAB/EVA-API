@@ -51,4 +51,10 @@ public class AuthUserEntity extends StdEntity {
      **/
     @TableField(exist = false)
     private List<AuthRoleEntity> roles;
+
+    /**
+     * 权限版本号
+     **/
+    @TableField("PERM_VER")
+    private Long permVer;
 }

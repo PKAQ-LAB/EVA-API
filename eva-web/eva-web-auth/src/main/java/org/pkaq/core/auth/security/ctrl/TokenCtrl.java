@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.auth.AuthCodes;
+import org.pkaq.core.auth.user.service.AuthUserService;
 import org.pkaq.core.auth.util.CacheTokenUtil;
 import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.jwt.JwtUtil;
@@ -15,9 +16,12 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Map;
 
 /**
+ * Token控制器
+ *
  * @author PKAQ
  */
 @RestController
@@ -27,15 +31,14 @@ public class TokenCtrl {
     private final EvaConfig evaConfig;
     private final CacheTokenUtil cacheTokenUtil;
     private final TokenUtils tokenUtil;
+    private final AuthUserService authUserService;
 
     /**
-     * 使用refresh token 换取 access token
+     * 使用refresh token换取access token
      * 1. 签发新的 access_token
-     * 2. 删除老的 access_token
+     * 2. 删除旧的 access_token
      * 3. 签发新的 refreshToken
-     * 4. 删除老的 refreshToken
-     *
-     * @return
+     * 4. 删除旧的 refreshToken
      */
     @PostMapping("/auth/getAlpha")
     public Response<Object> refreshToken(HttpServletRequest request, HttpServletResponse response) {
@@ -54,38 +57,47 @@ public class TokenCtrl {
             AuthCodes.LOGIN_EXPIRED.newException(AuthenticationException.class);
         }
 
-        // 获取当前用户 account
+        // 获取当前用户信息
         long uid = jwtUtil.getUid(refreshTk);
         String account = jwtUtil.getAccount(refreshTk);
-        // 签发新 access token
-        String new_alpha = jwtUtil.build(evaConfig.getJwt().getAlphaTtl(), uid, account);
+        List<Long> roleIds = jwtUtil.getRoles(refreshTk);
+        long tokenPermVer = jwtUtil.getPermVer(refreshTk);
 
-        // 签发新 refresh token
-        String new_bravo = jwtUtil.build(evaConfig.getJwt().getBravoTtl(), uid, account);
+        // 权限版本号校验
+        long dbPermVer = authUserService.getPermVer(uid);
+        if (dbPermVer != tokenPermVer) {
+            this.clearCookie(response);
+            AuthCodes.PERM_VER_CHANGED.newException(AuthenticationException.class);
+        }
+
+        // 签发新的 access token
+        String newAlpha = jwtUtil.build(evaConfig.getJwt().getAlphaTtl(), uid, account, roleIds, dbPermVer);
+
+        // 签发新的 refresh token
+        String newBravo = jwtUtil.build(evaConfig.getJwt().getBravoTtl(), uid, account, roleIds, dbPermVer);
 
         // 替换客户端的旧token
         String domain = evaConfig.getCookie().getDomain();
         String path = "/";
 
-        CookieUtils.addCookie(response, CommonConstant.ACCESS_TOKEN_KEY, new_alpha, 0, path, domain);
-        CookieUtils.addCookie(response, CommonConstant.REFRESH_TOKEN_KEY, new_bravo, 0, path, domain);
+        CookieUtils.addCookie(response, CommonConstant.ACCESS_TOKEN_KEY, newAlpha, 0, path, domain);
+        CookieUtils.addCookie(response, CommonConstant.REFRESH_TOKEN_KEY, newBravo, 0, path, domain);
 
-        // 持久化 token
+        // 持久化token
         if (cacheToken) {
-            cacheTokenUtil.saveToken(uid, cacheTokenUtil.buildCacheValue(request, uid, new_alpha));
+            cacheTokenUtil.saveToken(uid, cacheTokenUtil.buildCacheValue(request, uid, newAlpha));
         }
 
-        var map = Map.of(CommonConstant.ACCESS_TOKEN_KEY, new_alpha,
-                CommonConstant.REFRESH_TOKEN_KEY, new_bravo);
+        var map = Map.of(CommonConstant.ACCESS_TOKEN_KEY, newAlpha,
+                CommonConstant.REFRESH_TOKEN_KEY, newBravo);
 
         return Response.success(map);
-
     }
 
     /**
      * 清除cookie
      *
-     * @param response
+     * @param response 响应对象
      */
     public void clearCookie(HttpServletResponse response) {
         String domain = evaConfig.getCookie().getDomain();

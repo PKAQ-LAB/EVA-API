@@ -27,4 +27,24 @@ public class AuthUserService {
         user.setAccount(account);
         return authUserMapper.getUserWithRole(user);
     }
+
+    /**
+     * 获取用户的权限版本号
+     *
+     * @param userId 用户ID
+     * @return 权限版本号
+     */
+    public Long getPermVer(Long userId) {
+        Long ver = authUserMapper.getPermVer(userId);
+        return ver != null ? ver : 0L;
+    }
+
+    /**
+     * 自增用户的权限版本号（角色变更时调用）
+     *
+     * @param userId 用户ID
+     */
+    public void incrementPermVer(Long userId) {
+        authUserMapper.incrementPermVer(userId);
+    }
 }

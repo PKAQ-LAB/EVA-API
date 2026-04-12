@@ -5,7 +5,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.auth.AuthCodes;
+import org.pkaq.core.auth.rbac.service.RoleResourceCacheService;
+import org.pkaq.core.auth.user.service.AuthUserService;
 import org.pkaq.core.auth.util.CacheTokenUtil;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.constant.CommonConstant;
@@ -20,42 +23,46 @@ import org.pkaq.core.util.json.JsonUtil;
 import org.pkaq.web.core.utils.CookieUtils;
 import org.pkaq.web.core.utils.ResponseUtil;
 import org.pkaq.web.core.utils.TokenUtils;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
+ * JWT认证过滤器
+ * 从JWT中解析用户信息、校验permVer、检查RBAC资源权限
+ *
  * @author PKAQ
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 @Order(200)
 public class JwtAuthFilter extends OncePerRequestFilter {
-    @Qualifier("jwtUserDetailsService")
-    private final UserDetailsService userDetailsService;
 
     private final JwtUtil jwtUtil;
-
     private final EvaConfig evaConfig;
-
     private final CacheTokenUtil cacheTokenUtil;
-
     private final TokenUtils tokenUtil;
+    private final AuthUserService authUserService;
+    private final RoleResourceCacheService roleResourceCacheService;
+
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain chain) throws ServletException, IOException {
 
         String requestPath = request.getRequestURI();
         if (!evaConfig.getAuth().matchJwtPath(requestPath)) {
@@ -63,26 +70,23 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
 
-        var isvalid = false;
-        var inCache = false;
-        var cacheToken = evaConfig.getJwt().isPersistence();
+        boolean isvalid = false;
+        boolean inCache = false;
+        boolean cacheToken = evaConfig.getJwt().isPersistence();
 
         String authToken;
         try {
             authToken = tokenUtil.getToken(request);
         } catch (Exception e) {
             authToken = null;
-            logger.warn(e);
+            log.warn(e.getLocalizedMessage());
         }
 
         if (StrUtils.isNotBlank(authToken)) {
             Long uid = jwtUtil.getUid(authToken);
 
-            /**
-             * token即将过期 刷新
-             */
             try {
-                // 验证token 是否合法
+                // 验证token是否合法
                 isvalid = jwtUtil.valid(authToken);
                 // 验证缓存中是否存在该token
                 if (cacheToken) {
@@ -96,73 +100,78 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     if (null != jsonObject && authToken.equals(jsonObject.get(CommonConstant.CACHE_TOKEN))) {
                         inCache = true;
                     } else {
-                        logger.warn("鉴权失败 缓存中无法找到对应token");
-                        // 清除cookie
+                        log.warn("鉴权失败 缓存中无法找到对应token");
                         this.clearCookie(response);
                         ResponseUtil.write(response, Response.failure(AuthCodes.LOGIN_EXPIRED));
+                        return;
                     }
                 }
 
-                // token 即将过期 续命
+                // token即将过期 续命
                 if (jwtUtil.isTokenExpiring(authToken)) {
                     String newToken = jwtUtil.refreshToken(authToken);
-                    // 刷新缓存中的
-                    // token放入缓存
                     if (cacheToken) {
                         cacheTokenUtil.saveToken(uid, cacheTokenUtil.buildCacheValue(request, uid, newToken));
                     }
-
-                    // reponse请求头返回刷新后的token
                     response.setHeader(CommonConstant.ACCESS_TOKEN_KEY, newToken);
-                    // 后台设置前台cookie值
                     CookieUtils.addCookie(response, CommonConstant.ACCESS_TOKEN_KEY, newToken, evaConfig.getCookie().getMaxAge(), "/", evaConfig.getCookie().getDomain());
                 }
             } catch (AuthenticationException e) {
-                logger.warn("鉴权失败 Token已过期", e);
-
-                // 清除cookie
-                // this.clearCookie(response);
-
+                log.warn("鉴权失败 Token已过期", e);
                 ResponseUtil.write(response, Response.failure(AuthCodes.LOGIN_EXPIRED));
                 return;
             }
         } else {
-            logger.warn("couldn't find bearer string, will ignore the header");
+            log.warn("couldn't find bearer string, will ignore the header");
         }
 
         if (isvalid && (inCache || !cacheToken)) {
             long uid = jwtUtil.getUid(authToken);
             String account = jwtUtil.getAccount(authToken);
 
-            logger.info("checking authentication ：" + account);
-
-            logger.info(SecurityContextHolder.getContext().getAuthentication());
-//            if (StrUtils.isNotBlank(uid) && SecurityContextHolder.getContext().getAuthentication() == null) {
             if (StrUtils.isNotBlank(account)) {
-                logger.debug("org.pkaq.security context was null, so authorizing user");
+                // 从JWT解析角色和权限版本号
+                List<Long> roleIds = jwtUtil.getRoles(authToken);
+                long tokenPermVer = jwtUtil.getPermVer(authToken);
 
-                // 从redis中 根据用户id获取用户权限列表
-                UserDetails userDetails;
-                try {
-                    userDetails = this.userDetailsService.loadUserByUsername(account);
-                } catch (UsernameNotFoundException _) {
-                    ResponseUtil.write(response, Response.failure(AuthCodes.LOGIN_EXPIRED));
-                    return;
-                } catch (Exception e) {
-                    ResponseUtil.write(response, Response.failure(AuthCodes.LOGIN_EXPIRED));
+                // 校验权限版本号：不一致即要求重新登录
+                long dbPermVer = authUserService.getPermVer(uid);
+                if (dbPermVer != tokenPermVer) {
+                    log.warn("用户 {} 权限已变更, tokenPermVer={}, dbPermVer={}", account, tokenPermVer, dbPermVer);
+                    this.clearCookie(response);
+                    ResponseUtil.write(response, Response.failure(AuthCodes.PERM_VER_CHANGED));
                     return;
                 }
 
-                logger.info("authenticated user " + account + ", setting org.pkaq.security context");
-                // 验证通过 将用户信息存入 threadlocal
-                String[] roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toArray(String[]::new);
+                // RBAC资源权限校验（permit路径跳过校验）
+                if (!isPermitPath(requestPath)) {
+                    String httpMethod = request.getMethod();
+                    if (roleIds == null || roleIds.isEmpty()) {
+                        log.warn("用户 {} 无角色, 禁止访问: {} {}", account, httpMethod, requestPath);
+                        ResponseUtil.write(response, Response.failure(AuthCodes.RESOURCE_FORBIDDEN));
+                        return;
+                    }
 
-                ThreadUser currentUser = new ThreadUser().setUserId(uid).setName(account).setRoles(roles);
+                    if (!roleResourceCacheService.hasPermission(roleIds, httpMethod, requestPath)) {
+                        log.warn("用户 {} 无权访问: {} {}", account, httpMethod, requestPath);
+                        ResponseUtil.write(response, Response.failure(AuthCodes.RESOURCE_FORBIDDEN));
+                        return;
+                    }
+                }
 
-                // 将用户信息设置到security 上下文中
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                // 从JWT构建ThreadUser
+                String[] roleNames = roleIds == null ? new String[0] : roleIds.stream().map(String::valueOf).toArray(String[]::new);
+                ThreadUser currentUser = new ThreadUser()
+                        .setUserId(uid)
+                        .setName(account)
+                        .setRoles(roleNames);
+
+                // 设置SecurityContext
+                List<SimpleGrantedAuthority> authorities = roleIds == null || roleIds.isEmpty()
+                        ? Collections.emptyList()
+                        : roleIds.stream().map(id -> new SimpleGrantedAuthority("ROLE_" + id)).toList();
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(account, null, authorities);
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
                 ThreadUserHelper.runWithUser(currentUser, () -> {
@@ -174,23 +183,33 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 });
             }
         } else {
-            // 没有有效的token，让Spring Security的后续过滤器处理认证
+            // 没有有效的token, 让Spring Security后续过滤器处理认证
             chain.doFilter(request, response);
         }
     }
 
     /**
+     * 判断是否为无需资源鉴权的路径
+     */
+    private boolean isPermitPath(String path) {
+        String[] permitPaths = evaConfig.getAuth().getPermit();
+        if (permitPaths == null || permitPaths.length == 0) {
+            return false;
+        }
+        for (String pattern : permitPaths) {
+            if (pathMatcher.match(pattern, path)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * 清除cookie
-     *
-     * @param response
      */
     public void clearCookie(HttpServletResponse response) {
         CookieUtils.addCookie(response, CommonConstant.ACCESS_TOKEN_KEY, null, 0, "/", evaConfig.getCookie().getDomain());
-
         CookieUtils.addCookie(response, CommonConstant.REFRESH_TOKEN_KEY, null, 0, "/", evaConfig.getCookie().getDomain());
-
         CookieUtils.addCookie(response, CommonConstant.USER_KEY, null, 0, "/", evaConfig.getCookie().getDomain());
-
     }
 }
-

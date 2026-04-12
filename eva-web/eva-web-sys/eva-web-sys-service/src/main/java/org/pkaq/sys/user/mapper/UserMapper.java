@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Update;
 import org.pkaq.core.annotation.Ignore;
 import org.pkaq.sys.user.bo.UserAoeBo;
 import org.pkaq.sys.user.entity.UserEntity;
@@ -42,4 +43,13 @@ public interface UserMapper extends BaseMapper<UserEntity> {
      * 查询剩余可用授权用户数
      */
     Integer availableCounts(long tid);
+
+    /**
+     * 自增用户权限版本号
+     *
+     * @param userId 用户ID
+     * @return 影响行数
+     */
+    @Update("UPDATE SYS_USER SET PERM_VER = COALESCE(PERM_VER, 0) + 1 WHERE ID = #{userId} AND DELETED = 0")
+    int incrementPermVer(@Param("userId") Long userId);
 }

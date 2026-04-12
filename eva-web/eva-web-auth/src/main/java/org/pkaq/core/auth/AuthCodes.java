@@ -28,7 +28,9 @@ public enum AuthCodes implements BizAssert {
     OPENAPI_UNEXPECTED_AUTH_ERROR("认证异常错误", "0x000-00019"),
     OPENAPI_TIMESTAMP_OUT_OF_TOLERANCE("时间戳超出容忍范围", "0x000-00020"),
     OPENAPI_SIGNATURE_GENERATION_FAILED("生成签名失败", "0x000-00021"),
-    OPENAPI_REQUEST_ERROR("请求资源无法访问", "0x000-00022");
+    OPENAPI_REQUEST_ERROR("请求资源无法访问", "0x000-00022"),
+    PERM_VER_CHANGED("权限已变更，请重新登录", "0x000-00023"),
+    RESOURCE_FORBIDDEN("无权访问该资源", "0x000-00024");
 
     @Getter
     private final String msg;

@@ -53,10 +53,10 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
 
         //表单输入的用户名
         JwtUserDetail user = (JwtUserDetail) authentication.getPrincipal();
-        // 签发 access_token -> ALPHA
-        String access_token = jwtUtil.build(evaConfig.getJwt().getAlphaTtl(), user.getId(), user.getAccount());
-        // 签发 refresh_token -> BRAVO
-        String refresh_token = jwtUtil.build(evaConfig.getJwt().getBravoTtl(), user.getId(), user.getAccount());
+        // 签发 access_token -> ALPHA（含角色ID和权限版本号）
+        String access_token = jwtUtil.build(evaConfig.getJwt().getAlphaTtl(), user.getId(), user.getAccount(), user.getRoleIds(), user.getPermVer() != null ? user.getPermVer() : 0L);
+        // 签发 refresh_token -> BRAVO（含角色ID和权限版本号）
+        String refresh_token = jwtUtil.build(evaConfig.getJwt().getBravoTtl(), user.getId(), user.getAccount(), user.getRoleIds(), user.getPermVer() != null ? user.getPermVer() : 0L);
 
         // token放入缓存
         if (cacheToken) {

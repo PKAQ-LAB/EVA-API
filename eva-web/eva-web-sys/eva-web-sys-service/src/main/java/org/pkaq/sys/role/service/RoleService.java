@@ -36,6 +36,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
+ * 角色服务
+ *
  * @author PKAQ
  */
 @Service
@@ -57,14 +59,24 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
      */
     @Override
     public void delete(Set<Long> ids) {
+        if (CollUtils.isEmpty(ids)) {
+            return;
+        }
+
+        // 删除前收集受影响用户
+        Set<Long> affectedUsers = fetchUsersByRoleIds(ids);
+
         QueryWrapper queryWrapper = new QueryWrapper<>();
         queryWrapper.in("role_id", ids);
-        // 删除角色授权的用户，可能有其他角色绑定
+        // 删除角色授权的用户
         this.roleUserMapper.delete(queryWrapper);
         // 删除角色授权的模块及资源
         this.roleResourceMapper.delete(queryWrapper);
         // 删除角色
         this.mapper.deleteByIds(ids);
+
+        // 更新权限版本号
+        incrementPermVer(affectedUsers);
     }
 
     /**
@@ -153,7 +165,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
      * 获取角色绑定的所有用户
      *
      * @param roleId 权限条件
-     * @return
+     * @return 角色绑定用户
      */
     @Override
     public RoleGrantedUserVo listUser(Long roleId, Long deptId) {
@@ -189,6 +201,13 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
         if (null == role.getRoleId()) {
             CommonCodes.PARAM_ERROR.newException();
         }
+
+        // 删除前收集受影响用户
+        Set<Long> affectedUsers = fetchUsersByRoleIds(Set.of(role.getRoleId()));
+        if (CollUtils.isNotEmpty(role.getUserId())) {
+            affectedUsers.addAll(role.getUserId());
+        }
+
         // 删除原有角色
         this.roleUserMapper.delete(new LambdaQueryWrapper<RoleUserEntity>().eq(RoleUserEntity::getRoleId, role.getRoleId()));
         // 插入新的权限信息
@@ -200,6 +219,37 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
                 ref.setUserId(user);
                 this.roleUserMapper.insert(ref);
             }
+        }
+
+        // 更新权限版本号
+        incrementPermVer(affectedUsers);
+    }
+
+    /**
+     * 获取指定角色集合的用户ID
+     */
+    private Set<Long> fetchUsersByRoleIds(Set<Long> roleIds) {
+        if (CollUtils.isEmpty(roleIds)) {
+            return new HashSet<>();
+        }
+        LambdaQueryWrapper<RoleUserEntity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.in(RoleUserEntity::getRoleId, roleIds);
+        wrapper.select(RoleUserEntity::getUserId);
+        return this.roleUserMapper.selectObjs(wrapper)
+                .stream()
+                .map(o -> (Long) o)
+                .collect(Collectors.toSet());
+    }
+
+    /**
+     * 更新用户权限版本号
+     */
+    private void incrementPermVer(Set<Long> userIds) {
+        if (CollUtils.isEmpty(userIds)) {
+            return;
+        }
+        for (Long userId : userIds) {
+            this.userMapper.incrementPermVer(userId);
         }
     }
 }

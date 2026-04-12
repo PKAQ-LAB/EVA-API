@@ -2,6 +2,8 @@ package org.pkaq.core.auth.user.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.pkaq.core.auth.user.entity.AuthUserEntity;
 import org.springframework.stereotype.Repository;
 
@@ -20,4 +22,22 @@ public interface AuthUserMapper extends BaseMapper<AuthUserEntity> {
      * @return 用户信息
      */
     AuthUserEntity getUserWithRole(AuthUserEntity user);
+
+    /**
+     * 获取用户的权限版本号
+     *
+     * @param userId 用户ID
+     * @return 权限版本号
+     */
+    @Select("SELECT PERM_VER FROM SYS_USER WHERE ID = #{userId} AND DELETED = 0")
+    Long getPermVer(Long userId);
+
+    /**
+     * 自增用户的权限版本号
+     *
+     * @param userId 用户ID
+     * @return 影响行数
+     */
+    @Update("UPDATE SYS_USER SET PERM_VER = COALESCE(PERM_VER, 0) + 1 WHERE ID = #{userId} AND DELETED = 0")
+    int incrementPermVer(Long userId);
 }
