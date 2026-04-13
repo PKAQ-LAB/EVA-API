@@ -2,30 +2,27 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.pkaq.sys.role.mapper.RoleResourceMapper">
     <delete id="purgeBrokenRoleResourceRefs" parameterType="java.lang.Long">
-        DELETE rr
-            FROM SYS_ROLERES_REF rr
-        JOIN SYS_MODULE_RESOURCES res ON rr.resource_id = res.id
-        WHERE res.module_id = #{mid}
+        DELETE FROM SYS_ROLERES_REF rr
+        WHERE EXISTS (
+            SELECT 1
+            FROM SYS_MODULE_RESOURCES res
+            WHERE rr.resource_id = res.id
+                AND res.main_id = #{mid}
+        )
     </delete>
 
-    <!--获取已选且是叶子节点的模块-->
     <select id="roleModuleList" resultType="roleModule">
-        select
-            rm.*
-        from
-            sys_role_module rm ,sys_module m
-        where
-            rm.module_id=m.id
-        <if test="@org.pkaq.core.util.StrUtils@isNotBlank(entity.roleId)">
-            and rm.role_Id=#{entity.roleId,jdbcType=VARCHAR}
-        </if>
-        <if test="@org.pkaq.core.util.StrUtils@isNotBlank(entity.moduleId)">
-            and rm.module_Id=#{entity.moduleId,jdbcType=VARCHAR}
-        </if>
-        order by m.id
+        SELECT rm.*
+        FROM sys_role_module rm
+            JOIN sys_module m ON rm.module_id = m.id
+        <where>
+            <if test="entity.roleId != null">
+                AND rm.role_id = #{entity.roleId,jdbcType=BIGINT}
+            </if>
+        </where>
+        ORDER BY m.id
     </select>
 
-    <!--    查询资源 并对该角色已拥有的资源打标记-->
     <select id="listGrantedResource" resultType="java.util.Map">
         SELECT
             r.ID,
@@ -36,11 +33,9 @@
             CASE
                 WHEN rr.ROLE_ID IS NOT NULL THEN 1
                 ELSE 0
-                END AS CHECKED
+            END AS CHECKED
         FROM SYS_MODULE_RESOURCES r
-                 LEFT JOIN SYS_ROLERES_REF rr
-                           ON r.ID = rr.RESOURCE_ID AND rr.ROLE_ID = #{roleId}
-        ORDER BY r.MAIN_ID ASC;
+            LEFT JOIN SYS_ROLERES_REF rr ON r.ID = rr.RESOURCE_ID AND rr.ROLE_ID = #{roleId}
+        ORDER BY r.MAIN_ID ASC
     </select>
-
 </mapper>

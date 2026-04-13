@@ -36,6 +36,8 @@ public class AuthCtrl extends Ctrl {
 
             return success(this.moduleService.fetchUserModules(userId));
         } catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
             return failure(CommonCodes.SERVER_ERROR);
         }
     }

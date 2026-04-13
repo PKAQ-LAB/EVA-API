@@ -4,51 +4,38 @@
     <resultMap id="BaseResultMap" type="dict" extends="common.resultMap">
         <result column="CODE" jdbcType="VARCHAR" property="code"/>
         <result column="NAME" jdbcType="VARCHAR" property="name"/>
-        <result column="PARENT_ID" jdbcType="VARCHAR" property="parentId"/>
-        <result column="STATUS" jdbcType="VARCHAR" property="status"/>
+        <result column="PID" jdbcType="BIGINT" property="pid"/>
+        <result column="PATH" jdbcType="VARCHAR" property="path"/>
     </resultMap>
-    <!-- 树形数据 -->
+
     <resultMap id="TreeResultMap" type="dict" extends="BaseResultMap">
         <collection property="children" column="{id=id}" select="listChildren"/>
     </resultMap>
-    <!-- 带子表数据查询 -->
+
     <resultMap id="LineResultMap" type="dict" extends="BaseResultMap">
         <collection property="lines" ofType="dictItem" column="{dictId=id}"
                     select="org.pkaq.sys.dict.mapper.DictItemMapper.listItemByDictId"/>
     </resultMap>
 
-    <sql id="column">
-        m.id,
-        m.code,
-        m.name,
-        m.pid,
-        m.remark,
-        m2.id itemId ,
-        m2.main_id,
-        m2.d_code,
-        m2.d_value,
-        m2.sort,
-        m2.frozen,
-        m2.remark
-    </sql>
-
     <select id="getDict" resultMap="LineResultMap">
-        select *
-            from sys_dict m
-        where m.id = #{id}
+        SELECT *
+        FROM sys_dict m
+        WHERE m.id = #{id}
     </select>
 
-    <!--根据条件查询菜单数据-->
     <select id="listDict" resultMap="TreeResultMap">
-        select * from sys_dict
+        SELECT * FROM sys_dict
         <where>
-            pid = '0' or pid is null
+            (pid = 0 OR pid IS NULL)
+            AND (<include refid="common.avalibleSQL"/>)
         </where>
     </select>
-    <!-- 根据parentId查询子节点数据-->
+
     <select id="listChildren" resultMap="BaseResultMap">
-        select *
-        from sys_dict
-        where pid = #{id} and frozen != '0001'
+        SELECT *
+        FROM sys_dict
+        WHERE pid = #{id}
+            AND (<include refid="common.avalibleSQL"/>)
+            AND (frozen != 1 OR frozen IS NULL)
     </select>
 </mapper>

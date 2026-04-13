@@ -1,26 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.pkaq.sys.tenant.mapper.TenantMapper">
-
     <delete id="deleteByModuleIds">
-        DELETE rr
-            FROM SYS_ROLERES_REF rr
-        JOIN SYS_MODULE_RESOURCES mr ON rr.RESOURCE_ID = mr.ID
-            WHERE mr.MAIN_ID IN
-        <foreach collection="moduleIds" item="id" open="(" separator="," close=")">
-            #{id}
-        </foreach>
+        DELETE FROM SYS_ROLERES_REF rr
+        WHERE EXISTS (
+            SELECT 1
+            FROM SYS_MODULE_RESOURCES mr
+            WHERE rr.RESOURCE_ID = mr.ID
+                AND mr.MAIN_ID IN
+                <foreach collection="moduleIds" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+        )
     </delete>
-    <!--    锁定超出数量的用户-->
+
     <update id="reGrantUser">
-        WITH SORTED_USERS AS (
+        WITH sorted_users AS (
             SELECT ID
             FROM SYS_USER
             WHERE TENANT_ID = #{tid}
-                  and
-                  <include refid="common.avalibleSQL">
-                      <property name="prefix" value="SYS_USER" />
-                  </include>
+                AND (<include refid="common.avalibleSQL"><property name="prefix" value="SYS_USER"/></include>)
             ORDER BY UTC_MODIFY DESC
             <choose>
                 <when test="_databaseId =='mysql'">
@@ -31,33 +30,27 @@
                 </otherwise>
             </choose>
         )
-        UPDATE SYS_USER
-            JOIN SORTED_USERS ON SYS_USER.ID = SORTED_USERS.ID
-        SET SYS_USER.FROZEN = #{frz}
-        WHERE (SYS_USER.FROZEN IS NULL OR SYS_USER.FROZEN != 1)
-            and
-            <include refid="common.avalibleSQL">
-                <property name="prefix" value="SYS_USER" />
-            </include>
+        UPDATE SYS_USER u
+        SET FROZEN = #{frz}
+        FROM sorted_users s
+        WHERE u.ID = s.ID
+            AND (u.FROZEN IS NULL OR u.FROZEN != 1)
+            AND (<include refid="common.avalibleSQL"><property name="prefix" value="u"/></include>)
     </update>
 
-    <!-- 冻结已被冻结的租户对应的用户 -->
-    <update id="frozenUser" >
+    <update id="frozenUser">
         UPDATE SYS_USER u
-            JOIN SYS_TENANT t ON u.tenant_id = t.id
-        SET u.frozen = 1
-        WHERE t.frozen = 1
-          AND u.tenant_id IN
+        SET frozen = 1
+        FROM SYS_TENANT t
+        WHERE u.tenant_id = t.id
+            AND t.frozen = 1
+            AND u.tenant_id IN
             <foreach collection="ids" item="id" index="index" open="(" close=")" separator=",">
                 #{id}
             </foreach>
-          AND
-            <include refid="common.avalibleSQL">
-                <property name="prefix" value="u" />
-            </include>
+            AND (<include refid="common.avalibleSQL"><property name="prefix" value="u"/></include>)
     </update>
 
-    <!-- 解冻已被冻结的租户对应的用户 -->
     <update id="unfronzenUser">
         WITH ordered_users AS (
             SELECT
@@ -65,28 +58,22 @@
                 u.tenant_id,
                 u.frozen,
                 t.auth_user_count,
-                ROW_NUMBER() OVER (PARTITION BY u.tenant_id ORDER BY u.create_time ASC) AS rn
+                ROW_NUMBER() OVER (PARTITION BY u.tenant_id ORDER BY u.utc_create ASC) AS rn
             FROM sys_user u
                 JOIN sys_tenant t ON u.tenant_id = t.id
-            WHERE
-                u.tenant_id IN
+            WHERE u.tenant_id IN
                 <foreach collection="ids" item="id" index="index" open="(" close=")" separator=",">
                     #{id}
                 </foreach>
-                AND
-                <include refid="common.avalibleSQL">
-                    <property name="prefix" value="u" />
-                </include>
+                AND (<include refid="common.avalibleSQL"><property name="prefix" value="u"/></include>)
         )
         UPDATE sys_user u
-            JOIN ordered_users o ON u.id = o.id
-        SET u.frozen = 0
-        WHERE o.rn &lt;= o.auth_user_count
+        SET frozen = 0
+        FROM ordered_users o
+        WHERE u.id = o.id
+            AND o.rn &lt;= o.auth_user_count
             AND u.frozen != -1
             AND u.frozen != 0
-            AND
-                <include refid="common.avalibleSQL">
-                    <property name="prefix" value="u" />
-                </include>
+            AND (<include refid="common.avalibleSQL"><property name="prefix" value="u"/></include>)
     </update>
 </mapper>

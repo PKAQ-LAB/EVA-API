@@ -9,7 +9,7 @@
              sys_role r
         WHERE rm.MODULE_ID = m.ID
           AND rm.ROLE_ID = r.ID
-          AND m.id = mr.module_id
+          AND m.id = mr.main_id
           AND rm.RESOURCE_ID = mr.ID
           AND m.isleaf = '1'
     </select>

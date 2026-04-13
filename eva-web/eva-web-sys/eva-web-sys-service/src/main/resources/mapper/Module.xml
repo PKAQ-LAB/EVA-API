@@ -9,28 +9,24 @@
         </collection>
     </resultMap>
 
-    <!-- 更新path   -->
     <update id="refreshPath" parameterType="map">
         UPDATE sys_module
         SET path = CONCAT(#{newPath}, SUBSTRING(path, #{oldPathLength} + 1))
         WHERE path LIKE CONCAT(#{oldPath}, '/%')
     </update>
 
-    <!-- 根据id更新模块及子孙节点冻结状态 -->
     <update id="switchFrozen">
-        update sys_module
-        set frozen = abs(frozen - 1)
+        UPDATE sys_module
+        SET frozen = abs(coalesce(frozen, 0) - 1)
         <where>
             <if test="null != ids and !ids.isEmpty()">
                 <foreach collection="ids" item="id" index="index" open="(" close=")" separator="or">
-                    id = #{id} or path like concat('%', #{id}, '%')
+                    id = #{id} or path like concat('%', #{id}, '/%') or path like concat('%/', #{id}, '/%') or path like concat('%/', #{id})
                 </foreach>
             </if>
         </where>
     </update>
 
-
-    <!--    更新排序-->
     <update id="updateSort" parameterType="map">
         UPDATE sys_module
         SET sort = CASE
@@ -47,28 +43,20 @@
             OR id = #{id}
     </update>
 
-    <!--根据权限ID查询用户拥有的模块-->
     <select id="getRoleModuleByUserId" resultType="module">
-        select
-            distinct
-            m.*
-        from
-            SYS_MODULE M,
-            SYS_ROLE R,
-            SYS_ROLE_MODULE RM,
-            SYS_ROLEUSER_REF RU
-        where
-            M.STATUS != '0001' and
-            R.ID=RM.ROLE_ID and
-            M.ID=RM.MODULE_ID and
-            R.ID=RU.ROLE_ID and
-            ru.USER_ID = #{userId}
-        order by
-            m.orders asc
+        SELECT DISTINCT m.*
+        FROM SYS_MODULE m
+            JOIN SYS_ROLE_MODULE rm ON m.ID = rm.MODULE_ID
+            JOIN SYS_ROLE r ON r.ID = rm.ROLE_ID
+            JOIN SYS_ROLEUSER_REF ru ON r.ID = ru.ROLE_ID
+        WHERE ru.USER_ID = #{userId}
+            AND (<include refid="common.avalibleSQL"><property name="prefix" value="m"/></include>)
+            AND (m.FROZEN != 1 OR m.FROZEN IS NULL)
+        ORDER BY m.sort ASC
     </select>
-    <!--根据条件查询 拥有权限的 菜单数据-->
+
     <select id="listGrantedModule" resultMap="BaseResultMap">
-        select * from v_granted_module m
+        SELECT * FROM v_granted_module m
         <where>
             <if test="null != roleNames and roleNames.length > 0">
                 and role_Code in
@@ -78,7 +66,7 @@
             </if>
             <choose>
                 <when test="null == condition or '' == condition">
-                    and (m.parent_Id = '0' or m.parent_Id is null)
+                    and (m.pid = 0 or m.pid is null)
                 </when>
                 <otherwise>
                     and m.name like
@@ -88,56 +76,47 @@
                     <if test="_databaseId == 'oracle'">
                         '%' ||#{condition}||'%'
                     </if>
+                    <if test="_databaseId == 'postgre'">
+                        '%' || #{condition, jdbcType=VARCHAR} || '%'
+                    </if>
                 </otherwise>
             </choose>
-            <if test="null != module">
-                <if test="null != module.status and module.status != '' ">
-                    and m.status = #{module.status,jdbcType=VARCHAR}
+            <if test="null != module and null != module.name and module.name != '' ">
+                and m.name like
+                <if test="_databaseId =='mysql'">
+                    concat('%',#{module.name,jdbcType=VARCHAR},'%')
                 </if>
-                <if test="null != module.name and module.name != '' ">
-                    and m.name like
-                    <if test="_databaseId =='mysql'">
-                        concat('%',#{module.name,jdbcType=VARCHAR},'%')
-                    </if>
-                    <if test="_databaseId == 'oracle'">
-                        '%'||#{module.name}||'%'
-                    </if>
-                    <if test="_databaseId == 'postgre'">
-                        '%' || #{module.name, jdbcType=VARCHAR} || '%'
-                    </if>
+                <if test="_databaseId == 'oracle'">
+                    '%'||#{module.name}||'%'
+                </if>
+                <if test="_databaseId == 'postgre'">
+                    '%' || #{module.name, jdbcType=VARCHAR} || '%'
                 </if>
             </if>
         </where>
-        order by id asc
+        ORDER BY m.sort ASC
     </select>
 
-    <!--根据条件查询菜单数据-->
     <select id="listModule" resultMap="BaseResultMap">
-        select
-            SM.*,
+        SELECT
+            SM.*, 
             SMR.ID R_ID,
-            SMR.MODULE_ID,
+            SMR.MAIN_ID,
             SMR.RESOURCE_DESC,
             SMR.RESOURCE_URL,
             SMR.RESOURCE_TYPE
-        from
-            SYS_MODULE SM
-        LEFT JOIN
-            SYS_MODULE_RESOURCES SMR
-                ON SM.ID = SMR.MODULE_ID
+        FROM SYS_MODULE SM
+            LEFT JOIN SYS_MODULE_RESOURCES SMR ON SM.ID = SMR.MAIN_ID
         <where>
-            <if test="null == module or null == module.parentId or '' == module.parentId">
-                and (parent_id is null or parent_id = '0')
+            <if test="null == module or null == module.pid">
+                and (SM.pid is null or SM.pid = 0)
             </if>
             <if test="null != module">
-                <if test="null != module.parentId and '' != module.parentId">
-                    and parent_id = #{module.parent_id,jdbcType=VARCHAR}
-                </if>
-                <if test="null != module.status and module.status != '' ">
-                    and status in(#{module.status,jdbcType=VARCHAR},'9999')
+                <if test="null != module.pid">
+                    and SM.pid = #{module.pid,jdbcType=BIGINT}
                 </if>
                 <if test="null != module.name and module.name != '' ">
-                    and name like
+                    and SM.name like
                     <if test="_databaseId == 'mysql'">
                         concat('%',#{module.name,jdbcType=VARCHAR},'%')
                     </if>
@@ -148,88 +127,81 @@
                         '%' || #{module.name, jdbcType=VARCHAR} || '%'
                     </if>
                 </if>
+                <if test="null != module.code and module.code != ''">
+                    and SM.code = #{module.code,jdbcType=VARCHAR}
+                </if>
             </if>
         </where>
-        order by orders asc
-    </select>
-    <!-- 根据parentId查询子节点数据-->
-    <select id="listChildren" resultMap="BaseResultMap">
-        select
-        SM.*,
-        SMR.ID R_ID,
-        SMR.MODULE_ID,
-        SMR.RESOURCE_DESC,
-        SMR.RESOURCE_URL,
-        SMR.RESOURCE_TYPE
-        from
-        sys_module SM
-        LEFT JOIN
-        SYS_MODULE_RESOURCES SMR
-        ON SM.ID = SMR.MODULE_ID
-        where parent_ID = #{id,jdbcType=VARCHAR}
-        order by orders asc
-    </select>
-    <!-- 根据ID查询-->
-    <select id="getParentById" resultMap="BaseResultMap">
-        select * from sys_module module
-        where module.id = (select parent_Id from sys_module og where og.id = #{id,jdbcType=VARCHAR})
-        order by orders asc
-    </select>
-    <!--查询叶子节点数量-->
-    <select id="countPrantLeaf" resultType="int">
-        select count(id)
-        from sys_module
-        where parent_Id=#{id,jdbcType=VARCHAR}
+        ORDER BY SM.sort ASC
     </select>
 
-    <!-- 根据parentId查询子节点数据-->
+    <select id="listChildren" resultMap="BaseResultMap">
+        SELECT
+            SM.*, 
+            SMR.ID R_ID,
+            SMR.MAIN_ID,
+            SMR.RESOURCE_DESC,
+            SMR.RESOURCE_URL,
+            SMR.RESOURCE_TYPE
+        FROM sys_module SM
+            LEFT JOIN SYS_MODULE_RESOURCES SMR ON SM.ID = SMR.MAIN_ID
+        WHERE SM.pid = #{id,jdbcType=BIGINT}
+        ORDER BY SM.sort ASC
+    </select>
+
+    <select id="getParentById" resultMap="BaseResultMap">
+        SELECT * FROM sys_module module
+        WHERE module.id = (SELECT pid FROM sys_module og WHERE og.id = #{id,jdbcType=BIGINT})
+        ORDER BY module.sort ASC
+    </select>
+
+    <select id="countPrantLeaf" resultType="int">
+        SELECT count(id)
+        FROM sys_module
+        WHERE pid = #{id,jdbcType=BIGINT}
+    </select>
+
     <select id="listOrder" resultType="java.lang.Integer">
-        select
+        SELECT
         <if test="_databaseId == 'mysql'">
-            ifnull(max(orders),0)
+            ifnull(max(sort),0)
         </if>
         <if test="_databaseId == 'oracle'">
-            nvl(max(orders),0)
+            nvl(max(sort),0)
         </if>
         <if test="_databaseId == 'postgre'">
-            coalesce(max(orders), 0)
+            coalesce(max(sort), 0)
         </if>
-        from
-        sys_module where
+        FROM sys_module
+        WHERE
         <choose>
             <when test='pid == null or pid == "0"'>
-                parent_ID is null
+                pid is null
             </when>
             <otherwise>
-                parent_ID = #{pid,jdbcType=VARCHAR}
+                pid = #{pid,jdbcType=BIGINT}
             </otherwise>
         </choose>
     </select>
 
-    <!-- 根据id禁用节点-->
     <update id="disableChild">
-        update sys_module set status = '0001'
-        where path_id like
-        <if test="_databaseId == 'mysql'">
-            concat(#{id,jdbcType=VARCHAR},'%') or id = #{id}
-        </if>
-        <if test="_databaseId == 'oracle'">
-            #{id}||'%' or id = #{id}
-        </if>
-        <if test="_databaseId == 'postgre'">
-            #{id} || '%' or id = #{id}
-        </if>
+        UPDATE sys_module
+        SET frozen = 1
+        WHERE id = #{id,jdbcType=BIGINT}
+            OR path like concat(#{id,jdbcType=VARCHAR}, '/%')
+            OR path like concat('%/', #{id,jdbcType=VARCHAR}, '/%')
+            OR path like concat('%/', #{id,jdbcType=VARCHAR})
     </update>
 
-    <!-- 根据id查询数据-->
     <select id="selectId" resultMap="BaseResultMap">
-        select *
-        from sys_module where id = #{id,jdbcType=VARCHAR}
+        SELECT *
+        FROM sys_module
+        WHERE id = #{id,jdbcType=BIGINT}
     </select>
-    <!--    查询当前登录用户所拥有角色的所有不重复模块合集 -->
-    <select id="listGrantedModules" resultType="java.util.Map">
+
+    <select id="listGrantedModules" resultMap="BaseResultMap">
         SELECT DISTINCT
-            m.ID ,
+            m.ID,
             m.NAME,
             m.PID,
             m.PATH,
@@ -241,19 +213,14 @@
             JOIN SYS_MODULE_RESOURCES r ON rr.RESOURCE_ID = r.ID
             JOIN SYS_MODULE m ON r.MAIN_ID = m.ID
         WHERE ru.USER_ID = #{uid}
-        AND
-        <include refid="common.avalibleSQL">
-            <property name="prefix" value="m"/>
-        </include>
-        ORDER BY m.SORT ASC;
+            AND (<include refid="common.avalibleSQL"><property name="prefix" value="m"/></include>)
+        ORDER BY m.SORT ASC
     </select>
-    <!--    查询map化的数结构-->
-    <select id="selectModuleMapList" resultType="java.util.Map">
+
+    <select id="selectModuleMapList" resultMap="BaseResultMap">
         SELECT * FROM SYS_MODULE t
         <where>
-            <include refid="common.avalibleSQL">
-                <property name="prefix" value="t"/>
-            </include>
+            (<include refid="common.avalibleSQL"><property name="prefix" value="t"/></include>)
             <if test="bo.id != null">
                 AND t.ID = #{bo.id}
             </if>
@@ -267,28 +234,20 @@
                 AND t.CODE = #{bo.code}
             </if>
         </where>
+        ORDER BY t.SORT ASC
     </select>
-    <!--  刷新子节点名称-->
+
     <update id="updateChildParentName">
-        update sys_module
-        set PARENT_NAME=#{name,jdbcType=VARCHAR}
-        where parent_id like
-        <if test="_databaseId == 'mysql'">
-            concat(#{id,jdbcType=VARCHAR},'%')
-        </if>
-        <if test="_databaseId == 'oracle'">
-            #{id}||'%'
-        </if>
-        <if test="_databaseId == 'postgre'">
-            #{id} || '%'
-        </if>
+        UPDATE sys_module
+        SET path = REPLACE(path, #{oldPathId,jdbcType=VARCHAR}, #{newPathId,jdbcType=VARCHAR})
+        WHERE path like concat('%', #{oldPathId,jdbcType=VARCHAR}, '%')
+            AND id != CAST(#{id,jdbcType=VARCHAR} AS BIGINT)
     </update>
-    <!--  刷新子节点的path_name  和 path -->
+
     <update id="updateChildPathInfo">
-        update sys_module set
-            PATH_NAME=REPLACE(PARENT_NAME,#{oldModule.name,jdbcType=VARCHAR},#{newModule.name,jdbcType=VARCHAR}),
-            PATH=REPLACE(PATH,#{oldModule.path,jdbcType=VARCHAR},#{newModule.path,jdbcType=VARCHAR})
-        where path like
+        UPDATE sys_module
+        SET PATH = REPLACE(PATH, #{oldModule.path,jdbcType=VARCHAR}, #{newModule.path,jdbcType=VARCHAR})
+        WHERE path like
         <if test="_databaseId == 'mysql'">
             concat('%',#{oldModule.path,jdbcType=VARCHAR},'%')
         </if>
@@ -298,7 +257,6 @@
         <if test="_databaseId == 'postgre'">
             '%' || #{oldModule.path, jdbcType=VARCHAR} || '%'
         </if>
-        and id != #{oldModule.id,jdbcType=VARCHAR}
+        AND id != #{oldModule.id,jdbcType=BIGINT}
     </update>
-
 </mapper>
