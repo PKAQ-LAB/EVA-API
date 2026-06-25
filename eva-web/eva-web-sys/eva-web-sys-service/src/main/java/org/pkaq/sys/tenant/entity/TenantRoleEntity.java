@@ -3,7 +3,7 @@ package org.pkaq.sys.tenant.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
@@ -21,9 +21,9 @@ public class TenantRoleEntity {
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
-    @NotBlank
+    @NotNull
     private Long tenantId;
 
-    @NotBlank
+    @NotNull
     private Long roleId;
 }

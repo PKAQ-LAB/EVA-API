@@ -1,7 +1,7 @@
 package org.pkaq.sys.tenant.bo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -14,13 +14,13 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class TenantAuthBo {
-    @NotBlank
+    @NotNull
     private Long id;
 
     @Schema(description = "原角色id 修改时材有")
     private String oldRole;
 
     @Schema(description = "角色id")
-    @NotBlank
+    @NotNull
     private Long roleId;
 }

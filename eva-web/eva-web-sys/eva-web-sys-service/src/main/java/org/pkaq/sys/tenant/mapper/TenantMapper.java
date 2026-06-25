@@ -2,14 +2,16 @@ package org.pkaq.sys.tenant.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 import org.pkaq.core.annotation.Ignore;
-import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.sys.tenant.entity.TenantEntity;
 import org.springframework.stereotype.Repository;
 
 /**
- * 租户管理
+ * 租户管理 Mapper
+ * <p>
+ * 注：原先的 frozenUser / unfronzenUser / reGrantUser 自定义方法已移除，
+ * 这些方法当时无对应 XML 实现，调用会抛 BindingException。
+ * 现在 Service 用 LambdaUpdateWrapper 直接表达，更安全也更易调试。
  *
  * @author PKAQ
  */
@@ -17,21 +19,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 @Ignore
 public interface TenantMapper extends BaseMapper<TenantEntity> {
-
-    /**
-     * 锁定超出数量的用户
-     *
-     * @param tid   租户id
-     * @param count 授权数量
-     */
-    void reGrantUser(@Param("tid") Long tid, @Param("count") int count, @Param("frz") int frz);
-
-    /**
-     * 冻结已被冻结的租户对应的用户
-     *
-     * @param ids
-     */
-    void frozenUser(SingleArray<Long> ids);
-
-    void unfronzenUser(SingleArray<Long> ids);
 }

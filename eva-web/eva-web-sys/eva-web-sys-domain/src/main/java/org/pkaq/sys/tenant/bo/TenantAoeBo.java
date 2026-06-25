@@ -8,7 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.pkaq.core.mvc.bo.StdBo;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * 租户管理-详情-请求参数
@@ -65,7 +65,7 @@ public class TenantAoeBo extends StdBo {
 
     @Schema(description = "到期时间")
     @NotNull
-    private LocalDateTime expirationDate;
+    private Date expirationDate;
 
     @Schema(description = "租户管理员账号")
     @NotNull
