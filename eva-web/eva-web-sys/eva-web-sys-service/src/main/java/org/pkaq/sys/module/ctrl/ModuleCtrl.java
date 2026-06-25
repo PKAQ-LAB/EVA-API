@@ -50,7 +50,7 @@ public class ModuleCtrl extends Ctrl {
 
     @GetMapping("/get/{id}")
     @Operation(summary = "根据ID获得模块")
-    @BizLog(operateType = BizLogCodes.EDIT, description = "插叙了模块信息[{0}]", args = {"param:0"})
+    @BizLog(operateType = BizLogCodes.QUERY, description = "查询了模块信息[{0}]", args = {"param:0"})
     public Response<Object> get(@Parameter(name = "id", description = "记录ID")
                                 @PathVariable("id") Long id) {
         return this.success(this.service.getModule(id));
@@ -58,23 +58,24 @@ public class ModuleCtrl extends Ctrl {
 
     @GetMapping({"/list"})
     @Operation(summary = "获取模块树 ")
-    @BizLog(operateType = BizLogCodes.EDIT, description = "查询了模块树[{0}]", args = {"param:0"})
+    @BizLog(operateType = BizLogCodes.QUERY, description = "查询了模块树[{0}]", args = {"param:0"})
     public Response<Object> list(@Parameter(name = "module", description = "{key: value}") ModuleQueryBo queryBo) {
         return success(this.service.list(queryBo, false));
     }
 
     @PostMapping("/sort")
-    @Operation(summary = "排序模块信息")
-    @BizLog(operateType = BizLogCodes.EDIT, description = "调整了模块顺序[{0}]", args = {"param:0"})
-    public Response<Object> sort(@Parameter(name = "module", description = "{id,orders}")
-                                 @RequestBody ModuleSortBo switchObj) {
-        this.service.sortModule(switchObj);
+    @Operation(summary = "同级拖拽排序")
+    @BizLog(operateType = BizLogCodes.UPDATE, description = "调整了模块顺序[{0}]", args = {"param:0"})
+    public Response<Object> sort(@Parameter(name = "bo", description = "{id, oldSort, newSort}")
+                                 @RequestBody ModuleSortBo bo) {
+        this.service.sortModule(bo);
         return success();
     }
 
     @PostMapping("/frozen")
-    @Operation(summary = "切换冻结状态")
-    public Response<Object> frozen(@Parameter(name = "id", description = "模块Id")
+    @Operation(summary = "切换冻结状态（级联子节点）")
+    @BizLog(operateType = BizLogCodes.UPDATE, description = "切换了模块冻结状态[{0}]", args = {"param:0"})
+    public Response<Object> frozen(@Parameter(name = "ids", description = "[模块Id]")
                                    @RequestBody SingleArray<Long> ids) {
         this.service.switchFrozen(ids);
         return success();

@@ -15,18 +15,17 @@
         WHERE path LIKE CONCAT(#{oldPath}, '/%')
     </update>
 
-    <update id="switchFrozen">
+    <!-- 级联冻结/解锁：自身 + 所有 path 以本节点 path 为前缀的子孙 -->
+    <update id="cascadeFrozen">
         UPDATE sys_module
-        SET frozen = abs(coalesce(frozen, 0) - 1)
-        <where>
-            <if test="null != ids and !ids.isEmpty()">
-                <foreach collection="ids" item="id" index="index" open="(" close=")" separator="or">
-                    id = #{id} or path like concat('%', #{id}, '/%') or path like concat('%/', #{id}, '/%') or path like concat('%/', #{id})
-                </foreach>
-            </if>
-        </where>
+        SET frozen = #{frozen,jdbcType=INTEGER}
+        WHERE id = #{id,jdbcType=BIGINT}
+        <if test="path != null and path != ''">
+            OR path LIKE CONCAT(#{path,jdbcType=VARCHAR}, '/%')
+        </if>
     </update>
 
+    <!-- 同级拖拽排序：限定相同 pid，避免跨父节点污染。根节点排序时 pid = 0 -->
     <update id="updateSort" parameterType="map">
         UPDATE sys_module
         SET sort = CASE
@@ -39,8 +38,11 @@
                 AND sort &gt; #{oldSort} THEN sort - 1
             ELSE sort
         END
-        WHERE (sort BETWEEN LEAST(#{oldSort}, #{newSort}) AND GREATEST(#{oldSort}, #{newSort}))
-            OR id = #{id}
+        WHERE pid = #{pid,jdbcType=BIGINT}
+          AND (
+              (sort BETWEEN LEAST(#{oldSort}, #{newSort}) AND GREATEST(#{oldSort}, #{newSort}))
+              OR id = #{id}
+          )
     </update>
 
     <select id="getRoleModuleByUserId" resultType="module">
@@ -66,7 +68,7 @@
             </if>
             <choose>
                 <when test="null == condition or '' == condition">
-                    and (m.pid = 0 or m.pid is null)
+                    and m.pid = 0
                 </when>
                 <otherwise>
                     and m.name like
@@ -109,7 +111,7 @@
             LEFT JOIN SYS_MODULE_RESOURCES SMR ON SM.ID = SMR.MAIN_ID
         <where>
             <if test="null == module or null == module.pid">
-                and (SM.pid is null or SM.pid = 0)
+                and SM.pid = 0
             </if>
             <if test="null != module">
                 <if test="null != module.pid">
@@ -173,15 +175,7 @@
             coalesce(max(sort), 0)
         </if>
         FROM sys_module
-        WHERE
-        <choose>
-            <when test='pid == null or pid == "0"'>
-                pid is null
-            </when>
-            <otherwise>
-                pid = #{pid,jdbcType=BIGINT}
-            </otherwise>
-        </choose>
+        WHERE pid = #{pid,jdbcType=BIGINT}
     </select>
 
     <update id="disableChild">

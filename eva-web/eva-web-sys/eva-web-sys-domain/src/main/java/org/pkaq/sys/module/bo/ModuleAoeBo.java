@@ -21,10 +21,10 @@ public class ModuleAoeBo extends StdTreeBo {
     private String icon;
 
     @Schema(description = "模块路由url")
-    private String routeurl;
+    private String routeUrl;
 
     @Schema(description = "模块前端model url")
-    private String modelurl;
+    private String componentUrl;
 
     @Schema(description = "模块拥有的资源")
     private List<ModuleResourcesBo> resources;

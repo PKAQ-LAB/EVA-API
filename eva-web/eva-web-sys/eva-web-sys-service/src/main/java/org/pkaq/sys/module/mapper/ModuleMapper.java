@@ -5,7 +5,6 @@ import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.pkaq.core.annotation.Ignore;
-import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.sys.module.bo.ModuleQueryBo;
 import org.pkaq.sys.module.entity.ModuleEntity;
 import org.pkaq.sys.module.vo.ModuleDetailVo;
@@ -124,15 +123,27 @@ public interface ModuleMapper extends BaseMapper<ModuleEntity> {
                      @Param("oldPathLength") int oldPathLength,
                      @Param("newPath") String newPath);
 
-    // 更新节点排序
+    /**
+     * 更新节点排序（仅在同一父节点下生效）
+     *
+     * @param id      被拖拽的节点 id
+     * @param pid     该节点的父 id；根节点之间排序时传 0
+     * @param oldSort 拖拽前的 sort 值
+     * @param newSort 拖拽后的 sort 值
+     */
     void updateSort(@Param("id") Long id,
+                    @Param("pid") Long pid,
                     @Param("oldSort") Integer oldSort,
                     @Param("newSort") Integer newSort);
 
     /**
-     * 切换状态
+     * 级联冻结/解锁：自身 + 所有子孙
      *
-     * @param ids
+     * @param id     被操作的节点 id
+     * @param path   该节点的 path（用于锚定子孙节点）
+     * @param frozen 目标 frozen 值（0 = 解锁，1 = 冻结）
      */
-    void switchFrozen(SingleArray<Long> ids);
+    void cascadeFrozen(@Param("id") Long id,
+                       @Param("path") String path,
+                       @Param("frozen") Integer frozen);
 }

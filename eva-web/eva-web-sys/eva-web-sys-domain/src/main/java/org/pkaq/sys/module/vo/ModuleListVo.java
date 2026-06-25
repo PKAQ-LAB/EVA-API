@@ -19,8 +19,8 @@ public class ModuleListVo extends StdTreeVo {
     private String icon;
 
     @Schema(description = "模块路由url")
-    private String routeurl;
+    private String routeUrl;
 
     @Schema(description = "模块前端model url")
-    private String modelurl;
+    private String componentUrl;
 }
