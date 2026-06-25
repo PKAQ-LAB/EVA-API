@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
+import org.pkaq.core.auth.util.CacheTokenUtil;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.constant.CommonConstant;
+import org.pkaq.core.enums.FrozenEnumm;
 import org.pkaq.core.exception.BizException;
 import org.pkaq.core.mvc.entity.Entity;
 import org.pkaq.core.mvc.vo.PageVo;
@@ -19,6 +21,8 @@ import org.pkaq.core.util.BCryptUtils;
 import org.pkaq.core.util.CollUtils;
 import org.pkaq.core.util.StrUtils;
 import org.pkaq.sys.SysCodes;
+import org.pkaq.sys.post.entity.PostUserEntity;
+import org.pkaq.sys.post.mapper.PostUserMapper;
 import org.pkaq.sys.post.service.UserPostRefSerivce;
 import org.pkaq.sys.role.entity.RoleUserEntity;
 import org.pkaq.sys.role.mapper.RoleUserMapper;
@@ -40,6 +44,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 用户管理
@@ -50,16 +55,23 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 public class UserService extends StdService<UserMapper, UserEntity> implements IUserService {
 
+    /** 系统保留账号 / 非法账号黑名单（不区分大小写） */
     private static final Set<String> ILLEGAL_USERNAMES = new HashSet<>(Arrays.asList(
             "null", "undefined", "true", "false", "admin", "root", "", " ", "\t", "\n"
     ));
+
     private final UserRoleRefSerivce userRoleRefSerivce;
     private final UserPostRefSerivce userPostRefSerivce;
     private final FileProvider fileProvider;
     private final RoleUserMapper roleUserMapper;
+    private final PostUserMapper postUserMapper;
     private final UserConvert convert;
     private final EvaConfig evaConfig;
+    private final CacheTokenUtil cacheTokenUtil;
 
+    /**
+     * 账号合法性校验：不允许为黑名单中的保留字
+     */
     public void validateUsername(String username) {
         if (username == null || ILLEGAL_USERNAMES.contains(username.trim().toLowerCase())) {
             throw new BizException(SysCodes.USER_ACCOUNT_ILLEGAL);
@@ -69,12 +81,16 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
     /**
      * 修改密码
      */
-    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void repwd(RePwdBo rePwdBo) {
-        var uid = ThreadUserHelper.getUserId();
+        Long uid = ThreadUserHelper.getUserId();
 
         UserEntity userEntity = this.mapper.selectById(uid);
+        if (userEntity == null) {
+            SysCodes.CANNOT_FIND_USER.newException();
+            return;
+        }
 
         if (!BCryptUtils.checkpw(rePwdBo.getOriginPassword(), userEntity.getPassword())) {
             SysCodes.BAD_ORG_PASSWORD.newException();
@@ -84,16 +100,30 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
         updateE.setId(userEntity.getId());
         updateE.setPassword(BCryptUtils.hashpw(rePwdBo.getNewPassword()));
         updateE.setRevision(rePwdBo.getRevision());
-
         this.mapper.updateById(updateE);
+
+        // 改密后强制下线（其它设备/浏览器 token 立即失效）
+        cacheTokenUtil.removeToken(uid);
     }
 
-    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    /**
+     * 批量删除：
+     * - 同步清理 角色-用户、岗位-用户 中间表
+     * - 删除后踢被删用户下线
+     */
     @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void delete(Set<Long> param) {
+        if (CollUtils.isEmpty(param)) {
+            return;
+        }
         this.mapper.deleteByIds(param);
-        // 删除授权关系
+        // 清理角色关系
         this.roleUserMapper.delete(new LambdaQueryWrapper<RoleUserEntity>().in(RoleUserEntity::getUserId, param));
+        // 清理岗位关系（U-03 修复）
+        this.postUserMapper.delete(new LambdaQueryWrapper<PostUserEntity>().in(PostUserEntity::getUserId, param));
+        // 踢下线
+        this.cacheTokenUtil.removeTokens(param);
     }
 
     /**
@@ -104,16 +134,17 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
         UserEntity user = this.convert.boToEntity(queryBo);
         LambdaQueryWrapper<UserEntity> wrapper = Wrappers.lambdaQuery();
         wrapper.setEntity(user);
-        wrapper.orderByDesc(UserEntity::getModifyBy);
+        wrapper.orderByDesc(UserEntity::getUtcModify);
         return this.convert.entityToListVo(this.mapper.selectList(wrapper));
     }
 
-    public List<? extends Vo> listUser(UserQueryBo queryBo, Function<List<? extends Entity>, List<? extends Vo>> convert) {
+    public List<? extends Vo> listUser(UserQueryBo queryBo,
+                                       Function<List<? extends Entity>, List<? extends Vo>> convertFn) {
         UserEntity user = this.convert.boToEntity(queryBo);
         LambdaQueryWrapper<UserEntity> wrapper = Wrappers.lambdaQuery();
         wrapper.setEntity(user);
-        wrapper.orderByDesc(UserEntity::getModifyBy);
-        return convert.apply(this.mapper.selectList(wrapper));
+        wrapper.orderByDesc(UserEntity::getUtcModify);
+        return convertFn.apply(this.mapper.selectList(wrapper));
     }
 
     /**
@@ -129,81 +160,98 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
     }
 
     /**
-     * 解锁/锁定用户
+     * 切换冻结状态（解锁 / 锁定）
+     * - 翻转 frozen
+     * - 切换后若用户处于"冻结"状态则立即踢下线
      */
     @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void updateUser(Set<Long> ids) {
         if (CollUtils.isEmpty(ids)) {
             CommonCodes.NULL_ID.newException();
+            return;
         }
 
+        // 记录翻转前为"未冻结"的用户 —— 翻转后会变冻结，需要踢下线
+        Set<Long> willBeFrozen = this.mapper.selectList(new LambdaQueryWrapper<UserEntity>()
+                        .select(UserEntity::getId)
+                        .in(UserEntity::getId, ids)
+                        .eq(UserEntity::getFrozen, FrozenEnumm.UN_FROZEN))
+                .stream()
+                .map(UserEntity::getId)
+                .collect(Collectors.toSet());
+
         this.mapper.change(ids);
+
+        if (!willBeFrozen.isEmpty()) {
+            this.cacheTokenUtil.removeTokens(willBeFrozen);
+        }
     }
 
     /**
-     * 获取一条用户信息
-     *
-     * @param id 用户id
-     * @return 符合条件的用户对象
+     * 获取用户详情（含角色 id 列表）
      */
     @Override
     public UserDetailVo getUser(Long id) {
-        var user = this.mapper.selectById(id);
-        if (null == user) {
+        UserEntity user = this.mapper.selectById(id);
+        if (user == null) {
             SysCodes.CANNOT_FIND_USER.newException();
+            return null;
         }
-        var uvo = this.convert.entityToDetailVo(user);
-        // 权限列表
-        var roleIds = this.roleUserMapper.selectRoleIds(id);
-
-        uvo.setRoleIds(roleIds);
-
-        return uvo;
+        UserDetailVo vo = this.convert.entityToDetailVo(user);
+        vo.setRoleIds(this.roleUserMapper.selectRoleIds(id));
+        return vo;
     }
 
     /**
-     * 新增/编辑用户信息
-     *
-     * @param user 用户对象
+     * 新增 / 编辑用户
      */
-    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void saveUser(UserAoeBo user) {
-        // 校验用户名合法性
+        // 账号合法性
         this.validateUsername(user.getAccount());
 
-        // 用户资料发生修改后 重新生成密码
-        // 这里传递过来的密码是进行md5加密后的
-        String pwd = user.getPassword();
-        pwd = BCryptUtils.hashpw(pwd);
-        user.setPassword(pwd);
-
-        // 新增手工生成主键
-        // 编辑， 删除原有头像文件，保存新的头像文件
         Long userId = user.getId();
-        boolean isInsert = true;
-        if (null == userId || 0 == userId) {
+        boolean isInsert = (userId == null || userId == 0L);
+
+        if (isInsert) {
+            // 新增：生成 id + 校验授权数量 + hash 密码
             userId = IdWorker.getId();
             user.setId(userId);
-            // 单例模式 不限用户数量
-            if (CommonConstant.MODE_SINGLETON.equals(evaConfig.getMode())) {
-                var tid = ThreadUserHelper.getTenantId();
+
+            // 多租户模式下校验授权用户数（U-07 修复：之前条件反向）
+            if (!CommonConstant.MODE_SINGLETON.equals(evaConfig.getMode())) {
+                Long tid = ThreadUserHelper.getTenantId();
                 Integer leftCt = this.mapper.availableCounts(tid);
                 if (leftCt == null || leftCt < 1) {
                     SysCodes.USER_ACCOUNT_LIMIT.newException();
                 }
             }
+
+            if (StrUtils.isBlank(user.getPassword())) {
+                SysCodes.BAD_ORG_PASSWORD.newException();
+            }
+            user.setPassword(BCryptUtils.hashpw(user.getPassword()));
         } else {
-            isInsert = false;
+            // 编辑：处理头像替换；密码为空则不更新（MyBatis-Plus null 不更新）
             UserEntity oldUser = this.mapper.selectById(userId);
-            String avatar = oldUser.getAvatar();
-            if (StrUtils.isNotBlank(avatar) && !avatar.equals(user.getAvatar())) {
-                fileProvider.delFromStorage(avatar);
+            if (oldUser == null) {
+                SysCodes.CANNOT_FIND_USER.newException();
+                return;
+            }
+            String oldAvatar = oldUser.getAvatar();
+            if (StrUtils.isNotBlank(oldAvatar) && !oldAvatar.equals(user.getAvatar())) {
+                fileProvider.delFromStorage(oldAvatar);
+            }
+            if (StrUtils.isNotBlank(user.getPassword())) {
+                user.setPassword(BCryptUtils.hashpw(user.getPassword()));
+            } else {
+                user.setPassword(null);
             }
         }
 
-        // 保存新的头像文件
-        // TODO 异步
+        // 保存新头像缩略图
         if (StrUtils.isNotBlank(user.getAvatar())) {
             try {
                 fileProvider.storageWithThumbnail(0.3f, user.getAvatar());
@@ -212,7 +260,6 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
             }
         }
 
-        // 保存用户
         UserEntity entity = this.convert.boToEntity(user);
         if (isInsert) {
             this.mapper.insert(entity);
@@ -220,16 +267,16 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
             this.mapper.updateById(entity);
         }
 
-        // 保存权限
+        // 保存角色关系
         if (CollUtils.isNotEmpty(user.getRoleIds())) {
-            UserGrantBo userGrantBo = new UserGrantBo();
-            userGrantBo.setUserId(userId);
-            userGrantBo.setRoleIds(user.getRoleIds());
-            this.userRoleRefSerivce.saveRoles(userGrantBo);
+            UserGrantBo grantBo = new UserGrantBo();
+            grantBo.setUserId(userId);
+            grantBo.setRoleIds(user.getRoleIds());
+            this.userRoleRefSerivce.saveRoles(grantBo);
         }
 
-        // 保存岗位
-        if (CollUtils.isNotEmpty(user.getRoleIds())) {
+        // 保存岗位关系（U-01 修复：原代码条件用了 roleIds，导致只传岗位不传角色时不保存岗位）
+        if (CollUtils.isNotEmpty(user.getPostId())) {
             UserPostBo postBo = new UserPostBo();
             postBo.setUserId(userId);
             postBo.setPostIds(user.getPostId());
@@ -238,50 +285,41 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
     }
 
     /**
-     * 获取当前登录用户的信息(菜单.权限.消息
-     * todo
-     *
-     * @param uid 用户ID
+     * TODO 待实现：返回用户菜单 + 资源
      */
     public List<UserResourceVo> fetchModuleByUid(Long uid) {
-//        // 菜单树
-//        List<ModuleEntity> moduleEntity = this.mapper.getRoleModuleByUserId(uid);
-//        List<StdTreeEntity> treeModule = TreeHelper().bulid(moduleEntity);
-//
-//        List<UserResourceVo> urv = this.convert.moduleTreeToUserResourceVo(treeModule);
-//        // 权限是否为空
-////        SysCodes.PERMISSION_EXPIRED.assertNotBlank(treeModule);
-//
-//        return urv;
         return null;
     }
 
     /**
-     * 校验账号是否唯一
+     * 校验账号 / 编码唯一性
+     * 注意：@TableLogic 自动添加 deleted=0 条件，已逻辑删除的用户自动排除
      */
     @Override
     public boolean checkUnique(UserCheckBo user) {
-        LambdaQueryWrapper<UserEntity> entityWrapper = new LambdaQueryWrapper<>();
-        entityWrapper.nested(w ->
-                w.eq(UserEntity::getAccount, user.getAccount())
-                        .or()
-                        .eq(UserEntity::getCode, user.getCode()));
-
-        if (null != user.getId() && user.getId() != 0) {
-            entityWrapper.ne(UserEntity::getId, user.getId());
+        if (user == null || (StrUtils.isBlank(user.getAccount()) && StrUtils.isBlank(user.getCode()))) {
+            return false;
         }
-        return this.mapper.selectCount(entityWrapper) > 0;
+        LambdaQueryWrapper<UserEntity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.nested(w -> w.eq(StrUtils.isNotBlank(user.getAccount()), UserEntity::getAccount, user.getAccount())
+                .or()
+                .eq(StrUtils.isNotBlank(user.getCode()), UserEntity::getCode, user.getCode()));
+
+        if (user.getId() != null && user.getId() != 0L) {
+            wrapper.ne(UserEntity::getId, user.getId());
+        }
+        return this.mapper.selectCount(wrapper) > 0;
     }
 
 
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void createTenantAdmin(UserEntity user) {
-        // 校验用户名合法性
         this.validateUsername(user.getAccount());
 
-        String pwd = user.getPassword();
-        pwd = BCryptUtils.hashpw(pwd);
-        user.setPassword(pwd);
+        if (StrUtils.isBlank(user.getPassword())) {
+            SysCodes.BAD_ORG_PASSWORD.newException();
+        }
+        user.setPassword(BCryptUtils.hashpw(user.getPassword()));
         this.mapper.insert(user);
     }
 }
