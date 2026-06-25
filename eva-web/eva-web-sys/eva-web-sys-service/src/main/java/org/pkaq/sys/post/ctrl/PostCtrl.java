@@ -43,8 +43,9 @@ public class PostCtrl extends Ctrl {
         if (StrUtils.isAllBlank(bo.getCode(), bo.getTitle())) {
             return failure(SysCodes.MISS_CODE_OR_NAME);
         }
+        // checkUnique 返回 true = 已存在重复
         boolean exists = this.postService.checkUnique(bo);
-        return exists ? success() : failure(SysCodes.DUPLICATE_CODE_OR_NAME);
+        return exists ? failure(SysCodes.DUPLICATE_CODE_OR_NAME) : success();
     }
 
     @GetMapping("/list")
@@ -77,6 +78,15 @@ public class PostCtrl extends Ctrl {
         // 参数非空校验
         CommonCodes.NULL_ID.assertNotNull(ids.getParam());
         this.postService.del(ids.getParam());
+        return success();
+    }
+
+    @PostMapping("/switch")
+    @Operation(summary = "切换冻结状态")
+    public Response<Object> switchFrozen(@Parameter(name = "ids", description = "[岗位Id]")
+                                         @RequestBody SingleArray<Long> ids) {
+        CommonCodes.NULL_ID.assertNotNull(ids.getParam());
+        this.postService.switchFrozen(ids);
         return success();
     }
 

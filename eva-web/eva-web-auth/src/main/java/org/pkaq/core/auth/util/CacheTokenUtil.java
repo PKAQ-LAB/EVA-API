@@ -92,4 +92,30 @@ public class CacheTokenUtil {
         this.tokenCache.evict(key);
     }
 
+    /**
+     * 从缓存中按用户 ID 清除 token（与 saveToken(Long) 配对）
+     * 用于冻结用户 / 冻结租户下用户时立即踢下线
+     *
+     * @param uid 用户 ID
+     */
+    public void removeToken(Long uid) {
+        if (uid != null) {
+            this.tokenCache.evict(uid);
+        }
+    }
+
+    /**
+     * 批量按用户 ID 清除 token
+     *
+     * @param uids 用户 ID 集合
+     */
+    public void removeTokens(java.util.Collection<Long> uids) {
+        if (uids == null || uids.isEmpty()) {
+            return;
+        }
+        for (Long uid : uids) {
+            this.tokenCache.evict(uid);
+        }
+    }
+
 }
