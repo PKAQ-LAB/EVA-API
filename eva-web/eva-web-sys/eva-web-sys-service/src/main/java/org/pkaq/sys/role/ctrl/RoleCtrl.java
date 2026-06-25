@@ -57,7 +57,7 @@ public class RoleCtrl extends StdCtrl<RoleService> {
 
     @PostMapping({"/grantUser"})
     @Operation(summary = "保存角色用户关系")
-    @BizLog(operateType = BizLogCodes.EDIT, description = "更新了橘色授权用户[{0}]", args = {"param:0"})
+    @BizLog(operateType = BizLogCodes.EDIT, description = "更新了角色授权用户[{0}]", args = {"param:0"})
     public Response<Object> grantUser(@Parameter(name = "param", description = "角色用户id关系")
                                       @RequestBody @Valid RoleUserRefBo role) {
         this.service.grantUser(role);

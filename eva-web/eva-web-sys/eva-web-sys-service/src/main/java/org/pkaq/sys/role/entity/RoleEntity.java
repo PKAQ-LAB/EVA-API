@@ -27,12 +27,20 @@ public class RoleEntity extends StdEntity {
      **/
     private String name = "";
 
-    // 添加 ROLE_ 前缀 并转大写
-    public String getCode() {
-
-        if (!this.code.startsWith(CommonConstant.AUTH_PREFIX)) {
-            this.code = CommonConstant.AUTH_PREFIX + this.code;
+    /**
+     * setter 中一次性规范化：补 ROLE_ 前缀并大写
+     * 替代原先在 getter 中改写字段的副作用写法（每次 get 都改字段，
+     * 对 MyBatis 反射 / JSON 序列化都不友好）。
+     */
+    public void setCode(String code) {
+        if (code == null || code.isEmpty()) {
+            this.code = "";
+            return;
         }
-        return this.code.toUpperCase();
+        String trimmed = code.trim();
+        if (!trimmed.toUpperCase().startsWith(CommonConstant.AUTH_PREFIX)) {
+            trimmed = CommonConstant.AUTH_PREFIX + trimmed;
+        }
+        this.code = trimmed.toUpperCase();
     }
 }
