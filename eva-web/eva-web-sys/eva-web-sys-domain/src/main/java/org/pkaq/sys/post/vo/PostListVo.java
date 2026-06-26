@@ -3,57 +3,40 @@ package org.pkaq.sys.post.vo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.pkaq.core.mvc.vo.StdVo;
+
+import java.util.List;
 
 /**
+ * 岗位列表视图对象（树形）
+ *
  * @author dmz
  */
 @Schema(description = "岗位管理列表视图对象")
 @Data
-@EqualsAndHashCode(callSuper = false)
-public class PostListVo {
-    /**
-     * 记录id
-     */
-    @Schema(description = "记录id")
-    private String id;
-    /**
-     * 编码
-     */
+@EqualsAndHashCode(callSuper = true)
+public class PostListVo extends StdVo {
     @Schema(description = "编码")
     private String code;
-    /**
-     * 岗位
-     */
-    @Schema(description = "岗位")
+
+    @Schema(description = "岗位名称")
     private String title;
-    /**
-     * 职级
-     */
+
     @Schema(description = "职级")
     private String level;
-    /**
-     * 上级岗位ID
-     */
+
     @Schema(description = "上级岗位ID")
-    private String parentId;
-    /**
-     * 状态
-     */
-    @Schema(description = "状态")
-    private String status;
-    /**
-     * 排序
-     */
-    @Schema(description = "排序")
-    private Integer sorts;
-    /**
-     * 上级岗位名称
-     */
+    private Long pid;
+
     @Schema(description = "上级岗位名称")
-    private String parentName;
-    /**
-     * 备注
-     */
-    @Schema(description = "备注")
-    private String remark;
+    private String parentTitle;
+
+    @Schema(description = "路径")
+    private String path;
+
+    @Schema(description = "是否叶子节点")
+    private Boolean isleaf;
+
+    @Schema(description = "子节点")
+    private List<PostListVo> children;
 }

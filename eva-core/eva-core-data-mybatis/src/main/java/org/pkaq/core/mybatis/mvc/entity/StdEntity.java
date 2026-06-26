@@ -43,8 +43,10 @@ public abstract class StdEntity implements Entity {
     private double sort;
 
     /**
-     * 租户id
+     * 租户id（由 MybatisMetaObjectHandler 在新增时按 ThreadUser 自动填充，
+     * 业务侧无需关心；显式 setTenantId 优先级更高）
      **/
+    @TableField(fill = FieldFill.INSERT)
     private Long tenantId;
 
     /**

@@ -1,28 +1,117 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.pkaq.sys.post.mapper.PostMapper">
-    <select id="list" resultType="org.pkaq.sys.post.vo.PostListVo">
+
+    <resultMap id="ListResultMap" type="org.pkaq.sys.post.vo.PostListVo" extends="common.resultMap">
+        <id property="id" column="ID"/>
+        <result property="code" column="CODE"/>
+        <result property="title" column="TITLE"/>
+        <result property="level" column="LEVEL"/>
+        <result property="pid" column="PID"/>
+        <result property="parentTitle" column="PARENT_TITLE"/>
+        <result property="path" column="PATH"/>
+        <result property="isleaf" column="ISLEAF"/>
+    </resultMap>
+
+    <!-- 树形查询：返回 Map<id, PostListVo>，由 Service 端 buildTree -->
+    <select id="selectPostMapList" resultMap="ListResultMap">
         SELECT
             y.ID,
             y.CODE,
             y.TITLE,
             y.LEVEL,
-            y.PID AS PARENT_ID,
-            y.FROZEN AS STATUS,
-            y.SORT AS SORTS,
-            s.TITLE AS PARENT_NAME,
-            y.REMARK
+            y.PID,
+            y.PATH,
+            y.ISLEAF,
+            y.FROZEN,
+            y.SORT,
+            y.REMARK,
+            y.CREATE_ID,
+            y.CREATE_BY,
+            y.UTC_CREATE,
+            y.MODIFY_ID,
+            y.MODIFY_BY,
+            y.UTC_MODIFY,
+            y.REVISION,
+            s.TITLE AS PARENT_TITLE
         FROM SYS_POST y
-            LEFT JOIN SYS_POST s ON s.ID = y.PID
+            LEFT JOIN SYS_POST s ON s.ID = y.PID AND s.DELETED = 0
         <where>
             (<include refid="common.avalibleSQL"><property name="prefix" value="y"/></include>)
-            <if test="q != null and q.title != null and q.title != ''">
-                AND y.TITLE like concat('%',#{q.title},'%')
-            </if>
-            <if test="q != null and q.level != null and q.level != ''">
-                AND y.LEVEL like concat('%',#{q.level},'%')
+            <if test="q != null">
+                <if test="q.code != null and q.code != ''">
+                    AND y.CODE = #{q.code,jdbcType=VARCHAR}
+                </if>
+                <if test="q.title != null and q.title != ''">
+                    AND y.TITLE LIKE CONCAT('%', #{q.title,jdbcType=VARCHAR}, '%')
+                </if>
+                <if test="q.level != null and q.level != ''">
+                    AND y.LEVEL = #{q.level,jdbcType=VARCHAR}
+                </if>
+                <if test="q.pid != null">
+                    AND y.PID = #{q.pid,jdbcType=BIGINT}
+                </if>
             </if>
         </where>
         ORDER BY y.SORT ASC, y.UTC_MODIFY DESC
     </select>
+
+    <!-- 取指定父节点下最大 sort -->
+    <select id="listOrder" resultType="java.lang.Integer">
+        SELECT
+        <if test="_databaseId == 'mysql'">
+            IFNULL(MAX(SORT), 0)
+        </if>
+        <if test="_databaseId == 'oracle'">
+            NVL(MAX(SORT), 0)
+        </if>
+        <if test="_databaseId == 'postgre'">
+            COALESCE(MAX(SORT), 0)
+        </if>
+        FROM SYS_POST
+        WHERE PID = #{pid,jdbcType=BIGINT} AND DELETED = 0
+    </select>
+
+    <!-- 同级拖拽排序：限定相同 pid，避免跨父节点污染 -->
+    <update id="updateSort" parameterType="map">
+        UPDATE SYS_POST
+        SET SORT = CASE
+            WHEN ID = #{id} THEN #{newSort}
+            WHEN #{newSort} &lt; #{oldSort}
+                AND SORT &gt;= #{newSort}
+                AND SORT &lt; #{oldSort} THEN SORT + 1
+            WHEN #{newSort} &gt; #{oldSort}
+                AND SORT &lt;= #{newSort}
+                AND SORT &gt; #{oldSort} THEN SORT - 1
+            ELSE SORT
+        END
+        WHERE PID = #{pid,jdbcType=BIGINT}
+          AND DELETED = 0
+          AND (
+              (SORT BETWEEN LEAST(#{oldSort}, #{newSort}) AND GREATEST(#{oldSort}, #{newSort}))
+              OR ID = #{id}
+          )
+    </update>
+
+    <!-- 级联冻结/解锁：自身 + 所有 path 以本节点 path 为前缀的子孙 -->
+    <update id="cascadeFrozen">
+        UPDATE SYS_POST
+        SET FROZEN = #{frozen,jdbcType=INTEGER}
+        WHERE (
+            ID = #{id,jdbcType=BIGINT}
+            <if test="path != null and path != ''">
+                OR PATH LIKE CONCAT(#{path,jdbcType=VARCHAR}, '/%')
+            </if>
+        )
+        AND DELETED = 0
+    </update>
+
+    <!-- 移动节点后刷新所有子孙 path 前缀 -->
+    <update id="refreshPath" parameterType="map">
+        UPDATE SYS_POST
+        SET PATH = CONCAT(#{newPath}, SUBSTRING(PATH, #{oldPathLength} + 1))
+        WHERE PATH LIKE CONCAT(#{oldPath}, '/%')
+          AND DELETED = 0
+    </update>
+
 </mapper>
