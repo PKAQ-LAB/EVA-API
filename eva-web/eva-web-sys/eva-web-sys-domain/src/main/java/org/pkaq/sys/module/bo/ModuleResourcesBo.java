@@ -16,7 +16,7 @@ public class ModuleResourcesBo implements Vo {
     private Long id;
 
     @Schema(description = "模块id")
-    private Long moduleId;
+    private Long mainId;
 
     @Schema(description = "资源描述")
     private String resourceDesc;

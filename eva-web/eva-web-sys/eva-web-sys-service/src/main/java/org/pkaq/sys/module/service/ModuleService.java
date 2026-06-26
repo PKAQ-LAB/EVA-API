@@ -27,9 +27,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -99,13 +101,13 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
                 .collect(Collectors.toSet());
 
         try {
+            // 先删除授权关系；deleteByModuleIds 依赖资源表反查，不能放在资源删除之后
+            this.roleResourceMapper.deleteByModuleIds(ids);
             // 删除模块下的资源定义
             this.moduleResourceMapper.delete(new LambdaUpdateWrapper<ModuleResources>()
                     .in(ModuleResources::getMainId, ids));
             // 删除模块本体
             this.mapper.deleteByIds(ids);
-            // 删除角色对资源的授权
-            this.roleResourceMapper.deleteByModuleIds(ids);
         } catch (Exception e) {
             throw new BizException(SysCodes.MODULE_RESOURCE_USED);
         }
@@ -167,9 +169,10 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
         }
 
         // 更新资源（diff 模式，避免误删被引用的资源）
-        handleResources(moduleId, bo.getResources());
-        // 清理失效的角色资源引用
-        this.roleResourceMapper.purgeBrokenRoleResourceRefs(moduleId);
+        Set<Long> deletedResourceIds = handleResources(moduleId, bo.getResources());
+        if (!deletedResourceIds.isEmpty()) {
+            this.roleResourceMapper.deleteByResourceIds(deletedResourceIds);
+        }
     }
 
     /**
@@ -400,23 +403,33 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
      * - 现有资源未出现在入参 → 删除
      * 避免"先全删再插入"导致已被授权引用的资源 id 变更。
      */
-    private void handleResources(long moduleId, List<ModuleResourcesBo> resources) {
+    private Set<Long> handleResources(long moduleId, List<ModuleResourcesBo> resources) {
+        if (resources == null) {
+            return Collections.emptySet();
+        }
         List<ModuleResources> existingList = this.moduleResourceMapper.selectList(
                 new LambdaQueryWrapper<ModuleResources>().eq(ModuleResources::getMainId, moduleId));
-        Set<Long> existingIds = existingList.stream()
-                .map(ModuleResources::getId)
-                .collect(Collectors.toSet());
+        Map<Long, ModuleResources> existingMap = existingList.stream()
+                .collect(Collectors.toMap(ModuleResources::getId, item -> item));
+        Set<Long> existingIds = existingMap.keySet();
 
         Set<Long> retainedIds = new HashSet<>();
 
         if (CollUtils.isNotEmpty(resources)) {
-            List<ModuleResources> incoming = this.convert.resourceBoToEntity(resources);
+            List<ModuleResources> incoming = this.convert.resourceBoToEntity(distinctResources(resources));
             for (ModuleResources r : incoming) {
-                r.setMainId(moduleId);
                 if (r.getId() != null && r.getId() != 0L && existingIds.contains(r.getId())) {
+                    ModuleResources existing = existingMap.get(r.getId());
+                    if (!Objects.equals(existing.getMainId(), moduleId)) {
+                        CommonCodes.PARAM_ERROR.newException();
+                        continue;
+                    }
+                    r.setMainId(moduleId);
                     this.moduleResourceMapper.updateById(r);
                     retainedIds.add(r.getId());
                 } else {
+                    r.setId(null);
+                    r.setMainId(moduleId);
                     this.moduleResourceMapper.insert(r);
                 }
             }
@@ -429,5 +442,24 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
             this.moduleResourceMapper.delete(new LambdaUpdateWrapper<ModuleResources>()
                     .in(ModuleResources::getId, toDelete));
         }
+        return toDelete;
+    }
+
+    /**
+     * 对入参资源去重，避免同一次请求重复 update/insert。
+     * 有 id 时按 id 去重；无 id 时按 type + url 去重。
+     */
+    private List<ModuleResourcesBo> distinctResources(List<ModuleResourcesBo> resources) {
+        Map<String, ModuleResourcesBo> resourceMap = new LinkedHashMap<>();
+        for (ModuleResourcesBo resource : resources) {
+            if (resource == null) {
+                continue;
+            }
+            String key = resource.getId() != null && resource.getId() != 0L
+                    ? "ID:" + resource.getId()
+                    : "NEW:" + resource.getResourceType() + ":" + resource.getResourceUrl();
+            resourceMap.putIfAbsent(key, resource);
+        }
+        return new ArrayList<>(resourceMap.values());
     }
 }

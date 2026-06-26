@@ -8,6 +8,27 @@
             FROM SYS_MODULE_RESOURCES res
             WHERE rr.resource_id = res.id
                 AND res.main_id = #{mid}
+            )
+    </delete>
+
+    <delete id="deleteByResourceIds">
+        DELETE FROM SYS_ROLERES_REF
+        WHERE RESOURCE_ID IN
+        <foreach collection="resourceIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteByModuleIds">
+        DELETE FROM SYS_ROLERES_REF rr
+        WHERE EXISTS (
+            SELECT 1
+            FROM SYS_MODULE_RESOURCES mr
+            WHERE rr.RESOURCE_ID = mr.ID
+                AND mr.MAIN_ID IN
+                <foreach collection="moduleIds" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
         )
     </delete>
 

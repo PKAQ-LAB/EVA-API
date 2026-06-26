@@ -28,6 +28,7 @@ public abstract class StdLineEntity implements Entity {
     /**
      * 租户id
      **/
+    @TableField(fill = FieldFill.INSERT)
     private Long tenantId;
 
     /**

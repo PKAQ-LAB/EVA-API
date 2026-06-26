@@ -16,7 +16,7 @@ public class ModuleResourcesVo implements Entity {
     private Long id;
 
     @Schema(description = "模块id")
-    private long moduleId;
+    private Long mainId;
 
     @Schema(description = "资源描述")
     private String resourceDesc;
