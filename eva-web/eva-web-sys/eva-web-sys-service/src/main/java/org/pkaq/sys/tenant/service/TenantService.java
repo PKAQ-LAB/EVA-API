@@ -5,9 +5,10 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
-import org.pkaq.core.auth.util.CacheTokenUtil;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.enums.FrozenEnumm;
+import org.pkaq.core.event.UserOfflineEvent;
+import org.pkaq.core.event.UserOfflineEvent.OfflineReason;
 import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.core.mvc.vo.PageVo;
 import org.pkaq.core.mybatis.mvc.service.StdService;
@@ -24,6 +25,7 @@ import org.pkaq.sys.tenant.vo.TenantListVo;
 import org.pkaq.sys.user.entity.UserEntity;
 import org.pkaq.sys.user.mapper.UserMapper;
 import org.pkaq.sys.user.service.UserService;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,7 +53,7 @@ public class TenantService extends StdService<org.pkaq.sys.tenant.mapper.TenantM
     private final UserMapper userMapper;
     private final UserService userService;
     private final TenantConvert convert;
-    private final CacheTokenUtil cacheTokenUtil;
+    private final ApplicationEventPublisher eventPublisher;
 
     /**
      * 批量切换冻结状态
@@ -104,8 +106,8 @@ public class TenantService extends StdService<org.pkaq.sys.tenant.mapper.TenantM
         this.mapper.deleteByIds(ids);
         // 删除租户下所有用户（StdEntity @TableLogic → 逻辑删）
         this.userMapper.delete(Wrappers.<UserEntity>lambdaUpdate().in(UserEntity::getTenantId, ids));
-        // 踢下线
-        this.cacheTokenUtil.removeTokens(affectedUsers);
+        // 发布下线事件（事务提交后由 listener 清 token）
+        eventPublisher.publishEvent(new UserOfflineEvent(this, affectedUsers, OfflineReason.TENANT_DELETED));
     }
 
     /**
@@ -260,7 +262,7 @@ public class TenantService extends StdService<org.pkaq.sys.tenant.mapper.TenantM
                     .set(UserEntity::getFrozen, FrozenEnumm.FROZEN));
 
             Set<Long> uids = toFrozen.stream().map(UserEntity::getId).collect(Collectors.toSet());
-            this.cacheTokenUtil.removeTokens(uids);
+            eventPublisher.publishEvent(new UserOfflineEvent(this, uids, OfflineReason.TENANT_FROZEN));
         } else if (target == FrozenEnumm.UN_FROZEN) {
             this.userMapper.update(null, new LambdaUpdateWrapper<UserEntity>()
                     .eq(UserEntity::getTenantId, tenantId)

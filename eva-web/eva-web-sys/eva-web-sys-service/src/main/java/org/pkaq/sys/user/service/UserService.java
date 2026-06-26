@@ -4,10 +4,11 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
-import org.pkaq.core.auth.util.CacheTokenUtil;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.enums.FrozenEnumm;
+import org.pkaq.core.event.UserOfflineEvent;
+import org.pkaq.core.event.UserOfflineEvent.OfflineReason;
 import org.pkaq.core.exception.BizException;
 import org.pkaq.core.mvc.entity.Entity;
 import org.pkaq.core.mvc.vo.PageVo;
@@ -34,6 +35,7 @@ import org.pkaq.sys.user.mapper.UserMapper;
 import org.pkaq.sys.user.vo.UserDetailVo;
 import org.pkaq.sys.user.vo.UserListVo;
 import org.pkaq.sys.user.vo.UserResourceVo;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,7 +69,7 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
     private final PostUserMapper postUserMapper;
     private final UserConvert convert;
     private final EvaConfig evaConfig;
-    private final CacheTokenUtil cacheTokenUtil;
+    private final ApplicationEventPublisher eventPublisher;
 
     /**
      * 账号合法性校验：不允许为黑名单中的保留字
@@ -102,8 +104,8 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
         updateE.setRevision(rePwdBo.getRevision());
         this.mapper.updateById(updateE);
 
-        // 改密后强制下线（其它设备/浏览器 token 立即失效）
-        cacheTokenUtil.removeToken(uid);
+        // 改密后强制下线（事务提交后由 listener 清 token）
+        eventPublisher.publishEvent(new UserOfflineEvent(this, uid, OfflineReason.PASSWORD_CHANGED));
     }
 
     /**
@@ -122,8 +124,8 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
         this.roleUserMapper.delete(new LambdaQueryWrapper<RoleUserEntity>().in(RoleUserEntity::getUserId, param));
         // 清理岗位关系（U-03 修复）
         this.postUserMapper.delete(new LambdaQueryWrapper<PostUserEntity>().in(PostUserEntity::getUserId, param));
-        // 踢下线
-        this.cacheTokenUtil.removeTokens(param);
+        // 发布下线事件（事务提交后由 listener 清 token）
+        eventPublisher.publishEvent(new UserOfflineEvent(this, param, OfflineReason.USER_DELETED));
     }
 
     /**
@@ -184,7 +186,7 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
         this.mapper.change(ids);
 
         if (!willBeFrozen.isEmpty()) {
-            this.cacheTokenUtil.removeTokens(willBeFrozen);
+            eventPublisher.publishEvent(new UserOfflineEvent(this, willBeFrozen, OfflineReason.USER_FROZEN));
         }
     }
 

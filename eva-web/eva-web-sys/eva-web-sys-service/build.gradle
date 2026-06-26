@@ -11,7 +11,6 @@ dependencies {
     api project(":eva-web:eva-web-sys:eva-web-sys-domain")
 
     implementation project(":eva-web:eva-web-core"),
-                   project(":eva-web:eva-web-auth"),
                    project(":eva-core:eva-core-cache"),
                    project(":eva-core:eva-core-data-mybatis"),
                    project(":eva-core:eva-core-log"),
