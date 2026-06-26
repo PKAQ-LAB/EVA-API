@@ -3,16 +3,20 @@ package org.pkaq.sys.organization.bo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.pkaq.core.mvc.bo.StdBo;
+import org.pkaq.core.mvc.bo.Bo;
 
 /**
+ * 组织管理树形查询 BO
+ *
  * @author PKAQ
  */
-
 @Data
-@EqualsAndHashCode(callSuper = true)
-@Schema(title = "组织管理列表查询BO")
-public class OrganizationQueryBo extends StdBo {
+@EqualsAndHashCode(callSuper = false)
+@Schema(title = "组织管理查询BO")
+public class OrganizationQueryBo implements Bo {
+
+    @Schema(description = "节点 ID")
+    private Long id;
 
     @Schema(description = "组织名称")
     private String name;
@@ -20,6 +24,6 @@ public class OrganizationQueryBo extends StdBo {
     @Schema(description = "编码")
     private String code;
 
-    @Schema(description = "上级节点Id")
-    private String parentId;
+    @Schema(description = "上级节点 ID（按层级筛选）")
+    private Long pid;
 }

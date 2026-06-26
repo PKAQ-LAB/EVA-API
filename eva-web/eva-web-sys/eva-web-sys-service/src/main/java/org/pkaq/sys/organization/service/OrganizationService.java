@@ -1,10 +1,14 @@
 package org.pkaq.sys.organization.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.codes.CommonCodes;
+import org.pkaq.core.enums.FrozenEnumm;
 import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.core.mybatis.mvc.service.StdService;
+import org.pkaq.core.mybatis.util.TreeHelper;
 import org.pkaq.core.util.CollUtils;
 import org.pkaq.sys.organization.bo.OrganizationAoeBo;
 import org.pkaq.sys.organization.bo.OrganizationQueryBo;
@@ -15,171 +19,289 @@ import org.pkaq.sys.organization.mapper.OrganizationMapper;
 import org.pkaq.sys.organization.vo.OrganizationDetailVo;
 import org.pkaq.sys.organization.vo.OrganizationListVo;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
- * 组织信息Service
+ * 组织 / 部门管理 Service —— 树形结构（CRUD + 冻结 + 同级拖拽）标准范本
+ * <p>
+ * 数据约定（与 sys_module / sys_post 一致）：
+ * 1. pid 非空，根节点 pid = 0
+ * 2. path 形如 "/{id}"（根）、"/{parentPath}/{id}"（子孙）
+ * 3. sort 同级递增，跨级移动后自动追加到末尾
+ * 4. isleaf：新增 / 移走最后一个子节点时自动维护
+ * <p>
+ * 注意：删除时"部门-用户引用"检查暂未实现，后续作为 ReferenceChecker SPI 接入。
  *
- * @author S.PKAQ
+ * @author PKAQ
  */
 @Service
 @RequiredArgsConstructor
 public class OrganizationService extends StdService<OrganizationMapper, OrganizationEntity> {
+    /** 根节点 pid 哨兵值 */
+    private static final long ROOT_PID = 0L;
+
     private final OrganizationConvert organizationConvert;
 
     /**
-     * 查询组织结构树
+     * 校验编码在同 pid 下唯一（同租户由拦截器隔离）
      *
-     * @return
+     * @return true = 已存在重复
      */
-    public List<OrganizationEntity> listOrg(OrganizationEntity organizationEntity) {
-        return this.mapper.listOrg(organizationEntity);
+    public boolean checkUnique(OrganizationAoeBo bo) {
+        if (bo == null) {
+            return false;
+        }
+        long pid = bo.getPid() == null ? ROOT_PID : bo.getPid();
+        LambdaQueryWrapper<OrganizationEntity> wrapper = new LambdaQueryWrapper<OrganizationEntity>()
+                .eq(OrganizationEntity::getPid, pid)
+                .and(w -> w
+                        .eq(bo.getCode() != null && !bo.getCode().isEmpty(), OrganizationEntity::getCode, bo.getCode())
+                        .or()
+                        .eq(bo.getName() != null && !bo.getName().isEmpty(), OrganizationEntity::getName, bo.getName()));
+
+        if (bo.getId() != null && bo.getId() != 0L) {
+            wrapper.ne(OrganizationEntity::getId, bo.getId());
+        }
+        return this.mapper.selectCount(wrapper) > 0;
     }
 
     /**
-     * 根据ID批量删除
-     *
-     * @param ids
-     * @return
+     * 树形列表查询
      */
-    public void deleteOrg(Set<Long> ids) {
-        // 检查是否存在子节点，存在子节点不允许删除
-        LambdaQueryWrapper<OrganizationEntity> oew = new LambdaQueryWrapper<>();
-        oew.in(OrganizationEntity::getPid, ids);
+    public Collection<OrganizationListVo> list(OrganizationQueryBo queryBo) {
+        Map<Long, OrganizationListVo> orgMap = this.mapper.selectOrgMapList(queryBo);
+        if (CollUtils.isEmpty(orgMap)) {
+            return Collections.emptyList();
+        }
+        return TreeHelper.buildTree(orgMap.values());
+    }
 
-        List<OrganizationEntity> leafList = this.mapper.selectList(oew);
+    /**
+     * 新增 / 编辑组织
+     */
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public void edit(OrganizationAoeBo bo) {
+        OrganizationEntity org = this.organizationConvert.aoeBoToEntity(bo);
+        // 入口规范化：前端未传 pid 时统一为根节点哨兵 0
+        if (org.getPid() == null) {
+            org.setPid(ROOT_PID);
+        }
 
-        if (CollUtils.isNotEmpty(leafList)) {
-            List<Object> list = CollUtils.getFieldValues(leafList, "parentName");
-            String name = CollUtils.join(list, ",");
+        Long orgId = org.getId();
+        long pid = org.getPid();
+        boolean isNew = orgId == null || orgId == 0L;
+        boolean isRoot = pid == ROOT_PID;
 
-            CommonCodes.CHILD_EXIST.newException(name);
+        if (isNew) {
+            orgId = IdWorker.getId();
+            org.setId(orgId);
+            org.setIsleaf(true);
+            org.setPath(buildPath(pid, orgId, isRoot));
+            org.setSort(nextSort(pid));
+            this.mapper.insert(org);
+
+            if (!isRoot) {
+                setParentLeaf(pid, false);
+            }
         } else {
-            this.mapper.deleteByIds(ids);
+            OrganizationEntity origin = this.mapper.selectById(orgId);
+            if (origin == null) {
+                CommonCodes.CAN_NOT_FIND_RECORD.newException(orgId);
+                return;
+            }
+
+            if (!Objects.equals(origin.getPid(), pid)) {
+                handleParentChange(org, origin, isRoot);
+            } else {
+                org.setPath(origin.getPath());
+                org.setSort(origin.getSort());
+                this.mapper.updateById(org);
+            }
         }
     }
 
     /**
-     * 新增/编辑一条组织信息
-     *
-     * @param bo 要 新增/编辑 得组织对象
+     * 详情查询
      */
-    public void editOrg(OrganizationAoeBo bo) {
-//        var organization = this.organizationConvert.aoeBoToEntity(bo);
-//
-//        Long orgId = organization.getId();
-//        // 获取上级节点
-//        String pid = organization.getPid();
-//        String root = "0";
-//        if (!root.equals(pid) && StrUtils.isNotBlank(pid)) {
-//            // 查询新父节点信息
-//            OrganizationEntity parentOrg = this.get(pid);
-//            // 设置当前节点信息
-//            String parentPath = StrUtils.isNotBlank(organization.getId()) ? parentOrg.getPath() + "/" + organization.getId() : parentOrg.getPath();
-//            organization.setPath(parentPath);
-//
-//        } else {
-//            // 父节点为空, 根节点 设置为非叶子\
-//            pid = root;
-//            if (StrUtils.isNotBlank(organization.getId())) {
-//                organization.setPath(organization.getId());
-//            }
-//            organization.setPid(pid);
-//            organization.setIsleaf(false);
-//        }
-//
-//        // 检查原父节点是否还存在子节点 不存在设置leaf为false
-//        OrganizationEntity orginNode = this.mapper.getParentById(orgId);
-//
-//        // 如果更换了父节点 重新确定原父节点的 leaf属性，以及所修改节点的orders属性
-//        if (null != orginNode && !pid.equals(orginNode.getPid())) {
-//            int brothers = this.mapper.countPrantLeaf(orgId) - 1;
-//            if (brothers < 1) {
-//                orginNode.setIsleaf(true);
-//                this.updateOrg(orginNode);
-//            }
-//        }
-//        //如果是新增且orders属性为空则设置orders属性
-//        OrganizationEntity oldOrgin = null;
-//        if (StrUtils.isBlank(organization.getId())) {
-//            organization.setSort(this.mapper.countPrantLeaf(pid));
-//        } else {
-//            oldOrgin = this.mapper.selectById(orgId);
-//        }
-//        this.merge(organization);
-//
-//        //新增
-//        if (null == oldOrgin) {
-//            //设置path路径 把path路径加上自己本身
-//            //String path= StrUtils.isBlank(organization.getPath()) ? organization.getId() : organization.getPath() + "/" + organization.getId();
-//            this.mapper.updateById(organization);
-//        } else {
-//            //刷新子节点相关数据
-//            this.refreshChild(organization, oldOrgin);
-//        }
-//        // 保存完重新查询一遍列表数据
-    }
-
-    // 父节点信息有修改 刷新子节点相关数据
-    public void refreshChild(OrganizationEntity organizationEntity, OrganizationEntity oldOrgin) {
-//        // 刷新子节点名称
-//        this.mapper.updateChildParentName(organizationEntity.getName(), organizationEntity.getId());
-//        // TODO 刷新所有子节点的 path_name 和 path
-//        this.mapper.updateChildPathInfo(organizationEntity, oldOrgin);
+    public OrganizationDetailVo get(Long id) {
+        OrganizationEntity entity = this.mapper.selectById(id);
+        if (entity == null) {
+            CommonCodes.CAN_NOT_FIND_RECORD.newException(id);
+            return null;
+        }
+        OrganizationDetailVo vo = this.organizationConvert.entityToDetailVo(entity);
+        // 回填上级节点名称
+        if (entity.getPid() != null && entity.getPid() != ROOT_PID) {
+            OrganizationEntity parent = this.mapper.selectById(entity.getPid());
+            if (parent != null) {
+                vo.setParentName(parent.getName());
+            }
+        }
+        return vo;
     }
 
     /**
-     * 根据ID更新
-     *
-     * @param organizationEntity
+     * 批量删除：
+     * - 子节点存在性检查（不允许删除非叶子）
+     * - 删除后维护原父节点 isleaf
+     * - 部门-用户引用检查留待 ReferenceChecker SPI 后续接入
      */
-    public void updateOrg(OrganizationEntity organizationEntity) {
-        // 检查是否存在叶子节点，存在 返回叶子节点名称 终止删除
-        this.mapper.updateById(organizationEntity);
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public void delete(Set<Long> ids) {
+        if (CollUtils.isEmpty(ids)) {
+            return;
+        }
+
+        // 子节点存在性检查
+        List<OrganizationEntity> leafList = this.mapper.selectList(new LambdaQueryWrapper<OrganizationEntity>()
+                .in(OrganizationEntity::getPid, ids));
+        if (CollUtils.isNotEmpty(leafList)) {
+            String nameStr = leafList.stream()
+                    .map(OrganizationEntity::getName)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.joining(","));
+            CommonCodes.CHILD_EXIST.newException(nameStr);
+            return;
+        }
+
+        // 收集原父节点 id（非根）
+        Set<Long> originPids = this.mapper.selectList(new LambdaQueryWrapper<OrganizationEntity>()
+                        .select(OrganizationEntity::getPid)
+                        .in(OrganizationEntity::getId, ids))
+                .stream()
+                .map(OrganizationEntity::getPid)
+                .filter(pid -> pid != null && pid != ROOT_PID)
+                .collect(Collectors.toSet());
+
+        // 删除组织本体（StdEntity @TableLogic → 逻辑删）
+        this.mapper.delete(new LambdaQueryWrapper<OrganizationEntity>().in(OrganizationEntity::getId, ids));
+
+        // 刷新原父节点 isleaf
+        refreshParentLeaf(originPids);
     }
 
     /**
-     * 根据ID获取一条组织信息
-     *
-     * @param id 组织ID
-     * @return 组织信息
+     * 同级拖拽排序
      */
-    public OrganizationDetailVo getOrg(long id) {
-        return this.organizationConvert.entityToDetailVo(this.get(id));
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public void sort(OrganizationSortBo bo) {
+        if (bo == null || bo.getId() == null) {
+            CommonCodes.PARAM_ERROR.newException();
+            return;
+        }
+        OrganizationEntity self = this.mapper.selectById(bo.getId());
+        if (self == null) {
+            CommonCodes.CAN_NOT_FIND_RECORD.newException(bo.getId());
+            return;
+        }
+        if (bo.getOldSort() == bo.getNewSort()) {
+            return;
+        }
+        this.mapper.updateSort(bo.getId(), self.getPid(), bo.getOldSort(), bo.getNewSort());
     }
 
     /**
-     * 根据属性查询组织树列表
-     *
-     * @return 组织树列表
+     * 批量切换冻结状态（逐个翻转，子节点跳过判断）
      */
-    public List<OrganizationListVo> list(OrganizationQueryBo queryBo) {
-        var bo = this.organizationConvert.queryBoToEntity(queryBo);
-        var vo = this.mapper.listOrg(bo);
-        return this.organizationConvert.entityToListVo(vo);
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public void switchFrozen(SingleArray<Long> ids) {
+        if (ids == null || CollUtils.isEmpty(ids.getParam())) {
+            return;
+        }
+        for (Long id : ids.getParam()) {
+            OrganizationEntity self = this.mapper.selectById(id);
+            if (self == null || self.getFrozen() == FrozenEnumm.READ_ONLY) {
+                continue;
+            }
+            FrozenEnumm target = self.getFrozen() == FrozenEnumm.FROZEN
+                    ? FrozenEnumm.UN_FROZEN
+                    : FrozenEnumm.FROZEN;
+
+            // 解锁时若父节点为冻结，禁止解锁子节点
+            if (target == FrozenEnumm.UN_FROZEN && self.getPid() != null && self.getPid() != ROOT_PID) {
+                OrganizationEntity parent = this.mapper.selectById(self.getPid());
+                if (parent != null && parent.getFrozen() == FrozenEnumm.FROZEN) {
+                    continue;
+                }
+            }
+            this.mapper.cascadeFrozen(id, self.getPath(), target.getCode());
+        }
     }
 
-    /**
-     * 交换两个orders值
-     *
-     * @param switchOrg 进行交换的两个实体
-     */
-    public void sortOrg(OrganizationSortBo[] switchOrg) {
-        // 优化逻辑
-//        for (OrganizationEntity org : switchOrg) {
-//            this.mapper.updateById(org);
-//        }
+    // ------------------------------------------------------------------
+    // 私有辅助方法（与 ModuleService / PostService 范本一致）
+    // ------------------------------------------------------------------
+
+    /** 计算节点 path：根节点 = "/{id}"，非根 = "{parentPath}/{id}" */
+    private String buildPath(long pid, long id, boolean isRoot) {
+        if (isRoot) {
+            return "/" + id;
+        }
+        OrganizationEntity parent = this.mapper.selectById(pid);
+        if (parent == null || parent.getPath() == null) {
+            CommonCodes.CAN_NOT_FIND_RECORD.newException(pid);
+            return null;
+        }
+        return parent.getPath() + "/" + id;
     }
 
-    /**
-     * 切换可用状态 - 级联操作
-     *
-     * @param ids
-     */
-    public void switchStatus(SingleArray<String> ids) {
-        //TODO 优化逻辑
-        //this.mapper.switchStatus(organization);
+    /** 取指定父节点下的下一个 sort 值 */
+    private double nextSort(long pid) {
+        Integer maxSort = this.mapper.listOrder(pid);
+        return (maxSort == null ? 0 : maxSort) + 1;
+    }
+
+    /** 设置指定节点的 isleaf */
+    private void setParentLeaf(long pid, boolean isleaf) {
+        this.mapper.update(null, new LambdaUpdateWrapper<OrganizationEntity>()
+                .eq(OrganizationEntity::getId, pid)
+                .set(OrganizationEntity::getIsleaf, isleaf));
+    }
+
+    /** 对一批父节点 id，若已无子节点则置 isleaf=true */
+    private void refreshParentLeaf(Set<Long> parentIds) {
+        if (CollUtils.isEmpty(parentIds)) {
+            return;
+        }
+        for (Long pid : parentIds) {
+            Long childCount = this.mapper.selectCount(new LambdaQueryWrapper<OrganizationEntity>()
+                    .eq(OrganizationEntity::getPid, pid));
+            if (childCount == null || childCount == 0L) {
+                setParentLeaf(pid, true);
+            }
+        }
+    }
+
+    /** 处理父节点变更：重算 path、刷新所有子孙 path、维护两边 isleaf */
+    private void handleParentChange(OrganizationEntity org, OrganizationEntity origin, boolean isRoot) {
+        long orgId = org.getId();
+        long newPid = org.getPid();
+        long oldPid = origin.getPid();
+        String oldPath = origin.getPath();
+
+        String newPath = buildPath(newPid, orgId, isRoot);
+        org.setPath(newPath);
+        org.setSort(nextSort(newPid));
+        this.mapper.updateById(org);
+
+        if (oldPath != null && !oldPath.isEmpty()) {
+            this.mapper.refreshPath(oldPath, oldPath.length(), newPath);
+        }
+
+        if (oldPid != ROOT_PID) {
+            refreshParentLeaf(Set.of(oldPid));
+        }
+        if (!isRoot) {
+            setParentLeaf(newPid, false);
+        }
     }
 }

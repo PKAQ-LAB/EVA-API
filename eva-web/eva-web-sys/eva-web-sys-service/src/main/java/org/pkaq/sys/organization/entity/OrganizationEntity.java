@@ -3,7 +3,6 @@ package org.pkaq.sys.organization.entity;
 import com.baomidou.mybatisplus.annotation.SqlCondition;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
@@ -12,11 +11,15 @@ import org.pkaq.core.mybatis.mvc.entity.StdEntity;
 import java.util.List;
 
 /**
- * 组织管理实体类
+ * 组织/部门管理实体（树形）
+ * <p>
+ * 数据约定（与 sys_module / sys_post 一致）：
+ * - pid 非空，根节点 pid = 0（DB NOT NULL DEFAULT 0）
+ * - path 形如 "/{id}"（根）、"/{parentPath}/{id}"（子孙）
+ * - isleaf 由 Service 自动维护
  *
  * @author PKAQ
  */
-
 @Data
 @Alias("organization")
 @TableName("sys_organization")
@@ -24,54 +27,21 @@ import java.util.List;
 public class OrganizationEntity extends StdEntity {
 
     @TableField(condition = SqlCondition.LIKE)
-    @Schema(description = "组织名称")
     private String name;
 
     @TableField(condition = SqlCondition.LIKE)
-    @Schema(description = "编码")
     private String code;
 
-    @Schema(description = "上级节点Id")
-    private String pid;
+    /** 上级节点 ID，根节点 = 0 */
+    private Long pid;
 
-    @Schema(description = "上级节点id路径")
+    /** 路径（id 链） */
     private String path;
 
-    @Schema(description = "是否是叶子")
-    private boolean isleaf;
+    /** 是否叶子节点 */
+    private Boolean isleaf;
 
+    /** 子节点（非数据库字段，仅在树形组装时使用） */
     @TableField(exist = false)
-    @Schema(description = "子节点")
     private List<OrganizationEntity> children;
-
-    /**
-     * TreeSelect组件需要为一个key
-     */
-    @TableField(exist = false)
-    @Schema(description = "key")
-    private String key;
-
-    /**
-     * TreeSelect组件指定treeNodeLabelProp无法生效 仍然按默认title属性读取 这里添加title返回
-     */
-    @TableField(exist = false)
-    @Schema(description = "title")
-    private String title;
-
-    public Long getKey() {
-        return this.getId();
-    }
-
-    public String getTitle() {
-        return this.name;
-    }
-
-    public Long getValue() {
-        return this.getId();
-    }
-
-    public List<OrganizationEntity> getChildren() {
-        return children == null || children.size() < 1 ? null : children;
-    }
-
 }

@@ -6,16 +6,21 @@ import lombok.EqualsAndHashCode;
 import org.pkaq.core.mvc.bo.Bo;
 
 /**
+ * 组织顺序调整 BO（同级拖拽）
+ *
  * @author PKAQ
  */
-
 @Data
 @EqualsAndHashCode(callSuper = false)
-@Schema(title = "组织管理顺序调整Bo")
+@Schema(title = "组织顺序调整Bo")
 public class OrganizationSortBo implements Bo {
 
-    private String id;
+    @Schema(description = "记录ID")
+    private Long id;
 
-    @Schema(description = "展示顺序")
-    private int sort;
+    @Schema(description = "旧的顺序")
+    private int oldSort;
+
+    @Schema(description = "新的顺序")
+    private int newSort;
 }

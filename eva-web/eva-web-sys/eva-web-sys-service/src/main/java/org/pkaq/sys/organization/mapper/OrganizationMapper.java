@@ -3,69 +3,51 @@ package org.pkaq.sys.organization.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.pkaq.sys.organization.bo.OrganizationQueryBo;
 import org.pkaq.sys.organization.entity.OrganizationEntity;
+import org.pkaq.sys.organization.vo.OrganizationListVo;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.Map;
 
 /**
- * 组织管理mapper
+ * 组织管理 Mapper
  *
  * @author PKAQ
  */
 @Mapper
 @Repository
 public interface OrganizationMapper extends BaseMapper<OrganizationEntity> {
-    /**
-     * 查询所有符合条件的树
-     *
-     * @param organization 符合条件的List
-     * @return 符合查询条件的List
-     */
-    List<OrganizationEntity> listOrg(@Param("organization") OrganizationEntity organization);
 
     /**
-     * 根据parentID查询子节点数据
-     *
-     * @param id parentID
-     * @return 符合条件的List
+     * 树形查询（含 parentName 回填，按 pid + sort 排序）
      */
-    List<OrganizationEntity> listChildren(String id);
+    Map<Long, OrganizationListVo> selectOrgMapList(@Param("q") OrganizationQueryBo queryBo);
 
     /**
-     * 根据子节点ID查询父节点信息
-     *
-     * @param id 子节点ID
-     * @return 父节点实体类
+     * 取指定父节点下当前最大 sort（用于新增节点 sort = max + 1）
      */
-    OrganizationEntity getParentById(String id);
+    Integer listOrder(@Param("pid") Long pid);
 
     /**
-     * 根据子节点ID查询同级节点数量（包含自身）
-     *
-     * @param id 子节点ID
-     * @return 同级节点数量
+     * 同级拖拽排序（仅在相同 pid 下生效）。根节点之间排序时 pid = 0。
      */
-    int countPrantLeaf(String id);
+    void updateSort(@Param("id") Long id,
+                    @Param("pid") Long pid,
+                    @Param("oldSort") Integer oldSort,
+                    @Param("newSort") Integer newSort);
 
     /**
-     * 切换可用状态
-     *
-     * @param organization
+     * 级联冻结 / 解锁：自身 + 所有 path 以本节点 path 为前缀的子孙
      */
-    void switchStatus(OrganizationEntity organization);
+    void cascadeFrozen(@Param("id") Long id,
+                       @Param("path") String path,
+                       @Param("frozen") Integer frozen);
 
     /**
-     * 父节点信息有修改 刷新子节点相关数据
-     *
-     * @param name
-     * @param id
+     * 移动节点后刷新所有子孙 path 前缀
      */
-    void updateChildParentName(@Param("name") String name, @Param("id") String id);
-
-    /**
-     * 刷新子节点的path_name  和 path
-     */
-    void updateChildPathInfo(@Param("neworgin") OrganizationEntity neworgin, @Param("oldorgin") OrganizationEntity oldorgin);
-
+    void refreshPath(@Param("oldPath") String oldPath,
+                     @Param("oldPathLength") int oldPathLength,
+                     @Param("newPath") String newPath);
 }

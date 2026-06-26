@@ -7,11 +7,15 @@ import lombok.EqualsAndHashCode;
 import org.pkaq.core.mvc.bo.StdBo;
 
 /**
+ * 组织管理新增 / 编辑请求参数
+ * <p>
+ * 注意：frozen 走独立的 /switch 端点；sort/path/isleaf 由 Service 维护，
+ * 此 BO 不接受这些字段，避免前端越权改排序、冻结或破坏 path 链。
+ *
  * @author PKAQ
  */
-
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 @Schema(title = "组织管理编辑Bo")
 public class OrganizationAoeBo extends StdBo {
 
@@ -23,12 +27,6 @@ public class OrganizationAoeBo extends StdBo {
     @NotBlank
     private String code;
 
-    @Schema(description = "上级节点Id")
-    private String pid;
-
-    @Schema(description = "上级节点id路径")
-    private String path;
-
-    @Schema(description = "是否是叶子")
-    private boolean isleaf;
+    @Schema(description = "上级节点ID，根节点传 0 或留空")
+    private Long pid;
 }

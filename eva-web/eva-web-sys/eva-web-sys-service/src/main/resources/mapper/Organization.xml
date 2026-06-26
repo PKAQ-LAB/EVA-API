@@ -1,80 +1,115 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.pkaq.sys.organization.mapper.OrganizationMapper">
-    <resultMap id="BaseResultMap" type="organization" extends="common.resultMap">
-        <result column="NAME" jdbcType="VARCHAR" property="name"/>
-        <result column="CODE" jdbcType="VARCHAR" property="code"/>
-        <result column="PID" jdbcType="BIGINT" property="pid"/>
-        <result column="PATH" jdbcType="VARCHAR" property="path"/>
-        <result column="ISLEAF" jdbcType="TINYINT" property="isleaf"/>
-        <collection property="children" column="{id=id}" select="listChildren"/>
+
+    <resultMap id="ListResultMap" type="org.pkaq.sys.organization.vo.OrganizationListVo" extends="common.resultMap">
+        <id property="id" column="ID"/>
+        <result property="name" column="NAME"/>
+        <result property="code" column="CODE"/>
+        <result property="pid" column="PID"/>
+        <result property="parentName" column="PARENT_NAME"/>
+        <result property="path" column="PATH"/>
+        <result property="isleaf" column="ISLEAF"/>
     </resultMap>
 
-    <select id="listOrg" resultMap="BaseResultMap">
-        SELECT * FROM sys_organization
+    <!-- 树形查询：返回 Map<id, OrganizationListVo>，由 Service 端 buildTree -->
+    <select id="selectOrgMapList" resultMap="ListResultMap">
+        SELECT
+            y.ID,
+            y.NAME,
+            y.CODE,
+            y.PID,
+            y.PATH,
+            y.ISLEAF,
+            y.FROZEN,
+            y.SORT,
+            y.REMARK,
+            y.CREATE_ID,
+            y.CREATE_BY,
+            y.UTC_CREATE,
+            y.MODIFY_ID,
+            y.MODIFY_BY,
+            y.UTC_MODIFY,
+            y.REVISION,
+            s.NAME AS PARENT_NAME
+        FROM sys_organization y
+            LEFT JOIN sys_organization s ON s.ID = y.PID AND s.DELETED = 0
         <where>
-            (<include refid="common.avalibleSQL"/>)
-            <if test="null == organization or null == organization.pid or '' == organization.pid">
-                AND (pid = 0 OR pid IS NULL)
-            </if>
-            <if test="null != organization">
-                <if test="null != organization.pid and '' != organization.pid">
-                    AND pid = CAST(#{organization.pid} AS BIGINT)
+            (<include refid="common.avalibleSQL"><property name="prefix" value="y"/></include>)
+            <if test="q != null">
+                <if test="q.id != null">
+                    AND y.ID = #{q.id,jdbcType=BIGINT}
                 </if>
-                <if test="organization.name != null and organization.name != ''">
-                    AND name LIKE CONCAT('%', #{organization.name}, '%')
+                <if test="q.name != null and q.name != ''">
+                    AND y.NAME LIKE CONCAT('%', #{q.name,jdbcType=VARCHAR}, '%')
                 </if>
-                <if test="organization.code != null and organization.code != ''">
-                    AND code LIKE CONCAT('%', #{organization.code}, '%')
+                <if test="q.code != null and q.code != ''">
+                    AND y.CODE = #{q.code,jdbcType=VARCHAR}
+                </if>
+                <if test="q.pid != null">
+                    AND y.PID = #{q.pid,jdbcType=BIGINT}
                 </if>
             </if>
         </where>
-        ORDER BY sort ASC
+        ORDER BY y.SORT ASC, y.UTC_MODIFY DESC
     </select>
 
-    <select id="listChildren" resultMap="BaseResultMap">
-        SELECT *
+    <!-- 取指定父节点下最大 sort -->
+    <select id="listOrder" resultType="java.lang.Integer">
+        SELECT
+        <if test="_databaseId == 'mysql'">
+            IFNULL(MAX(SORT), 0)
+        </if>
+        <if test="_databaseId == 'oracle'">
+            NVL(MAX(SORT), 0)
+        </if>
+        <if test="_databaseId == 'postgre'">
+            COALESCE(MAX(SORT), 0)
+        </if>
         FROM sys_organization
-        WHERE pid = CAST(#{id} AS BIGINT)
-            AND (<include refid="common.avalibleSQL"/>)
-        ORDER BY sort ASC
+        WHERE PID = #{pid,jdbcType=BIGINT} AND DELETED = 0
     </select>
 
-    <select id="getParentById" resultMap="BaseResultMap">
-        SELECT *
-        FROM sys_organization org
-        WHERE org.id = (SELECT pid FROM sys_organization og WHERE og.id = CAST(#{id} AS BIGINT))
-            AND (<include refid="common.avalibleSQL"/>)
-    </select>
-
-    <select id="countPrantLeaf" resultType="int">
-        SELECT count(id)
-        FROM sys_organization
-        WHERE pid = CAST(#{id} AS BIGINT)
-            AND (<include refid="common.avalibleSQL"/>)
-    </select>
-
-    <update id="switchStatus">
+    <!-- 同级拖拽排序：限定相同 pid，避免跨父节点污染 -->
+    <update id="updateSort" parameterType="map">
         UPDATE sys_organization
-        SET frozen = CASE WHEN coalesce(frozen, 0) = 1 THEN 0 ELSE 1 END
-        WHERE (id = CAST(#{id} AS BIGINT)
-            OR path like concat(CAST(#{id} AS VARCHAR), '/%')
-            OR path like concat('%/', CAST(#{id} AS VARCHAR), '/%')
-            OR path like concat('%/', CAST(#{id} AS VARCHAR)))
-            AND (<include refid="common.avalibleSQL"/>)
+        SET SORT = CASE
+            WHEN ID = #{id} THEN #{newSort}
+            WHEN #{newSort} &lt; #{oldSort}
+                AND SORT &gt;= #{newSort}
+                AND SORT &lt; #{oldSort} THEN SORT + 1
+            WHEN #{newSort} &gt; #{oldSort}
+                AND SORT &lt;= #{newSort}
+                AND SORT &gt; #{oldSort} THEN SORT - 1
+            ELSE SORT
+        END
+        WHERE PID = #{pid,jdbcType=BIGINT}
+          AND DELETED = 0
+          AND (
+              (SORT BETWEEN LEAST(#{oldSort}, #{newSort}) AND GREATEST(#{oldSort}, #{newSort}))
+              OR ID = #{id}
+          )
     </update>
 
-    <update id="updateChildParentName">
+    <!-- 级联冻结 / 解锁：自身 + 所有 path 以本节点 path 为前缀的子孙 -->
+    <update id="cascadeFrozen">
         UPDATE sys_organization
-        SET path = path
-        WHERE 1 = 0
+        SET FROZEN = #{frozen,jdbcType=INTEGER}
+        WHERE (
+            ID = #{id,jdbcType=BIGINT}
+            <if test="path != null and path != ''">
+                OR PATH LIKE CONCAT(#{path,jdbcType=VARCHAR}, '/%')
+            </if>
+        )
+        AND DELETED = 0
     </update>
 
-    <update id="updateChildPathInfo">
+    <!-- 移动节点后刷新所有子孙 path 前缀 -->
+    <update id="refreshPath" parameterType="map">
         UPDATE sys_organization
-        SET PATH = REPLACE(PATH, #{oldorgin.path,jdbcType=VARCHAR}, #{neworgin.path,jdbcType=VARCHAR})
-        WHERE path like concat('%', #{oldorgin.path,jdbcType=VARCHAR}, '%')
-            AND id != CAST(#{oldorgin.id,jdbcType=VARCHAR} AS BIGINT)
-            AND (<include refid="common.avalibleSQL"/>)
+        SET PATH = CONCAT(#{newPath}, SUBSTRING(PATH, #{oldPathLength} + 1))
+        WHERE PATH LIKE CONCAT(#{oldPath}, '/%')
+          AND DELETED = 0
     </update>
+
 </mapper>
