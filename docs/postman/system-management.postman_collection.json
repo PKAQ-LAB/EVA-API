@@ -1,0 +1,1323 @@
+{
+  "info": {
+    "_postman_id": "3d96c7f3-d5e3-4a77-a7e2-6c7740d1a8c2",
+    "name": "EVA 系统管理全量测试",
+    "description": "EVA-API 系统管理模块 Postman 测试集合。导入后先执行“认证/登录”，脚本会自动写入 accessToken。默认 baseUrl 为 http://localhost:9016/api。",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{accessToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "pm.test('HTTP 状态码小于 500', function () {",
+          "  pm.expect(pm.response.code).to.be.below(500);",
+          "});"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:9016/api",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refreshToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "loginAccount",
+      "value": "admin",
+      "type": "string"
+    },
+    {
+      "key": "loginPassword",
+      "value": "123456",
+      "type": "string"
+    },
+    {
+      "key": "tenantId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "moduleId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "resourceId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "organizationId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "postId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "roleId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "userId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "dictId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "logId",
+      "value": "1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "认证",
+      "item": [
+        {
+          "name": "登录",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = json.data || {};",
+                  "const accessToken = data.accessToken || data.access_token || json.accessToken || json.access_token;",
+                  "const refreshToken = data.refreshToken || data.refresh_token || json.refreshToken || json.refresh_token;",
+                  "if (accessToken) {",
+                  "  pm.collectionVariables.set('accessToken', accessToken);",
+                  "}",
+                  "if (refreshToken) {",
+                  "  pm.collectionVariables.set('refreshToken', refreshToken);",
+                  "}",
+                  "pm.test('已获取 accessToken', function () {",
+                  "  pm.expect(pm.collectionVariables.get('accessToken')).to.not.be.empty;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"account\": \"{{loginAccount}}\",\n  \"password\": \"{{loginPassword}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "刷新 accessToken",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/getAlpha",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "getAlpha"
+              ]
+            }
+          }
+        },
+        {
+          "name": "当前用户菜单",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/fetchMenus",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "fetchMenus"
+              ]
+            }
+          }
+        },
+        {
+          "name": "当前用户字典",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/fetchDicts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "fetchDicts"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "租户管理",
+      "item": [
+        {
+          "name": "租户列表",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sys/tenant/list?pageNo=1&pageSize=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "tenant",
+                "list"
+              ],
+              "query": [
+                {
+                  "key": "pageNo",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "租户详情",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sys/tenant/get/{{tenantId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "tenant",
+                "get",
+                "{{tenantId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "租户新增/编辑",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": null,\n  \"name\": \"测试租户\",\n  \"code\": \"T001\",\n  \"type\": \"0001\",\n  \"fullName\": \"测试租户有限公司\",\n  \"cardType\": \"0001\",\n  \"cardNo\": \"91310000000000000X\",\n  \"contactName\": \"测试联系人\",\n  \"contactTel\": \"13800000000\",\n  \"authUserCount\": 50,\n  \"expirationDate\": \"2030-12-31 23:59:59\",\n  \"adminAccount\": \"tenant_admin\",\n  \"adminPass\": \"123456\",\n  \"resourceIds\": [{{resourceId}}],\n  \"remark\": \"Postman 测试租户\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sys/tenant/edit",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "tenant",
+                "edit"
+              ]
+            }
+          }
+        },
+        {
+          "name": "租户冻结/解冻",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"param\": [{{tenantId}}]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sys/tenant/switch",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "tenant",
+                "switch"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "模块管理",
+      "item": [
+        {
+          "name": "模块树列表",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sys/module/list?pid=0",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "module",
+                "list"
+              ],
+              "query": [
+                {
+                  "key": "pid",
+                  "value": "0"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "模块详情",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sys/module/get/{{moduleId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "module",
+                "get",
+                "{{moduleId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "模块新增/编辑（含资源）",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": null,\n  \"code\": \"SYS_TEST\",\n  \"name\": \"测试模块\",\n  \"pid\": 0,\n  \"icon\": \"Settings\",\n  \"routeUrl\": \"/sys/test\",\n  \"componentUrl\": \"sys/test/index\",\n  \"remark\": \"Postman 测试模块\",\n  \"resources\": [\n    {\n      \"id\": null,\n      \"code\": \"SYS_TEST_LIST\",\n      \"resourceDesc\": \"测试模块列表\",\n      \"resourceUrl\": \"/sys/test/list\",\n      \"resourceType\": \"GET\",\n      \"sort\": 1\n    },\n    {\n      \"id\": null,\n      \"code\": \"SYS_TEST_EDIT\",\n      \"resourceDesc\": \"测试模块编辑\",\n      \"resourceUrl\": \"/sys/test/edit\",\n      \"resourceType\": \"POST\",\n      \"sort\": 2\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sys/module/edit",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "module",
+                "edit"
+              ]
+            }
+          }
+        },
+        {
+          "name": "模块同级排序",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": {{moduleId}},\n  \"oldSort\": 1,\n  \"newSort\": 2\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sys/module/sort",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "module",
+                "sort"
+              ]
+            }
+          }
+        },
+        {
+          "name": "模块冻结/解冻（级联）",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"param\": [{{moduleId}}]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sys/module/frozen",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "module",
+                "frozen"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "组织管理",
+      "item": [
+        {
+          "name": "组织树列表",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sys/organization/list?pid=0",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "organization",
+                "list"
+              ],
+              "query": [
+                {
+                  "key": "pid",
+                  "value": "0"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "组织详情",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sys/organization/get/{{organizationId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "organization",
+                "get",
+                "{{organizationId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "组织新增/编辑",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": null,\n  \"code\": \"ORG_TEST\",\n  \"name\": \"测试部门\",\n  \"pid\": 0,\n  \"remark\": \"Postman 测试组织\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sys/organization/edit",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "organization",
+                "edit"
+              ]
+            }
+          }
+        },
+        {
+          "name": "组织同级排序",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": {{organizationId}},\n  \"oldSort\": 1,\n  \"newSort\": 2\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sys/organization/sort",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "organization",
+                "sort"
+              ]
+            }
+          }
+        },
+        {
+          "name": "组织冻结/解冻（级联）",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"param\": [{{organizationId}}]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sys/organization/switch",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "organization",
+                "switch"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "岗位管理",
+      "item": [
+        {
+          "name": "岗位树列表",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sys/post/list?pid=0",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "post",
+                "list"
+              ],
+              "query": [
+                {
+                  "key": "pid",
+                  "value": "0"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "岗位详情",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sys/post/get/{{postId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "post",
+                "get",
+                "{{postId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "岗位新增/编辑",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": null,\n  \"code\": \"POST_TEST\",\n  \"title\": \"测试岗位\",\n  \"level\": \"L1\",\n  \"pid\": 0,\n  \"remark\": \"Postman 测试岗位\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sys/post/edit",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "post",
+                "edit"
+              ]
+            }
+          }
+        },
+        {
+          "name": "岗位同级排序",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": {{postId}},\n  \"oldSort\": 1,\n  \"newSort\": 2\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sys/post/sort",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "post",
+                "sort"
+              ]
+            }
+          }
+        },
+        {
+          "name": "岗位冻结/解冻",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"param\": [{{postId}}]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sys/post/switch",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "post",
+                "switch"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "角色管理",
+      "item": [
+        {
+          "name": "角色列表",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sys/role/list?pageNo=1&pageSize=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "role",
+                "list"
+              ],
+              "query": [
+                {
+                  "key": "pageNo",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "角色新增/编辑",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": null,\n  \"code\": \"TEST_ROLE\",\n  \"name\": \"测试角色\",\n  \"remark\": \"Postman 测试角色\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sys/role/edit",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "role",
+                "edit"
+              ]
+            }
+          }
+        },
+        {
+          "name": "获取角色可授权资源",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sys/role/fetchResource?roleId={{roleId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "role",
+                "fetchResource"
+              ],
+              "query": [
+                {
+                  "key": "roleId",
+                  "value": "{{roleId}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "保存角色-资源授权",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"roleId\": {{roleId}},\n  \"resourceId\": [{{resourceId}}]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sys/role/grantResource",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "role",
+                "grantResource"
+              ]
+            }
+          }
+        },
+        {
+          "name": "获取角色授权用户",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sys/role/listUser?roleId={{roleId}}&deptId={{organizationId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "role",
+                "listUser"
+              ],
+              "query": [
+                {
+                  "key": "roleId",
+                  "value": "{{roleId}}"
+                },
+                {
+                  "key": "deptId",
+                  "value": "{{organizationId}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "保存角色-用户授权",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"roleId\": {{roleId}},\n  \"userId\": [{{userId}}]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sys/role/grantUser",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "role",
+                "grantUser"
+              ]
+            }
+          }
+        },
+        {
+          "name": "角色删除",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"param\": [{{roleId}}]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sys/role/del",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "role",
+                "del"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "用户管理",
+      "item": [
+        {
+          "name": "用户列表",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sys/account/list?pageNo=1&pageSize=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "account",
+                "list"
+              ],
+              "query": [
+                {
+                  "key": "pageNo",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "用户详情",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sys/account/get/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "account",
+                "get",
+                "{{userId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "用户新增/编辑",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": null,\n  \"code\": \"U_TEST\",\n  \"account\": \"test_user\",\n  \"password\": \"123456\",\n  \"name\": \"测试用户\",\n  \"nickName\": \"测试\",\n  \"tel\": \"13900000000\",\n  \"email\": \"test_user@example.com\",\n  \"deptId\": {{organizationId}},\n  \"postId\": [{{postId}}],\n  \"roleIds\": [{{roleId}}],\n  \"remark\": \"Postman 测试用户\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sys/account/edit",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "account",
+                "edit"
+              ]
+            }
+          }
+        },
+        {
+          "name": "用户授权角色",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": {{userId}},\n  \"roleIds\": [{{roleId}}]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sys/account/grant",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "account",
+                "grant"
+              ]
+            }
+          }
+        },
+        {
+          "name": "用户授权岗位",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": {{userId}},\n  \"postIds\": [{{postId}}]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sys/account/grantPost",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "account",
+                "grantPost"
+              ]
+            }
+          }
+        },
+        {
+          "name": "用户冻结/解冻",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"param\": [{{userId}}]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sys/account/switch",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "account",
+                "switch"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "字典管理",
+      "item": [
+        {
+          "name": "字典全部树",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sys/dictionary/list",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "dictionary",
+                "list"
+              ]
+            }
+          }
+        },
+        {
+          "name": "按类型查询字典树",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sys/dictionary/tree/TEST_DICT",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "dictionary",
+                "tree",
+                "TEST_DICT"
+              ]
+            }
+          }
+        },
+        {
+          "name": "字典详情",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sys/dictionary/get/{{dictId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "dictionary",
+                "get",
+                "{{dictId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "按 code 查询字典",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sys/dictionary/query/TEST_DICT",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "dictionary",
+                "query",
+                "TEST_DICT"
+              ]
+            }
+          }
+        },
+        {
+          "name": "字典新增/编辑",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": null,\n  \"type\": \"TEST_DICT\",\n  \"code\": \"TEST_DICT\",\n  \"name\": \"测试字典\",\n  \"value\": \"TEST_DICT\",\n  \"pid\": 0,\n  \"sort\": 1,\n  \"remark\": \"Postman 测试字典根节点\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sys/dictionary/edit",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "dictionary",
+                "edit"
+              ]
+            }
+          }
+        },
+        {
+          "name": "字典冻结/解冻",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"param\": [{{dictId}}]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sys/dictionary/switch",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sys",
+                "dictionary",
+                "switch"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "日志监控",
+      "item": [
+        {
+          "name": "登录日志列表",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/monitor/log/login/list?pageNo=1&pageSize=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "monitor",
+                "log",
+                "login",
+                "list"
+              ],
+              "query": [
+                {
+                  "key": "pageNo",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "登录日志详情",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/monitor/log/login/get/{{logId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "monitor",
+                "log",
+                "login",
+                "get",
+                "{{logId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "操作日志列表",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/monitor/log/biz/list",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "monitor",
+                "log",
+                "biz",
+                "list"
+              ]
+            }
+          }
+        },
+        {
+          "name": "错误日志列表",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/monitor/log/error/list?pageNo=1&pageCount=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "monitor",
+                "log",
+                "error",
+                "list"
+              ],
+              "query": [
+                {
+                  "key": "pageNo",
+                  "value": "1"
+                },
+                {
+                  "key": "pageCount",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "在线用户列表",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/monitor/log/online/list",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "monitor",
+                "log",
+                "online",
+                "list"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
