@@ -2,11 +2,18 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.pkaq.core.auth.user.mapper.AuthUserMapper">
     <resultMap id="UserWithRole" type="authUser">
+        <result property="tenantFrozen" column="TENANT_FROZEN"/>
+        <result property="tenantExpirationDate" column="TENANT_EXPIRATION_DATE"/>
         <collection property="roles" column="{userId=id}" select="org.pkaq.core.auth.role.mapper.AuthRoleMapper.selectByUserId" ofType="authRole"/>
     </resultMap>
 
     <select id="getUserWithRole" resultMap="UserWithRole">
-        select * from SYS_USER su
+        SELECT
+            su.*,
+            st.FROZEN AS TENANT_FROZEN,
+            st.EXPIRATION_DATE AS TENANT_EXPIRATION_DATE
+        FROM SYS_USER su
+            LEFT JOIN SYS_TENANT st ON su.TENANT_ID = st.ID
         <where>
             <if test="null != id and id != ''">
                 su.id = #{id,jdbcType=VARCHAR}

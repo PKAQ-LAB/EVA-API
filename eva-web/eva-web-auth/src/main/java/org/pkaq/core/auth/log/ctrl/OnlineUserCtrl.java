@@ -23,7 +23,7 @@ public class OnlineUserCtrl extends Ctrl {
 
     @GetMapping("/list")
     @Operation(description = "获取在线用户列表")
-    public Response list(@Parameter(name = "uid", description = "查询固定用户") String account) {
+    public Response list(@Parameter(name = "uid", description = "查询指定用户") String account) {
 //        Response response = new Response();
 //        if (StrUtils.isNotBlank(account)) {
 //            Object obj = this.tokenUtil.getToken(account);

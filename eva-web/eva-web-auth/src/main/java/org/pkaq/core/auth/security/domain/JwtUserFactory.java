@@ -25,6 +25,7 @@ public final class JwtUserFactory {
         var detail = new JwtUserDetail(
                 user.getId(),
                 user.getAccount(),
+                user.getTenantId(),
                 user.getPassword(),
                 user.getDeptId(),
                 user.getName(),

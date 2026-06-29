@@ -6,8 +6,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
 import org.pkaq.core.auth.role.entity.AuthRoleEntity;
+import org.pkaq.core.enums.FrozenEnumm;
 import org.pkaq.core.mybatis.mvc.entity.StdEntity;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -57,4 +59,16 @@ public class AuthUserEntity extends StdEntity {
      **/
     @TableField("PERM_VER")
     private Long permVer;
+
+    /**
+     * 租户冻结状态。
+     */
+    @TableField(exist = false)
+    private FrozenEnumm tenantFrozen;
+
+    /**
+     * 租户授权到期时间。
+     */
+    @TableField(exist = false)
+    private Date tenantExpirationDate;
 }

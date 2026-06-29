@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.GlobalAuthenticationConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * @author PKAQ
@@ -17,15 +17,15 @@ public class AuthenticationManagerConfig extends GlobalAuthenticationConfigurerA
     private final LoginAuthenticationProvider loginAuthenticationProvider;
     private final UserDetailsService userDetailsService;
 
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void init(AuthenticationManagerBuilder auth) {
         auth.authenticationProvider(loginAuthenticationProvider)
                 // 设置UserDetailsService
                 .userDetailsService(userDetailsService)
-                // 使用BCrypt进行密码的hash
-                .passwordEncoder(bCryptPasswordEncoder);
+                // 使用统一密码编码器
+                .passwordEncoder(passwordEncoder);
     }
 
 }

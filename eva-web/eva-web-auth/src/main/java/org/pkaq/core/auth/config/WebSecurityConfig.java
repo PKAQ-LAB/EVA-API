@@ -4,12 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.pkaq.core.auth.openapi.filter.AppKeyAuthenticationFilter;
 import org.pkaq.core.auth.security.entrypoint.*;
 import org.pkaq.core.auth.security.filter.JwtAuthFilter;
-import org.pkaq.core.auth.security.provider.DynamiclAccessDecisionManager;
 import org.pkaq.core.auth.security.provider.JwtUsernamePasswordAuthenticationFilter;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.util.ArrayUtils;
 import org.pkaq.core.util.CollUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.security.autoconfigure.web.servlet.PathRequest;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -58,9 +56,6 @@ public class WebSecurityConfig {
     @Value("${server.servlet.context-path:/}")
     private String contextPath;
 
-    @Autowired(required = false)
-    private DynamiclAccessDecisionManager urlAccessDecisionManager;
-
     /**
      * 跨域配置
      *
@@ -69,10 +64,9 @@ public class WebSecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(CollUtils.isEmpty(evaConfig.getJwt().getCreditUrl())
-                ? List.of("*")
-                : evaConfig.getJwt().getCreditUrl());
-        configuration.setAllowCredentials(false);
+        boolean hasCreditUrl = !CollUtils.isEmpty(evaConfig.getJwt().getCreditUrl());
+        configuration.setAllowedOrigins(hasCreditUrl ? evaConfig.getJwt().getCreditUrl() : List.of("*"));
+        configuration.setAllowCredentials(hasCreditUrl);
         configuration.setAllowedMethods(Arrays.asList("PUT", "DELETE", "GET", "POST", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setMaxAge(1800L);
@@ -100,10 +94,7 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .headers(header -> {
                     //允许加载iframe内容 X-Frame-Options
-                    header.frameOptions(frame -> {
-                        frame.disable();
-                        frame.sameOrigin();
-                    });
+                    header.frameOptions(frame -> frame.sameOrigin());
                     header.cacheControl(Customizer.withDefaults());
                     // 适配IE
                     header.addHeaderWriter(new StaticHeadersWriter("P3P",
@@ -120,11 +111,7 @@ public class WebSecurityConfig {
             httpSecurity.authorizeHttpRequests(auth -> auth.requestMatchers(anonymousPaths).permitAll());
         }
 
-        if (null != urlAccessDecisionManager) {
-            httpSecurity.authorizeHttpRequests(auth -> auth.anyRequest().access(urlAccessDecisionManager));
-        } else {
-            httpSecurity.authorizeHttpRequests(auth -> auth.anyRequest().authenticated());
-        }
+        httpSecurity.authorizeHttpRequests(auth -> auth.anyRequest().authenticated());
 
         httpSecurity.logout(logout -> logout.logoutUrl(contextPath + "/auth/logout").logoutSuccessHandler(urlLogoutSuccessHandler));
 

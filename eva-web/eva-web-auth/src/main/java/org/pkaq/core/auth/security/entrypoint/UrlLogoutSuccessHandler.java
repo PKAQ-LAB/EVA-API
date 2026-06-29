@@ -38,7 +38,7 @@ public class UrlLogoutSuccessHandler implements LogoutSuccessHandler {
         var cacheToken = evaConfig.getJwt().isPersistence();
         // 清空redis/caffeine中的token 刷新用户secret
         if (cacheToken) {
-            this.tokenUtil.removeToken(ThreadUserHelper.getUserName());
+            this.tokenUtil.removeToken(ThreadUserHelper.getUserId());
         }
         String domain = evaConfig.getCookie().getDomain();
 

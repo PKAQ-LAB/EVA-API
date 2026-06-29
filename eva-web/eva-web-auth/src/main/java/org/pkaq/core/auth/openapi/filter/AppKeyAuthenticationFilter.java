@@ -12,6 +12,7 @@ import org.pkaq.core.auth.AuthCodes;
 import org.pkaq.core.auth.openapi.consts.OpenApiConsts;
 import org.pkaq.core.auth.openapi.entity.AppCredentialEntity;
 import org.pkaq.core.auth.openapi.exception.AppKeyAuthenticationException;
+import org.pkaq.core.auth.openapi.log.service.OpenApiCallLogService;
 import org.pkaq.core.auth.openapi.security.SignatureValidator;
 import org.pkaq.core.auth.openapi.service.AppKeyService;
 import org.pkaq.core.properties.EvaConfig;
@@ -41,6 +42,7 @@ public class AppKeyAuthenticationFilter extends OncePerRequestFilter {
 
     private final AppKeyService appKeyService;
     private final SignatureValidator signatureValidator;
+    private final OpenApiCallLogService openApiCallLogService;
     private final EvaConfig evaConfig;
 
     /**
@@ -89,15 +91,19 @@ public class AppKeyAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
+        long startTime = System.nanoTime();
         long timestamp;
         try {
             timestamp = Long.parseLong(timestampStr);
         } catch (NumberFormatException e) {
             log.warn("无效的时间戳格式: {}", timestampStr);
+            this.openApiCallLogService.save(request, null, requestPath, startTime,
+                    HttpServletResponse.SC_UNAUTHORIZED, "无效的时间戳格式");
             AuthCodes.OPENAPI_INVALID_TIMESTAMP_FORMAT.newException();
             return;
         }
 
+        AppCredentialEntity credential = null;
         try {
             String body = "";
             CachedBodyHttpServletRequest wrapper = getNativeRequest(request, CachedBodyHttpServletRequest.class);
@@ -109,7 +115,7 @@ public class AppKeyAuthenticationFilter extends OncePerRequestFilter {
             body = JsonUtil.normalizeJsonBody(body);
             request.setAttribute(OpenApiConsts.REQUEST_BODY, body);
 
-            AppCredentialEntity credential = appKeyService.getCredential(appKey);
+            credential = appKeyService.getCredential(appKey);
             if (credential == null) {
                 log.warn("AppKey未找到: {}", appKey);
                 AuthCodes.OPENAPI_APP_KEY_NOT_FOUND.newException();
@@ -151,12 +157,17 @@ public class AppKeyAuthenticationFilter extends OncePerRequestFilter {
             log.info("认证成功 - appKey: {}, 应用: {}, 路径: {}", appKey, credential.getAppName(), requestPath);
 
             filterChain.doFilter(request, response);
+            this.openApiCallLogService.save(request, credential, requestPath, startTime, response.getStatus(), null);
 
         } catch (AppKeyAuthenticationException e) {
             log.error("认证失败: {}", e.getMessage());
+            this.openApiCallLogService.save(request, credential, requestPath, startTime,
+                    HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
             AuthCodes.OPENAPI_AUTHENTICATION_FAILED.newException();
         } catch (Exception e) {
             log.error("认证异常错误", e);
+            this.openApiCallLogService.save(request, credential, requestPath, startTime,
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
             AuthCodes.OPENAPI_UNEXPECTED_AUTH_ERROR.newException();
         }
     }

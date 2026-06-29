@@ -4,6 +4,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.pkaq.core.auth.log.service.LoginLogService;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.exception.BizException;
 import org.pkaq.core.util.json.JsonUtil;
@@ -72,6 +73,7 @@ public class JwtUsernamePasswordAuthenticationFilter extends UsernamePasswordAut
         assert param != null;
         String username = param.get("account");
         String password = param.get("password");
+        request.setAttribute(LoginLogService.LOGIN_ACCOUNT_ATTRIBUTE, username);
 
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password, authorities);

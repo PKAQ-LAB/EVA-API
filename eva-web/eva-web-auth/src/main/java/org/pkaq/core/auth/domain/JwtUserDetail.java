@@ -24,6 +24,10 @@ public class JwtUserDetail implements UserDetails {
      */
     private final String account;
     /**
+     * 租户ID
+     */
+    private final Long tenantId;
+    /**
      * 密码
      */
     @JsonIgnore
@@ -66,6 +70,7 @@ public class JwtUserDetail implements UserDetails {
 
     public JwtUserDetail(Long id,
                          String account,
+                         Long tenantId,
                          String password,
                          Long deptId,
                          String name,
@@ -74,6 +79,7 @@ public class JwtUserDetail implements UserDetails {
                          Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.account = account;
+        this.tenantId = tenantId;
         this.password = password;
         this.deptId = deptId;
         this.name = name;

@@ -1,15 +1,19 @@
 package org.pkaq.core.auth.rbac.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.auth.rbac.entity.SysRoleResource;
 import org.pkaq.core.auth.rbac.mapper.SysRoleResourceMapper;
+import org.pkaq.core.properties.EvaConfig;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.AntPathMatcher;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +35,7 @@ public class RoleResourceCacheService {
     private static final String CACHE_KEY_PREFIX = "role:resource:";
     private final SysRoleResourceMapper roleResourceMapper;
     private final RedisTemplate<Object, Object> redisTemplate;
+    private final EvaConfig evaConfig;
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     /**
@@ -38,7 +43,16 @@ public class RoleResourceCacheService {
      */
     @EventListener(ApplicationReadyEvent.class)
     public void loadAllRoleResources() {
+        if (!evaConfig.getResourcePermission().isEnable()) {
+            log.info("资源权限未启用，跳过角色资源权限缓存加载");
+            return;
+        }
         log.info("开始加载角色资源权限到Redis...");
+        Set<Object> oldKeys = redisTemplate.keys(CACHE_KEY_PREFIX + "*");
+        if (oldKeys != null && !oldKeys.isEmpty()) {
+            redisTemplate.delete(oldKeys);
+        }
+
         List<SysRoleResource> all = roleResourceMapper.selectAll();
 
         Map<Long, List<SysRoleResource>> grouped = all.stream()
@@ -46,8 +60,6 @@ public class RoleResourceCacheService {
 
         for (Map.Entry<Long, List<SysRoleResource>> entry : grouped.entrySet()) {
             String key = CACHE_KEY_PREFIX + entry.getKey();
-            // 先清除旧数据
-            redisTemplate.delete(key);
             // 写入 Set<METHOD:PATH>
             Object[] values = entry.getValue().stream()
                     .map(this::toCacheValue)
@@ -66,6 +78,9 @@ public class RoleResourceCacheService {
      * @param roleId 角色ID
      */
     public void refreshRoleCache(Long roleId) {
+        if (roleId == null) {
+            return;
+        }
         String key = CACHE_KEY_PREFIX + roleId;
         redisTemplate.delete(key);
 
@@ -78,6 +93,40 @@ public class RoleResourceCacheService {
             if (values.length > 0) {
                 redisTemplate.opsForSet().add(key, values);
             }
+        }
+    }
+
+    /**
+     * 重建指定角色的扁平资源表并刷新缓存。
+     *
+     * @param roleId 角色ID
+     */
+    public void rebuildRoleResource(Long roleId) {
+        if (roleId == null) {
+            return;
+        }
+        List<SysRoleResource> resources = roleResourceMapper.selectEffectiveResourcesByRoleId(roleId);
+        roleResourceMapper.delete(new LambdaQueryWrapper<SysRoleResource>()
+                .eq(SysRoleResource::getRoleId, roleId));
+        for (SysRoleResource resource : resources) {
+            resource.setId(null);
+            roleResourceMapper.insert(resource);
+        }
+        refreshRoleCache(roleId);
+    }
+
+    /**
+     * 批量重建角色资源。
+     *
+     * @param roleIds 角色ID集合
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void rebuildRoleResources(Collection<Long> roleIds) {
+        if (roleIds == null || roleIds.isEmpty()) {
+            return;
+        }
+        for (Long roleId : roleIds) {
+            rebuildRoleResource(roleId);
         }
     }
 

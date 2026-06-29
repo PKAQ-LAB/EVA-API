@@ -8,14 +8,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 /**
- * 鑷畾涔夌櫥褰曢獙璇侀€昏緫
+ * 自定义登录认证逻辑
  *
- * @author
+ * @author PKAQ
  */
 @Getter
 @Setter
@@ -24,23 +23,20 @@ public class LoginAuthenticationProvider extends AbstractUserDetailsAuthenticati
 
     private UserDetailsService userDetailsService;
 
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
-
     private PasswordEncoder passwordEncoder;
 
-    public LoginAuthenticationProvider(UserDetailsService userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder, PasswordEncoder passwordEncoder) {
+    public LoginAuthenticationProvider(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
         this.userDetailsService = userDetailsService;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.passwordEncoder = passwordEncoder;
-        this.setHideUserNotFoundExceptions(false);
+        this.setHideUserNotFoundExceptions(true);
     }
 
     /**
-     * 鏌ヨ鐢ㄦ埛
+     * 查询用户
      *
-     * @param username
-     * @param authentication
-     * @return
+     * @param username       账号
+     * @param authentication 认证信息
+     * @return 用户明细
      */
     @Override
     protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication) {
@@ -59,10 +55,10 @@ public class LoginAuthenticationProvider extends AbstractUserDetailsAuthenticati
     }
 
     /**
-     * 鏍￠獙瀵嗙爜
+     * 校验密码
      *
-     * @param userDetails
-     * @param authentication
+     * @param userDetails    用户明细
+     * @param authentication 认证信息
      */
     @Override
     protected void additionalAuthenticationChecks(UserDetails userDetails,
@@ -71,7 +67,7 @@ public class LoginAuthenticationProvider extends AbstractUserDetailsAuthenticati
 
         String presentedPassword = String.valueOf(authentication.getCredentials());
 
-        boolean matches = this.bCryptPasswordEncoder.matches(presentedPassword, userDetails.getPassword());
+        boolean matches = this.passwordEncoder.matches(presentedPassword, userDetails.getPassword());
 
         if (!matches) {
             throw new BadCredentialsException(AuthCodes.ACCOUNT_OR_PWD_ERROR.getMsg());

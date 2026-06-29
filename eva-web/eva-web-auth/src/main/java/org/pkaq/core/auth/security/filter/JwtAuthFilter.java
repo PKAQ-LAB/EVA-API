@@ -8,10 +8,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.auth.AuthCodes;
 import org.pkaq.core.auth.rbac.service.RoleResourceCacheService;
+import org.pkaq.core.auth.user.entity.AuthUserEntity;
 import org.pkaq.core.auth.user.service.AuthUserService;
 import org.pkaq.core.auth.util.CacheTokenUtil;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.constant.CommonConstant;
+import org.pkaq.core.enums.FrozenEnumm;
 import org.pkaq.core.exception.BizException;
 import org.pkaq.core.jwt.JwtUtil;
 import org.pkaq.core.mvc.vo.Response;
@@ -36,6 +38,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -84,13 +87,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         if (StrUtils.isNotBlank(authToken)) {
-            Long uid = jwtUtil.getUid(authToken);
-
             try {
                 // 验证token是否合法
-                isvalid = jwtUtil.valid(authToken);
+                isvalid = jwtUtil.valid(authToken) && jwtUtil.isAccessToken(authToken);
+                Long uid = isvalid ? jwtUtil.getUid(authToken) : null;
                 // 验证缓存中是否存在该token
-                if (cacheToken) {
+                if (isvalid && cacheToken) {
                     Object token = cacheTokenUtil.getToken(uid);
 
                     Map<String, Object> jsonObject = null;
@@ -109,13 +111,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 }
 
                 // token即将过期 续命
-                if (jwtUtil.isTokenExpiring(authToken)) {
+                if (isvalid && jwtUtil.isTokenExpiring(authToken)) {
                     String newToken = jwtUtil.refreshToken(authToken);
                     if (cacheToken) {
                         cacheTokenUtil.saveToken(uid, cacheTokenUtil.buildCacheValue(request, uid, newToken));
                     }
                     response.setHeader(CommonConstant.ACCESS_TOKEN_KEY, newToken);
-                    CookieUtils.addCookie(response, CommonConstant.ACCESS_TOKEN_KEY, newToken, evaConfig.getCookie().getMaxAge(), "/", evaConfig.getCookie().getDomain());
+                    CookieUtils.addCookie(response, CommonConstant.ACCESS_TOKEN_KEY,
+                            newToken, evaConfig.getCookie().getMaxAge(), "/", evaConfig.getCookie().getDomain());
                 }
             } catch (AuthenticationException e) {
                 log.warn("鉴权失败 Token已过期", e);
@@ -135,8 +138,25 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 List<Long> roleIds = jwtUtil.getRoles(authToken);
                 long tokenPermVer = jwtUtil.getPermVer(authToken);
 
+                AuthUserEntity authState = authUserService.getAuthState(uid);
+                if (authState == null) {
+                    this.clearCookie(response);
+                    ResponseUtil.write(response, Response.failure(AuthCodes.LOGIN_EXPIRED));
+                    return;
+                }
+                if (FrozenEnumm.FROZEN == authState.getFrozen()) {
+                    this.clearCookie(response);
+                    ResponseUtil.write(response, Response.failure(AuthCodes.ACCOUNT_LOCKED));
+                    return;
+                }
+                if (evaConfig.isSaasMode() && isTenantUnavailable(authState)) {
+                    this.clearCookie(response);
+                    ResponseUtil.write(response, Response.failure(AuthCodes.LOGIN_TENANT_AUTH_EXPIRED));
+                    return;
+                }
+
                 // 校验权限版本号：不一致即要求重新登录
-                long dbPermVer = authUserService.getPermVer(uid);
+                long dbPermVer = authState.getPermVer() == null ? 0L : authState.getPermVer();
                 if (dbPermVer != tokenPermVer) {
                     log.warn("用户 {} 权限已变更, tokenPermVer={}, dbPermVer={}", account, tokenPermVer, dbPermVer);
                     this.clearCookie(response);
@@ -145,7 +165,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 }
 
                 // RBAC资源权限校验（permit路径跳过校验）
-                if (!isPermitPath(requestPath)) {
+                if (evaConfig.getResourcePermission().isEnable() && !isPermitPath(requestPath)) {
                     String httpMethod = request.getMethod();
                     if (roleIds == null || roleIds.isEmpty()) {
                         log.warn("用户 {} 无角色, 禁止访问: {} {}", account, httpMethod, requestPath);
@@ -161,17 +181,22 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 }
 
                 // 从JWT构建ThreadUser
-                String[] roleNames = roleIds == null ? new String[0] : roleIds.stream().map(String::valueOf).toArray(String[]::new);
+                String[] roleNames = roleIds == null
+                        ? new String[0]
+                        : roleIds.stream().map(String::valueOf).toArray(String[]::new);
                 ThreadUser currentUser = new ThreadUser()
                         .setUserId(uid)
                         .setName(account)
+                        .setTenantId(authState.getTenantId() == null ? 0L : authState.getTenantId())
+                        .setDeptId(authState.getDeptId() == null ? 0L : authState.getDeptId())
                         .setRoles(roleNames);
 
                 // 设置SecurityContext
                 List<SimpleGrantedAuthority> authorities = roleIds == null || roleIds.isEmpty()
                         ? Collections.emptyList()
                         : roleIds.stream().map(id -> new SimpleGrantedAuthority("ROLE_" + id)).toList();
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(account, null, authorities);
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(account, null, authorities);
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -206,6 +231,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     /**
+     * 判断租户是否不可用。
+     */
+    private boolean isTenantUnavailable(AuthUserEntity authState) {
+        if (FrozenEnumm.FROZEN == authState.getTenantFrozen()) {
+            return true;
+        }
+        return authState.getTenantExpirationDate() != null
+                && !authState.getTenantExpirationDate().after(new Date());
+    }
+
+    /**
      * 获取去除 context-path 后的请求路径。
      */
     private String resolveRequestPath(HttpServletRequest request) {
@@ -220,8 +256,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
      * 清除cookie
      */
     public void clearCookie(HttpServletResponse response) {
-        CookieUtils.addCookie(response, CommonConstant.ACCESS_TOKEN_KEY, null, 0, "/", evaConfig.getCookie().getDomain());
-        CookieUtils.addCookie(response, CommonConstant.REFRESH_TOKEN_KEY, null, 0, "/", evaConfig.getCookie().getDomain());
+        CookieUtils.addCookie(response, CommonConstant.ACCESS_TOKEN_KEY,
+                null, 0, "/", evaConfig.getCookie().getDomain());
+        CookieUtils.addCookie(response, CommonConstant.REFRESH_TOKEN_KEY,
+                null, 0, "/", evaConfig.getCookie().getDomain());
         CookieUtils.addCookie(response, CommonConstant.USER_KEY, null, 0, "/", evaConfig.getCookie().getDomain());
     }
 }

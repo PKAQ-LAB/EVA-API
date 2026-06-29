@@ -48,9 +48,9 @@ public class BizLogEntity {
     @Schema(description = "业务id")
     private String bId;
     /**
-     * 类名
+     * 绫诲悕
      **/
-    @Schema(description = "类名")
+    @Schema(description = "绫诲悕")
     private String className;
     /**
      * 方法名
@@ -69,14 +69,14 @@ public class BizLogEntity {
     @Schema(description = "返回结果")
     private String response;
     /**
-     * 设备类型
+     * 璁惧绫诲瀷
      **/
-    @Schema(description = "设备类型")
+    @Schema(description = "璁惧绫诲瀷")
     private String device;
     /**
-     * 应用版本
+     * 搴旂敤鐗堟湰
      **/
-    @Schema(description = "应用版本")
+    @Schema(description = "搴旂敤鐗堟湰")
     private String version;
 
     @Override
@@ -86,8 +86,8 @@ public class BizLogEntity {
                 ", 操作类型 ='" + operateType + '\'' +
                 ", 操作描述 ='" + description + '\'' +
                 ", 操作时间 ='" + operateDatetime + '\'' +
-                ", 设备类型 ='" + device + '\'' +
-                ", 版本 ='" + version + '\'' +
+                ", 璁惧绫诲瀷 ='" + device + '\'' +
+                ", 鐗堟湰 ='" + version + '\'' +
                 ']';
     }
 

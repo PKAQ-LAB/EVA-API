@@ -40,6 +40,19 @@ public class AuthUserService {
     }
 
     /**
+     * 获取认证期用户状态。
+     *
+     * @param userId 用户ID
+     * @return 用户认证状态
+     */
+    public AuthUserEntity getAuthState(Long userId) {
+        if (userId == null || userId <= 0) {
+            return null;
+        }
+        return authUserMapper.getAuthState(userId);
+    }
+
+    /**
      * 自增用户的权限版本号（角色变更时调用）
      *
      * @param userId 用户ID

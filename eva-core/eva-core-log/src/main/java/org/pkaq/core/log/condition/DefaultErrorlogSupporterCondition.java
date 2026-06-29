@@ -14,7 +14,10 @@ public class DefaultErrorlogSupporterCondition implements Condition {
 
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        String enabled = context.getEnvironment().getProperty("eva.error-log.enabled");
+        String enabled = context.getEnvironment().getProperty("eva.errorlog.enabled");
+        if (enabled == null) {
+            enabled = context.getEnvironment().getProperty("eva.error-log.enabled");
+        }
         return StrUtils.isEmpty(enabled) || "false".equalsIgnoreCase(enabled);
     }
 }

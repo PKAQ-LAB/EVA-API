@@ -2,7 +2,9 @@ package org.pkaq.core.auth.security.entrypoint;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.pkaq.core.auth.AuthCodes;
+import org.pkaq.core.auth.log.service.LoginLogService;
 import org.pkaq.core.codes.BizCode;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.web.core.utils.ResponseUtil;
@@ -19,7 +21,10 @@ import java.io.IOException;
  * @author PKAQ
  */
 @Component
+@RequiredArgsConstructor
 public class UrlAuthenticationFailureHandler implements AuthenticationFailureHandler {
+
+    private final LoginLogService loginLogService;
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest httpServletRequest,
@@ -32,6 +37,8 @@ public class UrlAuthenticationFailureHandler implements AuthenticationFailureHan
             bizcode = AuthCodes.ACCOUNT_OR_PWD_ERROR;
         }
 
-        ResponseUtil.write(httpServletResponse,Response.failure(bizcode.getCode(), bizcode.getMsg()));
+        loginLogService.saveFailure(httpServletRequest, bizcode.getMsg());
+
+        ResponseUtil.write(httpServletResponse, Response.failure(bizcode.getCode(), bizcode.getMsg()));
     }
 }

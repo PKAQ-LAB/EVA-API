@@ -33,6 +33,26 @@ public interface AuthUserMapper extends BaseMapper<AuthUserEntity> {
     Long getPermVer(Long userId);
 
     /**
+     * 获取认证期用户状态。
+     *
+     * @param userId 用户ID
+     * @return 用户认证状态
+     */
+    @Select("""
+            SELECT
+                su.ID,
+                su.FROZEN,
+                su.PERM_VER,
+                st.FROZEN AS TENANT_FROZEN,
+                st.EXPIRATION_DATE AS TENANT_EXPIRATION_DATE
+            FROM SYS_USER su
+                LEFT JOIN SYS_TENANT st ON su.TENANT_ID = st.ID AND (st.DELETED = 0 OR st.DELETED IS NULL)
+            WHERE su.ID = #{userId}
+                AND su.DELETED = 0
+            """)
+    AuthUserEntity getAuthState(Long userId);
+
+    /**
      * 自增用户的权限版本号
      *
      * @param userId 用户ID

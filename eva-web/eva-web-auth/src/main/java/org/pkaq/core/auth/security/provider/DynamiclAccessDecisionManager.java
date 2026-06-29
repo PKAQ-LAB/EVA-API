@@ -4,14 +4,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.util.CollUtils;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
-import org.springframework.stereotype.Component;
 import org.springframework.web.util.UrlPathHelper;
 
 import java.util.Collection;
@@ -22,9 +20,7 @@ import java.util.function.Supplier;
  * @author PKAQ
  */
 @Slf4j
-@Component
 @RequiredArgsConstructor
-@ConditionalOnProperty(prefix = "eva.resource-permission", name = "enable", havingValue = "true")
 public final class DynamiclAccessDecisionManager implements AuthorizationManager<RequestAuthorizationContext> {
     // 使用你自己的 URL -> 权限映射
     private final Map<String, Collection<String>> urlPermissionMap;

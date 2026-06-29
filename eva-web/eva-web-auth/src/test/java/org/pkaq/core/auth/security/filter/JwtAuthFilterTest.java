@@ -8,7 +8,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pkaq.core.auth.user.service.AuthUserService;
 import org.pkaq.core.auth.rbac.service.RoleResourceCacheService;
+import org.pkaq.core.auth.user.entity.AuthUserEntity;
 import org.pkaq.core.auth.util.CacheTokenUtil;
+import org.pkaq.core.enums.FrozenEnumm;
 import org.pkaq.core.jwt.JwtUtil;
 import org.pkaq.core.properties.Auth;
 import org.pkaq.core.properties.EvaConfig;
@@ -70,11 +72,15 @@ class JwtAuthFilterTest {
         when(tokenUtil.getToken(request)).thenReturn("mock-token");
         when(jwtUtil.getUid("mock-token")).thenReturn(1001L);
         when(jwtUtil.valid("mock-token")).thenReturn(true);
+        when(jwtUtil.isAccessToken("mock-token")).thenReturn(true);
         when(jwtUtil.isTokenExpiring("mock-token")).thenReturn(false);
         when(jwtUtil.getAccount("mock-token")).thenReturn("admin");
         when(jwtUtil.getRoles("mock-token")).thenReturn(List.of(1L, 2L));
         when(jwtUtil.getPermVer("mock-token")).thenReturn(1L);
-        when(authUserService.getPermVer(1001L)).thenReturn(2L);
+        AuthUserEntity authState = new AuthUserEntity();
+        authState.setFrozen(FrozenEnumm.UN_FROZEN);
+        authState.setPermVer(2L);
+        when(authUserService.getAuthState(1001L)).thenReturn(authState);
 
         filter.doFilter(request, response, filterChain);
 
