@@ -28,7 +28,7 @@ public abstract class StdCtrl<T extends StdService> extends Ctrl {
     protected T service;
 
     @PostMapping("/checkUnique")
-    @Operation(summary = "校验code唯一性")
+    @Operation(summary = "校验 code 唯一性")
     public Response<Object> checkUnique(@Parameter(name = "idCodeBo", description = "要进行校验的参数")
                                         @RequestBody IdCodeBo idCodeBo) {
         var exist = this.service.isUnique(idCodeBo);
@@ -36,8 +36,8 @@ public abstract class StdCtrl<T extends StdService> extends Ctrl {
     }
 
     @GetMapping("/get/{id}")
-    @Operation(summary = "根据ID查询", description = "根据ID获得记录信息")
-    @BizLog(operateType = BizLogCodes.QUERY, description = "根据id查询")
+    @Operation(summary = "根据ID查询", description = "根据ID获取记录信息")
+    @BizLog(operateType = BizLogCodes.QUERY, description = "根据 id 查询")
     public Response<Object> get(@Parameter(name = "id", description = "记录ID")
                                 @PathVariable("id") long id) {
         return this.success(this.service.get(id));
@@ -57,7 +57,7 @@ public abstract class StdCtrl<T extends StdService> extends Ctrl {
 
     @PostMapping("/switch")
     @Operation(summary = "锁定/解锁")
-    @BizLog(operateType = BizLogCodes.EDIT, description = "切换状态 [{0}]", args = {"param:0"})
+    @BizLog(operateType = BizLogCodes.EDIT, description = "切换状态[{0}]", args = {"param:0"})
     public Response<Object> change(@Parameter(name = "params", description = "[id]")
                                    @RequestBody SingleArray<Long> ids) {
         this.service.switchFrozen(ids);

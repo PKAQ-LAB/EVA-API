@@ -71,7 +71,7 @@ server:
   #  2.3.0 新支持, 优雅关机
   shutdown: graceful
 eva:
-  mode: Singleton
+  mode: standalone
   i18n: true
   norepeat-check: false
   # 该配置必须在jwt配置前 30天有效

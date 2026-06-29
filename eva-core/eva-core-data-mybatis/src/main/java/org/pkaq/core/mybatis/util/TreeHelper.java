@@ -58,10 +58,10 @@ public class TreeHelper {
                 roots.add(node);
             } else {
                 T parent = idMap.get(pid);
-                if (parent.getChildren() == null) {
+                if (parent.getOriginChildren() == null) {
                     parent.setChildren(new ArrayList<>());
                 }
-                parent.getChildren().add(node);
+                parent.getOriginChildren().add(node);
             }
         }
 

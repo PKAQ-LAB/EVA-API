@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerIntercept
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
 import org.apache.ibatis.mapping.VendorDatabaseIdProvider;
-import org.pkaq.core.constant.CommonConstant;
+import org.pkaq.core.mybatis.handler.CustomTenantLineHandler;
 import org.pkaq.core.properties.EvaConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +25,8 @@ import java.util.Properties;
 @RequiredArgsConstructor
 public class MybatisPlusConfig {
     private final EvaConfig evaConfig;
+    private final CustomTenantLineHandler customTenantLineHandler;
+
     /**
      * 分页插件
      */
@@ -32,8 +34,8 @@ public class MybatisPlusConfig {
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
         // 租户插件
-        if (CommonConstant.MODE_SAAS.equalsIgnoreCase(evaConfig.getMode())){
-            interceptor.addInnerInterceptor(new TenantLineInnerInterceptor());
+        if (evaConfig.isSaasMode()) {
+            interceptor.addInnerInterceptor(new TenantLineInnerInterceptor(customTenantLineHandler));
         }
 
         //分页插件

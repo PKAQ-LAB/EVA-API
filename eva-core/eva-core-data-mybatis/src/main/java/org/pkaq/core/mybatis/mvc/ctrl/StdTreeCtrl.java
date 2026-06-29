@@ -28,7 +28,7 @@ public abstract class StdTreeCtrl<T extends StdTreeService, E extends StdTreeEnt
 
 
     @PostMapping("/checkUnique")
-    @Operation(summary = "校验code唯一性")
+    @Operation(summary = "校验 code 唯一性")
     public Response<Object> checkUnique(@Parameter(name = "entity", description = "要进行校验的参数")
                                         @RequestBody E entity) {
         boolean exist = null != entity && StrUtils.isNotBlank(entity.getCode()) && this.service.count(entity) > 0;
@@ -36,14 +36,14 @@ public abstract class StdTreeCtrl<T extends StdTreeService, E extends StdTreeEnt
     }
 
     @GetMapping("/list")
-    @Operation(summary = "根据实体类属性获取相应的树结构 ")
+    @Operation(summary = "根据实体类属性获取对应树结构")
     public Response<Object> listOrgByAttr(@Parameter(name = "entity", description = "{key: value}") E entity) {
         return success(this.service.lisTree(entity));
     }
 
     @GetMapping("/get/{id}")
-    @Operation(summary = "根据ID获取节点信息")
-    public Response<Object> getOrg(@Parameter(name = "id", description = "节点ID")
+    @Operation(summary = "根据 ID 获取节点信息")
+    public Response<Object> getOrg(@Parameter(name = "id", description = "鑺傜偣ID")
                                    @PathVariable("id") Long id) {
         return success(this.service.get(id));
     }
@@ -51,12 +51,12 @@ public abstract class StdTreeCtrl<T extends StdTreeService, E extends StdTreeEnt
     @PostMapping("/del")
     @Operation(summary = "根据ID删除/批量删除节点")
     //@PreAuthorize("hasRole('ADMIN')")
-    public Response<Object> delOrg(@Parameter(name = "ids", description = "[节点ID]")
+    public Response<Object> delOrg(@Parameter(name = "ids", description = "[鑺傜偣ID]")
                                    @RequestBody SingleArray<Long> ids) {
         // 参数非空校验
         CommonCodes.NULL_ID.assertNotNull(ids.getParam());
 
-        // 判断上级节点是否还有其它叶子 如果没有把 isleaf属性改为false
+        // 判断上级节点是否还有其它子节点；没有则更新 isleaf。
         return this.service.delete(ids.getParam());
     }
 
@@ -78,7 +78,7 @@ public abstract class StdTreeCtrl<T extends StdTreeService, E extends StdTreeEnt
 
     @PostMapping("/switchStatus")
     @Operation(summary = "切换节点可用状态")
-    public Response<Object> switchStatus(@Parameter(name = "id", description = "节点Id")
+    public Response<Object> switchStatus(@Parameter(name = "id", description = "鑺傜偣Id")
                                          @RequestBody E entity) {
         this.service.changeStatus(entity);
         return success();

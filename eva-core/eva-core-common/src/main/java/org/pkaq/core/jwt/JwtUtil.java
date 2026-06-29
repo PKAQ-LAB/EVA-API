@@ -13,7 +13,6 @@ import com.nimbusds.jwt.SignedJWT;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.exception.BizException;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.properties.Jwt;
@@ -40,6 +39,9 @@ public class JwtUtil {
     private static final String CLAIM_UID = "uid";
     private static final String CLAIM_ROLES = "roles";
     private static final String CLAIM_PERM_VER = "permVer";
+    private static final String CLAIM_TOKEN_TYPE = "typ";
+    private static final String TOKEN_TYPE_ACCESS = "access";
+    private static final String TOKEN_TYPE_REFRESH = "refresh";
 
     public Jwt jwtConfig() {
         return this.evaConfig.getJwt();
@@ -58,6 +60,9 @@ public class JwtUtil {
     public long getUid(String token) {
         try {
             final JWTClaimsSet claims = getClaimsFromToken(token);
+            if (claims == null) {
+                return 0;
+            }
             Object uidClaim = claims.getClaim(CLAIM_UID);
             if (uidClaim instanceof Number num) {
                 return num.longValue();
@@ -82,7 +87,9 @@ public class JwtUtil {
         String uid = "";
         try {
             final JWTClaimsSet claims = getClaimsFromToken(token);
-            uid = claims.getSubject();
+            if (claims != null) {
+                uid = claims.getSubject();
+            }
         } catch (Exception e) {
             log.warn("获取用户账号失败", e);
         }
@@ -96,6 +103,9 @@ public class JwtUtil {
     public List<Long> getRoles(String token) {
         try {
             final JWTClaimsSet claims = getClaimsFromToken(token);
+            if (claims == null) {
+                return Collections.emptyList();
+            }
             List<Object> raw = (List<Object>) claims.getClaim(CLAIM_ROLES);
             if (raw != null) {
                 return raw.stream().map(o -> ((Number) o).longValue()).toList();
@@ -112,6 +122,9 @@ public class JwtUtil {
     public long getPermVer(String token) {
         try {
             final JWTClaimsSet claims = getClaimsFromToken(token);
+            if (claims == null) {
+                return 0;
+            }
             Object val = claims.getClaim(CLAIM_PERM_VER);
             if (val instanceof Number num) {
                 return num.longValue();
@@ -136,7 +149,8 @@ public class JwtUtil {
 
             JWSVerifier jwsVerifier = new MACVerifier(this.generalKey());
             if (!jwsObject.verify(jwsVerifier)) {
-                throw new BizException(CommonCodes.TOKEN_NOT_VERIFY);
+                log.warn("Token签名校验失败");
+                return null;
             }
             jwtClaimsSet = JWTClaimsSet.parse(jwsObject.getPayload().toJSONObject());
         } catch (ParseException | JOSEException e) {
@@ -149,18 +163,18 @@ public class JwtUtil {
     /**
      * 构建JWT（兼容旧版调用）
      *
-     * @param ttlMillis 有效时间
+     * @param ttlMillis 有效时间，单位毫秒
      * @param username  username
      * @return jwt token
      */
     public String build(long ttlMillis, long userId, String username) {
-        return build(ttlMillis, userId, username, null, 0);
+        return build(ttlMillis, userId, username, null, 0, TOKEN_TYPE_ACCESS);
     }
 
     /**
      * 构建JWT（含角色和权限版本）
      *
-     * @param ttlMillis 有效时间
+     * @param ttlMillis 有效时间，单位毫秒
      * @param userId    用户ID
      * @param username  用户名
      * @param roleIds   角色ID列表
@@ -168,6 +182,32 @@ public class JwtUtil {
      * @return jwt token
      */
     public String build(long ttlMillis, long userId, String username, List<Long> roleIds, long permVer) {
+        return build(ttlMillis, userId, username, roleIds, permVer, TOKEN_TYPE_ACCESS);
+    }
+
+    /**
+     * 构建刷新Token。
+     *
+     * @param ttlMillis 有效时间，单位毫秒
+     * @param userId    用户ID
+     * @param username  用户名
+     * @param roleIds   角色ID列表
+     * @param permVer   权限版本号
+     * @return refresh token
+     */
+    public String buildRefreshToken(long ttlMillis, long userId, String username, List<Long> roleIds, long permVer) {
+        return build(ttlMillis, userId, username, roleIds, permVer, TOKEN_TYPE_REFRESH);
+    }
+
+    /**
+     * 构建指定类型的JWT。
+     */
+    private String build(long ttlMillis,
+                         long userId,
+                         String username,
+                         List<Long> roleIds,
+                         long permVer,
+                         String tokenType) {
         MACSigner macSigner = null;
         try {
             macSigner = new MACSigner(this.generalKey());
@@ -176,7 +216,7 @@ public class JwtUtil {
         }
 
         long nowMillis = System.currentTimeMillis();
-        long expMillis = nowMillis + (ttlMillis * 1000);
+        long expMillis = nowMillis + ttlMillis;
         Date exp = new Date(expMillis);
 
         var builder = new JWTClaimsSet.Builder()
@@ -185,6 +225,7 @@ public class JwtUtil {
                 .subject(username)
                 .jwtID(String.valueOf(userId))
                 .claim(CLAIM_UID, userId)
+                .claim(CLAIM_TOKEN_TYPE, tokenType)
                 .expirationTime(ttlMillis > 0 ? exp : null)
                 .notBeforeTime(new Date(nowMillis));
 
@@ -214,19 +255,60 @@ public class JwtUtil {
      * @return 验证结果
      */
     public boolean valid(String jwtToken) throws BizException {
-        boolean ret = false;
+        if (jwtToken == null || jwtToken.isBlank()) {
+            return false;
+        }
         try {
             JWSObject jwsObject = JWSObject.parse(jwtToken);
             JWSVerifier jwsVerifier = new MACVerifier(this.generalKey());
             if (!jwsObject.verify(jwsVerifier)) {
-                throw new BizException(CommonCodes.TOKEN_NOT_VERIFY);
+                return false;
             }
             JWTClaimsSet claimsSet = JWTClaimsSet.parse(jwsObject.getPayload().toJSONObject());
-            ret = null != claimsSet && !"-".equals(claimsSet.getSubject());
+            if (claimsSet == null || claimsSet.getSubject() == null || "-".equals(claimsSet.getSubject())) {
+                return false;
+            }
+
+            Date now = new Date();
+            Date notBefore = claimsSet.getNotBeforeTime();
+            Date expiration = claimsSet.getExpirationTime();
+            if (notBefore != null && notBefore.after(now)) {
+                return false;
+            }
+            if (expiration == null || !expiration.after(now)) {
+                return false;
+            }
+            return this.jwtConfig().getSign().equals(claimsSet.getIssuer());
         } catch (JOSEException | ParseException e) {
             log.warn("验证Token失败", e);
         }
-        return ret;
+        return false;
+    }
+
+    /**
+     * 判断是否为access token。
+     */
+    public boolean isAccessToken(String token) {
+        return TOKEN_TYPE_ACCESS.equals(getTokenType(token));
+    }
+
+    /**
+     * 判断是否为refresh token。
+     */
+    public boolean isRefreshToken(String token) {
+        return TOKEN_TYPE_REFRESH.equals(getTokenType(token));
+    }
+
+    /**
+     * 获取Token类型。
+     */
+    private String getTokenType(String token) {
+        JWTClaimsSet claims = getClaimsFromToken(token);
+        if (claims == null) {
+            return null;
+        }
+        Object tokenType = claims.getClaim(CLAIM_TOKEN_TYPE);
+        return tokenType == null ? null : tokenType.toString();
     }
 
     /**
@@ -237,15 +319,20 @@ public class JwtUtil {
         final String account = this.getAccount(token);
         final List<Long> roles = this.getRoles(token);
         final long permVer = this.getPermVer(token);
-        return this.build(this.jwtConfig().getThreshold(), uid, account, roles, permVer);
+        return this.build(this.jwtConfig().getAlphaTtl(), uid, account, roles, permVer);
     }
 
     /**
      * Token是否即将过期
      */
     public Boolean isTokenExpiring(String token) throws BizException {
-        Date expiration = getClaimsFromToken(token).getExpirationTime();
-        return (expiration.getTime() - System.currentTimeMillis()) < (this.jwtConfig().getThreshold());
+        JWTClaimsSet claims = getClaimsFromToken(token);
+        if (claims == null || claims.getExpirationTime() == null) {
+            return false;
+        }
+        Date expiration = claims.getExpirationTime();
+        long remaining = expiration.getTime() - System.currentTimeMillis();
+        return remaining > 0 && remaining < this.jwtConfig().getThreshold();
     }
 
     /**
@@ -259,13 +346,15 @@ public class JwtUtil {
      * 获取签发时间
      */
     public Date getIssuedAt(String token) {
-        return this.getClaimsFromToken(token).getIssueTime();
+        JWTClaimsSet claims = this.getClaimsFromToken(token);
+        return claims == null ? null : claims.getIssueTime();
     }
 
     /**
      * 获取过期时间
      */
     public Date getExpirationDateFromToken(String token) {
-        return this.getClaimsFromToken(token).getExpirationTime();
+        JWTClaimsSet claims = this.getClaimsFromToken(token);
+        return claims == null ? null : claims.getExpirationTime();
     }
 }

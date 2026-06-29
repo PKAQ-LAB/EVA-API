@@ -18,19 +18,19 @@ public class StdTreeVo extends StdVo {
     @Schema(description = "编码")
     private String code;
 
-    @Schema(description = "节点名称")
+    @Schema(description = "鑺傜偣鍚嶇О")
     private String name;
 
     @Schema(description = "上级节点id")
     private Long pid;
 
-    @Schema(description = "路径")
+    @Schema(description = "璺緞")
     private String path;
 
     @Schema(description = "是否叶子")
     private Boolean isleaf;
 
-    @Schema(description = "是否选中")
+    @Schema(description = "鏄惁閫変腑")
     private boolean checked = false;
 
     @Schema(description = "子节点")

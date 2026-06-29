@@ -1,6 +1,7 @@
 package org.pkaq.core.properties;
 
 import lombok.Data;
+import org.pkaq.core.constant.CommonConstant;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -16,9 +17,9 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(EvaConfig.class)
 public class EvaConfig {
     /**
-     * 单例还是多租户模式
+     * 运行模式：standalone=非租户系统，platform=平台管理端，saas=租户端。
      */
-    private String mode;
+    private String mode = CommonConstant.MODE_STANDALONE;
 
     /**
      * 多租户模式专属配置
@@ -116,5 +117,22 @@ public class EvaConfig {
 
     public Cache getCache() {
         return null == cache ? new Cache() : cache;
+    }
+
+    public Tenant getTenant() {
+        return null == tenant ? new Tenant() : tenant;
+    }
+
+    public boolean isStandaloneMode() {
+        return CommonConstant.MODE_STANDALONE.equalsIgnoreCase(mode)
+                || CommonConstant.MODE_SINGLETON.equalsIgnoreCase(mode);
+    }
+
+    public boolean isPlatformMode() {
+        return CommonConstant.MODE_PLATFORM.equalsIgnoreCase(mode);
+    }
+
+    public boolean isSaasMode() {
+        return CommonConstant.MODE_SAAS.equalsIgnoreCase(mode);
     }
 }

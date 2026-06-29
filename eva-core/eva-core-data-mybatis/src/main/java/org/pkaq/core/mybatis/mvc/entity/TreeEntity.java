@@ -28,7 +28,7 @@ public class TreeEntity implements Entity {
     @Schema(description = "是否可用")
     private String status;
 
-    @Schema(description = "节点名称")
+    @Schema(description = "鑺傜偣鍚嶇О")
     private String name;
 
     @Schema(description = "上级节点id")
@@ -40,10 +40,10 @@ public class TreeEntity implements Entity {
     @Schema(description = "排序")
     private long orders;
 
-    @Schema(description = "路径")
+    @Schema(description = "璺緞")
     private String path;
 
-    @Schema(description = "上级节点id路径")
+    @Schema(description = "上级节点 id 路径")
     private String pathId;
 
     @Schema(description = "上级节点名称路径")
@@ -65,7 +65,7 @@ public class TreeEntity implements Entity {
     private Boolean exact;
 
     @TableField(exist = false)
-    @Schema(description = "国际化面包屑")
+    @Schema(description = "鍥介檯鍖栭潰鍖呭睉")
     private String locale;
 
     public String getLocale() {

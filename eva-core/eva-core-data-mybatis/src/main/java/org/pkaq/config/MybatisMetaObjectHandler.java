@@ -22,7 +22,7 @@ import java.util.function.Supplier;
  * <p>
  * tenantId 自动填充策略：
  * - 仅在新增时填充
- * - 取 ThreadUserHelper.getTenantId()（匿名请求时为 null，跳过填充）
+ * - standalone 模式填 0，platform 模式填 -1，saas 模式填当前登录租户
  * - 与 CustomTenantLineHandler 共用 eva.tenant.ignoreTables 配置，
  *   被忽略的表（如 sys_tenant、sys_module 等系统级表）不填 tenantId
  *
@@ -51,9 +51,8 @@ public class MybatisMetaObjectHandler implements MetaObjectHandler {
         this.strictInsertFill(metaObject, "deleted", Integer.class, DelEnumm.UN_DELETED.getCode());
 
         // tenantId 自动填充
-        Long currentTid = ThreadUserHelper.getTenantId();
-        if (currentTid != null && shouldFillTenantId(metaObject)) {
-            this.strictInsertFill(metaObject, "tenantId", Long.class, currentTid);
+        if (shouldFillTenantId(metaObject)) {
+            this.strictInsertFill(metaObject, "tenantId", Long.class, resolveTenantId());
         }
     }
 
@@ -87,6 +86,24 @@ public class MybatisMetaObjectHandler implements MetaObjectHandler {
             return true;
         }
         return ignoreTables.stream().noneMatch(t -> t.equalsIgnoreCase(tableName));
+    }
+
+    private Long resolveTenantId() {
+        if (evaConfig.isStandaloneMode()) {
+            return 0L;
+        }
+        if (evaConfig.isPlatformMode()) {
+            return -1L;
+        }
+        long tenantId = ThreadUserHelper.getTenantId();
+        if (tenantId > 0L) {
+            return tenantId;
+        }
+        try {
+            return Long.parseLong(evaConfig.getTenant().getDefaultTenantId());
+        } catch (NumberFormatException e) {
+            return -1L;
+        }
     }
 
     /**

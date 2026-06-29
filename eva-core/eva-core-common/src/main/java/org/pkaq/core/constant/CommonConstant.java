@@ -12,8 +12,11 @@ import lombok.experimental.UtilityClass;
 public class CommonConstant {
 
     public final static String AUTH_PREFIX = "ROLE_";
-    public final static String MODE_SINGLETON = "singleton";
+    public final static String MODE_STANDALONE = "standalone";
+    public final static String MODE_PLATFORM = "platform";
     public final static String MODE_SAAS = "saas";
+    /** 兼容旧配置值，新增配置应使用 MODE_STANDALONE。 */
+    public final static String MODE_SINGLETON = "singleton";
     /**
      * 有效记录标识
      */

@@ -65,7 +65,7 @@ public abstract class StdMultiCtrl<T extends StdMultiService, E extends StdMulti
     }
 
     @GetMapping("/getMain/{id}")
-    @Operation(summary = "查询主表明细", description = "根据ID获得记录信息")
+    @Operation(summary = "查询主表明细", description = "根据ID获取记录信息")
     @NoRepeatSubmit
     public Response getMain(@Parameter(name = "id", description = "记录ID")
                             @PathVariable("id") String id) {
@@ -81,7 +81,7 @@ public abstract class StdMultiCtrl<T extends StdMultiService, E extends StdMulti
     }
 
     @GetMapping("/get/{id}")
-    @Operation(summary = "根据ID查询", description = "根据ID获得记录信息")
+    @Operation(summary = "根据ID查询", description = "根据ID获取记录信息")
     @NoRepeatSubmit
     public Response get(@Parameter(name = "id", description = "记录ID")
                         @PathVariable("id") String id) {
@@ -89,7 +89,7 @@ public abstract class StdMultiCtrl<T extends StdMultiService, E extends StdMulti
     }
 
     @GetMapping("/get")
-    @Operation(summary = "根据条件查询一条", description = "根据条件获得记录信息")
+    @Operation(summary = "根据条件查询一条", description = "根据条件获取记录信息")
     @NoRepeatSubmit
     public Response get(@Parameter(name = "entity", description = "查询条件")
                         E entity) {
