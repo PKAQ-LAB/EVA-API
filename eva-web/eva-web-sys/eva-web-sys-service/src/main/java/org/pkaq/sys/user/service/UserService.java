@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.codes.CommonCodes;
-import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.enums.FrozenEnumm;
 import org.pkaq.core.event.UserOfflineEvent;
 import org.pkaq.core.event.UserOfflineEvent.OfflineReason;
@@ -22,13 +21,22 @@ import org.pkaq.core.util.BCryptUtils;
 import org.pkaq.core.util.CollUtils;
 import org.pkaq.core.util.StrUtils;
 import org.pkaq.sys.SysCodes;
+import org.pkaq.sys.module.service.ModuleService;
+import org.pkaq.sys.module.vo.ModuleDetailVo;
+import org.pkaq.sys.organization.entity.OrganizationEntity;
+import org.pkaq.sys.organization.mapper.OrganizationMapper;
 import org.pkaq.sys.post.entity.PostUserEntity;
 import org.pkaq.sys.post.mapper.PostUserMapper;
 import org.pkaq.sys.post.service.UserPostRefSerivce;
 import org.pkaq.sys.role.entity.RoleUserEntity;
 import org.pkaq.sys.role.mapper.RoleUserMapper;
 import org.pkaq.sys.role.service.UserRoleRefSerivce;
-import org.pkaq.sys.user.bo.*;
+import org.pkaq.sys.user.bo.RePwdBo;
+import org.pkaq.sys.user.bo.UserAoeBo;
+import org.pkaq.sys.user.bo.UserCheckBo;
+import org.pkaq.sys.user.bo.UserGrantBo;
+import org.pkaq.sys.user.bo.UserPostBo;
+import org.pkaq.sys.user.bo.UserQueryBo;
 import org.pkaq.sys.user.convert.UserConvert;
 import org.pkaq.sys.user.entity.UserEntity;
 import org.pkaq.sys.user.mapper.UserMapper;
@@ -42,6 +50,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -49,7 +59,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * 用户管理
+ * 用户管理服务
  *
  * @author PKAQ
  */
@@ -57,7 +67,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService extends StdService<UserMapper, UserEntity> implements IUserService {
 
-    /** 系统保留账号 / 非法账号黑名单（不区分大小写） */
+    /** 系统保留账号和非法账号黑名单，不区分大小写。 */
     private static final Set<String> ILLEGAL_USERNAMES = new HashSet<>(Arrays.asList(
             "null", "undefined", "true", "false", "admin", "root", "", " ", "\t", "\n"
     ));
@@ -67,12 +77,16 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
     private final FileProvider fileProvider;
     private final RoleUserMapper roleUserMapper;
     private final PostUserMapper postUserMapper;
+    private final OrganizationMapper organizationMapper;
+    private final ModuleService moduleService;
     private final UserConvert convert;
     private final EvaConfig evaConfig;
     private final ApplicationEventPublisher eventPublisher;
 
     /**
-     * 账号合法性校验：不允许为黑名单中的保留字
+     * 校验账号合法性。
+     *
+     * @param username 用户账号
      */
     public void validateUsername(String username) {
         if (username == null || ILLEGAL_USERNAMES.contains(username.trim().toLowerCase())) {
@@ -81,7 +95,9 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
     }
 
     /**
-     * 修改密码
+     * 修改当前用户密码。
+     *
+     * @param rePwdBo 修改密码参数
      */
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
@@ -104,94 +120,114 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
         updateE.setRevision(rePwdBo.getRevision());
         this.mapper.updateById(updateE);
 
-        // 改密后强制下线（事务提交后由 listener 清 token）
-        eventPublisher.publishEvent(new UserOfflineEvent(this, uid, OfflineReason.PASSWORD_CHANGED));
+        this.eventPublisher.publishEvent(new UserOfflineEvent(this, uid, OfflineReason.PASSWORD_CHANGED));
     }
 
     /**
-     * 批量删除：
-     * - 同步清理 角色-用户、岗位-用户 中间表
-     * - 删除后踢被删用户下线
+     * 批量删除用户，并同步清理用户-角色、用户-岗位关系。
+     *
+     * @param param 用户ID集合
      */
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void delete(Set<Long> param) {
-        if (CollUtils.isEmpty(param)) {
+        Set<Long> userIds = this.sanitizeIds(param);
+        if (userIds.isEmpty()) {
             return;
         }
-        this.mapper.deleteByIds(param);
-        // 清理角色关系
-        this.roleUserMapper.delete(new LambdaQueryWrapper<RoleUserEntity>().in(RoleUserEntity::getUserId, param));
-        // 清理岗位关系（U-03 修复）
-        this.postUserMapper.delete(new LambdaQueryWrapper<PostUserEntity>().in(PostUserEntity::getUserId, param));
-        // 发布下线事件（事务提交后由 listener 清 token）
-        eventPublisher.publishEvent(new UserOfflineEvent(this, param, OfflineReason.USER_DELETED));
+
+        this.mapper.deleteByIds(userIds);
+        this.roleUserMapper.delete(new LambdaQueryWrapper<RoleUserEntity>().in(RoleUserEntity::getUserId, userIds));
+        this.postUserMapper.delete(new LambdaQueryWrapper<PostUserEntity>().in(PostUserEntity::getUserId, userIds));
+        this.eventPublisher.publishEvent(new UserOfflineEvent(this, userIds, OfflineReason.USER_DELETED));
     }
 
     /**
-     * 查询用户列表 无分页
+     * 查询用户列表。
+     *
+     * @param queryBo 查询条件
+     * @return 用户列表
      */
     @Override
     public List<UserListVo> listUser(UserQueryBo queryBo) {
         UserEntity user = this.convert.boToEntity(queryBo);
         LambdaQueryWrapper<UserEntity> wrapper = Wrappers.lambdaQuery();
         wrapper.setEntity(user);
+        this.appendPostFilter(wrapper, queryBo);
         wrapper.orderByDesc(UserEntity::getUtcModify);
         return this.convert.entityToListVo(this.mapper.selectList(wrapper));
     }
 
+    /**
+     * 查询用户列表。
+     *
+     * @param queryBo 查询条件
+     * @param convertFn 转换函数
+     * @return 用户列表
+     */
     public List<? extends Vo> listUser(UserQueryBo queryBo,
                                        Function<List<? extends Entity>, List<? extends Vo>> convertFn) {
         UserEntity user = this.convert.boToEntity(queryBo);
         LambdaQueryWrapper<UserEntity> wrapper = Wrappers.lambdaQuery();
         wrapper.setEntity(user);
+        this.appendPostFilter(wrapper, queryBo);
         wrapper.orderByDesc(UserEntity::getUtcModify);
         return convertFn.apply(this.mapper.selectList(wrapper));
     }
 
     /**
-     * 列表查询 - 分页
+     * 分页查询用户列表。
+     *
+     * @param queryBo 查询条件
+     * @return 分页数据
      */
     @Override
     public PageVo<UserListVo> listPage(UserQueryBo queryBo) {
         LambdaQueryWrapper<UserEntity> wrapper = Wrappers.lambdaQuery();
         wrapper.setEntity(this.convert.boToEntity(queryBo));
+        this.appendPostFilter(wrapper, queryBo);
         wrapper.orderByDesc(UserEntity::getUtcModify);
         PageResult<UserEntity> pagination = new PageResult<>(queryBo.getPageNo(), queryBo.getPageSize());
         return this.mapper.selectPage(pagination, wrapper).map(this.convert::entityToListVo);
     }
 
     /**
-     * 切换冻结状态（解锁 / 锁定）
-     * - 翻转 frozen
-     * - 切换后若用户处于"冻结"状态则立即踢下线
+     * 切换用户冻结状态。
+     *
+     * @param ids 用户ID集合
      */
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void updateUser(Set<Long> ids) {
-        if (CollUtils.isEmpty(ids)) {
+        Set<Long> userIds = this.sanitizeIds(ids);
+        if (userIds.isEmpty()) {
             CommonCodes.NULL_ID.newException();
             return;
         }
 
-        // 记录翻转前为"未冻结"的用户 —— 翻转后会变冻结，需要踢下线
         Set<Long> willBeFrozen = this.mapper.selectList(new LambdaQueryWrapper<UserEntity>()
                         .select(UserEntity::getId)
-                        .in(UserEntity::getId, ids)
+                        .in(UserEntity::getId, userIds)
                         .eq(UserEntity::getFrozen, FrozenEnumm.UN_FROZEN))
                 .stream()
                 .map(UserEntity::getId)
                 .collect(Collectors.toSet());
 
-        this.mapper.change(ids);
+        this.mapper.change(userIds);
+        for (Long userId : userIds) {
+            this.mapper.incrementPermVer(userId);
+        }
 
         if (!willBeFrozen.isEmpty()) {
-            eventPublisher.publishEvent(new UserOfflineEvent(this, willBeFrozen, OfflineReason.USER_FROZEN));
+            this.eventPublisher.publishEvent(new UserOfflineEvent(this, willBeFrozen, OfflineReason.USER_FROZEN));
         }
     }
 
     /**
-     * 获取用户详情（含角色 id 列表）
+     * 查询用户详情。
+     *
+     * @param id 用户ID
+     * @return 用户详情
      */
     @Override
     public UserDetailVo getUser(Long id) {
@@ -200,85 +236,66 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
             SysCodes.CANNOT_FIND_USER.newException();
             return null;
         }
+
         UserDetailVo vo = this.convert.entityToDetailVo(user);
         vo.setRoleIds(this.roleUserMapper.selectRoleIds(id));
+        vo.setPostId(this.userPostRefSerivce.listPostIdsByUserId(id));
         return vo;
     }
 
     /**
-     * 新增 / 编辑用户
+     * 新增或编辑用户。
+     *
+     * @param user 用户参数
      */
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void saveUser(UserAoeBo user) {
-        // 账号合法性
+        if (user == null) {
+            SysCodes.CANNOT_FIND_USER.newException();
+            return;
+        }
+
         this.validateUsername(user.getAccount());
+        this.ensureUniqueUser(user);
+        this.ensureDepartmentUsable(user.getDeptId());
 
         Long userId = user.getId();
-        boolean isInsert = (userId == null || userId == 0L);
+        boolean isInsert = userId == null || userId == 0L;
 
         if (isInsert) {
-            // 新增：生成 id + 校验授权数量 + hash 密码
             userId = IdWorker.getId();
             user.setId(userId);
-
-            // 多租户模式下校验授权用户数（U-07 修复：之前条件反向）
-            if (!CommonConstant.MODE_SINGLETON.equals(evaConfig.getMode())) {
-                Long tid = ThreadUserHelper.getTenantId();
-                Integer leftCt = this.mapper.availableCounts(tid);
-                if (leftCt == null || leftCt < 1) {
-                    SysCodes.USER_ACCOUNT_LIMIT.newException();
-                }
-            }
-
-            if (StrUtils.isBlank(user.getPassword())) {
-                SysCodes.BAD_ORG_PASSWORD.newException();
-            }
+            this.ensureTenantUserQuota();
+            this.ensurePasswordPresent(user.getPassword());
             user.setPassword(BCryptUtils.hashpw(user.getPassword()));
         } else {
-            // 编辑：处理头像替换；密码为空则不更新（MyBatis-Plus null 不更新）
             UserEntity oldUser = this.mapper.selectById(userId);
             if (oldUser == null) {
                 SysCodes.CANNOT_FIND_USER.newException();
                 return;
             }
-            String oldAvatar = oldUser.getAvatar();
-            if (StrUtils.isNotBlank(oldAvatar) && !oldAvatar.equals(user.getAvatar())) {
-                fileProvider.delFromStorage(oldAvatar);
-            }
-            if (StrUtils.isNotBlank(user.getPassword())) {
-                user.setPassword(BCryptUtils.hashpw(user.getPassword()));
-            } else {
-                user.setPassword(null);
-            }
+            this.handleEditPasswordAndAvatar(user, oldUser);
         }
 
-        // 保存新头像缩略图
-        if (StrUtils.isNotBlank(user.getAvatar())) {
-            try {
-                fileProvider.storageWithThumbnail(0.3f, user.getAvatar());
-            } catch (IOException e) {
-                throw new BizException(CommonCodes.SERVER_ERROR);
-            }
-        }
+        this.storageAvatarThumbnail(user.getAvatar());
 
         UserEntity entity = this.convert.boToEntity(user);
         if (isInsert) {
             this.mapper.insert(entity);
         } else {
             this.mapper.updateById(entity);
+            this.mapper.incrementPermVer(userId);
         }
 
-        // 保存角色关系
-        if (CollUtils.isNotEmpty(user.getRoleIds())) {
+        if (user.getRoleIds() != null) {
             UserGrantBo grantBo = new UserGrantBo();
             grantBo.setUserId(userId);
             grantBo.setRoleIds(user.getRoleIds());
             this.userRoleRefSerivce.saveRoles(grantBo);
         }
 
-        // 保存岗位关系（U-01 修复：原代码条件用了 roleIds，导致只传岗位不传角色时不保存岗位）
-        if (CollUtils.isNotEmpty(user.getPostId())) {
+        if (user.getPostId() != null) {
             UserPostBo postBo = new UserPostBo();
             postBo.setUserId(userId);
             postBo.setPostIds(user.getPostId());
@@ -287,15 +304,47 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
     }
 
     /**
-     * TODO 待实现：返回用户菜单 + 资源
+     * 查询用户菜单和资源。
+     *
+     * @param uid 用户ID
+     * @return 用户资源列表
      */
     public List<UserResourceVo> fetchModuleByUid(Long uid) {
-        return null;
+        Collection<ModuleDetailVo> modules = this.moduleService.fetchUserModules(uid);
+        if (modules == null || modules.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return modules.stream()
+                .map(this::toUserResourceVo)
+                .collect(Collectors.toList());
+    }
+
+    private UserResourceVo toUserResourceVo(ModuleDetailVo module) {
+        UserResourceVo vo = new UserResourceVo();
+        vo.setId(module.getId());
+        vo.setPid(module.getPid());
+        vo.setRouteurl(module.getRouteUrl());
+        vo.setModelurl(module.getComponentUrl());
+        vo.setResources(module.getResources());
+
+        List<UserResourceVo> children = module.getOriginChildren() == null
+                ? Collections.emptyList()
+                : module.getOriginChildren().stream()
+                        .filter(ModuleDetailVo.class::isInstance)
+                        .map(ModuleDetailVo.class::cast)
+                        .map(this::toUserResourceVo)
+                        .collect(Collectors.toList());
+        if (!children.isEmpty()) {
+            vo.setChildren(children);
+        }
+        return vo;
     }
 
     /**
-     * 校验账号 / 编码唯一性
-     * 注意：@TableLogic 自动添加 deleted=0 条件，已逻辑删除的用户自动排除
+     * 校验账号或编码是否重复。
+     *
+     * @param user 校验参数
+     * @return true 表示重复
      */
     @Override
     public boolean checkUnique(UserCheckBo user) {
@@ -313,7 +362,11 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
         return this.mapper.selectCount(wrapper) > 0;
     }
 
-
+    /**
+     * 创建租户管理员。
+     *
+     * @param user 用户实体
+     */
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void createTenantAdmin(UserEntity user) {
         this.validateUsername(user.getAccount());
@@ -323,5 +376,105 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
         }
         user.setPassword(BCryptUtils.hashpw(user.getPassword()));
         this.mapper.insert(user);
+    }
+
+    private void ensureUniqueUser(UserAoeBo user) {
+        UserCheckBo checkBo = new UserCheckBo();
+        checkBo.setId(user.getId());
+        checkBo.setAccount(user.getAccount());
+        checkBo.setCode(user.getCode());
+        if (this.checkUnique(checkBo)) {
+            SysCodes.ACCOUNT_OR_CODE_ALREADY_EXIST.newException();
+        }
+    }
+
+    private void ensureDepartmentUsable(Long deptId) {
+        if (deptId == null || deptId == 0L) {
+            return;
+        }
+
+        OrganizationEntity department = this.organizationMapper.selectById(deptId);
+        if (department == null || FrozenEnumm.FROZEN == department.getFrozen()) {
+            SysCodes.RECORD_NOT_FOUND.newException();
+        }
+    }
+
+    private void ensureTenantUserQuota() {
+        if (!this.evaConfig.isSaasMode()) {
+            return;
+        }
+
+        Long tenantId = ThreadUserHelper.getTenantId();
+        Integer leftCt = this.mapper.availableCounts(tenantId);
+        if (leftCt == null || leftCt < 1) {
+            SysCodes.USER_ACCOUNT_LIMIT.newException();
+        }
+    }
+
+    private void ensurePasswordPresent(String password) {
+        if (StrUtils.isBlank(password)) {
+            SysCodes.BAD_ORG_PASSWORD.newException();
+        }
+    }
+
+    private void handleEditPasswordAndAvatar(UserAoeBo user, UserEntity oldUser) {
+        String oldAvatar = oldUser.getAvatar();
+        if (StrUtils.isNotBlank(oldAvatar) && !oldAvatar.equals(user.getAvatar())) {
+            this.fileProvider.delFromStorage(oldAvatar);
+        }
+
+        if (StrUtils.isNotBlank(user.getPassword())) {
+            user.setPassword(BCryptUtils.hashpw(user.getPassword()));
+        } else {
+            user.setPassword(null);
+        }
+    }
+
+    private void storageAvatarThumbnail(String avatar) {
+        if (StrUtils.isBlank(avatar)) {
+            return;
+        }
+
+        try {
+            this.fileProvider.storageWithThumbnail(0.3f, avatar);
+        } catch (IOException e) {
+            throw new BizException(CommonCodes.SERVER_ERROR);
+        }
+    }
+
+    private Set<Long> sanitizeIds(Set<Long> ids) {
+        if (CollUtils.isEmpty(ids)) {
+            return new HashSet<>();
+        }
+        return ids.stream()
+                .filter(id -> id != null && id > 0L)
+                .collect(Collectors.toSet());
+    }
+
+    private List<Long> sanitizeListIds(List<Long> ids) {
+        if (CollUtils.isEmpty(ids)) {
+            return Collections.emptyList();
+        }
+        return ids.stream()
+                .filter(id -> id != null && id > 0L)
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    private void appendPostFilter(LambdaQueryWrapper<UserEntity> wrapper, UserQueryBo queryBo) {
+        if (queryBo == null) {
+            return;
+        }
+
+        List<Long> postIds = this.sanitizeListIds(queryBo.getPostId());
+        if (postIds.isEmpty()) {
+            return;
+        }
+
+        String postIdSql = postIds.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
+        wrapper.inSql(UserEntity::getId,
+                "SELECT USER_ID FROM SYS_POSTUSER_REF WHERE POST_ID IN (" + postIdSql + ")");
     }
 }

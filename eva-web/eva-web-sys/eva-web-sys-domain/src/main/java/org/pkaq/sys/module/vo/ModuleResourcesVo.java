@@ -18,12 +18,21 @@ public class ModuleResourcesVo implements Entity {
     @Schema(description = "模块id")
     private Long mainId;
 
-    @Schema(description = "资源描述")
+    @Schema(description = "资源编码")
+    private String code;
+
+    @Schema(description = "璧勬簮鎻忚堪")
     private String resourceDesc;
 
-    @Schema(description = "资源路径")
+    @Schema(description = "璧勬簮璺緞")
     private String resourceUrl;
 
     @Schema(description = "资源类型（按钮、操作）")
     private String resourceType;
+
+    @Schema(description = "排序")
+    private Double sort;
+
+    @Schema(description = "是否已授权")
+    private Integer checked;
 }

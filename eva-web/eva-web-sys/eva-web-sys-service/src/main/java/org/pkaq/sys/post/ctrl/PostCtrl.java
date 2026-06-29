@@ -33,7 +33,7 @@ public class PostCtrl extends Ctrl {
     private final PostService postService;
 
     @PostMapping("/checkUnique")
-    @Operation(summary = "校验 code / title 在同 pid 下是否唯一")
+    @Operation(summary = "校验 code / title 在同一 pid 下是否唯一")
     public Response<Object> checkUnique(@Parameter(name = "bo", required = true, description = "岗位唯一性校验请求参数")
                                         @RequestBody PostAoeBo bo) {
         if (StrUtils.isAllBlank(bo.getCode(), bo.getTitle())) {

@@ -25,22 +25,22 @@ public class UserListVo implements Vo {
     @Schema(description = "电话")
     private String tel;
 
-    @Schema(description = "邮箱")
+    @Schema(description = "閭")
     private String email;
 
-    @Schema(description = "账号")
+    @Schema(description = "璐﹀彿")
     private String account;
 
     @Schema(description = "用户头像")
     private String avatar;
 
-    @Schema(description = "姓名")
+    @Schema(description = "濮撳悕")
     private String name;
 
-    @Schema(description = "昵称")
+    @Schema(description = "鏄电О")
     private String nickName;
 
-    @Schema(description = "最后登录ip")
+    @Schema(description = "最后登录 IP")
     private String lastIp;
 
     @Schema(description = "最后登录时间")

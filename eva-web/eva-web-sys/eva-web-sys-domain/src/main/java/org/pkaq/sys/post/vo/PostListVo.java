@@ -3,9 +3,7 @@ package org.pkaq.sys.post.vo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.pkaq.core.mvc.vo.StdVo;
-
-import java.util.List;
+import org.pkaq.core.mvc.vo.StdTreeVo;
 
 /**
  * 岗位列表视图对象（树形）
@@ -15,28 +13,13 @@ import java.util.List;
 @Schema(description = "岗位管理列表视图对象")
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class PostListVo extends StdVo {
-    @Schema(description = "编码")
-    private String code;
-
+public class PostListVo extends StdTreeVo {
     @Schema(description = "岗位名称")
     private String title;
 
     @Schema(description = "职级")
     private String level;
 
-    @Schema(description = "上级岗位ID")
-    private Long pid;
-
     @Schema(description = "上级岗位名称")
     private String parentTitle;
-
-    @Schema(description = "路径")
-    private String path;
-
-    @Schema(description = "是否叶子节点")
-    private Boolean isleaf;
-
-    @Schema(description = "子节点")
-    private List<PostListVo> children;
 }

@@ -78,15 +78,11 @@
                 SELECT
                     TENANT_ID, COUNT(*) AS USER_COUNT
                 FROM SYS_USER
-                    WHERE
-                        <include refid="common.avalibleSQL">
-                            <property name="prefix" value="SYS_USER"/>
-                        </include> and TENANT_ID = #{tid}
+                    WHERE (SYS_USER.DELETED = 0 OR SYS_USER.DELETED IS NULL)
+                        AND TENANT_ID = #{tid}
                 GROUP BY TENANT_ID
         ) U ON U.TENANT_ID = T.ID
-                WHERE
-                    <include refid="common.avalibleSQL">
-                        <property name="prefix" value="T"/>
-                    </include> and T.ID = #{tid}
+                WHERE (T.DELETED = 0 OR T.DELETED IS NULL)
+                    AND T.ID = #{tid}
     </select>
 </mapper>

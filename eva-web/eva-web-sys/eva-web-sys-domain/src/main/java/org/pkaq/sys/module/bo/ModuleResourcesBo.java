@@ -18,6 +18,9 @@ public class ModuleResourcesBo implements Vo {
     @Schema(description = "模块id")
     private Long mainId;
 
+    @Schema(description = "资源编码")
+    private String code;
+
     @Schema(description = "资源描述")
     private String resourceDesc;
 
@@ -26,4 +29,7 @@ public class ModuleResourcesBo implements Vo {
 
     @Schema(description = "资源类型（按钮、操作）")
     private String resourceType;
+
+    @Schema(description = "排序")
+    private Double sort;
 }

@@ -32,7 +32,7 @@ public class OrganizationCtrl extends Ctrl {
     private final OrganizationService service;
 
     @PostMapping("/checkUnique")
-    @Operation(summary = "校验 code / name 在同 pid 下是否唯一")
+    @Operation(summary = "校验 code / name 在同一 pid 下是否唯一")
     public Response<Object> checkUnique(@Parameter(name = "bo", description = "组织唯一性校验参数")
                                         @RequestBody OrganizationAoeBo bo) {
         if (StrUtils.isAllBlank(bo.getCode(), bo.getName())) {
@@ -52,7 +52,7 @@ public class OrganizationCtrl extends Ctrl {
     @GetMapping("/get/{id}")
     @Operation(summary = "根据 ID 获取组织详情")
     @BizLog(operateType = BizLogCodes.QUERY, description = "查询了组织信息[{0}]", args = {"param:0"})
-    public Response<Object> get(@Parameter(name = "id", description = "组织ID")
+    public Response<Object> get(@Parameter(name = "id", description = "组织 ID")
                                 @PathVariable("id") Long id) {
         return success(this.service.get(id));
     }
@@ -69,7 +69,7 @@ public class OrganizationCtrl extends Ctrl {
     @PostMapping("/del")
     @Operation(summary = "根据 ID 批量删除")
     @BizLog(operateType = BizLogCodes.DELETE, description = "删除了组织[{0}]", args = {"param:0"})
-    public Response<Object> del(@Parameter(name = "ids", description = "[组织ID]")
+    public Response<Object> del(@Parameter(name = "ids", description = "[组织 ID]")
                                 @RequestBody SingleArray<Long> ids) {
         CommonCodes.NULL_ID.assertNotNull(ids.getParam());
         this.service.delete(ids.getParam());

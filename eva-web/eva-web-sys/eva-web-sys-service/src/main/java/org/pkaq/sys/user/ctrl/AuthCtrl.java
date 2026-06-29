@@ -34,7 +34,7 @@ public class AuthCtrl extends Ctrl {
         try {
             final var userId = ThreadUserHelper.getUserId();
 
-            return success(this.moduleService.fetchUserModules(userId));
+            return success(this.moduleService.fetchUserMenus(userId));
         } catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());

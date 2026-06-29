@@ -7,10 +7,11 @@ import lombok.EqualsAndHashCode;
 import org.pkaq.core.mvc.bo.StdBo;
 
 import java.sql.Date;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 用户新增编辑参数
+ *
  * @author PKAQ
  */
 @EqualsAndHashCode(callSuper = true)
@@ -25,39 +26,37 @@ public class UserAoeBo extends StdBo {
     @Schema(description = "电话")
     private String tel;
 
-    @Schema(description = "邮箱")
+    @Schema(description = "閭")
     private String email;
 
-    @Schema(description = "账号")
+    @Schema(description = "璐﹀彿")
     @NotBlank(message = "{sys.user.account.required}")
     private String account;
 
     @Schema(description = "密码")
-    @NotBlank(message = "{sys.user.pwd.required}")
     private String password;
 
     @Schema(description = "用户头像")
     private String avatar;
 
-    @Schema(description = "姓名")
+    @Schema(description = "濮撳悕")
     private String name;
 
-    @Schema(description = "昵称")
+    @Schema(description = "鏄电О")
     private String nickName;
 
-    @Schema(description = "最后登录ip")
+    @Schema(description = "最后登录 IP")
     private String lastIp;
 
     @Schema(description = "最后登录时间")
     private Date lastLogin;
 
-    @Schema(description = "所属岗位ID")
-    private List<Long> postId = new ArrayList<>();
+    @Schema(description = "所属岗位 ID")
+    private List<Long> postId;
 
     @Schema(description = "所属部门")
     private Long deptId;
 
     @Schema(description = "用户拥有的角色")
-    private List<Long> roleIds = new ArrayList<>();
-
+    private List<Long> roleIds;
 }

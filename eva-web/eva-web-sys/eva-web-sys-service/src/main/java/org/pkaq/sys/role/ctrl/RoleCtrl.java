@@ -31,7 +31,7 @@ public class RoleCtrl extends StdCtrl<RoleService> {
 
     @GetMapping({"/fetchResource"})
     @Operation(summary = "获得角色绑定的菜单资源列表")
-    @BizLog(operateType = BizLogCodes.EDIT, description = "查询了角色授权资源", args = {"param:0"})
+    @BizLog(operateType = BizLogCodes.QUERY, description = "查询了角色授权资源[{0}]", args = {"param:0"})
     public Response<Object> fetchResource(@Parameter(name = "role", description = "包含角色对象属性的查询条件")
                                           RoleResourceRefBo role) {
         return success(this.service.fetchResource(role));

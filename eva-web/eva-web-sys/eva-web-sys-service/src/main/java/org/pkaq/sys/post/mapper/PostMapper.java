@@ -1,6 +1,7 @@
 package org.pkaq.sys.post.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.pkaq.sys.post.bo.PostQueryBo;
@@ -21,6 +22,7 @@ public interface PostMapper extends BaseMapper<PostEntity> {
     /**
      * 树形查询（含 parentTitle 回填，按 pid + sort 排序）
      */
+    @MapKey("id")
     Map<Long, PostListVo> selectPostMapList(@Param("q") PostQueryBo queryBo);
 
     /**

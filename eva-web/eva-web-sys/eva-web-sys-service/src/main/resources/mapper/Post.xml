@@ -37,7 +37,7 @@
         FROM SYS_POST y
             LEFT JOIN SYS_POST s ON s.ID = y.PID AND s.DELETED = 0
         <where>
-            (<include refid="common.avalibleSQL"><property name="prefix" value="y"/></include>)
+            (y.DELETED = 0 OR y.DELETED IS NULL)
             <if test="q != null">
                 <if test="q.code != null and q.code != ''">
                     AND y.CODE = #{q.code,jdbcType=VARCHAR}

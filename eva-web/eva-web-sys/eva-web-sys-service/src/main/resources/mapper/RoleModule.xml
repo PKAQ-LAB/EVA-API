@@ -7,7 +7,7 @@
             SELECT 1
             FROM SYS_MODULE_RESOURCES res
             WHERE rr.resource_id = res.id
-                AND res.main_id = #{mid}
+                AND res.main_id = #{moduleId}
             )
     </delete>
 
@@ -32,6 +32,25 @@
         )
     </delete>
 
+    <select id="selectRoleIdsByResourceIds" resultType="java.lang.Long">
+        SELECT DISTINCT ROLE_ID
+        FROM SYS_ROLERES_REF
+        WHERE RESOURCE_ID IN
+        <foreach collection="resourceIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="selectRoleIdsByModuleIds" resultType="java.lang.Long">
+        SELECT DISTINCT rr.ROLE_ID
+        FROM SYS_ROLERES_REF rr
+            JOIN SYS_MODULE_RESOURCES mr ON rr.RESOURCE_ID = mr.ID
+        WHERE mr.MAIN_ID IN
+        <foreach collection="moduleIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
     <select id="roleModuleList" resultType="roleModule">
         SELECT rm.*
         FROM sys_role_module rm
@@ -44,19 +63,32 @@
         ORDER BY m.id
     </select>
 
-    <select id="listGrantedResource" resultType="java.util.Map">
+    <select id="listGrantedResource" resultType="org.pkaq.sys.module.vo.ModuleResourcesVo">
         SELECT
             r.ID,
             r.MAIN_ID,
+            r.CODE,
             r.RESOURCE_DESC,
             r.RESOURCE_URL,
             r.RESOURCE_TYPE,
+            r.SORT,
             CASE
                 WHEN rr.ROLE_ID IS NOT NULL THEN 1
                 ELSE 0
             END AS CHECKED
         FROM SYS_MODULE_RESOURCES r
             LEFT JOIN SYS_ROLERES_REF rr ON r.ID = rr.RESOURCE_ID AND rr.ROLE_ID = #{roleId}
-        ORDER BY r.MAIN_ID ASC
+        WHERE (r.DELETED = 0 OR r.DELETED IS NULL)
+        ORDER BY r.MAIN_ID ASC, r.SORT ASC, r.ID ASC
+    </select>
+
+    <select id="selectValidResourceIds" resultType="java.lang.Long">
+        SELECT ID
+        FROM SYS_MODULE_RESOURCES
+        WHERE (DELETED = 0 OR DELETED IS NULL)
+            AND ID IN
+            <foreach collection="resourceIds" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
     </select>
 </mapper>

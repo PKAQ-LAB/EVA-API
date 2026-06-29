@@ -1,5 +1,8 @@
 package org.pkaq.sys.module.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,9 +20,17 @@ import org.pkaq.core.mybatis.mvc.entity.StdLineEntity;
 @EqualsAndHashCode(callSuper = false)
 public class ModuleResources extends StdLineEntity {
 
+    private String code;
+
     private String resourceDesc;
 
     private String resourceUrl;
 
     private String resourceType;
+
+    private Double sort;
+
+    @TableLogic
+    @TableField(fill = FieldFill.INSERT)
+    private long deleted;
 }

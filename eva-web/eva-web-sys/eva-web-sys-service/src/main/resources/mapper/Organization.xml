@@ -35,7 +35,7 @@
         FROM sys_organization y
             LEFT JOIN sys_organization s ON s.ID = y.PID AND s.DELETED = 0
         <where>
-            (<include refid="common.avalibleSQL"><property name="prefix" value="y"/></include>)
+            (y.DELETED = 0 OR y.DELETED IS NULL)
             <if test="q != null">
                 <if test="q.id != null">
                     AND y.ID = #{q.id,jdbcType=BIGINT}

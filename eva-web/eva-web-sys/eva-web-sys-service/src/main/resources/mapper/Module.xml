@@ -6,8 +6,41 @@
         <collection property="children" column="{id=id}" select="listChildren"/>
         <collection property="resources" javaType="java.util.List" ofType="moduleResource">
             <id column="R_ID" property="id" jdbcType="VARCHAR"/>
+            <result column="R_MAIN_ID" property="mainId"/>
+            <result column="R_CODE" property="code"/>
+            <result column="R_RESOURCE_DESC" property="resourceDesc"/>
+            <result column="R_RESOURCE_URL" property="resourceUrl"/>
+            <result column="R_RESOURCE_TYPE" property="resourceType"/>
+            <result column="R_SORT" property="sort"/>
         </collection>
     </resultMap>
+
+    <resultMap id="FlatResultMap" type="org.pkaq.sys.module.vo.ModuleDetailVo" extends="common.resultMap">
+        <id property="id" column="ID"/>
+    </resultMap>
+
+    <sql id="ModuleDetailColumns">
+        ${alias}.ID,
+        ${alias}.REVISION,
+        ${alias}.FROZEN,
+        ${alias}.SORT,
+        ${alias}.TENANT_ID,
+        ${alias}.CREATE_ID,
+        ${alias}.CREATE_BY,
+        ${alias}.UTC_CREATE,
+        ${alias}.MODIFY_ID,
+        ${alias}.MODIFY_BY,
+        ${alias}.UTC_MODIFY,
+        ${alias}.REMARK,
+        ${alias}.CODE,
+        ${alias}.NAME,
+        ${alias}.PID,
+        ${alias}.PATH,
+        ${alias}.ISLEAF,
+        ${alias}.ICON,
+        ${alias}.ROUTE_URL,
+        ${alias}.COMPONENT_URL
+    </sql>
 
     <update id="refreshPath" parameterType="map">
         UPDATE sys_module
@@ -52,7 +85,7 @@
             JOIN SYS_ROLE r ON r.ID = rm.ROLE_ID
             JOIN SYS_ROLEUSER_REF ru ON r.ID = ru.ROLE_ID
         WHERE ru.USER_ID = #{userId}
-            AND (<include refid="common.avalibleSQL"><property name="prefix" value="m"/></include>)
+            AND (m.DELETED = 0 OR m.DELETED IS NULL)
             AND (m.FROZEN != 1 OR m.FROZEN IS NULL)
         ORDER BY m.sort ASC
     </select>
@@ -101,14 +134,17 @@
 
     <select id="listModule" resultMap="BaseResultMap">
         SELECT
-            SM.*, 
+            <include refid="ModuleDetailColumns"><property name="alias" value="SM"/></include>,
             SMR.ID R_ID,
-            SMR.MAIN_ID,
-            SMR.RESOURCE_DESC,
-            SMR.RESOURCE_URL,
-            SMR.RESOURCE_TYPE
+            SMR.MAIN_ID R_MAIN_ID,
+            SMR.CODE R_CODE,
+            SMR.RESOURCE_DESC R_RESOURCE_DESC,
+            SMR.RESOURCE_URL R_RESOURCE_URL,
+            SMR.RESOURCE_TYPE R_RESOURCE_TYPE,
+            SMR.SORT R_SORT
         FROM SYS_MODULE SM
-            LEFT JOIN SYS_MODULE_RESOURCES SMR ON SM.ID = SMR.MAIN_ID
+            LEFT JOIN SYS_MODULE_RESOURCES SMR
+                ON SM.ID = SMR.MAIN_ID AND (SMR.DELETED = 0 OR SMR.DELETED IS NULL)
         <where>
             <if test="null == module or null == module.pid">
                 and SM.pid = 0
@@ -134,21 +170,24 @@
                 </if>
             </if>
         </where>
-        ORDER BY SM.sort ASC
+        ORDER BY SM.sort ASC, SMR.SORT ASC, SMR.ID ASC
     </select>
 
     <select id="listChildren" resultMap="BaseResultMap">
         SELECT
-            SM.*, 
+            <include refid="ModuleDetailColumns"><property name="alias" value="SM"/></include>,
             SMR.ID R_ID,
-            SMR.MAIN_ID,
-            SMR.RESOURCE_DESC,
-            SMR.RESOURCE_URL,
-            SMR.RESOURCE_TYPE
+            SMR.MAIN_ID R_MAIN_ID,
+            SMR.CODE R_CODE,
+            SMR.RESOURCE_DESC R_RESOURCE_DESC,
+            SMR.RESOURCE_URL R_RESOURCE_URL,
+            SMR.RESOURCE_TYPE R_RESOURCE_TYPE,
+            SMR.SORT R_SORT
         FROM sys_module SM
-            LEFT JOIN SYS_MODULE_RESOURCES SMR ON SM.ID = SMR.MAIN_ID
+            LEFT JOIN SYS_MODULE_RESOURCES SMR
+                ON SM.ID = SMR.MAIN_ID AND (SMR.DELETED = 0 OR SMR.DELETED IS NULL)
         WHERE SM.pid = #{id,jdbcType=BIGINT}
-        ORDER BY SM.sort ASC
+        ORDER BY SM.sort ASC, SMR.SORT ASC, SMR.ID ASC
     </select>
 
     <select id="getParentById" resultMap="BaseResultMap">
@@ -193,28 +232,33 @@
         WHERE id = #{id,jdbcType=BIGINT}
     </select>
 
-    <select id="listGrantedModules" resultMap="BaseResultMap">
+    <select id="listGrantedModules" resultMap="FlatResultMap">
         SELECT DISTINCT
             m.ID,
+            m.SORT,
             m.NAME,
             m.PID,
             m.PATH,
             m.ISLEAF,
             m.CODE,
-            m.SORT
+            m.ICON,
+            m.ROUTE_URL,
+            m.COMPONENT_URL
         FROM SYS_ROLEUSER_REF ru
             JOIN SYS_ROLERES_REF rr ON ru.ROLE_ID = rr.ROLE_ID
-            JOIN SYS_MODULE_RESOURCES r ON rr.RESOURCE_ID = r.ID
+            JOIN SYS_MODULE_RESOURCES r ON rr.RESOURCE_ID = r.ID AND (r.DELETED = 0 OR r.DELETED IS NULL)
             JOIN SYS_MODULE m ON r.MAIN_ID = m.ID
         WHERE ru.USER_ID = #{uid}
-            AND (<include refid="common.avalibleSQL"><property name="prefix" value="m"/></include>)
+            AND (m.DELETED = 0 OR m.DELETED IS NULL)
         ORDER BY m.SORT ASC
     </select>
 
     <select id="selectModuleMapList" resultMap="BaseResultMap">
-        SELECT * FROM SYS_MODULE t
+        SELECT
+            <include refid="ModuleDetailColumns"><property name="alias" value="t"/></include>
+        FROM SYS_MODULE t
         <where>
-            (<include refid="common.avalibleSQL"><property name="prefix" value="t"/></include>)
+            (t.DELETED = 0 OR t.DELETED IS NULL)
             <if test="bo.id != null">
                 AND t.ID = #{bo.id}
             </if>

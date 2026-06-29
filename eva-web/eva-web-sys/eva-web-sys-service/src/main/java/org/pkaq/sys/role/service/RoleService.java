@@ -1,18 +1,24 @@
 package org.pkaq.sys.role.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.enums.FrozenEnumm;
+import org.pkaq.core.event.ModuleResourceChangedEvent;
+import org.pkaq.core.event.ModuleResourceChangedEvent.ChangeReason;
 import org.pkaq.core.mvc.bo.IdCodeBo;
+import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.core.mybatis.util.TreeHelper;
 import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.core.util.CollUtils;
 import org.pkaq.sys.module.mapper.ModuleMapper;
 import org.pkaq.sys.module.vo.ModuleDetailVo;
+import org.pkaq.sys.module.vo.ModuleResourcesVo;
+import org.pkaq.sys.role.bo.RoleAoeBo;
 import org.pkaq.sys.role.bo.RoleResourceRefBo;
 import org.pkaq.sys.role.bo.RoleUserRefBo;
 import org.pkaq.sys.role.entity.RoleEntity;
@@ -23,21 +29,25 @@ import org.pkaq.sys.role.mapper.RoleResourceMapper;
 import org.pkaq.sys.role.mapper.RoleUserMapper;
 import org.pkaq.sys.role.vo.RoleGrantedModuleVo;
 import org.pkaq.sys.role.vo.RoleGrantedUserVo;
+import org.pkaq.sys.tenant.mapper.TenantResourceMapper;
 import org.pkaq.sys.user.convert.UserConvert;
 import org.pkaq.sys.user.entity.UserEntity;
 import org.pkaq.sys.user.mapper.UserMapper;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * 角色服务
+ * 角色服务。
  *
  * @author PKAQ
  */
@@ -53,12 +63,16 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
 
     private final UserMapper userMapper;
 
+    private final TenantResourceMapper tenantResourceMapper;
+
     private final UserConvert userConvert;
 
+    private final ApplicationEventPublisher eventPublisher;
+
     /**
-     * 批量删除角色：
-     * - 同步清理 角色-用户、角色-资源 中间表
-     * - 自增受影响用户的权限版本号（让其下一次请求重新拉权限）
+     * 批量删除角色，同步清理角色-用户、角色-资源关系，并刷新受影响用户权限版本号。
+     *
+     * @param ids 角色ID集合
      */
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
@@ -66,32 +80,89 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
         if (CollUtils.isEmpty(ids)) {
             return;
         }
+        Set<Long> roleIds = sanitizeIds(ids);
+        if (CollUtils.isEmpty(roleIds)) {
+            return;
+        }
 
-        // 删除前收集受影响用户
-        Set<Long> affectedUsers = fetchUsersByRoleIds(ids);
+        Set<Long> affectedUsers = fetchUsersByRoleIds(roleIds);
+        this.roleUserMapper.delete(new LambdaQueryWrapper<RoleUserEntity>().in(RoleUserEntity::getRoleId, roleIds));
+        this.roleResourceMapper.delete(new LambdaQueryWrapper<RoleResourceEntity>().in(RoleResourceEntity::getRoleId, roleIds));
+        this.mapper.deleteByIds(roleIds);
 
-        // 删除 角色-用户 中间表
-        this.roleUserMapper.delete(new LambdaQueryWrapper<RoleUserEntity>().in(RoleUserEntity::getRoleId, ids));
-        // 删除 角色-资源 中间表
-        this.roleResourceMapper.delete(new LambdaQueryWrapper<RoleResourceEntity>().in(RoleResourceEntity::getRoleId, ids));
-        // 删除角色本体
-        this.mapper.deleteByIds(ids);
-
-        // 自增受影响用户的权限版本号
+        this.eventPublisher.publishEvent(new ModuleResourceChangedEvent(this, roleIds, ChangeReason.ROLE_RESOURCE_CHANGED));
         incrementPermVer(affectedUsers);
     }
 
     /**
-     * 校验编码唯一性（同名 / 同 code）
-     * 注意：RoleEntity.setCode 已统一规范化为 ROLE_ 前缀 + 大写，
-     * 此处只做查询比对，不再二次拼接前缀。
+     * 新增或编辑角色。
+     *
+     * @param bo 角色保存参数
+     */
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public void editUniqueCode(RoleAoeBo bo) {
+        if (bo == null || !hasText(bo.getCode()) || !hasText(bo.getName())) {
+            CommonCodes.PARAM_ERROR.newException();
+            return;
+        }
+        if (bo.getId() != null && bo.getId() != 0L) {
+            ensureRoleExists(bo.getId());
+        }
+        IdCodeBo codeCheck = new IdCodeBo();
+        codeCheck.setId(bo.getId());
+        codeCheck.setCode(bo.getCode());
+        if (this.isUnique(codeCheck) || isDuplicateName(bo)) {
+            CommonCodes.DUPLICATE_CODE_ERROR.newException();
+            return;
+        }
+        RoleEntity entity = this.convert.fromBo(bo);
+        this.mapper.insertOrUpdate(entity);
+        if (bo.getId() != null && bo.getId() != 0L) {
+            incrementPermVer(fetchUsersByRoleIds(Set.of(bo.getId())));
+        }
+    }
+
+    /**
+     * 切换角色冻结状态，并刷新受影响用户权限版本号。
+     *
+     * @param ids 角色ID集合
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public void switchFrozen(SingleArray<Long> ids) {
+        if (ids == null || CollUtils.isEmpty(ids.getParam())) {
+            CommonCodes.PARAM_ERROR.newException();
+            return;
+        }
+        Set<Long> roleIds = sanitizeIds(ids.getParam());
+        Set<Long> affectedUsers = fetchUsersByRoleIds(roleIds);
+
+        for (Long roleId : roleIds) {
+            RoleEntity role = this.mapper.selectById(roleId);
+            if (role == null || role.getFrozen() == FrozenEnumm.READ_ONLY) {
+                continue;
+            }
+            FrozenEnumm target = role.getFrozen() == FrozenEnumm.FROZEN
+                    ? FrozenEnumm.UN_FROZEN
+                    : FrozenEnumm.FROZEN;
+            this.mapper.update(null, new LambdaUpdateWrapper<RoleEntity>()
+                    .eq(RoleEntity::getId, roleId)
+                    .set(RoleEntity::getFrozen, target));
+        }
+        incrementPermVer(affectedUsers);
+    }
+
+    /**
+     * 校验角色编码是否已存在。
+     *
+     * @param idCodeBo 编码校验参数
+     * @return true 表示已存在
      */
     @Override
     public boolean isUnique(IdCodeBo idCodeBo) {
         if (idCodeBo == null || idCodeBo.getCode() == null) {
             return false;
         }
-        // 规范化：与 setCode 同样的规则
         String code = idCodeBo.getCode().trim();
         if (!code.toUpperCase().startsWith(CommonConstant.AUTH_PREFIX)) {
             code = CommonConstant.AUTH_PREFIX + code;
@@ -106,7 +177,10 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
     }
 
     /**
-     * 获取角色绑定的所有模块资源
+     * 获取角色可授权的模块资源树，并标记当前角色已授权资源。
+     *
+     * @param roleModule 角色授权查询参数
+     * @return 角色授权模块资源
      */
     @Override
     public RoleGrantedModuleVo fetchResource(RoleResourceRefBo roleModule) {
@@ -114,37 +188,40 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
             CommonCodes.PARAM_ERROR.newException();
             return null;
         }
-        var curUid = ThreadUserHelper.getUserId();
-        var roleId = roleModule.getRoleId();
+        Long roleId = roleModule.getRoleId();
+        ensureRoleExists(roleId);
 
+        Long curUid = ThreadUserHelper.getUserId();
         Map<Long, ModuleDetailVo> moduleMap = this.moduleMapper.listGrantedModules(curUid);
-        Map<Long, List<org.pkaq.sys.module.vo.ModuleResourcesVo>> resourceMap = this.roleResourceMapper.listGrantedResource(roleId);
+        Map<Long, ModuleDetailVo> grantedModuleMap = moduleMap == null ? new LinkedHashMap<>() : moduleMap;
+        List<ModuleResourcesVo> resources = this.roleResourceMapper.listGrantedResource(roleId);
+        if (resources == null) {
+            resources = List.of();
+        }
+        Map<Long, List<ModuleResourcesVo>> resourceMap = resources.stream()
+                .collect(Collectors.groupingBy(ModuleResourcesVo::getMainId, LinkedHashMap::new, Collectors.toList()));
 
         Set<Long> moduleChecked = new HashSet<>();
-        // 将资源装配到模块；防御性 NPE：moduleMap 中可能没有对应模块（被删/无权限）
-        if (CollUtils.isNotEmpty(resourceMap)) {
-            resourceMap.forEach((moduleId, resources) -> {
-                ModuleDetailVo module = moduleMap.get(moduleId);
-                if (module != null) {
-                    module.setResources(resources);
+        resourceMap.forEach((moduleId, moduleResources) -> {
+            ModuleDetailVo module = grantedModuleMap.get(moduleId);
+            if (module != null) {
+                module.setResources(moduleResources);
+                if (moduleResources.stream().anyMatch(this::isCheckedResource)) {
                     moduleChecked.add(moduleId);
                 }
-            });
-        }
-
-        var moduleTree = TreeHelper.buildTree(moduleMap.values());
+            }
+        });
 
         RoleGrantedModuleVo vo = new RoleGrantedModuleVo();
-        vo.setModules(moduleTree);
+        vo.setModules(TreeHelper.buildTree(grantedModuleMap.values()));
         vo.setCheckedModuleIds(moduleChecked);
         return vo;
     }
 
     /**
-     * 保存角色-资源关系（diff 模式）
-     * - 新增的资源 id 插入
-     * - 已存在但不在新集合的删除
-     * - 保留交集（避免无谓 IO）
+     * 保存角色-资源关系，采用 diff 模式避免无意义删除插入。
+     *
+     * @param role 角色资源授权参数
      */
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
@@ -154,20 +231,20 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
             return;
         }
         Long roleId = role.getRoleId();
+        ensureRoleExists(roleId);
 
-        // 当前已授权的 resource id 集合
         Set<Long> existing = this.roleResourceMapper.selectList(
                         new LambdaQueryWrapper<RoleResourceEntity>().eq(RoleResourceEntity::getRoleId, roleId))
                 .stream()
                 .map(RoleResourceEntity::getResourceId)
                 .collect(Collectors.toSet());
 
-        Set<Long> incoming = CollUtils.isEmpty(role.getResourceId()) ? new HashSet<>() : new HashSet<>(role.getResourceId());
+        Set<Long> incoming = sanitizeIds(role.getResourceId());
+        ensureResourcesValid(incoming);
+        ensureTenantResourcesAuthorized(incoming);
 
-        // 待新增 = incoming - existing
         Set<Long> toInsert = new HashSet<>(incoming);
         toInsert.removeAll(existing);
-        // 待删除 = existing - incoming
         Set<Long> toDelete = new HashSet<>(existing);
         toDelete.removeAll(incoming);
 
@@ -177,23 +254,35 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
                     .in(RoleResourceEntity::getResourceId, toDelete));
         }
         if (!toInsert.isEmpty()) {
-            for (Long rid : toInsert) {
+            for (Long resourceId : toInsert) {
                 RoleResourceEntity ref = new RoleResourceEntity();
                 ref.setRoleId(roleId);
-                ref.setResourceId(rid);
+                ref.setResourceId(resourceId);
                 this.roleResourceMapper.insert(ref);
             }
         }
 
-        // 该角色下的所有用户都需要刷新权限版本号
-        incrementPermVer(fetchUsersByRoleIds(Set.of(roleId)));
+        if (!toDelete.isEmpty() || !toInsert.isEmpty()) {
+            this.eventPublisher.publishEvent(new ModuleResourceChangedEvent(this, roleId, ChangeReason.ROLE_RESOURCE_CHANGED));
+            incrementPermVer(fetchUsersByRoleIds(Set.of(roleId)));
+        }
     }
 
     /**
-     * 获取角色绑定的所有用户（指定部门下）
+     * 获取角色绑定用户列表。
+     *
+     * @param roleId 角色ID
+     * @param deptId 部门ID
+     * @return 角色授权用户
      */
     @Override
     public RoleGrantedUserVo listUser(Long roleId, Long deptId) {
+        if (roleId == null) {
+            CommonCodes.PARAM_ERROR.newException();
+            return null;
+        }
+        ensureRoleExists(roleId);
+
         LambdaQueryWrapper<UserEntity> userWrapper = new LambdaQueryWrapper<>();
         userWrapper.eq(deptId != null && deptId != 0L, UserEntity::getDeptId, deptId);
         userWrapper.eq(UserEntity::getFrozen, FrozenEnumm.UN_FROZEN);
@@ -216,8 +305,9 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
     }
 
     /**
-     * 保存角色-用户关系（diff 模式 + 事务）
-     * 删除前后受影响用户均自增权限版本号
+     * 保存角色-用户关系，采用 diff 模式避免无意义删除插入。
+     *
+     * @param role 角色用户授权参数
      */
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
@@ -227,14 +317,15 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
             return;
         }
         Long roleId = role.getRoleId();
+        ensureRoleExists(roleId);
 
-        // 受影响用户 = 旧 ∪ 新（无论增加还是减少都要刷 permVer）
         Set<Long> oldUsers = fetchUsersByRoleIds(Set.of(roleId));
-        Set<Long> incoming = CollUtils.isEmpty(role.getUserId()) ? new HashSet<>() : new HashSet<>(role.getUserId());
+        Set<Long> incoming = sanitizeIds(role.getUserId());
+        ensureUsersValid(incoming);
+
         Set<Long> affectedUsers = new HashSet<>(oldUsers);
         affectedUsers.addAll(incoming);
 
-        // diff
         Set<Long> toInsert = new HashSet<>(incoming);
         toInsert.removeAll(oldUsers);
         Set<Long> toDelete = new HashSet<>(oldUsers);
@@ -246,24 +337,88 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
                     .in(RoleUserEntity::getUserId, toDelete));
         }
         if (!toInsert.isEmpty()) {
-            for (Long uid : toInsert) {
+            for (Long userId : toInsert) {
                 RoleUserEntity ref = new RoleUserEntity();
                 ref.setRoleId(roleId);
-                ref.setUserId(uid);
+                ref.setUserId(userId);
                 this.roleUserMapper.insert(ref);
             }
         }
 
-        incrementPermVer(affectedUsers);
+        if (!toDelete.isEmpty() || !toInsert.isEmpty()) {
+            incrementPermVer(affectedUsers);
+        }
     }
 
-    // ------------------------------------------------------------------
-    // 私有辅助方法
-    // ------------------------------------------------------------------
+    private void ensureRoleExists(Long roleId) {
+        if (roleId == null || this.mapper.selectById(roleId) == null) {
+            CommonCodes.CAN_NOT_FIND_RECORD.newException(roleId);
+        }
+    }
 
-    /**
-     * 查询指定角色集合下所有用户的 id
-     */
+    private void ensureResourcesValid(Set<Long> resourceIds) {
+        if (CollUtils.isEmpty(resourceIds)) {
+            return;
+        }
+        Set<Long> validIds = this.roleResourceMapper.selectValidResourceIds(resourceIds);
+        if (validIds == null || validIds.size() != resourceIds.size()) {
+            CommonCodes.PARAM_ERROR.newException();
+        }
+    }
+
+    private void ensureTenantResourcesAuthorized(Set<Long> resourceIds) {
+        if (CollUtils.isEmpty(resourceIds)) {
+            return;
+        }
+        long tenantId = ThreadUserHelper.getTenantId();
+        if (tenantId <= 0L) {
+            return;
+        }
+        Set<Long> authorizedIds = this.tenantResourceMapper.selectAuthorizedResourceIds(tenantId);
+        if (authorizedIds == null || !authorizedIds.containsAll(resourceIds)) {
+            CommonCodes.PARAM_ERROR.newException();
+        }
+    }
+
+    private void ensureUsersValid(Set<Long> userIds) {
+        if (CollUtils.isEmpty(userIds)) {
+            return;
+        }
+        Set<Long> validIds = this.userMapper.selectList(new LambdaQueryWrapper<UserEntity>()
+                        .select(UserEntity::getId)
+                        .in(UserEntity::getId, userIds)
+                        .eq(UserEntity::getFrozen, FrozenEnumm.UN_FROZEN))
+                .stream()
+                .map(UserEntity::getId)
+                .collect(Collectors.toSet());
+        if (validIds.size() != userIds.size()) {
+            CommonCodes.PARAM_ERROR.newException();
+        }
+    }
+
+    private boolean isDuplicateName(RoleAoeBo bo) {
+        return this.mapper.selectCount(new LambdaQueryWrapper<RoleEntity>()
+                .eq(RoleEntity::getName, bo.getName().trim())
+                .ne(bo.getId() != null && bo.getId() != 0L, RoleEntity::getId, bo.getId())) > 0;
+    }
+
+    private boolean isCheckedResource(ModuleResourcesVo resource) {
+        return resource != null && resource.getChecked() != null && resource.getChecked() == 1;
+    }
+
+    private Set<Long> sanitizeIds(Collection<Long> ids) {
+        if (CollUtils.isEmpty(ids)) {
+            return new HashSet<>();
+        }
+        return ids.stream()
+                .filter(id -> id != null && id != 0L)
+                .collect(Collectors.toSet());
+    }
+
+    private boolean hasText(String value) {
+        return value != null && !value.trim().isEmpty();
+    }
+
     private Set<Long> fetchUsersByRoleIds(Set<Long> roleIds) {
         if (CollUtils.isEmpty(roleIds)) {
             return new HashSet<>();
@@ -277,9 +432,6 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
                 .collect(Collectors.toSet());
     }
 
-    /**
-     * 自增一批用户的权限版本号
-     */
     private void incrementPermVer(Set<Long> userIds) {
         if (CollUtils.isEmpty(userIds)) {
             return;

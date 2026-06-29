@@ -18,10 +18,10 @@ public class UserResourceVo implements Vo {
 
     private Long pid;
 
-    @Schema(description = "模块路由url")
+    @Schema(description = "模块路由 URL")
     private String routeurl;
 
-    @Schema(description = "模块前端model url")
+    @Schema(description = "模块前端组件 URL")
     private String modelurl;
 
     @Schema(description = "子节点")

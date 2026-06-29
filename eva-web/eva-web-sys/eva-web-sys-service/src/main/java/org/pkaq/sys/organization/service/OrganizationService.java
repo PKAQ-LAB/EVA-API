@@ -31,30 +31,24 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * 组织 / 部门管理 Service —— 树形结构（CRUD + 冻结 + 同级拖拽）标准范本
+ * 组织管理服务。
  * <p>
- * 数据约定（与 sys_module / sys_post 一致）：
- * 1. pid 非空，根节点 pid = 0
- * 2. path 形如 "/{id}"（根）、"/{parentPath}/{id}"（子孙）
- * 3. sort 同级递增，跨级移动后自动追加到末尾
- * 4. isleaf：新增 / 移走最后一个子节点时自动维护
- * <p>
- * 注意：删除时"部门-用户引用"检查暂未实现，后续作为 ReferenceChecker SPI 接入。
+ * 维护组织树的增删改查、冻结、同级排序和 path/isleaf 等树形字段。
  *
  * @author PKAQ
  */
 @Service
 @RequiredArgsConstructor
 public class OrganizationService extends StdService<OrganizationMapper, OrganizationEntity> {
-    /** 根节点 pid 哨兵值 */
+    /** 根节点 pid，与数据库默认值保持一致。 */
     private static final long ROOT_PID = 0L;
 
     private final OrganizationConvert organizationConvert;
 
     /**
-     * 校验编码在同 pid 下唯一（同租户由拦截器隔离）
+     * 校验同级组织 code 或名称是否重复。
      *
-     * @return true = 已存在重复
+     * @return true 表示已存在
      */
     public boolean checkUnique(OrganizationAoeBo bo) {
         if (bo == null) {
@@ -75,7 +69,7 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
     }
 
     /**
-     * 树形列表查询
+     * 查询。
      */
     public Collection<OrganizationListVo> list(OrganizationQueryBo queryBo) {
         Map<Long, OrganizationListVo> orgMap = this.mapper.selectOrgMapList(queryBo);
@@ -86,12 +80,11 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
     }
 
     /**
-     * 新增 / 编辑组织
+     * 新增或编辑组织。
      */
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void edit(OrganizationAoeBo bo) {
         OrganizationEntity org = this.organizationConvert.aoeBoToEntity(bo);
-        // 入口规范化：前端未传 pid 时统一为根节点哨兵 0
         if (org.getPid() == null) {
             org.setPid(ROOT_PID);
         }
@@ -112,25 +105,27 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
             if (!isRoot) {
                 setParentLeaf(pid, false);
             }
-        } else {
-            OrganizationEntity origin = this.mapper.selectById(orgId);
-            if (origin == null) {
-                CommonCodes.CAN_NOT_FIND_RECORD.newException(orgId);
-                return;
-            }
-
-            if (!Objects.equals(origin.getPid(), pid)) {
-                handleParentChange(org, origin, isRoot);
-            } else {
-                org.setPath(origin.getPath());
-                org.setSort(origin.getSort());
-                this.mapper.updateById(org);
-            }
+            return;
         }
+
+        OrganizationEntity origin = this.mapper.selectById(orgId);
+        if (origin == null) {
+            CommonCodes.CAN_NOT_FIND_RECORD.newException(orgId);
+            return;
+        }
+
+        if (!Objects.equals(origin.getPid(), pid)) {
+            handleParentChange(org, origin, isRoot);
+            return;
+        }
+
+        org.setPath(origin.getPath());
+        org.setSort(origin.getSort());
+        this.mapper.updateById(org);
     }
 
     /**
-     * 详情查询
+     * 查询组织详情。
      */
     public OrganizationDetailVo get(Long id) {
         OrganizationEntity entity = this.mapper.selectById(id);
@@ -139,7 +134,6 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
             return null;
         }
         OrganizationDetailVo vo = this.organizationConvert.entityToDetailVo(entity);
-        // 回填上级节点名称
         if (entity.getPid() != null && entity.getPid() != ROOT_PID) {
             OrganizationEntity parent = this.mapper.selectById(entity.getPid());
             if (parent != null) {
@@ -150,10 +144,7 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
     }
 
     /**
-     * 批量删除：
-     * - 子节点存在性检查（不允许删除非叶子）
-     * - 删除后维护原父节点 isleaf
-     * - 部门-用户引用检查留待 ReferenceChecker SPI 后续接入
+     * 删除组织。
      */
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void delete(Set<Long> ids) {
@@ -161,7 +152,6 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
             return;
         }
 
-        // 子节点存在性检查
         List<OrganizationEntity> leafList = this.mapper.selectList(new LambdaQueryWrapper<OrganizationEntity>()
                 .in(OrganizationEntity::getPid, ids));
         if (CollUtils.isNotEmpty(leafList)) {
@@ -173,7 +163,6 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
             return;
         }
 
-        // 收集原父节点 id（非根）
         Set<Long> originPids = this.mapper.selectList(new LambdaQueryWrapper<OrganizationEntity>()
                         .select(OrganizationEntity::getPid)
                         .in(OrganizationEntity::getId, ids))
@@ -182,15 +171,12 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
                 .filter(pid -> pid != null && pid != ROOT_PID)
                 .collect(Collectors.toSet());
 
-        // 删除组织本体（StdEntity @TableLogic → 逻辑删）
         this.mapper.delete(new LambdaQueryWrapper<OrganizationEntity>().in(OrganizationEntity::getId, ids));
-
-        // 刷新原父节点 isleaf
         refreshParentLeaf(originPids);
     }
 
     /**
-     * 同级拖拽排序
+     * 同级拖拽排序。
      */
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void sort(OrganizationSortBo bo) {
@@ -210,7 +196,7 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
     }
 
     /**
-     * 批量切换冻结状态（逐个翻转，子节点跳过判断）
+     * 切换冻结状态，并级联处理子节点。
      */
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void switchFrozen(SingleArray<Long> ids) {
@@ -226,7 +212,6 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
                     ? FrozenEnumm.UN_FROZEN
                     : FrozenEnumm.FROZEN;
 
-            // 解锁时若父节点为冻结，禁止解锁子节点
             if (target == FrozenEnumm.UN_FROZEN && self.getPid() != null && self.getPid() != ROOT_PID) {
                 OrganizationEntity parent = this.mapper.selectById(self.getPid());
                 if (parent != null && parent.getFrozen() == FrozenEnumm.FROZEN) {
@@ -237,11 +222,9 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
         }
     }
 
-    // ------------------------------------------------------------------
-    // 私有辅助方法（与 ModuleService / PostService 范本一致）
-    // ------------------------------------------------------------------
-
-    /** 计算节点 path：根节点 = "/{id}"，非根 = "{parentPath}/{id}" */
+    /**
+     * 构建组织 path。
+     */
     private String buildPath(long pid, long id, boolean isRoot) {
         if (isRoot) {
             return "/" + id;
@@ -254,20 +237,26 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
         return parent.getPath() + "/" + id;
     }
 
-    /** 取指定父节点下的下一个 sort 值 */
+    /**
+     * 获取同级下一个排序值。
+     */
     private double nextSort(long pid) {
         Integer maxSort = this.mapper.listOrder(pid);
         return (maxSort == null ? 0 : maxSort) + 1;
     }
 
-    /** 设置指定节点的 isleaf */
+    /**
+     * 设置父节点叶子状态。
+     */
     private void setParentLeaf(long pid, boolean isleaf) {
         this.mapper.update(null, new LambdaUpdateWrapper<OrganizationEntity>()
                 .eq(OrganizationEntity::getId, pid)
                 .set(OrganizationEntity::getIsleaf, isleaf));
     }
 
-    /** 对一批父节点 id，若已无子节点则置 isleaf=true */
+    /**
+     * 刷新父节点叶子状态。
+     */
     private void refreshParentLeaf(Set<Long> parentIds) {
         if (CollUtils.isEmpty(parentIds)) {
             return;
@@ -281,7 +270,7 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
         }
     }
 
-    /** 处理父节点变更：重算 path、刷新所有子孙 path、维护两边 isleaf */
+    /** 更换父节点时刷新当前节点、子孙节点路径以及新旧父节点叶子状态。 */
     private void handleParentChange(OrganizationEntity org, OrganizationEntity origin, boolean isRoot) {
         long orgId = org.getId();
         long newPid = org.getPid();

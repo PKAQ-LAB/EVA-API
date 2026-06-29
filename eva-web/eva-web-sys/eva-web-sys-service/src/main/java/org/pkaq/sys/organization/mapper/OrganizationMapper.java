@@ -1,6 +1,7 @@
 package org.pkaq.sys.organization.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.pkaq.sys.organization.bo.OrganizationQueryBo;
@@ -22,6 +23,7 @@ public interface OrganizationMapper extends BaseMapper<OrganizationEntity> {
     /**
      * 树形查询（含 parentName 回填，按 pid + sort 排序）
      */
+    @MapKey("id")
     Map<Long, OrganizationListVo> selectOrgMapList(@Param("q") OrganizationQueryBo queryBo);
 
     /**

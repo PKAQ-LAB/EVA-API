@@ -1,7 +1,6 @@
 package org.pkaq.sys.role.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.pkaq.core.annotation.Ignore;
@@ -11,7 +10,6 @@ import org.pkaq.sys.role.entity.RoleResourceEntity;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -38,15 +36,14 @@ public interface RoleResourceMapper extends BaseMapper<RoleResourceEntity> {
      * @param roleId 角色ID
      * @return 资源列表
      */
-    @MapKey("MODULE_ID")
-    Map<Long, List<ModuleResourcesVo>> listGrantedResource(Long roleId);
+    List<ModuleResourcesVo> listGrantedResource(Long roleId);
 
     /**
      * 删除权限中失效的引用关系
      *
      * @param moduleId 模块ID
      */
-    void purgeBrokenRoleResourceRefs(Long moduleId);
+    void purgeBrokenRoleResourceRefs(@Param("moduleId") Long moduleId);
 
     /**
      * 删除指定资源的角色授权关系
@@ -63,4 +60,28 @@ public interface RoleResourceMapper extends BaseMapper<RoleResourceEntity> {
      * @return 影响行数
      */
     int deleteByModuleIds(@Param("moduleIds") Set<Long> ids);
+
+    /**
+     * 查询引用指定资源的角色。
+     *
+     * @param resourceIds 资源ID集合
+     * @return 角色ID集合
+     */
+    Set<Long> selectRoleIdsByResourceIds(@Param("resourceIds") Set<Long> resourceIds);
+
+    /**
+     * 查询引用指定模块资源的角色。
+     *
+     * @param moduleIds 模块ID集合
+     * @return 角色ID集合
+     */
+    Set<Long> selectRoleIdsByModuleIds(@Param("moduleIds") Set<Long> moduleIds);
+
+    /**
+     * 查询仍然有效的资源ID。
+     *
+     * @param resourceIds 资源ID集合
+     * @return 有效资源ID集合
+     */
+    Set<Long> selectValidResourceIds(@Param("resourceIds") Set<Long> resourceIds);
 }
