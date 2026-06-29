@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import org.pkaq.core.mvc.bo.StdBo;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 租户管理-详情-请求参数
@@ -73,4 +74,7 @@ public class TenantAoeBo extends StdBo {
 
     @Schema(description = "租户管理员密码")
     private String adminPass;
+
+    @Schema(description = "租户授权资源ID集合")
+    private List<Long> resourceIds;
 }

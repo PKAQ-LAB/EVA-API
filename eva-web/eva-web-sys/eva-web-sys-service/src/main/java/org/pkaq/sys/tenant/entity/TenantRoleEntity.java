@@ -15,7 +15,7 @@ import org.apache.ibatis.type.Alias;
  */
 @Data
 @Alias("tenantUser")
-@TableName("sys_tenant_role")
+@TableName("SYS_TENANT_ROLE")
 @EqualsAndHashCode()
 public class TenantRoleEntity {
     @TableId(type = IdType.ASSIGN_ID)

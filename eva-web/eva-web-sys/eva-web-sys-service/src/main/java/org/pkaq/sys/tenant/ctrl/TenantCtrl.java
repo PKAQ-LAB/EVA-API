@@ -35,7 +35,7 @@ public class TenantCtrl extends Ctrl {
     private final TenantService service;
 
     @PostMapping("/checkUnique")
-    @Operation(summary = "校验租户code/name唯一性")
+    @Operation(summary = "校验租户 code/name 唯一性")
     public Response<Object> checkUnique(@Parameter(name = "checkBo", description = "要进行校验的参数")
                                         @RequestBody TenantCheckBo checkBo) {
         if (null == checkBo.getCode() && null == checkBo.getName()) {
@@ -65,7 +65,7 @@ public class TenantCtrl extends Ctrl {
     }
 
     @GetMapping("/list")
-    @Operation(summary = "根据条件查询列表数据 ")
+    @Operation(summary = "根据条件查询列表数据")
     @BizLog(operateType = BizLogCodes.QUERY, description = "查询了租户列表[{0}]", args = {"param:0"})
     public Response<PageVo<TenantListVo>> list(@Parameter(name = "queryBo", description = "请求参数")
                                                TenantQueryBo queryBo) {

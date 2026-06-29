@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.pkaq.sys.tenant.mapper.TenantResourceMapper">
+    <select id="selectAuthorizedResourceIds" resultType="java.lang.Long">
+        SELECT RESOURCE_ID
+        FROM SYS_TENANT_RESOURCE
+        WHERE TENANT_ID = #{tenantId}
+    </select>
+
+    <delete id="deleteUnauthorizedRoleResources">
+        DELETE FROM SYS_ROLERES_REF rr
+        USING SYS_ROLE r
+        WHERE rr.ROLE_ID = r.ID
+          AND r.TENANT_ID = #{tenantId}
+        <choose>
+            <when test="resourceIds != null and resourceIds.size() > 0">
+                AND rr.RESOURCE_ID NOT IN
+                <foreach collection="resourceIds" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </when>
+            <otherwise>
+                AND 1 = 1
+            </otherwise>
+        </choose>
+    </delete>
+
+    <select id="selectTenantUserIds" resultType="java.lang.Long">
+        SELECT ID
+        FROM SYS_USER
+        WHERE TENANT_ID = #{tenantId}
+          AND (DELETED = 0 OR DELETED IS NULL)
+    </select>
+
+    <select id="selectTenantRoleIds" resultType="java.lang.Long">
+        SELECT ID
+        FROM SYS_ROLE
+        WHERE TENANT_ID = #{tenantId}
+          AND (DELETED = 0 OR DELETED IS NULL)
+    </select>
+</mapper>

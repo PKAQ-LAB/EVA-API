@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import org.pkaq.core.mvc.vo.StdVo;
 
 import java.util.Date;
+import java.util.Set;
 
 /**
  * 租户管理详情视图对象
@@ -49,4 +50,7 @@ public class TenantDetailVo extends StdVo {
 
     @Schema(description = "租户管理员账号")
     private String adminAccount;
+
+    @Schema(description = "租户已授权资源ID集合")
+    private Set<Long> resourceIds;
 }

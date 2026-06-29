@@ -17,7 +17,7 @@ public class TenantAuthBo {
     @NotNull
     private Long id;
 
-    @Schema(description = "原角色id 修改时材有")
+    @Schema(description = "原角色 id，修改时使用")
     private String oldRole;
 
     @Schema(description = "角色id")
