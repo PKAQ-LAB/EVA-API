@@ -16,11 +16,17 @@ public interface IDictService {
 
     Map<String, LinkedHashMap<String, String>> selectDict();
 
-    Map<?, ?> fetchDicts();
+    Map<String, LinkedHashMap<String, String>> fetchDicts();
+
+    Map<String, String> queryDict(String type);
 
     DictViewVo getDict(DictAoeBo bo);
 
     List<DictViewVo> listDict();
+
+    List<DictViewVo> listDictByType(String type);
+
+    boolean validateLeaf(String type, String value);
 
     void delDict(Long id);
 

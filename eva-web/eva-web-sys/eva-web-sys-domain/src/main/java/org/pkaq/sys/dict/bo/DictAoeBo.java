@@ -5,48 +5,46 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.pkaq.core.mvc.bo.Bo;
 
-import java.util.List;
-
 /**
- * 字典编辑BO
+ * 字典节点新增编辑参数
  *
  * @author PKAQ
  */
 @Data
-@Schema(title = "字典编辑BO")
+@Schema(title = "字典节点编辑BO")
 public class DictAoeBo implements Bo {
+    @Schema(description = "字典节点 ID")
     private Long id;
 
     @Schema(description = "乐观锁")
-    private int revision;
+    private Integer revision;
 
-    @Schema(description = "是否冻结（0000 - 未冻结，0001 - 冻结， 9999 - 不可编辑）")
-    private String frozen;
+    @Schema(description = "是否冻结：0-未冻结，1-冻结，-1-只读")
+    private Integer frozen;
 
     @Schema(description = "展示顺序")
-    private int sort;
+    private double sort;
 
     @Schema(description = "备注")
     private String remark;
 
-    @NotBlank(message = "{sys.dict.category.empty}")
-    @Schema(description = "归属类型")
-    private String category;
+    @Schema(description = "字典类型编码，根节点默认等于 code，子节点默认继承父节点 type")
+    private String type;
 
     @NotBlank(message = "{sys.dict.code.empty}")
-    @Schema(description = "字典编码")
+    @Schema(description = "节点编码")
     private String code;
 
     @NotBlank(message = "{sys.dict.name.empty}")
-    @Schema(description = "字典名称")
+    @Schema(description = "鑺傜偣鍚嶇О")
     private String name;
 
-    @Schema(description = "上级节点")
-    private String pid;
+    @Schema(description = "叶子节点提交值，为空时默认等于code")
+    private String value;
 
-    @Schema(description = "树路径(id)")
+    @Schema(description = "上级节点 ID，根节点为 0")
+    private Long pid;
+
+    @Schema(description = "树路径")
     private String path;
-
-    @Schema(description = "字典项明细")
-    private List<DictAoeLineBo> lines;
 }

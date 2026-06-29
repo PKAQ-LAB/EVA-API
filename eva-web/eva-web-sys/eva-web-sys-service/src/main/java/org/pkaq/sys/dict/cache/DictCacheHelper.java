@@ -1,5 +1,6 @@
 package org.pkaq.sys.dict.cache;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.Data;
 import org.pkaq.core.cache.util.RedisUtil;
 import org.pkaq.core.constant.CommonConstant;
@@ -54,6 +55,11 @@ public class DictCacheHelper {
     public Map<String, String> get(String code) {
         Cache.ValueWrapper jsonStr = this.cache.get(code);
         return null != jsonStr ? JsonUtil.parse((String) jsonStr.get(), LinkedHashMap.class) : null;
+    }
+
+    public <T> T getObject(String key, TypeReference<T> typeReference) {
+        Cache.ValueWrapper jsonStr = this.cache.get(key);
+        return null != jsonStr ? JsonUtil.parse((String) jsonStr.get(), typeReference) : null;
     }
 
     /**
