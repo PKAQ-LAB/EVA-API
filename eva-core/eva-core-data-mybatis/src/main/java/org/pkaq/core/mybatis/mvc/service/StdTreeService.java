@@ -115,7 +115,7 @@ public abstract class StdTreeService<M extends StdTreeMapper<T>, T extends StdTr
             orderQuery.eq(T::getPid, pid);
             orderQuery.eq(T::getDeleted, DelEnumm.UN_DELETED);
 
-            entity.setSort(this.mapper.selectCount(orderQuery));
+            entity.setSort((double) this.mapper.selectCount(orderQuery));
         } else {
             oldOrgin = this.mapper.selectById(orgId);
         }

@@ -44,5 +44,6 @@ public class StdTreeEntity extends StdEntity {
     /**
      * 子节点
      **/
+    @TableField(exist = false)
     private List<StdTreeEntity> children;
 }

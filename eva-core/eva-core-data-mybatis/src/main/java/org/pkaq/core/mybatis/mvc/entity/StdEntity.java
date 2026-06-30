@@ -40,7 +40,7 @@ public abstract class StdEntity implements Entity {
     /**
      * 展示顺序
      **/
-    private double sort;
+    private Double sort;
 
     /**
      * 租户id（由 MybatisMetaObjectHandler 在新增时按 ThreadUser 自动填充，

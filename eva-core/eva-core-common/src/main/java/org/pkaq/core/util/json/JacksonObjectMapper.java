@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import org.pkaq.core.util.DatePatterns;
 
 import java.io.Serializable;
@@ -50,6 +52,10 @@ public class JacksonObjectMapper extends ObjectMapper implements Serializable {
         //反序列化时，属性不存在的兼容处理s
         super.getDeserializationConfig().withoutFeatures(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         //序列化时，日期的统一格式
+        SimpleModule longModule = new SimpleModule();
+        longModule.addSerializer(Long.class, ToStringSerializer.instance);
+        longModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
+        super.registerModule(longModule);
         // 注册Java 8时间模块
         super.registerModule(new JavaTimeModule());
         super.findAndRegisterModules();
