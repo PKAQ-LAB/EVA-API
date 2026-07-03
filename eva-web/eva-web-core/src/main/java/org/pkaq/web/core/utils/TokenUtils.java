@@ -49,8 +49,10 @@ public class TokenUtils {
 
         authToken = CookieUtils.getCookie(request, tokenKey);
 
-        if (StrUtils.isBlank(authToken) && StrUtils.isNotBlank(authHeader) && authHeader.startsWith(evaConfig.getJwt().getTokenHead())) {
-            authToken = authHeader.substring(evaConfig.getJwt().getTokenHead().length());
+        if (StrUtils.isBlank(authToken)
+                && StrUtils.isNotBlank(authHeader)
+                && authHeader.startsWith(evaConfig.getJwt().getTokenHead())) {
+            authToken = authHeader.substring(evaConfig.getJwt().getTokenHead().length()).trim();
         }
 
         return authToken;

@@ -1,7 +1,6 @@
 package org.pkaq.sys.organization.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.pkaq.sys.organization.bo.OrganizationQueryBo;
@@ -9,7 +8,7 @@ import org.pkaq.sys.organization.entity.OrganizationEntity;
 import org.pkaq.sys.organization.vo.OrganizationListVo;
 import org.springframework.stereotype.Repository;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * 组织管理 Mapper
@@ -23,8 +22,7 @@ public interface OrganizationMapper extends BaseMapper<OrganizationEntity> {
     /**
      * 树形查询（含 parentName 回填，按 pid + sort 排序）
      */
-    @MapKey("id")
-    Map<Long, OrganizationListVo> selectOrgMapList(@Param("q") OrganizationQueryBo queryBo);
+    List<OrganizationListVo> selectOrgMapList(@Param("q") OrganizationQueryBo queryBo);
 
     /**
      * 取指定父节点下当前最大 sort（用于新增节点 sort = max + 1）

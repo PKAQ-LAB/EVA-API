@@ -35,58 +35,54 @@ public class DictCtrl extends Ctrl {
     private final DictService service;
 
     /**
-     * 根据类型从缓存中获取可选叶子字典项銆?     *
+     * 根据类型从缓存中获取字典项。
+     *
      * @param code 字典类型
-     * @return 字典项     */
+     * @return 字典项
+     */
     @GetMapping("/query/{code}")
-    @Operation(summary = "根据类型从缓存中获取可选叶子字典项")
+    @Operation(summary = "根据类型从缓存中获取字典项")
     public Response<Map<String, String>> query(@Parameter(name = "code", description = "字典类型")
                                                @PathVariable(name = "code") String code) {
         return this.success(this.service.queryDict(code));
     }
 
     /**
-     * 获取完整字典树。     *
-     * @return 字典树     */
+     * 获取字典列表。
+     *
+     * @return 字典列表
+     */
     @GetMapping("/list")
-    @Operation(summary = "获取完整字典树")
+    @Operation(summary = "获取字典列表")
     public Response<List<DictViewVo>> listDict() {
         return this.success(this.service.listDict());
     }
 
     /**
-     * 获取指定类型的字典树銆?     *
+     * 校验字典值是否属于指定字典。
+     *
      * @param type 字典类型
-     * @return 字典树     */
-    @GetMapping("/tree/{type}")
-    @Operation(summary = "获取指定类型的字典树")
-    public Response<List<DictViewVo>> treeByType(@Parameter(name = "type", description = "字典类型")
-                                                 @PathVariable("type") String type) {
-        return this.success(this.service.listDictByType(type));
-    }
-
-    /**
-     * 校验字典值是否为可选叶子节点。     *
-     * @param type 字典类型
-     * @param value 字典值     * @return 校验结果
+     * @param value 字典值
+     * @return 校验结果
      */
     @GetMapping("/validate/{type}/{value}")
-    @Operation(summary = "校验字典值是否为可选叶子节点")
-    public Response<Boolean> validateLeaf(@Parameter(name = "type", description = "字典类型")
+    @Operation(summary = "校验字典值是否属于指定字典")
+    public Response<Boolean> validateItem(@Parameter(name = "type", description = "字典类型")
                                           @PathVariable("type") String type,
                                           @Parameter(name = "value", description = "字典值")
                                           @PathVariable("value") String value) {
-        return this.success(this.service.validateLeaf(type, value));
+        return this.success(this.service.validateItem(type, value));
     }
 
     /**
-     * 根据 ID 获取字典节点銆?     *
-     * @param id 字典节点 ID
+     * 根据 ID 获取字典。
+     *
+     * @param id 字典 ID
      * @return 字典详情
      */
     @GetMapping("/get/{id}")
-    @Operation(summary = "根据 ID 获取字典节点")
-    public Response<DictViewVo> getDict(@Parameter(name = "id", description = "字典节点 ID")
+    @Operation(summary = "根据 ID 获取字典")
+    public Response<DictViewVo> getDict(@Parameter(name = "id", description = "字典 ID")
                                         @PathVariable("id") Long id) {
         CommonCodes.NULL_ID.assertNotNull(id);
         DictAoeBo bo = new DictAoeBo();
@@ -95,12 +91,13 @@ public class DictCtrl extends Ctrl {
     }
 
     /**
-     * 根据编码获取字典节点。     *
+     * 根据编码获取字典。
+     *
      * @param code 字典编码
      * @return 字典详情
      */
     @GetMapping("/get/type/{code}")
-    @Operation(summary = "根据编码获取字典节点")
+    @Operation(summary = "根据编码获取字典")
     public Response<DictViewVo> getDictByCode(@Parameter(name = "code", description = "字典编码")
                                               @PathVariable("code") String code) {
         if (StrUtils.isBlank(code)) {
@@ -109,12 +106,12 @@ public class DictCtrl extends Ctrl {
         DictAoeBo bo = new DictAoeBo();
         bo.setCode(code);
         bo.setType(code);
-        bo.setPid(0L);
         return this.success(this.service.getDict(bo));
     }
 
     /**
-     * 校验同级字典编码唯一性。     *
+     * 校验字典编码唯一性。
+     *
      * @param bo 字典参数
      * @return 响应结果
      */
@@ -127,13 +124,14 @@ public class DictCtrl extends Ctrl {
     }
 
     /**
-     * 根据 ID 删除字典节点。     *
-     * @param id 字典节点 ID
+     * 根据 ID 删除字典。
+     *
+     * @param id 字典 ID
      * @return 响应结果
      */
     @GetMapping("/del/{id}")
     @Operation(summary = "根据ID删除")
-    public Response<Object> delDict(@Parameter(name = "id", description = "[字典节点 ID]")
+    public Response<Object> delDict(@Parameter(name = "id", description = "字典 ID")
                                     @PathVariable("id") Long id) {
         CommonCodes.NULL_ID.assertNotNull(id);
 
@@ -142,12 +140,13 @@ public class DictCtrl extends Ctrl {
     }
 
     /**
-     * 新增或编辑字典节点。     *
+     * 新增或编辑字典。
+     *
      * @param dictEntity 字典参数
      * @return 响应结果
      */
     @PostMapping("/edit")
-    @Operation(summary = "新增/编辑字典节点")
+    @Operation(summary = "新增/编辑字典")
     public Response<Object> editDict(@Parameter(name = "dictEntity", description = "字典信息")
                                      @RequestBody @Valid DictAoeBo dictEntity) {
         this.service.edit(dictEntity);
@@ -155,7 +154,8 @@ public class DictCtrl extends Ctrl {
     }
 
     /**
-     * 切换字典冻结状态。     *
+     * 切换字典锁定状态。
+     *
      * @param param 字典 ID 集合
      * @return 响应结果
      */

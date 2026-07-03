@@ -19,9 +19,7 @@ public abstract class StdBo implements Bo {
     @Schema(description = "乐观锁")
     private Integer revision;
 
-    /**
-     * 是否冻结：0 - 未冻结，1 - 冻结，-1 - 不可编辑
-     **/
+    @Schema(description = "是否锁定：0-正常，1-已锁定，9999-只读")
     private Integer frozen;
 
     @Schema(description = "展示顺序")

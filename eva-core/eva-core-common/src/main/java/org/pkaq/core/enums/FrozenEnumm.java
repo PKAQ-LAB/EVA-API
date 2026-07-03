@@ -10,12 +10,12 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum FrozenEnumm implements BaseEnum<Integer> {
-    // 已冻结
+    // 已锁定
     FROZEN(1),
-    // 未冻结
+    // 正常
     UN_FROZEN(0),
     // 只读
-    READ_ONLY(-1);
+    READ_ONLY(9999);
 
     @JsonValue
     private final Integer code;

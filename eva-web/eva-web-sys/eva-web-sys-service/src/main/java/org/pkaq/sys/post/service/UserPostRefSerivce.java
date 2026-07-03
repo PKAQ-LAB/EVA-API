@@ -34,6 +34,9 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class UserPostRefSerivce {
+    /** 系统内置管理员账号编码。 */
+    private static final String SYSTEM_ADMIN_CODE = "9999";
+
     private final PostUserMapper postUserMapper;
     private final PostMapper postMapper;
     private final UserMapper userMapper;
@@ -113,6 +116,10 @@ public class UserPostRefSerivce {
         UserEntity user = this.userMapper.selectById(userId);
         if (user == null) {
             SysCodes.CANNOT_FIND_USER.newException();
+            return;
+        }
+        if (user.getFrozen() == FrozenEnumm.READ_ONLY || SYSTEM_ADMIN_CODE.equals(user.getCode())) {
+            SysCodes.READ_ONLY_RECORD.newException();
         }
     }
 

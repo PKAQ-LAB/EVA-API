@@ -11,14 +11,18 @@ import org.pkaq.core.event.ModuleResourceChangedEvent;
 import org.pkaq.core.event.ModuleResourceChangedEvent.ChangeReason;
 import org.pkaq.core.mvc.bo.IdCodeBo;
 import org.pkaq.core.mvc.bo.SingleArray;
+import org.pkaq.core.mvc.vo.PageVo;
 import org.pkaq.core.mybatis.mvc.service.StdService;
+import org.pkaq.core.mybatis.util.PageResult;
 import org.pkaq.core.mybatis.util.TreeHelper;
 import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.core.util.CollUtils;
+import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.module.mapper.ModuleMapper;
 import org.pkaq.sys.module.vo.ModuleDetailVo;
 import org.pkaq.sys.module.vo.ModuleResourcesVo;
 import org.pkaq.sys.role.bo.RoleAoeBo;
+import org.pkaq.sys.role.bo.RoleQueryBo;
 import org.pkaq.sys.role.bo.RoleResourceRefBo;
 import org.pkaq.sys.role.bo.RoleUserRefBo;
 import org.pkaq.sys.role.entity.RoleEntity;
@@ -54,6 +58,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class RoleService extends StdService<RoleMapper, RoleEntity> implements IRoleService {
+    /** 默认数据权限：全部权限。 */
+    private static final String DEFAULT_DATA_SCOPE = "0000";
 
     private final RoleResourceMapper roleResourceMapper;
 
@@ -70,6 +76,28 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
     private final ApplicationEventPublisher eventPublisher;
 
     /**
+     * 分页查询角色列表，角色名称和角色编码使用模糊查询。
+     *
+     * @param page 查询条件
+     * @return 角色分页列表
+     */
+    public PageVo listPage(RoleQueryBo page) {
+        if (page == null) {
+            CommonCodes.PARAM_ERROR.newException();
+            return null;
+        }
+        LambdaQueryWrapper<RoleEntity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.like(hasText(page.getName()), RoleEntity::getName,
+                page.getName() == null ? null : page.getName().trim());
+        wrapper.like(hasText(page.getCode()), RoleEntity::getCode,
+                page.getCode() == null ? null : page.getCode().trim().toUpperCase());
+        wrapper.orderByDesc(RoleEntity::getUtcModify);
+
+        PageResult<RoleEntity> pagination = new PageResult<>(page.getPageNo(), page.getPageSize());
+        return this.mapper.selectPage(pagination, wrapper).map(this.convert::toVo);
+    }
+
+    /**
      * 批量删除角色，同步清理角色-用户、角色-资源关系，并刷新受影响用户权限版本号。
      *
      * @param ids 角色ID集合
@@ -84,6 +112,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
         if (CollUtils.isEmpty(roleIds)) {
             return;
         }
+        ensureRolesEditable(roleIds);
 
         Set<Long> affectedUsers = fetchUsersByRoleIds(roleIds);
         this.roleUserMapper.delete(new LambdaQueryWrapper<RoleUserEntity>().in(RoleUserEntity::getRoleId, roleIds));
@@ -106,7 +135,10 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
             return;
         }
         if (bo.getId() != null && bo.getId() != 0L) {
-            ensureRoleExists(bo.getId());
+            ensureRoleEditable(bo.getId());
+        }
+        if (!hasText(bo.getDataScope())) {
+            bo.setDataScope(DEFAULT_DATA_SCOPE);
         }
         IdCodeBo codeCheck = new IdCodeBo();
         codeCheck.setId(bo.getId());
@@ -231,7 +263,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
             return;
         }
         Long roleId = role.getRoleId();
-        ensureRoleExists(roleId);
+        ensureRoleEditable(roleId);
 
         Set<Long> existing = this.roleResourceMapper.selectList(
                         new LambdaQueryWrapper<RoleResourceEntity>().eq(RoleResourceEntity::getRoleId, roleId))
@@ -317,7 +349,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
             return;
         }
         Long roleId = role.getRoleId();
-        ensureRoleExists(roleId);
+        ensureRoleEditable(roleId);
 
         Set<Long> oldUsers = fetchUsersByRoleIds(Set.of(roleId));
         Set<Long> incoming = sanitizeIds(role.getUserId());
@@ -353,6 +385,29 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
     private void ensureRoleExists(Long roleId) {
         if (roleId == null || this.mapper.selectById(roleId) == null) {
             CommonCodes.CAN_NOT_FIND_RECORD.newException(roleId);
+        }
+    }
+
+    private void ensureRoleEditable(Long roleId) {
+        RoleEntity role = this.mapper.selectById(roleId);
+        if (role == null) {
+            CommonCodes.CAN_NOT_FIND_RECORD.newException(roleId);
+            return;
+        }
+        if (role.getFrozen() == FrozenEnumm.READ_ONLY) {
+            SysCodes.READ_ONLY_RECORD.newException();
+        }
+    }
+
+    private void ensureRolesEditable(Set<Long> roleIds) {
+        if (CollUtils.isEmpty(roleIds)) {
+            return;
+        }
+        Long readOnlyCount = this.mapper.selectCount(new LambdaQueryWrapper<RoleEntity>()
+                .in(RoleEntity::getId, roleIds)
+                .eq(RoleEntity::getFrozen, FrozenEnumm.READ_ONLY));
+        if (readOnlyCount != null && readOnlyCount > 0L) {
+            SysCodes.READ_ONLY_RECORD.newException();
         }
     }
 

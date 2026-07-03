@@ -8,45 +8,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 字典节点视图对象
+ * 字典视图对象
  *
  * @author PKAQ
  */
 @Data
 public class DictViewVo implements Vo {
-    @Schema(description = "字典节点 ID")
+    @Schema(description = "字典 ID")
     private Long id;
 
     @Schema(description = "字典类型编码")
     private String type;
 
-    @Schema(description = "节点编码")
+    @Schema(description = "字典编码")
     private String code;
 
-    @Schema(description = "鑺傜偣鍚嶇О")
+    @Schema(description = "字典名称")
     private String name;
 
-    @Schema(description = "叶子节点提交值")
-    private String value;
-
-    @Schema(description = "上级节点ID")
-    private Long pid;
-
-    @Schema(description = "树路径")
-    private String path;
-
-    @Schema(description = "是否叶子鑺傜偣")
-    private Boolean isleaf;
-
-    @Schema(description = "是否可选")
-    private Boolean selectable;
-
-    @Schema(description = "是否冻结：0-未冻结，1-冻结，-1-只读")
+    @Schema(description = "是否锁定：0-正常，1-已锁定，9999-只读")
     private Integer frozen;
 
     @Schema(description = "展示顺序")
     private double sort;
 
-    @Schema(description = "子节点列表")
-    private List<DictViewVo> children = new ArrayList<>();
+    @Schema(description = "字典明细")
+    private List<DictLineVo> lines = new ArrayList<>();
 }

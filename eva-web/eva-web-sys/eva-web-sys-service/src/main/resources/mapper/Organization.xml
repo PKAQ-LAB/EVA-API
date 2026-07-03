@@ -51,7 +51,7 @@
                 </if>
             </if>
         </where>
-        ORDER BY y.SORT ASC, y.UTC_MODIFY DESC
+        ORDER BY y.PID ASC, y.SORT ASC, y.ID ASC
     </select>
 
     <!-- 取指定父节点下最大 sort -->

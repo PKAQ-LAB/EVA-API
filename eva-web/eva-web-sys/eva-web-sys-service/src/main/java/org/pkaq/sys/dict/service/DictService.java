@@ -1,8 +1,6 @@
 package org.pkaq.sys.dict.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.constant.CommonConstant;
@@ -13,9 +11,13 @@ import org.pkaq.core.util.CollUtils;
 import org.pkaq.core.util.StrUtils;
 import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.dict.bo.DictAoeBo;
+import org.pkaq.sys.dict.bo.DictLineBo;
 import org.pkaq.sys.dict.cache.DictCacheHelper;
 import org.pkaq.sys.dict.entity.DictEntity;
+import org.pkaq.sys.dict.entity.DictItemEntity;
+import org.pkaq.sys.dict.mapper.DictItemMapper;
 import org.pkaq.sys.dict.mapper.DictMapper;
+import org.pkaq.sys.dict.vo.DictLineVo;
 import org.pkaq.sys.dict.vo.DictViewVo;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
@@ -29,21 +31,21 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * 字典管理服务
+ * 单级字典管理服务
  *
  * @author PKAQ
  */
 @Service
 @RequiredArgsConstructor
 public class DictService extends StdService<DictMapper, DictEntity> implements IDictService {
-    private static final Long ROOT_PID = 0L;
-    private static final String TREE_CACHE_PREFIX = "tree:";
-
     private final DictCacheHelper dictCacheHelper;
+    private final DictItemMapper dictItemMapper;
 
     /**
      * 初始化字典缓存。
@@ -52,33 +54,46 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
     @CacheEvict(cacheNames = CommonConstant.CACHE_DICTDATA, key = CommonConstant.SYS_ALL_DICT_KEY)
     public void init() {
         this.dictCacheHelper.removeAll();
-        Map<String, LinkedHashMap<String, String>> dictMap = this.selectDict();
-        dictMap.forEach(this.dictCacheHelper::cachePut);
-        this.preloadTreeCache();
+        this.selectDict().forEach(this.dictCacheHelper::cachePut);
     }
 
     /**
-     * 查询可缓存的叶子字典数据。
+     * 查询全部可用字典缓存数据。
      *
-     * @return 字典缓存结构
+     * @return 字典编码到明细键值的映射
      */
     @Override
     public Map<String, LinkedHashMap<String, String>> selectDict() {
-        List<DictEntity> leaves = this.mapper.selectList(new LambdaQueryWrapper<DictEntity>()
-                .eq(DictEntity::getIsleaf, true)
-                .isNotNull(DictEntity::getType)
+        List<DictEntity> dicts = this.mapper.selectList(new LambdaQueryWrapper<DictEntity>()
                 .ne(DictEntity::getFrozen, FrozenEnumm.FROZEN.getCode())
-                .orderByAsc(DictEntity::getType)
                 .orderByAsc(DictEntity::getSort)
                 .orderByAsc(DictEntity::getId));
+        if (CollUtils.isEmpty(dicts)) {
+            return Collections.emptyMap();
+        }
 
-        return leaves.stream()
-                .collect(Collectors.groupingBy(DictEntity::getType,
-                        LinkedHashMap::new,
-                        Collectors.toMap(this::cacheKey,
-                                DictEntity::getName,
-                                (oldValue, newValue) -> newValue,
-                                LinkedHashMap::new)));
+        Map<Long, String> dictCodeMap = dicts.stream()
+                .collect(Collectors.toMap(DictEntity::getId, DictEntity::getCode, (oldValue, newValue) -> newValue,
+                        LinkedHashMap::new));
+        List<DictItemEntity> items = this.dictItemMapper.selectList(new LambdaQueryWrapper<DictItemEntity>()
+                .in(DictItemEntity::getMainId, dictCodeMap.keySet())
+                .ne(DictItemEntity::getFrozen, FrozenEnumm.FROZEN.getCode())
+                .orderByAsc(DictItemEntity::getMainId)
+                .orderByAsc(DictItemEntity::getSort)
+                .orderByAsc(DictItemEntity::getId));
+
+        Map<String, LinkedHashMap<String, String>> result = new LinkedHashMap<>();
+        for (DictEntity dict : dicts) {
+            result.put(dict.getCode(), new LinkedHashMap<>());
+        }
+        for (DictItemEntity item : items) {
+            String dictCode = dictCodeMap.get(item.getMainId());
+            if (StrUtils.isBlank(dictCode)) {
+                continue;
+            }
+            result.get(dictCode).put(item.getDCode(), item.getDValue());
+        }
+        return result;
     }
 
     /**
@@ -89,34 +104,30 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
     @Override
     public Map<String, LinkedHashMap<String, String>> fetchDicts() {
         Map<?, ?> cached = this.dictCacheHelper.getAll();
-        Map<String, LinkedHashMap<String, String>> ret = new LinkedHashMap<>();
+        Map<String, LinkedHashMap<String, String>> result = new LinkedHashMap<>();
         if (cached != null && !cached.isEmpty()) {
             for (Object keyObj : cached.keySet()) {
                 String key = String.valueOf(keyObj);
-                if (key.startsWith(TREE_CACHE_PREFIX)) {
-                    continue;
-                }
                 Map<String, String> item = this.dictCacheHelper.get(key);
                 if (item != null) {
-                    ret.put(key, new LinkedHashMap<>(item));
+                    result.put(key, new LinkedHashMap<>(item));
                 }
             }
-            if (!ret.isEmpty()) {
-                return ret;
+            if (!result.isEmpty()) {
+                return result;
             }
         }
 
-        ret = this.selectDict();
-        ret.forEach(this.dictCacheHelper::cachePut);
-        this.preloadTreeCache();
-        return ret;
+        result = this.selectDict();
+        result.forEach(this.dictCacheHelper::cachePut);
+        return result;
     }
 
     /**
-     * 查询指定类型的叶子字典缓存。
+     * 查询指定类型字典缓存。
      *
-     * @param type 字典类型
-     * @return 叶子节点值和名称映射
+     * @param type 字典编码
+     * @return 明细提交值和显示文本映射
      */
     @Override
     public Map<String, String> queryDict(String type) {
@@ -129,16 +140,16 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
             return cached;
         }
 
-        this.reloadType(type);
-        cached = this.dictCacheHelper.get(type);
-        return cached == null ? Collections.emptyMap() : cached;
+        LinkedHashMap<String, String> items = this.selectDictByType(type);
+        this.dictCacheHelper.cachePut(type, items);
+        return items;
     }
 
     /**
-     * 查询字典节点详情。
+     * 查询字典详情。
      *
      * @param bo 查询参数
-     * @return 字典节点详情
+     * @return 字典详情
      */
     @Override
     public DictViewVo getDict(DictAoeBo bo) {
@@ -147,90 +158,70 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
             return null;
         }
 
-        LambdaQueryWrapper<DictEntity> wrapper = new LambdaQueryWrapper<>();
+        DictEntity entity;
         if (bo.getId() != null) {
-            wrapper.eq(DictEntity::getId, bo.getId());
+            entity = this.mapper.selectById(bo.getId());
         } else {
-            String type = StrUtils.isBlank(bo.getType()) ? bo.getCode() : bo.getType();
-            Long pid = bo.getPid() == null ? ROOT_PID : bo.getPid();
-            wrapper.eq(DictEntity::getCode, bo.getCode());
-            wrapper.eq(DictEntity::getType, type);
-            wrapper.eq(DictEntity::getPid, pid);
+            entity = this.mapper.selectOne(new LambdaQueryWrapper<DictEntity>().eq(DictEntity::getCode, bo.getCode()));
         }
-        DictEntity entity = this.mapper.selectOne(wrapper);
         if (entity == null) {
             SysCodes.RECORD_NOT_FOUND.newException();
             return null;
         }
 
-        return this.toVo(entity);
+        return this.toVo(entity, this.listItems(entity.getId()));
     }
 
     /**
-     * 查询字典树。
+     * 查询字典主表列表。
      *
-     * @return 字典树
+     * @return 字典列表
      */
     @Override
     public List<DictViewVo> listDict() {
         List<DictEntity> entities = this.mapper.selectList(new LambdaQueryWrapper<DictEntity>()
                 .orderByAsc(DictEntity::getSort)
                 .orderByAsc(DictEntity::getId));
-        return this.buildTree(entities);
-    }
-
-    /**
-     * 查询指定类型的字典树。
-     *
-     * @param type 字典类型
-     * @return 字典树
-     */
-    @Override
-    public List<DictViewVo> listDictByType(String type) {
-        if (StrUtils.isBlank(type)) {
-            SysCodes.RECORD_NOT_FOUND.newException();
+        if (CollUtils.isEmpty(entities)) {
             return Collections.emptyList();
         }
 
-        List<DictViewVo> cached = this.dictCacheHelper.getObject(this.treeCacheKey(type),
-                new TypeReference<List<DictViewVo>>() {
-                });
-        if (cached != null) {
-            return cached;
-        }
-
-        List<DictEntity> entities = this.mapper.selectList(new LambdaQueryWrapper<DictEntity>()
-                .eq(DictEntity::getType, type)
-                .orderByAsc(DictEntity::getSort)
-                .orderByAsc(DictEntity::getId));
-        List<DictViewVo> tree = this.buildTree(entities);
-        this.dictCacheHelper.cachePut(this.treeCacheKey(type), tree);
-        return tree;
+        Map<Long, List<DictItemEntity>> itemMap = this.listItems(entities.stream()
+                .map(DictEntity::getId)
+                .collect(Collectors.toSet()));
+        return entities.stream()
+                .map(entity -> this.toVo(entity, itemMap.getOrDefault(entity.getId(), Collections.emptyList())))
+                .collect(Collectors.toList());
     }
 
     /**
-     * 校验字典值是否为指定类型的可选叶子节点。
+     * 校验字典值是否属于指定字典。
      *
-     * @param type 字典类型
-     * @param value 字典值
-     * @return true 表示是可选叶子节点
+     * @param type 字典编码
+     * @param value 字典提交值
+     * @return true 表示存在且可用
      */
     @Override
-    public boolean validateLeaf(String type, String value) {
+    public boolean validateItem(String type, String value) {
         if (StrUtils.isBlank(type) || StrUtils.isBlank(value)) {
             return false;
         }
-        return this.mapper.selectCount(new LambdaQueryWrapper<DictEntity>()
-                .eq(DictEntity::getType, type)
-                .eq(DictEntity::getValue, value)
-                .eq(DictEntity::getIsleaf, true)
-                .ne(DictEntity::getFrozen, FrozenEnumm.FROZEN.getCode())) > 0;
+        DictEntity dict = this.mapper.selectOne(new LambdaQueryWrapper<DictEntity>()
+                .eq(DictEntity::getCode, type)
+                .ne(DictEntity::getFrozen, FrozenEnumm.FROZEN.getCode()));
+        if (dict == null) {
+            return false;
+        }
+        return this.dictItemMapper.selectCount(new LambdaQueryWrapper<DictItemEntity>()
+                .eq(DictItemEntity::getMainId, dict.getId())
+                .eq(DictItemEntity::getDCode, value)
+                .ne(DictItemEntity::getFrozen, FrozenEnumm.FROZEN.getCode())) > 0;
     }
 
     /**
-     * 删除字典节点。
+     * 删除字典。
      *
-     * @param id 字典节点ID
+     * @param id 字典 ID
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -240,78 +231,63 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
             return;
         }
 
-        DictEntity dictEntity = this.mapper.selectById(id);
-        if (dictEntity == null) {
+        DictEntity entity = this.mapper.selectById(id);
+        if (entity == null) {
             SysCodes.RECORD_NOT_FOUND.newException();
             return;
         }
 
-        Long childCount = this.mapper.selectCount(new LambdaQueryWrapper<DictEntity>().eq(DictEntity::getPid, id));
-        if (childCount > 0) {
-            SysCodes.DELETE_EXISTENCE_CHILD_NODE.newException();
-        }
-
-        String affectedType = dictEntity.getType();
+        this.dictItemMapper.delete(new LambdaQueryWrapper<DictItemEntity>().eq(DictItemEntity::getMainId, id));
         this.mapper.deleteById(id);
-        this.refreshParentLeaf(dictEntity.getPid());
-        this.reloadTypesAfterCommit(Collections.singleton(affectedType));
+        this.reloadTypesAfterCommit(Collections.singleton(entity.getCode()));
     }
 
     /**
-     * 新增或编辑字典节点。
+     * 新增或编辑字典。
      *
-     * @param dictAoeBo 字典节点参数
+     * @param bo 字典参数
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void edit(DictAoeBo dictAoeBo) {
-        if (dictAoeBo == null) {
+    public void edit(DictAoeBo bo) {
+        if (bo == null || StrUtils.isBlank(bo.getCode()) || StrUtils.isBlank(bo.getName())) {
             SysCodes.RECORD_NOT_FOUND.newException();
             return;
         }
+        this.ensureUniqueDictCode(bo.getId(), bo.getCode());
+        this.ensureUniqueLineCode(bo.getLines());
 
-        this.ensureCodeAndName(dictAoeBo);
-
-        Long id = dictAoeBo.getId();
-        boolean isInsert = id == null || id == 0L;
+        boolean isInsert = bo.getId() == null || bo.getId() == 0L;
         DictEntity oldEntity = null;
-        Set<String> affectedTypes = new HashSet<>();
-        if (isInsert) {
-            id = IdWorker.getId();
-            dictAoeBo.setId(id);
-        } else {
-            oldEntity = this.mapper.selectById(id);
+        if (!isInsert) {
+            oldEntity = this.mapper.selectById(bo.getId());
             if (oldEntity == null) {
                 SysCodes.RECORD_NOT_FOUND.newException();
                 return;
             }
-            affectedTypes.add(oldEntity.getType());
         }
 
-        DictEntity parent = this.ensureParentUsable(id, dictAoeBo.getPid());
-        String type = this.resolveType(dictAoeBo, parent);
-        Long parentId = parent == null ? ROOT_PID : parent.getId();
-        this.ensureUniqueSibling(id, type, parentId, dictAoeBo.getCode());
-
-        DictEntity entity = this.buildEntity(dictAoeBo, parent, type);
-        affectedTypes.add(entity.getType());
+        DictEntity entity = this.toEntity(bo, oldEntity);
         if (isInsert) {
+            entity.setId(IdWorker.getId());
             this.mapper.insert(entity);
-            this.refreshParentLeaf(parentId);
         } else {
             this.mapper.updateById(entity);
-            this.updateChildrenIfNeeded(oldEntity, entity);
-            this.refreshParentLeaf(oldEntity.getPid());
-            this.refreshParentLeaf(parentId);
         }
+        this.diffSaveItems(entity.getId(), bo.getLines());
 
+        Set<String> affectedTypes = new HashSet<>();
+        affectedTypes.add(entity.getCode());
+        if (oldEntity != null) {
+            affectedTypes.add(oldEntity.getCode());
+        }
         this.reloadTypesAfterCommit(affectedTypes);
     }
 
     /**
-     * 校验同级编码是否重复。
+     * 校验字典编码是否重复。
      *
-     * @param bo 字典节点参数
+     * @param bo 字典参数
      * @return true 表示重复
      */
     @Override
@@ -319,14 +295,9 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
         if (bo == null || StrUtils.isBlank(bo.getCode())) {
             return false;
         }
-
-        DictEntity parent = null;
-        if (bo.getPid() != null && !ROOT_PID.equals(bo.getPid())) {
-            parent = this.mapper.selectById(bo.getPid());
-        }
-        String type = this.resolveType(bo, parent);
-        Long parentId = parent == null ? ROOT_PID : parent.getId();
-        return this.isDuplicateSibling(bo.getId(), type, parentId, bo.getCode());
+        return this.mapper.selectCount(new LambdaQueryWrapper<DictEntity>()
+                .eq(DictEntity::getCode, bo.getCode())
+                .ne(bo.getId() != null && bo.getId() != 0L, DictEntity::getId, bo.getId())) > 0;
     }
 
     /**
@@ -359,9 +330,9 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
     }
 
     /**
-     * 切换字典节点冻结状态，并级联到子节点。
+     * 切换字典锁定状态。
      *
-     * @param ids 字典节点ID集合
+     * @param ids 字典 ID 集合
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -373,92 +344,165 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
 
         Set<String> affectedTypes = new HashSet<>();
         for (Long id : this.sanitizeIds(ids.getParam())) {
-            DictEntity self = this.mapper.selectById(id);
-            if (self == null || self.getFrozen() == FrozenEnumm.READ_ONLY) {
+            DictEntity entity = this.mapper.selectById(id);
+            if (entity == null || entity.getFrozen() == FrozenEnumm.READ_ONLY) {
                 continue;
             }
-            affectedTypes.add(self.getType());
-
-            FrozenEnumm target = self.getFrozen() == FrozenEnumm.FROZEN
+            FrozenEnumm target = entity.getFrozen() == FrozenEnumm.FROZEN
                     ? FrozenEnumm.UN_FROZEN
                     : FrozenEnumm.FROZEN;
-            Set<Long> subtreeIds = this.findSubtreeIds(self);
-            if (!subtreeIds.isEmpty()) {
-                this.mapper.update(null, new LambdaUpdateWrapper<DictEntity>()
-                        .in(DictEntity::getId, subtreeIds)
-                        .ne(DictEntity::getFrozen, FrozenEnumm.READ_ONLY.getCode())
-                        .set(DictEntity::getFrozen, target));
-            }
+            DictEntity update = new DictEntity();
+            update.setId(id);
+            update.setFrozen(target);
+            this.mapper.updateById(update);
+            affectedTypes.add(entity.getCode());
         }
-
         this.reloadTypesAfterCommit(affectedTypes);
     }
 
-    private void ensureCodeAndName(DictAoeBo bo) {
-        if (StrUtils.isBlank(bo.getCode()) || StrUtils.isBlank(bo.getName())) {
-            SysCodes.RECORD_NOT_FOUND.newException();
+    private DictEntity toEntity(DictAoeBo bo, DictEntity oldEntity) {
+        DictEntity entity = new DictEntity();
+        entity.setId(bo.getId());
+        entity.setRevision(bo.getRevision());
+        entity.setFrozen(this.toFrozen(bo.getFrozen()));
+        entity.setSort(bo.getSort());
+        entity.setRemark(bo.getRemark());
+        entity.setType(StrUtils.isBlank(bo.getType()) ? bo.getCode() : bo.getType());
+        entity.setCode(bo.getCode());
+        entity.setName(bo.getName());
+        if (oldEntity != null && oldEntity.getFrozen() == FrozenEnumm.READ_ONLY) {
+            entity.setFrozen(FrozenEnumm.READ_ONLY);
+        }
+        return entity;
+    }
+
+    private void diffSaveItems(Long mainId, List<DictLineBo> lines) {
+        List<DictLineBo> safeLines = lines == null ? Collections.emptyList() : lines;
+        Map<Long, DictItemEntity> oldItemMap = this.listItems(mainId).stream()
+                .collect(Collectors.toMap(DictItemEntity::getId, Function.identity()));
+        Set<Long> keepIds = new HashSet<>();
+        double defaultSort = 1D;
+        for (DictLineBo line : safeLines) {
+            if (line == null || StrUtils.isBlank(line.getKeyName()) || StrUtils.isBlank(line.getKeyValue())) {
+                continue;
+            }
+            DictItemEntity item = new DictItemEntity();
+            item.setMainId(mainId);
+            item.setDCode(line.getKeyName());
+            item.setDValue(line.getKeyValue());
+            item.setSort(line.getOrders() == null ? defaultSort : line.getOrders());
+            item.setFrozen(this.toFrozen(line.getFrozen()));
+            item.setRemark(line.getRemark());
+            defaultSort++;
+            if (line.getId() != null && oldItemMap.containsKey(line.getId())) {
+                item.setId(line.getId());
+                DictItemEntity oldItem = oldItemMap.get(line.getId());
+                if (oldItem.getFrozen() == FrozenEnumm.READ_ONLY) {
+                    item.setFrozen(FrozenEnumm.READ_ONLY);
+                }
+                this.dictItemMapper.updateById(item);
+                keepIds.add(line.getId());
+                continue;
+            }
+            item.setId(IdWorker.getId());
+            this.dictItemMapper.insert(item);
+            keepIds.add(item.getId());
+        }
+
+        for (Long oldId : oldItemMap.keySet()) {
+            if (!keepIds.contains(oldId)) {
+                this.dictItemMapper.deleteById(oldId);
+            }
         }
     }
 
-    private void ensureUniqueSibling(Long id, String type, Long pid, String code) {
-        if (this.isDuplicateSibling(id, type, pid, code)) {
+    private void ensureUniqueDictCode(Long id, String code) {
+        if (this.checkUnique(this.buildUniqueBo(id, code))) {
             SysCodes.DICT_CODE_EXISTS.newException();
         }
     }
 
-    private boolean isDuplicateSibling(Long id, String type, Long pid, String code) {
-        LambdaQueryWrapper<DictEntity> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(DictEntity::getType, type);
-        wrapper.eq(DictEntity::getPid, pid);
-        wrapper.eq(DictEntity::getCode, code);
-        wrapper.ne(id != null && id != 0L, DictEntity::getId, id);
-        return this.mapper.selectCount(wrapper) > 0;
+    private DictAoeBo buildUniqueBo(Long id, String code) {
+        DictAoeBo bo = new DictAoeBo();
+        bo.setId(id);
+        bo.setCode(code);
+        return bo;
     }
 
-    private DictEntity ensureParentUsable(Long selfId, Long pid) {
-        Long parentId = pid == null ? ROOT_PID : pid;
-        if (ROOT_PID.equals(parentId)) {
-            return null;
+    private void ensureUniqueLineCode(List<DictLineBo> lines) {
+        if (CollUtils.isEmpty(lines)) {
+            return;
         }
-        if (selfId != null && selfId.equals(parentId)) {
-            SysCodes.NO_CHANGE_ORG.newException();
+        Set<String> codes = new HashSet<>();
+        for (DictLineBo line : lines) {
+            if (line == null || StrUtils.isBlank(line.getKeyName())) {
+                continue;
+            }
+            if (!codes.add(line.getKeyName())) {
+                SysCodes.DICT_CODE_EXISTS.newException();
+            }
         }
-
-        DictEntity parent = this.mapper.selectById(parentId);
-        if (parent == null || parent.getFrozen() == FrozenEnumm.FROZEN) {
-            SysCodes.RECORD_NOT_FOUND.newException();
-        }
-        if (selfId != null && parent.getPath() != null && parent.getPath().contains("/" + selfId + "/")) {
-            SysCodes.NO_CHANGE_ORG.newException();
-        }
-        return parent;
     }
 
-    private String resolveType(DictAoeBo bo, DictEntity parent) {
-        if (parent != null) {
-            return parent.getType();
+    private List<DictItemEntity> listItems(Long mainId) {
+        if (mainId == null) {
+            return Collections.emptyList();
         }
-        if (StrUtils.isNotBlank(bo.getType())) {
-            return bo.getType();
-        }
-        return bo.getCode();
+        return this.dictItemMapper.selectList(new LambdaQueryWrapper<DictItemEntity>()
+                .eq(DictItemEntity::getMainId, mainId)
+                .orderByAsc(DictItemEntity::getSort)
+                .orderByAsc(DictItemEntity::getId));
     }
 
-    private DictEntity buildEntity(DictAoeBo bo, DictEntity parent, String type) {
-        DictEntity entity = new DictEntity();
-        entity.setId(bo.getId());
-        entity.setRevision(bo.getRevision());
-        entity.setType(type);
-        entity.setCode(bo.getCode());
-        entity.setName(bo.getName());
-        entity.setValue(StrUtils.isBlank(bo.getValue()) ? bo.getCode() : bo.getValue());
-        entity.setRemark(bo.getRemark());
-        entity.setSort(bo.getSort());
-        entity.setFrozen(this.toFrozen(bo.getFrozen()));
-        entity.setPid(parent == null ? ROOT_PID : parent.getId());
-        entity.setPath(parent == null ? "/" + bo.getId() : parent.getPath() + "/" + bo.getId());
-        entity.setIsleaf(!this.hasChildren(bo.getId()));
-        return entity;
+    private Map<Long, List<DictItemEntity>> listItems(Set<Long> mainIds) {
+        if (CollUtils.isEmpty(mainIds)) {
+            return Collections.emptyMap();
+        }
+        return this.dictItemMapper.selectList(new LambdaQueryWrapper<DictItemEntity>()
+                        .in(DictItemEntity::getMainId, mainIds)
+                        .orderByAsc(DictItemEntity::getMainId)
+                        .orderByAsc(DictItemEntity::getSort)
+                        .orderByAsc(DictItemEntity::getId))
+                .stream()
+                .collect(Collectors.groupingBy(DictItemEntity::getMainId, LinkedHashMap::new, Collectors.toList()));
+    }
+
+    private DictViewVo toVo(DictEntity entity, List<DictItemEntity> items) {
+        DictViewVo vo = new DictViewVo();
+        vo.setId(entity.getId());
+        vo.setType(entity.getType());
+        vo.setCode(entity.getCode());
+        vo.setName(entity.getName());
+        vo.setFrozen(entity.getFrozen() == null ? null : entity.getFrozen().getCode());
+        vo.setSort(entity.getSort() == null ? 0D : entity.getSort());
+        vo.setLines(items.stream().map(this::toLineVo).collect(Collectors.toCollection(ArrayList::new)));
+        return vo;
+    }
+
+    private DictLineVo toLineVo(DictItemEntity entity) {
+        DictLineVo vo = new DictLineVo();
+        vo.setId(entity.getId());
+        vo.setKeyName(entity.getDCode());
+        vo.setKeyValue(entity.getDValue());
+        vo.setOrders(entity.getSort());
+        vo.setFrozen(entity.getFrozen() == null ? null : entity.getFrozen().getCode());
+        vo.setRemark(entity.getRemark());
+        return vo;
+    }
+
+    private LinkedHashMap<String, String> selectDictByType(String type) {
+        DictEntity dict = this.mapper.selectOne(new LambdaQueryWrapper<DictEntity>()
+                .eq(DictEntity::getCode, type)
+                .ne(DictEntity::getFrozen, FrozenEnumm.FROZEN.getCode()));
+        if (dict == null) {
+            return new LinkedHashMap<>();
+        }
+        return this.listItems(dict.getId()).stream()
+                .filter(item -> !Objects.equals(item.getFrozen(), FrozenEnumm.FROZEN))
+                .collect(Collectors.toMap(DictItemEntity::getDCode,
+                        DictItemEntity::getDValue,
+                        (oldValue, newValue) -> newValue,
+                        LinkedHashMap::new));
     }
 
     private FrozenEnumm toFrozen(Integer frozen) {
@@ -474,95 +518,6 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
         return FrozenEnumm.UN_FROZEN;
     }
 
-    private void updateChildrenIfNeeded(DictEntity oldEntity, DictEntity newEntity) {
-        boolean pathChanged = StrUtils.isNotBlank(oldEntity.getPath())
-                && !oldEntity.getPath().equals(newEntity.getPath());
-        boolean typeChanged = StrUtils.isNotBlank(oldEntity.getType())
-                && !oldEntity.getType().equals(newEntity.getType());
-        if (!pathChanged && !typeChanged) {
-            return;
-        }
-
-        List<DictEntity> children = this.mapper.selectList(new LambdaQueryWrapper<DictEntity>()
-                .likeRight(DictEntity::getPath, oldEntity.getPath() + "/"));
-        for (DictEntity child : children) {
-            if (pathChanged) {
-                child.setPath(newEntity.getPath() + child.getPath().substring(oldEntity.getPath().length()));
-            }
-            if (typeChanged) {
-                child.setType(newEntity.getType());
-            }
-            this.mapper.updateById(child);
-        }
-    }
-
-    private void refreshParentLeaf(Long parentId) {
-        if (parentId == null || ROOT_PID.equals(parentId)) {
-            return;
-        }
-        boolean hasChildren = this.hasChildren(parentId);
-        DictEntity update = new DictEntity();
-        update.setId(parentId);
-        update.setIsleaf(!hasChildren);
-        this.mapper.updateById(update);
-    }
-
-    private boolean hasChildren(Long id) {
-        if (id == null || id == 0L) {
-            return false;
-        }
-        return this.mapper.selectCount(new LambdaQueryWrapper<DictEntity>().eq(DictEntity::getPid, id)) > 0;
-    }
-
-    private List<DictViewVo> buildTree(List<DictEntity> entities) {
-        if (CollUtils.isEmpty(entities)) {
-            return Collections.emptyList();
-        }
-
-        Map<Long, DictViewVo> voMap = new LinkedHashMap<>();
-        for (DictEntity entity : entities) {
-            voMap.put(entity.getId(), this.toVo(entity));
-        }
-
-        List<DictViewVo> roots = new ArrayList<>();
-        for (DictViewVo vo : voMap.values()) {
-            if (vo.getPid() == null || ROOT_PID.equals(vo.getPid()) || !voMap.containsKey(vo.getPid())) {
-                roots.add(vo);
-            } else {
-                voMap.get(vo.getPid()).getChildren().add(vo);
-            }
-        }
-        return roots;
-    }
-
-    private DictViewVo toVo(DictEntity entity) {
-        DictViewVo vo = new DictViewVo();
-        vo.setId(entity.getId());
-        vo.setType(entity.getType());
-        vo.setCode(entity.getCode());
-        vo.setName(entity.getName());
-        vo.setValue(entity.getValue());
-        vo.setPid(entity.getPid());
-        vo.setPath(entity.getPath());
-        vo.setIsleaf(entity.getIsleaf());
-        vo.setFrozen(entity.getFrozen() == null ? null : entity.getFrozen().getCode());
-        vo.setSort(entity.getSort());
-        vo.setSelectable(Boolean.TRUE.equals(entity.getIsleaf()) && entity.getFrozen() != FrozenEnumm.FROZEN);
-        return vo;
-    }
-
-    private Set<Long> findSubtreeIds(DictEntity root) {
-        Set<Long> ids = new HashSet<>();
-        ids.add(root.getId());
-        if (StrUtils.isNotBlank(root.getPath())) {
-            this.mapper.selectList(new LambdaQueryWrapper<DictEntity>()
-                            .select(DictEntity::getId)
-                            .likeRight(DictEntity::getPath, root.getPath() + "/"))
-                    .forEach(child -> ids.add(child.getId()));
-        }
-        return ids;
-    }
-
     private Set<Long> sanitizeIds(Set<Long> ids) {
         if (CollUtils.isEmpty(ids)) {
             return Collections.emptySet();
@@ -570,22 +525,6 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
         return ids.stream()
                 .filter(id -> id != null && id > 0L)
                 .collect(Collectors.toSet());
-    }
-
-    private String cacheKey(DictEntity entity) {
-        return StrUtils.isBlank(entity.getValue()) ? entity.getCode() : entity.getValue();
-    }
-
-    private void preloadTreeCache() {
-        List<DictEntity> entities = this.mapper.selectList(new LambdaQueryWrapper<DictEntity>()
-                .isNotNull(DictEntity::getType)
-                .orderByAsc(DictEntity::getType)
-                .orderByAsc(DictEntity::getSort)
-                .orderByAsc(DictEntity::getId));
-        Map<String, List<DictEntity>> typeMap = entities.stream()
-                .collect(Collectors.groupingBy(DictEntity::getType, LinkedHashMap::new, Collectors.toList()));
-        typeMap.forEach((type, typeEntities) ->
-                this.dictCacheHelper.cachePut(this.treeCacheKey(type), this.buildTree(typeEntities)));
     }
 
     private void reloadTypesAfterCommit(Set<String> types) {
@@ -611,44 +550,8 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
 
     private void reloadTypes(Set<String> types) {
         for (String type : types) {
-            this.reloadType(type);
+            this.dictCacheHelper.remove(type);
+            this.dictCacheHelper.cachePut(type, this.selectDictByType(type));
         }
-    }
-
-    private void reloadType(String type) {
-        if (StrUtils.isBlank(type)) {
-            return;
-        }
-
-        this.dictCacheHelper.remove(type);
-        this.dictCacheHelper.remove(this.treeCacheKey(type));
-        this.dictCacheHelper.cachePut(type, this.selectDictByType(type));
-        this.dictCacheHelper.cachePut(this.treeCacheKey(type), this.loadTreeByType(type));
-    }
-
-    private LinkedHashMap<String, String> selectDictByType(String type) {
-        List<DictEntity> leaves = this.mapper.selectList(new LambdaQueryWrapper<DictEntity>()
-                .eq(DictEntity::getType, type)
-                .eq(DictEntity::getIsleaf, true)
-                .ne(DictEntity::getFrozen, FrozenEnumm.FROZEN.getCode())
-                .orderByAsc(DictEntity::getSort)
-                .orderByAsc(DictEntity::getId));
-        return leaves.stream()
-                .collect(Collectors.toMap(this::cacheKey,
-                        DictEntity::getName,
-                        (oldValue, newValue) -> newValue,
-                        LinkedHashMap::new));
-    }
-
-    private List<DictViewVo> loadTreeByType(String type) {
-        List<DictEntity> entities = this.mapper.selectList(new LambdaQueryWrapper<DictEntity>()
-                .eq(DictEntity::getType, type)
-                .orderByAsc(DictEntity::getSort)
-                .orderByAsc(DictEntity::getId));
-        return this.buildTree(entities);
-    }
-
-    private String treeCacheKey(String type) {
-        return TREE_CACHE_PREFIX + type;
     }
 }

@@ -2,6 +2,7 @@ package org.pkaq.sys.user.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import org.pkaq.core.enums.FrozenEnumm;
 import org.pkaq.core.mvc.vo.Vo;
 
 import java.sql.Date;
@@ -51,5 +52,8 @@ public class UserListVo implements Vo {
 
     @Schema(description = "所属部门")
     private Long deptId;
+
+    @Schema(description = "是否锁定：0-正常，1-已锁定，9999-只读")
+    private FrozenEnumm frozen;
 
 }

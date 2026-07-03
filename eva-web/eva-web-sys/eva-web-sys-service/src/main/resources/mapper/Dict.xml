@@ -5,36 +5,5 @@
         <result column="TYPE" jdbcType="VARCHAR" property="type"/>
         <result column="CODE" jdbcType="VARCHAR" property="code"/>
         <result column="NAME" jdbcType="VARCHAR" property="name"/>
-        <result column="VALUE" jdbcType="VARCHAR" property="value"/>
-        <result column="PID" jdbcType="BIGINT" property="pid"/>
-        <result column="PATH" jdbcType="VARCHAR" property="path"/>
-        <result column="ISLEAF" jdbcType="BOOLEAN" property="isleaf"/>
     </resultMap>
-
-    <resultMap id="TreeResultMap" type="dict" extends="BaseResultMap">
-        <collection property="children" column="{id=ID}" select="listChildren"/>
-    </resultMap>
-
-    <select id="getDict" resultMap="BaseResultMap">
-        SELECT *
-        FROM sys_dict
-        WHERE id = #{id}
-          AND deleted = 0
-    </select>
-
-    <select id="listDict" resultMap="TreeResultMap">
-        SELECT *
-        FROM sys_dict
-        WHERE deleted = 0
-          AND (pid = 0 OR pid IS NULL)
-        ORDER BY sort ASC, id ASC
-    </select>
-
-    <select id="listChildren" resultMap="TreeResultMap">
-        SELECT *
-        FROM sys_dict
-        WHERE deleted = 0
-          AND pid = #{id}
-        ORDER BY sort ASC, id ASC
-    </select>
 </mapper>

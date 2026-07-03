@@ -16,6 +16,7 @@ import org.pkaq.web.core.utils.CookieUtils;
 import org.pkaq.web.core.utils.TokenUtils;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
@@ -44,8 +45,16 @@ public class TokenCtrl {
      * 4. 删除旧的 refreshToken
      */
     @PostMapping("/auth/getAlpha")
-    public Response<Object> refreshToken(HttpServletRequest request, HttpServletResponse response) {
+    public Response<Object> refreshToken(@RequestBody(required = false) Map<String, String> body,
+                                         HttpServletRequest request,
+                                         HttpServletResponse response) {
         String refreshTk = tokenUtil.getRefreshToken(request);
+        if ((refreshTk == null || refreshTk.isBlank()) && body != null) {
+            refreshTk = body.get("refreshToken");
+            if (refreshTk == null || refreshTk.isBlank()) {
+                refreshTk = body.get(CommonConstant.REFRESH_TOKEN_KEY);
+            }
+        }
 
         // 是否持久化token
         var cacheToken = evaConfig.getJwt().isPersistence();

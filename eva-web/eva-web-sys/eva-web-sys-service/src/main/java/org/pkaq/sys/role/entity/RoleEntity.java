@@ -28,6 +28,16 @@ public class RoleEntity extends StdEntity {
     private String name = "";
 
     /**
+     * 数据权限范围。
+     **/
+    private String dataScope;
+
+    /**
+     * 自定义数据权限组织 ID，多个 ID 使用英文逗号分隔。
+     **/
+    private String dataOrgIds;
+
+    /**
      * setter 中一次性规范化：补 ROLE_ 前缀并大写
      * 替代原先在 getter 中改写字段的副作用写法（每次 get 都改字段，
      * 对 MyBatis 反射 / JSON 序列化都不友好）。

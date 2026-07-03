@@ -1,5 +1,6 @@
 package org.pkaq.sys.module.vo;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -27,6 +28,7 @@ public class ModuleDetailVo extends StdTreeVo {
     private String componentUrl;
 
     @Schema(description = "模块拥有的资源")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<ModuleResourcesVo> resources;
 
 }

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.pkaq.sys.dict.mapper.DictItemMapper">
+    <resultMap id="BaseResultMap" type="dictItem" extends="common.resultMap">
+        <result column="MAIN_ID" jdbcType="BIGINT" property="mainId"/>
+        <result column="D_CODE" jdbcType="VARCHAR" property="dCode"/>
+        <result column="D_VALUE" jdbcType="VARCHAR" property="dValue"/>
+    </resultMap>
+</mapper>

@@ -3,20 +3,27 @@
 <mapper namespace="org.pkaq.sys.module.mapper.ModuleMapper">
     <resultMap id="BaseResultMap" type="org.pkaq.sys.module.vo.ModuleDetailVo" extends="common.resultMap">
         <id property="id" column="ID"/>
+        <result property="code" column="CODE"/>
+        <result property="name" column="NAME"/>
+        <result property="pid" column="PID"/>
+        <result property="path" column="PATH"/>
+        <result property="isleaf" column="ISLEAF"/>
+        <result property="icon" column="ICON"/>
+        <result property="routeUrl" column="ROUTE_URL"/>
+        <result property="componentUrl" column="COMPONENT_URL"/>
         <collection property="children" column="{id=id}" select="listChildren"/>
-        <collection property="resources" javaType="java.util.List" ofType="moduleResource">
-            <id column="R_ID" property="id" jdbcType="VARCHAR"/>
-            <result column="R_MAIN_ID" property="mainId"/>
-            <result column="R_CODE" property="code"/>
-            <result column="R_RESOURCE_DESC" property="resourceDesc"/>
-            <result column="R_RESOURCE_URL" property="resourceUrl"/>
-            <result column="R_RESOURCE_TYPE" property="resourceType"/>
-            <result column="R_SORT" property="sort"/>
-        </collection>
     </resultMap>
 
     <resultMap id="FlatResultMap" type="org.pkaq.sys.module.vo.ModuleDetailVo" extends="common.resultMap">
         <id property="id" column="ID"/>
+        <result property="code" column="CODE"/>
+        <result property="name" column="NAME"/>
+        <result property="pid" column="PID"/>
+        <result property="path" column="PATH"/>
+        <result property="isleaf" column="ISLEAF"/>
+        <result property="icon" column="ICON"/>
+        <result property="routeUrl" column="ROUTE_URL"/>
+        <result property="componentUrl" column="COMPONENT_URL"/>
     </resultMap>
 
     <sql id="ModuleDetailColumns">
@@ -134,17 +141,8 @@
 
     <select id="listModule" resultMap="BaseResultMap">
         SELECT
-            <include refid="ModuleDetailColumns"><property name="alias" value="SM"/></include>,
-            SMR.ID R_ID,
-            SMR.MAIN_ID R_MAIN_ID,
-            SMR.CODE R_CODE,
-            SMR.RESOURCE_DESC R_RESOURCE_DESC,
-            SMR.RESOURCE_URL R_RESOURCE_URL,
-            SMR.RESOURCE_TYPE R_RESOURCE_TYPE,
-            SMR.SORT R_SORT
+            <include refid="ModuleDetailColumns"><property name="alias" value="SM"/></include>
         FROM SYS_MODULE SM
-            LEFT JOIN SYS_MODULE_RESOURCES SMR
-                ON SM.ID = SMR.MAIN_ID AND (SMR.DELETED = 0 OR SMR.DELETED IS NULL)
         <where>
             <if test="null == module or null == module.pid">
                 and SM.pid = 0
@@ -170,24 +168,15 @@
                 </if>
             </if>
         </where>
-        ORDER BY SM.sort ASC, SMR.SORT ASC, SMR.ID ASC
+        ORDER BY SM.sort ASC, SM.ID ASC
     </select>
 
     <select id="listChildren" resultMap="BaseResultMap">
         SELECT
-            <include refid="ModuleDetailColumns"><property name="alias" value="SM"/></include>,
-            SMR.ID R_ID,
-            SMR.MAIN_ID R_MAIN_ID,
-            SMR.CODE R_CODE,
-            SMR.RESOURCE_DESC R_RESOURCE_DESC,
-            SMR.RESOURCE_URL R_RESOURCE_URL,
-            SMR.RESOURCE_TYPE R_RESOURCE_TYPE,
-            SMR.SORT R_SORT
+            <include refid="ModuleDetailColumns"><property name="alias" value="SM"/></include>
         FROM sys_module SM
-            LEFT JOIN SYS_MODULE_RESOURCES SMR
-                ON SM.ID = SMR.MAIN_ID AND (SMR.DELETED = 0 OR SMR.DELETED IS NULL)
         WHERE SM.pid = #{id,jdbcType=BIGINT}
-        ORDER BY SM.sort ASC, SMR.SORT ASC, SMR.ID ASC
+        ORDER BY SM.sort ASC, SM.ID ASC
     </select>
 
     <select id="getParentById" resultMap="BaseResultMap">

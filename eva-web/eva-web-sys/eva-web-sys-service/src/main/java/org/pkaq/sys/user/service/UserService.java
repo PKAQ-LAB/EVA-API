@@ -67,6 +67,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService extends StdService<UserMapper, UserEntity> implements IUserService {
 
+    /** 系统内置管理员账号编码，前端按 frozen = 9999 展示为灰色不可编辑行。 */
+    private static final String SYSTEM_ADMIN_CODE = "9999";
+
     /** 系统保留账号和非法账号黑名单，不区分大小写。 */
     private static final Set<String> ILLEGAL_USERNAMES = new HashSet<>(Arrays.asList(
             "null", "undefined", "true", "false", "admin", "root", "", " ", "\t", "\n"
@@ -135,6 +138,7 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
         if (userIds.isEmpty()) {
             return;
         }
+        ensureUsersEditable(userIds);
 
         this.mapper.deleteByIds(userIds);
         this.roleUserMapper.delete(new LambdaQueryWrapper<RoleUserEntity>().in(RoleUserEntity::getUserId, userIds));
@@ -204,6 +208,7 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
             CommonCodes.NULL_ID.newException();
             return;
         }
+        ensureUsersEditable(userIds);
 
         Set<Long> willBeFrozen = this.mapper.selectList(new LambdaQueryWrapper<UserEntity>()
                         .select(UserEntity::getId)
@@ -257,6 +262,7 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
         }
 
         this.validateUsername(user.getAccount());
+        ensureSystemAdminCodeAvailable(user);
         this.ensureUniqueUser(user);
         this.ensureDepartmentUsable(user.getDeptId());
 
@@ -275,6 +281,7 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
                 SysCodes.CANNOT_FIND_USER.newException();
                 return;
             }
+            ensureUserEditable(oldUser);
             this.handleEditPasswordAndAvatar(user, oldUser);
         }
 
@@ -385,6 +392,45 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
         checkBo.setCode(user.getCode());
         if (this.checkUnique(checkBo)) {
             SysCodes.ACCOUNT_OR_CODE_ALREADY_EXIST.newException();
+        }
+    }
+
+    private void ensureSystemAdminCodeAvailable(UserAoeBo user) {
+        if (user == null || !SYSTEM_ADMIN_CODE.equals(user.getCode())) {
+            return;
+        }
+        Long userId = user.getId();
+        if (userId == null || userId == 0L) {
+            SysCodes.READ_ONLY_RECORD.newException();
+            return;
+        }
+        UserEntity oldUser = this.mapper.selectById(userId);
+        if (oldUser == null || !SYSTEM_ADMIN_CODE.equals(oldUser.getCode())) {
+            SysCodes.READ_ONLY_RECORD.newException();
+        }
+    }
+
+    private void ensureUsersEditable(Set<Long> userIds) {
+        if (CollUtils.isEmpty(userIds)) {
+            return;
+        }
+        Long readOnlyCount = this.mapper.selectCount(new LambdaQueryWrapper<UserEntity>()
+                .in(UserEntity::getId, userIds)
+                .and(w -> w.eq(UserEntity::getFrozen, FrozenEnumm.READ_ONLY)
+                        .or()
+                        .eq(UserEntity::getCode, SYSTEM_ADMIN_CODE)));
+        if (readOnlyCount != null && readOnlyCount > 0L) {
+            SysCodes.READ_ONLY_RECORD.newException();
+        }
+    }
+
+    private void ensureUserEditable(UserEntity user) {
+        if (user == null) {
+            SysCodes.CANNOT_FIND_USER.newException();
+            return;
+        }
+        if (user.getFrozen() == FrozenEnumm.READ_ONLY || SYSTEM_ADMIN_CODE.equals(user.getCode())) {
+            SysCodes.READ_ONLY_RECORD.newException();
         }
     }
 

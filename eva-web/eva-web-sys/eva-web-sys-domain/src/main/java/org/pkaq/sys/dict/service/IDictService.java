@@ -1,5 +1,6 @@
 package org.pkaq.sys.dict.service;
 
+import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.sys.dict.bo.DictAoeBo;
 import org.pkaq.sys.dict.vo.DictViewVo;
 
@@ -24,9 +25,7 @@ public interface IDictService {
 
     List<DictViewVo> listDict();
 
-    List<DictViewVo> listDictByType(String type);
-
-    boolean validateLeaf(String type, String value);
+    boolean validateItem(String type, String value);
 
     void delDict(Long id);
 
@@ -39,4 +38,6 @@ public interface IDictService {
     void reload();
 
     void reload(Map<String, LinkedHashMap<String, String>> dictMap);
+
+    void switchFrozen(SingleArray<Long> ids);
 }

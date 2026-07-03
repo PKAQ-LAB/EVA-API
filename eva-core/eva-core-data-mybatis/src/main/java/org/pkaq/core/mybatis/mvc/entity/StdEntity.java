@@ -33,7 +33,7 @@ public abstract class StdEntity implements Entity {
     private long deleted;
 
     /**
-     * 是否冻结（0 - 未冻结，1 - 冻结， -1 - 不可编辑）
+     * 是否锁定（0 - 正常，1 - 已锁定，9999 - 只读）
      **/
     private FrozenEnumm frozen;
 
