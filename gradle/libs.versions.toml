@@ -24,7 +24,7 @@ prometheus = "1.17.0"
 versioncheck = "0.54.0"
 mapstruct = "1.6.3"
 servlet_api = "6.1.0"
-junit_platform = "6.1.1"
+junit_platform = "6.1.2"
 
 [libraries]
 boot = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring_boot" }
