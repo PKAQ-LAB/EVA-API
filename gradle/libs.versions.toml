@@ -2,7 +2,7 @@
 spring_dep = "1.1.7"
 spring_boot = "4.1.0"
 aop = "3.5.16"
-mysql = "9.7.0"
+mysql = "26.7.0"
 mybatis_plus_starter = "3.5.17"
 mybatis_plus_jsqlparser = "3.5.17"
 lombok = "1.18.46"
