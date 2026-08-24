@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.pkaq.sys.organization.mapper.OrganizationMapper">
 
-    <resultMap id="ListResultMap" type="org.pkaq.sys.organization.vo.OrganizationListVo" extends="common.resultMap">
+    <resultMap id="ListResultMap" type="org.pkaq.sys.organization.entity.OrganizationEntity" extends="common.resultMap">
         <id property="id" column="ID"/>
         <result property="name" column="NAME"/>
         <result property="code" column="CODE"/>
@@ -12,7 +12,7 @@
         <result property="isleaf" column="ISLEAF"/>
     </resultMap>
 
-    <!-- 树形查询：返回 Map<id, OrganizationListVo>，由 Service 端 buildTree -->
+    <!-- 树形查询：返回实体列表，由 Service 转换并组装树 -->
     <select id="selectOrgMapList" resultMap="ListResultMap">
         SELECT
             y.ID,

@@ -63,7 +63,7 @@
         ORDER BY m.id
     </select>
 
-    <select id="listGrantedResource" resultType="org.pkaq.sys.module.vo.ModuleResourcesVo">
+    <select id="listGrantedResource" resultType="org.pkaq.sys.module.entity.ModuleResources">
         SELECT
             r.ID,
             r.MAIN_ID,

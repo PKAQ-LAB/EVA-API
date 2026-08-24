@@ -72,6 +72,12 @@ server:
   shutdown: graceful
 eva:
   mode: standalone
+  cloud:
+    # 是否仅允许经过网关转发的请求访问服务，默认关闭
+    enable: false
+    # 网关转发请求头名称及期望值
+    request-header: x-request
+    request-value: eva-gateway-request
   i18n: true
   norepeat-check: false
   # 该配置必须在jwt配置前 30天有效

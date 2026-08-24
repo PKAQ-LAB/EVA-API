@@ -1,15 +1,12 @@
 package org.pkaq.sys.post.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.pkaq.sys.post.bo.PostQueryBo;
 import org.pkaq.sys.post.entity.PostEntity;
-import org.pkaq.sys.post.vo.PostListVo;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 岗位管理 Mapper
@@ -22,8 +19,7 @@ public interface PostMapper extends BaseMapper<PostEntity> {
     /**
      * 树形查询（含 parentTitle 回填，按 pid + sort 排序）
      */
-    @MapKey("id")
-    Map<Long, PostListVo> selectPostMapList(@Param("q") PostQueryBo queryBo);
+    List<PostEntity> selectPostMapList(@Param("q") PostQueryBo queryBo);
 
     /**
      * 取指定父节点下当前最大 sort（用于新增节点 sort = max + 1）

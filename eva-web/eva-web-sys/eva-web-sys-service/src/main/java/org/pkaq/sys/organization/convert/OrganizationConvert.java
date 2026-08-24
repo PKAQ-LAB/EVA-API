@@ -5,6 +5,9 @@ import org.pkaq.core.mvc.convert.MapConvertConfig;
 import org.pkaq.sys.organization.bo.OrganizationAoeBo;
 import org.pkaq.sys.organization.entity.OrganizationEntity;
 import org.pkaq.sys.organization.vo.OrganizationDetailVo;
+import org.pkaq.sys.organization.vo.OrganizationListVo;
+
+import java.util.List;
 
 /**
  * @author PKAQ
@@ -15,4 +18,6 @@ public interface OrganizationConvert {
     OrganizationEntity aoeBoToEntity(OrganizationAoeBo aoeBo);
 
     OrganizationDetailVo entityToDetailVo(OrganizationEntity entity);
+
+    List<OrganizationListVo> entityToListVo(List<OrganizationEntity> entities);
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.module//DTD Mapper 3.0//EN" "http://mybatis.module/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.pkaq.sys.module.mapper.ModuleMapper">
-    <resultMap id="BaseResultMap" type="org.pkaq.sys.module.vo.ModuleDetailVo" extends="common.resultMap">
+    <resultMap id="BaseResultMap" type="org.pkaq.sys.module.entity.ModuleEntity" extends="common.resultMap">
         <id property="id" column="ID"/>
         <result property="code" column="CODE"/>
         <result property="name" column="NAME"/>
@@ -14,7 +14,7 @@
         <collection property="children" column="{id=id}" select="listChildren"/>
     </resultMap>
 
-    <resultMap id="FlatResultMap" type="org.pkaq.sys.module.vo.ModuleDetailVo" extends="common.resultMap">
+    <resultMap id="FlatResultMap" type="org.pkaq.sys.module.entity.ModuleEntity" extends="common.resultMap">
         <id property="id" column="ID"/>
         <result property="code" column="CODE"/>
         <result property="name" column="NAME"/>

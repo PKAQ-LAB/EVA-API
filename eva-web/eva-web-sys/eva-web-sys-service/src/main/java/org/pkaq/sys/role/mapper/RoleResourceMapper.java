@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.pkaq.core.annotation.Ignore;
-import org.pkaq.sys.module.vo.ModuleResourcesVo;
+import org.pkaq.sys.module.entity.ModuleResources;
 import org.pkaq.sys.role.bo.RoleResourceRefBo;
 import org.pkaq.sys.role.entity.RoleResourceEntity;
 import org.springframework.stereotype.Repository;
@@ -36,7 +36,7 @@ public interface RoleResourceMapper extends BaseMapper<RoleResourceEntity> {
      * @param roleId 角色ID
      * @return 资源列表
      */
-    List<ModuleResourcesVo> listGrantedResource(Long roleId);
+    List<ModuleResources> listGrantedResource(Long roleId);
 
     /**
      * 删除权限中失效的引用关系

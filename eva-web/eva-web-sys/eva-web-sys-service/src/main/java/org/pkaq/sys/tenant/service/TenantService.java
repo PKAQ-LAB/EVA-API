@@ -27,6 +27,7 @@ import org.pkaq.sys.tenant.mapper.TenantResourceMapper;
 import org.pkaq.sys.tenant.vo.TenantDetailVo;
 import org.pkaq.sys.tenant.vo.TenantListVo;
 import org.pkaq.sys.user.entity.UserEntity;
+import org.pkaq.sys.user.bo.UserTenantAdminBo;
 import org.pkaq.sys.user.mapper.UserMapper;
 import org.pkaq.sys.user.service.UserService;
 import org.springframework.context.ApplicationEventPublisher;
@@ -126,13 +127,10 @@ public class TenantService extends StdService<org.pkaq.sys.tenant.mapper.TenantM
             entity.setAdminId(adminId);
             this.mapper.insert(entity);
 
-            UserEntity admin = new UserEntity();
+            UserTenantAdminBo admin = new UserTenantAdminBo();
             admin.setId(adminId);
-            admin.setFrozen(FrozenEnumm.READ_ONLY);
             admin.setAccount(editBo.getAdminAccount());
             admin.setPassword(editBo.getAdminPass());
-            admin.setName(editBo.getAdminAccount());
-            admin.setCode(editBo.getAdminAccount());
             admin.setTenantId(tenantId);
             this.userService.createTenantAdmin(admin);
             syncTenantResources(tenantId, sanitizeIds(editBo.getResourceIds()));
@@ -196,22 +194,7 @@ public class TenantService extends StdService<org.pkaq.sys.tenant.mapper.TenantM
         int pageSize = queryBo == null ? 10 : queryBo.getPageSize();
 
         PageResult<TenantEntity> pagination = new PageResult<>(pageNo, pageSize);
-        return this.mapper.selectPage(pagination, wrapper).map(e -> {
-            TenantListVo vo = new TenantListVo();
-            vo.setId(e.getId());
-            vo.setName(e.getName());
-            vo.setCode(e.getCode());
-            vo.setType(e.getType());
-            vo.setFullName(e.getFullName());
-            vo.setCardType(e.getCardType());
-            vo.setCardNo(e.getCardNo());
-            vo.setContactName(e.getContactName());
-            vo.setContactTel(e.getContactTel());
-            vo.setAuthUserCount(e.getAuthUserCount());
-            vo.setExpirationDate(e.getExpirationDate());
-            vo.setRemark(e.getRemark());
-            return vo;
-        });
+        return this.mapper.selectPage(pagination, wrapper).map(this.convert::entityToListVo);
     }
 
     /**

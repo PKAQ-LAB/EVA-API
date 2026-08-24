@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -71,10 +70,8 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
      * 查询。
      */
     public Collection<OrganizationListVo> list(OrganizationQueryBo queryBo) {
-        List<OrganizationListVo> orgList = this.mapper.selectOrgMapList(queryBo);
-        if (CollUtils.isEmpty(orgList)) {
-            return Collections.emptyList();
-        }
+        List<OrganizationListVo> orgList = this.organizationConvert.entityToListVo(
+                this.mapper.selectOrgMapList(queryBo));
         return TreeHelper.buildTree(orgList);
     }
 

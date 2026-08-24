@@ -5,6 +5,7 @@ import org.pkaq.core.mvc.convert.MapConvertConfig;
 import org.pkaq.sys.tenant.bo.TenantAoeBo;
 import org.pkaq.sys.tenant.entity.TenantEntity;
 import org.pkaq.sys.tenant.vo.TenantDetailVo;
+import org.pkaq.sys.tenant.vo.TenantListVo;
 
 /**
  * @author PKAQ
@@ -15,4 +16,6 @@ public interface TenantConvert {
     TenantEntity boToEntity(TenantAoeBo bo);
 
     TenantDetailVo entityToVo(TenantEntity entity);
+
+    TenantListVo entityToListVo(TenantEntity entity);
 }

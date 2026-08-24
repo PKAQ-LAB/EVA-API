@@ -13,6 +13,7 @@ import org.pkaq.core.util.StrUtils;
 import org.pkaq.sys.role.mapper.RoleResourceMapper;
 import org.pkaq.sys.tenant.pkg.bo.TenantPackageAoeBo;
 import org.pkaq.sys.tenant.pkg.bo.TenantPackageQueryBo;
+import org.pkaq.sys.tenant.pkg.convert.TenantPackageConvert;
 import org.pkaq.sys.tenant.pkg.entity.TenantPackageEntity;
 import org.pkaq.sys.tenant.pkg.entity.TenantPackageResourceEntity;
 import org.pkaq.sys.tenant.pkg.mapper.TenantPackageMapper;
@@ -36,6 +37,7 @@ public class TenantPackageService {
     private final TenantPackageMapper tenantPackageMapper;
     private final TenantPackageResourceMapper tenantPackageResourceMapper;
     private final RoleResourceMapper roleResourceMapper;
+    private final TenantPackageConvert convert;
 
     /**
      * 分页查询租户套餐。
@@ -50,7 +52,7 @@ public class TenantPackageService {
                         .like(StrUtils.isNotBlank(safeQueryBo.getCode()), TenantPackageEntity::getCode, safeQueryBo.getCode())
                         .like(StrUtils.isNotBlank(safeQueryBo.getName()), TenantPackageEntity::getName, safeQueryBo.getName())
                         .orderByDesc(TenantPackageEntity::getUtcModify))
-                .convert(this::toVo);
+                .convert(this.convert::entityToVo);
     }
 
     /**
@@ -65,7 +67,7 @@ public class TenantPackageService {
             CommonCodes.CAN_NOT_FIND_RECORD.newException(id);
             return null;
         }
-        TenantPackageVo vo = toVo(entity);
+        TenantPackageVo vo = this.convert.entityToVo(entity);
         vo.setResourceIds(this.tenantPackageResourceMapper.selectAuthorizedResourceIds(id));
         return vo;
     }
@@ -101,16 +103,10 @@ public class TenantPackageService {
         Set<Long> resourceIds = sanitizeIds(bo.getResourceIds());
         ensureResourcesValid(resourceIds);
 
-        TenantPackageEntity entity = new TenantPackageEntity();
-        entity.setId(bo.getId());
-        entity.setRevision(bo.getRevision());
+        TenantPackageEntity entity = this.convert.boToEntity(bo);
         entity.setCode(bo.getCode().trim());
         entity.setName(bo.getName().trim());
-        entity.setAuthUserCount(bo.getAuthUserCount());
-        entity.setValidDays(bo.getValidDays());
         entity.setFrozen(resolveFrozen(bo.getFrozen()));
-        entity.setSort(bo.getSort());
-        entity.setRemark(bo.getRemark());
         this.tenantPackageMapper.insertOrUpdate(entity);
 
         syncResources(entity.getId(), resourceIds);
@@ -215,24 +211,4 @@ public class TenantPackageService {
         return FrozenEnumm.UN_FROZEN;
     }
 
-    private TenantPackageVo toVo(TenantPackageEntity entity) {
-        TenantPackageVo vo = new TenantPackageVo();
-        vo.setId(entity.getId());
-        vo.setRevision(entity.getRevision() == null ? 0 : entity.getRevision());
-        vo.setFrozen(entity.getFrozen());
-        vo.setSort(entity.getSort());
-        vo.setTenantId(entity.getTenantId());
-        vo.setCreateId(entity.getCreateId());
-        vo.setCreateBy(entity.getCreateBy());
-        vo.setUtcCreate(entity.getUtcCreate());
-        vo.setModifyId(entity.getModifyId());
-        vo.setModifyBy(entity.getModifyBy());
-        vo.setUtcModify(entity.getUtcModify());
-        vo.setRemark(entity.getRemark());
-        vo.setCode(entity.getCode());
-        vo.setName(entity.getName());
-        vo.setAuthUserCount(entity.getAuthUserCount());
-        vo.setValidDays(entity.getValidDays());
-        return vo;
-    }
 }

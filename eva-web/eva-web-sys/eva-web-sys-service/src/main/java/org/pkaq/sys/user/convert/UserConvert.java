@@ -4,6 +4,7 @@ import org.mapstruct.Mapper;
 import org.pkaq.core.mvc.convert.MapConvertConfig;
 import org.pkaq.sys.user.bo.UserAoeBo;
 import org.pkaq.sys.user.bo.UserQueryBo;
+import org.pkaq.sys.user.bo.UserTenantAdminBo;
 import org.pkaq.sys.user.entity.UserEntity;
 import org.pkaq.sys.user.vo.UserDetailVo;
 import org.pkaq.sys.user.vo.UserListVo;
@@ -22,6 +23,8 @@ public interface UserConvert {
     UserEntity boToEntity(UserAoeBo bo);
 
     UserEntity boToEntity(UserQueryBo queryBo);
+
+    UserEntity boToEntity(UserTenantAdminBo bo);
 
     List<UserListVo> entityToListVo(List<UserEntity> list);
 

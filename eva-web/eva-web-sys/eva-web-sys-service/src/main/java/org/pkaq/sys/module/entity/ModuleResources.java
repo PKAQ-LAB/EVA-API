@@ -30,6 +30,10 @@ public class ModuleResources extends StdLineEntity {
 
     private Double sort;
 
+    /** 是否已授权，仅用于角色资源查询。 */
+    @TableField(exist = false)
+    private Integer checked;
+
     @TableLogic
     @TableField(fill = FieldFill.INSERT)
     private long deleted;

@@ -41,6 +41,10 @@ public class OrganizationEntity extends StdEntity {
     /** 是否叶子节点 */
     private Boolean isleaf;
 
+    /** 上级节点名称，仅用于列表查询。 */
+    @TableField(exist = false)
+    private String parentName;
+
     /** 子节点（非数据库字段，仅在树形组装时使用） */
     @TableField(exist = false)
     private List<OrganizationEntity> children;

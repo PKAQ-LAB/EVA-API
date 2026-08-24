@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.pkaq.sys.post.mapper.PostMapper">
 
-    <resultMap id="ListResultMap" type="org.pkaq.sys.post.vo.PostListVo" extends="common.resultMap">
+    <resultMap id="ListResultMap" type="org.pkaq.sys.post.entity.PostEntity" extends="common.resultMap">
         <id property="id" column="ID"/>
         <result property="code" column="CODE"/>
         <result property="title" column="TITLE"/>
@@ -13,7 +13,7 @@
         <result property="isleaf" column="ISLEAF"/>
     </resultMap>
 
-    <!-- 树形查询：返回 Map<id, PostListVo>，由 Service 端 buildTree -->
+    <!-- 树形查询：返回实体列表，由 Service 转换并组装树 -->
     <select id="selectPostMapList" resultMap="ListResultMap">
         SELECT
             y.ID,

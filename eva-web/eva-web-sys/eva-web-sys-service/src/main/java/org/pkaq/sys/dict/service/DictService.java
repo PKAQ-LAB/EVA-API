@@ -13,11 +13,11 @@ import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.dict.bo.DictAoeBo;
 import org.pkaq.sys.dict.bo.DictLineBo;
 import org.pkaq.sys.dict.cache.DictCacheHelper;
+import org.pkaq.sys.dict.convert.DictConvert;
 import org.pkaq.sys.dict.entity.DictEntity;
 import org.pkaq.sys.dict.entity.DictItemEntity;
 import org.pkaq.sys.dict.mapper.DictItemMapper;
 import org.pkaq.sys.dict.mapper.DictMapper;
-import org.pkaq.sys.dict.vo.DictLineVo;
 import org.pkaq.sys.dict.vo.DictViewVo;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -46,6 +45,7 @@ import java.util.stream.Collectors;
 public class DictService extends StdService<DictMapper, DictEntity> implements IDictService {
     private final DictCacheHelper dictCacheHelper;
     private final DictItemMapper dictItemMapper;
+    private final DictConvert convert;
 
     /**
      * 初始化字典缓存。
@@ -361,15 +361,8 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
     }
 
     private DictEntity toEntity(DictAoeBo bo, DictEntity oldEntity) {
-        DictEntity entity = new DictEntity();
-        entity.setId(bo.getId());
-        entity.setRevision(bo.getRevision());
-        entity.setFrozen(this.toFrozen(bo.getFrozen()));
-        entity.setSort(bo.getSort());
-        entity.setRemark(bo.getRemark());
+        DictEntity entity = this.convert.boToEntity(bo);
         entity.setType(StrUtils.isBlank(bo.getType()) ? bo.getCode() : bo.getType());
-        entity.setCode(bo.getCode());
-        entity.setName(bo.getName());
         if (oldEntity != null && oldEntity.getFrozen() == FrozenEnumm.READ_ONLY) {
             entity.setFrozen(FrozenEnumm.READ_ONLY);
         }
@@ -386,13 +379,9 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
             if (line == null || StrUtils.isBlank(line.getKeyName()) || StrUtils.isBlank(line.getKeyValue())) {
                 continue;
             }
-            DictItemEntity item = new DictItemEntity();
+            DictItemEntity item = this.convert.lineBoToEntity(line);
             item.setMainId(mainId);
-            item.setDCode(line.getKeyName());
-            item.setDValue(line.getKeyValue());
             item.setSort(line.getOrders() == null ? defaultSort : line.getOrders());
-            item.setFrozen(this.toFrozen(line.getFrozen()));
-            item.setRemark(line.getRemark());
             defaultSort++;
             if (line.getId() != null && oldItemMap.containsKey(line.getId())) {
                 item.setId(line.getId());
@@ -468,25 +457,8 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
     }
 
     private DictViewVo toVo(DictEntity entity, List<DictItemEntity> items) {
-        DictViewVo vo = new DictViewVo();
-        vo.setId(entity.getId());
-        vo.setType(entity.getType());
-        vo.setCode(entity.getCode());
-        vo.setName(entity.getName());
-        vo.setFrozen(entity.getFrozen() == null ? null : entity.getFrozen().getCode());
-        vo.setSort(entity.getSort() == null ? 0D : entity.getSort());
-        vo.setLines(items.stream().map(this::toLineVo).collect(Collectors.toCollection(ArrayList::new)));
-        return vo;
-    }
-
-    private DictLineVo toLineVo(DictItemEntity entity) {
-        DictLineVo vo = new DictLineVo();
-        vo.setId(entity.getId());
-        vo.setKeyName(entity.getDCode());
-        vo.setKeyValue(entity.getDValue());
-        vo.setOrders(entity.getSort());
-        vo.setFrozen(entity.getFrozen() == null ? null : entity.getFrozen().getCode());
-        vo.setRemark(entity.getRemark());
+        DictViewVo vo = this.convert.entityToVo(entity);
+        vo.setLines(this.convert.lineEntityToVo(items));
         return vo;
     }
 
@@ -503,19 +475,6 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
                         DictItemEntity::getDValue,
                         (oldValue, newValue) -> newValue,
                         LinkedHashMap::new));
-    }
-
-    private FrozenEnumm toFrozen(Integer frozen) {
-        if (frozen == null) {
-            return FrozenEnumm.UN_FROZEN;
-        }
-        if (FrozenEnumm.FROZEN.getCode().equals(frozen)) {
-            return FrozenEnumm.FROZEN;
-        }
-        if (FrozenEnumm.READ_ONLY.getCode().equals(frozen)) {
-            return FrozenEnumm.READ_ONLY;
-        }
-        return FrozenEnumm.UN_FROZEN;
     }
 
     private Set<Long> sanitizeIds(Set<Long> ids) {

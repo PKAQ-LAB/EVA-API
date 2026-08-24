@@ -19,12 +19,15 @@ import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.core.util.CollUtils;
 import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.module.mapper.ModuleMapper;
+import org.pkaq.sys.module.convert.ModuleConvert;
+import org.pkaq.sys.module.entity.ModuleEntity;
 import org.pkaq.sys.module.vo.ModuleDetailVo;
 import org.pkaq.sys.module.vo.ModuleResourcesVo;
 import org.pkaq.sys.role.bo.RoleAoeBo;
 import org.pkaq.sys.role.bo.RoleQueryBo;
 import org.pkaq.sys.role.bo.RoleResourceRefBo;
 import org.pkaq.sys.role.bo.RoleUserRefBo;
+import org.pkaq.sys.role.convert.RoleConvert;
 import org.pkaq.sys.role.entity.RoleEntity;
 import org.pkaq.sys.role.entity.RoleResourceEntity;
 import org.pkaq.sys.role.entity.RoleUserEntity;
@@ -73,6 +76,10 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
 
     private final UserConvert userConvert;
 
+    private final RoleConvert roleConvert;
+
+    private final ModuleConvert moduleConvert;
+
     private final ApplicationEventPublisher eventPublisher;
 
     /**
@@ -94,7 +101,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
         wrapper.orderByDesc(RoleEntity::getUtcModify);
 
         PageResult<RoleEntity> pagination = new PageResult<>(page.getPageNo(), page.getPageSize());
-        return this.mapper.selectPage(pagination, wrapper).map(this.convert::toVo);
+        return this.mapper.selectPage(pagination, wrapper).map(this.roleConvert::toVo);
     }
 
     /**
@@ -147,7 +154,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
             CommonCodes.DUPLICATE_CODE_ERROR.newException();
             return;
         }
-        RoleEntity entity = this.convert.fromBo(bo);
+        RoleEntity entity = this.roleConvert.fromBo(bo);
         this.mapper.insertOrUpdate(entity);
         if (bo.getId() != null && bo.getId() != 0L) {
             incrementPermVer(fetchUsersByRoleIds(Set.of(bo.getId())));
@@ -224,12 +231,15 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
         ensureRoleExists(roleId);
 
         Long curUid = ThreadUserHelper.getUserId();
-        Map<Long, ModuleDetailVo> moduleMap = this.moduleMapper.listGrantedModules(curUid);
+        Map<Long, ModuleEntity> moduleEntities = this.moduleMapper.listGrantedModules(curUid);
+        Map<Long, ModuleDetailVo> moduleMap = this.moduleConvert
+                .entityToDetailVo(new java.util.ArrayList<>(moduleEntities.values()))
+                .stream()
+                .collect(Collectors.toMap(ModuleDetailVo::getId, item -> item,
+                        (left, right) -> left, LinkedHashMap::new));
         Map<Long, ModuleDetailVo> grantedModuleMap = moduleMap == null ? new LinkedHashMap<>() : moduleMap;
-        List<ModuleResourcesVo> resources = this.roleResourceMapper.listGrantedResource(roleId);
-        if (resources == null) {
-            resources = List.of();
-        }
+        List<ModuleResourcesVo> resources = this.moduleConvert.resourceEntityToVo(
+                this.roleResourceMapper.listGrantedResource(roleId));
         Map<Long, List<ModuleResourcesVo>> resourceMap = resources.stream()
                 .collect(Collectors.groupingBy(ModuleResourcesVo::getMainId, LinkedHashMap::new, Collectors.toList()));
 
@@ -244,10 +254,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
             }
         });
 
-        RoleGrantedModuleVo vo = new RoleGrantedModuleVo();
-        vo.setModules(TreeHelper.buildTree(grantedModuleMap.values()));
-        vo.setCheckedModuleIds(moduleChecked);
-        return vo;
+        return this.roleConvert.toGrantedModuleVo(TreeHelper.buildTree(grantedModuleMap.values()), moduleChecked);
     }
 
     /**
@@ -330,10 +337,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
                 .map(o -> (Long) o)
                 .collect(Collectors.toSet());
 
-        RoleGrantedUserVo vo = new RoleGrantedUserVo();
-        vo.setCheckedUser(checkedUser);
-        vo.setUsers(this.userConvert.entityToSimpleVo(users));
-        return vo;
+        return this.roleConvert.toGrantedUserVo(this.userConvert.entityToSimpleVo(users), checkedUser);
     }
 
     /**

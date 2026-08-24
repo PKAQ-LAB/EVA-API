@@ -22,6 +22,11 @@ public class EvaConfig {
     private String mode = CommonConstant.MODE_STANDALONE;
 
     /**
+     * 微服务访问配置。
+     */
+    private Cloud cloud;
+
+    /**
      * 多租户模式专属配置
      */
     private Tenant tenant;
@@ -121,6 +126,10 @@ public class EvaConfig {
 
     public Tenant getTenant() {
         return null == tenant ? new Tenant() : tenant;
+    }
+
+    public Cloud getCloud() {
+        return null == cloud ? new Cloud() : cloud;
     }
 
     public boolean isStandaloneMode() {

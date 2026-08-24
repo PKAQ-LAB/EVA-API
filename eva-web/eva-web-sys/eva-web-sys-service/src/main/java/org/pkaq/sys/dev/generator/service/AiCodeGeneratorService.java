@@ -3,7 +3,9 @@ package org.pkaq.sys.dev.generator.service;
 import org.pkaq.core.util.CollUtils;
 import org.pkaq.sys.dev.generator.bo.AiCodeFieldBo;
 import org.pkaq.sys.dev.generator.bo.AiCodePromptBo;
+import org.pkaq.sys.dev.generator.convert.AiCodeGeneratorConvert;
 import org.pkaq.sys.dev.generator.vo.AiCodePromptVo;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,9 +18,12 @@ import java.util.List;
  * @author PKAQ
  */
 @Service
+@RequiredArgsConstructor
 public class AiCodeGeneratorService {
 
     private static final String DEFAULT_FEATURE_TYPE = "crud";
+
+    private final AiCodeGeneratorConvert convert;
 
     /**
      * 生成AI代码提示词。
@@ -27,10 +32,8 @@ public class AiCodeGeneratorService {
      * @return 提示词结果
      */
     public AiCodePromptVo buildPrompt(AiCodePromptBo bo) {
-        AiCodePromptVo vo = new AiCodePromptVo();
-        vo.setTitle("生成" + trimToEmpty(bo.getModuleName()) + "代码");
-        vo.setPrompt(buildPromptText(bo));
-        return vo;
+        String title = "生成" + trimToEmpty(bo.getModuleName()) + "代码";
+        return this.convert.toVo(title, buildPromptText(bo));
     }
 
     private String buildPromptText(AiCodePromptBo bo) {

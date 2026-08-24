@@ -9,9 +9,14 @@ import org.pkaq.sys.role.bo.RoleQueryBo;
 import org.pkaq.sys.role.entity.RoleEntity;
 import org.pkaq.sys.role.vo.RoleDetailVo;
 import org.pkaq.sys.role.vo.RoleGrantedModuleVo;
+import org.pkaq.sys.role.vo.RoleGrantedUserVo;
 import org.pkaq.sys.role.vo.RoleListVo;
+import org.pkaq.sys.module.vo.ModuleDetailVo;
+import org.pkaq.sys.user.vo.UserSimpleVo;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author PKAQ
@@ -30,5 +35,10 @@ public abstract class RoleConvert extends Convert {
     public abstract RoleEntity fromBo(RoleAoeBo roleAoeBo);
 
     public abstract List<RoleGrantedModuleVo> entityToModuleList(List<ModuleEntity> entities);
+
+    public abstract RoleGrantedModuleVo toGrantedModuleVo(Collection<ModuleDetailVo> modules,
+                                                           Set<Long> checkedModuleIds);
+
+    public abstract RoleGrantedUserVo toGrantedUserVo(List<UserSimpleVo> users, Set<Long> checkedUser);
 
 }

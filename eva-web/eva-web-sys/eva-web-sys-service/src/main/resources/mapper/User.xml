@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.pkaq.sys.user.mapper.UserMapper">
-    <resultMap id="BaseResultMap" type="org.pkaq.sys.user.vo.UserDetailVo" extends="common.resultMap">
+    <resultMap id="BaseResultMap" type="org.pkaq.sys.user.entity.UserEntity" extends="common.resultMap">
         <id property="id" column="ID"/>
     </resultMap>
     <!-- 获取包含模块权限列表的用户信息 -->
@@ -10,14 +10,6 @@
                     select="org.pkaq.sys.role.mapper.RoleMapper.selectByUserId" ofType="role"/>
         <collection property="modules" column="{userId=id}"
                     select="org.pkaq.sys.module.mapper.ModuleMapper.getRoleModuleByUserId" ofType="module"/>
-    </resultMap>
-
-    <!-- 获取包含权限列表的用户信息 -->
-    <resultMap id="UserWithRoleId" type="user" extends="BaseResultMap">
-        <collection property="roles" javaType="java.util.List" ofType="roleUser">
-            <id column="R_ID" property="id" jdbcType="VARCHAR"/>
-            <result column="ROLE_ID" property="roleId" jdbcType="VARCHAR"/>
-        </collection>
     </resultMap>
 
     <!-- 根据id更新用户锁定状态 -->
@@ -32,31 +24,6 @@
             </if>
         </where>
     </update>
-
-    <select id="getUerWithRoleId" resultMap="UserWithRoleId">
-        SELECT
-            su.*,
-            sru.id R_ID,
-            sru.ROLE_ID
-        FROM
-            SYS_USER su
-        LEFT JOIN SYS_ROLEUSER_REF sru
-            ON su.id = sru.USER_ID
-        <where>
-            <if test="null != user.deptId and user.deptId != ''">
-                su.dept_Id = #{user.deptId,jdbcType=VARCHAR}
-            </if>
-            <if test="null != user.account and user.account != ''">
-                and su.account = #{user.account,jdbcType=VARCHAR}
-            </if>
-            <if test="null != user.name and user.name != ''">
-                and su.name = #{user.name,jdbcType=VARCHAR}
-            </if>
-            <if test="null != user.tel and user.tel != ''">
-                and su.tel = #{user.tel,jdbcType=VARCHAR}
-            </if>
-        </where>
-    </select>
 
     <!-- 根据用户ID获取包含模块权限列表的用户信息 -->
     <select id="getUserWithModuleAndRoleById" resultMap="UserWithModuleAndRole">

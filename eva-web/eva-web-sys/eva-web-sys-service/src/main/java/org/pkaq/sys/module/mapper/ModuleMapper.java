@@ -7,8 +7,6 @@ import org.apache.ibatis.annotations.Param;
 import org.pkaq.core.annotation.Ignore;
 import org.pkaq.sys.module.bo.ModuleQueryBo;
 import org.pkaq.sys.module.entity.ModuleEntity;
-import org.pkaq.sys.module.vo.ModuleDetailVo;
-import org.pkaq.sys.module.vo.ModuleListVo;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -43,7 +41,7 @@ public interface ModuleMapper extends BaseMapper<ModuleEntity> {
      * @param module 符合条件的List
      * @return 符合查询条件的List
      */
-    List<ModuleListVo> listModule(@Param("module") ModuleQueryBo module);
+    List<ModuleEntity> listModule(@Param("module") ModuleQueryBo module);
 
     /**
      * 根据parentID查询子节点数据
@@ -107,10 +105,10 @@ public interface ModuleMapper extends BaseMapper<ModuleEntity> {
      * @return
      */
     @MapKey("id")
-    Map<Long, ModuleDetailVo> listGrantedModules(long uid);
+    Map<Long, ModuleEntity> listGrantedModules(long uid);
 
     @MapKey("id")
-    Map<Long, ModuleDetailVo> selectModuleMapList(@Param("bo") ModuleQueryBo bo);
+    Map<Long, ModuleEntity> selectModuleMapList(@Param("bo") ModuleQueryBo bo);
 
     /**
      * 刷新树的path

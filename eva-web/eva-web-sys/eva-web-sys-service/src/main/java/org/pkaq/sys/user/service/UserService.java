@@ -22,6 +22,7 @@ import org.pkaq.core.util.CollUtils;
 import org.pkaq.core.util.StrUtils;
 import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.module.service.ModuleService;
+import org.pkaq.sys.module.convert.ModuleConvert;
 import org.pkaq.sys.module.vo.ModuleDetailVo;
 import org.pkaq.sys.organization.entity.OrganizationEntity;
 import org.pkaq.sys.organization.mapper.OrganizationMapper;
@@ -37,6 +38,7 @@ import org.pkaq.sys.user.bo.UserCheckBo;
 import org.pkaq.sys.user.bo.UserGrantBo;
 import org.pkaq.sys.user.bo.UserPostBo;
 import org.pkaq.sys.user.bo.UserQueryBo;
+import org.pkaq.sys.user.bo.UserTenantAdminBo;
 import org.pkaq.sys.user.convert.UserConvert;
 import org.pkaq.sys.user.entity.UserEntity;
 import org.pkaq.sys.user.mapper.UserMapper;
@@ -82,6 +84,7 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
     private final PostUserMapper postUserMapper;
     private final OrganizationMapper organizationMapper;
     private final ModuleService moduleService;
+    private final ModuleConvert moduleConvert;
     private final UserConvert convert;
     private final EvaConfig evaConfig;
     private final ApplicationEventPublisher eventPublisher;
@@ -322,29 +325,8 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
             return Collections.emptyList();
         }
         return modules.stream()
-                .map(this::toUserResourceVo)
+                .map(this.moduleConvert::detailToUserResourceVo)
                 .collect(Collectors.toList());
-    }
-
-    private UserResourceVo toUserResourceVo(ModuleDetailVo module) {
-        UserResourceVo vo = new UserResourceVo();
-        vo.setId(module.getId());
-        vo.setPid(module.getPid());
-        vo.setRouteurl(module.getRouteUrl());
-        vo.setModelurl(module.getComponentUrl());
-        vo.setResources(module.getResources());
-
-        List<UserResourceVo> children = module.getOriginChildren() == null
-                ? Collections.emptyList()
-                : module.getOriginChildren().stream()
-                        .filter(ModuleDetailVo.class::isInstance)
-                        .map(ModuleDetailVo.class::cast)
-                        .map(this::toUserResourceVo)
-                        .collect(Collectors.toList());
-        if (!children.isEmpty()) {
-            vo.setChildren(children);
-        }
-        return vo;
     }
 
     /**
@@ -372,17 +354,21 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
     /**
      * 创建租户管理员。
      *
-     * @param user 用户实体
+     * @param user 租户管理员参数
      */
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public void createTenantAdmin(UserEntity user) {
+    public void createTenantAdmin(UserTenantAdminBo user) {
         this.validateUsername(user.getAccount());
 
         if (StrUtils.isBlank(user.getPassword())) {
             SysCodes.BAD_ORG_PASSWORD.newException();
         }
-        user.setPassword(BCryptUtils.hashpw(user.getPassword()));
-        this.mapper.insert(user);
+        UserEntity entity = this.convert.boToEntity(user);
+        entity.setName(user.getAccount());
+        entity.setCode(user.getAccount());
+        entity.setFrozen(FrozenEnumm.READ_ONLY);
+        entity.setPassword(BCryptUtils.hashpw(user.getPassword()));
+        this.mapper.insert(entity);
     }
 
     private void ensureUniqueUser(UserAoeBo user) {

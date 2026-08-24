@@ -25,7 +25,6 @@ import org.pkaq.sys.module.enums.ResourceTypeEnum;
 import org.pkaq.sys.module.mapper.ModuleMapper;
 import org.pkaq.sys.module.mapper.ModuleResourceMapper;
 import org.pkaq.sys.module.vo.ModuleDetailVo;
-import org.pkaq.sys.module.vo.ModuleMenuResourceVo;
 import org.pkaq.sys.module.vo.ModuleMenuVo;
 import org.pkaq.sys.module.vo.ModuleResourcesVo;
 import org.pkaq.sys.role.mapper.RoleResourceMapper;
@@ -185,7 +184,8 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
      * @return 模块详情
      */
     public ModuleDetailVo getModule(Long id) {
-        ModuleDetailVo md = this.convert.entityToDetailVo(this.get(id));
+        ModuleEntity entity = this.get(id);
+        ModuleDetailVo md = this.convert.entityToDetailVo(entity);
 
         List<ModuleResources> resources = this.moduleResourceMapper.selectList(
                 new LambdaQueryWrapper<ModuleResources>().eq(ModuleResources::getMainId, id));
@@ -198,7 +198,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
      * 查询模块树，可按需附带资源列表。
      */
     public Collection<ModuleDetailVo> list(ModuleQueryBo queryBo, boolean withResource) {
-        Map<Long, ModuleDetailVo> moduleMap = this.mapper.selectModuleMapList(queryBo);
+        Map<Long, ModuleDetailVo> moduleMap = toDetailMap(this.mapper.selectModuleMapList(queryBo));
 
         if (CollUtils.isEmpty(moduleMap)) {
             return Collections.emptyList();
@@ -214,7 +214,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
      * 查询用户已授权的模块树，并附带资源列表。
      */
     public Collection<ModuleDetailVo> fetchUserModules(Long uid) {
-        Map<Long, ModuleDetailVo> moduleMap = this.mapper.listGrantedModules(uid);
+        Map<Long, ModuleDetailVo> moduleMap = toDetailMap(this.mapper.listGrantedModules(uid));
 
         if (CollUtils.isEmpty(moduleMap)) {
             return Collections.emptyList();
@@ -236,7 +236,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
             return Collections.emptyList();
         }
         return modules.stream()
-                .map(this::toMenuVo)
+                .map(this.convert::detailToMenuVo)
                 .collect(Collectors.toList());
     }
 
@@ -415,47 +415,15 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
     }
 
     /**
-     * 转换为前端菜单视图，剔除创建人、修改人、租户等管理端字段。
+     * 将 Mapper 返回的实体映射转换为 Service 输出视图映射。
      */
-    private ModuleMenuVo toMenuVo(ModuleDetailVo module) {
-        ModuleMenuVo vo = new ModuleMenuVo();
-        vo.setId(module.getId());
-        vo.setCode(module.getCode());
-        vo.setName(module.getName());
-        vo.setPid(module.getPid());
-        vo.setPath(module.getPath());
-        vo.setIsleaf(module.getIsleaf());
-        vo.setIcon(module.getIcon());
-        vo.setRouteUrl(module.getRouteUrl());
-        vo.setComponentUrl(module.getComponentUrl());
-        vo.setSort(module.getSort());
-
-        if (!CollUtils.isEmpty(module.getResources())) {
-            vo.setResources(module.getResources().stream()
-                    .map(this::toMenuResourceVo)
-                    .collect(Collectors.toList()));
+    private Map<Long, ModuleDetailVo> toDetailMap(Map<Long, ModuleEntity> entityMap) {
+        if (CollUtils.isEmpty(entityMap)) {
+            return Collections.emptyMap();
         }
-        if (!CollUtils.isEmpty(module.getOriginChildren())) {
-            vo.setChildren(module.getOriginChildren().stream()
-                    .filter(ModuleDetailVo.class::isInstance)
-                    .map(ModuleDetailVo.class::cast)
-                    .map(this::toMenuVo)
-                    .collect(Collectors.toList()));
-        }
-        return vo;
-    }
-
-    /**
-     * 转换为前端菜单资源视图。
-     */
-    private ModuleMenuResourceVo toMenuResourceVo(ModuleResourcesVo resource) {
-        ModuleMenuResourceVo vo = new ModuleMenuResourceVo();
-        vo.setId(resource.getId());
-        vo.setCode(resource.getCode());
-        vo.setResourceDesc(resource.getResourceDesc());
-        vo.setResourceUrl(resource.getResourceUrl());
-        vo.setResourceType(resource.getResourceType());
-        return vo;
+        return this.convert.entityToDetailVo(new ArrayList<>(entityMap.values())).stream()
+                .collect(Collectors.toMap(ModuleDetailVo::getId, item -> item,
+                        (left, right) -> left, LinkedHashMap::new));
     }
 
     /**

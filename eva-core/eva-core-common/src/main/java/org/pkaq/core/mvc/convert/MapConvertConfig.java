@@ -9,6 +9,8 @@ import org.mapstruct.*;
 @MapperConfig(componentModel = "spring",
         mappingInheritanceStrategy = MappingInheritanceStrategy.EXPLICIT,
         nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT,
+        nullValueIterableMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT,
+        nullValueMapMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
         unmappedTargetPolicy = ReportingPolicy.IGNORE)

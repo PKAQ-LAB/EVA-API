@@ -27,9 +27,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -77,11 +75,8 @@ public class PostService extends StdService<PostMapper, PostEntity> {
      * 查询。
      */
     public Collection<PostListVo> list(PostQueryBo queryBo) {
-        Map<Long, PostListVo> postMap = this.mapper.selectPostMapList(queryBo);
-        if (CollUtils.isEmpty(postMap)) {
-            return Collections.emptyList();
-        }
-        return TreeHelper.buildTree(postMap.values());
+        List<PostListVo> posts = this.postConvert.entityToListVo(this.mapper.selectPostMapList(queryBo));
+        return TreeHelper.buildTree(posts);
     }
 
     /**
