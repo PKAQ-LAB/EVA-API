@@ -13,7 +13,6 @@ import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Objects;
 
 /**
  * 通用枚举处理器
@@ -68,7 +67,7 @@ public class UniversalEnumTypeHandler<E extends Enum<E> & BaseEnum<?>> extends B
         }
 
         for (E e : type.getEnumConstants()) {
-            if (Objects.equals(((BaseEnum<?>) e).getCode(), code)) {
+            if (String.valueOf(((BaseEnum<?>) e).getCode()).equals(String.valueOf(code))) {
                 return e;
             }
         }

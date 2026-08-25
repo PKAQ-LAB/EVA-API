@@ -1,6 +1,6 @@
 # EVA-API 项目知识库
 
-> 基于 GitNexus 索引（403 文件 / 3220 符号 / 6858 关系 / 256 执行流）整理。
+> 基于 GitNexus 索引（3851 个节点 / 8734 条关系 / 146 个功能簇 / 300 条执行流）整理。
 > 数据陈旧后请运行 `node .gitnexus/run.cjs analyze` 重新索引。
 
 ---
@@ -12,14 +12,14 @@
 | GroupId / Version | `org.pkaq` / `4.0.3.12` |
 | JDK | **Java 25**（`languageVersion = 25`，启用 `-parameters`） |
 | 构建 | Gradle 多模块 + `libs.versions.toml` 版本目录 |
-| 核心框架 | Spring Boot **4.1.0** + Spring Security |
-| ORM | MyBatis-Plus **3.5.16**（兼容 Spring Boot 4 starter） |
+| 核心框架 | Spring Boot **4.1.1** + Spring Security |
+| ORM | MyBatis-Plus **3.5.17**（兼容 Spring Boot 4 starter） |
 | 数据库 | MySQL 9.7 / PostgreSQL（默认）；Mongo（日志） |
 | 缓存 | Caffeine（本地）/ Redis（分布式），按 Condition 切换 |
 | 鉴权 | JWT（Nimbus JOSE 10.9.1）+ 双 Token + 设备 ID |
 | 对象映射 | MapStruct **1.6.3**（`defaultComponentModel = spring`） |
 | 文件存储 | MinIO 9.0.3 / Ali OSS / FastDFS / 本地目录（Condition 切换） |
-| 接口文档 | SpringDoc **3.0.3** + Knife4j 4.5.0（`!prod` Profile） |
+| 接口文档 | SpringDoc **3.1.0** + Knife4j 4.5.0（`!prod` Profile） |
 | License | TrueLicense 1.33（独立 server + 拦截器） |
 | 私服 | `http://dev.jm-sk.com:12081/` |
 
@@ -243,7 +243,7 @@ AuthCtrl.fetchMenus
 - `SaveUser → GetMsg` —— 用户保存
 - `List → GetMsg` —— 列表型查询统一收口到 `BizCode.getMsg`
 
-> 完整 256 条执行流可通过 `gitnexus://repo/EVA-API/processes` 浏览；针对单条用 `gitnexus://repo/EVA-API/process/{name}` 取 step trace。
+> 完整 300 条执行流可通过 `gitnexus://repo/EVA-API/processes` 浏览；针对单条用 `gitnexus://repo/EVA-API/process/{name}` 取 step trace。
 
 ---
 

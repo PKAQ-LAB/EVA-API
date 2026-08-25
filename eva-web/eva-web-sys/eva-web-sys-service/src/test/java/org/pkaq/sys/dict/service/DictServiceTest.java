@@ -19,8 +19,10 @@ import org.pkaq.sys.dict.entity.DictItemEntity;
 import org.pkaq.sys.dict.mapper.DictItemMapper;
 import org.pkaq.sys.dict.mapper.DictMapper;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -114,6 +116,90 @@ class DictServiceTest {
         assertNotEquals(11L, insertedItem.getValue().getId());
         assertNotEquals(12L, insertedItem.getValue().getId());
         assertEquals(1, TransactionSynchronizationManager.getSynchronizations().size());
+    }
+
+    /**
+     * 验证事务提交后才刷新受影响的字典缓存。
+     */
+    @Test
+    void shouldReloadCacheOnlyAfterCommit() {
+        DictEntity oldDict = new DictEntity();
+        oldDict.setId(1L);
+        oldDict.setCode("old-status");
+        oldDict.setFrozen(FrozenEnumm.UN_FROZEN);
+        when(this.dictMapper.selectCount(any(Wrapper.class))).thenReturn(0L);
+        when(this.dictMapper.selectById(1L)).thenReturn(oldDict);
+        when(this.dictItemMapper.selectList(any(Wrapper.class))).thenReturn(Collections.emptyList());
+
+        DictAoeBo bo = new DictAoeBo();
+        bo.setId(1L);
+        bo.setCode("new-status");
+        bo.setName("新状态");
+        this.service.edit(bo);
+
+        verify(this.dictCacheHelper, never()).remove(any(String.class));
+        for (TransactionSynchronization synchronization : TransactionSynchronizationManager.getSynchronizations()) {
+            synchronization.afterCommit();
+        }
+
+        verify(this.dictCacheHelper).remove("old-status");
+        verify(this.dictCacheHelper).remove("new-status");
+    }
+
+    /**
+     * 验证事务回滚时不刷新字典缓存。
+     */
+    @Test
+    void shouldNotReloadCacheAfterRollback() {
+        DictEntity oldDict = new DictEntity();
+        oldDict.setId(1L);
+        oldDict.setCode("status");
+        oldDict.setFrozen(FrozenEnumm.UN_FROZEN);
+        when(this.dictMapper.selectCount(any(Wrapper.class))).thenReturn(0L);
+        when(this.dictMapper.selectById(1L)).thenReturn(oldDict);
+        when(this.dictItemMapper.selectList(any(Wrapper.class))).thenReturn(Collections.emptyList());
+
+        DictAoeBo bo = new DictAoeBo();
+        bo.setId(1L);
+        bo.setCode("status");
+        bo.setName("状态");
+        this.service.edit(bo);
+
+        for (TransactionSynchronization synchronization : TransactionSynchronizationManager.getSynchronizations()) {
+            synchronization.afterCompletion(TransactionSynchronization.STATUS_ROLLED_BACK);
+        }
+
+        verify(this.dictCacheHelper, never()).remove(any(String.class));
+    }
+
+    /**
+     * 验证提交空明细时删除全部原有明细。
+     */
+    @Test
+    void shouldDeleteAllItemsWhenLinesAreEmpty() {
+        DictEntity oldDict = new DictEntity();
+        oldDict.setId(1L);
+        oldDict.setCode("status");
+        oldDict.setFrozen(FrozenEnumm.UN_FROZEN);
+        DictItemEntity firstItem = new DictItemEntity();
+        firstItem.setId(11L);
+        DictItemEntity secondItem = new DictItemEntity();
+        secondItem.setId(12L);
+        when(this.dictMapper.selectCount(any(Wrapper.class))).thenReturn(0L);
+        when(this.dictMapper.selectById(1L)).thenReturn(oldDict);
+        when(this.dictItemMapper.selectList(any(Wrapper.class))).thenReturn(List.of(firstItem, secondItem));
+
+        DictAoeBo bo = new DictAoeBo();
+        bo.setId(1L);
+        bo.setCode("status");
+        bo.setName("状态");
+        bo.setLines(Collections.emptyList());
+        this.service.edit(bo);
+
+        verify(this.dictItemMapper).deleteById(11L);
+        verify(this.dictItemMapper).deleteById(12L);
+        verify(this.dictItemMapper, never()).insert(any(DictItemEntity.class));
+        verify(this.dictItemMapper, never()).updateById(any(DictItemEntity.class));
     }
 
     private DictLineBo line(Long id, String code, String value) {

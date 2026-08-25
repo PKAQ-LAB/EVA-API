@@ -1,6 +1,8 @@
 package org.pkaq.web.core.filter;
 
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.DispatcherType;
+import jakarta.servlet.RequestDispatcher;
 import org.junit.jupiter.api.Test;
 import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.properties.Cloud;
@@ -69,6 +71,47 @@ class RequestFilterTest {
         RequestFilter filter = new RequestFilter(this.enabledConfig());
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader(CommonConstant.X_GATEWAY_HEADER, CommonConstant.X_GATEWAY_VALUE);
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        FilterChain filterChain = mock(FilterChain.class);
+
+        filter.doFilter(request, response, filterChain);
+
+        verify(filterChain).doFilter(request, response);
+        assertEquals(200, response.getStatus());
+    }
+
+    /**
+     * 验证 CORS 预检请求不需要网关请求头。
+     *
+     * @throws Exception 过滤器执行异常
+     */
+    @Test
+    void shouldAllowCorsPreflightWithoutGatewayHeader() throws Exception {
+        RequestFilter filter = new RequestFilter(this.enabledConfig());
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setMethod("OPTIONS");
+        request.addHeader("Origin", "https://example.test");
+        request.addHeader("Access-Control-Request-Method", "GET");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        FilterChain filterChain = mock(FilterChain.class);
+
+        filter.doFilter(request, response, filterChain);
+
+        verify(filterChain).doFilter(request, response);
+        assertEquals(200, response.getStatus());
+    }
+
+    /**
+     * 验证错误派发不会被网关请求头校验二次拦截。
+     *
+     * @throws Exception 过滤器执行异常
+     */
+    @Test
+    void shouldSkipGatewayCheckForErrorDispatch() throws Exception {
+        RequestFilter filter = new RequestFilter(this.enabledConfig());
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setAttribute(RequestDispatcher.ERROR_REQUEST_URI, "/failed");
+        request.setDispatcherType(DispatcherType.ERROR);
         MockHttpServletResponse response = new MockHttpServletResponse();
         FilterChain filterChain = mock(FilterChain.class);
 

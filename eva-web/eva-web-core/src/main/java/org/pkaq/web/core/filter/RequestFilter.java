@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.properties.Cloud;
 import org.pkaq.core.properties.EvaConfig;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -30,12 +31,18 @@ public class RequestFilter extends OncePerRequestFilter {
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws IOException, ServletException {
         Cloud cloud = this.evaConfig.getCloud();
-        if (cloud.isEnable() && !cloud.getRequestValue().equals(request.getHeader(cloud.getRequestHeader()))) {
+        boolean corsPreflight = HttpMethod.OPTIONS.matches(request.getMethod());
+        if (!corsPreflight && cloud.isEnable()
+                && !cloud.getRequestValue().equals(request.getHeader(cloud.getRequestHeader()))) {
             log.warn("拒绝未经过网关转发的请求: method={}, uri={}", request.getMethod(), request.getRequestURI());
-            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
         filterChain.doFilter(request, response);
     }
 
+    @Override
+    protected boolean shouldNotFilterErrorDispatch() {
+        return true;
+    }
 }

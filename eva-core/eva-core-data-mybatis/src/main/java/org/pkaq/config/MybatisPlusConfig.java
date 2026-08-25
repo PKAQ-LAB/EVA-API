@@ -1,5 +1,6 @@
 package org.pkaq.config;
 
+import com.baomidou.mybatisplus.core.handlers.CompositeEnumTypeHandler;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
@@ -7,6 +8,7 @@ import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerIntercept
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
 import org.apache.ibatis.mapping.VendorDatabaseIdProvider;
+import org.pkaq.core.mybatis.enums.UniversalEnumTypeHandler;
 import org.pkaq.core.mybatis.handler.CustomTenantLineHandler;
 import org.pkaq.core.properties.EvaConfig;
 import org.springframework.context.annotation.Bean;
@@ -33,6 +35,7 @@ public class MybatisPlusConfig {
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        CompositeEnumTypeHandler.setDefaultEnumTypeHandler(UniversalEnumTypeHandler.class);
         // 租户插件
         if (evaConfig.isSaasMode()) {
             interceptor.addInnerInterceptor(new TenantLineInnerInterceptor(customTenantLineHandler));
