@@ -156,7 +156,7 @@ public class MinIOFileUtil implements FileProvider {
      */
     @Override
     public void thumbnail(File file, float scale) {
-        // TODO document why this method is empty
+        throw new UnsupportedOperationException("MinIO provider does not support local File thumbnails");
     }
 
     /**
@@ -168,7 +168,7 @@ public class MinIOFileUtil implements FileProvider {
      */
     @Override
     public void thumbnail(File file, File dest, float scale) {
-        // TODO document why this method is empty
+        throw new UnsupportedOperationException("MinIO provider does not support local File thumbnails");
     }
 
     /**

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.log.base.BizLogEntity;
 import org.pkaq.core.log.base.LogSupporter;
+import org.pkaq.core.util.Snowflake;
 import org.pkaq.core.log.condition.JdbcSupporterCondition;
 import org.pkaq.core.mvc.bo.DateRangeBo;
 import org.springframework.context.annotation.Conditional;
@@ -24,13 +25,37 @@ import java.util.List;
 @Conditional(JdbcSupporterCondition.class)
 @RequiredArgsConstructor
 public class BizlogJdbcSupporter implements LogSupporter {
+    private static final Snowflake ID_GENERATOR = new Snowflake();
 
     private final JdbcTemplate jdbcTemplate;
 
     @Override
     public void save(BizLogEntity entity) {
-        // TODO 瀹炵幇JDBC鏃ュ織淇濆瓨
-        log.info(entity.toString());
+        if (entity == null) {
+            return;
+        }
+        String sql = """
+                INSERT INTO LOG_BIZ (
+                    ID, OPERATOR, OPERATE_TYPE, OPERATE_DATETIME, SPEND_TIME,
+                    DESCRIPTION, M_CODE, B_ID, CLASS_NAME, METHOD, PARAMS,
+                    RESPONSE, DEVICE, VERSION
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """;
+        jdbcTemplate.update(sql,
+                ID_GENERATOR.nextId(),
+                entity.getOperator(),
+                entity.getOperateType(),
+                entity.getOperateDatetime(),
+                entity.getSpendTime(),
+                entity.getDescription(),
+                entity.getMCode(),
+                entity.getBId(),
+                entity.getClassName(),
+                entity.getMethod(),
+                entity.getParams(),
+                entity.getResponse(),
+                entity.getDevice(),
+                entity.getVersion());
     }
 
     @Override

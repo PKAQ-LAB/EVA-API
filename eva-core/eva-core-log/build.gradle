@@ -10,4 +10,5 @@ dependencies {
     implementation  project(":eva-core:eva-core-common")
 
     compileOnly libs.jdbc
+    testImplementation libs.jdbc
 }
