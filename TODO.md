@@ -1,6 +1,6 @@
 # EVA-API 未完成任务
 
-> 2026-08-25 基于 GitNexus 全量索引（3,851 个节点、8,734 条关系、146 个功能簇、300 条执行流）、现有代码审查报告和测试结果复核。
+> 2026-09-10 基于 GitNexus 全量索引、现有代码审查报告和测试结果复核。
 
 ## P0
 1. 统一错误码前缀、编码唯一性、国际化资源和参数占位符。
@@ -16,7 +16,7 @@
 
 ## P2 工程质量
 1. 为 ModuleService、OrganizationService、PostService、RoleService、TenantService、TenantPackageService 和 UserService 补齐单元测试。
-2. 为所有 sys Convert 补齐字段级单元测试。
+2. 为除已覆盖 `DictConvert` 外的 sys Convert 补齐字段级单元测试。
 3. 统一字典明细、模块资源、角色用户、角色资源、岗位用户、租户资源和套餐资源的差异更新模式。
 4. 统一枚举业务编码、MapStruct 转换、MyBatis TypeHandler 和 JSON 序列化，禁止使用枚举序号作为业务编码，并补齐未知业务码测试。
 5. 明确 APISIX 替换范围、路由、鉴权、网关请求头注入与剥离、限流、熔断、灰度和回滚方案。
