@@ -43,6 +43,8 @@ public interface AuthUserMapper extends BaseMapper<AuthUserEntity> {
                 su.ID,
                 su.FROZEN,
                 su.PERM_VER,
+                su.TENANT_ID,
+                su.DEPT_ID,
                 st.FROZEN AS TENANT_FROZEN,
                 st.EXPIRATION_DATE AS TENANT_EXPIRATION_DATE
             FROM SYS_USER su

@@ -3,6 +3,7 @@ package org.pkaq.core.auth.user.service;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.auth.user.entity.AuthUserEntity;
 import org.pkaq.core.auth.user.mapper.AuthUserMapper;
+import org.pkaq.core.auth.role.mapper.AuthRoleMapper;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 public class AuthUserService {
 
     private final AuthUserMapper authUserMapper;
+    private final AuthRoleMapper authRoleMapper;
 
     /**
      * 获取用户及角色信息
@@ -49,7 +51,11 @@ public class AuthUserService {
         if (userId == null || userId <= 0) {
             return null;
         }
-        return authUserMapper.getAuthState(userId);
+        AuthUserEntity authState = authUserMapper.getAuthState(userId);
+        if (authState != null) {
+            authState.setRoles(this.authRoleMapper.selectByUserId(String.valueOf(userId)));
+        }
+        return authState;
     }
 
     /**

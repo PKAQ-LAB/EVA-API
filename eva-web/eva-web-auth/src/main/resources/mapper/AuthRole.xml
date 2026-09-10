@@ -5,6 +5,8 @@
         select  R.ID,
                 R.NAME,
                 R.CODE,
+                R.DATA_SCOPE,
+                R.DATA_ORG_IDS,
                 RU.USER_ID
         from SYS_ROLE R, SYS_ROLEUSER_REF RU
         <where>

@@ -2,6 +2,7 @@ package org.pkaq.config;
 
 import com.baomidou.mybatisplus.core.handlers.CompositeEnumTypeHandler;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.DataPermissionInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
@@ -39,6 +40,12 @@ public class MybatisPlusConfig {
         // 租户插件
         if (evaConfig.isSaasMode()) {
             interceptor.addInnerInterceptor(new TenantLineInnerInterceptor(customTenantLineHandler));
+        }
+
+        // 数据权限必须位于分页插件之前，保证总数查询和数据查询采用相同条件。
+        if (evaConfig.getDataPermission().isEnable()) {
+            interceptor.addInnerInterceptor(new DataPermissionInterceptor(
+                    new MybatisPlusDataPermissionHandler(evaConfig)));
         }
 
         //分页插件

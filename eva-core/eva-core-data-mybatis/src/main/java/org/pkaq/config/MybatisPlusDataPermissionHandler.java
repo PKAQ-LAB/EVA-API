@@ -1,176 +1,198 @@
-//package io.nerv.config;
-//
-//import com.baomidou.mybatisplus.extension.plugins.handler.DataPermissionHandler;
-//import io.nerv.core.annotation.Ignore;
-//import io.nerv.core.enums.DataPermissionEnumm;
-//import io.nerv.core.properties.EvaConfig;
-//import io.nerv.core.security.domain.JwtUserDetail;
-//import io.nerv.core.threaduser.ThreadUserHelper;
-//import io.nerv.security.domain.JwtGrantedAuthority;
-//import io.nerv.web.sys.role.entity.RoleEntity;
-//import lombok.Getter;
-//import lombok.Setter;
-//import lombok.SneakyThrows;
-//import lombok.extern.slf4j.Slf4j;
-//import net.sf.jsqlparser.expression.Expression;
-//import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
-//import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-//import org.pkaq.core.util.CollUtils;
-//import org.pkaq.core.util.StrUtils;
-//
-//import java.lang.reflect.Method;
-//import java.util.Arrays;
-//import java.util.List;
-//import java.util.stream.Collectors;
-//
-/// **
-// * 数据权限拦截插件
-// */
-//@Slf4j
-//@Getter
-//@Setter
-//public class MybatisPlusDataPermissionHandler implements DataPermissionHandler {
-//    private EvaConfig evaConfig;
-//
-//    public MybatisPlusDataPermissionHandler() {
-//        super();
-//    }
-//    /**
-//     * @param where             原SQL Where 条件表达式
-//     * @param mappedStatementId Mapper接口方法ID
-//     * @return
-//     */
-//    @SneakyThrows
-//    @Override
-//    public Expression getSqlSegment(Expression where, String mappedStatementId) {
-//        //  未启用数据权限控制 直接返回
-//        if (null == evaConfig.getDataPermission() || !evaConfig.getDataPermission().isEnable()) {
-//            return where;
-//        }
-//        // 是否为排除的语句 通过配置文件或@Ignore注解
-//        if (this.isIgnored(mappedStatementId) || this.isExcluded(mappedStatementId)){
-//            return where;
-//        }
-//
-//        if (ThreadUserHelper.getCurrentUser() != null && !this.isExcluded(mappedStatementId)) {
-//            // 从数据库中获得当前请求需要的权限
-//            List<RoleEntity> roles = securityHelper.getAuthentication()
-//                    .getAuthorities()
-//                    .stream()
-//                    .map(item -> {
-//                        JwtGrantedAuthority jwtGrantedAuthority = (JwtGrantedAuthority) item;
-//                        log.debug(" ||| -- 当前用户权限为 -- ||| " + jwtGrantedAuthority.getRoleEntity());
-//                        return jwtGrantedAuthority.getRoleEntity();
-//                    })
-//                    .collect(Collectors.toList());
-//
-//            // 获得当前请求所需角色的数据权限
-//            String permissionSQL = this.permissionSql(roles);
-//
-//            Expression permission = CCJSqlParserUtil.parseCondExpression(permissionSQL);
-//
-//            // 查询当前权限组拥有的数据权限
-//            // 根据权限拼接查询语句
-//            if (StrUtils.isNotBlank(permissionSQL)){
-//                return new AndExpression(where, permission);
-//            }
-//        }
-//        return where;
-//    }
-//    /**
-//     * 判断是否存在忽略注解
-//     * @param statementId
-//     * @return
-//     */
-//    public boolean isIgnored(String statementId) throws ClassNotFoundException {
-//        String namespace = statementId;
-//        String className = namespace.substring(0,namespace.lastIndexOf("."));
-//        String methedName= namespace.substring(namespace.lastIndexOf(".") + 1);
-//        Class clazz = Class.forName(className);
-//        // 判断类注解
-//        if (null != clazz && clazz.getAnnotation(Ignore.class) instanceof Ignore){
-//            return true;
-//        }
-//
-//        // 判断方法注解
-//        Method[] ms = Class.forName(className).getMethods();
-//
-//        return Arrays.stream(ms).filter(item ->
-//                methedName.equals(item.getName()) && item.getAnnotation(Ignore.class) instanceof Ignore)
-//                .count() > 0;
-//    }
-//    /**
-//     * 判断是否为排除不过滤的语句
-//     * @param statementId
-//     * @return
-//     */
-//    public boolean isExcluded(String statementId){
-//        List<String> excludeTables = evaConfig.getDataPermission().getExcludeStatements();
-//        return CollUtils.isNotEmpty(excludeTables)
-//                &&
-//                excludeTables.stream()
-//                        .filter(item -> statementId.equals(item))
-//                        .count() > 0;
-//    }
-//
-//    /**
-//     * 生成权限限制sql
-//     * @param dataPermission
-//     * @return
-//     */
-//    public String permissionSql(List<RoleEntity> dataPermission){
-//        StringBuilder permissionSql = new StringBuilder(" ( ");
-//
-//        JwtUserDetail jwtUserDetail = securityHelper.getJwtUser();
-//
-//        dataPermission.stream().forEach(item -> {
-//            if (null == item.getDataPermissionType() || DataPermissionEnumm.ALL.getV().equals(item.getDataPermissionType())) return;
-//            switch (item.getDataPermissionType()){
-//                // 仅本部门
-//                case "0001":    var fchildSql = "select id from sys_user_info where dept_id = '"+jwtUserDetail.getDeptId()+"'";
-//                    permissionSql.append(" ( CREATE_BY in ( ");
-//                    permissionSql.append(fchildSql);
-//                    permissionSql.append(" ) OR ");
-//                    permissionSql.append(" MODIFY_BY in ( ");
-//                    permissionSql.append(fchildSql);
-//                    permissionSql.append(" ) ) ");
-//                    break;
-//                // 本人所属部门及下属部门
-//                case "0002":    var schildSql = "select id from sys_user_info sui where dept_id in (select so.id  from  sys_organization so  where so.id='"+jwtUserDetail.getDeptId()+"' or so.path like '"+jwtUserDetail.getDeptId()+"%')";
-//                    permissionSql.append(" ( CREATE_BY in ( ");
-//                    permissionSql.append(schildSql);
-//                    permissionSql.append(" ) OR ");
-//                    permissionSql.append(" MODIFY_BY in ( ");
-//                    permissionSql.append(schildSql);
-//                    permissionSql.append(" ) ) ");
-//                    break;
-//                // 指定部门
-//                case "0003":    String deptId = Arrays.stream(item.getDataPermissionDeptid().split(","))
-//                        .map(str -> "'"+item+"'")
-//                        .collect(Collectors.joining(","));
-//                    var tchildSql = "select id from sys_user_info where dept_id in (" +deptId+ ")";
-//                    permissionSql.append(" ( CREATE_BY in ( ");
-//                    permissionSql.append(tchildSql);
-//                    permissionSql.append(" ) OR ");
-//                    permissionSql.append(" MODIFY_BY in ( ");
-//                    permissionSql.append(tchildSql);
-//                    permissionSql.append(" ) ) ");
-//                    break;
-//                // 本人创建或修改
-//                case "0005":    permissionSql.append(" ( ");
-//                    permissionSql.append("CREATE_BY = '"+jwtUserDetail.getId()+"'");
-//                    permissionSql.append(" or ");
-//                    permissionSql.append("MODIFY_BY = '"+jwtUserDetail.getId()+"'");
-//                    permissionSql.append(" ) ");
-//                    break;
-//
-//                default:        permissionSql.append(" 1 = 1 ");
-//            }
-//            permissionSql.append(" or ");
-//        });
-//        permissionSql.delete(permissionSql.lastIndexOf(" or "), permissionSql.length()-1);
-//        permissionSql.append(" ) ");
-//
-//        return permissionSql.toString();
-//    }
-//}
+package org.pkaq.config;
+
+import com.baomidou.mybatisplus.extension.plugins.handler.MultiDataPermissionHandler;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.schema.Table;
+import org.pkaq.core.annotation.Ignore;
+import org.pkaq.core.mybatis.enums.DataPermissionEnumm;
+import org.pkaq.core.properties.DataPermission;
+import org.pkaq.core.properties.EvaConfig;
+import org.pkaq.core.threaduser.ThreadUser;
+import org.pkaq.core.threaduser.ThreadUserHelper;
+
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
+
+/**
+ * MyBatis-Plus 数据权限处理器。
+ *
+ * @author PKAQ
+ */
+@Slf4j
+@RequiredArgsConstructor
+public class MybatisPlusDataPermissionHandler implements MultiDataPermissionHandler {
+    private static final String DENY_ALL_SQL = "1 = 0";
+    private static final Set<String> INTERNAL_TABLES = Set.of(
+            "sys_roleuser_ref", "sys_roleres_ref", "sys_postuser_ref",
+            "sys_tenant_resource", "sys_tenant_package_resource", "sys_tenant_role");
+
+    private final EvaConfig evaConfig;
+    private final ConcurrentMap<String, Boolean> ignoredStatementCache = new ConcurrentHashMap<>();
+
+    /**
+     * 为当前表生成数据权限条件。
+     *
+     * @param table 数据表
+     * @param where 原查询条件
+     * @param mappedStatementId Mapper 方法标识
+     * @return 需要追加的数据权限条件；无需限制时返回 null
+     */
+    @Override
+    public Expression getSqlSegment(Table table, Expression where, String mappedStatementId) {
+        DataPermission config = this.evaConfig.getDataPermission();
+        if (!config.isEnable() || shouldIgnore(table, mappedStatementId, config)) {
+            return null;
+        }
+        ThreadUser currentUser = ThreadUserHelper.getCurrentUserOrNull();
+        if (currentUser == null) {
+            return null;
+        }
+
+        try {
+            return CCJSqlParserUtil.parseCondExpression(buildPermissionSql(table, currentUser));
+        } catch (Exception exception) {
+            log.error("数据权限 SQL 生成失败，statementId={}, table={}", mappedStatementId, table, exception);
+            try {
+                return CCJSqlParserUtil.parseCondExpression(DENY_ALL_SQL, false);
+            } catch (Exception denyException) {
+                throw new IllegalStateException("无法生成拒绝访问的数据权限条件", denyException);
+            }
+        }
+    }
+
+    private String buildPermissionSql(Table table, ThreadUser currentUser) {
+        List<ThreadUser.DataScope> scopes = currentUser.getDataScopes();
+        if (scopes == null || scopes.isEmpty()) {
+            return DENY_ALL_SQL;
+        }
+        if (scopes.stream().anyMatch(scope -> DataPermissionEnumm.ALL.getCode().equals(scope.getCode()))) {
+            return "1 = 1";
+        }
+
+        String qualifier = table.getAlias() == null ? table.getName() : table.getAlias().getName();
+        String createId = qualifier + ".CREATE_ID";
+        String modifyId = qualifier + ".MODIFY_ID";
+        long userId = currentUser.getUserId();
+        long deptId = currentUser.getDeptId();
+        Set<String> conditions = new HashSet<>();
+        for (ThreadUser.DataScope scope : scopes) {
+            DataPermissionEnumm permission = DataPermissionEnumm.getByCode(scope.getCode());
+            if (permission == null) {
+                continue;
+            }
+            switch (permission) {
+                case CREATOR_LIMIT -> conditions.add(ownerCondition(createId, modifyId, userId));
+                case DEPT_ONLY_LIMIT -> addDepartmentCondition(conditions, createId, modifyId, deptId);
+                case DEPT_AND_CHILDREN_LIMIT -> addDepartmentTreeCondition(
+                        conditions, createId, modifyId, deptId);
+                case DEPT_LIMIT -> addSpecifiedDepartmentCondition(
+                        conditions, createId, modifyId, scope.getOrgIds());
+                default -> {
+                    // 未实现的权限类型不得隐式放行。
+                }
+            }
+        }
+        return conditions.isEmpty() ? DENY_ALL_SQL : "(" + String.join(" OR ", conditions) + ")";
+    }
+
+    private void addDepartmentCondition(Set<String> conditions, String createId, String modifyId, long deptId) {
+        if (deptId > 0L) {
+            conditions.add(departmentCondition(createId, modifyId, "dp_user.DEPT_ID = " + deptId));
+        }
+    }
+
+    private void addDepartmentTreeCondition(Set<String> conditions, String createId, String modifyId, long deptId) {
+        if (deptId <= 0L) {
+            return;
+        }
+        String predicate = "dp_user.DEPT_ID IN (SELECT dp_org.ID FROM SYS_ORGANIZATION dp_org "
+                + "WHERE dp_org.DELETED = 0 AND (dp_org.ID = " + deptId
+                + " OR dp_org.PATH LIKE '%/" + deptId + "/%'))";
+        conditions.add(departmentCondition(createId, modifyId, predicate));
+    }
+
+    private void addSpecifiedDepartmentCondition(Set<String> conditions,
+                                                  String createId,
+                                                  String modifyId,
+                                                  Collection<Long> ids) {
+        String orgIds = validIds(ids);
+        if (!orgIds.isEmpty()) {
+            conditions.add(departmentCondition(createId, modifyId, "dp_user.DEPT_ID IN (" + orgIds + ")"));
+        }
+    }
+
+    private String ownerCondition(String createId, String modifyId, long userId) {
+        return "(" + createId + " = " + userId + " OR " + modifyId + " = " + userId + ")";
+    }
+
+    private String departmentCondition(String createId, String modifyId, String departmentPredicate) {
+        return "EXISTS (SELECT 1 FROM SYS_USER dp_user WHERE dp_user.DELETED = 0 AND dp_user.ID IN ("
+                + createId + ", " + modifyId + ") AND " + departmentPredicate + ")";
+    }
+
+    private String validIds(Collection<Long> ids) {
+        if (ids == null) {
+            return "";
+        }
+        return ids.stream().filter(id -> id != null && id > 0L).distinct()
+                .map(String::valueOf).collect(Collectors.joining(", "));
+    }
+
+    private boolean shouldIgnore(Table table, String statementId, DataPermission config) {
+        String tableName = normalizeTableName(table.getName());
+        if (INTERNAL_TABLES.contains(tableName) || containsIgnoreCase(config.getExcludeTables(), tableName)) {
+            return true;
+        }
+        if (containsIgnoreCase(config.getExcludeStatements(), statementId)) {
+            return true;
+        }
+        return this.ignoredStatementCache.computeIfAbsent(statementId, this::hasIgnoreAnnotation);
+    }
+
+    private boolean hasIgnoreAnnotation(String statementId) {
+        int separator = statementId.lastIndexOf('.');
+        if (separator <= 0 || separator == statementId.length() - 1) {
+            return false;
+        }
+        String className = statementId.substring(0, separator);
+        String methodName = statementId.substring(separator + 1);
+        try {
+            Class<?> mapperClass = Class.forName(className);
+            if (mapperClass.isAnnotationPresent(Ignore.class)) {
+                return true;
+            }
+            for (Method method : mapperClass.getMethods()) {
+                if (methodName.equals(method.getName()) && method.isAnnotationPresent(Ignore.class)) {
+                    return true;
+                }
+            }
+        } catch (ClassNotFoundException exception) {
+            log.debug("无法加载 Mapper 类型，按未忽略数据权限处理: {}", className);
+        }
+        return false;
+    }
+
+    private boolean containsIgnoreCase(List<String> values, String expected) {
+        if (values == null || expected == null) {
+            return false;
+        }
+        return values.stream().filter(value -> value != null).map(String::trim)
+                .anyMatch(value -> value.equalsIgnoreCase(expected));
+    }
+
+    private String normalizeTableName(String tableName) {
+        int separator = tableName.lastIndexOf('.');
+        String simpleName = separator >= 0 ? tableName.substring(separator + 1) : tableName;
+        return simpleName.replace("`", "").replace("\"", "").toLowerCase(Locale.ROOT);
+    }
+}

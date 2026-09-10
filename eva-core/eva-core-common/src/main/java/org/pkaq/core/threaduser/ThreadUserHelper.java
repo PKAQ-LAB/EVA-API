@@ -27,6 +27,13 @@ public class ThreadUserHelper {
     }
 
     /**
+     * 获取当前登录用户；未绑定用户上下文时返回 null。
+     */
+    public static ThreadUser getCurrentUserOrNull() {
+        return userThreadLocal.isBound() ? userThreadLocal.get() : null;
+    }
+
+    /**
      * 设置当前登录用户
      *
      * @param user 用户对象

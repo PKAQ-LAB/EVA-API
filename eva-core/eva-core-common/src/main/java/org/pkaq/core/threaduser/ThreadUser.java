@@ -41,6 +41,8 @@ public class ThreadUser implements Serializable {
     private long deptId;
     // 当前用户岗位id
     private long postId;
+    // 当前用户角色对应的数据权限范围
+    private List<DataScope> dataScopes;
     // 当前用户所有角色与其对应的path权限 当前路径是无需资源鉴权的路径||没打开资源鉴权时，该map为null（资源鉴权时才会设置角色和其权限）
     private Map<Long, List<Long>> rolePermissonMap;
     // 当前用户的设备类型
@@ -55,6 +57,17 @@ public class ThreadUser implements Serializable {
         private String name;
 
         private String code;
+    }
+
+    /**
+     * 角色数据权限快照。
+     */
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class DataScope implements Serializable {
+        private String code;
+        private List<Long> orgIds;
     }
 }
 

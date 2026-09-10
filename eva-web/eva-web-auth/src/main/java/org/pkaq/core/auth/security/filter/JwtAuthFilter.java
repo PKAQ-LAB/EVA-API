@@ -41,6 +41,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * JWT认证过滤器
@@ -189,6 +191,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                         .setName(account)
                         .setTenantId(authState.getTenantId() == null ? 0L : authState.getTenantId())
                         .setDeptId(authState.getDeptId() == null ? 0L : authState.getDeptId())
+                        .setDataScopes(toDataScopes(authState))
                         .setRoles(roleNames);
 
                 // 设置SecurityContext
@@ -239,6 +242,42 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
         return authState.getTenantExpirationDate() != null
                 && !authState.getTenantExpirationDate().after(new Date());
+    }
+
+    /**
+     * 将数据库角色权限转换为当前请求使用的数据权限快照。
+     */
+    private List<ThreadUser.DataScope> toDataScopes(AuthUserEntity authState) {
+        if (authState.getRoles() == null) {
+            return Collections.emptyList();
+        }
+        return authState.getRoles().stream()
+                .filter(Objects::nonNull)
+                .map(role -> new ThreadUser.DataScope(role.getDataScope(), parseOrgIds(role.getDataOrgIds())))
+                .toList();
+    }
+
+    private List<Long> parseOrgIds(String dataOrgIds) {
+        if (dataOrgIds == null || dataOrgIds.isBlank()) {
+            return Collections.emptyList();
+        }
+        return Arrays.stream(dataOrgIds.split(","))
+                .map(String::trim)
+                .filter(value -> !value.isEmpty())
+                .map(this::parsePositiveLong)
+                .filter(Objects::nonNull)
+                .distinct()
+                .toList();
+    }
+
+    private Long parsePositiveLong(String value) {
+        try {
+            long id = Long.parseLong(value);
+            return id > 0L ? id : null;
+        } catch (NumberFormatException exception) {
+            log.warn("忽略非法的数据权限组织 ID: {}", value);
+            return null;
+        }
     }
 
     /**
