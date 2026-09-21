@@ -106,12 +106,12 @@ eva:
     # 无需鉴权路径(无条件访问)
     anonymous: /auth/login,/auth/logout,/auth/getAlpha,/wx/**,/doc/**,/actuator/**,/swagger-resources/**,/v3/api-docs/swagger-config
     # 无需资源鉴权的路径
-    permit: /auth/**,/wx/**,/doc/**,/actuator/**,/license/**
+    permit: /auth/**,/notices,/wx/**,/doc/**,/actuator/**,/license/**
     openAPIPaths: /apr/**
   # 资源权限
   resource-permission:
     # 是否启用
-    enable: false
+    enable: true
     # 是否采用严格鉴权模式
     #    严格模式, 判断 登录角色 请求的资源 是否与 资源需要的角色 一致
     #    * 一致 return 放行
@@ -178,6 +178,14 @@ eva:
   bizlog:
     enabled: true
     impl: mybatis
+    archive:
+      enabled: true
+      # 热数据保留月数，超过该期限后迁移到归档表
+      after-months: 6
+      batch-size: 1000
+      max-batches: 100
+      cron: "0 20 2 * * *"
+      zone: Asia/Shanghai
   license:
     enable: false
     # 公钥别名
