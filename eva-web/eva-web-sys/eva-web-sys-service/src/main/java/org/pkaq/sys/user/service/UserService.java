@@ -13,6 +13,7 @@ import org.pkaq.core.mvc.entity.Entity;
 import org.pkaq.core.mvc.vo.PageVo;
 import org.pkaq.core.mvc.vo.Vo;
 import org.pkaq.core.mybatis.mvc.service.StdService;
+import org.pkaq.core.mybatis.tenant.TenantSchema;
 import org.pkaq.core.mybatis.util.PageResult;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.threaduser.ThreadUserHelper;
@@ -357,6 +358,7 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
      * @param user 租户管理员参数
      */
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    @TenantSchema
     public void createTenantAdmin(UserTenantAdminBo user) {
         this.validateUsername(user.getAccount());
 
@@ -364,6 +366,9 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
             SysCodes.BAD_ORG_PASSWORD.newException();
         }
         UserEntity entity = this.convert.boToEntity(user);
+        if (this.evaConfig.getTenant().isSchemaMode()) {
+            entity.setTenantId(null);
+        }
         entity.setName(user.getAccount());
         entity.setCode(user.getAccount());
         entity.setFrozen(FrozenEnumm.READ_ONLY);

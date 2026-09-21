@@ -29,7 +29,7 @@ public class EvaConfig {
     /**
      * 多租户模式专属配置
      */
-    private Tenant tenant;
+    private TenantProperties tenant;
     /**
      * 是否开启国际化
      */
@@ -124,8 +124,8 @@ public class EvaConfig {
         return null == cache ? new Cache() : cache;
     }
 
-    public Tenant getTenant() {
-        return null == tenant ? new Tenant() : tenant;
+    public TenantProperties getTenant() {
+        return null == tenant ? new TenantProperties() : tenant;
     }
 
     public Cloud getCloud() {

@@ -327,6 +327,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
         userWrapper.eq(UserEntity::getFrozen, FrozenEnumm.UN_FROZEN);
 
         List<UserEntity> users = this.userMapper.selectList(userWrapper);
+        Set<Long> visibleUserIds = users.stream().map(UserEntity::getId).collect(Collectors.toSet());
 
         LambdaQueryWrapper<RoleUserEntity> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(RoleUserEntity::getRoleId, roleId);
@@ -335,6 +336,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
         Set<Long> checkedUser = this.roleUserMapper.selectObjs(wrapper)
                 .stream()
                 .map(o -> (Long) o)
+                .filter(visibleUserIds::contains)
                 .collect(Collectors.toSet());
 
         return this.roleConvert.toGrantedUserVo(this.userConvert.entityToSimpleVo(users), checkedUser);
@@ -359,13 +361,16 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
         Set<Long> incoming = sanitizeIds(role.getUserId());
         ensureUsersValid(incoming);
 
-        Set<Long> affectedUsers = new HashSet<>(oldUsers);
-        affectedUsers.addAll(incoming);
+        // 只允许撤销当前数据权限范围内的用户，范围外既有授权必须保持不变。
+        Set<Long> visibleOldUsers = fetchVisibleUserIds(oldUsers);
 
         Set<Long> toInsert = new HashSet<>(incoming);
         toInsert.removeAll(oldUsers);
-        Set<Long> toDelete = new HashSet<>(oldUsers);
+        Set<Long> toDelete = new HashSet<>(visibleOldUsers);
         toDelete.removeAll(incoming);
+
+        Set<Long> affectedUsers = new HashSet<>(toDelete);
+        affectedUsers.addAll(toInsert);
 
         if (!toDelete.isEmpty()) {
             this.roleUserMapper.delete(new LambdaQueryWrapper<RoleUserEntity>()
@@ -453,6 +458,18 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
         if (validIds.size() != userIds.size()) {
             CommonCodes.PARAM_ERROR.newException();
         }
+    }
+
+    private Set<Long> fetchVisibleUserIds(Set<Long> userIds) {
+        if (CollUtils.isEmpty(userIds)) {
+            return new HashSet<>();
+        }
+        return this.userMapper.selectList(new LambdaQueryWrapper<UserEntity>()
+                        .select(UserEntity::getId)
+                        .in(UserEntity::getId, userIds))
+                .stream()
+                .map(UserEntity::getId)
+                .collect(Collectors.toSet());
     }
 
     private boolean isDuplicateName(RoleAoeBo bo) {

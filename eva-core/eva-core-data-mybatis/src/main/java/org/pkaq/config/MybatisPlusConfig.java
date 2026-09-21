@@ -5,15 +5,14 @@ import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.DataPermissionInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
 import org.apache.ibatis.mapping.VendorDatabaseIdProvider;
 import org.pkaq.core.mybatis.enums.UniversalEnumTypeHandler;
-import org.pkaq.core.mybatis.handler.CustomTenantLineHandler;
 import org.pkaq.core.properties.EvaConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.Properties;
@@ -24,11 +23,10 @@ import java.util.Properties;
  * @author PKAQ
  */
 @Configuration
-@EnableTransactionManagement
+@EnableTransactionManagement(order = Ordered.LOWEST_PRECEDENCE - 1)
 @RequiredArgsConstructor
 public class MybatisPlusConfig {
     private final EvaConfig evaConfig;
-    private final CustomTenantLineHandler customTenantLineHandler;
 
     /**
      * 分页插件
@@ -37,11 +35,6 @@ public class MybatisPlusConfig {
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
         CompositeEnumTypeHandler.setDefaultEnumTypeHandler(UniversalEnumTypeHandler.class);
-        // 租户插件
-        if (evaConfig.isSaasMode()) {
-            interceptor.addInnerInterceptor(new TenantLineInnerInterceptor(customTenantLineHandler));
-        }
-
         // 数据权限必须位于分页插件之前，保证总数查询和数据查询采用相同条件。
         if (evaConfig.getDataPermission().isEnable()) {
             interceptor.addInnerInterceptor(new DataPermissionInterceptor(

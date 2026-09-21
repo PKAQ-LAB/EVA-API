@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.pkaq.sys.tenant.mapper.TenantAuthorizationMapper">
+    <update id="revokeRoleGrants">
+        UPDATE SYS_TENANT_ROLE SET ACTIVE = FALSE, REVOKED_AT = CURRENT_TIMESTAMP,
+            STATUS_REASON = 'REVOKED_BY_TENANT_AUTH_UPDATE'
+        WHERE TENANT_ID = #{tenantId} AND ACTIVE = TRUE
+        <if test="roleIds != null and roleIds.size() > 0">
+            AND ROLE_ID NOT IN
+            <foreach collection="roleIds" item="id" open="(" separator="," close=")">#{id}</foreach>
+        </if>
+    </update>
+    <insert id="grantRoles">
+        INSERT INTO SYS_TENANT_ROLE(
+            ID, TENANT_ID, ROLE_ID, ACTIVE, GRANTED_AT, REVOKED_AT, STATUS_REASON)
+        VALUES
+        <foreach collection="roleIds" item="id" separator=",">
+            ((hashtextextended(#{tenantId}::text || ':' || #{id}::text, 0) &amp; 9223372036854775807),
+             #{tenantId}, #{id}, TRUE, CURRENT_TIMESTAMP, NULL, 'ACTIVE_PLATFORM_TEMPLATE')
+        </foreach>
+        ON CONFLICT (TENANT_ID, ROLE_ID) DO UPDATE
+        SET ACTIVE = TRUE, GRANTED_AT = CURRENT_TIMESTAMP, REVOKED_AT = NULL,
+            STATUS_REASON = 'ACTIVE_PLATFORM_TEMPLATE'
+    </insert>
+    <update id="revokePackageGrants">
+        UPDATE SYS_TENANT_PACKAGE_GRANT SET ACTIVE = FALSE, REVOKED_AT = CURRENT_TIMESTAMP
+        WHERE TENANT_ID = #{tenantId} AND ACTIVE = TRUE
+        <if test="packageIds != null and packageIds.size() > 0">
+            AND PACKAGE_ID NOT IN
+            <foreach collection="packageIds" item="id" open="(" separator="," close=")">#{id}</foreach>
+        </if>
+    </update>
+    <insert id="grantPackages">
+        INSERT INTO SYS_TENANT_PACKAGE_GRANT(TENANT_ID, PACKAGE_ID, ACTIVE, GRANTED_AT, REVOKED_AT)
+        VALUES
+        <foreach collection="packageIds" item="id" separator=",">
+            (#{tenantId}, #{id}, TRUE, CURRENT_TIMESTAMP, NULL)
+        </foreach>
+        ON CONFLICT (TENANT_ID, PACKAGE_ID) DO UPDATE
+        SET ACTIVE = TRUE, GRANTED_AT = CURRENT_TIMESTAMP, REVOKED_AT = NULL
+    </insert>
+    <delete id="clearTenantResources">
+        DELETE FROM SYS_TENANT_RESOURCE WHERE TENANT_ID = #{tenantId}
+    </delete>
+    <insert id="insertDerivedTenantResources">
+        INSERT INTO SYS_TENANT_RESOURCE(TENANT_ID, RESOURCE_ID)
+        SELECT #{tenantId}, RESOURCE_ID FROM (
+            SELECT rr.RESOURCE_ID
+            FROM SYS_TENANT_ROLE tr JOIN SYS_ROLERES_REF rr ON rr.ROLE_ID = tr.ROLE_ID
+            WHERE tr.TENANT_ID = #{tenantId} AND tr.ACTIVE = TRUE
+            UNION
+            SELECT pr.RESOURCE_ID
+            FROM SYS_TENANT_PACKAGE_GRANT pg
+            JOIN SYS_TENANT_PACKAGE p ON p.ID = pg.PACKAGE_ID
+            JOIN SYS_TENANT_PACKAGE_RESOURCE pr ON pr.PACKAGE_ID = pg.PACKAGE_ID
+            WHERE pg.TENANT_ID = #{tenantId} AND pg.ACTIVE = TRUE
+              AND COALESCE(p.DELETED, 0) = 0 AND COALESCE(p.FROZEN, 0) &lt;&gt; 1
+        ) capability
+    </insert>
+    <select id="selectGrantedRoleIds" resultType="java.lang.Long">
+        SELECT ROLE_ID FROM SYS_TENANT_ROLE WHERE TENANT_ID = #{tenantId} AND ACTIVE = TRUE
+    </select>
+    <select id="selectGrantedPackageIds" resultType="java.lang.Long">
+        SELECT PACKAGE_ID FROM SYS_TENANT_PACKAGE_GRANT WHERE TENANT_ID = #{tenantId} AND ACTIVE = TRUE
+    </select>
+    <select id="selectInvalidTemplateRoleIds" resultType="java.lang.Long">
+        SELECT requested.ID FROM
+        <foreach collection="roleIds" item="id" open="(VALUES" separator="," close=") AS requested(ID)">(#{id})</foreach>
+        LEFT JOIN SYS_ROLE r ON r.ID = requested.ID AND COALESCE(r.TENANT_ID, 0) = 0
+            AND COALESCE(r.DELETED, 0) = 0 AND COALESCE(r.FROZEN, 0) &lt;&gt; 1
+        WHERE r.ID IS NULL
+    </select>
+    <select id="selectInvalidPackageIds" resultType="java.lang.Long">
+        SELECT requested.ID FROM
+        <foreach collection="packageIds" item="id" open="(VALUES" separator="," close=") AS requested(ID)">(#{id})</foreach>
+        LEFT JOIN SYS_TENANT_PACKAGE p ON p.ID = requested.ID
+            AND COALESCE(p.DELETED, 0) = 0 AND COALESCE(p.FROZEN, 0) &lt;&gt; 1
+        WHERE p.ID IS NULL
+    </select>
+    <insert id="ensureTenantAdminRole">
+        INSERT INTO SYS_ROLE(
+            ID, REVISION, DELETED, FROZEN, SORT, TENANT_ID, UTC_CREATE,
+            CODE, NAME, DATA_SCOPE, SYSTEM_ROLE)
+        VALUES (
+            (hashtextextended(#{tenantId}::text || ':TENANT_ADMIN', 0) &amp; 9223372036854775807),
+            0, 0, 9999, 0, #{tenantId}, CURRENT_TIMESTAMP,
+            'ROLE_TENANT_ADMIN_' || #{tenantId}::text, '租户管理员', '0000', 'TENANT_ADMIN')
+        ON CONFLICT DO NOTHING
+    </insert>
+    <insert id="bindTenantAdminRole">
+        INSERT INTO SYS_ROLEUSER_REF(ROLE_ID, USER_ID)
+        SELECT r.ID, t.ADMIN_ID
+        FROM SYS_ROLE r JOIN SYS_TENANT t ON t.ID = r.TENANT_ID
+        WHERE r.TENANT_ID = #{tenantId} AND r.SYSTEM_ROLE = 'TENANT_ADMIN'
+        ON CONFLICT (ROLE_ID, USER_ID) DO NOTHING
+    </insert>
+    <delete id="clearTenantAdminResources">
+        DELETE FROM SYS_ROLERES_REF rr
+        USING SYS_ROLE r
+        WHERE rr.ROLE_ID = r.ID AND r.TENANT_ID = #{tenantId}
+          AND r.SYSTEM_ROLE = 'TENANT_ADMIN'
+    </delete>
+    <insert id="refreshTenantAdminResources">
+        INSERT INTO SYS_ROLERES_REF(ROLE_ID, RESOURCE_ID)
+        SELECT r.ID, tr.RESOURCE_ID
+        FROM SYS_ROLE r JOIN SYS_TENANT_RESOURCE tr ON tr.TENANT_ID = r.TENANT_ID
+        WHERE r.TENANT_ID = #{tenantId} AND r.SYSTEM_ROLE = 'TENANT_ADMIN'
+        ON CONFLICT (ROLE_ID, RESOURCE_ID) DO NOTHING
+    </insert>
+</mapper>

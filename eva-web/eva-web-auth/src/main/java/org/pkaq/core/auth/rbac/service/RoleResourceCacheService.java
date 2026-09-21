@@ -42,6 +42,7 @@ public class RoleResourceCacheService {
      * 应用启动后加载所有角色资源到Redis
      */
     @EventListener(ApplicationReadyEvent.class)
+    @Transactional(rollbackFor = Exception.class)
     public void loadAllRoleResources() {
         if (!evaConfig.getResourcePermission().isEnable()) {
             log.info("资源权限未启用，跳过角色资源权限缓存加载");
@@ -51,6 +52,11 @@ public class RoleResourceCacheService {
         Set<Object> oldKeys = redisTemplate.keys(CACHE_KEY_PREFIX + "*");
         if (oldKeys != null && !oldKeys.isEmpty()) {
             redisTemplate.delete(oldKeys);
+        }
+
+        List<Long> activeRoleIds = roleResourceMapper.selectActiveRoleIds();
+        for (Long roleId : activeRoleIds) {
+            rebuildRoleResource(roleId);
         }
 
         List<SysRoleResource> all = roleResourceMapper.selectAll();
@@ -165,7 +171,7 @@ public class RoleResourceCacheService {
                 }
 
                 // 路径匹配
-                if (pathMatcher.match(pattern, requestPath)) {
+                if (matchesPath(method, pattern, requestPath)) {
                     return true;
                 }
             }
@@ -197,5 +203,18 @@ public class RoleResourceCacheService {
             method = "*";
         }
         return method.trim().toUpperCase() + ":" + resource.getResourcePath().trim();
+    }
+
+    private boolean matchesPath(String method, String pattern, String requestPath) {
+        if (pathMatcher.match(pattern, requestPath)) {
+            return true;
+        }
+        if (!"*".equals(method) || "/".equals(pattern)) {
+            return false;
+        }
+        String normalizedPattern = pattern.endsWith("/")
+                ? pattern.substring(0, pattern.length() - 1)
+                : pattern;
+        return requestPath.startsWith(normalizedPattern + "/");
     }
 }

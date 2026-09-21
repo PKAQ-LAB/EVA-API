@@ -53,4 +53,10 @@ public class TenantDetailVo extends StdVo {
 
     @Schema(description = "租户已授权资源ID集合")
     private Set<Long> resourceIds;
+
+    @Schema(description = "租户当前有效的平台角色模板ID集合")
+    private Set<Long> roleIds;
+
+    @Schema(description = "租户当前有效的套餐ID集合")
+    private Set<Long> packageIds;
 }

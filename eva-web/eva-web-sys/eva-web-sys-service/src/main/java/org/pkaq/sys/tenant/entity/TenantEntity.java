@@ -77,4 +77,9 @@ public class TenantEntity extends StdEntity {
      * 管理员Id
      **/
     private Long adminId;
+
+    /**
+     * schema 租户模式下的服务端可信 schema 名。
+     */
+    private String schemaName;
 }

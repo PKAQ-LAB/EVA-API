@@ -37,6 +37,12 @@ public class RoleEntity extends StdEntity {
      **/
     private String dataOrgIds;
 
+    /** 平台角色模板 ID；租户自定义角色为空。 */
+    private Long templateRoleId;
+
+    /** 系统保留角色标识。 */
+    private String systemRole;
+
     /**
      * setter 中一次性规范化：补 ROLE_ 前缀并大写
      * 替代原先在 getter 中改写字段的副作用写法（每次 get 都改字段，

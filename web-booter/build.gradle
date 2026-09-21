@@ -27,6 +27,12 @@ processResources {
 
 dependencies {
 
+    testImplementation("io.zonky.test:embedded-postgres:2.2.2") {
+        exclude group: "io.zonky.test.postgres", module: "embedded-postgres-binaries-darwin-amd64"
+        exclude group: "io.zonky.test.postgres", module: "embedded-postgres-binaries-linux-amd64"
+        exclude group: "io.zonky.test.postgres", module: "embedded-postgres-binaries-linux-amd64-alpine"
+    }
+
     implementation     project(":eva-core:eva-core-common"),
                        project(":eva-core:eva-core-data-mybatis"),
                        project(":eva-web:eva-web-sys:eva-web-sys-service"),

@@ -24,6 +24,7 @@ import org.pkaq.sys.tenant.convert.TenantConvert;
 import org.pkaq.sys.tenant.entity.TenantEntity;
 import org.pkaq.sys.tenant.entity.TenantResourceEntity;
 import org.pkaq.sys.tenant.mapper.TenantResourceMapper;
+import org.pkaq.sys.tenant.mapper.TenantAuthorizationMapper;
 import org.pkaq.sys.tenant.vo.TenantDetailVo;
 import org.pkaq.sys.tenant.vo.TenantListVo;
 import org.pkaq.sys.user.entity.UserEntity;
@@ -55,9 +56,11 @@ public class TenantService extends StdService<org.pkaq.sys.tenant.mapper.TenantM
     private final UserMapper userMapper;
     private final UserService userService;
     private final TenantResourceMapper tenantResourceMapper;
+    private final TenantAuthorizationMapper tenantAuthorizationMapper;
     private final RoleResourceMapper roleResourceMapper;
     private final TenantConvert convert;
     private final ApplicationEventPublisher eventPublisher;
+    private final TenantSchemaProvisioner tenantSchemaProvisioner;
 
     /**
      * 切换租户冻结状态，并级联冻结或解冻租户下普通用户。
@@ -110,6 +113,7 @@ public class TenantService extends StdService<org.pkaq.sys.tenant.mapper.TenantM
     /**
      * 新增或编辑租户，并同步租户授权资源。
      */
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void edit(TenantAoeBo editBo) {
         if (editBo == null) {
             CommonCodes.PARAM_ERROR.newException();
@@ -126,6 +130,7 @@ public class TenantService extends StdService<org.pkaq.sys.tenant.mapper.TenantM
             long adminId = IdWorker.getId();
             entity.setAdminId(adminId);
             this.mapper.insert(entity);
+            this.tenantSchemaProvisioner.provision(tenantId);
 
             UserTenantAdminBo admin = new UserTenantAdminBo();
             admin.setId(adminId);
@@ -133,7 +138,7 @@ public class TenantService extends StdService<org.pkaq.sys.tenant.mapper.TenantM
             admin.setPassword(editBo.getAdminPass());
             admin.setTenantId(tenantId);
             this.userService.createTenantAdmin(admin);
-            syncTenantResources(tenantId, sanitizeIds(editBo.getResourceIds()));
+            syncTenantAuthorization(tenantId, editBo);
             return;
         }
 
@@ -149,8 +154,8 @@ public class TenantService extends StdService<org.pkaq.sys.tenant.mapper.TenantM
         if (editBo.getAuthUserCount() != originAuthUserCount) {
             handleAuthUserCountChanged(tenantId, editBo.getAuthUserCount());
         }
-        if (editBo.getResourceIds() != null) {
-            syncTenantResources(tenantId, sanitizeIds(editBo.getResourceIds()));
+        if (editBo.getResourceIds() != null || editBo.getRoleIds() != null || editBo.getPackageIds() != null) {
+            syncTenantAuthorization(tenantId, editBo);
         }
         if (isExpired(editBo.getExpirationDate())) {
             offlineTenantUsers(tenantId, OfflineReason.TENANT_FROZEN);
@@ -170,6 +175,8 @@ public class TenantService extends StdService<org.pkaq.sys.tenant.mapper.TenantM
         Optional.ofNullable(this.userMapper.selectById(entity.getAdminId()))
                 .ifPresent(admin -> vo.setAdminAccount(admin.getAccount()));
         vo.setResourceIds(this.tenantResourceMapper.selectAuthorizedResourceIds(id));
+        vo.setRoleIds(this.tenantAuthorizationMapper.selectGrantedRoleIds(id));
+        vo.setPackageIds(this.tenantAuthorizationMapper.selectGrantedPackageIds(id));
         return vo;
     }
 
@@ -308,14 +315,83 @@ public class TenantService extends StdService<org.pkaq.sys.tenant.mapper.TenantM
             this.tenantResourceMapper.insert(entity);
         }
 
-        int deleted = this.tenantResourceMapper.deleteUnauthorizedRoleResources(tenantId, resourceIds);
-        if (deleted > 0) {
-            Set<Long> roleIds = this.tenantResourceMapper.selectTenantRoleIds(tenantId);
-            if (!CollUtils.isEmpty(roleIds)) {
-                eventPublisher.publishEvent(new ModuleResourceChangedEvent(this, roleIds, ChangeReason.ROLE_RESOURCE_CHANGED));
-            }
-            incrementTenantUserPermVer(tenantId);
+        this.tenantResourceMapper.deleteUnauthorizedRoleResources(tenantId, resourceIds);
+        notifyTenantPermissionChanged(tenantId);
+    }
+
+    /**
+     * 同步角色模板与套餐授权，并重新物化租户能力。
+     */
+    private void syncTenantAuthorization(Long tenantId, TenantAoeBo bo) {
+        if (usesLegacyResourceMode(bo)) {
+            syncTenantResources(tenantId, sanitizeIds(bo.getResourceIds()));
+            tenantAuthorizationMapper.ensureTenantAdminRole(tenantId);
+            tenantAuthorizationMapper.bindTenantAdminRole(tenantId);
+            tenantAuthorizationMapper.clearTenantAdminResources(tenantId);
+            tenantAuthorizationMapper.refreshTenantAdminResources(tenantId);
+            return;
         }
+        Set<Long> roleIds = bo.getRoleIds() == null
+                ? tenantAuthorizationMapper.selectGrantedRoleIds(tenantId)
+                : sanitizeIds(bo.getRoleIds());
+        Set<Long> packageIds = bo.getPackageIds() == null
+                ? tenantAuthorizationMapper.selectGrantedPackageIds(tenantId)
+                : sanitizeIds(bo.getPackageIds());
+        validateAuthorizationSources(roleIds, packageIds);
+
+        tenantAuthorizationMapper.revokeRoleGrants(tenantId, roleIds);
+        if (!roleIds.isEmpty()) {
+            tenantAuthorizationMapper.grantRoles(tenantId, roleIds);
+        }
+        tenantAuthorizationMapper.revokePackageGrants(tenantId, packageIds);
+        if (!packageIds.isEmpty()) {
+            tenantAuthorizationMapper.grantPackages(tenantId, packageIds);
+        }
+        tenantAuthorizationMapper.clearTenantResources(tenantId);
+        tenantAuthorizationMapper.insertDerivedTenantResources(tenantId);
+        tenantAuthorizationMapper.ensureTenantAdminRole(tenantId);
+        tenantAuthorizationMapper.bindTenantAdminRole(tenantId);
+
+        // resourceIds 是管理员对角色与套餐能力并集的裁剪，不能用于扩权。
+        if (bo.getResourceIds() != null) {
+            Set<Long> requested = sanitizeIds(bo.getResourceIds());
+            Set<Long> derived = tenantResourceMapper.selectAuthorizedResourceIds(tenantId);
+            if (!derived.containsAll(requested)) {
+                CommonCodes.PARAM_ERROR.newException();
+            }
+            syncTenantResources(tenantId, requested);
+            tenantAuthorizationMapper.clearTenantAdminResources(tenantId);
+            tenantAuthorizationMapper.refreshTenantAdminResources(tenantId);
+            return;
+        }
+        tenantAuthorizationMapper.clearTenantAdminResources(tenantId);
+        tenantAuthorizationMapper.refreshTenantAdminResources(tenantId);
+        notifyTenantPermissionChanged(tenantId);
+    }
+
+    /**
+     * 旧客户端只提交 resourceIds 时继续使用直接授权真源。
+     */
+    static boolean usesLegacyResourceMode(TenantAoeBo bo) {
+        return bo != null && bo.getRoleIds() == null && bo.getPackageIds() == null;
+    }
+
+    private void validateAuthorizationSources(Set<Long> roleIds, Set<Long> packageIds) {
+        if (!roleIds.isEmpty() && !tenantAuthorizationMapper.selectInvalidTemplateRoleIds(roleIds).isEmpty()) {
+            CommonCodes.PARAM_ERROR.newException();
+        }
+        if (!packageIds.isEmpty() && !tenantAuthorizationMapper.selectInvalidPackageIds(packageIds).isEmpty()) {
+            CommonCodes.PARAM_ERROR.newException();
+        }
+    }
+
+    private void notifyTenantPermissionChanged(Long tenantId) {
+        Set<Long> roleIds = tenantResourceMapper.selectTenantRoleIds(tenantId);
+        if (!CollUtils.isEmpty(roleIds)) {
+            eventPublisher.publishEvent(new ModuleResourceChangedEvent(
+                    this, roleIds, ChangeReason.ROLE_RESOURCE_CHANGED));
+        }
+        incrementTenantUserPermVer(tenantId);
     }
 
     private Set<Long> sanitizeIds(List<Long> ids) {

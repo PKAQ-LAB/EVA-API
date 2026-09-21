@@ -8,8 +8,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
 
+import java.time.LocalDateTime;
+
 /**
- * 租户角色关系表
+ * 租户获得的平台角色模板授权。
  *
  * @author PKAQ
  */
@@ -26,4 +28,12 @@ public class TenantRoleEntity {
 
     @NotNull
     private Long roleId;
+
+    private Boolean active;
+
+    private LocalDateTime grantedAt;
+
+    private LocalDateTime revokedAt;
+
+    private String statusReason;
 }

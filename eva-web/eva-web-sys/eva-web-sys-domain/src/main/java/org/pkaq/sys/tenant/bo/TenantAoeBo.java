@@ -77,4 +77,10 @@ public class TenantAoeBo extends StdBo {
 
     @Schema(description = "租户授权资源ID集合")
     private List<Long> resourceIds;
+
+    @Schema(description = "租户获授的平台角色模板ID集合")
+    private List<Long> roleIds;
+
+    @Schema(description = "租户获授的套餐ID集合")
+    private List<Long> packageIds;
 }
