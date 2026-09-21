@@ -10,6 +10,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pkaq.core.enums.FrozenEnumm;
+import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.sys.dict.bo.DictAoeBo;
 import org.pkaq.sys.dict.bo.DictLineBo;
 import org.pkaq.sys.dict.cache.DictCacheHelper;
@@ -57,7 +58,7 @@ class DictServiceTest {
     @BeforeEach
     void setUp() {
         DictConvert convert = Mappers.getMapper(DictConvert.class);
-        this.service = new DictService(this.dictCacheHelper, this.dictItemMapper, convert);
+        this.service = new DictService(this.dictCacheHelper, this.dictItemMapper, convert, new EvaConfig());
         ReflectionTestUtils.setField(this.service, "mapper", this.dictMapper);
         TransactionSynchronizationManager.initSynchronization();
     }

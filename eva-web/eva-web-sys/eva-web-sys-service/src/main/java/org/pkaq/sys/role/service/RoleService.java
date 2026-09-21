@@ -13,6 +13,9 @@ import org.pkaq.core.mvc.bo.IdCodeBo;
 import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.core.mvc.vo.PageVo;
 import org.pkaq.core.mybatis.mvc.service.StdService;
+import org.pkaq.core.mybatis.tenant.CoreSchemaExecutor;
+import org.pkaq.core.mybatis.tenant.TenantSchema;
+import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.mybatis.util.PageResult;
 import org.pkaq.core.mybatis.util.TreeHelper;
 import org.pkaq.core.threaduser.ThreadUserHelper;
@@ -21,6 +24,7 @@ import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.module.mapper.ModuleMapper;
 import org.pkaq.sys.module.convert.ModuleConvert;
 import org.pkaq.sys.module.entity.ModuleEntity;
+import org.pkaq.sys.module.entity.ModuleResources;
 import org.pkaq.sys.module.vo.ModuleDetailVo;
 import org.pkaq.sys.module.vo.ModuleResourcesVo;
 import org.pkaq.sys.role.bo.RoleAoeBo;
@@ -82,12 +86,18 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
 
     private final ApplicationEventPublisher eventPublisher;
 
+    private final CoreSchemaExecutor coreSchemaExecutor;
+
+    private final EvaConfig evaConfig;
+
     /**
      * 分页查询角色列表，角色名称和角色编码使用模糊查询。
      *
      * @param page 查询条件
      * @return 角色分页列表
      */
+    @Transactional(readOnly = true)
+    @TenantSchema
     public PageVo listPage(RoleQueryBo page) {
         if (page == null) {
             CommonCodes.PARAM_ERROR.newException();
@@ -111,6 +121,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
      */
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    @TenantSchema
     public void delete(Set<Long> ids) {
         if (CollUtils.isEmpty(ids)) {
             return;
@@ -136,6 +147,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
      * @param bo 角色保存参数
      */
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    @TenantSchema
     public void editUniqueCode(RoleAoeBo bo) {
         if (bo == null || !hasText(bo.getCode()) || !hasText(bo.getName())) {
             CommonCodes.PARAM_ERROR.newException();
@@ -168,6 +180,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
      */
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    @TenantSchema
     public void switchFrozen(SingleArray<Long> ids) {
         if (ids == null || CollUtils.isEmpty(ids.getParam())) {
             CommonCodes.PARAM_ERROR.newException();
@@ -198,6 +211,8 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
      * @return true 表示已存在
      */
     @Override
+    @Transactional(readOnly = true)
+    @TenantSchema
     public boolean isUnique(IdCodeBo idCodeBo) {
         if (idCodeBo == null || idCodeBo.getCode() == null) {
             return false;
@@ -222,6 +237,8 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
      * @return 角色授权模块资源
      */
     @Override
+    @Transactional(readOnly = true)
+    @TenantSchema
     public RoleGrantedModuleVo fetchResource(RoleResourceRefBo roleModule) {
         if (roleModule == null || roleModule.getRoleId() == null) {
             CommonCodes.PARAM_ERROR.newException();
@@ -229,6 +246,10 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
         }
         Long roleId = roleModule.getRoleId();
         ensureRoleExists(roleId);
+
+        if (this.evaConfig.getTenant().isSchemaMode()) {
+            return fetchSchemaModeResources(roleId);
+        }
 
         Long curUid = ThreadUserHelper.getUserId();
         Map<Long, ModuleEntity> moduleEntities = this.moduleMapper.listGrantedModules(curUid);
@@ -264,6 +285,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
      */
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    @TenantSchema
     public void grantResource(RoleResourceRefBo role) {
         if (role == null || role.getRoleId() == null) {
             CommonCodes.PARAM_ERROR.newException();
@@ -279,8 +301,12 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
                 .collect(Collectors.toSet());
 
         Set<Long> incoming = sanitizeIds(role.getResourceId());
-        ensureResourcesValid(incoming);
-        ensureTenantResourcesAuthorized(incoming);
+        if (this.evaConfig.getTenant().isSchemaMode()) {
+            ensureSchemaResourcesAuthorized(incoming);
+        } else {
+            ensureResourcesValid(incoming);
+            ensureTenantResourcesAuthorized(incoming);
+        }
 
         Set<Long> toInsert = new HashSet<>(incoming);
         toInsert.removeAll(existing);
@@ -315,6 +341,8 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
      * @return 角色授权用户
      */
     @Override
+    @Transactional(readOnly = true)
+    @TenantSchema
     public RoleGrantedUserVo listUser(Long roleId, Long deptId) {
         if (roleId == null) {
             CommonCodes.PARAM_ERROR.newException();
@@ -349,6 +377,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
      */
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    @TenantSchema
     public void grantUser(RoleUserRefBo role) {
         if (role == null || role.getRoleId() == null) {
             CommonCodes.PARAM_ERROR.newException();
@@ -460,6 +489,94 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
         }
     }
 
+    private RoleGrantedModuleVo fetchSchemaModeResources(Long roleId) {
+        Set<Long> selectedIds = this.roleResourceMapper.selectList(
+                        new LambdaQueryWrapper<RoleResourceEntity>()
+                                .select(RoleResourceEntity::getResourceId)
+                                .eq(RoleResourceEntity::getRoleId, roleId))
+                .stream()
+                .map(RoleResourceEntity::getResourceId)
+                .collect(Collectors.toSet());
+        long tenantId = ThreadUserHelper.getTenantId();
+        CoreGrantOptions options = this.coreSchemaExecutor.execute(jdbcTemplate -> {
+            Set<Long> authorizedIds = safeSet(this.tenantResourceMapper.selectAuthorizedResourceIds(tenantId));
+            List<ModuleResources> resources = authorizedIds.isEmpty()
+                    ? List.of()
+                    : this.roleResourceMapper.selectResourcesByIds(authorizedIds);
+            List<ModuleEntity> modules = resources.isEmpty()
+                    ? List.of()
+                    : this.moduleMapper.selectList(new LambdaQueryWrapper<ModuleEntity>()
+                            .eq(ModuleEntity::getFrozen, FrozenEnumm.UN_FROZEN));
+            return new CoreGrantOptions(modules, resources, authorizedIds);
+        });
+
+        Set<Long> effectiveSelectedIds = new HashSet<>(selectedIds);
+        effectiveSelectedIds.retainAll(options.authorizedIds);
+        options.resources.forEach(resource -> resource.setChecked(
+                effectiveSelectedIds.contains(resource.getId()) ? 1 : 0));
+        return buildGrantedModuleVo(options.modules, options.resources);
+    }
+
+    private RoleGrantedModuleVo buildGrantedModuleVo(List<ModuleEntity> modules, List<ModuleResources> resources) {
+        Set<Long> visibleModuleIds = resources.stream()
+                .map(ModuleResources::getMainId)
+                .collect(Collectors.toSet());
+        Map<Long, ModuleEntity> allModules = modules.stream()
+                .collect(Collectors.toMap(ModuleEntity::getId, item -> item, (left, right) -> left));
+        Set<Long> pending = new HashSet<>(visibleModuleIds);
+        while (!pending.isEmpty()) {
+            Long moduleId = pending.iterator().next();
+            pending.remove(moduleId);
+            ModuleEntity module = allModules.get(moduleId);
+            if (module != null && module.getPid() != null && module.getPid() != 0L
+                    && visibleModuleIds.add(module.getPid())) {
+                pending.add(module.getPid());
+            }
+        }
+        Map<Long, ModuleDetailVo> moduleMap = this.moduleConvert.entityToDetailVo(modules.stream()
+                        .filter(module -> visibleModuleIds.contains(module.getId()))
+                        .collect(Collectors.toList()))
+                .stream()
+                .collect(Collectors.toMap(ModuleDetailVo::getId, item -> item,
+                        (left, right) -> left, LinkedHashMap::new));
+        List<ModuleResourcesVo> resourceVos = this.moduleConvert.resourceEntityToVo(resources);
+        Map<Long, List<ModuleResourcesVo>> resourceMap = resourceVos.stream()
+                .collect(Collectors.groupingBy(ModuleResourcesVo::getMainId, LinkedHashMap::new, Collectors.toList()));
+        Set<Long> moduleChecked = new HashSet<>();
+        resourceMap.forEach((moduleId, moduleResources) -> {
+            ModuleDetailVo module = moduleMap.get(moduleId);
+            if (module != null) {
+                module.setResources(moduleResources);
+                if (moduleResources.stream().anyMatch(this::isCheckedResource)) {
+                    moduleChecked.add(moduleId);
+                }
+            }
+        });
+        return this.roleConvert.toGrantedModuleVo(TreeHelper.buildTree(moduleMap.values()), moduleChecked);
+    }
+
+    private void ensureSchemaResourcesAuthorized(Set<Long> resourceIds) {
+        if (CollUtils.isEmpty(resourceIds)) {
+            return;
+        }
+        long tenantId = ThreadUserHelper.getTenantId();
+        this.coreSchemaExecutor.execute(jdbcTemplate -> {
+            Set<Long> authorizedIds = safeSet(this.tenantResourceMapper.selectAuthorizedResourceIds(tenantId));
+            if (!authorizedIds.containsAll(resourceIds)) {
+                CommonCodes.PARAM_ERROR.newException();
+            }
+            Set<Long> validIds = safeSet(this.roleResourceMapper.selectValidResourceIds(resourceIds));
+            if (validIds.size() != resourceIds.size()) {
+                CommonCodes.PARAM_ERROR.newException();
+            }
+            return null;
+        });
+    }
+
+    private Set<Long> safeSet(Set<Long> ids) {
+        return ids == null ? Set.of() : ids;
+    }
+
     private Set<Long> fetchVisibleUserIds(Set<Long> userIds) {
         if (CollUtils.isEmpty(userIds)) {
             return new HashSet<>();
@@ -514,6 +631,19 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
         }
         for (Long userId : userIds) {
             this.userMapper.incrementPermVer(userId);
+        }
+    }
+
+    private static final class CoreGrantOptions {
+        private final List<ModuleEntity> modules;
+        private final List<ModuleResources> resources;
+        private final Set<Long> authorizedIds;
+
+        private CoreGrantOptions(List<ModuleEntity> modules, List<ModuleResources> resources,
+                                 Set<Long> authorizedIds) {
+            this.modules = modules;
+            this.resources = resources;
+            this.authorizedIds = authorizedIds;
         }
     }
 }

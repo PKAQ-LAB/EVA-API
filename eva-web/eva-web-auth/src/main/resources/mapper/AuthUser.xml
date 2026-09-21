@@ -15,8 +15,8 @@
         FROM SYS_USER su
             LEFT JOIN SYS_TENANT st ON su.TENANT_ID = st.ID
         <where>
-            <if test="null != id and id != ''">
-                su.id = #{id,jdbcType=VARCHAR}
+            <if test="null != id">
+                su.id = #{id,jdbcType=BIGINT}
             </if>
             <if test="null != account and account != ''">
                 and (su.account = #{account,jdbcType=VARCHAR} or
@@ -25,4 +25,14 @@
             </if>
         </where>
     </select>
+
+    <select id="getTenantUserWithRole" resultMap="UserWithRole">
+        SELECT su.*
+        FROM SYS_USER su
+        WHERE COALESCE(su.DELETED, 0) = 0
+          AND (su.ACCOUNT = #{account,jdbcType=VARCHAR}
+            OR su.TEL = #{account,jdbcType=VARCHAR}
+            OR su.EMAIL = #{account,jdbcType=VARCHAR})
+    </select>
+
 </mapper>

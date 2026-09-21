@@ -23,6 +23,8 @@ public interface AuthUserMapper extends BaseMapper<AuthUserEntity> {
      */
     AuthUserEntity getUserWithRole(AuthUserEntity user);
 
+    AuthUserEntity getTenantUserWithRole(AuthUserEntity user);
+
     /**
      * 获取用户的权限版本号
      *
@@ -53,6 +55,13 @@ public interface AuthUserMapper extends BaseMapper<AuthUserEntity> {
                 AND su.DELETED = 0
             """)
     AuthUserEntity getAuthState(Long userId);
+
+    @Select("""
+            SELECT ID, FROZEN, PERM_VER, DEPT_ID
+            FROM SYS_USER
+            WHERE ID = #{userId} AND COALESCE(DELETED, 0) = 0
+            """)
+    AuthUserEntity getTenantAuthState(Long userId);
 
     /**
      * 自增用户的权限版本号

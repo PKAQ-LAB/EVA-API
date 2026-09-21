@@ -5,6 +5,7 @@ import org.pkaq.core.auth.openapi.filter.AppKeyAuthenticationFilter;
 import org.pkaq.core.auth.security.entrypoint.*;
 import org.pkaq.core.auth.security.filter.JwtAuthFilter;
 import org.pkaq.core.auth.security.provider.JwtUsernamePasswordAuthenticationFilter;
+import org.pkaq.core.auth.tenant.TenantLoginResolver;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.util.ArrayUtils;
 import org.pkaq.core.util.CollUtils;
@@ -52,6 +53,7 @@ public class WebSecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JwtAuthFilter jwtAuthFilter;
     private final AppKeyAuthenticationFilter appKeyAuthenticationFilter;
+    private final TenantLoginResolver tenantLoginResolver;
 
     @Value("${server.servlet.context-path:/}")
     private String contextPath;
@@ -129,7 +131,9 @@ public class WebSecurityConfig {
                     .addFilterBefore(new JwtUsernamePasswordAuthenticationFilter(contextPath + "/auth/login",
                                     authenticationConfiguration.getAuthenticationManager(),
                                     urlAuthenticationSuccessHandler,
-                                    urlAuthenticationFailureHandler),
+                                    urlAuthenticationFailureHandler,
+                                    evaConfig,
+                                    tenantLoginResolver),
                             UsernamePasswordAuthenticationFilter.class);
         }
 

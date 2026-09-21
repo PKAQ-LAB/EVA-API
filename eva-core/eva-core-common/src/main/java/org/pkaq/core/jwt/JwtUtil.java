@@ -39,6 +39,8 @@ public class JwtUtil {
     private static final String CLAIM_UID = "uid";
     private static final String CLAIM_ROLES = "roles";
     private static final String CLAIM_PERM_VER = "permVer";
+    private static final String CLAIM_TENANT_ID = "tenantId";
+    private static final String CLAIM_SCHEMA_GENERATION = "schemaGeneration";
     private static final String CLAIM_TOKEN_TYPE = "typ";
     private static final String TOKEN_TYPE_ACCESS = "access";
     private static final String TOKEN_TYPE_REFRESH = "refresh";
@@ -135,6 +137,25 @@ public class JwtUtil {
         return 0;
     }
 
+    public long getTenantId(String token) {
+        return getLongClaim(token, CLAIM_TENANT_ID);
+    }
+
+    public long getSchemaGeneration(String token) {
+        return getLongClaim(token, CLAIM_SCHEMA_GENERATION);
+    }
+
+    private long getLongClaim(String token, String claimName) {
+        try {
+            JWTClaimsSet claims = getClaimsFromToken(token);
+            Object value = claims == null ? null : claims.getClaim(claimName);
+            return value instanceof Number number ? number.longValue() : 0L;
+        } catch (Exception exception) {
+            log.warn("读取JWT声明失败: {}", claimName, exception);
+            return 0L;
+        }
+    }
+
     /**
      * 获取jwt自定义属性
      *
@@ -185,6 +206,11 @@ public class JwtUtil {
         return build(ttlMillis, userId, username, roleIds, permVer, TOKEN_TYPE_ACCESS);
     }
 
+    public String build(long ttlMillis, long userId, String username, List<Long> roleIds, long permVer,
+                        long tenantId, long schemaGeneration) {
+        return build(ttlMillis, userId, username, roleIds, permVer, tenantId, schemaGeneration, TOKEN_TYPE_ACCESS);
+    }
+
     /**
      * 构建刷新Token。
      *
@@ -199,6 +225,11 @@ public class JwtUtil {
         return build(ttlMillis, userId, username, roleIds, permVer, TOKEN_TYPE_REFRESH);
     }
 
+    public String buildRefreshToken(long ttlMillis, long userId, String username, List<Long> roleIds, long permVer,
+                                    long tenantId, long schemaGeneration) {
+        return build(ttlMillis, userId, username, roleIds, permVer, tenantId, schemaGeneration, TOKEN_TYPE_REFRESH);
+    }
+
     /**
      * 构建指定类型的JWT。
      */
@@ -207,6 +238,17 @@ public class JwtUtil {
                          String username,
                          List<Long> roleIds,
                          long permVer,
+                         String tokenType) {
+        return build(ttlMillis, userId, username, roleIds, permVer, 0L, 0L, tokenType);
+    }
+
+    private String build(long ttlMillis,
+                         long userId,
+                         String username,
+                         List<Long> roleIds,
+                         long permVer,
+                         long tenantId,
+                         long schemaGeneration,
                          String tokenType) {
         MACSigner macSigner = null;
         try {
@@ -225,6 +267,8 @@ public class JwtUtil {
                 .subject(username)
                 .jwtID(String.valueOf(userId))
                 .claim(CLAIM_UID, userId)
+                .claim(CLAIM_TENANT_ID, tenantId)
+                .claim(CLAIM_SCHEMA_GENERATION, schemaGeneration)
                 .claim(CLAIM_TOKEN_TYPE, tokenType)
                 .expirationTime(ttlMillis > 0 ? exp : null)
                 .notBeforeTime(new Date(nowMillis));
@@ -319,7 +363,8 @@ public class JwtUtil {
         final String account = this.getAccount(token);
         final List<Long> roles = this.getRoles(token);
         final long permVer = this.getPermVer(token);
-        return this.build(this.jwtConfig().getAlphaTtl(), uid, account, roles, permVer);
+        return this.build(this.jwtConfig().getAlphaTtl(), uid, account, roles, permVer,
+                getTenantId(token), getSchemaGeneration(token));
     }
 
     /**

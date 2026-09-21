@@ -8,6 +8,7 @@ import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.enums.FrozenEnumm;
 import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.core.mybatis.mvc.service.StdService;
+import org.pkaq.core.mybatis.tenant.TenantSchema;
 import org.pkaq.core.mybatis.util.TreeHelper;
 import org.pkaq.core.util.CollUtils;
 import org.pkaq.sys.organization.bo.OrganizationAoeBo;
@@ -48,6 +49,8 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
      *
      * @return true 表示已存在
      */
+    @TenantSchema
+    @Transactional(readOnly = true)
     public boolean checkUnique(OrganizationAoeBo bo) {
         if (bo == null) {
             return false;
@@ -69,6 +72,8 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
     /**
      * 查询。
      */
+    @TenantSchema
+    @Transactional(readOnly = true)
     public Collection<OrganizationListVo> list(OrganizationQueryBo queryBo) {
         List<OrganizationListVo> orgList = this.organizationConvert.entityToListVo(
                 this.mapper.selectOrgMapList(queryBo));
@@ -78,6 +83,7 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
     /**
      * 新增或编辑组织。
      */
+    @TenantSchema
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void edit(OrganizationAoeBo bo) {
         OrganizationEntity org = this.organizationConvert.aoeBoToEntity(bo);
@@ -123,6 +129,8 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
     /**
      * 查询组织详情。
      */
+    @TenantSchema
+    @Transactional(readOnly = true)
     public OrganizationDetailVo get(Long id) {
         OrganizationEntity entity = this.mapper.selectById(id);
         if (entity == null) {
@@ -142,6 +150,7 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
     /**
      * 删除组织。
      */
+    @TenantSchema
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void delete(Set<Long> ids) {
         if (CollUtils.isEmpty(ids)) {
@@ -174,6 +183,7 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
     /**
      * 同级拖拽排序。
      */
+    @TenantSchema
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void sort(OrganizationSortBo bo) {
         if (bo == null || bo.getId() == null) {
@@ -194,6 +204,7 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
     /**
      * 切换冻结状态，并级联处理子节点。
      */
+    @TenantSchema
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void switchFrozen(SingleArray<Long> ids) {
         if (ids == null || CollUtils.isEmpty(ids.getParam())) {

@@ -5,8 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.pkaq.core.enums.FrozenEnumm;
 import org.pkaq.core.log.annotation.BizLog;
 import org.pkaq.core.log.base.BizLogCodes;
-import org.pkaq.core.properties.EvaConfig;
-import org.pkaq.core.threaduser.ThreadUserHelper;
+import org.pkaq.core.mybatis.tenant.TenantSchema;
 import org.pkaq.core.util.CollUtils;
 import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.post.entity.PostEntity;
@@ -40,7 +39,6 @@ public class UserPostRefSerivce {
     private final PostUserMapper postUserMapper;
     private final PostMapper postMapper;
     private final UserMapper userMapper;
-    private final EvaConfig evaConfig;
 
     /**
      * 保存用户岗位关系。
@@ -48,6 +46,7 @@ public class UserPostRefSerivce {
      * @param bo 用户岗位参数
      */
     @BizLog(operateType = BizLogCodes.EDIT, description = "更新用户岗位关系[{0}]", args = {"param:0.userId"})
+    @TenantSchema
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void savePosts(UserPostBo bo) {
         if (bo == null || bo.getUserId() == null) {
@@ -84,7 +83,6 @@ public class UserPostRefSerivce {
                 PostUserEntity ref = new PostUserEntity();
                 ref.setUserId(userId);
                 ref.setPostId(postId);
-                ref.setTenantId(resolveTenantId());
                 this.postUserMapper.insert(ref);
             }
         }
@@ -100,6 +98,8 @@ public class UserPostRefSerivce {
      * @param userId 用户ID
      * @return 岗位ID列表
      */
+    @TenantSchema
+    @Transactional(readOnly = true)
     public List<Long> listPostIdsByUserId(Long userId) {
         if (userId == null) {
             return Collections.emptyList();
@@ -135,16 +135,6 @@ public class UserPostRefSerivce {
         if (posts.size() != postIds.size()) {
             SysCodes.RECORD_NOT_FOUND.newException();
         }
-    }
-
-    private Long resolveTenantId() {
-        if (evaConfig.isStandaloneMode()) {
-            return 0L;
-        }
-        if (evaConfig.isPlatformMode()) {
-            return -1L;
-        }
-        return ThreadUserHelper.getTenantId();
     }
 
     private Set<Long> sanitizeIds(List<Long> ids) {

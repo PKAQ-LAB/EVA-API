@@ -5,6 +5,7 @@ import org.pkaq.core.auth.user.entity.AuthUserEntity;
 import org.pkaq.core.auth.user.mapper.AuthUserMapper;
 import org.pkaq.core.auth.role.mapper.AuthRoleMapper;
 import org.springframework.stereotype.Service;
+import org.pkaq.core.properties.EvaConfig;
 
 /**
  * 认证用户服务
@@ -17,6 +18,7 @@ public class AuthUserService {
 
     private final AuthUserMapper authUserMapper;
     private final AuthRoleMapper authRoleMapper;
+    private final EvaConfig evaConfig;
 
     /**
      * 获取用户及角色信息
@@ -28,6 +30,12 @@ public class AuthUserService {
         AuthUserEntity user = new AuthUserEntity();
         user.setAccount(account);
         return authUserMapper.getUserWithRole(user);
+    }
+
+    public AuthUserEntity getTenantUserWithRoles(String account) {
+        AuthUserEntity user = new AuthUserEntity();
+        user.setAccount(account);
+        return authUserMapper.getTenantUserWithRole(user);
     }
 
     /**
@@ -51,9 +59,11 @@ public class AuthUserService {
         if (userId == null || userId <= 0) {
             return null;
         }
-        AuthUserEntity authState = authUserMapper.getAuthState(userId);
+        AuthUserEntity authState = evaConfig.getTenant().isSchemaMode()
+                ? authUserMapper.getTenantAuthState(userId)
+                : authUserMapper.getAuthState(userId);
         if (authState != null) {
-            authState.setRoles(this.authRoleMapper.selectByUserId(String.valueOf(userId)));
+            authState.setRoles(this.authRoleMapper.selectByUserId(userId));
         }
         return authState;
     }

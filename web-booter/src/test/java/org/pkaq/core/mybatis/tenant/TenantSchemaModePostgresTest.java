@@ -15,6 +15,7 @@ import org.springframework.util.StreamUtils;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -67,9 +68,20 @@ class TenantSchemaModePostgresTest {
             assertEquals(0, jdbcTemplate.queryForObject("""
                     SELECT COUNT(*) FROM information_schema.columns
                     WHERE table_schema = 'tenant_101'
-                      AND table_name = 'sys_user'
+                      AND table_name IN (
+                          'sys_user', 'sys_organization', 'sys_post', 'sys_dict', 'sys_dict_item',
+                          'sys_role', 'sys_roleuser_ref', 'sys_roleres_ref', 'sys_postuser_ref')
                       AND column_name = 'tenant_id'
                     """, Integer.class));
+            List<String> tenantTables = jdbcTemplate.queryForList("""
+                    SELECT table_name FROM information_schema.tables
+                    WHERE table_schema = 'tenant_101'
+                      AND table_name IN (
+                          'sys_user', 'sys_organization', 'sys_post', 'sys_dict', 'sys_dict_item',
+                          'sys_role', 'sys_roleuser_ref', 'sys_roleres_ref', 'sys_postuser_ref')
+                    ORDER BY table_name
+                    """, String.class);
+            assertEquals(9, tenantTables.size());
             assertEquals("tenant_101", resolver.resolve(101L));
         }
     }

@@ -39,6 +39,22 @@ public interface RoleResourceMapper extends BaseMapper<RoleResourceEntity> {
     List<ModuleResources> listGrantedResource(Long roleId);
 
     /**
+     * 仅从当前租户 schema 查询用户经本地角色获得的资源ID。
+     *
+     * @param userId 用户ID
+     * @return 资源ID集合
+     */
+    Set<Long> selectResourceIdsByUserId(@Param("userId") Long userId);
+
+    /**
+     * 从当前 schema 查询指定资源详情；schema 模式下必须由 core 执行器调用。
+     *
+     * @param resourceIds 资源ID集合
+     * @return 资源详情
+     */
+    List<ModuleResources> selectResourcesByIds(@Param("resourceIds") Set<Long> resourceIds);
+
+    /**
      * 删除权限中失效的引用关系
      *
      * @param moduleId 模块ID

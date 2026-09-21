@@ -5,10 +5,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.pkaq.core.auth.log.service.LoginLogService;
+import org.pkaq.core.auth.tenant.TenantLoginIdentity;
+import org.pkaq.core.auth.tenant.TenantLoginResolver;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.exception.BizException;
+import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.util.json.JsonUtil;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -35,15 +39,21 @@ public class JwtUsernamePasswordAuthenticationFilter extends UsernamePasswordAut
     private final AuthenticationManager authenticationManager;
     private final AuthenticationSuccessHandler successHandler;
     private final AuthenticationFailureHandler failureHandler;
+    private final EvaConfig evaConfig;
+    private final TenantLoginResolver tenantLoginResolver;
 
     public JwtUsernamePasswordAuthenticationFilter(String url,
                                                    AuthenticationManager authenticationManager,
                                                    AuthenticationSuccessHandler successHandler,
-                                                   AuthenticationFailureHandler failureHandler) {
+                                                   AuthenticationFailureHandler failureHandler,
+                                                   EvaConfig evaConfig,
+                                                   TenantLoginResolver tenantLoginResolver) {
         this.url = url;
         this.authenticationManager = authenticationManager;
         this.successHandler = successHandler;
         this.failureHandler = failureHandler;
+        this.evaConfig = evaConfig;
+        this.tenantLoginResolver = tenantLoginResolver;
         setAuthenticationSuccessHandler(successHandler);
         setAuthenticationFailureHandler(failureHandler);
     }
@@ -71,12 +81,23 @@ public class JwtUsernamePasswordAuthenticationFilter extends UsernamePasswordAut
         Map<String, String> param = JsonUtil.parse(params, Map.class);
 
         assert param != null;
+        if (param.containsKey("schemaName")) {
+            throw new BadCredentialsException("禁止客户端指定schemaName");
+        }
         String username = param.get("account");
         String password = param.get("password");
+        TenantLoginIdentity tenantIdentity;
+        try {
+            tenantIdentity = tenantLoginResolver.resolveCode(param.get("tenantCode"));
+        } catch (RuntimeException exception) {
+            throw new BadCredentialsException("租户不可用", exception);
+        }
         request.setAttribute(LoginLogService.LOGIN_ACCOUNT_ATTRIBUTE, username);
 
         Collection<GrantedAuthority> authorities = new ArrayList<>();
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password, authorities);
+        UsernamePasswordAuthenticationToken authenticationToken = evaConfig.getTenant().isSchemaMode()
+                ? new TenantLoginAuthenticationToken(username, password, tenantIdentity.tenantId(), authorities)
+                : new UsernamePasswordAuthenticationToken(username, password, authorities);
 
         return this.authenticationManager.authenticate(authenticationToken);
     }

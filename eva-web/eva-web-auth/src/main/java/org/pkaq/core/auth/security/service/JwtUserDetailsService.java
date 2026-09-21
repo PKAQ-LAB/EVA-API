@@ -39,6 +39,13 @@ public class JwtUserDetailsService implements UserDetailsService {
         return JwtUserFactory.create(user);
     }
 
+    public UserDetails loadTenantUser(String account, Long tenantId) {
+        var user = authUserService.getTenantUserWithRoles(account);
+        AuthCodes.ACCOUNT_OR_PWD_ERROR.assertNotNull(user);
+        user.setTenantId(tenantId);
+        return JwtUserFactory.create(user);
+    }
+
     private void ensureTenantAvailable(AuthUserEntity user) {
         if (!evaConfig.isSaasMode()) {
             return;

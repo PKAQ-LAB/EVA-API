@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 模块管理module
@@ -106,6 +107,9 @@ public interface ModuleMapper extends BaseMapper<ModuleEntity> {
      */
     @MapKey("id")
     Map<Long, ModuleEntity> listGrantedModules(long uid);
+
+    @MapKey("id")
+    Map<Long, ModuleEntity> listModulesByResourceIds(@Param("resourceIds") Set<Long> resourceIds);
 
     @MapKey("id")
     Map<Long, ModuleEntity> selectModuleMapList(@Param("bo") ModuleQueryBo bo);

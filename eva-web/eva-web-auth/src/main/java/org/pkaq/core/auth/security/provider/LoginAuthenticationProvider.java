@@ -3,6 +3,8 @@ package org.pkaq.core.auth.security.provider;
 import lombok.Getter;
 import lombok.Setter;
 import org.pkaq.core.auth.AuthCodes;
+import org.pkaq.core.auth.security.service.JwtUserDetailsService;
+import org.pkaq.core.auth.tenant.TenantAuthRoutingService;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
@@ -21,13 +23,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class LoginAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
 
-    private UserDetailsService userDetailsService;
+    private JwtUserDetailsService userDetailsService;
 
     private PasswordEncoder passwordEncoder;
 
-    public LoginAuthenticationProvider(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
+    private final TenantAuthRoutingService tenantAuthRoutingService;
+
+    public LoginAuthenticationProvider(JwtUserDetailsService userDetailsService, PasswordEncoder passwordEncoder,
+                                       TenantAuthRoutingService tenantAuthRoutingService) {
         this.userDetailsService = userDetailsService;
         this.passwordEncoder = passwordEncoder;
+        this.tenantAuthRoutingService = tenantAuthRoutingService;
         this.setHideUserNotFoundExceptions(true);
     }
 
@@ -47,7 +53,14 @@ public class LoginAuthenticationProvider extends AbstractUserDetailsAuthenticati
 
         username = username.trim();
 
-        UserDetails user = this.getUserDetailsService().loadUserByUsername(username);
+        UserDetails user;
+        if (authentication instanceof TenantLoginAuthenticationToken tenantToken) {
+            String normalizedUsername = username;
+            user = tenantAuthRoutingService.execute(tenantToken.getTenantId(),
+                    () -> userDetailsService.loadTenantUser(normalizedUsername, tenantToken.getTenantId()));
+        } else {
+            user = this.getUserDetailsService().loadUserByUsername(username);
+        }
 
         AuthCodes.ACCOUNT_OR_PWD_ERROR.assertNotNull(user);
 

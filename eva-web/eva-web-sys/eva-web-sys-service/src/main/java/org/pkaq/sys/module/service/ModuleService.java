@@ -414,6 +414,47 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
         });
     }
 
+    public Collection<ModuleDetailVo> fetchModulesByResourceIds(Set<Long> resourceIds) {
+        if (CollUtils.isEmpty(resourceIds)) {
+            return Collections.emptyList();
+        }
+        Map<Long, ModuleDetailVo> moduleMap = toDetailMap(this.mapper.listModulesByResourceIds(resourceIds));
+        if (CollUtils.isEmpty(moduleMap)) {
+            return Collections.emptyList();
+        }
+        List<ModuleResources> resources = this.moduleResourceMapper.selectList(
+                new LambdaQueryWrapper<ModuleResources>()
+                        .in(ModuleResources::getId, resourceIds)
+                        .orderByAsc(ModuleResources::getSort));
+        Map<Long, List<ModuleResourcesVo>> grouped = this.convert.resourceEntityToVo(resources).stream()
+                .collect(Collectors.groupingBy(ModuleResourcesVo::getMainId));
+        moduleMap.forEach((moduleId, module) -> module.setResources(
+                grouped.getOrDefault(moduleId, Collections.emptyList())));
+        return TreeHelper.buildTree(moduleMap.values());
+    }
+
+    /** 禁止将节点移动到自身或其任一后代节点下。 */
+    private void assertValidParent(ModuleEntity origin, long newPid) {
+        if (newPid == origin.getId()) {
+            CommonCodes.PARAM_ERROR.newException();
+            return;
+        }
+        if (newPid == ROOT_PID) {
+            return;
+        }
+        ModuleEntity parent = this.mapper.selectById(newPid);
+        if (parent == null) {
+            CommonCodes.CAN_NOT_FIND_RECORD.newException(newPid);
+            return;
+        }
+        String originPath = origin.getPath();
+        String parentPath = parent.getPath();
+        if (originPath != null && parentPath != null
+                && (parentPath.equals(originPath) || parentPath.startsWith(originPath + "/"))) {
+            CommonCodes.PARAM_ERROR.newException();
+        }
+    }
+
     /**
      * 将 Mapper 返回的实体映射转换为 Service 输出视图映射。
      */

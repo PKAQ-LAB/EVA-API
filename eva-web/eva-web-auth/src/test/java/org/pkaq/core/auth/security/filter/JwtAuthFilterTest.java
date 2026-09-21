@@ -10,6 +10,8 @@ import org.pkaq.core.auth.user.service.AuthUserService;
 import org.pkaq.core.auth.rbac.service.RoleResourceCacheService;
 import org.pkaq.core.auth.user.entity.AuthUserEntity;
 import org.pkaq.core.auth.util.CacheTokenUtil;
+import org.pkaq.core.auth.tenant.TenantAuthRoutingService;
+import org.pkaq.core.auth.tenant.TenantLoginResolver;
 import org.pkaq.core.enums.FrozenEnumm;
 import org.pkaq.core.jwt.JwtUtil;
 import org.pkaq.core.properties.Auth;
@@ -47,6 +49,10 @@ class JwtAuthFilterTest {
     @Mock
     private RoleResourceCacheService roleResourceCacheService;
     @Mock
+    private TenantLoginResolver tenantLoginResolver;
+    @Mock
+    private TenantAuthRoutingService tenantAuthRoutingService;
+    @Mock
     private FilterChain filterChain;
 
     @AfterEach
@@ -63,7 +69,9 @@ class JwtAuthFilterTest {
                 cacheTokenUtil,
                 tokenUtil,
                 authUserService,
-                roleResourceCacheService
+                roleResourceCacheService,
+                tenantLoginResolver,
+                tenantAuthRoutingService
         );
 
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/api/user/list");

@@ -21,5 +21,5 @@ public interface AuthRoleMapper extends BaseMapper<AuthRoleEntity> {
      * @param userId 用户ID
      * @return 角色列表
      */
-    List<AuthRoleEntity> selectByUserId(String userId);
+    List<AuthRoleEntity> selectByUserId(Long userId);
 }

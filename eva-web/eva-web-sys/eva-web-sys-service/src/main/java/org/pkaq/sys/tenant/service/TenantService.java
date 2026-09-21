@@ -12,6 +12,7 @@ import org.pkaq.core.event.ModuleResourceChangedEvent.ChangeReason;
 import org.pkaq.core.event.UserOfflineEvent;
 import org.pkaq.core.event.UserOfflineEvent.OfflineReason;
 import org.pkaq.core.mvc.bo.SingleArray;
+import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.mvc.vo.PageVo;
 import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.core.mybatis.util.PageResult;
@@ -61,6 +62,8 @@ public class TenantService extends StdService<org.pkaq.sys.tenant.mapper.TenantM
     private final TenantConvert convert;
     private final ApplicationEventPublisher eventPublisher;
     private final TenantSchemaProvisioner tenantSchemaProvisioner;
+    private final TenantLocalAdminService tenantLocalAdminService;
+    private final EvaConfig evaConfig;
 
     /**
      * 切换租户冻结状态，并级联冻结或解冻租户下普通用户。
@@ -107,7 +110,10 @@ public class TenantService extends StdService<org.pkaq.sys.tenant.mapper.TenantM
         this.mapper.deleteByIds(ids);
         // 业务处理
         this.userMapper.delete(Wrappers.<UserEntity>lambdaUpdate().in(UserEntity::getTenantId, ids));
-        eventPublisher.publishEvent(new UserOfflineEvent(this, affectedUsers, OfflineReason.TENANT_DELETED));
+        for (Long tenantId : ids) {
+            eventPublisher.publishEvent(new UserOfflineEvent(
+                    this, tenantId, affectedUsers, OfflineReason.TENANT_DELETED));
+        }
     }
 
     /**
@@ -243,7 +249,7 @@ public class TenantService extends StdService<org.pkaq.sys.tenant.mapper.TenantM
                     .set(UserEntity::getFrozen, FrozenEnumm.FROZEN));
 
             Set<Long> uids = toFrozen.stream().map(UserEntity::getId).collect(Collectors.toSet());
-            eventPublisher.publishEvent(new UserOfflineEvent(this, uids, OfflineReason.TENANT_FROZEN));
+            eventPublisher.publishEvent(new UserOfflineEvent(this, tenantId, uids, OfflineReason.TENANT_FROZEN));
         } else if (target == FrozenEnumm.UN_FROZEN) {
             this.userMapper.update(null, new LambdaUpdateWrapper<UserEntity>()
                     .eq(UserEntity::getTenantId, tenantId)
@@ -283,7 +289,8 @@ public class TenantService extends StdService<org.pkaq.sys.tenant.mapper.TenantM
         this.userMapper.update(null, new LambdaUpdateWrapper<UserEntity>()
                 .in(UserEntity::getId, frozenUserIds)
                 .set(UserEntity::getFrozen, FrozenEnumm.FROZEN));
-        eventPublisher.publishEvent(new UserOfflineEvent(this, frozenUserIds, OfflineReason.TENANT_FROZEN));
+        eventPublisher.publishEvent(new UserOfflineEvent(
+                this, tenantId, frozenUserIds, OfflineReason.TENANT_FROZEN));
     }
 
     /**
@@ -325,10 +332,7 @@ public class TenantService extends StdService<org.pkaq.sys.tenant.mapper.TenantM
     private void syncTenantAuthorization(Long tenantId, TenantAoeBo bo) {
         if (usesLegacyResourceMode(bo)) {
             syncTenantResources(tenantId, sanitizeIds(bo.getResourceIds()));
-            tenantAuthorizationMapper.ensureTenantAdminRole(tenantId);
-            tenantAuthorizationMapper.bindTenantAdminRole(tenantId);
-            tenantAuthorizationMapper.clearTenantAdminResources(tenantId);
-            tenantAuthorizationMapper.refreshTenantAdminResources(tenantId);
+            synchronizeTenantAdministrator(tenantId);
             return;
         }
         Set<Long> roleIds = bo.getRoleIds() == null
@@ -349,8 +353,10 @@ public class TenantService extends StdService<org.pkaq.sys.tenant.mapper.TenantM
         }
         tenantAuthorizationMapper.clearTenantResources(tenantId);
         tenantAuthorizationMapper.insertDerivedTenantResources(tenantId);
-        tenantAuthorizationMapper.ensureTenantAdminRole(tenantId);
-        tenantAuthorizationMapper.bindTenantAdminRole(tenantId);
+        if (!isSchemaTenantMode()) {
+            tenantAuthorizationMapper.ensureTenantAdminRole(tenantId);
+            tenantAuthorizationMapper.bindTenantAdminRole(tenantId);
+        }
 
         // resourceIds 是管理员对角色与套餐能力并集的裁剪，不能用于扩权。
         if (bo.getResourceIds() != null) {
@@ -364,9 +370,27 @@ public class TenantService extends StdService<org.pkaq.sys.tenant.mapper.TenantM
             tenantAuthorizationMapper.refreshTenantAdminResources(tenantId);
             return;
         }
+        synchronizeTenantAdministrator(tenantId);
+        notifyTenantPermissionChanged(tenantId);
+    }
+
+    private void synchronizeTenantAdministrator(Long tenantId) {
+        if (isSchemaTenantMode()) {
+            TenantEntity tenant = this.mapper.selectById(tenantId);
+            if (tenant == null || tenant.getAdminId() == null) {
+                throw new IllegalStateException("租户管理员不存在");
+            }
+            tenantLocalAdminService.synchronize(tenantId, tenant.getAdminId());
+            return;
+        }
+        tenantAuthorizationMapper.ensureTenantAdminRole(tenantId);
+        tenantAuthorizationMapper.bindTenantAdminRole(tenantId);
         tenantAuthorizationMapper.clearTenantAdminResources(tenantId);
         tenantAuthorizationMapper.refreshTenantAdminResources(tenantId);
-        notifyTenantPermissionChanged(tenantId);
+    }
+
+    private boolean isSchemaTenantMode() {
+        return evaConfig.getTenant().isSchemaMode();
     }
 
     /**
@@ -420,7 +444,7 @@ public class TenantService extends StdService<org.pkaq.sys.tenant.mapper.TenantM
     private void offlineTenantUsers(Long tenantId, OfflineReason reason) {
         Set<Long> userIds = this.tenantResourceMapper.selectTenantUserIds(tenantId);
         if (!CollUtils.isEmpty(userIds)) {
-            eventPublisher.publishEvent(new UserOfflineEvent(this, userIds, reason));
+            eventPublisher.publishEvent(new UserOfflineEvent(this, tenantId, userIds, reason));
         }
     }
 }

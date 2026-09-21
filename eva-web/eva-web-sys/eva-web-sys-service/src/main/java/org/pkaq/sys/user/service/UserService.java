@@ -14,6 +14,7 @@ import org.pkaq.core.mvc.vo.PageVo;
 import org.pkaq.core.mvc.vo.Vo;
 import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.core.mybatis.tenant.TenantSchema;
+import org.pkaq.core.mybatis.tenant.CoreSchemaExecutor;
 import org.pkaq.core.mybatis.util.PageResult;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.threaduser.ThreadUserHelper;
@@ -32,6 +33,7 @@ import org.pkaq.sys.post.mapper.PostUserMapper;
 import org.pkaq.sys.post.service.UserPostRefSerivce;
 import org.pkaq.sys.role.entity.RoleUserEntity;
 import org.pkaq.sys.role.mapper.RoleUserMapper;
+import org.pkaq.sys.role.mapper.RoleResourceMapper;
 import org.pkaq.sys.role.service.UserRoleRefSerivce;
 import org.pkaq.sys.user.bo.RePwdBo;
 import org.pkaq.sys.user.bo.UserAoeBo;
@@ -89,6 +91,8 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
     private final UserConvert convert;
     private final EvaConfig evaConfig;
     private final ApplicationEventPublisher eventPublisher;
+    private final CoreSchemaExecutor coreSchemaExecutor;
+    private final RoleResourceMapper roleResourceMapper;
 
     /**
      * 校验账号合法性。
@@ -108,6 +112,7 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
      */
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    @TenantSchema
     public void repwd(RePwdBo rePwdBo) {
         Long uid = ThreadUserHelper.getUserId();
 
@@ -127,7 +132,8 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
         updateE.setRevision(rePwdBo.getRevision());
         this.mapper.updateById(updateE);
 
-        this.eventPublisher.publishEvent(new UserOfflineEvent(this, uid, OfflineReason.PASSWORD_CHANGED));
+        this.eventPublisher.publishEvent(new UserOfflineEvent(
+                this, ThreadUserHelper.getTenantId(), uid, OfflineReason.PASSWORD_CHANGED));
     }
 
     /**
@@ -137,6 +143,7 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
      */
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    @TenantSchema
     public void delete(Set<Long> param) {
         Set<Long> userIds = this.sanitizeIds(param);
         if (userIds.isEmpty()) {
@@ -147,7 +154,8 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
         this.mapper.deleteByIds(userIds);
         this.roleUserMapper.delete(new LambdaQueryWrapper<RoleUserEntity>().in(RoleUserEntity::getUserId, userIds));
         this.postUserMapper.delete(new LambdaQueryWrapper<PostUserEntity>().in(PostUserEntity::getUserId, userIds));
-        this.eventPublisher.publishEvent(new UserOfflineEvent(this, userIds, OfflineReason.USER_DELETED));
+        this.eventPublisher.publishEvent(new UserOfflineEvent(
+                this, ThreadUserHelper.getTenantId(), userIds, OfflineReason.USER_DELETED));
     }
 
     /**
@@ -157,6 +165,8 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
      * @return 用户列表
      */
     @Override
+    @Transactional(readOnly = true)
+    @TenantSchema
     public List<UserListVo> listUser(UserQueryBo queryBo) {
         UserEntity user = this.convert.boToEntity(queryBo);
         LambdaQueryWrapper<UserEntity> wrapper = Wrappers.lambdaQuery();
@@ -173,6 +183,8 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
      * @param convertFn 转换函数
      * @return 用户列表
      */
+    @Transactional(readOnly = true)
+    @TenantSchema
     public List<? extends Vo> listUser(UserQueryBo queryBo,
                                        Function<List<? extends Entity>, List<? extends Vo>> convertFn) {
         UserEntity user = this.convert.boToEntity(queryBo);
@@ -190,6 +202,8 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
      * @return 分页数据
      */
     @Override
+    @Transactional(readOnly = true)
+    @TenantSchema
     public PageVo<UserListVo> listPage(UserQueryBo queryBo) {
         LambdaQueryWrapper<UserEntity> wrapper = Wrappers.lambdaQuery();
         wrapper.setEntity(this.convert.boToEntity(queryBo));
@@ -206,6 +220,7 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
      */
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    @TenantSchema
     public void updateUser(Set<Long> ids) {
         Set<Long> userIds = this.sanitizeIds(ids);
         if (userIds.isEmpty()) {
@@ -228,7 +243,8 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
         }
 
         if (!willBeFrozen.isEmpty()) {
-            this.eventPublisher.publishEvent(new UserOfflineEvent(this, willBeFrozen, OfflineReason.USER_FROZEN));
+            this.eventPublisher.publishEvent(new UserOfflineEvent(
+                    this, ThreadUserHelper.getTenantId(), willBeFrozen, OfflineReason.USER_FROZEN));
         }
     }
 
@@ -239,6 +255,8 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
      * @return 用户详情
      */
     @Override
+    @Transactional(readOnly = true)
+    @TenantSchema
     public UserDetailVo getUser(Long id) {
         UserEntity user = this.mapper.selectById(id);
         if (user == null) {
@@ -259,6 +277,7 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
      */
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    @TenantSchema
     public void saveUser(UserAoeBo user) {
         if (user == null) {
             SysCodes.CANNOT_FIND_USER.newException();
@@ -320,8 +339,17 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
      * @param uid 用户ID
      * @return 用户资源列表
      */
+    @Transactional(readOnly = true)
+    @TenantSchema
     public List<UserResourceVo> fetchModuleByUid(Long uid) {
-        Collection<ModuleDetailVo> modules = this.moduleService.fetchUserModules(uid);
+        Collection<ModuleDetailVo> modules;
+        if (this.evaConfig.getTenant().isSchemaMode()) {
+            Set<Long> resourceIds = this.roleResourceMapper.selectResourceIdsByUserId(uid);
+            modules = this.coreSchemaExecutor.execute(
+                    template -> this.moduleService.fetchModulesByResourceIds(resourceIds));
+        } else {
+            modules = this.moduleService.fetchUserModules(uid);
+        }
         if (modules == null || modules.isEmpty()) {
             return Collections.emptyList();
         }
@@ -337,6 +365,8 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
      * @return true 表示重复
      */
     @Override
+    @Transactional(readOnly = true)
+    @TenantSchema
     public boolean checkUnique(UserCheckBo user) {
         if (user == null || (StrUtils.isBlank(user.getAccount()) && StrUtils.isBlank(user.getCode()))) {
             return false;
@@ -442,6 +472,16 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
         }
 
         Long tenantId = ThreadUserHelper.getTenantId();
+        if (this.evaConfig.getTenant().isSchemaMode()) {
+            Long userCount = this.mapper.selectCount(new LambdaQueryWrapper<UserEntity>());
+            Integer limit = this.coreSchemaExecutor.execute(template -> template.queryForObject(
+                    "SELECT AUTH_USER_COUNT FROM SYS_TENANT WHERE ID = ? AND COALESCE(DELETED, 0) = 0",
+                    Integer.class, tenantId));
+            if (limit == null || userCount >= limit) {
+                SysCodes.USER_ACCOUNT_LIMIT.newException();
+            }
+            return;
+        }
         Integer leftCt = this.mapper.availableCounts(tenantId);
         if (leftCt == null || leftCt < 1) {
             SysCodes.USER_ACCOUNT_LIMIT.newException();

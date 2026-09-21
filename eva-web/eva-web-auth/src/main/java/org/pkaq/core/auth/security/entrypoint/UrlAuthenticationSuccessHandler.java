@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.pkaq.core.auth.domain.JwtUserDetail;
 import org.pkaq.core.auth.log.service.LoginLogService;
 import org.pkaq.core.auth.util.CacheTokenUtil;
+import org.pkaq.core.auth.tenant.TenantLoginIdentity;
+import org.pkaq.core.auth.tenant.TenantLoginResolver;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.jwt.JwtUtil;
@@ -40,6 +42,7 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
     private final LoginLogService loginLogService;
 
     private final CacheTokenUtil tokenUtil;
+    private final TenantLoginResolver tenantLoginResolver;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
@@ -52,15 +55,19 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         JwtUserDetail user = (JwtUserDetail) authentication.getPrincipal();
         // 签发 access_token -> ALPHA（含角色ID和权限版本号）
         long permVer = user.getPermVer() != null ? user.getPermVer() : 0L;
+        TenantLoginIdentity tenantIdentity = tenantLoginResolver.resolveId(user.getTenantId());
         String access_token = jwtUtil.build(evaConfig.getJwt().getAlphaTtl(),
-                user.getId(), user.getAccount(), user.getRoleIds(), permVer);
+                user.getId(), user.getAccount(), user.getRoleIds(), permVer,
+                tenantIdentity.tenantId(), tenantIdentity.schemaGeneration());
         // 签发 refresh_token -> BRAVO（含角色ID和权限版本号）
         String refresh_token = jwtUtil.buildRefreshToken(evaConfig.getJwt().getBravoTtl(),
-                user.getId(), user.getAccount(), user.getRoleIds(), permVer);
+                user.getId(), user.getAccount(), user.getRoleIds(), permVer,
+                tenantIdentity.tenantId(), tenantIdentity.schemaGeneration());
 
         // token放入缓存
         if (cacheToken) {
-            tokenUtil.saveToken(user.getId(), tokenUtil.buildCacheValue(request, user.getId(), access_token));
+            tokenUtil.saveToken(tenantIdentity.tenantId(), user.getId(),
+                    tokenUtil.buildCacheValue(request, user.getId(), access_token));
         }
 
         String domain = evaConfig.getCookie().getDomain();

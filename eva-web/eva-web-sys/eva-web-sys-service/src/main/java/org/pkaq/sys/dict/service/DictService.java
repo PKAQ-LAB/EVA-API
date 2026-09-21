@@ -3,10 +3,12 @@ package org.pkaq.sys.dict.service;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import lombok.RequiredArgsConstructor;
-import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.enums.FrozenEnumm;
 import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.core.mybatis.mvc.service.StdService;
+import org.pkaq.core.mybatis.tenant.TenantSchema;
+import org.pkaq.core.tenant.TenantContext;
+import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.util.CollUtils;
 import org.pkaq.core.util.StrUtils;
 import org.pkaq.sys.SysCodes;
@@ -19,7 +21,6 @@ import org.pkaq.sys.dict.entity.DictItemEntity;
 import org.pkaq.sys.dict.mapper.DictItemMapper;
 import org.pkaq.sys.dict.mapper.DictMapper;
 import org.pkaq.sys.dict.vo.DictViewVo;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
@@ -46,13 +47,16 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
     private final DictCacheHelper dictCacheHelper;
     private final DictItemMapper dictItemMapper;
     private final DictConvert convert;
+    private final EvaConfig evaConfig;
 
     /**
      * 初始化字典缓存。
      */
     @Override
-    @CacheEvict(cacheNames = CommonConstant.CACHE_DICTDATA, key = CommonConstant.SYS_ALL_DICT_KEY)
     public void init() {
+        if (evaConfig.getTenant().isSchemaMode() && TenantContext.schemaName() == null) {
+            return;
+        }
         this.dictCacheHelper.removeAll();
         this.selectDict().forEach(this.dictCacheHelper::cachePut);
     }
@@ -63,6 +67,8 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
      * @return 字典编码到明细键值的映射
      */
     @Override
+    @TenantSchema
+    @Transactional(readOnly = true)
     public Map<String, LinkedHashMap<String, String>> selectDict() {
         List<DictEntity> dicts = this.mapper.selectList(new LambdaQueryWrapper<DictEntity>()
                 .ne(DictEntity::getFrozen, FrozenEnumm.FROZEN.getCode())
@@ -102,6 +108,8 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
      * @return 字典缓存
      */
     @Override
+    @TenantSchema
+    @Transactional(readOnly = true)
     public Map<String, LinkedHashMap<String, String>> fetchDicts() {
         Map<?, ?> cached = this.dictCacheHelper.getAll();
         Map<String, LinkedHashMap<String, String>> result = new LinkedHashMap<>();
@@ -130,6 +138,8 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
      * @return 明细提交值和显示文本映射
      */
     @Override
+    @TenantSchema
+    @Transactional(readOnly = true)
     public Map<String, String> queryDict(String type) {
         if (StrUtils.isBlank(type)) {
             return Collections.emptyMap();
@@ -152,6 +162,8 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
      * @return 字典详情
      */
     @Override
+    @TenantSchema
+    @Transactional(readOnly = true)
     public DictViewVo getDict(DictAoeBo bo) {
         if (bo == null || (bo.getId() == null && StrUtils.isBlank(bo.getCode()))) {
             SysCodes.RECORD_NOT_FOUND.newException();
@@ -178,6 +190,8 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
      * @return 字典列表
      */
     @Override
+    @TenantSchema
+    @Transactional(readOnly = true)
     public List<DictViewVo> listDict() {
         List<DictEntity> entities = this.mapper.selectList(new LambdaQueryWrapper<DictEntity>()
                 .orderByAsc(DictEntity::getSort)
@@ -202,6 +216,8 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
      * @return true 表示存在且可用
      */
     @Override
+    @TenantSchema
+    @Transactional(readOnly = true)
     public boolean validateItem(String type, String value) {
         if (StrUtils.isBlank(type) || StrUtils.isBlank(value)) {
             return false;
@@ -225,6 +241,7 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @TenantSchema
     public void delDict(Long id) {
         if (id == null || id == 0L) {
             SysCodes.RECORD_NOT_FOUND.newException();
@@ -249,6 +266,7 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @TenantSchema
     public void edit(DictAoeBo bo) {
         if (bo == null || StrUtils.isBlank(bo.getCode()) || StrUtils.isBlank(bo.getName())) {
             SysCodes.RECORD_NOT_FOUND.newException();
@@ -291,6 +309,8 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
      * @return true 表示重复
      */
     @Override
+    @TenantSchema
+    @Transactional(readOnly = true)
     public boolean checkUnique(DictAoeBo bo) {
         if (bo == null || StrUtils.isBlank(bo.getCode())) {
             return false;
@@ -336,6 +356,7 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @TenantSchema
     public void switchFrozen(SingleArray<Long> ids) {
         if (ids == null || CollUtils.isEmpty(ids.getParam())) {
             SysCodes.RECORD_NOT_FOUND.newException();
@@ -499,10 +520,27 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
             return;
         }
 
+        Map<String, LinkedHashMap<String, String>> snapshots = safeTypes.stream()
+                .collect(Collectors.toMap(Function.identity(), this::selectDictByType));
+        Long tenantId = TenantContext.tenantId();
+        String schemaName = TenantContext.schemaName();
+
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
             public void afterCommit() {
-                DictService.this.reloadTypes(safeTypes);
+                if (schemaName != null) {
+                    TenantContext.bind(tenantId, schemaName);
+                }
+                try {
+                    snapshots.forEach((type, items) -> {
+                        dictCacheHelper.remove(type);
+                        dictCacheHelper.cachePut(type, items);
+                    });
+                } finally {
+                    if (schemaName != null) {
+                        TenantContext.clear();
+                    }
+                }
             }
         });
     }

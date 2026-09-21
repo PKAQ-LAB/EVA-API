@@ -14,7 +14,7 @@
             and
             R.FROZEN != 1
             and
-            RU.USER_ID=#{userId,jdbcType=VARCHAR}
+            RU.USER_ID=#{userId,jdbcType=BIGINT}
         </where>
     </select>
 </mapper>

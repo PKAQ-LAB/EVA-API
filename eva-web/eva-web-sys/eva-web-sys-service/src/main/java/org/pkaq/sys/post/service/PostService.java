@@ -8,6 +8,7 @@ import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.enums.FrozenEnumm;
 import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.core.mybatis.mvc.service.StdService;
+import org.pkaq.core.mybatis.tenant.TenantSchema;
 import org.pkaq.core.mybatis.util.TreeHelper;
 import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.core.util.CollUtils;
@@ -53,6 +54,8 @@ public class PostService extends StdService<PostMapper, PostEntity> {
      *
      * @return true 表示已存在
      */
+    @TenantSchema
+    @Transactional(readOnly = true)
     public boolean checkUnique(PostAoeBo bo) {
         if (bo == null) {
             return false;
@@ -74,6 +77,8 @@ public class PostService extends StdService<PostMapper, PostEntity> {
     /**
      * 查询。
      */
+    @TenantSchema
+    @Transactional(readOnly = true)
     public Collection<PostListVo> list(PostQueryBo queryBo) {
         List<PostListVo> posts = this.postConvert.entityToListVo(this.mapper.selectPostMapList(queryBo));
         return TreeHelper.buildTree(posts);
@@ -82,6 +87,7 @@ public class PostService extends StdService<PostMapper, PostEntity> {
     /**
      * 新增或编辑岗位。
      */
+    @TenantSchema
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void edit(PostAoeBo bo) {
         PostEntity post = this.postConvert.aoeBoToEntity(bo);
@@ -127,6 +133,8 @@ public class PostService extends StdService<PostMapper, PostEntity> {
     /**
      * 查询岗位详情。
      */
+    @TenantSchema
+    @Transactional(readOnly = true)
     public PostDetailVo get(Long id) {
         PostEntity entity = this.mapper.selectById(id);
         if (entity == null) {
@@ -146,6 +154,7 @@ public class PostService extends StdService<PostMapper, PostEntity> {
     /**
      * 删除岗位，并清理岗位-用户关系。
      */
+    @TenantSchema
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void del(Set<Long> ids) {
         if (CollUtils.isEmpty(ids)) {
@@ -182,6 +191,7 @@ public class PostService extends StdService<PostMapper, PostEntity> {
     /**
      * 同级拖拽排序。
      */
+    @TenantSchema
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void sort(PostSortBo bo) {
         if (bo == null || bo.getId() == null) {
@@ -202,6 +212,7 @@ public class PostService extends StdService<PostMapper, PostEntity> {
     /**
      * 切换冻结状态，并级联处理子节点。
      */
+    @TenantSchema
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void switchFrozen(SingleArray<Long> ids) {
         if (ids == null || CollUtils.isEmpty(ids.getParam())) {

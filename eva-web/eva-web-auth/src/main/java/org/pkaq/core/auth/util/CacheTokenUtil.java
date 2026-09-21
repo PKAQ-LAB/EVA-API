@@ -51,8 +51,12 @@ public class CacheTokenUtil {
      * @param key
      * @param value
      */
-    public void saveToken(Long key, Object value) {
-        this.tokenCache.put(key, value);
+    public void saveToken(Long tenantId, Long userId, Object value) {
+        this.tokenCache.put(cacheKey(tenantId, userId), value);
+    }
+
+    public void saveToken(Long userId, Object value) {
+        saveToken(0L, userId, value);
     }
 
 
@@ -78,9 +82,13 @@ public class CacheTokenUtil {
      * @param uid
      * @return
      */
-    public Object getToken(Long uid) {
-        var wrapper = this.tokenCache.get(uid);
+    public Object getToken(Long tenantId, Long userId) {
+        var wrapper = this.tokenCache.get(cacheKey(tenantId, userId));
         return null == wrapper ? null : wrapper.get();
+    }
+
+    public Object getToken(Long userId) {
+        return getToken(0L, userId);
     }
 
     /**
@@ -99,8 +107,12 @@ public class CacheTokenUtil {
      * @param uid 用户 ID
      */
     public void removeToken(Long uid) {
-        if (uid != null) {
-            this.tokenCache.evict(uid);
+        removeToken(0L, uid);
+    }
+
+    public void removeToken(Long tenantId, Long userId) {
+        if (userId != null) {
+            this.tokenCache.evict(cacheKey(tenantId, userId));
         }
     }
 
@@ -110,12 +122,33 @@ public class CacheTokenUtil {
      * @param uids 用户 ID 集合
      */
     public void removeTokens(java.util.Collection<Long> uids) {
+        removeTokens(0L, uids);
+    }
+
+    public void removeTokens(Long tenantId, java.util.Collection<Long> uids) {
         if (uids == null || uids.isEmpty()) {
             return;
         }
         for (Long uid : uids) {
-            this.tokenCache.evict(uid);
+            removeToken(tenantId, uid);
         }
+    }
+
+    public void removeTenantTokens(Long tenantId) {
+        String prefix = (tenantId == null ? 0L : tenantId) + ":";
+        Map<?, ?> tokens = getAllToken();
+        if (tokens == null) {
+            return;
+        }
+        tokens.keySet().stream()
+                .map(String::valueOf)
+                .filter(key -> key.startsWith(prefix))
+                .forEach(this.tokenCache::evict);
+    }
+
+    private String cacheKey(Long tenantId, Long userId) {
+        long trustedTenantId = tenantId == null ? 0L : tenantId;
+        return trustedTenantId + ":" + userId;
     }
 
 }

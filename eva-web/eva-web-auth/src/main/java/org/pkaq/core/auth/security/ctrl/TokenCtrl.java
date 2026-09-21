@@ -7,6 +7,9 @@ import org.pkaq.core.auth.AuthCodes;
 import org.pkaq.core.auth.user.entity.AuthUserEntity;
 import org.pkaq.core.auth.user.service.AuthUserService;
 import org.pkaq.core.auth.util.CacheTokenUtil;
+import org.pkaq.core.auth.tenant.TenantAuthRoutingService;
+import org.pkaq.core.auth.tenant.TenantLoginIdentity;
+import org.pkaq.core.auth.tenant.TenantLoginResolver;
 import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.enums.FrozenEnumm;
 import org.pkaq.core.jwt.JwtUtil;
@@ -36,6 +39,8 @@ public class TokenCtrl {
     private final CacheTokenUtil cacheTokenUtil;
     private final TokenUtils tokenUtil;
     private final AuthUserService authUserService;
+    private final TenantLoginResolver tenantLoginResolver;
+    private final TenantAuthRoutingService tenantAuthRoutingService;
 
     /**
      * 使用refresh token换取access token
@@ -71,17 +76,24 @@ public class TokenCtrl {
 
         // 获取当前用户信息
         long uid = jwtUtil.getUid(refreshTk);
+        long tenantId = jwtUtil.getTenantId(refreshTk);
         String account = jwtUtil.getAccount(refreshTk);
         List<Long> roleIds = jwtUtil.getRoles(refreshTk);
         long tokenPermVer = jwtUtil.getPermVer(refreshTk);
 
         // 权限版本号校验
-        AuthUserEntity authState = authUserService.getAuthState(uid);
+        TenantLoginIdentity tenantIdentity = tenantLoginResolver.resolveId(tenantId);
+        if (tenantIdentity.schemaGeneration() != jwtUtil.getSchemaGeneration(refreshTk)) {
+            this.clearCookie(response);
+            AuthCodes.LOGIN_EXPIRED.newException(AuthenticationException.class);
+        }
+        AuthUserEntity authState = tenantAuthRoutingService.execute(tenantId,
+                () -> authUserService.getAuthState(uid));
         if (!isAuthStateAvailable(authState)) {
             this.clearCookie(response);
             AuthCodes.LOGIN_EXPIRED.newException(AuthenticationException.class);
         }
-        if (cacheToken && cacheTokenUtil.getToken(uid) == null) {
+        if (cacheToken && cacheTokenUtil.getToken(tenantId, uid) == null) {
             this.clearCookie(response);
             AuthCodes.LOGIN_EXPIRED.newException(AuthenticationException.class);
         }
@@ -92,10 +104,12 @@ public class TokenCtrl {
         }
 
         // 签发新的 access token
-        String newAlpha = jwtUtil.build(evaConfig.getJwt().getAlphaTtl(), uid, account, roleIds, dbPermVer);
+        String newAlpha = jwtUtil.build(evaConfig.getJwt().getAlphaTtl(), uid, account, roleIds, dbPermVer,
+                tenantId, tenantIdentity.schemaGeneration());
 
         // 签发新的 refresh token
-        String newBravo = jwtUtil.buildRefreshToken(evaConfig.getJwt().getBravoTtl(), uid, account, roleIds, dbPermVer);
+        String newBravo = jwtUtil.buildRefreshToken(evaConfig.getJwt().getBravoTtl(), uid, account, roleIds, dbPermVer,
+                tenantId, tenantIdentity.schemaGeneration());
 
         // 替换客户端的旧token
         String domain = evaConfig.getCookie().getDomain();
@@ -108,7 +122,7 @@ public class TokenCtrl {
 
         // 持久化token
         if (cacheToken) {
-            cacheTokenUtil.saveToken(uid, cacheTokenUtil.buildCacheValue(request, uid, newAlpha));
+            cacheTokenUtil.saveToken(tenantId, uid, cacheTokenUtil.buildCacheValue(request, uid, newAlpha));
         }
 
         var map = Map.of(CommonConstant.ACCESS_TOKEN_KEY, newAlpha,

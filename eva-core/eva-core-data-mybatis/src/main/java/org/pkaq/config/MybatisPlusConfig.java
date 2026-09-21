@@ -12,7 +12,7 @@ import org.pkaq.core.mybatis.enums.UniversalEnumTypeHandler;
 import org.pkaq.core.properties.EvaConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
+import org.pkaq.core.mybatis.tenant.TenantRoutingOrder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.Properties;
@@ -23,7 +23,7 @@ import java.util.Properties;
  * @author PKAQ
  */
 @Configuration
-@EnableTransactionManagement(order = Ordered.LOWEST_PRECEDENCE - 1)
+@EnableTransactionManagement(order = TenantRoutingOrder.TRANSACTION)
 @RequiredArgsConstructor
 public class MybatisPlusConfig {
     private final EvaConfig evaConfig;

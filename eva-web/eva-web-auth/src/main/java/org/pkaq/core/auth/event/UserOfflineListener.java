@@ -28,10 +28,16 @@ public class UserOfflineListener {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
     public void onUserOffline(UserOfflineEvent event) {
+        boolean entireTenant = event.getReason() == UserOfflineEvent.OfflineReason.TENANT_FROZEN
+                || event.getReason() == UserOfflineEvent.OfflineReason.TENANT_DELETED;
+        if (entireTenant && event.getTenantId() != null && event.getTenantId() > 0L) {
+            cacheTokenUtil.removeTenantTokens(event.getTenantId());
+            return;
+        }
         if (event.getUids() == null || event.getUids().isEmpty()) {
             return;
         }
         log.info("[token-evict] reason={}, uids={}", event.getReason(), event.getUids());
-        cacheTokenUtil.removeTokens(event.getUids());
+        cacheTokenUtil.removeTokens(event.getTenantId(), event.getUids());
     }
 }

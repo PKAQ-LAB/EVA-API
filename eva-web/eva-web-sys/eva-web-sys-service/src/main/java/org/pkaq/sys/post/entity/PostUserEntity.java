@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
  * <p>
  * 字段约定：
  * - id：独立主键（避免 (postId, userId) 复合主键带来的 Mapper 操作复杂度）
- * - tenantId：多租户隔离字段
+ * - 租户隔离由 schema 路由保证，关系表不得保存 tenantId
  * - 审计字段：记录授权人 / 授权时间（便于追溯）
  * - DB 层需要补 UNIQUE(post_id, user_id) 约束防止重复授权
  *
@@ -38,9 +38,6 @@ public class PostUserEntity implements Entity {
 
     @NotNull
     private Long userId;
-
-    /** 租户ID */
-    private Long tenantId;
 
     /** 授权人 ID */
     @TableField(fill = FieldFill.INSERT)

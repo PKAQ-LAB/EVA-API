@@ -82,6 +82,31 @@
         ORDER BY r.MAIN_ID ASC, r.SORT ASC, r.ID ASC
     </select>
 
+    <select id="selectResourceIdsByUserId" resultType="java.lang.Long">
+        SELECT DISTINCT rr.RESOURCE_ID
+        FROM SYS_ROLEUSER_REF ru
+            JOIN SYS_ROLERES_REF rr ON ru.ROLE_ID = rr.ROLE_ID
+        WHERE ru.USER_ID = #{userId}
+    </select>
+
+    <select id="selectResourcesByIds" resultType="org.pkaq.sys.module.entity.ModuleResources">
+        SELECT
+            ID,
+            MAIN_ID,
+            CODE,
+            RESOURCE_DESC,
+            RESOURCE_URL,
+            RESOURCE_TYPE,
+            SORT
+        FROM SYS_MODULE_RESOURCES
+        WHERE (DELETED = 0 OR DELETED IS NULL)
+          AND ID IN
+        <foreach collection="resourceIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        ORDER BY MAIN_ID ASC, SORT ASC, ID ASC
+    </select>
+
     <select id="selectValidResourceIds" resultType="java.lang.Long">
         SELECT ID
         FROM SYS_MODULE_RESOURCES

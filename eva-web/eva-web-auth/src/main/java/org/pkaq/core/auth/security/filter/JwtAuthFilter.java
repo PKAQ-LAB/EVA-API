@@ -11,6 +11,9 @@ import org.pkaq.core.auth.rbac.service.RoleResourceCacheService;
 import org.pkaq.core.auth.user.entity.AuthUserEntity;
 import org.pkaq.core.auth.user.service.AuthUserService;
 import org.pkaq.core.auth.util.CacheTokenUtil;
+import org.pkaq.core.auth.tenant.TenantAuthRoutingService;
+import org.pkaq.core.auth.tenant.TenantLoginIdentity;
+import org.pkaq.core.auth.tenant.TenantLoginResolver;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.enums.FrozenEnumm;
@@ -62,6 +65,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final TokenUtils tokenUtil;
     private final AuthUserService authUserService;
     private final RoleResourceCacheService roleResourceCacheService;
+    private final TenantLoginResolver tenantLoginResolver;
+    private final TenantAuthRoutingService tenantAuthRoutingService;
 
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
@@ -93,9 +98,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 // 验证token是否合法
                 isvalid = jwtUtil.valid(authToken) && jwtUtil.isAccessToken(authToken);
                 Long uid = isvalid ? jwtUtil.getUid(authToken) : null;
+                long tenantId = isvalid ? jwtUtil.getTenantId(authToken) : 0L;
+                if (isvalid && evaConfig.getTenant().isSchemaMode()) {
+                    TenantLoginIdentity identity = tenantLoginResolver.resolveId(tenantId);
+                    isvalid = identity.schemaGeneration() == jwtUtil.getSchemaGeneration(authToken);
+                }
                 // 验证缓存中是否存在该token
                 if (isvalid && cacheToken) {
-                    Object token = cacheTokenUtil.getToken(uid);
+                    Object token = cacheTokenUtil.getToken(tenantId, uid);
 
                     Map<String, Object> jsonObject = null;
                     if (null != token) {
@@ -116,7 +126,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 if (isvalid && jwtUtil.isTokenExpiring(authToken)) {
                     String newToken = jwtUtil.refreshToken(authToken);
                     if (cacheToken) {
-                        cacheTokenUtil.saveToken(uid, cacheTokenUtil.buildCacheValue(request, uid, newToken));
+                        cacheTokenUtil.saveToken(tenantId, uid,
+                                cacheTokenUtil.buildCacheValue(request, uid, newToken));
                     }
                     response.setHeader(CommonConstant.ACCESS_TOKEN_KEY, newToken);
                     CookieUtils.addCookie(response, CommonConstant.ACCESS_TOKEN_KEY,
@@ -133,6 +144,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         if (isvalid && (inCache || !cacheToken)) {
             long uid = jwtUtil.getUid(authToken);
+            long tenantId = jwtUtil.getTenantId(authToken);
             String account = jwtUtil.getAccount(authToken);
 
             if (StrUtils.isNotBlank(account)) {
@@ -140,7 +152,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 List<Long> roleIds = jwtUtil.getRoles(authToken);
                 long tokenPermVer = jwtUtil.getPermVer(authToken);
 
-                AuthUserEntity authState = authUserService.getAuthState(uid);
+                AuthUserEntity authState = evaConfig.getTenant().isSchemaMode()
+                        ? tenantAuthRoutingService.execute(tenantId, () -> authUserService.getAuthState(uid))
+                        : authUserService.getAuthState(uid);
                 if (authState == null) {
                     this.clearCookie(response);
                     ResponseUtil.write(response, Response.failure(AuthCodes.LOGIN_EXPIRED));
@@ -189,7 +203,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 ThreadUser currentUser = new ThreadUser()
                         .setUserId(uid)
                         .setName(account)
-                        .setTenantId(authState.getTenantId() == null ? 0L : authState.getTenantId())
+                        .setTenantId(tenantId)
                         .setDeptId(authState.getDeptId() == null ? 0L : authState.getDeptId())
                         .setDataScopes(toDataScopes(authState))
                         .setRoles(roleNames);

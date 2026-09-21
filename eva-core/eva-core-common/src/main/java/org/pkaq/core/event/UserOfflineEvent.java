@@ -22,19 +22,34 @@ import java.util.Set;
 public class UserOfflineEvent extends ApplicationEvent {
     /** 需要下线的用户 ID 集合 */
     private final Set<Long> uids;
+    /** token 缓存所属的可信租户 ID；0 表示 standalone/platform。 */
+    private final Long tenantId;
     /** 触发原因（仅用于日志/审计；监听方的清 token 行为对所有 reason 一致） */
     private final OfflineReason reason;
 
     public UserOfflineEvent(Object source, Collection<Long> uids, OfflineReason reason) {
         super(source);
         this.uids = (uids == null || uids.isEmpty()) ? Set.of() : new HashSet<>(uids);
+        this.tenantId = 0L;
         this.reason = reason;
     }
 
     public UserOfflineEvent(Object source, Long uid, OfflineReason reason) {
         super(source);
         this.uids = uid == null ? Set.of() : Set.of(uid);
+        this.tenantId = 0L;
         this.reason = reason;
+    }
+
+    public UserOfflineEvent(Object source, Long tenantId, Collection<Long> uids, OfflineReason reason) {
+        super(source);
+        this.tenantId = tenantId == null ? 0L : tenantId;
+        this.uids = (uids == null || uids.isEmpty()) ? Set.of() : new HashSet<>(uids);
+        this.reason = reason;
+    }
+
+    public UserOfflineEvent(Object source, Long tenantId, Long uid, OfflineReason reason) {
+        this(source, tenantId, uid == null ? Set.of() : Set.of(uid), reason);
     }
 
     /**

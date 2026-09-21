@@ -3,6 +3,7 @@ package org.pkaq.sys.role.service;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.enums.FrozenEnumm;
+import org.pkaq.core.mybatis.tenant.TenantSchema;
 import org.pkaq.core.util.CollUtils;
 import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.role.entity.RoleEntity;
@@ -42,6 +43,7 @@ public class UserRoleRefSerivce implements IUserRoleRefSerivce {
      *
      * @param bo 用户授权参数
      */
+    @TenantSchema
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void saveRoles(UserGrantBo bo) {
         if (bo == null || bo.getUserId() == null) {

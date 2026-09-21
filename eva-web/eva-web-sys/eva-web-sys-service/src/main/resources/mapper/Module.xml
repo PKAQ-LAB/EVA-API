@@ -242,6 +242,23 @@
         ORDER BY m.SORT ASC
     </select>
 
+    <select id="listModulesByResourceIds" resultMap="FlatResultMap">
+        SELECT DISTINCT
+            m.ID, m.SORT, m.NAME, m.PID, m.PATH, m.ISLEAF,
+            m.CODE, m.ICON, m.ROUTE_URL, m.COMPONENT_URL
+        FROM SYS_MODULE_RESOURCES r
+            JOIN SYS_MODULE m ON r.MAIN_ID = m.ID
+        WHERE r.ID IN
+        <foreach collection="resourceIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+          AND COALESCE(r.DELETED, 0) = 0
+          AND COALESCE(r.FROZEN, 0) &lt;&gt; 1
+          AND COALESCE(m.DELETED, 0) = 0
+          AND COALESCE(m.FROZEN, 0) &lt;&gt; 1
+        ORDER BY m.SORT ASC
+    </select>
+
     <select id="selectModuleMapList" resultMap="BaseResultMap">
         SELECT
             <include refid="ModuleDetailColumns"><property name="alias" value="t"/></include>
