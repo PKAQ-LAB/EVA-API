@@ -30,12 +30,22 @@ public class TargetTenantExecutor {
         if (!TransactionSynchronizationManager.isActualTransactionActive()) {
             throw new IllegalStateException("目标租户执行必须位于事务内");
         }
+        Long previousTenantId = TenantContext.tenantId();
+        String previousSchemaName = TenantContext.schemaName();
         String previous = router.routeCurrentTransaction(targetTenantId);
         try {
             return callback.get();
         } finally {
             router.restoreCurrentTransaction(previous);
-            TenantContext.clear();
+            restoreTenantContext(previousTenantId, previousSchemaName);
         }
+    }
+
+    private void restoreTenantContext(Long tenantId, String schemaName) {
+        if (tenantId == null || schemaName == null) {
+            TenantContext.clear();
+            return;
+        }
+        TenantContext.bind(tenantId, schemaName);
     }
 }

@@ -81,7 +81,7 @@ public class TenantCtrl extends Ctrl {
     }
 
     @PostMapping("/switch")
-    @BizLog(operateType = BizLogCodes.EDIT, description = "调整了租户状态[{0}]", args = {"param:0"})
+    @BizLog(operateType = BizLogCodes.UPDATE, description = "调整了租户状态[{0}]", args = {"param:0"})
     @Operation(summary = "切换租户可用状态")
     public Response<Object> change(@RequestBody SingleArray<Long> ids) {
         this.service.switchFrozen(ids);

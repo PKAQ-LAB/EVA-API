@@ -10,7 +10,9 @@ import org.pkaq.core.enums.FrozenEnumm;
 import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.core.util.CollUtils;
 import org.pkaq.core.util.StrUtils;
+import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.role.mapper.RoleResourceMapper;
+import org.pkaq.sys.tenant.mapper.TenantAuthorizationMapper;
 import org.pkaq.sys.tenant.pkg.bo.TenantPackageAoeBo;
 import org.pkaq.sys.tenant.pkg.bo.TenantPackageQueryBo;
 import org.pkaq.sys.tenant.pkg.convert.TenantPackageConvert;
@@ -37,6 +39,7 @@ public class TenantPackageService {
     private final TenantPackageMapper tenantPackageMapper;
     private final TenantPackageResourceMapper tenantPackageResourceMapper;
     private final RoleResourceMapper roleResourceMapper;
+    private final TenantAuthorizationMapper tenantAuthorizationMapper;
     private final TenantPackageConvert convert;
 
     /**
@@ -100,6 +103,9 @@ public class TenantPackageService {
             CommonCodes.DUPLICATE_CODE_ERROR.newException();
             return;
         }
+        if (bo.getId() != null && bo.getId() != 0L) {
+            ensurePackageEditable(this.tenantPackageMapper.selectById(bo.getId()));
+        }
         Set<Long> resourceIds = sanitizeIds(bo.getResourceIds());
         ensureResourcesValid(resourceIds);
 
@@ -122,6 +128,11 @@ public class TenantPackageService {
         if (CollUtils.isEmpty(ids)) {
             return;
         }
+        ensurePackagesEditable(ids);
+        if (this.tenantAuthorizationMapper.countActivePackageGrants(ids) > 0) {
+            SysCodes.RESOURCE_USED.newException();
+            return;
+        }
         this.tenantPackageResourceMapper.delete(new LambdaQueryWrapper<TenantPackageResourceEntity>()
                 .in(TenantPackageResourceEntity::getPackageId, ids));
         this.tenantPackageMapper.deleteByIds(ids);
@@ -132,6 +143,7 @@ public class TenantPackageService {
      *
      * @param ids 套餐ID集合
      */
+    @Transactional(rollbackFor = Exception.class)
     public void switchFrozen(SingleArray<Long> ids) {
         if (ids == null || CollUtils.isEmpty(ids.getParam())) {
             CommonCodes.PARAM_ERROR.newException();
@@ -211,4 +223,22 @@ public class TenantPackageService {
         return FrozenEnumm.UN_FROZEN;
     }
 
+    private void ensurePackagesEditable(Set<Long> ids) {
+        long readOnlyCount = this.tenantPackageMapper.selectCount(new LambdaQueryWrapper<TenantPackageEntity>()
+                .in(TenantPackageEntity::getId, ids)
+                .eq(TenantPackageEntity::getFrozen, FrozenEnumm.READ_ONLY));
+        if (readOnlyCount > 0) {
+            SysCodes.READ_ONLY_RECORD.newException();
+        }
+    }
+
+    private void ensurePackageEditable(TenantPackageEntity entity) {
+        if (entity == null) {
+            CommonCodes.CAN_NOT_FIND_RECORD.newException();
+            return;
+        }
+        if (entity.getFrozen() == FrozenEnumm.READ_ONLY) {
+            SysCodes.READ_ONLY_RECORD.newException();
+        }
+    }
 }

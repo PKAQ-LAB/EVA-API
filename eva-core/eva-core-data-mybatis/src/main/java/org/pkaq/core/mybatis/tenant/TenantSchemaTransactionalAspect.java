@@ -22,12 +22,22 @@ public class TenantSchemaTransactionalAspect {
 
     @Around("@annotation(tenantSchema)")
     public Object route(ProceedingJoinPoint joinPoint, TenantSchema tenantSchema) throws Throwable {
+        Long previousTenantId = TenantContext.tenantId();
+        String previousSchemaName = TenantContext.schemaName();
         String previous = router.routeCurrentTransaction();
         try {
             return joinPoint.proceed();
         } finally {
             router.restoreCurrentTransaction(previous);
-            TenantContext.clear();
+            restoreTenantContext(previousTenantId, previousSchemaName);
         }
+    }
+
+    private void restoreTenantContext(Long tenantId, String schemaName) {
+        if (tenantId == null || schemaName == null) {
+            TenantContext.clear();
+            return;
+        }
+        TenantContext.bind(tenantId, schemaName);
     }
 }

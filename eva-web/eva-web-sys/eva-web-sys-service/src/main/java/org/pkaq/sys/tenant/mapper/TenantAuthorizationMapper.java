@@ -31,6 +31,8 @@ public interface TenantAuthorizationMapper {
 
     Set<Long> selectGrantedPackageIds(@Param("tenantId") Long tenantId);
 
+    long countActivePackageGrants(@Param("packageIds") Set<Long> packageIds);
+
     List<Long> selectInvalidTemplateRoleIds(@Param("roleIds") Set<Long> roleIds);
 
     List<Long> selectInvalidPackageIds(@Param("packageIds") Set<Long> packageIds);

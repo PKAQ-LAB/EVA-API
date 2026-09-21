@@ -63,6 +63,16 @@
     <select id="selectGrantedPackageIds" resultType="java.lang.Long">
         SELECT PACKAGE_ID FROM SYS_TENANT_PACKAGE_GRANT WHERE TENANT_ID = #{tenantId} AND ACTIVE = TRUE
     </select>
+
+    <select id="countActivePackageGrants" resultType="long">
+        SELECT COUNT(*)
+        FROM SYS_TENANT_PACKAGE_GRANT
+        WHERE ACTIVE = TRUE
+          AND PACKAGE_ID IN
+        <foreach collection="packageIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
     <select id="selectInvalidTemplateRoleIds" resultType="java.lang.Long">
         SELECT requested.ID FROM
         <foreach collection="roleIds" item="id" open="(VALUES" separator="," close=") AS requested(ID)">(#{id})</foreach>
