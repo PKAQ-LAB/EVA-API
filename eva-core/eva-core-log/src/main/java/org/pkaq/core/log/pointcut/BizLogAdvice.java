@@ -15,6 +15,8 @@ import org.pkaq.core.log.base.BizLogEntity;
 import org.pkaq.core.log.base.LogSupporter;
 import org.pkaq.core.log.condition.BizlogSupporterCondition;
 import org.pkaq.core.log.events.BizLogEvent;
+import org.pkaq.core.log.util.LogSanitizer;
+import org.pkaq.core.threaduser.ThreadUser;
 import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.core.util.*;
 import org.pkaq.core.util.json.JsonUtil;
@@ -37,6 +39,9 @@ import java.util.*;
 @RequiredArgsConstructor
 @Conditional(BizlogSupporterCondition.class)
 public class BizLogAdvice {
+    private static final int MAX_PARAMS_LENGTH = 16_000;
+    private static final int MAX_RESPONSE_LENGTH = 32_000;
+
     private final ApplicationEventPublisher eventPublisher;
     private final I18NHelper i18NHelper;
     private final String formatArg = "param:";
@@ -71,7 +76,7 @@ public class BizLogAdvice {
 
         var className = joinPoint.getTarget().getClass().getName();
         var methodName = joinPoint.getSignature().getName();
-        var args = JsonUtil.toJson(joinPoint.getArgs());
+        var args = LogSanitizer.sanitize(JsonUtil.toJson(joinPoint.getArgs()), MAX_PARAMS_LENGTH);
         // 根据方法入参设置操作描述的格式化参数 并返回需要的响应参数名
         var descriptionArgs = bizlog.args();
         if (StrUtils.isNotBlank(bizlog.bizId())) {
@@ -85,7 +90,12 @@ public class BizLogAdvice {
             operatorType = processOperatorType(bizlog.distinguishParam(), joinPoint.getArgs());
         }
         BizLogEntity bizLogEntity = new BizLogEntity();
-        bizLogEntity.setOperator(ThreadUserHelper.getUserName())
+        ThreadUser currentUser = ThreadUserHelper.getCurrentUserOrNull();
+        long tenantId = currentUser == null ? 0L : currentUser.getTenantId();
+        long userId = currentUser == null ? 0L : currentUser.getUserId();
+        bizLogEntity.setTenantId(tenantId)
+                .setUserId(userId)
+                .setOperator(currentUser == null ? "anonymous" : currentUser.getName())
                 .setOperateDatetime(DateUtils.now())
                 .setOperateType(operatorType.getCode())
                 .setClassName(className)
@@ -93,12 +103,14 @@ public class BizLogAdvice {
                 .setParams(args)
                 .setMCode(ThreadUserHelper.getMcode())
                 .setDevice(ThreadUserHelper.getDevice())
-                .setVersion(ThreadUserHelper.getVersion());
+                .setVersion(currentUser == null ? "" : currentUser.getVersion())
+                .setSuccess(Boolean.FALSE);
 
         Object result;
         try {
             result = joinPoint.proceed();
-            bizLogEntity.setResponse(JsonUtil.toJson(result));
+            bizLogEntity.setResponse(LogSanitizer.sanitize(JsonUtil.toJson(result), MAX_RESPONSE_LENGTH));
+            bizLogEntity.setSuccess(Boolean.TRUE);
             // 根据响应设置操作描述的格式化参数
             processResult(result, rMap, formatArgs);
         } catch (Exception e) {

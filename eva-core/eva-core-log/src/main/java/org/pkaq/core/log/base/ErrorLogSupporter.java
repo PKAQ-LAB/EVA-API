@@ -3,6 +3,7 @@ package org.pkaq.core.log.base;
 import org.pkaq.core.advice.ExceptionInfo;
 import org.pkaq.core.mvc.bo.DateRangeBo;
 import org.pkaq.core.mvc.vo.PageVo;
+import org.pkaq.core.log.util.LogSanitizer;
 import org.pkaq.core.util.BeanUtils;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -49,6 +50,8 @@ public interface ErrorLogSupporter {
     default void onExceptionEvent(ExceptionInfo info) {
         var entity = new ErrorLogEntity();
         BeanUtils.copyProperties(info, entity);
+        entity.setParams(LogSanitizer.sanitize(entity.getParams(), 4_000));
+        entity.setExDesc(LogSanitizer.sanitize(entity.getExDesc(), 32_000));
         this.save(entity);
     }
 }

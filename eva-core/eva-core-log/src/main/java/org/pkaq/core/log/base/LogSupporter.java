@@ -1,7 +1,7 @@
 package org.pkaq.core.log.base;
 
 import org.pkaq.core.log.events.BizLogEvent;
-import org.pkaq.core.mvc.bo.DateRangeBo;
+import org.pkaq.core.log.bo.LogQueryBo;
 import org.pkaq.core.util.ReflectUtils;
 import org.pkaq.core.util.StrUtils;
 import org.springframework.scheduling.annotation.Async;
@@ -43,7 +43,7 @@ public interface LogSupporter {
      * @param dateRangeBo 日期范围查询参数
      * @return 分页结果
      */
-    Object list(DateRangeBo dateRangeBo);
+    Object list(LogQueryBo queryBo);
 
     /**
      * 获取所有日志

@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.log.base.BizLogEntity;
 import org.pkaq.core.log.base.LogSupporter;
+import org.pkaq.core.log.bo.LogQueryBo;
 import org.pkaq.core.util.Snowflake;
 import org.pkaq.core.log.condition.JdbcSupporterCondition;
-import org.pkaq.core.mvc.bo.DateRangeBo;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -36,13 +36,15 @@ public class BizlogJdbcSupporter implements LogSupporter {
         }
         String sql = """
                 INSERT INTO LOG_BIZ (
-                    ID, OPERATOR, OPERATE_TYPE, OPERATE_DATETIME, SPEND_TIME,
+                    ID, TENANT_ID, USER_ID, OPERATOR, OPERATE_TYPE, OPERATE_DATETIME, SPEND_TIME,
                     DESCRIPTION, M_CODE, B_ID, CLASS_NAME, METHOD, PARAMS,
-                    RESPONSE, DEVICE, VERSION
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    RESPONSE, DEVICE, VERSION, SUCCESS
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """;
         jdbcTemplate.update(sql,
                 ID_GENERATOR.nextId(),
+                entity.getTenantId(),
+                entity.getUserId(),
                 entity.getOperator(),
                 entity.getOperateType(),
                 entity.getOperateDatetime(),
@@ -55,7 +57,8 @@ public class BizlogJdbcSupporter implements LogSupporter {
                 entity.getParams(),
                 entity.getResponse(),
                 entity.getDevice(),
-                entity.getVersion());
+                entity.getVersion(),
+                entity.getSuccess());
     }
 
     @Override
@@ -64,7 +67,7 @@ public class BizlogJdbcSupporter implements LogSupporter {
     }
 
     @Override
-    public Object list(DateRangeBo dateRangeBo) {
+    public Object list(LogQueryBo queryBo) {
         return Collections.emptyList();
     }
 

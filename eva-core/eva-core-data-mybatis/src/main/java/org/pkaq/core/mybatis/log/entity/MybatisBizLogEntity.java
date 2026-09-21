@@ -2,6 +2,7 @@ package org.pkaq.core.mybatis.log.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,4 +21,8 @@ import org.pkaq.core.log.base.BizLogEntity;
 public class MybatisBizLogEntity extends BizLogEntity {
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
+
+    /** 是否来自归档表 */
+    @TableField(exist = false)
+    private Boolean archived;
 }

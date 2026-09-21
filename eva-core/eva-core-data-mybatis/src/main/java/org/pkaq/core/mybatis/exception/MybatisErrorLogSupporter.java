@@ -11,9 +11,12 @@ import org.pkaq.core.mvc.vo.PageVo;
 import org.pkaq.core.mybatis.exception.entity.ErrorlogEntity;
 import org.pkaq.core.mybatis.exception.mapper.ErrorlogMapper;
 import org.pkaq.core.mybatis.util.PageResult;
+import org.pkaq.core.properties.EvaConfig;
+import org.pkaq.core.threaduser.ThreadUser;
 import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.core.util.BeanUtils;
 import org.pkaq.core.util.DateUtils;
+import org.pkaq.core.util.DatePatterns;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
@@ -33,11 +36,22 @@ public class MybatisErrorLogSupporter implements ErrorLogSupporter {
 
     private final ErrorlogMapper errorlogMapper;
 
+    private final EvaConfig evaConfig;
+
     @Override
     public void save(ErrorLogEntity entity) {
-        var mybatisEntity = new ErrorlogEntity();
-        BeanUtils.copyProperties(entity, mybatisEntity);
-        errorlogMapper.insert(mybatisEntity);
+        if (entity == null) {
+            return;
+        }
+        try {
+            var mybatisEntity = new ErrorlogEntity();
+            BeanUtils.copyProperties(entity, mybatisEntity);
+            errorlogMapper.insert(mybatisEntity);
+        } catch (Exception exception) {
+            // 错误日志持久化失败不得覆盖原始业务异常。
+            log.error("保存错误日志失败, tenantId: {}, className: {}",
+                    entity.getTenantId(), entity.getClassName(), exception);
+        }
     }
 
     @Override
@@ -62,8 +76,8 @@ public class MybatisErrorLogSupporter implements ErrorLogSupporter {
             end = new Date();
         }
 
-        wrapper.ge("request_time", begin);
-        wrapper.le("request_time", end);
+        wrapper.ge("request_time", DateUtils.format(begin, DatePatterns.NORM_DATETIME_PATTERN));
+        wrapper.le("request_time", DateUtils.format(end, DatePatterns.NORM_DATETIME_PATTERN));
         wrapper.orderByDesc("request_time");
 
         applyTenantFilter(wrapper);
@@ -74,10 +88,11 @@ public class MybatisErrorLogSupporter implements ErrorLogSupporter {
     }
 
     private void applyTenantFilter(QueryWrapper<ErrorlogEntity> wrapper) {
-        try {
-            wrapper.eq("tenant_id", ThreadUserHelper.getTenantId());
-        } catch (Exception ignored) {
-            // 未登录场景不做租户过滤
+        if (this.evaConfig.isStandaloneMode()) {
+            wrapper.eq("tenant_id", 0L);
+            return;
         }
+        ThreadUser currentUser = ThreadUserHelper.getCurrentUserOrNull();
+        wrapper.eq("tenant_id", currentUser == null ? -1L : currentUser.getTenantId());
     }
 }

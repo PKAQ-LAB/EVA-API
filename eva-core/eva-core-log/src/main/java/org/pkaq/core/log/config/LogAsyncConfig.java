@@ -1,8 +1,6 @@
 package org.pkaq.core.log.config;
 
-import org.pkaq.core.log.condition.BizlogSupporterCondition;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -18,7 +16,6 @@ import java.util.concurrent.ThreadPoolExecutor;
  */
 @Configuration
 @EnableAsync
-@Conditional(BizlogSupporterCondition.class)
 public class LogAsyncConfig {
 
     /**

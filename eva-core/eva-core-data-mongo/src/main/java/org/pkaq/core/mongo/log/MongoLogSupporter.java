@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.log.base.BizLogEntity;
 import org.pkaq.core.log.base.LogSupporter;
+import org.pkaq.core.log.bo.LogQueryBo;
 import org.pkaq.core.log.condition.MongoSupporterCondition;
 import org.pkaq.core.mongo.log.entity.MongoBizLogEntity;
 import org.pkaq.core.mongo.log.repository.MongoBizLogRepository;
-import org.pkaq.core.mvc.bo.DateRangeBo;
 import org.pkaq.core.util.BeanUtils;
 import org.pkaq.core.util.DatePatterns;
 import org.pkaq.core.util.DateUtils;
@@ -51,9 +51,10 @@ public class MongoLogSupporter implements LogSupporter {
     }
 
     @Override
-    public Object list(DateRangeBo dateRangeBo) {
-        Date begin = dateRangeBo.getBegin();
-        Date end = dateRangeBo.getEnd();
+    public Object list(LogQueryBo queryBo) {
+        LogQueryBo safeQuery = queryBo == null ? new LogQueryBo() : queryBo;
+        Date begin = safeQuery.getBegin();
+        Date end = safeQuery.getEnd();
         if (null == begin) {
             begin = DateUtils.addDay(new Date(), -7);
         }
@@ -64,7 +65,8 @@ public class MongoLogSupporter implements LogSupporter {
         String beginStr = DateUtils.format(begin, DatePatterns.NORM_DATETIME_PATTERN);
         String endStr = DateUtils.format(end, DatePatterns.NORM_DATETIME_PATTERN);
 
-        PageRequest pageRequest = PageRequest.of(0, 30, Sort.by(Sort.Direction.DESC, "operateDatetime"));
+        PageRequest pageRequest = PageRequest.of(safeQuery.getPageNo() - 1, safeQuery.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "operateDatetime"));
         Page<MongoBizLogEntity> page = this.mongoBizLogRepository
                 .findByOperateDatetimeBetweenOrderByOperateDatetimeDesc(beginStr, endStr, pageRequest);
         return page;

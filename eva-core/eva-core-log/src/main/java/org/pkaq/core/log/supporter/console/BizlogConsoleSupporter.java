@@ -3,8 +3,8 @@ package org.pkaq.core.log.supporter.console;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.log.base.BizLogEntity;
 import org.pkaq.core.log.base.LogSupporter;
+import org.pkaq.core.log.bo.LogQueryBo;
 import org.pkaq.core.log.condition.DefaultBizlogSupporterCondition;
-import org.pkaq.core.mvc.bo.DateRangeBo;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
@@ -34,7 +34,7 @@ public class BizlogConsoleSupporter implements LogSupporter {
     }
 
     @Override
-    public Object list(DateRangeBo dateRangeBo) {
+    public Object list(LogQueryBo queryBo) {
         return Collections.emptyList();
     }
 

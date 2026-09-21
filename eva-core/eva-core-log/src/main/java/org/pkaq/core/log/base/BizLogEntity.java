@@ -13,6 +13,16 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class BizLogEntity {
     /**
+     * 租户ID；standalone 模式固定为 0。
+     */
+    @Schema(description = "租户ID")
+    private Long tenantId;
+    /**
+     * 操作用户ID。
+     */
+    @Schema(description = "操作用户ID")
+    private Long userId;
+    /**
      * 操作人
      **/
     @Schema(description = "操作人")
@@ -68,6 +78,11 @@ public class BizLogEntity {
      **/
     @Schema(description = "返回结果")
     private String response;
+    /**
+     * 操作是否成功。
+     */
+    @Schema(description = "操作是否成功")
+    private Boolean success;
     /**
      * 璁惧绫诲瀷
      **/
