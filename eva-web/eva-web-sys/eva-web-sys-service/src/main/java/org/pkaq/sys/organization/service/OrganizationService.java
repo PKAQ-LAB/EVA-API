@@ -6,12 +6,13 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.enums.FrozenEnumm;
-import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.core.mybatis.tenant.TenantSchema;
 import org.pkaq.core.mybatis.util.TreeHelper;
 import org.pkaq.core.util.CollUtils;
+import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.organization.bo.OrganizationAoeBo;
+import org.pkaq.sys.organization.bo.OrganizationFrozenBo;
 import org.pkaq.sys.organization.bo.OrganizationQueryBo;
 import org.pkaq.sys.organization.bo.OrganizationSortBo;
 import org.pkaq.sys.organization.convert.OrganizationConvert;
@@ -19,6 +20,8 @@ import org.pkaq.sys.organization.entity.OrganizationEntity;
 import org.pkaq.sys.organization.mapper.OrganizationMapper;
 import org.pkaq.sys.organization.vo.OrganizationDetailVo;
 import org.pkaq.sys.organization.vo.OrganizationListVo;
+import org.pkaq.sys.user.entity.UserEntity;
+import org.pkaq.sys.user.mapper.UserMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +46,7 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
     private static final long ROOT_PID = 0L;
 
     private final OrganizationConvert organizationConvert;
+    private final UserMapper userMapper;
 
     /**
      * 校验同级组织 code 或名称是否重复。
@@ -56,12 +60,24 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
             return false;
         }
         long pid = bo.getPid() == null ? ROOT_PID : bo.getPid();
+        boolean hasCode = bo.getCode() != null && !bo.getCode().isEmpty();
+        boolean hasName = bo.getName() != null && !bo.getName().isEmpty();
+        if (!hasCode && !hasName) {
+            return false;
+        }
         LambdaQueryWrapper<OrganizationEntity> wrapper = new LambdaQueryWrapper<OrganizationEntity>()
                 .eq(OrganizationEntity::getPid, pid)
-                .and(w -> w
-                        .eq(bo.getCode() != null && !bo.getCode().isEmpty(), OrganizationEntity::getCode, bo.getCode())
-                        .or()
-                        .eq(bo.getName() != null && !bo.getName().isEmpty(), OrganizationEntity::getName, bo.getName()));
+                .and(w -> {
+                    if (hasCode) {
+                        w.eq(OrganizationEntity::getCode, bo.getCode());
+                    }
+                    if (hasCode && hasName) {
+                        w.or();
+                    }
+                    if (hasName) {
+                        w.eq(OrganizationEntity::getName, bo.getName());
+                    }
+                });
 
         if (bo.getId() != null && bo.getId() != 0L) {
             wrapper.ne(OrganizationEntity::getId, bo.getId());
@@ -115,8 +131,10 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
             CommonCodes.CAN_NOT_FIND_RECORD.newException(orgId);
             return;
         }
+        ensureOrganizationEditable(origin);
 
         if (!Objects.equals(origin.getPid(), pid)) {
+            assertValidParent(origin, pid);
             handleParentChange(org, origin, isRoot);
             return;
         }
@@ -157,6 +175,8 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
             return;
         }
 
+        ensureOrganizationsEditable(ids);
+
         List<OrganizationEntity> leafList = this.mapper.selectList(new LambdaQueryWrapper<OrganizationEntity>()
                 .in(OrganizationEntity::getPid, ids));
         if (CollUtils.isNotEmpty(leafList)) {
@@ -165,6 +185,12 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
                     .filter(Objects::nonNull)
                     .collect(Collectors.joining(","));
             CommonCodes.CHILD_EXIST.newException(nameStr);
+            return;
+        }
+
+        if (this.userMapper.selectCount(new LambdaQueryWrapper<UserEntity>()
+                .in(UserEntity::getDeptId, ids)) > 0) {
+            SysCodes.RESOURCE_USED.newException();
             return;
         }
 
@@ -195,6 +221,7 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
             CommonCodes.CAN_NOT_FIND_RECORD.newException(bo.getId());
             return;
         }
+        ensureOrganizationEditable(self);
         if (bo.getOldSort() == bo.getNewSort()) {
             return;
         }
@@ -206,18 +233,27 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
      */
     @TenantSchema
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public void switchFrozen(SingleArray<Long> ids) {
-        if (ids == null || CollUtils.isEmpty(ids.getParam())) {
+    public void switchFrozen(OrganizationFrozenBo bo) {
+        if (bo == null || CollUtils.isEmpty(bo.getParam()) || bo.getFrozen() == null) {
             return;
         }
-        for (Long id : ids.getParam()) {
+        FrozenEnumm target;
+        if (FrozenEnumm.FROZEN.getCode().equals(bo.getFrozen())) {
+            target = FrozenEnumm.FROZEN;
+        } else if (FrozenEnumm.UN_FROZEN.getCode().equals(bo.getFrozen())) {
+            target = FrozenEnumm.UN_FROZEN;
+        } else {
+            CommonCodes.PARAM_ERROR.newException();
+            return;
+        }
+        for (Long id : bo.getParam()) {
             OrganizationEntity self = this.mapper.selectById(id);
             if (self == null || self.getFrozen() == FrozenEnumm.READ_ONLY) {
                 continue;
             }
-            FrozenEnumm target = self.getFrozen() == FrozenEnumm.FROZEN
-                    ? FrozenEnumm.UN_FROZEN
-                    : FrozenEnumm.FROZEN;
+            if (self.getFrozen() == target) {
+                continue;
+            }
 
             if (target == FrozenEnumm.UN_FROZEN && self.getPid() != null && self.getPid() != ROOT_PID) {
                 OrganizationEntity parent = this.mapper.selectById(self.getPid());
@@ -242,6 +278,28 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
             return null;
         }
         return parent.getPath() + "/" + id;
+    }
+
+    /** 禁止将节点移动到自身或其任一后代节点下。 */
+    private void assertValidParent(OrganizationEntity origin, long newPid) {
+        if (newPid == origin.getId()) {
+            CommonCodes.PARAM_ERROR.newException();
+            return;
+        }
+        if (newPid == ROOT_PID) {
+            return;
+        }
+        OrganizationEntity parent = this.mapper.selectById(newPid);
+        if (parent == null) {
+            CommonCodes.CAN_NOT_FIND_RECORD.newException(newPid);
+            return;
+        }
+        String originPath = origin.getPath();
+        String parentPath = parent.getPath();
+        if (originPath != null && parentPath != null
+                && (parentPath.equals(originPath) || parentPath.startsWith(originPath + "/"))) {
+            CommonCodes.PARAM_ERROR.newException();
+        }
     }
 
     /**
@@ -274,6 +332,21 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
             if (childCount == null || childCount == 0L) {
                 setParentLeaf(pid, true);
             }
+        }
+    }
+
+    private void ensureOrganizationsEditable(Set<Long> ids) {
+        long readOnlyCount = this.mapper.selectCount(new LambdaQueryWrapper<OrganizationEntity>()
+                .in(OrganizationEntity::getId, ids)
+                .eq(OrganizationEntity::getFrozen, FrozenEnumm.READ_ONLY));
+        if (readOnlyCount > 0) {
+            SysCodes.READ_ONLY_RECORD.newException();
+        }
+    }
+
+    private void ensureOrganizationEditable(OrganizationEntity entity) {
+        if (entity.getFrozen() == FrozenEnumm.READ_ONLY) {
+            SysCodes.READ_ONLY_RECORD.newException();
         }
     }
 

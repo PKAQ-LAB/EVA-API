@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.log.annotation.BizLog;
 import org.pkaq.core.log.base.BizLogCodes;
+import org.pkaq.core.mvc.bo.IdCodeBo;
 import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.mybatis.mvc.ctrl.StdCtrl;
@@ -29,6 +30,32 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class RoleCtrl extends StdCtrl<RoleService> {
 
+    @Override
+    @GetMapping("/get/{id}")
+    @Operation(summary = "根据ID获取角色详情")
+    @BizLog(operateType = BizLogCodes.QUERY, description = "查询了角色信息[{0}]", args = {"param:0"})
+    public Response<Object> get(@Parameter(name = "id", description = "角色ID")
+                                @PathVariable("id") long id) {
+        return success(this.service.getRole(id));
+    }
+
+    @Override
+    @PostMapping("/checkUnique")
+    @Operation(summary = "校验角色编码唯一性")
+    public Response<Object> checkUnique(@RequestBody IdCodeBo bo) {
+        return this.service.isUnique(bo) ? failure() : success();
+    }
+
+    @Override
+    @PostMapping("/switch")
+    @Operation(summary = "锁定/解锁角色")
+    @BizLog(operateType = BizLogCodes.UPDATE, description = "切换了角色状态[{0}]", args = {"param:0"})
+    public Response<Object> change(@RequestBody SingleArray<Long> ids) {
+        CommonCodes.NULL_ID.assertNotNull(ids.getParam());
+        this.service.switchFrozen(ids);
+        return success();
+    }
+
     @GetMapping({"/fetchResource"})
     @Operation(summary = "获得角色绑定的菜单资源列表")
     @BizLog(operateType = BizLogCodes.QUERY, description = "查询了角色授权资源[{0}]", args = {"param:0"})
@@ -48,7 +75,7 @@ public class RoleCtrl extends StdCtrl<RoleService> {
 
     @GetMapping({"/listUser"})
     @Operation(summary = "获得角色绑定的用户列表")
-    @BizLog(operateType = BizLogCodes.EDIT, description = "查询了角色授权用户[{0}]", args = {"param:0"})
+    @BizLog(operateType = BizLogCodes.QUERY, description = "查询了角色授权用户[{0}]", args = {"param:0"})
     public Response<Object> listUser(@Parameter(name = "roleEntity", description = "包含角色对象属性的查询条件", required = true)
                                      @RequestParam Long roleId,
                                      @RequestParam(required = false) Long deptId) {
@@ -67,7 +94,7 @@ public class RoleCtrl extends StdCtrl<RoleService> {
     @Override
     @PostMapping("/del")
     @Operation(summary = "根据ID删除/批量删除角色")
-    @BizLog(operateType = BizLogCodes.EDIT, description = "删除了角色[{0}]", args = {"param:0"})
+    @BizLog(operateType = BizLogCodes.DELETE, description = "删除了角色[{0}]", args = {"param:0"})
     public Response<Object> del(@Parameter(name = "ids", description = "[角色id]")
                                 @RequestBody SingleArray<Long> ids) {
 
@@ -89,7 +116,7 @@ public class RoleCtrl extends StdCtrl<RoleService> {
 
     @GetMapping("/list")
     @Operation(summary = "分页查询", description = "列表查询")
-    @BizLog(operateType = BizLogCodes.EDIT, description = "查询了角色列表[{0}]", args = {"param:0"})
+    @BizLog(operateType = BizLogCodes.QUERY, description = "查询了角色列表[{0}]", args = {"param:0"})
     public Response<Object> list(RoleQueryBo page) {
         return this.success(this.service.listPage(page));
     }

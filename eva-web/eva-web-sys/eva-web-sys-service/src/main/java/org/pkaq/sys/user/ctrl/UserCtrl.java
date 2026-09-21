@@ -90,7 +90,7 @@ public class UserCtrl extends Ctrl {
      */
     @PostMapping("/del")
     @Operation(summary = "根据ID删除/批量删除记录")
-    @BizLog(operateType = BizLogCodes.EDIT, description = "删除了用户[{0}]", args = {"param:0.param"})
+    @BizLog(operateType = BizLogCodes.DELETE, description = "删除了用户[{0}]", args = {"param:0.param"})
     public Response<Object> del(@Parameter(name = "ids", description = "[记录ID]")
                                 @RequestBody @Valid SingleArray<Long> ids) {
         CommonCodes.NULL_ID.assertNotNull(ids);
@@ -148,7 +148,7 @@ public class UserCtrl extends Ctrl {
      */
     @GetMapping("/list")
     @Operation(summary = "列表查询")
-    @BizLog(operateType = BizLogCodes.EDIT, description = "查询了用户列表[{0}]", args = {"param:0.id"})
+    @BizLog(operateType = BizLogCodes.QUERY, description = "查询了用户列表[{0}]", args = {"param:0"})
     public Response<Object> list(@Parameter(name = "condition", description = "用户对象")
                                  UserQueryBo bo) {
         return success(this.service.listPage(bo));
@@ -161,7 +161,7 @@ public class UserCtrl extends Ctrl {
      */
     @GetMapping("/get/{id}")
     @Operation(summary = "根据ID获取记录信息")
-    @BizLog(operateType = BizLogCodes.EDIT, description = "查询了用户信息[{0}]", args = {"param:0.id"})
+    @BizLog(operateType = BizLogCodes.QUERY, description = "查询了用户信息[{0}]", args = {"param:0"})
     public Response<Object> get(@Parameter(name = "id", description = "记录ID")
                                 @PathVariable("id") Long id) {
         return this.success(this.service.getUser(id));
@@ -174,7 +174,7 @@ public class UserCtrl extends Ctrl {
      */
     @PostMapping("/switch")
     @Operation(summary = "锁定/解锁")
-    @BizLog(operateType = BizLogCodes.EDIT, description = "锁定/解锁了用户[{0}]", args = {"param:0.param"})
+    @BizLog(operateType = BizLogCodes.UPDATE, description = "锁定/解锁了用户[{0}]", args = {"param:0.param"})
     public Response<Object> change(@Parameter(name = "param", description = "用户[id]")
                                    @RequestBody SingleArray<Long> param) {
         CommonCodes.NULL_ID.assertNotNull(param.getParam());

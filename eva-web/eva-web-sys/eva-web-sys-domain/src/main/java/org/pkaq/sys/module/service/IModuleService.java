@@ -22,7 +22,7 @@ public interface IModuleService {
 
     Collection<ModuleDetailVo> list(ModuleQueryBo queryBo);
 
-    void sortModule(ModuleSortBo[] switchModule);
+    void sortModule(ModuleSortBo switchModule);
 
     boolean checkUnique(ModuleAoeBo module);
 

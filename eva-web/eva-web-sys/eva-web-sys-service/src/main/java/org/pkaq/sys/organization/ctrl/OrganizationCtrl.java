@@ -14,6 +14,7 @@ import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.util.StrUtils;
 import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.organization.bo.OrganizationAoeBo;
+import org.pkaq.sys.organization.bo.OrganizationFrozenBo;
 import org.pkaq.sys.organization.bo.OrganizationQueryBo;
 import org.pkaq.sys.organization.bo.OrganizationSortBo;
 import org.pkaq.sys.organization.service.OrganizationService;
@@ -88,10 +89,10 @@ public class OrganizationCtrl extends Ctrl {
     @PostMapping("/switch")
     @Operation(summary = "切换冻结状态（级联子节点）")
     @BizLog(operateType = BizLogCodes.UPDATE, description = "切换了组织冻结状态[{0}]", args = {"param:0"})
-    public Response<Object> switchFrozen(@Parameter(name = "ids", description = "[组织Id]")
-                                         @RequestBody SingleArray<Long> ids) {
-        CommonCodes.NULL_ID.assertNotNull(ids.getParam());
-        this.service.switchFrozen(ids);
+    public Response<Object> switchFrozen(@Parameter(name = "bo", description = "{param:[组织Id], frozen:目标状态}")
+                                         @RequestBody @Valid OrganizationFrozenBo bo) {
+        CommonCodes.NULL_ID.assertNotNull(bo.getParam());
+        this.service.switchFrozen(bo);
         return success();
     }
 }

@@ -119,6 +119,7 @@ public class PostService extends StdService<PostMapper, PostEntity> {
             CommonCodes.CAN_NOT_FIND_RECORD.newException(postId);
             return;
         }
+        ensurePostEditable(origin);
 
         if (!Objects.equals(origin.getPid(), pid)) {
             handleParentChange(post, origin, isRoot);
@@ -163,6 +164,7 @@ public class PostService extends StdService<PostMapper, PostEntity> {
         if (ids.size() > 100) {
             SysCodes.DELETE_LIMIT.newException();
         }
+        ensurePostsEditable(ids);
 
         List<PostEntity> leafList = this.mapper.selectList(new LambdaQueryWrapper<PostEntity>()
                 .in(PostEntity::getPid, ids));
@@ -203,6 +205,7 @@ public class PostService extends StdService<PostMapper, PostEntity> {
             CommonCodes.CAN_NOT_FIND_RECORD.newException(bo.getId());
             return;
         }
+        ensurePostEditable(self);
         if (bo.getOldSort() == bo.getNewSort()) {
             return;
         }
@@ -282,6 +285,21 @@ public class PostService extends StdService<PostMapper, PostEntity> {
             if (childCount == null || childCount == 0L) {
                 setParentLeaf(pid, true);
             }
+        }
+    }
+
+    private void ensurePostsEditable(Set<Long> ids) {
+        long readOnlyCount = this.mapper.selectCount(new LambdaQueryWrapper<PostEntity>()
+                .in(PostEntity::getId, ids)
+                .eq(PostEntity::getFrozen, FrozenEnumm.READ_ONLY));
+        if (readOnlyCount > 0) {
+            SysCodes.READ_ONLY_RECORD.newException();
+        }
+    }
+
+    private void ensurePostEditable(PostEntity entity) {
+        if (entity.getFrozen() == FrozenEnumm.READ_ONLY) {
+            SysCodes.READ_ONLY_RECORD.newException();
         }
     }
 

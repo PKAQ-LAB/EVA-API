@@ -28,6 +28,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
@@ -201,6 +202,37 @@ class DictServiceTest {
         verify(this.dictItemMapper).deleteById(12L);
         verify(this.dictItemMapper, never()).insert(any(DictItemEntity.class));
         verify(this.dictItemMapper, never()).updateById(any(DictItemEntity.class));
+    }
+
+    @Test
+    void shouldRejectEditingReadOnlyDict() {
+        DictEntity readOnly = new DictEntity();
+        readOnly.setId(1L);
+        readOnly.setCode("status");
+        readOnly.setFrozen(FrozenEnumm.READ_ONLY);
+        when(this.dictMapper.selectCount(any(Wrapper.class))).thenReturn(0L);
+        when(this.dictMapper.selectById(1L)).thenReturn(readOnly);
+
+        DictAoeBo bo = new DictAoeBo();
+        bo.setId(1L);
+        bo.setCode("status");
+        bo.setName("状态");
+
+        assertThrows(RuntimeException.class, () -> this.service.edit(bo));
+        verify(this.dictMapper, never()).updateById(any(DictEntity.class));
+    }
+
+    @Test
+    void shouldRejectDeletingReadOnlyDict() {
+        DictEntity readOnly = new DictEntity();
+        readOnly.setId(1L);
+        readOnly.setCode("status");
+        readOnly.setFrozen(FrozenEnumm.READ_ONLY);
+        when(this.dictMapper.selectById(1L)).thenReturn(readOnly);
+
+        assertThrows(RuntimeException.class, () -> this.service.delDict(1L));
+        verify(this.dictMapper, never()).deleteById(1L);
+        verify(this.dictItemMapper, never()).delete(any(Wrapper.class));
     }
 
     private DictLineBo line(Long id, String code, String value) {

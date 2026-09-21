@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.codes.CommonCodes;
+import org.pkaq.core.log.annotation.BizLog;
+import org.pkaq.core.log.base.BizLogCodes;
 import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
@@ -131,10 +133,28 @@ public class DictCtrl extends Ctrl {
      */
     @GetMapping("/del/{id}")
     @Operation(summary = "根据ID删除")
+    @Deprecated
+    @BizLog(operateType = BizLogCodes.DELETE, description = "删除了字典[{0}]", args = {"param:0"})
     public Response<Object> delDict(@Parameter(name = "id", description = "字典 ID")
                                     @PathVariable("id") Long id) {
         CommonCodes.NULL_ID.assertNotNull(id);
 
+        this.service.delDict(id);
+        return success();
+    }
+
+    /**
+     * 根据 ID 删除字典。
+     *
+     * @param id 字典 ID
+     * @return 响应结果
+     */
+    @PostMapping("/del/{id}")
+    @Operation(summary = "根据ID删除")
+    @BizLog(operateType = BizLogCodes.DELETE, description = "删除了字典[{0}]", args = {"param:0"})
+    public Response<Object> deleteDict(@Parameter(name = "id", description = "字典 ID")
+                                       @PathVariable("id") Long id) {
+        CommonCodes.NULL_ID.assertNotNull(id);
         this.service.delDict(id);
         return success();
     }
@@ -147,6 +167,7 @@ public class DictCtrl extends Ctrl {
      */
     @PostMapping("/edit")
     @Operation(summary = "新增/编辑字典")
+    @BizLog(operateType = BizLogCodes.EDIT, description = "编辑了字典信息[{0}]", args = {"param:0"})
     public Response<Object> editDict(@Parameter(name = "dictEntity", description = "字典信息")
                                      @RequestBody @Valid DictAoeBo dictEntity) {
         this.service.edit(dictEntity);
@@ -161,6 +182,7 @@ public class DictCtrl extends Ctrl {
      */
     @PostMapping("/switch")
     @Operation(summary = "锁定/解锁")
+    @BizLog(operateType = BizLogCodes.UPDATE, description = "切换了字典状态[{0}]", args = {"param:0"})
     public Response<Object> switchFrozen(@Parameter(name = "param", description = "字典[id]")
                                          @RequestBody SingleArray<Long> param) {
         CommonCodes.NULL_ID.assertNotNull(param.getParam());

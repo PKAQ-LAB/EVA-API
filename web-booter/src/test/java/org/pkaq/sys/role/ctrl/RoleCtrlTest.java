@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.pkaq.sys.BaseTest;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -19,5 +20,19 @@ class RoleCtrlTest extends BaseTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("success").value(true))
                 .andExpect(jsonPath("data").exists());
+    }
+
+    @Test
+    void getAndCheckUniqueRole() throws Exception {
+        mockMvc.perform(get("/sys/role/get/{id}", "1000000000000000004"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("success").value(true))
+                .andExpect(jsonPath("data.id").value("1000000000000000004"));
+
+        mockMvc.perform(post("/sys/role/checkUnique")
+                        .contentType("application/json")
+                        .content("{\"code\":\"ROLE_NOT_EXIST\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("success").value(true));
     }
 }

@@ -9,12 +9,12 @@ import org.pkaq.core.enums.FrozenEnumm;
 import org.pkaq.core.event.ModuleResourceChangedEvent;
 import org.pkaq.core.event.ModuleResourceChangedEvent.ChangeReason;
 import org.pkaq.core.exception.BizException;
-import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.core.mybatis.mvc.service.StdService;
 import org.pkaq.core.mybatis.util.TreeHelper;
 import org.pkaq.core.util.CollUtils;
 import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.module.bo.ModuleAoeBo;
+import org.pkaq.sys.module.bo.ModuleFrozenBo;
 import org.pkaq.sys.module.bo.ModuleQueryBo;
 import org.pkaq.sys.module.bo.ModuleResourcesBo;
 import org.pkaq.sys.module.bo.ModuleSortBo;
@@ -72,10 +72,13 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
      *
      * @param ids 模块 id 集合
      */
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void deleteModule(Set<Long> ids) {
         if (CollUtils.isEmpty(ids)) {
             return;
         }
+
+        ensureModulesEditable(ids);
 
 
         List<ModuleEntity> leafList = this.mapper.selectList(new LambdaQueryWrapper<ModuleEntity>()
@@ -122,10 +125,11 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
      * 新增或编辑模块，并同步资源子表。
      * <p>
      * 新增时服务端生成 id、path、sort、isleaf；编辑更换父节点时重算自身和子孙 path。
-     * 冻结状态通过 {@link #switchFrozen(SingleArray)} 维护，编辑接口不处理 frozen。
+     * 冻结状态通过 {@link #switchFrozen(ModuleFrozenBo)} 维护，编辑接口不处理 frozen。
      *
      * @param bo 模块新增编辑参数
      */
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void editModule(ModuleAoeBo bo) {
         ModuleEntity module = this.convert.boToEntity(bo);
         if (module.getPid() == null) {
@@ -155,8 +159,10 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
                 CommonCodes.CAN_NOT_FIND_RECORD.newException(moduleId);
                 return;
             }
+            ensureModuleEditable(origin);
 
             if (origin.getPid() != pid) {
+                assertValidParent(origin, pid);
                 handleParentChange(module, origin, isRoot);
             } else {
                 // 未更换父节点时保留原路径和排序
@@ -245,6 +251,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
      *
      * @param bo 排序参数，包含模块 id、原排序值和目标排序值
      */
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void sortModule(ModuleSortBo bo) {
         if (bo == null || bo.getId() == null) {
             CommonCodes.PARAM_ERROR.newException();
@@ -255,6 +262,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
             CommonCodes.CAN_NOT_FIND_RECORD.newException(bo.getId());
             return;
         }
+        ensureModuleEditable(self);
         if (bo.getOldSort() == bo.getNewSort()) {
             return;
         }
@@ -264,8 +272,8 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
     /**
      * 校验同级模块 code 是否重复。
      */
-    public boolean checkUnique(ModuleEntity module) {
-        if (module == null) {
+    public boolean checkUnique(ModuleAoeBo module) {
+        if (module == null || module.getCode() == null || module.getCode().isEmpty()) {
             return false;
         }
         long pid = module.getPid() == null ? ROOT_PID : module.getPid();
@@ -280,24 +288,34 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
     }
 
     /**
-     * 切换模块冻结状态，并级联更新子节点。
+     * 设置模块冻结状态，并级联更新子节点。
      * <p>
      * 父节点冻结后子节点全部冻结；父节点未解冻时，子节点不允许单独解冻。
      *
-     * @param ids 模块 id 集合
+     * @param bo 模块 id 集合和目标冻结状态
      */
-    public void switchFrozen(SingleArray<Long> ids) {
-        if (ids == null || CollUtils.isEmpty(ids.getParam())) {
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public void switchFrozen(ModuleFrozenBo bo) {
+        if (bo == null || CollUtils.isEmpty(bo.getParam()) || bo.getFrozen() == null) {
             return;
         }
-        for (Long id : ids.getParam()) {
+        FrozenEnumm target;
+        if (FrozenEnumm.FROZEN.getCode().equals(bo.getFrozen())) {
+            target = FrozenEnumm.FROZEN;
+        } else if (FrozenEnumm.UN_FROZEN.getCode().equals(bo.getFrozen())) {
+            target = FrozenEnumm.UN_FROZEN;
+        } else {
+            CommonCodes.PARAM_ERROR.newException();
+            return;
+        }
+        for (Long id : bo.getParam()) {
             ModuleEntity self = this.mapper.selectById(id);
-            if (self == null) {
+            if (self == null || self.getFrozen() == FrozenEnumm.READ_ONLY) {
                 continue;
             }
-            FrozenEnumm target = self.getFrozen() == FrozenEnumm.FROZEN
-                    ? FrozenEnumm.UN_FROZEN
-                    : FrozenEnumm.FROZEN;
+            if (self.getFrozen() == target) {
+                continue;
+            }
 
             // 业务处理
             if (target == FrozenEnumm.UN_FROZEN && self.getPid() != ROOT_PID) {
@@ -572,6 +590,21 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
 
     private boolean hasText(String value) {
         return value != null && !value.trim().isEmpty();
+    }
+
+    private void ensureModulesEditable(Set<Long> ids) {
+        long readOnlyCount = this.mapper.selectCount(new LambdaQueryWrapper<ModuleEntity>()
+                .in(ModuleEntity::getId, ids)
+                .eq(ModuleEntity::getFrozen, FrozenEnumm.READ_ONLY));
+        if (readOnlyCount > 0) {
+            SysCodes.READ_ONLY_RECORD.newException();
+        }
+    }
+
+    private void ensureModuleEditable(ModuleEntity entity) {
+        if (entity.getFrozen() == FrozenEnumm.READ_ONLY) {
+            SysCodes.READ_ONLY_RECORD.newException();
+        }
     }
 
     private record ResourceDiffResult(Set<Long> deletedIds, Set<Long> changedIds) {

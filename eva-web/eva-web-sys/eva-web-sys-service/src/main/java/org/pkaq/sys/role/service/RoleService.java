@@ -38,6 +38,7 @@ import org.pkaq.sys.role.entity.RoleUserEntity;
 import org.pkaq.sys.role.mapper.RoleMapper;
 import org.pkaq.sys.role.mapper.RoleResourceMapper;
 import org.pkaq.sys.role.mapper.RoleUserMapper;
+import org.pkaq.sys.role.vo.RoleDetailVo;
 import org.pkaq.sys.role.vo.RoleGrantedModuleVo;
 import org.pkaq.sys.role.vo.RoleGrantedUserVo;
 import org.pkaq.sys.tenant.mapper.TenantResourceMapper;
@@ -89,6 +90,24 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
     private final CoreSchemaExecutor coreSchemaExecutor;
 
     private final EvaConfig evaConfig;
+
+    /**
+     * 根据ID查询角色详情。
+     *
+     * @param id 角色ID
+     * @return 角色详情
+     */
+    @Transactional(readOnly = true)
+    @TenantSchema
+    public RoleDetailVo getRole(Long id) {
+        CommonCodes.NULL_ID.assertNotNull(id);
+        RoleEntity entity = this.mapper.selectById(id);
+        if (entity == null) {
+            CommonCodes.CAN_NOT_FIND_RECORD.newException(id);
+            return null;
+        }
+        return this.roleConvert.toVo(entity);
+    }
 
     /**
      * 分页查询角色列表，角色名称和角色编码使用模糊查询。

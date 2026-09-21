@@ -59,10 +59,13 @@
     <update id="cascadeFrozen">
         UPDATE sys_module
         SET frozen = #{frozen,jdbcType=INTEGER}
-        WHERE id = #{id,jdbcType=BIGINT}
-        <if test="path != null and path != ''">
-            OR path LIKE CONCAT(#{path,jdbcType=VARCHAR}, '/%')
-        </if>
+        WHERE (
+            id = #{id,jdbcType=BIGINT}
+            <if test="path != null and path != ''">
+                OR path LIKE CONCAT(#{path,jdbcType=VARCHAR}, '/%')
+            </if>
+        )
+        AND (frozen IS NULL OR frozen != 9999)
     </update>
 
     <!-- 同级拖拽排序：限定相同 pid，避免跨父节点污染。根节点排序时 pid = 0 -->

@@ -3,6 +3,7 @@ package org.pkaq.sys.module.ctrl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.log.annotation.BizLog;
@@ -11,6 +12,7 @@ import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.sys.module.bo.ModuleAoeBo;
+import org.pkaq.sys.module.bo.ModuleFrozenBo;
 import org.pkaq.sys.module.bo.ModuleQueryBo;
 import org.pkaq.sys.module.bo.ModuleSortBo;
 import org.pkaq.sys.module.service.ModuleService;
@@ -48,6 +50,12 @@ public class ModuleCtrl extends Ctrl {
         return this.success();
     }
 
+    @PostMapping("/checkUnique")
+    @Operation(summary = "校验同级模块编码唯一性")
+    public Response<Object> checkUnique(@RequestBody ModuleAoeBo bo) {
+        return this.service.checkUnique(bo) ? this.failure() : this.success();
+    }
+
     @GetMapping("/get/{id}")
     @Operation(summary = "根据ID获得模块")
     @BizLog(operateType = BizLogCodes.QUERY, description = "查询了模块信息[{0}]", args = {"param:0"})
@@ -73,11 +81,12 @@ public class ModuleCtrl extends Ctrl {
     }
 
     @PostMapping("/frozen")
-    @Operation(summary = "切换冻结状态（级联子节点）")
-    @BizLog(operateType = BizLogCodes.UPDATE, description = "切换了模块冻结状态[{0}]", args = {"param:0"})
-    public Response<Object> frozen(@Parameter(name = "ids", description = "[模块Id]")
-                                   @RequestBody SingleArray<Long> ids) {
-        this.service.switchFrozen(ids);
+    @Operation(summary = "设置冻结状态（级联子节点）")
+    @BizLog(operateType = BizLogCodes.UPDATE, description = "设置了模块冻结状态[{0}]", args = {"param:0"})
+    public Response<Object> frozen(@Parameter(name = "bo", description = "{param:[模块Id], frozen:目标状态}")
+                                   @RequestBody @Valid ModuleFrozenBo bo) {
+        CommonCodes.NULL_ID.assertNotNull(bo.getParam());
+        this.service.switchFrozen(bo);
         return success();
     }
 }

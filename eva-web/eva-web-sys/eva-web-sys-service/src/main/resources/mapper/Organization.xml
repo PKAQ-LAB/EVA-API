@@ -102,6 +102,7 @@
             </if>
         )
         AND DELETED = 0
+        AND (FROZEN IS NULL OR FROZEN != 9999)
     </update>
 
     <!-- 移动节点后刷新所有子孙 path 前缀 -->

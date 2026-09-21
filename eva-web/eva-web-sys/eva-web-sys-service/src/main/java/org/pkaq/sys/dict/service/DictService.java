@@ -253,6 +253,7 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
             SysCodes.RECORD_NOT_FOUND.newException();
             return;
         }
+        ensureDictEditable(entity);
 
         this.dictItemMapper.delete(new LambdaQueryWrapper<DictItemEntity>().eq(DictItemEntity::getMainId, id));
         this.mapper.deleteById(id);
@@ -283,6 +284,7 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
                 SysCodes.RECORD_NOT_FOUND.newException();
                 return;
             }
+            ensureDictEditable(oldEntity);
         }
 
         DictEntity entity = this.toEntity(bo, oldEntity);
@@ -379,6 +381,12 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
             affectedTypes.add(entity.getCode());
         }
         this.reloadTypesAfterCommit(affectedTypes);
+    }
+
+    private void ensureDictEditable(DictEntity entity) {
+        if (entity.getFrozen() == FrozenEnumm.READ_ONLY) {
+            SysCodes.READ_ONLY_RECORD.newException();
+        }
     }
 
     private DictEntity toEntity(DictAoeBo bo, DictEntity oldEntity) {
