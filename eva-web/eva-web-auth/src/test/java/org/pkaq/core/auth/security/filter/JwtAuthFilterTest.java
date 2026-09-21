@@ -8,15 +8,18 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pkaq.core.auth.user.service.AuthUserService;
 import org.pkaq.core.auth.rbac.service.RoleResourceCacheService;
+import org.pkaq.core.auth.role.entity.AuthRoleEntity;
 import org.pkaq.core.auth.user.entity.AuthUserEntity;
 import org.pkaq.core.auth.util.CacheTokenUtil;
 import org.pkaq.core.auth.tenant.TenantAuthRoutingService;
 import org.pkaq.core.auth.tenant.TenantLoginResolver;
 import org.pkaq.core.enums.FrozenEnumm;
+import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.jwt.JwtUtil;
 import org.pkaq.core.properties.Auth;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.properties.Jwt;
+import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.web.core.utils.TokenUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -25,7 +28,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -83,7 +88,6 @@ class JwtAuthFilterTest {
         when(jwtUtil.isAccessToken("mock-token")).thenReturn(true);
         when(jwtUtil.isTokenExpiring("mock-token")).thenReturn(false);
         when(jwtUtil.getAccount("mock-token")).thenReturn("admin");
-        when(jwtUtil.getRoles("mock-token")).thenReturn(List.of(1L, 2L));
         when(jwtUtil.getPermVer("mock-token")).thenReturn(1L);
         AuthUserEntity authState = new AuthUserEntity();
         authState.setFrozen(FrozenEnumm.UN_FROZEN);
@@ -97,6 +101,48 @@ class JwtAuthFilterTest {
         verify(filterChain, never()).doFilter(request, response);
         verify(roleResourceCacheService, never())
                 .hasPermission(List.of(1L, 2L), "GET", "/api/user/list");
+    }
+
+    @Test
+    void shouldBuildThreadUserFromTrustedServerRoles() throws Exception {
+        EvaConfig evaConfig = buildEvaConfig();
+        JwtAuthFilter filter = new JwtAuthFilter(
+                jwtUtil, evaConfig, cacheTokenUtil, tokenUtil, authUserService,
+                roleResourceCacheService, tenantLoginResolver, tenantAuthRoutingService);
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/api/user/list");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        when(tokenUtil.getToken(request)).thenReturn("mock-token");
+        when(jwtUtil.getUid("mock-token")).thenReturn(1001L);
+        when(jwtUtil.valid("mock-token")).thenReturn(true);
+        when(jwtUtil.isAccessToken("mock-token")).thenReturn(true);
+        when(jwtUtil.isTokenExpiring("mock-token")).thenReturn(false);
+        when(jwtUtil.getAccount("mock-token")).thenReturn("admin-account");
+        when(jwtUtil.getPermVer("mock-token")).thenReturn(3L);
+        when(jwtUtil.getTenantId("mock-token")).thenReturn(8L);
+        AuthRoleEntity adminRole = new AuthRoleEntity();
+        adminRole.setId(10L);
+        adminRole.setName("平台管理员");
+        adminRole.setCode(CommonConstant.ADMIN_ROLE_NAME);
+        AuthUserEntity authState = new AuthUserEntity();
+        authState.setFrozen(FrozenEnumm.UN_FROZEN);
+        authState.setPermVer(3L);
+        authState.setName("管理员");
+        authState.setRoles(List.of(adminRole));
+        when(authUserService.getAuthState(1001L)).thenReturn(authState);
+        doAnswer(invocation -> {
+            assertEquals("admin-account", ThreadUserHelper.getAccount());
+            assertEquals("管理员", ThreadUserHelper.getUserName());
+            assertEquals(8L, ThreadUserHelper.getTenantId());
+            assertTrue(ThreadUserHelper.isAdmin());
+            assertTrue(ThreadUserHelper.getUsetGrantedRoles().containsKey(10L));
+            return null;
+        }).when(filterChain).doFilter(request, response);
+
+        filter.doFilter(request, response, filterChain);
+
+        verify(filterChain).doFilter(request, response);
+        verify(jwtUtil, never()).getRoles("mock-token");
     }
 
     /**

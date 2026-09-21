@@ -65,13 +65,28 @@ public class CacheTokenUtil {
      * @return
      */
     public Map<?, ?> getAllToken() {
+        return getTokens(null);
+    }
+
+    /**
+     * 按可信租户范围读取在线会话。
+     *
+     * @param tenantId 租户ID；null 表示平台全局范围
+     * @return 逻辑缓存键到会话元数据的映射
+     */
+    public Map<?, ?> getTokens(Long tenantId) {
+        String entryPrefix = tenantId == null ? "" : tenantId + ":";
         if (this.tokenCache instanceof CaffeineCache) {
             CaffeineCache caffeineCache = (CaffeineCache) this.tokenCache;
-            return caffeineCache.getNativeCache().asMap();
+            return caffeineCache.getNativeCache().asMap().entrySet().stream()
+                    .filter(entry -> String.valueOf(entry.getKey()).startsWith(entryPrefix))
+                    .collect(java.util.stream.Collectors.toMap(
+                            Map.Entry::getKey, Map.Entry::getValue,
+                            (first, second) -> first, java.util.LinkedHashMap::new));
         }
 
         if (this.tokenCache instanceof RedisCache) {
-            return redisUtil.getPureAll(CommonConstant.CACHE_TOKEN);
+            return redisUtil.scanPureAll(CommonConstant.CACHE_TOKEN, entryPrefix);
         }
         return null;
     }

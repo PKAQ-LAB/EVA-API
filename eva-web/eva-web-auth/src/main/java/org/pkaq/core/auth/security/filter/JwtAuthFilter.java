@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.auth.AuthCodes;
 import org.pkaq.core.auth.rbac.service.RoleResourceCacheService;
+import org.pkaq.core.auth.role.entity.AuthRoleEntity;
 import org.pkaq.core.auth.user.entity.AuthUserEntity;
 import org.pkaq.core.auth.user.service.AuthUserService;
 import org.pkaq.core.auth.util.CacheTokenUtil;
@@ -42,10 +43,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * JWT认证过滤器
@@ -148,8 +151,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             String account = jwtUtil.getAccount(authToken);
 
             if (StrUtils.isNotBlank(account)) {
-                // 从JWT解析角色和权限版本号
-                List<Long> roleIds = jwtUtil.getRoles(authToken);
+                // JWT仅携带权限版本，不将其中的角色声明作为本次请求的授权依据。
                 long tokenPermVer = jwtUtil.getPermVer(authToken);
 
                 AuthUserEntity authState = evaConfig.getTenant().isSchemaMode()
@@ -180,6 +182,18 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     return;
                 }
 
+                List<AuthRoleEntity> trustedRoles = authState.getRoles() == null
+                        ? Collections.emptyList() : authState.getRoles();
+                List<Long> roleIds = trustedRoles.stream()
+                        .map(AuthRoleEntity::getId)
+                        .filter(Objects::nonNull)
+                        .toList();
+                Map<Long, ThreadUser.GrantedRoles> rolesMap = trustedRoles.stream()
+                        .filter(role -> role.getId() != null)
+                        .collect(Collectors.toMap(AuthRoleEntity::getId,
+                                role -> new ThreadUser.GrantedRoles(role.getName(), role.getCode()),
+                                (first, second) -> first, LinkedHashMap::new));
+
                 // RBAC资源权限校验（permit路径跳过校验）
                 if (evaConfig.getResourcePermission().isEnable() && !isPermitPath(requestPath)) {
                     String httpMethod = request.getMethod();
@@ -202,11 +216,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                         : roleIds.stream().map(String::valueOf).toArray(String[]::new);
                 ThreadUser currentUser = new ThreadUser()
                         .setUserId(uid)
-                        .setName(account)
+                        .setAccount(account)
+                        .setName(StrUtils.isBlank(authState.getName()) ? account : authState.getName())
                         .setTenantId(tenantId)
                         .setDeptId(authState.getDeptId() == null ? 0L : authState.getDeptId())
                         .setDataScopes(toDataScopes(authState))
-                        .setRoles(roleNames);
+                        .setRoles(roleNames)
+                        .setRolesMap(rolesMap);
 
                 // 设置SecurityContext
                 List<SimpleGrantedAuthority> authorities = roleIds == null || roleIds.isEmpty()

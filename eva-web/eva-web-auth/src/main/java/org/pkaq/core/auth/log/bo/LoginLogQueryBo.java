@@ -17,6 +17,9 @@ import java.time.LocalDateTime;
 @Schema(description = "登录日志查询参数")
 public class LoginLogQueryBo extends PageBo {
 
+    @Schema(description = "目标租户ID，仅平台管理员可用")
+    private Long targetTenantId;
+
     @Schema(description = "登录账号")
     private String account;
 

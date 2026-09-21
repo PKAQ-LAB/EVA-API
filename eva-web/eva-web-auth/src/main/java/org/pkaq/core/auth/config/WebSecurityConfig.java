@@ -115,7 +115,7 @@ public class WebSecurityConfig {
 
         httpSecurity.authorizeHttpRequests(auth -> auth.anyRequest().authenticated());
 
-        httpSecurity.logout(logout -> logout.logoutUrl(contextPath + "/auth/logout").logoutSuccessHandler(urlLogoutSuccessHandler));
+        httpSecurity.logout(logout -> logout.logoutUrl("/auth/logout").logoutSuccessHandler(urlLogoutSuccessHandler));
 
         httpSecurity.exceptionHandling(ex ->
                 ex.authenticationEntryPoint(unauthorizedHandler)

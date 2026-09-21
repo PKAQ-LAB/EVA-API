@@ -86,13 +86,16 @@ public class JwtUsernamePasswordAuthenticationFilter extends UsernamePasswordAut
         }
         String username = param.get("account");
         String password = param.get("password");
-        TenantLoginIdentity tenantIdentity;
-        try {
-            tenantIdentity = tenantLoginResolver.resolveCode(param.get("tenantCode"));
-        } catch (RuntimeException exception) {
-            throw new BadCredentialsException("租户不可用", exception);
+        TenantLoginIdentity tenantIdentity = new TenantLoginIdentity(0L, 0L);
+        if (evaConfig.getTenant().isSchemaMode()) {
+            try {
+                tenantIdentity = tenantLoginResolver.resolveCode(param.get("tenantCode"));
+            } catch (RuntimeException exception) {
+                throw new BadCredentialsException("租户不可用", exception);
+            }
         }
         request.setAttribute(LoginLogService.LOGIN_ACCOUNT_ATTRIBUTE, username);
+        request.setAttribute(LoginLogService.LOGIN_TENANT_ID_ATTRIBUTE, tenantIdentity.tenantId());
 
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         UsernamePasswordAuthenticationToken authenticationToken = evaConfig.getTenant().isSchemaMode()

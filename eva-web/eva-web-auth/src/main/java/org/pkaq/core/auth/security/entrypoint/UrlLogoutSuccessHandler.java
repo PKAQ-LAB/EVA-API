@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.auth.util.CacheTokenUtil;
+import org.pkaq.core.auth.log.service.LoginLogService;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.mvc.vo.Response;
@@ -29,6 +30,7 @@ public class UrlLogoutSuccessHandler implements LogoutSuccessHandler {
     private final EvaConfig evaConfig;
 
     private final CacheTokenUtil tokenUtil;
+    private final LoginLogService loginLogService;
 
     @Override
     public void onLogoutSuccess(HttpServletRequest httpServletRequest,
@@ -47,7 +49,10 @@ public class UrlLogoutSuccessHandler implements LogoutSuccessHandler {
         CookieUtils.clearCookie(httpServletResponse, CommonConstant.REFRESH_TOKEN_KEY, "/", domain);
         CookieUtils.clearCookie(httpServletResponse, CommonConstant.USER_KEY, "/", domain);
 
-        ResponseUtil.write(httpServletResponse,Response.failure(CommonCodes.LOGINOUT_SUCCESS));
+        loginLogService.saveLogout(httpServletRequest);
+
+        ResponseUtil.write(httpServletResponse, Response.success(null,
+                CommonCodes.LOGINOUT_SUCCESS.getMsg(), CommonCodes.LOGINOUT_SUCCESS.getCode()));
 
     }
 }

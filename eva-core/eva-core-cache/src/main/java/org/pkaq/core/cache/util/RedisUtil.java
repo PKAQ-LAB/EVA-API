@@ -3,6 +3,8 @@ package org.pkaq.core.cache.util;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.util.json.JsonUtil;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.Cursor;
+import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
 import org.springframework.stereotype.Component;
 
@@ -99,6 +101,38 @@ public class RedisUtil {
         });
 
         return map;
+    }
+
+    /**
+     * 使用游标按缓存条目前缀读取数据，避免阻塞 Redis 的 KEYS 命令。
+     *
+     * @param cacheName 缓存名称
+     * @param entryPrefix 缓存条目前缀，空字符串表示全部条目
+     * @return 去除缓存名称前缀后的键值集合
+     */
+    public Map<String, ?> scanPureAll(String cacheName, String entryPrefix) {
+        String cachePrefix = cacheName + "::";
+        String safeEntryPrefix = entryPrefix == null ? "" : entryPrefix;
+        ScanOptions options = ScanOptions.scanOptions()
+                .match(cachePrefix + safeEntryPrefix + "*")
+                .count(500)
+                .build();
+        Map<String, Object> result = new LinkedHashMap<>();
+        try (Cursor<Object> cursor = this.redisTemplate.scan(options)) {
+            cursor.forEachRemaining(item -> {
+                String storedKey = String.valueOf(item);
+                if (!storedKey.startsWith(cachePrefix)) {
+                    return;
+                }
+                Object value = this.getObjectValue(storedKey);
+                if (value instanceof String text) {
+                    result.put(storedKey.substring(cachePrefix.length()), JsonUtil.parse(text, Map.class));
+                } else if (value != null) {
+                    result.put(storedKey.substring(cachePrefix.length()), value);
+                }
+            });
+        }
+        return result;
     }
 
     /**

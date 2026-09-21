@@ -1,11 +1,16 @@
 package org.pkaq.core.auth.util;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
 import org.junit.jupiter.api.Test;
 import org.pkaq.core.cache.util.RedisUtil;
 import org.pkaq.core.jwt.JwtUtil;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.caffeine.CaffeineCache;
 
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.mock;
@@ -37,5 +42,20 @@ class CacheTokenUtilTest {
 
         verify(cache).put("7:11", value);
         verify(cache).evict("7:11");
+    }
+
+    @Test
+    void shouldFilterCaffeineEntriesBeforeReturningValues() {
+        CaffeineCache cache = new CaffeineCache("token", Caffeine.newBuilder().build());
+        CacheManager manager = mock(CacheManager.class);
+        when(manager.getCache("token")).thenReturn(cache);
+        cache.put("7:11", Map.of("device", "web"));
+        cache.put("70:12", Map.of("device", "other"));
+        CacheTokenUtil util = new CacheTokenUtil(mock(JwtUtil.class), mock(RedisUtil.class), manager);
+
+        Map<?, ?> result = util.getTokens(7L);
+
+        assertEquals(1, result.size());
+        assertEquals(Map.of("device", "web"), result.get("7:11"));
     }
 }
