@@ -15,7 +15,7 @@
 | 核心框架 | Spring Boot **4.1.1** + Spring Security |
 | ORM | MyBatis-Plus **3.5.17**（兼容 Spring Boot 4 starter） |
 | 数据库 | MySQL 9.7 / PostgreSQL（默认）；Mongo（日志） |
-| 缓存 | Caffeine（本地）/ Redis（分布式），按 Condition 切换 |
+| 缓存 | Redis（唯一共享缓存与安全状态存储） |
 | 鉴权 | JWT（Nimbus JOSE 10.9.1）+ 双 Token + 设备 ID |
 | 对象映射 | MapStruct **1.6.3**（`defaultComponentModel = spring`） |
 | 文件存储 | MinIO 9.0.3 / Ali OSS / FastDFS / 本地目录（Condition 切换） |
@@ -37,7 +37,7 @@ EVA-API (root)
 │   ├── eva-core-log                    # 业务日志 / 错误日志 + 多 Supporter
 │   ├── eva-core-data-mybatis           # StdEntity/StdService/StdCtrl + 数据权限 + 多租户
 │   ├── eva-core-data-mongo             # Mongo 日志存储
-│   ├── eva-core-cache                  # Caffeine / Redis / 序列号生成
+│   ├── eva-core-cache                  # Redis / 序列号生成
 │   ├── eva-core-upload                 # 多 Provider 文件上传 + 临时文件清理
 │   ├── eva-core-websocket              # WebSocket + 心跳调度
 │   └── eva-core-license                # License 校验拦截器（客户端）
@@ -102,7 +102,8 @@ EVA-API (root)
 - **工具**：`PageResult`、`TreeHelper`
 
 ### 4.3 `eva-core-cache` —— 缓存与序列号
-- `CaffeineConfiguration` / `RedisConfiguration` 通过 `CaffeineCacheCondition` / `RedisCacheCondition` 二选一
+- `RedisConfiguration` —— 唯一 `CacheManager` 与 Redis 序列化配置
+- `RedisIdempotencyStore` —— 基于 `SET NX + TTL` 的跨节点重复提交控制
 - `SequenceGenerator` + `SequenceRepository` + `RuleFunction` —— 规则化序列号
 - `RedisUtil` —— 业务侧统一 Redis 操作入口
 

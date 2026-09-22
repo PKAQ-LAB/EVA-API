@@ -2,6 +2,7 @@ package org.pkaq.core.properties;
 
 import lombok.Data;
 
+import java.time.Duration;
 import java.util.List;
 
 /**
@@ -11,11 +12,6 @@ import java.util.List;
  */
 @Data
 public class Cache {
-
-    /**
-     * 缓存类型  默认 caffeine
-     **/
-    private String type = "caffeine";
 
     private List<CacheObject> config;
 
@@ -27,16 +23,8 @@ public class Cache {
         private String name = "default";
 
         /**
-         * 缓存初始大小
-         **/
-        private int initialCapacity = 100;
-
-        /**
          * 缓存过期时间
          **/
-        private int secondsToExpire = 100;
-
-        /*** 使用描述创建缓存 ***/
-        private String spec;
+        private Duration ttl = Duration.ZERO;
     }
 }

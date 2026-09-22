@@ -12,7 +12,6 @@ jasypt = "4.0.4"
 p6spy = "3.9.1"
 flyway = "13.7.0"
 truelicense = "1.33"
-caffeine = "3.3.0"
 security_test = "7.1.1"
 jwt = "10.10"
 postgre="42.7.13"
@@ -60,7 +59,6 @@ json = { module = "org.springframework.boot:spring-boot-starter-json" }
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
 
 # 缓存
-caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
 redis = { module = "org.springframework.boot:spring-boot-starter-data-redis" }
 cache = { module = "org.springframework.boot:spring-boot-starter-cache" }
 

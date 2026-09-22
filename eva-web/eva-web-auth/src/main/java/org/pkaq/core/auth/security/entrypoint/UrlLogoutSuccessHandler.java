@@ -38,7 +38,7 @@ public class UrlLogoutSuccessHandler implements LogoutSuccessHandler {
                                 Authentication authentication) throws IOException {
 
         var cacheToken = evaConfig.getJwt().isPersistence();
-        // 清空redis/caffeine中的token 刷新用户secret
+        // 清除 Redis 在线会话，确保所有节点立即失效。
         var currentUser = ThreadUserHelper.getCurrentUserOrNull();
         if (cacheToken && currentUser != null && currentUser.getUserId() > 0L) {
             this.tokenUtil.removeToken(currentUser.getTenantId(), currentUser.getUserId());

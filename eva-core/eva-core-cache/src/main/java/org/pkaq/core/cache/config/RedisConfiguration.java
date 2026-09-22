@@ -2,12 +2,10 @@ package org.pkaq.core.cache.config;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.pkaq.core.cache.condition.RedisCacheCondition;
 import org.pkaq.core.properties.EvaConfig;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
@@ -29,7 +27,6 @@ import java.util.Map;
  */
 @Slf4j
 @Configuration
-@Conditional(RedisCacheCondition.class)
 @RequiredArgsConstructor
 public class RedisConfiguration {
 
@@ -78,12 +75,13 @@ public class RedisConfiguration {
     @ConditionalOnMissingBean(CacheManager.class)
     public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
         log.debug("初始化 redis 緩存 --- --- --- -->");
-        RedisCacheConfiguration defaultCache = buildCache(60 * 30L);
+        RedisCacheConfiguration defaultCache = buildCache(Duration.ofMinutes(30));
 
         if (null != evaConfig.getCache() && null != evaConfig.getCache().getConfig()) {
             Map<String, RedisCacheConfiguration> cacheMap = HashMap.newHashMap(evaConfig.getCache().getConfig().size());
 
-            evaConfig.getCache().getConfig().forEach(item -> cacheMap.put(item.getName(), buildCache(item.getSecondsToExpire())));
+            evaConfig.getCache().getConfig().forEach(item ->
+                    cacheMap.put(item.getName(), buildCache(item.getTtl())));
 
             return RedisCacheManager.builder(RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory))
                     .cacheDefaults(defaultCache)
@@ -104,10 +102,9 @@ public class RedisConfiguration {
      * 我们需要将应用连接到它并使用某种“语言”进行交互，因此我们还需要一个连接工厂以及一个 Spring 和 Redis 对话要用的
      * RedisTemplate， 这些都是 Redis 缓存所必需的配置，把它们都放在自定义的 CachingConfigurerSupport 中
      */
-    private RedisCacheConfiguration buildCache(long secondsToExpire) {
+    private RedisCacheConfiguration buildCache(Duration ttl) {
         RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig();
-        //设置缓存的默认超时时间：30分钟
-        redisCacheConfiguration = redisCacheConfiguration.entryTtl(Duration.ofMillis(secondsToExpire))
+        redisCacheConfiguration = redisCacheConfiguration.entryTtl(ttl)
                 //如果是空值，不缓存
                 .disableCachingNullValues()
                 //设置key序列化器

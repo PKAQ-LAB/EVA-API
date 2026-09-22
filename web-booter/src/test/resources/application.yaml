@@ -2,7 +2,7 @@ project:
   version: 0.0.1
 spring:
   profiles:
-    active: dev
+    active: dev,test
   servlet:
     # 文件上传配置
     multipart:
@@ -118,41 +118,11 @@ eva:
     exclude-tables: sys_module_resources,sys_role_user
   # 缓存配置
   cache:
-    type: caffeine
     config:
       - name: uploadfiles
-        spec: initialCapacity=100,expireAfterWrite=1d
-      - name: repeatsubmit
-        spec: initialCapacity=10,expireAfterAccess=1s
+        ttl: 1d
       - name: dictdata
-        spec: initialCapacity=100
-      - name: bizdata
-        spec: initialCapacity=100,expireAfterAccess=1h
-      - name: token
-        spec: initialCapacity=100,expireAfterWrite=2592000s
-  #    type: redis
-  #    config:
-  #        # 缓存名称 - 文件上传缓存
-  #      - name: uploadfiles
-  #        # 初始大小
-  #        initialCapacity: 100
-  #        # 过期时间(毫秒)
-  #        secondsToExpire: 86400000
-  #        # 重复提交缓存
-  #      - name: repeatsubmit
-  #        initialCapacity: 100
-  #        secondsToExpire: 500
-  #        # 字典缓存
-  #      - name: dictdata
-  #        initialCapacity: 100
-  #        secondsToExpire: -1
-  #        # 业务数据缓存
-  #      - name: bizdata
-  #        initialCapacity: 100
-  #        secondsToExpire: 86400000
-  #      - name: token
-  #        initialCapacity: 1000
-  #        secondsToExpire: 2592000
+        ttl: 0s
   # 错误日志
   errorlog:
     enabled: true

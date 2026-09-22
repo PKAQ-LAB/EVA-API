@@ -9,8 +9,6 @@ import org.pkaq.core.tenant.TenantContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.caffeine.CaffeineCache;
-import org.springframework.data.redis.cache.RedisCache;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedHashMap;
@@ -51,16 +49,7 @@ public class DictCacheHelper {
     }
 
     private Map<?, ?> rawAll() {
-        if (this.cache instanceof CaffeineCache) {
-            CaffeineCache caffeineCache = (CaffeineCache) this.cache;
-            return caffeineCache.getNativeCache().asMap();
-        }
-
-        if (this.cache instanceof RedisCache) {
-            return redisUtil.getPureAll(CommonConstant.CACHE_DICTDATA);
-        }
-
-        return null;
+        return redisUtil.scanPureAll(CommonConstant.CACHE_DICTDATA, "");
     }
 
     /**

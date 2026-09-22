@@ -10,6 +10,5 @@ dependencies {
     implementation project(":eva-core:eva-core-common")
 
     api libs.cache,
-        libs.redis,
-        libs.caffeine
+        libs.redis
 }

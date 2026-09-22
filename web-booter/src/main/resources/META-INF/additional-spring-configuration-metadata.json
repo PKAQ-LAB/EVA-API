@@ -101,14 +101,9 @@
       "description": "数据权限排除的表"
     },
     {
-      "name": "eva.cache.type",
-      "type": "java.lang.String",
-      "description": "缓存类型（如 caffeine 或 redis）"
-    },
-    {
       "name": "eva.cache.config",
       "type": "java.util.List",
-      "description": "缓存配置列表"
+      "description": "Redis 缓存名称和 TTL 配置列表"
     },
     {
       "name": "eva.errorlog.enabled",
