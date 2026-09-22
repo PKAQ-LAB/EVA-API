@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pkaq.core.auth.rbac.mapper.SysRoleResourceMapper;
+import org.pkaq.core.auth.tenant.TenantAuthRoutingService;
 import org.pkaq.core.properties.EvaConfig;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
@@ -15,6 +16,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -32,6 +34,8 @@ class RoleResourceCacheServiceTest {
     private SetOperations<Object, Object> setOperations;
     @Mock
     private EvaConfig evaConfig;
+    @Mock
+    private TenantAuthRoutingService tenantAuthRoutingService;
 
     private RoleResourceCacheService service;
 
@@ -40,7 +44,8 @@ class RoleResourceCacheServiceTest {
      */
     @BeforeEach
     void setUp() {
-        service = new RoleResourceCacheService(roleResourceMapper, redisTemplate, evaConfig);
+        service = new RoleResourceCacheService(
+                roleResourceMapper, redisTemplate, evaConfig, tenantAuthRoutingService);
         when(redisTemplate.opsForSet()).thenReturn(setOperations);
     }
 
@@ -49,12 +54,13 @@ class RoleResourceCacheServiceTest {
      */
     @Test
     void shouldMatchWildcardMethodModulePathWithoutPrefixCollision() {
-        when(setOperations.members("role:resource:7"))
+        when(redisTemplate.hasKey("eva:security:tenant:101:role-resource:7")).thenReturn(true);
+        when(setOperations.members("eva:security:tenant:101:role-resource:7"))
                 .thenReturn(Set.of("*:/sys/organization"));
 
-        assertTrue(service.hasPermission(List.of(7L), "GET", "/sys/organization/list"));
-        assertTrue(service.hasPermission(List.of(7L), "POST", "/sys/organization"));
-        assertFalse(service.hasPermission(List.of(7L), "GET", "/sys/organizationExtra/list"));
+        assertTrue(service.hasPermission(101L, List.of(7L), "GET", "/sys/organization/list"));
+        assertTrue(service.hasPermission(101L, List.of(7L), "POST", "/sys/organization"));
+        assertFalse(service.hasPermission(101L, List.of(7L), "GET", "/sys/organizationExtra/list"));
     }
 
     /**
@@ -62,11 +68,31 @@ class RoleResourceCacheServiceTest {
      */
     @Test
     void shouldNotExpandConcreteMethodPath() {
-        when(setOperations.members("role:resource:8"))
+        when(redisTemplate.hasKey("eva:security:tenant:202:role-resource:8")).thenReturn(true);
+        when(setOperations.members("eva:security:tenant:202:role-resource:8"))
                 .thenReturn(Set.of("GET:/sys/account"));
 
-        assertTrue(service.hasPermission(List.of(8L), "GET", "/sys/account"));
-        assertFalse(service.hasPermission(List.of(8L), "GET", "/sys/account/list"));
-        assertFalse(service.hasPermission(List.of(8L), "POST", "/sys/account"));
+        assertTrue(service.hasPermission(202L, List.of(8L), "GET", "/sys/account"));
+        assertFalse(service.hasPermission(202L, List.of(8L), "GET", "/sys/account/list"));
+        assertFalse(service.hasPermission(202L, List.of(8L), "POST", "/sys/account"));
+    }
+
+    /**
+     * 相同角色ID在不同租户中必须使用不同缓存键。
+     */
+    @Test
+    void shouldIsolateSameRoleIdByTenant() {
+        when(redisTemplate.hasKey("eva:security:tenant:101:role-resource:7")).thenReturn(true);
+        when(redisTemplate.hasKey("eva:security:tenant:102:role-resource:7")).thenReturn(true);
+        when(setOperations.members("eva:security:tenant:101:role-resource:7"))
+                .thenReturn(Set.of("GET:/tenant-a"));
+        when(setOperations.members("eva:security:tenant:102:role-resource:7"))
+                .thenReturn(Set.of("GET:/tenant-b"));
+
+        assertTrue(service.hasPermission(101L, List.of(7L), "GET", "/tenant-a"));
+        assertFalse(service.hasPermission(102L, List.of(7L), "GET", "/tenant-a"));
+
+        verify(setOperations).members("eva:security:tenant:101:role-resource:7");
+        verify(setOperations).members("eva:security:tenant:102:role-resource:7");
     }
 }

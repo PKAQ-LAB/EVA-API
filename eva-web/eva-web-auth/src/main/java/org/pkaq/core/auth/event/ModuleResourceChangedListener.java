@@ -25,6 +25,6 @@ public class ModuleResourceChangedListener {
      */
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
     public void onModuleResourceChanged(ModuleResourceChangedEvent event) {
-        roleResourceCacheService.rebuildRoleResources(event.getRoleIds());
+        roleResourceCacheService.rebuildRoleResources(event.getTenantId(), event.getRoleIds());
     }
 }

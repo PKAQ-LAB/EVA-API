@@ -11,6 +11,11 @@
       "description": "是否启用重复提交检查"
     },
     {
+      "name": "eva.norepeat-ttl",
+      "type": "java.time.Duration",
+      "description": "重复提交 Redis 原子锁定时间"
+    },
+    {
       "name": "eva.cookie.maxAge",
       "type": "java.lang.Integer",
       "description": "Cookie 最大存活时间（单位秒）"

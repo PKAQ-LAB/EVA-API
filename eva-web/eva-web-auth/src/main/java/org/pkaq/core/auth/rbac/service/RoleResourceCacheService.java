@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.auth.rbac.entity.SysRoleResource;
 import org.pkaq.core.auth.rbac.mapper.SysRoleResourceMapper;
+import org.pkaq.core.auth.tenant.TenantAuthRoutingService;
 import org.pkaq.core.properties.EvaConfig;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -16,14 +17,10 @@ import org.springframework.util.AntPathMatcher;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
- * 角色资源缓存服务
- * 启动时加载sys_role_resource到Redis
- * 提供基于AntPathMatcher的权限校验
+ * 角色资源 Redis 缓存服务。
  *
  * @author PKAQ
  */
@@ -32,14 +29,18 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RoleResourceCacheService {
 
-    private static final String CACHE_KEY_PREFIX = "role:resource:";
+    private static final String CACHE_KEY_PREFIX = "eva:security:tenant:";
+    private static final String ROLE_RESOURCE_SEGMENT = ":role-resource:";
+    private static final String EMPTY_MARKER = "__EMPTY__";
+
     private final SysRoleResourceMapper roleResourceMapper;
     private final RedisTemplate<Object, Object> redisTemplate;
     private final EvaConfig evaConfig;
+    private final TenantAuthRoutingService tenantAuthRoutingService;
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     /**
-     * 应用启动后加载所有角色资源到Redis
+     * standalone 模式启动后预热角色资源；schema 模式按可信租户懒加载。
      */
     @EventListener(ApplicationReadyEvent.class)
     @Transactional(rollbackFor = Exception.class)
@@ -48,130 +49,99 @@ public class RoleResourceCacheService {
             log.info("资源权限未启用，跳过角色资源权限缓存加载");
             return;
         }
-        log.info("开始加载角色资源权限到Redis...");
-        Set<Object> oldKeys = redisTemplate.keys(CACHE_KEY_PREFIX + "*");
-        if (oldKeys != null && !oldKeys.isEmpty()) {
-            redisTemplate.delete(oldKeys);
+        if (evaConfig.getTenant().isSchemaMode()) {
+            log.info("schema 租户模式按租户懒加载角色资源权限缓存");
+            return;
         }
-
         List<Long> activeRoleIds = roleResourceMapper.selectActiveRoleIds();
-        for (Long roleId : activeRoleIds) {
-            rebuildRoleResource(roleId);
-        }
-
-        List<SysRoleResource> all = roleResourceMapper.selectAll();
-
-        Map<Long, List<SysRoleResource>> grouped = all.stream()
-                .collect(Collectors.groupingBy(SysRoleResource::getRoleId));
-
-        for (Map.Entry<Long, List<SysRoleResource>> entry : grouped.entrySet()) {
-            String key = CACHE_KEY_PREFIX + entry.getKey();
-            // 写入 Set<METHOD:PATH>
-            Object[] values = entry.getValue().stream()
-                    .map(this::toCacheValue)
-                    .filter(v -> v != null)
-                    .toArray();
-            if (values.length > 0) {
-                redisTemplate.opsForSet().add(key, values);
-            }
-        }
-        log.info("角色资源权限加载完成, 共 {} 个角色 {} 条记录", grouped.size(), all.size());
+        rebuildRoleResources(0L, activeRoleIds);
+        log.info("角色资源权限缓存预热完成，共 {} 个角色", activeRoleIds.size());
     }
 
     /**
-     * 刷新指定角色的资源缓存
+     * 刷新指定租户、指定角色的资源缓存。
      *
+     * @param tenantId 租户ID
      * @param roleId 角色ID
      */
-    public void refreshRoleCache(Long roleId) {
+    public void refreshRoleCache(Long tenantId, Long roleId) {
         if (roleId == null) {
             return;
         }
-        String key = CACHE_KEY_PREFIX + roleId;
+        long trustedTenantId = trustedTenantId(tenantId);
+        String key = cacheKey(trustedTenantId, roleId);
+        List<SysRoleResource> resources = tenantAuthRoutingService.execute(
+                trustedTenantId, () -> roleResourceMapper.selectByRoleId(roleId));
         redisTemplate.delete(key);
-
-        List<SysRoleResource> resources = roleResourceMapper.selectByRoleId(roleId);
-        if (!resources.isEmpty()) {
-            Object[] values = resources.stream()
-                    .map(this::toCacheValue)
-                    .filter(v -> v != null)
-                    .toArray();
-            if (values.length > 0) {
-                redisTemplate.opsForSet().add(key, values);
-            }
-        }
-    }
-
-    /**
-     * 重建指定角色的扁平资源表并刷新缓存。
-     *
-     * @param roleId 角色ID
-     */
-    public void rebuildRoleResource(Long roleId) {
-        if (roleId == null) {
+        Object[] values = resources.stream()
+                .map(this::toCacheValue)
+                .filter(value -> value != null)
+                .toArray();
+        if (values.length == 0) {
+            redisTemplate.opsForSet().add(key, EMPTY_MARKER);
             return;
         }
-        List<SysRoleResource> resources = roleResourceMapper.selectEffectiveResourcesByRoleId(roleId);
-        roleResourceMapper.delete(new LambdaQueryWrapper<SysRoleResource>()
-                .eq(SysRoleResource::getRoleId, roleId));
-        for (SysRoleResource resource : resources) {
-            resource.setId(null);
-            roleResourceMapper.insert(resource);
-        }
-        refreshRoleCache(roleId);
+        redisTemplate.opsForSet().add(key, values);
     }
 
     /**
-     * 批量重建角色资源。
+     * 重建指定租户、指定角色的扁平资源表并刷新缓存。
      *
-     * @param roleIds 角色ID集合
+     * @param tenantId 租户ID
+     * @param roleId 角色ID
      */
     @Transactional(rollbackFor = Exception.class)
-    public void rebuildRoleResources(Collection<Long> roleIds) {
+    public void rebuildRoleResource(Long tenantId, Long roleId) {
+        if (roleId == null) {
+            return;
+        }
+        long trustedTenantId = trustedTenantId(tenantId);
+        tenantAuthRoutingService.execute(trustedTenantId, () -> {
+            List<SysRoleResource> resources = roleResourceMapper.selectEffectiveResourcesByRoleId(roleId);
+            roleResourceMapper.delete(new LambdaQueryWrapper<SysRoleResource>()
+                    .eq(SysRoleResource::getRoleId, roleId));
+            for (SysRoleResource resource : resources) {
+                resource.setId(null);
+                roleResourceMapper.insert(resource);
+            }
+            return null;
+        });
+        refreshRoleCache(trustedTenantId, roleId);
+    }
+
+    /**
+     * 批量重建指定租户的角色资源。
+     *
+     * @param tenantId 租户ID
+     * @param roleIds 角色ID集合
+     */
+    public void rebuildRoleResources(Long tenantId, Collection<Long> roleIds) {
         if (roleIds == null || roleIds.isEmpty()) {
             return;
         }
         for (Long roleId : roleIds) {
-            rebuildRoleResource(roleId);
+            rebuildRoleResource(tenantId, roleId);
         }
     }
 
     /**
-     * 检查用户是否拥有访问指定资源的权限
+     * 检查用户是否拥有访问指定资源的权限。
      *
-     * @param roleIds     用户角色ID列表
-     * @param httpMethod  HTTP方法 (GET/POST/PUT/DELETE)
+     * @param tenantId 租户ID
+     * @param roleIds 用户角色ID列表
+     * @param httpMethod HTTP方法
      * @param requestPath 请求路径
-     * @return true=有权限
+     * @return 是否允许访问
      */
-    public boolean hasPermission(List<Long> roleIds, String httpMethod, String requestPath) {
+    public boolean hasPermission(Long tenantId, List<Long> roleIds, String httpMethod, String requestPath) {
         if (roleIds == null || roleIds.isEmpty()) {
             return false;
         }
-
+        long trustedTenantId = trustedTenantId(tenantId);
         for (Long roleId : roleIds) {
-            String key = CACHE_KEY_PREFIX + roleId;
-            Set<Object> resources = redisTemplate.opsForSet().members(key);
-            if (resources == null || resources.isEmpty()) {
-                continue;
-            }
-
+            Set<Object> resources = getOrLoadRoleResources(trustedTenantId, roleId);
             for (Object resource : resources) {
-                String entry = String.valueOf(resource);
-                int idx = entry.indexOf(':');
-                if (idx < 0) {
-                    continue;
-                }
-                String method = entry.substring(0, idx);
-                String pattern = entry.substring(idx + 1);
-
-                // 方法匹配: * 表示所有方法
-                if (!"*".equals(method) && !method.equalsIgnoreCase(httpMethod)) {
-                    continue;
-                }
-
-                // 路径匹配
-                if (matchesPath(method, pattern, requestPath)) {
+                if (matchesResource(String.valueOf(resource), httpMethod, requestPath)) {
                     return true;
                 }
             }
@@ -180,20 +150,42 @@ public class RoleResourceCacheService {
     }
 
     /**
-     * 获取缓存中指定角色的所有资源
+     * 获取缓存中指定租户、指定角色的全部资源。
      *
+     * @param tenantId 租户ID
      * @param roleId 角色ID
      * @return 资源集合
      */
-    public Set<Object> getRoleResources(Long roleId) {
-        String key = CACHE_KEY_PREFIX + roleId;
-        Set<Object> members = redisTemplate.opsForSet().members(key);
-        return members != null ? members : Collections.emptySet();
+    public Set<Object> getRoleResources(Long tenantId, Long roleId) {
+        Set<Object> members = redisTemplate.opsForSet().members(cacheKey(tenantId, roleId));
+        return members == null ? Collections.emptySet() : members;
     }
 
-    /**
-     * 构造缓存值
-     */
+    private Set<Object> getOrLoadRoleResources(long tenantId, Long roleId) {
+        String key = cacheKey(tenantId, roleId);
+        Boolean initialized = redisTemplate.hasKey(key);
+        if (!Boolean.TRUE.equals(initialized)) {
+            refreshRoleCache(tenantId, roleId);
+        }
+        return getRoleResources(tenantId, roleId);
+    }
+
+    private boolean matchesResource(String entry, String httpMethod, String requestPath) {
+        if (EMPTY_MARKER.equals(entry)) {
+            return false;
+        }
+        int separatorIndex = entry.indexOf(':');
+        if (separatorIndex < 0) {
+            return false;
+        }
+        String method = entry.substring(0, separatorIndex);
+        String pattern = entry.substring(separatorIndex + 1);
+        if (!"*".equals(method) && !method.equalsIgnoreCase(httpMethod)) {
+            return false;
+        }
+        return matchesPath(method, pattern, requestPath);
+    }
+
     private String toCacheValue(SysRoleResource resource) {
         if (resource == null || resource.getResourcePath() == null || resource.getResourcePath().isBlank()) {
             return null;
@@ -216,5 +208,13 @@ public class RoleResourceCacheService {
                 ? pattern.substring(0, pattern.length() - 1)
                 : pattern;
         return requestPath.startsWith(normalizedPattern + "/");
+    }
+
+    private String cacheKey(Long tenantId, Long roleId) {
+        return CACHE_KEY_PREFIX + trustedTenantId(tenantId) + ROLE_RESOURCE_SEGMENT + roleId;
+    }
+
+    private long trustedTenantId(Long tenantId) {
+        return tenantId == null ? 0L : tenantId;
     }
 }

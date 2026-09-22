@@ -6,6 +6,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+import java.time.Duration;
+
 /**
  * 业务配置读取类
  *
@@ -39,6 +41,11 @@ public class EvaConfig {
      * 是否启用重复提交判断
      **/
     private boolean norepeatCheck;
+
+    /**
+     * 重复提交锁定时间。
+     */
+    private Duration norepeatTtl = Duration.ofSeconds(1);
     /**
      * 业务日志配置
      **/

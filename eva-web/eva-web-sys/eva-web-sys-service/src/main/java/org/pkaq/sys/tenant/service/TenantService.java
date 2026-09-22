@@ -490,7 +490,7 @@ public class TenantService extends StdService<org.pkaq.sys.tenant.mapper.TenantM
                     tenantId, tenantResourceMapper.selectAuthorizedResourceIds(tenantId));
             if (!roleIds.isEmpty()) {
                 eventPublisher.publishEvent(new ModuleResourceChangedEvent(
-                        this, roleIds, ChangeReason.ROLE_RESOURCE_CHANGED));
+                        this, tenantId, roleIds, ChangeReason.ROLE_RESOURCE_CHANGED));
             }
             tenantPrivateAccountService.incrementAllPermVersions(tenantId);
             return;
@@ -498,7 +498,7 @@ public class TenantService extends StdService<org.pkaq.sys.tenant.mapper.TenantM
         Set<Long> roleIds = tenantResourceMapper.selectTenantRoleIds(tenantId);
         if (!CollUtils.isEmpty(roleIds)) {
             eventPublisher.publishEvent(new ModuleResourceChangedEvent(
-                    this, roleIds, ChangeReason.ROLE_RESOURCE_CHANGED));
+                    this, tenantId, roleIds, ChangeReason.ROLE_RESOURCE_CHANGED));
         }
         incrementTenantUserPermVer(tenantId);
     }

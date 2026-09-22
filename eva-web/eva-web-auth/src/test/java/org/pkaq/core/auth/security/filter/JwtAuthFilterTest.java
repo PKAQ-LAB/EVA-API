@@ -100,7 +100,7 @@ class JwtAuthFilterTest {
         assertFalse(response.getContentAsString().contains("\"success\":true"));
         verify(filterChain, never()).doFilter(request, response);
         verify(roleResourceCacheService, never())
-                .hasPermission(List.of(1L, 2L), "GET", "/api/user/list");
+                .hasPermission(0L, List.of(1L, 2L), "GET", "/api/user/list");
     }
 
     @Test

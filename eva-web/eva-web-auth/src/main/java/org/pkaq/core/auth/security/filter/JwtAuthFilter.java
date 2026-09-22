@@ -110,10 +110,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 if (isvalid && cacheToken) {
                     Object token = cacheTokenUtil.getToken(tenantId, uid);
 
-                    Map<String, Object> jsonObject = null;
-                    if (null != token) {
-                        jsonObject = JsonUtil.parse(String.valueOf(token), Map.class);
-                    }
+                    Map<String, Object> jsonObject = toTokenMap(token);
 
                     if (null != jsonObject && authToken.equals(jsonObject.get(CommonConstant.CACHE_TOKEN))) {
                         inCache = true;
@@ -203,7 +200,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                         return;
                     }
 
-                    if (!roleResourceCacheService.hasPermission(roleIds, httpMethod, requestPath)) {
+                    if (!roleResourceCacheService.hasPermission(tenantId, roleIds, httpMethod, requestPath)) {
                         log.warn("用户 {} 无权访问: {} {}", account, httpMethod, requestPath);
                         ResponseUtil.write(response, Response.failure(AuthCodes.RESOURCE_FORBIDDEN));
                         return;
@@ -308,6 +305,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             log.warn("忽略非法的数据权限组织 ID: {}", value);
             return null;
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> toTokenMap(Object token) {
+        if (token instanceof Map<?, ?> tokenMap) {
+            return (Map<String, Object>) tokenMap;
+        }
+        if (token instanceof String tokenJson) {
+            return JsonUtil.parse(tokenJson, Map.class);
+        }
+        return null;
     }
 
     /**

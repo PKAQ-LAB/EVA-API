@@ -1,16 +1,13 @@
 package org.pkaq.core.auth.util;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.pkaq.core.cache.util.RedisUtil;
-import org.pkaq.core.constant.CommonConstant;
+import org.pkaq.core.auth.session.RedisSessionStore;
 import org.pkaq.core.jwt.JwtUtil;
+import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.web.core.utils.RequestUtil;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.caffeine.CaffeineCache;
-import org.springframework.data.redis.cache.RedisCache;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -22,14 +19,14 @@ public class CacheTokenUtil {
 
     private final JwtUtil jwtUtil;
 
-    private final RedisUtil redisUtil;
+    private final RedisSessionStore sessionStore;
 
-    private Cache tokenCache;
+    private final Duration sessionTtl;
 
-    public CacheTokenUtil(JwtUtil jwtUtil, RedisUtil redisUtil, CacheManager cacheManager) {
+    public CacheTokenUtil(JwtUtil jwtUtil, RedisSessionStore sessionStore, EvaConfig evaConfig) {
         this.jwtUtil = jwtUtil;
-        this.redisUtil = redisUtil;
-        this.tokenCache = cacheManager.getCache(CommonConstant.CACHE_TOKEN);
+        this.sessionStore = sessionStore;
+        this.sessionTtl = Duration.ofMillis(evaConfig.getJwt().getTtl());
     }
 
     /**
@@ -52,7 +49,7 @@ public class CacheTokenUtil {
      * @param value
      */
     public void saveToken(Long tenantId, Long userId, Object value) {
-        this.tokenCache.put(cacheKey(tenantId, userId), value);
+        this.sessionStore.save(tenantId, userId, value, sessionTtl);
     }
 
     public void saveToken(Long userId, Object value) {
@@ -75,20 +72,7 @@ public class CacheTokenUtil {
      * @return 逻辑缓存键到会话元数据的映射
      */
     public Map<?, ?> getTokens(Long tenantId) {
-        String entryPrefix = tenantId == null ? "" : tenantId + ":";
-        if (this.tokenCache instanceof CaffeineCache) {
-            CaffeineCache caffeineCache = (CaffeineCache) this.tokenCache;
-            return caffeineCache.getNativeCache().asMap().entrySet().stream()
-                    .filter(entry -> String.valueOf(entry.getKey()).startsWith(entryPrefix))
-                    .collect(java.util.stream.Collectors.toMap(
-                            Map.Entry::getKey, Map.Entry::getValue,
-                            (first, second) -> first, java.util.LinkedHashMap::new));
-        }
-
-        if (this.tokenCache instanceof RedisCache) {
-            return redisUtil.scanPureAll(CommonConstant.CACHE_TOKEN, entryPrefix);
-        }
-        return null;
+        return this.sessionStore.list(tenantId);
     }
 
     /**
@@ -98,8 +82,7 @@ public class CacheTokenUtil {
      * @return
      */
     public Object getToken(Long tenantId, Long userId) {
-        var wrapper = this.tokenCache.get(cacheKey(tenantId, userId));
-        return null == wrapper ? null : wrapper.get();
+        return this.sessionStore.get(tenantId, userId);
     }
 
     public Object getToken(Long userId) {
@@ -112,7 +95,10 @@ public class CacheTokenUtil {
      * @param key
      */
     public void removeToken(String key) {
-        this.tokenCache.evict(key);
+        String[] keyParts = key == null ? new String[0] : key.split(":", 2);
+        if (keyParts.length == 2) {
+            this.sessionStore.remove(Long.valueOf(keyParts[0]), Long.valueOf(keyParts[1]));
+        }
     }
 
     /**
@@ -127,7 +113,7 @@ public class CacheTokenUtil {
 
     public void removeToken(Long tenantId, Long userId) {
         if (userId != null) {
-            this.tokenCache.evict(cacheKey(tenantId, userId));
+            this.sessionStore.remove(tenantId, userId);
         }
     }
 
@@ -150,20 +136,7 @@ public class CacheTokenUtil {
     }
 
     public void removeTenantTokens(Long tenantId) {
-        String prefix = (tenantId == null ? 0L : tenantId) + ":";
-        Map<?, ?> tokens = getAllToken();
-        if (tokens == null) {
-            return;
-        }
-        tokens.keySet().stream()
-                .map(String::valueOf)
-                .filter(key -> key.startsWith(prefix))
-                .forEach(this.tokenCache::evict);
-    }
-
-    private String cacheKey(Long tenantId, Long userId) {
-        long trustedTenantId = tenantId == null ? 0L : tenantId;
-        return trustedTenantId + ":" + userId;
+        this.sessionStore.removeTenant(tenantId);
     }
 
 }
