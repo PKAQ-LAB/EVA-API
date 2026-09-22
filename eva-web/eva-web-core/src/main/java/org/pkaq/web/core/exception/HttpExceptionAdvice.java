@@ -31,11 +31,7 @@ public class HttpExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public Response<Object> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
-        log.error("参数解析失败：" + e.getMessage());
-
-        if (log.isDebugEnabled()) {
-            e.printStackTrace();
-        }
+        log.warn("参数解析失败", e);
 
         return Response.failure(CommonCodes.PARAM_TYPE_ERROR);
     }
@@ -50,11 +46,7 @@ public class HttpExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({IllegalArgumentException.class, MissingServletRequestParameterException.class})
     public Response<Object> handleIllegalArgumentException(Exception e) {
-        log.warn("参数类型错误：不支持当前请求的参数类型:" + e.getMessage());
-
-        if (log.isDebugEnabled()) {
-            e.printStackTrace();
-        }
+        log.warn("参数类型错误：不支持当前请求的参数类型", e);
 
         return Response.failure(CommonCodes.PARAM_TYPE_ERROR);
     }
@@ -69,11 +61,7 @@ public class HttpExceptionAdvice {
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public Response<Object> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
-        log.warn("不支持当前请求方法:" + e.getMessage());
-
-        if (log.isDebugEnabled()) {
-            e.printStackTrace();
-        }
+        log.warn("不支持当前请求方法", e);
 
         return Response.failure(CommonCodes.REQUEST_METHOD_ERROR);
     }
@@ -87,11 +75,7 @@ public class HttpExceptionAdvice {
     @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     public Response<Object> handleHttpMediaTypeNotSupportedException(Exception e) {
-        log.warn("不支持当前媒体类型:" + e.getMessage());
-
-        if (log.isDebugEnabled()) {
-            e.printStackTrace();
-        }
+        log.warn("不支持当前媒体类型", e);
 
         return Response.failure(CommonCodes.REQUEST_MEDIA_ERROR);
     }

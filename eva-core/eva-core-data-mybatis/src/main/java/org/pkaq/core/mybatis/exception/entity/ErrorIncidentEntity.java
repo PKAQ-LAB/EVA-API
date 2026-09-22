@@ -7,19 +7,19 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import org.apache.ibatis.type.Alias;
-import org.pkaq.core.log.base.ErrorLogEntity;
+import org.pkaq.core.log.base.ErrorIncident;
 
 /**
- * 异常日志实体类
+ * PostgreSQL 错误事件实体。
  *
  * @author PKAQ
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@Alias("errorlog")
+@Alias("errorIncident")
 @TableName("log_error")
 @Accessors(chain = true)
-public class ErrorlogEntity extends ErrorLogEntity {
+public class ErrorIncidentEntity extends ErrorIncident {
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 }

@@ -9,8 +9,8 @@ import org.pkaq.core.exception.BizException;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.core.util.DateUtils;
-import org.pkaq.core.util.ExceptionUtils;
 import org.pkaq.core.util.StrUtils;
+import org.slf4j.MDC;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
@@ -39,11 +39,7 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ConstraintViolationException.class)
     public Response<Object> handleViolationException(ConstraintViolationException e) {
-        log.error("参数校验失败：" + e.getMessage());
-
-        if (log.isDebugEnabled()) {
-            e.printStackTrace();
-        }
+        log.warn("参数校验失败", e);
 
         Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
         StringBuilder message = new StringBuilder();
@@ -64,11 +60,7 @@ public class ExceptionAdvice {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Response<Object> handleMethodParamCheckException(MethodArgumentNotValidException e) {
 
-        log.error("参数校验失败：" + e.getMessage());
-
-        if (log.isDebugEnabled()) {
-            e.printStackTrace();
-        }
+        log.warn("参数校验失败", e);
 
         return Response.failure(CommonCodes.PARAM_TYPE_ERROR.getCode(), e.getBindingResult().getFieldError().getDefaultMessage());
     }
@@ -83,11 +75,7 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BindException.class)
     public Response<Object> handleBindException(BindException e) {
-        log.error("服务运行异常:" + e.getMessage());
-
-        if (log.isDebugEnabled()) {
-            e.printStackTrace();
-        }
+        log.warn("请求参数绑定失败", e);
 
         StringBuilder errorMsg = new StringBuilder();
         e.getAllErrors().forEach(
@@ -106,11 +94,7 @@ public class ExceptionAdvice {
     @ExceptionHandler(BizException.class)
     public Response<Object> handleBindException(BizException e) {
         String msg = StrUtils.defaultIfBlank(e.getMessage(), e.getEstr());
-        if (log.isDebugEnabled()) {
-            e.printStackTrace();
-        }
-
-        log.error("业务异常:" + msg);
+        log.error("业务异常: {}", msg, e);
 
         publishExceptionInfo(e);
 
@@ -130,10 +114,7 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public Response<Object> handleException(Exception e) {
-        log.error("服务运行异常:" + e.getMessage());
-        if (log.isDebugEnabled()) {
-            e.printStackTrace();
-        }
+        log.error("服务运行异常", e);
 
         publishExceptionInfo(e);
 
@@ -153,7 +134,9 @@ public class ExceptionAdvice {
                     .setRequestTime(DateUtils.now())
                     .setClassName(ste != null ? ste.getClassName() : "")
                     .setMethod(ste != null ? ste.getMethodName() : "")
-                    .setExDesc(ExceptionUtils.stackTraceToString(e, "org.pkaq"))
+                    .setExceptionType(e.getClass().getName())
+                    .setSummary(StrUtils.defaultIfBlank(e.getMessage(), e.getClass().getSimpleName()))
+                    .setTraceId(StrUtils.defaultIfBlank(MDC.get("traceId"), MDC.get("trace_id")))
                     .setLoginUser(safeGetUserName())
                     .setTenantId(safeGetTenantId());
 

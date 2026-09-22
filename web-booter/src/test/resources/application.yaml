@@ -1,5 +1,8 @@
 project:
   version: 0.0.1
+logging:
+  file:
+    name: build/test-logs/eva-test.log
 spring:
   profiles:
     active: dev,test

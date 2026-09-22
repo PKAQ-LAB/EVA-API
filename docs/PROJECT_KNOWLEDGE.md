@@ -97,7 +97,7 @@ EVA-API (root)
 - **数据权限**：`MybatisPlusPermissionConfig` + `MybatisPlusDataPermissionHandler` + `DataPermissionEnumm`
 - **多租户**：`CustomTenantLineHandler`
 - **枚举映射**：`UniversalEnumTypeHandler`（实现 `BaseEnum`）
-- **日志存储**：`PostgresBusinessLogRepository` / `MybatisErrorLogSupporter` + PostgreSQL Mapper
+- **日志存储**：`PostgresBusinessLogRepository` / `PostgresErrorIncidentRepository` + PostgreSQL Mapper
 - **工具**：`PageResult`、`TreeHelper`
 
 ### 4.3 `eva-core-cache` —— 缓存与序列号
@@ -110,7 +110,8 @@ EVA-API (root)
 - **入口**：`@BizLog` 注解 + `BizLogAdvice` AOP 切面
 - **事件机制**：`LogEvent` / `BizLogEvent` + `BusinessLogEventHandler` + `LogAsyncConfig`（异步落地）
 - **权威存储**：业务日志固定由 `BusinessLogRepository` 写入 PostgreSQL，不提供存储实现切换。
-- **错误日志**：完整堆栈输出到应用日志，PostgreSQL 仅保留可查询的错误摘要。
+- **错误事件**：`ErrorIncidentEventHandler` 按租户和稳定指纹聚合，PostgreSQL 仅保留摘要、次数、首末发生时间和处置状态。
+- **完整堆栈**：仅输出到应用文件/stdout，由部署侧 Alloy 采集到 Loki，应用不引入 Loki 客户端。
 - **配置入口**：`eva.bizlog.enabled` 仅控制业务审计切面，存储方案不可切换。
 
 ### 4.6 `eva-core-upload` —— 文件上传

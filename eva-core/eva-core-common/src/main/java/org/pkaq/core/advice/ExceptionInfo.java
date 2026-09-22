@@ -22,8 +22,12 @@ public class ExceptionInfo {
     private String method;
     /** 请求参数（由 web 层补充） */
     private String params;
-    /** 异常描述 */
-    private String exDesc;
+    /** 异常类型 */
+    private String exceptionType;
+    /** 异常摘要 */
+    private String summary;
+    /** 追踪标识 */
+    private String traceId;
     /** 登录用户 */
     private String loginUser;
     /** 租户ID */

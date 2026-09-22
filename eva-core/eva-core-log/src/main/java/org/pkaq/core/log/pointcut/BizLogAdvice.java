@@ -201,8 +201,7 @@ public class BizLogAdvice {
                 pMap.get(key).forEach(index -> formatArgs[index] = finalVal);
             });
         } catch (Exception e) {
-            log.error("记录日志异常:" + e.getMessage());
-            e.printStackTrace();
+            log.error("构造业务日志入参摘要失败", e);
         }
         return rMap;
     }
@@ -233,8 +232,7 @@ public class BizLogAdvice {
                 v.forEach(index -> formatArgs[index] = finalValue);
             });
         } catch (Exception e) {
-            log.error("记录日志异常:" + e.getMessage());
-            e.printStackTrace();
+            log.error("构造业务日志返回值摘要失败", e);
         }
     }
 

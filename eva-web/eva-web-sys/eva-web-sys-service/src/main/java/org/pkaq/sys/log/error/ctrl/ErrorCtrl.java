@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.pkaq.core.log.base.ErrorLogSupporter;
+import org.pkaq.core.log.base.ErrorIncidentRepository;
 import org.pkaq.core.mvc.bo.DateRangeBo;
 import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
@@ -25,13 +25,13 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class ErrorCtrl extends Ctrl {
 
-    private final ErrorLogSupporter errorLogSupporter;
+    private final ErrorIncidentRepository errorIncidentRepository;
 
     @GetMapping({"/get/{id}"})
     @Operation(summary = "根据id获取错误日志明细")
     public Response<Object> query(@Parameter(name = "id", description = "错误日志id")
                                   @PathVariable(name = "id") String id) {
-        return Response.success(this.errorLogSupporter.get(id));
+        return Response.success(this.errorIncidentRepository.get(id));
     }
 
     @GetMapping("/list")
@@ -47,7 +47,7 @@ public class ErrorCtrl extends Ctrl {
             dateRange.setEnd(new Date());
         }
 
-        return Response.success(this.errorLogSupporter.list(
+        return Response.success(this.errorIncidentRepository.list(
                 dateRange,
                 pageNo == null ? 1 : pageNo,
                 pageCount == null ? 10 : pageCount
