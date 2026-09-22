@@ -106,19 +106,9 @@
       "description": "Redis 缓存名称和 TTL 配置列表"
     },
     {
-      "name": "eva.errorlog.enabled",
-      "type": "java.lang.Boolean",
-      "description": "是否启用错误日志记录"
-    },
-    {
       "name": "eva.bizlog.enabled",
       "type": "java.lang.Boolean",
       "description": "是否启用业务日志"
-    },
-    {
-      "name": "eva.bizlog.impl",
-      "type": "java.lang.String",
-      "description": "业务日志实现方式（如 mybatis）"
     },
     {
       "name": "eva.license.enable",

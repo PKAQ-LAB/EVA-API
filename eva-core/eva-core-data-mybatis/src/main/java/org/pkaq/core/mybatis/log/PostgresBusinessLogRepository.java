@@ -1,15 +1,13 @@
 package org.pkaq.core.mybatis.log;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.log.base.BizLogEntity;
-import org.pkaq.core.log.base.LogSupporter;
+import org.pkaq.core.log.base.BusinessLogRepository;
 import org.pkaq.core.log.bo.LogQueryBo;
-import org.pkaq.core.log.condition.MybatisSupporterCondition;
 import org.pkaq.core.mvc.vo.PageVo;
 import org.pkaq.core.mybatis.log.entity.MybatisBizLogEntity;
-import org.pkaq.core.mybatis.log.mapper.MybatisSupporterMapper;
+import org.pkaq.core.mybatis.log.mapper.BusinessLogMapper;
 import org.pkaq.core.util.BeanUtils;
 import org.pkaq.core.util.DatePatterns;
 import org.pkaq.core.util.DateUtils;
@@ -17,24 +15,22 @@ import org.pkaq.core.util.json.JsonUtil;
 import org.pkaq.core.threaduser.ThreadUser;
 import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.core.properties.EvaConfig;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.List;
 
 /**
- * mybatis 存储实现类
+ * PostgreSQL 业务日志存储实现。
  *
  * @author PKAQ
  */
 @Slf4j
 @Component
-@Conditional(MybatisSupporterCondition.class)
 @RequiredArgsConstructor
-public class MybatisLogSupporter implements LogSupporter {
+public class PostgresBusinessLogRepository implements BusinessLogRepository {
 
-    private final MybatisSupporterMapper mybatisSupporterMapper;
+    private final BusinessLogMapper businessLogMapper;
     private final EvaConfig evaConfig;
 
     @Override
@@ -45,7 +41,7 @@ public class MybatisLogSupporter implements LogSupporter {
         try {
             MybatisBizLogEntity mybatisBizLogEntity = new MybatisBizLogEntity();
             BeanUtils.copyProperties(bizLogEntity, mybatisBizLogEntity);
-            this.mybatisSupporterMapper.insert(mybatisBizLogEntity);
+            this.businessLogMapper.insert(mybatisBizLogEntity);
         } catch (Exception exception) {
             // 审计日志写入失败不得破坏主业务，异常仍写入应用日志供监控告警。
             log.error("保存业务日志失败, tenantId: {}, userId: {}",
@@ -56,7 +52,7 @@ public class MybatisLogSupporter implements LogSupporter {
     @Override
     public String get(String id) {
         try {
-            MybatisBizLogEntity entity = this.mybatisSupporterMapper.selectLogById(
+            MybatisBizLogEntity entity = this.businessLogMapper.selectLogById(
                     Long.valueOf(id), currentTenantId(null));
             return null != entity ? JsonUtil.toJson(entity) : "";
         } catch (NumberFormatException exception) {
@@ -84,10 +80,10 @@ public class MybatisLogSupporter implements LogSupporter {
         long offset = (pageNo - 1) * pageSize;
         Long tenantId = currentTenantId(safeQuery.getTargetTenantId());
 
-        long total = this.mybatisSupporterMapper.countLogs(tenantId, beginText, endText,
+        long total = this.businessLogMapper.countLogs(tenantId, beginText, endText,
                 safeQuery.getOperator(), safeQuery.getOperateType(), safeQuery.getMCode(),
                 safeQuery.getBId(), includeArchived);
-        List<MybatisBizLogEntity> records = this.mybatisSupporterMapper.selectLogPage(
+        List<MybatisBizLogEntity> records = this.businessLogMapper.selectLogPage(
                 tenantId, beginText, endText, safeQuery.getOperator(), safeQuery.getOperateType(),
                 safeQuery.getMCode(), safeQuery.getBId(), includeArchived, offset, pageSize);
 
@@ -97,66 +93,6 @@ public class MybatisLogSupporter implements LogSupporter {
         page.setCurrent(pageNo);
         page.setSize(pageSize);
         return page;
-    }
-
-    @Override
-    public List<? extends BizLogEntity> getLog() {
-        QueryWrapper<MybatisBizLogEntity> wrapper = new QueryWrapper<>();
-        wrapper.eq("tenant_id", currentTenantId(null));
-        return this.mybatisSupporterMapper.selectList(wrapper);
-    }
-
-    @Override
-    public List<? extends BizLogEntity> getLogByType(String type) {
-        MybatisBizLogEntity mybatisBizLogEntity = new MybatisBizLogEntity();
-        mybatisBizLogEntity.setOperateType(type);
-        mybatisBizLogEntity.setTenantId(currentTenantId(null));
-
-        QueryWrapper<MybatisBizLogEntity> wrapper = new QueryWrapper<>(mybatisBizLogEntity);
-        return this.mybatisSupporterMapper.selectList(wrapper);
-    }
-
-    @Override
-    public List<? extends BizLogEntity> getLogAfter(Date dateTime) {
-        QueryWrapper<MybatisBizLogEntity> wrapper = new QueryWrapper<>();
-        wrapper.ge("operate_datetime", dateTime);
-        wrapper.eq("tenant_id", currentTenantId(null));
-        return this.mybatisSupporterMapper.selectList(wrapper);
-    }
-
-    @Override
-    public List<? extends BizLogEntity> getLogBetween(Date begin, Date end) {
-        QueryWrapper<MybatisBizLogEntity> wrapper = new QueryWrapper<>();
-        wrapper.between("operate_datetime", begin, end);
-        wrapper.eq("tenant_id", currentTenantId(null));
-        return this.mybatisSupporterMapper.selectList(wrapper);
-    }
-
-    @Override
-    public void cleanAll() {
-        QueryWrapper<MybatisBizLogEntity> wrapper = new QueryWrapper<>();
-        wrapper.eq("tenant_id", currentTenantId(null));
-        this.mybatisSupporterMapper.delete(wrapper);
-    }
-
-    @Override
-    public void cleanBefore(Date dateTime) {
-        QueryWrapper<MybatisBizLogEntity> wrapper = new QueryWrapper<>();
-        wrapper.le("operate_datetime", dateTime);
-        wrapper.eq("tenant_id", currentTenantId(null));
-        this.mybatisSupporterMapper.delete(wrapper);
-    }
-
-    @Override
-    public void cleanBetween(Date begin, Date end) {
-        QueryWrapper<MybatisBizLogEntity> wrapper = new QueryWrapper<>();
-        wrapper.between("operate_datetime", begin, end);
-        wrapper.eq("tenant_id", currentTenantId(null));
-        this.mybatisSupporterMapper.delete(wrapper);
-    }
-
-    @Override
-    public void print() {
     }
 
     private Long currentTenantId(Long targetTenantId) {

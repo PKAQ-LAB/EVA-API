@@ -51,10 +51,6 @@ public class EvaConfig {
      **/
     private BizLog bizlog;
     /**
-     * 错误日志配置
-     **/
-    private ErrorLog errorLog;
-    /**
      * 分页配置
      */
     private Page page = new Page();
@@ -93,10 +89,6 @@ public class EvaConfig {
 
     public BizLog getBizlog() {
         return null == this.bizlog ? new BizLog() : bizlog;
-    }
-
-    public ErrorLog getErrorLog() {
-        return null == this.errorLog ? new ErrorLog() : errorLog;
     }
 
     public File getUpload() {

@@ -8,7 +8,5 @@ project.description = 'eva log support'
 
 dependencies {
     implementation  project(":eva-core:eva-core-common")
-
-    compileOnly libs.jdbc
-    testImplementation libs.jdbc
+    implementation libs.spring.tx
 }

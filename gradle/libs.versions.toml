@@ -66,7 +66,7 @@ cache = { module = "org.springframework.boot:spring-boot-starter-cache" }
 aop = { module = "org.springframework.boot:spring-boot-starter-aop", version.ref="aop" }
 
 jdbc = { module = "org.springframework.boot:spring-boot-starter-jdbc" }
-mongo = { module = "org.springframework.boot:spring-boot-starter-data-mongodb" }
+spring_tx = { module = "org.springframework:spring-tx" }
 
 # 安全
 security = { module = "org.springframework.boot:spring-boot-starter-security" }

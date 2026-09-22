@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.pkaq.core.log.base.LogSupporter;
+import org.pkaq.core.log.base.BusinessLogRepository;
 import org.pkaq.core.log.bo.LogQueryBo;
 import org.pkaq.core.mvc.ctrl.Ctrl;
 import org.pkaq.core.mvc.vo.Response;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "业务日志")
 @RequiredArgsConstructor
 public class BizLogCtrl extends Ctrl {
-    private final LogSupporter logSupporter;
+    private final BusinessLogRepository businessLogRepository;
 
     /**
      * 根据id获取操作日志明细
@@ -32,7 +32,7 @@ public class BizLogCtrl extends Ctrl {
     @Operation(description = "根据id获取操作日志明细")
     public Response<Object> query(@Parameter(name = "id", description = "操作日志id")
                                   @PathVariable(name = "id") String id) {
-        return success(this.logSupporter.get(id));
+        return success(this.businessLogRepository.get(id));
     }
 
     /**
@@ -41,6 +41,6 @@ public class BizLogCtrl extends Ctrl {
     @GetMapping("/list")
     @Operation(description = "获取日志列表")
     public Response<Object> list(@Parameter(name = "query", description = "日志查询条件") LogQueryBo queryBo) {
-        return Response.success(this.logSupporter.list(queryBo));
+        return Response.success(this.businessLogRepository.list(queryBo));
     }
 }

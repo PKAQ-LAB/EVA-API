@@ -14,7 +14,7 @@
 | 构建 | Gradle 多模块 + `libs.versions.toml` 版本目录 |
 | 核心框架 | Spring Boot **4.1.1** + Spring Security |
 | ORM | MyBatis-Plus **3.5.17**（兼容 Spring Boot 4 starter） |
-| 数据库 | MySQL 9.7 / PostgreSQL（默认）；Mongo（日志） |
+| 数据库 | PostgreSQL（业务、登录、业务日志和错误事件的权威存储） |
 | 缓存 | Redis（唯一共享缓存与安全状态存储） |
 | 鉴权 | JWT（Nimbus JOSE 10.9.1）+ 双 Token + 设备 ID |
 | 对象映射 | MapStruct **1.6.3**（`defaultComponentModel = spring`） |
@@ -34,9 +34,8 @@ EVA-API (root)
 │
 ├── eva-core/                           # 框架级能力（无业务）
 │   ├── eva-core-common                 # MVC 基类、Properties、i18n、JWT 工具、ThreadUser
-│   ├── eva-core-log                    # 业务日志 / 错误日志 + 多 Supporter
+│   ├── eva-core-log                    # 业务日志 / 错误日志契约与事件
 │   ├── eva-core-data-mybatis           # StdEntity/StdService/StdCtrl + 数据权限 + 多租户
-│   ├── eva-core-data-mongo             # Mongo 日志存储
 │   ├── eva-core-cache                  # Redis / 序列号生成
 │   ├── eva-core-upload                 # 多 Provider 文件上传 + 临时文件清理
 │   ├── eva-core-websocket              # WebSocket + 心跳调度
@@ -98,7 +97,7 @@ EVA-API (root)
 - **数据权限**：`MybatisPlusPermissionConfig` + `MybatisPlusDataPermissionHandler` + `DataPermissionEnumm`
 - **多租户**：`CustomTenantLineHandler`
 - **枚举映射**：`UniversalEnumTypeHandler`（实现 `BaseEnum`）
-- **错误日志**：`MybatisErrorLogSupporter` + `ErrorlogEntity` + `ErrorlogMapper`
+- **日志存储**：`PostgresBusinessLogRepository` / `MybatisErrorLogSupporter` + PostgreSQL Mapper
 - **工具**：`PageResult`、`TreeHelper`
 
 ### 4.3 `eva-core-cache` —— 缓存与序列号
@@ -109,14 +108,10 @@ EVA-API (root)
 
 ### 4.4 `eva-core-log` —— 日志域
 - **入口**：`@BizLog` 注解 + `BizLogAdvice` AOP 切面
-- **事件机制**：`LogEvent` / `BizLogEvent` + `LogAsyncConfig`（异步落地）
-- **Supporter（按 Condition 切换写入目标）**：Console / Jdbc / Mongo / Redis / Kafka / File / MyBatis
-- **错误日志**：`ErrorLogSupporter` + `ErrorLogEntity`
-- **配置入口**：`eva.bizlog`、`eva.error-log`
-
-### 4.5 `eva-core-data-mongo` —— Mongo 日志载体
-- `MongoLogSupporter` + `MongoBizLogEntity` + `MongoBizLogRepository`
-- 默认承接日志归档与查询（与 log 模块协作）
+- **事件机制**：`LogEvent` / `BizLogEvent` + `BusinessLogEventHandler` + `LogAsyncConfig`（异步落地）
+- **权威存储**：业务日志固定由 `BusinessLogRepository` 写入 PostgreSQL，不提供存储实现切换。
+- **错误日志**：完整堆栈输出到应用日志，PostgreSQL 仅保留可查询的错误摘要。
+- **配置入口**：`eva.bizlog.enabled` 仅控制业务审计切面，存储方案不可切换。
 
 ### 4.6 `eva-core-upload` —— 文件上传
 - 控制器：`FileUploadCtrl`
@@ -205,7 +200,7 @@ EVA-API (root)
 | `eva.auth.*` | `Auth` | 白名单 / 登录路径等 |
 | `eva.tenant.*` | `Tenant` | 多租户隔离字段 |
 | `eva.cache.*` | `Cache` | 缓存类型选择 |
-| `eva.bizlog.*` / `eva.error-log.*` | `BizLog`/`ErrorLog` | 日志开关、包过滤、Supporter |
+| `eva.bizlog.*` | `BizLog` | 业务审计开关与 PostgreSQL 归档周期 |
 | `eva.upload.*` | `File` | 文件存储选型 |
 | `eva.page.*` | `Page` | 分页默认值 |
 | `eva.data-permission.*` | `DataPermission` | 数据权限规则 |

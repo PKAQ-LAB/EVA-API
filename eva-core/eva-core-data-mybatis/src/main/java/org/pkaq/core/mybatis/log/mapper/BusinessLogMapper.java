@@ -13,7 +13,7 @@ import java.util.List;
  */
 @Mapper
 @Repository
-public interface MybatisSupporterMapper extends BaseMapper<MybatisBizLogEntity> {
+public interface BusinessLogMapper extends BaseMapper<MybatisBizLogEntity> {
 
     MybatisBizLogEntity selectLogById(@Param("id") Long id, @Param("tenantId") Long tenantId);
 

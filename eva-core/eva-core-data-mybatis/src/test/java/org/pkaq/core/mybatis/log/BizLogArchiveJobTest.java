@@ -1,7 +1,7 @@
 package org.pkaq.core.mybatis.log;
 
 import org.junit.jupiter.api.Test;
-import org.pkaq.core.mybatis.log.mapper.MybatisSupporterMapper;
+import org.pkaq.core.mybatis.log.mapper.BusinessLogMapper;
 import org.pkaq.core.properties.BizLog;
 import org.pkaq.core.properties.EvaConfig;
 
@@ -16,7 +16,7 @@ class BizLogArchiveJobTest {
 
     @Test
     void skipsWhenAnotherInstanceOwnsArchiveLock() {
-        MybatisSupporterMapper mapper = mock(MybatisSupporterMapper.class);
+        BusinessLogMapper mapper = mock(BusinessLogMapper.class);
         EvaConfig config = archiveConfig();
         when(mapper.tryArchiveLock()).thenReturn(false);
 
@@ -27,7 +27,7 @@ class BizLogArchiveJobTest {
 
     @Test
     void archivesInStableBatchesUntilLastPartialBatch() {
-        MybatisSupporterMapper mapper = mock(MybatisSupporterMapper.class);
+        BusinessLogMapper mapper = mock(BusinessLogMapper.class);
         EvaConfig config = archiveConfig();
         when(mapper.tryArchiveLock()).thenReturn(true);
         when(mapper.archiveBefore(anyString(), eq(10))).thenReturn(10, 3);

@@ -1,7 +1,7 @@
 package org.pkaq.sys.log;
 
 import org.junit.jupiter.api.Test;
-import org.pkaq.core.log.base.LogSupporter;
+import org.pkaq.core.log.base.BusinessLogRepository;
 import org.pkaq.core.log.bo.LogQueryBo;
 import org.pkaq.core.mvc.vo.PageVo;
 import org.pkaq.core.mybatis.log.BizLogArchiveJob;
@@ -32,7 +32,7 @@ class BusinessLogIntegrationTest {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private LogSupporter logSupporter;
+    private BusinessLogRepository businessLogRepository;
 
     @Autowired
     private BizLogArchiveJob archiveJob;
@@ -47,9 +47,9 @@ class BusinessLogIntegrationTest {
         insertLog(archivedId, archivedBizId, LocalDateTime.now().minusMonths(7));
 
         LogQueryBo hotQuery = query(hotBizId);
-        PageVo<?> hotPage = (PageVo<?>) logSupporter.list(hotQuery);
+        PageVo<?> hotPage = (PageVo<?>) businessLogRepository.list(hotQuery);
         assertEquals(1, hotPage.getTotal());
-        assertTrue(logSupporter.get(String.valueOf(hotId)).contains(hotBizId));
+        assertTrue(businessLogRepository.get(String.valueOf(hotId)).contains(hotBizId));
 
         archiveJob.archive();
 
@@ -57,7 +57,7 @@ class BusinessLogIntegrationTest {
                 "SELECT COUNT(*) FROM LOG_BIZ WHERE ID = ?", Integer.class, archivedId));
         assertEquals(1, jdbcTemplate.queryForObject(
                 "SELECT COUNT(*) FROM LOG_BIZ_ARCHIVE WHERE ID = ?", Integer.class, archivedId));
-        PageVo<?> archivePage = (PageVo<?>) logSupporter.list(query(archivedBizId));
+        PageVo<?> archivePage = (PageVo<?>) businessLogRepository.list(query(archivedBizId));
         assertEquals(1, archivePage.getTotal());
         MybatisBizLogEntity archived = (MybatisBizLogEntity) archivePage.getRecords().getFirst();
         assertEquals(Boolean.TRUE, archived.getArchived());

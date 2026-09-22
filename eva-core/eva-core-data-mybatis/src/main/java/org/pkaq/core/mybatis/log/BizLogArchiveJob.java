@@ -2,14 +2,12 @@ package org.pkaq.core.mybatis.log;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.pkaq.core.log.condition.MybatisSupporterCondition;
-import org.pkaq.core.mybatis.log.mapper.MybatisSupporterMapper;
+import org.pkaq.core.mybatis.log.mapper.BusinessLogMapper;
 import org.pkaq.core.properties.BizLog;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.util.DatePatterns;
 import org.pkaq.core.util.DateUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -27,10 +25,9 @@ import java.util.Calendar;
 @Component
 @EnableScheduling
 @RequiredArgsConstructor
-@Conditional(MybatisSupporterCondition.class)
 @ConditionalOnProperty(prefix = "eva.bizlog.archive", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class BizLogArchiveJob {
-    private final MybatisSupporterMapper logMapper;
+    private final BusinessLogMapper logMapper;
     private final EvaConfig evaConfig;
 
     /**

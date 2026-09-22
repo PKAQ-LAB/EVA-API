@@ -123,13 +123,9 @@ eva:
         ttl: 1d
       - name: dictdata
         ttl: 0s
-  # 错误日志
-  errorlog:
-    enabled: true
   # 业务日志
   bizlog:
     enabled: true
-    impl: mybatis
   license:
     enable: false
     # 公钥别名

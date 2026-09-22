@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.log.base.ErrorLogEntity;
 import org.pkaq.core.log.base.ErrorLogSupporter;
-import org.pkaq.core.log.condition.ErrorlogSupporterCondition;
 import org.pkaq.core.mvc.bo.DateRangeBo;
 import org.pkaq.core.mvc.vo.PageVo;
 import org.pkaq.core.mybatis.exception.entity.ErrorlogEntity;
@@ -17,7 +16,6 @@ import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.core.util.BeanUtils;
 import org.pkaq.core.util.DateUtils;
 import org.pkaq.core.util.DatePatterns;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -31,7 +29,6 @@ import java.util.function.Function;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@Conditional(ErrorlogSupporterCondition.class)
 public class MybatisErrorLogSupporter implements ErrorLogSupporter {
 
     private final ErrorlogMapper errorlogMapper;

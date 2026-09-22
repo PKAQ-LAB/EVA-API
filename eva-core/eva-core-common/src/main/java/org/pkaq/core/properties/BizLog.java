@@ -14,11 +14,6 @@ public class BizLog {
      */
     private boolean enabled = false;
     /**
-     * 实现类
-     */
-    private String impl = "";
-
-    /**
      * 业务日志归档配置。
      */
     private Archive archive = new Archive();

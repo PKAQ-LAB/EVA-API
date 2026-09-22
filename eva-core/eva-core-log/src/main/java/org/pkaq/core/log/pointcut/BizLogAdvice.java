@@ -12,16 +12,15 @@ import org.pkaq.core.i18n.I18NHelper;
 import org.pkaq.core.log.annotation.BizLog;
 import org.pkaq.core.log.base.BizLogCodes;
 import org.pkaq.core.log.base.BizLogEntity;
-import org.pkaq.core.log.base.LogSupporter;
-import org.pkaq.core.log.condition.BizlogSupporterCondition;
 import org.pkaq.core.log.events.BizLogEvent;
+import org.pkaq.core.log.events.BusinessLogEventHandler;
 import org.pkaq.core.log.util.LogSanitizer;
 import org.pkaq.core.threaduser.ThreadUser;
 import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.core.util.*;
 import org.pkaq.core.util.json.JsonUtil;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.annotation.Conditional;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +36,7 @@ import java.util.*;
 @Aspect
 @Component
 @RequiredArgsConstructor
-@Conditional(BizlogSupporterCondition.class)
+@ConditionalOnProperty(prefix = "eva.bizlog", name = "enabled", havingValue = "true")
 public class BizLogAdvice {
     private static final int MAX_PARAMS_LENGTH = 16_000;
     private static final int MAX_RESPONSE_LENGTH = 32_000;
@@ -116,7 +115,7 @@ public class BizLogAdvice {
         } catch (Exception e) {
             // 无事务时操作失败不会走AFTER_ROLLBACK监听器 所以手动设置操作失败的记录
             if (!isTransactional) {
-                description = "%s%s".formatted(LogSupporter.FAILURE_PREFIX, description);
+                description = "%s%s".formatted(BusinessLogEventHandler.FAILURE_PREFIX, description);
             }
             throw e;
         } finally {
