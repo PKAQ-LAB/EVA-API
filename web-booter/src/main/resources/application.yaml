@@ -79,6 +79,11 @@ server:
   shutdown: graceful
 eva:
   mode: standalone
+  client-info:
+    # 仅这些代理来源可以提供 X-Forwarded-For / X-Real-IP；默认不信任任何来源
+    trusted-proxies: []
+    # 在线会话最后活动时间最多每分钟写入一次 Redis
+    activity-update-interval-seconds: 60
   cloud:
     # 是否仅允许经过网关转发的请求访问服务，默认关闭
     enable: false
@@ -91,21 +96,23 @@ eva:
   # 该配置必须在jwt配置前 30天有效
   cookie:
     maxAge: &maxAge 2592000
+    secure: false
+    same-site: Lax
   # JWT配置
   jwt:
     # 是否持久化token
-    persistence: false
+    persistence: true
     header: Authorization
     token-head: Bearer
     sign: PKAQ
     secert: 6MNSobBRCHGIO0fS6MNSobBRCHGIO0fS
-    ttl: *maxAge
-    # 6 小时
-    alphaTtl: 21600000
+    ttl: 2592000000
+    # 30 分钟
+    alphaTtl: 1800000
     # 30 天
     bravoTtl: 2592000000
-    # 过期阈值 默认6小时
-    threshold: 21600000
+    # 过期阈值 默认5分钟
+    threshold: 300000
   # 访问权限
   auth:
     jwtEnabled: true

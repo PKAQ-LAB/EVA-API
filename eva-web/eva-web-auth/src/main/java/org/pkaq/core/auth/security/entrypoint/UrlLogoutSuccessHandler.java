@@ -9,9 +9,10 @@ import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.properties.EvaConfig;
-import org.pkaq.core.threaduser.ThreadUserHelper;
+import org.pkaq.core.jwt.JwtUtil;
 import org.pkaq.web.core.utils.CookieUtils;
 import org.pkaq.web.core.utils.ResponseUtil;
+import org.pkaq.web.core.utils.TokenUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -30,6 +31,8 @@ public class UrlLogoutSuccessHandler implements LogoutSuccessHandler {
     private final EvaConfig evaConfig;
 
     private final CacheTokenUtil tokenUtil;
+    private final TokenUtils requestTokenUtil;
+    private final JwtUtil jwtUtil;
     private final LoginLogService loginLogService;
 
     @Override
@@ -38,18 +41,35 @@ public class UrlLogoutSuccessHandler implements LogoutSuccessHandler {
                                 Authentication authentication) throws IOException {
 
         var cacheToken = evaConfig.getJwt().isPersistence();
-        // 清除 Redis 在线会话，确保所有节点立即失效。
-        var currentUser = ThreadUserHelper.getCurrentUserOrNull();
-        if (cacheToken && currentUser != null && currentUser.getUserId() > 0L) {
-            this.tokenUtil.removeToken(currentUser.getTenantId(), currentUser.getUserId());
+        // 仅清除当前设备会话，其他设备保持登录。
+        String currentToken = requestTokenUtil.getToken(httpServletRequest);
+        if (currentToken == null || currentToken.isBlank()) {
+            currentToken = requestTokenUtil.getRefreshToken(httpServletRequest);
+        }
+        String sessionId = null;
+        Long tenantId = null;
+        Long userId = null;
+        String account = null;
+        if (currentToken != null && !currentToken.isBlank()
+                && (jwtUtil.isAccessToken(currentToken) || jwtUtil.isRefreshToken(currentToken))) {
+            sessionId = jwtUtil.getSessionId(currentToken);
+            tenantId = jwtUtil.getTenantId(currentToken);
+            userId = jwtUtil.getUid(currentToken);
+            account = jwtUtil.getAccount(currentToken);
+            if (cacheToken) {
+                this.tokenUtil.removeToken(tenantId, userId, sessionId);
+            }
         }
         String domain = evaConfig.getCookie().getDomain();
 
-        CookieUtils.clearCookie(httpServletResponse, CommonConstant.ACCESS_TOKEN_KEY, "/", domain);
-        CookieUtils.clearCookie(httpServletResponse, CommonConstant.REFRESH_TOKEN_KEY, "/", domain);
-        CookieUtils.clearCookie(httpServletResponse, CommonConstant.USER_KEY, "/", domain);
+        CookieUtils.clearCookie(httpServletResponse, CommonConstant.ACCESS_TOKEN_KEY, "/", domain,
+                evaConfig.getCookie().isSecure(), evaConfig.getCookie().getSameSite());
+        CookieUtils.clearCookie(httpServletResponse, CommonConstant.REFRESH_TOKEN_KEY, "/", domain,
+                evaConfig.getCookie().isSecure(), evaConfig.getCookie().getSameSite());
+        CookieUtils.clearCookie(httpServletResponse, CommonConstant.USER_KEY, "/", domain,
+                evaConfig.getCookie().isSecure(), evaConfig.getCookie().getSameSite());
 
-        loginLogService.saveLogout(httpServletRequest);
+        loginLogService.saveLogout(httpServletRequest, tenantId, userId, account, sessionId, "USER_LOGOUT");
 
         ResponseUtil.write(httpServletResponse, Response.success(null,
                 CommonCodes.LOGINOUT_SUCCESS.getMsg(), CommonCodes.LOGINOUT_SUCCESS.getCode()));

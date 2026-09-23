@@ -14,12 +14,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.pkaq.core.auth.log.bo.LoginLogQueryBo;
 import org.pkaq.core.auth.log.entity.LoginLogEntity;
 import org.pkaq.core.auth.log.mapper.LoginLogMapper;
+import org.pkaq.core.auth.domain.JwtUserDetail;
 import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.threaduser.ThreadUser;
 import org.pkaq.core.threaduser.ThreadUserHelper;
+import org.pkaq.web.core.client.ClientInfoResolver;
 
 import java.util.Map;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * 登录日志租户隔离测试。
@@ -50,7 +54,8 @@ class LoginLogServiceTest {
         TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""),
                 LoginLogEntity.class);
         this.evaConfig = new EvaConfig();
-        this.service = new LoginLogService(this.loginLogMapper, this.evaConfig);
+        this.service = new LoginLogService(this.loginLogMapper, this.evaConfig,
+                new ClientInfoResolver(this.evaConfig));
         lenient().when(this.loginLogMapper.selectPage(any(Page.class), any(LambdaQueryWrapper.class)))
                 .thenReturn(new Page<>());
     }
@@ -154,6 +159,51 @@ class LoginLogServiceTest {
         assertEquals(45L, entity.getTenantId());
         assertEquals(67L, entity.getUserId());
         assertEquals("logout-account", entity.getAccount());
+    }
+
+    /**
+     * 匿名放行的退出接口仍应使用已验签Token身份记录退出日志。
+     */
+    @Test
+    void shouldSaveLogoutWithTrustedTokenIdentity() {
+        this.service.saveLogout(new org.springframework.mock.web.MockHttpServletRequest(),
+                45L, 67L, "token-account", "web-1", "USER_LOGOUT");
+
+        ArgumentCaptor<LoginLogEntity> captor = ArgumentCaptor.forClass(LoginLogEntity.class);
+        verify(this.loginLogMapper).insert(captor.capture());
+        LoginLogEntity entity = captor.getValue();
+        assertEquals(45L, entity.getTenantId());
+        assertEquals(67L, entity.getUserId());
+        assertEquals("token-account", entity.getAccount());
+        assertEquals("web-1", entity.getSessionId());
+        assertEquals("USER_LOGOUT", entity.getLogoutReason());
+    }
+
+    /**
+     * 登录成功日志必须关联会话并记录解析后的客户端信息。
+     */
+    @Test
+    void shouldSaveSessionAndParsedClientInformation() {
+        when(this.loginLogMapper.selectCount(any(LambdaQueryWrapper.class))).thenReturn(0L);
+        org.springframework.mock.web.MockHttpServletRequest request =
+                new org.springframework.mock.web.MockHttpServletRequest();
+        request.setRemoteAddr("203.0.113.10");
+        request.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                + "AppleWebKit/537.36 Chrome/140.0.0.0 Safari/537.36 Edg/140.0.0.0");
+        JwtUserDetail user = new JwtUserDetail(67L, "admin", 45L, "-", null,
+                "管理员", "管理员", false, Collections.emptyList());
+
+        this.service.saveSuccess(request, user, "web-1");
+
+        ArgumentCaptor<LoginLogEntity> captor = ArgumentCaptor.forClass(LoginLogEntity.class);
+        verify(this.loginLogMapper).insert(captor.capture());
+        LoginLogEntity entity = captor.getValue();
+        assertEquals("web-1", entity.getSessionId());
+        assertEquals("203.0.113.10", entity.getIp());
+        assertEquals("DESKTOP", entity.getDeviceType());
+        assertEquals("Windows", entity.getOsName());
+        assertEquals("Edge", entity.getBrowserName());
+        assertEquals("NEW_DEVICE", entity.getRiskFlags());
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

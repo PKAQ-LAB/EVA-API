@@ -28,11 +28,12 @@ public class RedisSessionStore {
      *
      * @param tenantId 租户ID
      * @param userId 用户ID
+     * @param sessionId 会话标识
      * @param value 会话元数据
      * @param ttl 有效时间
      */
-    public void save(Long tenantId, Long userId, Object value, Duration ttl) {
-        redisTemplate.opsForValue().set(storageKey(tenantId, userId), value, ttl);
+    public void save(Long tenantId, Long userId, String sessionId, Object value, Duration ttl) {
+        redisTemplate.opsForValue().set(storageKey(tenantId, userId, sessionId), value, ttl);
     }
 
     /**
@@ -40,10 +41,11 @@ public class RedisSessionStore {
      *
      * @param tenantId 租户ID
      * @param userId 用户ID
+     * @param sessionId 会话标识
      * @return 会话元数据
      */
-    public Object get(Long tenantId, Long userId) {
-        return redisTemplate.opsForValue().get(storageKey(tenantId, userId));
+    public Object get(Long tenantId, Long userId, String sessionId) {
+        return redisTemplate.opsForValue().get(storageKey(tenantId, userId, sessionId));
     }
 
     /**
@@ -51,9 +53,20 @@ public class RedisSessionStore {
      *
      * @param tenantId 租户ID
      * @param userId 用户ID
+     * @param sessionId 会话标识
      */
-    public void remove(Long tenantId, Long userId) {
-        redisTemplate.delete(storageKey(tenantId, userId));
+    public void remove(Long tenantId, Long userId, String sessionId) {
+        redisTemplate.delete(storageKey(tenantId, userId, sessionId));
+    }
+
+    /**
+     * 删除指定用户的全部设备会话。
+     *
+     * @param tenantId 租户ID
+     * @param userId 用户ID
+     */
+    public void removeUser(Long tenantId, Long userId) {
+        scan(storageKeyPrefix(tenantId, userId) + "*").keySet().forEach(this::removeLogicalKey);
     }
 
     /**
@@ -64,8 +77,12 @@ public class RedisSessionStore {
      */
     public Map<String, Object> list(Long tenantId) {
         String tenantPrefix = tenantId == null ? "" : trustedTenantId(tenantId) + ":";
+        return scan(KEY_PREFIX + tenantPrefix + "*");
+    }
+
+    private Map<String, Object> scan(String pattern) {
         ScanOptions options = ScanOptions.scanOptions()
-                .match(KEY_PREFIX + tenantPrefix + "*")
+                .match(pattern)
                 .count(500)
                 .build();
         Map<String, Object> sessions = new LinkedHashMap<>();
@@ -99,8 +116,15 @@ public class RedisSessionStore {
         redisTemplate.delete(KEY_PREFIX + logicalKey);
     }
 
-    private String storageKey(Long tenantId, Long userId) {
-        return KEY_PREFIX + trustedTenantId(tenantId) + ":" + userId;
+    private String storageKey(Long tenantId, Long userId, String sessionId) {
+        if (sessionId == null || sessionId.isBlank()) {
+            throw new IllegalArgumentException("会话标识不能为空");
+        }
+        return storageKeyPrefix(tenantId, userId) + sessionId;
+    }
+
+    private String storageKeyPrefix(Long tenantId, Long userId) {
+        return KEY_PREFIX + trustedTenantId(tenantId) + ":" + userId + ":";
     }
 
     private long trustedTenantId(Long tenantId) {

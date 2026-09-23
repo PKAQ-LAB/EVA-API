@@ -4,6 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.auth.AuthCodes;
+import org.pkaq.core.auth.role.entity.AuthRoleEntity;
+import org.pkaq.core.auth.log.service.LoginLogService;
 import org.pkaq.core.auth.user.entity.AuthUserEntity;
 import org.pkaq.core.auth.user.service.AuthUserService;
 import org.pkaq.core.auth.util.CacheTokenUtil;
@@ -23,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,6 +42,7 @@ public class TokenCtrl {
     private final AuthUserService authUserService;
     private final TenantLoginResolver tenantLoginResolver;
     private final TenantAuthRoutingService tenantAuthRoutingService;
+    private final LoginLogService loginLogService;
 
     /**
      * 使用refresh token换取access token
@@ -78,7 +80,7 @@ public class TokenCtrl {
         long uid = jwtUtil.getUid(refreshTk);
         long tenantId = jwtUtil.getTenantId(refreshTk);
         String account = jwtUtil.getAccount(refreshTk);
-        List<Long> roleIds = jwtUtil.getRoles(refreshTk);
+        String oldSessionId = jwtUtil.getSessionId(refreshTk);
         long tokenPermVer = jwtUtil.getPermVer(refreshTk);
 
         // 权限版本号校验
@@ -93,7 +95,8 @@ public class TokenCtrl {
             this.clearCookie(response);
             AuthCodes.LOGIN_EXPIRED.newException(AuthenticationException.class);
         }
-        if (cacheToken && cacheTokenUtil.getToken(tenantId, uid) == null) {
+        if (cacheToken && (oldSessionId == null || oldSessionId.isBlank()
+                || !cacheTokenUtil.matchesRefreshToken(tenantId, uid, oldSessionId, refreshTk))) {
             this.clearCookie(response);
             AuthCodes.LOGIN_EXPIRED.newException(AuthenticationException.class);
         }
@@ -103,27 +106,37 @@ public class TokenCtrl {
             AuthCodes.PERM_VER_CHANGED.newException(AuthenticationException.class);
         }
 
-        // 签发新的 access token
+        var roleIds = authState.getRoles() == null
+                ? java.util.Collections.<Long>emptyList()
+                : authState.getRoles().stream().map(AuthRoleEntity::getId).toList();
+        String newSessionId = jwtUtil.newSessionId();
+
+        // access token 与 refresh token 共用同一会话标识，刷新后旧会话立即失效。
         String newAlpha = jwtUtil.build(evaConfig.getJwt().getAlphaTtl(), uid, account, roleIds, dbPermVer,
-                tenantId, tenantIdentity.schemaGeneration());
+                tenantId, tenantIdentity.schemaGeneration(), newSessionId);
 
         // 签发新的 refresh token
         String newBravo = jwtUtil.buildRefreshToken(evaConfig.getJwt().getBravoTtl(), uid, account, roleIds, dbPermVer,
-                tenantId, tenantIdentity.schemaGeneration());
+                tenantId, tenantIdentity.schemaGeneration(), newSessionId);
+
+        // 先废止旧 refresh token，再登记新会话，阻止旧 token 重放。
+        if (cacheToken) {
+            cacheTokenUtil.removeToken(tenantId, uid, oldSessionId);
+            cacheTokenUtil.saveToken(tenantId, uid, newSessionId,
+                    cacheTokenUtil.buildCacheValue(request, uid, newAlpha, newBravo));
+        }
+        loginLogService.rotateSession(tenantId, uid, oldSessionId, newSessionId);
 
         // 替换客户端的旧token
         String domain = evaConfig.getCookie().getDomain();
         String path = "/";
 
         CookieUtils.addCookie(response, CommonConstant.ACCESS_TOKEN_KEY,
-                newAlpha, evaConfig.getCookie().getMaxAge(), path, domain);
+                newAlpha, evaConfig.getCookie().getMaxAge(), path, domain,
+                evaConfig.getCookie().isSecure(), evaConfig.getCookie().getSameSite());
         CookieUtils.addCookie(response, CommonConstant.REFRESH_TOKEN_KEY,
-                newBravo, evaConfig.getCookie().getMaxAge(), path, domain);
-
-        // 持久化token
-        if (cacheToken) {
-            cacheTokenUtil.saveToken(tenantId, uid, cacheTokenUtil.buildCacheValue(request, uid, newAlpha));
-        }
+                newBravo, evaConfig.getCookie().getMaxAge(), path, domain,
+                evaConfig.getCookie().isSecure(), evaConfig.getCookie().getSameSite());
 
         var map = Map.of(CommonConstant.ACCESS_TOKEN_KEY, newAlpha,
                 CommonConstant.REFRESH_TOKEN_KEY, newBravo);
@@ -139,9 +152,12 @@ public class TokenCtrl {
     public void clearCookie(HttpServletResponse response) {
         String domain = evaConfig.getCookie().getDomain();
 
-        CookieUtils.clearCookie(response, CommonConstant.ACCESS_TOKEN_KEY, "/", domain);
-        CookieUtils.clearCookie(response, CommonConstant.REFRESH_TOKEN_KEY, "/", domain);
-        CookieUtils.clearCookie(response, CommonConstant.USER_KEY, "/", domain);
+        CookieUtils.clearCookie(response, CommonConstant.ACCESS_TOKEN_KEY, "/", domain,
+                evaConfig.getCookie().isSecure(), evaConfig.getCookie().getSameSite());
+        CookieUtils.clearCookie(response, CommonConstant.REFRESH_TOKEN_KEY, "/", domain,
+                evaConfig.getCookie().isSecure(), evaConfig.getCookie().getSameSite());
+        CookieUtils.clearCookie(response, CommonConstant.USER_KEY, "/", domain,
+                evaConfig.getCookie().isSecure(), evaConfig.getCookie().getSameSite());
     }
 
     /**

@@ -57,3 +57,7 @@ jwt:
     allowSuffixName: jpg,png,jpeg
   cookie:
     maxAge: 3600
+eva:
+  cookie:
+    secure: true
+    same-site: Lax

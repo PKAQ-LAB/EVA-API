@@ -24,6 +24,29 @@ public class CookieUtils {
                                  int maxAge,
                                  String path,
                                  String domain) {
+        addCookie(response, name, value, maxAge, path, domain, false, "Lax");
+    }
+
+    /**
+     * 添加或更新带安全策略的 Cookie。
+     *
+     * @param response 响应对象
+     * @param name Cookie 名称
+     * @param value Cookie 值
+     * @param maxAge 存活时间
+     * @param path 作用路径
+     * @param domain 作用域
+     * @param secure 是否仅允许 HTTPS 传输
+     * @param sameSite 跨站策略
+     */
+    public static void addCookie(HttpServletResponse response,
+                                 String name,
+                                 String value,
+                                 int maxAge,
+                                 String path,
+                                 String domain,
+                                 boolean secure,
+                                 String sameSite) {
         Objects.requireNonNull(response, "HttpServletResponse must not be null");
         Objects.requireNonNull(name, "Cookie name must not be null");
 
@@ -47,8 +70,8 @@ public class CookieUtils {
         // 安全策略：HttpOnly 默认启用
         cookie.setHttpOnly(true);
 
-        // 若启用 HTTPS，可改为 true
-        cookie.setSecure(false);
+        cookie.setSecure(secure);
+        cookie.setAttribute("SameSite", normalizeSameSite(sameSite));
 
         response.addCookie(cookie);
     }
@@ -64,6 +87,18 @@ public class CookieUtils {
     }
 
     /**
+     * 按指定安全策略删除 Cookie。
+     */
+    public static void clearCookie(HttpServletResponse response,
+                                   String name,
+                                   String path,
+                                   String domain,
+                                   boolean secure,
+                                   String sameSite) {
+        addCookie(response, name, null, 0, path, domain, secure, sameSite);
+    }
+
+    /**
      * 从cookie中获取值
      */
     public static String getCookie(HttpServletRequest request, String name) {
@@ -75,5 +110,18 @@ public class CookieUtils {
             }
         }
         return null;
+    }
+
+    private static String normalizeSameSite(String sameSite) {
+        if (sameSite == null || sameSite.isBlank()) {
+            return "Lax";
+        }
+        if ("Strict".equalsIgnoreCase(sameSite)) {
+            return "Strict";
+        }
+        if ("None".equalsIgnoreCase(sameSite)) {
+            return "None";
+        }
+        return "Lax";
     }
 }

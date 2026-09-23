@@ -14,7 +14,7 @@ public class Jwt {
     /**
      * 是否持久化
      **/
-    private boolean persistence;
+    private boolean persistence = true;
     /**
      * token header参数名
      **/
@@ -32,21 +32,21 @@ public class Jwt {
      **/
     private String secert = "6MNSobBRCHGIO0fS6MNSobBRCHGIO0fS";
     /**
-     * token 30天 有效时间
+     * Redis 会话有效时间，默认与 refresh token 一致
      **/
     private long ttl = 30 * 24 * 60 * 60 * 1000;
     /**
-     * access token有效时间,  6 小时
+     * access token有效时间，默认 30 分钟
      **/
-    private long alphaTtl = 6 * 60 * 60 * 1000;
+    private long alphaTtl = 30 * 60 * 1000;
     /**
      * refresh token有效时间, 30 天
      **/
     private long bravoTtl = 30 * 24 * 60 * 60 * 1000;
     /**
-     * 续期时间 , 6 小时
+     * access token 自动续期阈值，默认 5 分钟
      **/
-    private long threshold = 60 * 60 * 6 * 1000;
+    private long threshold = 5 * 60 * 1000;
     /**
      * 可信任域
      **/

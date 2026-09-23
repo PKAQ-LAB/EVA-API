@@ -26,7 +26,6 @@ import org.pkaq.core.threaduser.ThreadUser;
 import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.core.util.ArrayUtils;
 import org.pkaq.core.util.StrUtils;
-import org.pkaq.core.util.json.JsonUtil;
 import org.pkaq.web.core.utils.CookieUtils;
 import org.pkaq.web.core.utils.ResponseUtil;
 import org.pkaq.web.core.utils.TokenUtils;
@@ -102,18 +101,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 isvalid = jwtUtil.valid(authToken) && jwtUtil.isAccessToken(authToken);
                 Long uid = isvalid ? jwtUtil.getUid(authToken) : null;
                 long tenantId = isvalid ? jwtUtil.getTenantId(authToken) : 0L;
+                String sessionId = isvalid ? jwtUtil.getSessionId(authToken) : null;
                 if (isvalid && evaConfig.getTenant().isSchemaMode()) {
                     TenantLoginIdentity identity = tenantLoginResolver.resolveId(tenantId);
                     isvalid = identity.schemaGeneration() == jwtUtil.getSchemaGeneration(authToken);
                 }
                 // 验证缓存中是否存在该token
                 if (isvalid && cacheToken) {
-                    Object token = cacheTokenUtil.getToken(tenantId, uid);
-
-                    Map<String, Object> jsonObject = toTokenMap(token);
-
-                    if (null != jsonObject && authToken.equals(jsonObject.get(CommonConstant.CACHE_TOKEN))) {
+                    if (StrUtils.isNotBlank(sessionId)
+                            && cacheTokenUtil.matchesAccessToken(tenantId, uid, sessionId, authToken)) {
                         inCache = true;
+                        cacheTokenUtil.touchSession(tenantId, uid, sessionId);
                     } else {
                         log.warn("鉴权失败 缓存中无法找到对应token");
                         this.clearCookie(response);
@@ -125,13 +123,18 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 // token即将过期 续命
                 if (isvalid && jwtUtil.isTokenExpiring(authToken)) {
                     String newToken = jwtUtil.refreshToken(authToken);
-                    if (cacheToken) {
-                        cacheTokenUtil.saveToken(tenantId, uid,
-                                cacheTokenUtil.buildCacheValue(request, uid, newToken));
+                    if (cacheToken && !cacheTokenUtil.replaceAccessToken(
+                            tenantId, uid, sessionId, request, newToken)) {
+                        log.warn("鉴权续期失败 服务端会话已不存在, tenantId={}, userId={}, sessionId={}",
+                                tenantId, uid, sessionId);
+                        this.clearCookie(response);
+                        ResponseUtil.write(response, Response.failure(AuthCodes.LOGIN_EXPIRED));
+                        return;
                     }
                     response.setHeader(CommonConstant.ACCESS_TOKEN_KEY, newToken);
                     CookieUtils.addCookie(response, CommonConstant.ACCESS_TOKEN_KEY,
-                            newToken, evaConfig.getCookie().getMaxAge(), "/", evaConfig.getCookie().getDomain());
+                            newToken, evaConfig.getCookie().getMaxAge(), "/", evaConfig.getCookie().getDomain(),
+                            evaConfig.getCookie().isSecure(), evaConfig.getCookie().getSameSite());
                 }
             } catch (AuthenticationException e) {
                 log.warn("鉴权失败 Token已过期", e);
@@ -307,17 +310,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private Map<String, Object> toTokenMap(Object token) {
-        if (token instanceof Map<?, ?> tokenMap) {
-            return (Map<String, Object>) tokenMap;
-        }
-        if (token instanceof String tokenJson) {
-            return JsonUtil.parse(tokenJson, Map.class);
-        }
-        return null;
-    }
-
     /**
      * 获取去除 context-path 后的请求路径。
      */
@@ -334,9 +326,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
      */
     public void clearCookie(HttpServletResponse response) {
         CookieUtils.addCookie(response, CommonConstant.ACCESS_TOKEN_KEY,
-                null, 0, "/", evaConfig.getCookie().getDomain());
+                null, 0, "/", evaConfig.getCookie().getDomain(),
+                evaConfig.getCookie().isSecure(), evaConfig.getCookie().getSameSite());
         CookieUtils.addCookie(response, CommonConstant.REFRESH_TOKEN_KEY,
-                null, 0, "/", evaConfig.getCookie().getDomain());
-        CookieUtils.addCookie(response, CommonConstant.USER_KEY, null, 0, "/", evaConfig.getCookie().getDomain());
+                null, 0, "/", evaConfig.getCookie().getDomain(),
+                evaConfig.getCookie().isSecure(), evaConfig.getCookie().getSameSite());
+        CookieUtils.addCookie(response, CommonConstant.USER_KEY, null, 0, "/",
+                evaConfig.getCookie().getDomain(), evaConfig.getCookie().isSecure(),
+                evaConfig.getCookie().getSameSite());
     }
 }

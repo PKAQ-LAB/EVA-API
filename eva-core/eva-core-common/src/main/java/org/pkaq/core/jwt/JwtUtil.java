@@ -23,6 +23,7 @@ import java.text.ParseException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * JWT 工具类
@@ -145,6 +146,31 @@ public class JwtUtil {
         return getLongClaim(token, CLAIM_SCHEMA_GENERATION);
     }
 
+    /**
+     * 获取服务端会话标识。
+     *
+     * @param token JWT
+     * @return 会话标识；Token 无效时返回 null
+     */
+    public String getSessionId(String token) {
+        try {
+            JWTClaimsSet claims = getClaimsFromToken(token);
+            return claims == null ? null : claims.getJWTID();
+        } catch (Exception exception) {
+            log.warn("读取JWT会话标识失败", exception);
+            return null;
+        }
+    }
+
+    /**
+     * 创建不可预测的会话标识。
+     *
+     * @return 会话标识
+     */
+    public String newSessionId() {
+        return UUID.randomUUID().toString();
+    }
+
     private long getLongClaim(String token, String claimName) {
         try {
             JWTClaimsSet claims = getClaimsFromToken(token);
@@ -208,7 +234,14 @@ public class JwtUtil {
 
     public String build(long ttlMillis, long userId, String username, List<Long> roleIds, long permVer,
                         long tenantId, long schemaGeneration) {
-        return build(ttlMillis, userId, username, roleIds, permVer, tenantId, schemaGeneration, TOKEN_TYPE_ACCESS);
+        return build(ttlMillis, userId, username, roleIds, permVer, tenantId, schemaGeneration,
+                newSessionId(), TOKEN_TYPE_ACCESS);
+    }
+
+    public String build(long ttlMillis, long userId, String username, List<Long> roleIds, long permVer,
+                        long tenantId, long schemaGeneration, String sessionId) {
+        return build(ttlMillis, userId, username, roleIds, permVer, tenantId, schemaGeneration,
+                sessionId, TOKEN_TYPE_ACCESS);
     }
 
     /**
@@ -227,7 +260,14 @@ public class JwtUtil {
 
     public String buildRefreshToken(long ttlMillis, long userId, String username, List<Long> roleIds, long permVer,
                                     long tenantId, long schemaGeneration) {
-        return build(ttlMillis, userId, username, roleIds, permVer, tenantId, schemaGeneration, TOKEN_TYPE_REFRESH);
+        return build(ttlMillis, userId, username, roleIds, permVer, tenantId, schemaGeneration,
+                newSessionId(), TOKEN_TYPE_REFRESH);
+    }
+
+    public String buildRefreshToken(long ttlMillis, long userId, String username, List<Long> roleIds, long permVer,
+                                    long tenantId, long schemaGeneration, String sessionId) {
+        return build(ttlMillis, userId, username, roleIds, permVer, tenantId, schemaGeneration,
+                sessionId, TOKEN_TYPE_REFRESH);
     }
 
     /**
@@ -239,7 +279,8 @@ public class JwtUtil {
                          List<Long> roleIds,
                          long permVer,
                          String tokenType) {
-        return build(ttlMillis, userId, username, roleIds, permVer, 0L, 0L, tokenType);
+        return build(ttlMillis, userId, username, roleIds, permVer, 0L, 0L,
+                newSessionId(), tokenType);
     }
 
     private String build(long ttlMillis,
@@ -249,6 +290,7 @@ public class JwtUtil {
                          long permVer,
                          long tenantId,
                          long schemaGeneration,
+                         String sessionId,
                          String tokenType) {
         MACSigner macSigner = null;
         try {
@@ -265,7 +307,7 @@ public class JwtUtil {
                 .issueTime(new Date(nowMillis))
                 .issuer(this.jwtConfig().getSign())
                 .subject(username)
-                .jwtID(String.valueOf(userId))
+                .jwtID(sessionId)
                 .claim(CLAIM_UID, userId)
                 .claim(CLAIM_TENANT_ID, tenantId)
                 .claim(CLAIM_SCHEMA_GENERATION, schemaGeneration)
@@ -364,7 +406,7 @@ public class JwtUtil {
         final List<Long> roles = this.getRoles(token);
         final long permVer = this.getPermVer(token);
         return this.build(this.jwtConfig().getAlphaTtl(), uid, account, roles, permVer,
-                getTenantId(token), getSchemaGeneration(token));
+                getTenantId(token), getSchemaGeneration(token), getSessionId(token));
     }
 
     /**

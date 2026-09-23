@@ -22,6 +22,7 @@ import java.util.Map;
 public class OnlineUserService {
     private final CacheTokenUtil tokenUtil;
     private final EvaConfig evaConfig;
+    private final LoginLogService loginLogService;
 
     /**
      * 查询当前可管理租户范围内的在线用户。
@@ -57,6 +58,7 @@ public class OnlineUserService {
         if (tenantId == null) {
             throw new IllegalArgumentException("平台模式下必须指定目标租户ID");
         }
+        loginLogService.closeUserSessions(tenantId, userId, "ADMIN_FORCED");
         tokenUtil.removeToken(tenantId, userId);
     }
 
@@ -81,19 +83,27 @@ public class OnlineUserService {
         if (!(value instanceof Map<?, ?> token)) {
             return null;
         }
-        String[] keyParts = String.valueOf(cacheKey).split(":", 2);
-        if (keyParts.length != 2) {
+        String[] keyParts = String.valueOf(cacheKey).split(":", 3);
+        if (keyParts.length != 3) {
             return null;
         }
         try {
             OnlineUserVo vo = new OnlineUserVo();
             vo.setTenantId(Long.valueOf(keyParts[0]));
             vo.setUserId(Long.valueOf(keyParts[1]));
+            vo.setSessionId(keyParts[2]);
             vo.setDevice(stringValue(token.get("device")));
             vo.setVersion(stringValue(token.get("version")));
+            vo.setIp(stringValue(token.get("ip")));
+            vo.setDeviceModel(stringValue(token.get("deviceModel")));
+            vo.setOsName(stringValue(token.get("osName")));
+            vo.setOsVersion(stringValue(token.get("osVersion")));
+            vo.setBrowserName(stringValue(token.get("browserName")));
+            vo.setBrowserVersion(stringValue(token.get("browserVersion")));
             vo.setIssuedAt(token.get("issuedAt"));
             vo.setExpireAt(token.get("expireAt"));
             vo.setLoginTime(token.get("loginTime"));
+            vo.setLastActiveAt(token.get("lastActiveAt"));
             return vo;
         } catch (NumberFormatException exception) {
             return null;

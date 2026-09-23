@@ -56,23 +56,26 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         // 签发 access_token -> ALPHA（含角色ID和权限版本号）
         long permVer = user.getPermVer() != null ? user.getPermVer() : 0L;
         TenantLoginIdentity tenantIdentity = tenantLoginResolver.resolveId(user.getTenantId());
+        String sessionId = jwtUtil.newSessionId();
         String access_token = jwtUtil.build(evaConfig.getJwt().getAlphaTtl(),
                 user.getId(), user.getAccount(), user.getRoleIds(), permVer,
-                tenantIdentity.tenantId(), tenantIdentity.schemaGeneration());
+                tenantIdentity.tenantId(), tenantIdentity.schemaGeneration(), sessionId);
         // 签发 refresh_token -> BRAVO（含角色ID和权限版本号）
         String refresh_token = jwtUtil.buildRefreshToken(evaConfig.getJwt().getBravoTtl(),
                 user.getId(), user.getAccount(), user.getRoleIds(), permVer,
-                tenantIdentity.tenantId(), tenantIdentity.schemaGeneration());
+                tenantIdentity.tenantId(), tenantIdentity.schemaGeneration(), sessionId);
 
         // token放入缓存
         if (cacheToken) {
-            tokenUtil.saveToken(tenantIdentity.tenantId(), user.getId(),
-                    tokenUtil.buildCacheValue(request, user.getId(), access_token));
+            tokenUtil.saveToken(tenantIdentity.tenantId(), user.getId(), sessionId,
+                    tokenUtil.buildCacheValue(request, user.getId(), access_token, refresh_token));
         }
 
         String domain = evaConfig.getCookie().getDomain();
         int maxAge = evaConfig.getCookie().getMaxAge();
         String path = "/";
+        boolean secure = evaConfig.getCookie().isSecure();
+        String sameSite = evaConfig.getCookie().getSameSite();
 
         LoginUserInfoVo userInfo = buildLoginUserInfo(user);
         LoginSuccessVo loginSuccessVo = new LoginSuccessVo();
@@ -81,13 +84,14 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         loginSuccessVo.setRefreshToken(refresh_token);
 
         CookieUtils.addCookie(httpServletResponse, CommonConstant.ACCESS_TOKEN_KEY,
-                access_token, maxAge, path, domain);
+                access_token, maxAge, path, domain, secure, sameSite);
         CookieUtils.addCookie(httpServletResponse, CommonConstant.REFRESH_TOKEN_KEY,
-                refresh_token, maxAge, path, domain);
+                refresh_token, maxAge, path, domain, secure, sameSite);
         CookieUtils.addCookie(httpServletResponse, CommonConstant.USER_KEY,
-                URLEncoder.encode(JsonUtil.toJson(userInfo), StandardCharsets.UTF_8), maxAge, path, domain);
+                URLEncoder.encode(JsonUtil.toJson(userInfo), StandardCharsets.UTF_8),
+                maxAge, path, domain, secure, sameSite);
 
-        loginLogService.saveSuccess(request, user);
+        loginLogService.saveSuccess(request, user, sessionId);
 
         ResponseUtil.write(httpServletResponse, Response
                 .success(loginSuccessVo, CommonCodes.LOGIN_SUCCESS_WELCOME, user.getName()));

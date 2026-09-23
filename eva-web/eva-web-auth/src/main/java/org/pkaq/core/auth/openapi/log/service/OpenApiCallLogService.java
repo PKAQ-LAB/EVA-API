@@ -12,6 +12,7 @@ import org.pkaq.core.auth.openapi.log.entity.OpenApiCallLogEntity;
 import org.pkaq.core.auth.openapi.log.mapper.OpenApiCallLogMapper;
 import org.pkaq.core.auth.openapi.log.vo.OpenApiCallLogVo;
 import org.pkaq.core.util.StrUtils;
+import org.pkaq.web.core.client.ClientInfoResolver;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -33,6 +34,8 @@ public class OpenApiCallLogService {
     private static final int MAX_ERROR_LENGTH = 500;
 
     private final OpenApiCallLogMapper openApiCallLogMapper;
+
+    private final ClientInfoResolver clientInfoResolver;
 
     /**
      * 根据ID查询调用日志。
@@ -95,25 +98,13 @@ public class OpenApiCallLogService {
             entity.setStatusCode(statusCode);
             entity.setSuccess(statusCode >= 200 && statusCode < 400 && StrUtils.isBlank(errorMsg));
             entity.setSpendTime((System.nanoTime() - startTime) / 1_000_000L);
-            entity.setIp(limit(resolveIp(request), MAX_IP_LENGTH));
+            entity.setIp(limit(clientInfoResolver.resolve(request).ip(), MAX_IP_LENGTH));
             entity.setErrorMsg(limit(errorMsg, MAX_ERROR_LENGTH));
             entity.setUtcCreate(LocalDateTime.now());
             this.openApiCallLogMapper.insert(entity);
         } catch (Exception e) {
             log.warn("保存OpenAPI调用日志失败, path: {}", requestPath, e);
         }
-    }
-
-    private String resolveIp(HttpServletRequest request) {
-        String forwardedFor = request.getHeader("X-Forwarded-For");
-        if (StrUtils.isNotBlank(forwardedFor)) {
-            return forwardedFor.split(",")[0].trim();
-        }
-        String realIp = request.getHeader("X-Real-IP");
-        if (StrUtils.isNotBlank(realIp)) {
-            return realIp;
-        }
-        return request.getRemoteAddr();
     }
 
     private String limit(String value, int maxLength) {

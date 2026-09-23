@@ -29,14 +29,14 @@ class RedisSessionStoreTest {
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
         Map<String, Object> value = Map.of("token", "alpha");
         Duration ttl = Duration.ofHours(1);
-        when(valueOperations.get("eva:session:7:11")).thenReturn(value);
+        when(valueOperations.get("eva:session:7:11:web-1")).thenReturn(value);
         RedisSessionStore store = new RedisSessionStore(redisTemplate);
 
-        store.save(7L, 11L, value, ttl);
-        assertSame(value, store.get(7L, 11L));
-        store.remove(7L, 11L);
+        store.save(7L, 11L, "web-1", value, ttl);
+        assertSame(value, store.get(7L, 11L, "web-1"));
+        store.remove(7L, 11L, "web-1");
 
-        verify(valueOperations).set("eva:session:7:11", value, ttl);
-        verify(redisTemplate).delete("eva:session:7:11");
+        verify(valueOperations).set("eva:session:7:11:web-1", value, ttl);
+        verify(redisTemplate).delete("eva:session:7:11:web-1");
     }
 }

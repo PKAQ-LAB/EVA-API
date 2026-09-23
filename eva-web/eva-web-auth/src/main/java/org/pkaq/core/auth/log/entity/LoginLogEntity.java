@@ -41,5 +41,29 @@ public class LoginLogEntity {
 
     private String version;
 
+    private String sessionId;
+
+    private String deviceType;
+
+    private String deviceModel;
+
+    private String osName;
+
+    private String osVersion;
+
+    private String browserName;
+
+    private String browserVersion;
+
+    private String deviceFingerprint;
+
+    private String riskFlags;
+
+    private LocalDateTime lastActiveAt;
+
+    private LocalDateTime logoutAt;
+
+    private String logoutReason;
+
     private LocalDateTime utcCreate;
 }

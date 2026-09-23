@@ -28,6 +28,22 @@ class JwtTenantClaimsTest {
         assertEquals(7L, jwtUtil.getTenantId(refreshed));
         assertEquals(9L, jwtUtil.getSchemaGeneration(refreshed));
         assertEquals(11L, jwtUtil.getUid(refreshed));
+        assertEquals(jwtUtil.getSessionId(token), jwtUtil.getSessionId(refreshed));
+    }
+
+    @Test
+    void shouldUseSameExplicitSessionForAccessAndRefreshTokens() {
+        JwtUtil jwtUtil = new JwtUtil(config());
+
+        String accessToken = jwtUtil.build(60_000L, 11L, "admin", List.of(3L), 5L,
+                7L, 9L, "web-1");
+        String refreshToken = jwtUtil.buildRefreshToken(60_000L, 11L, "admin", List.of(3L), 5L,
+                7L, 9L, "web-1");
+
+        assertTrue(jwtUtil.isAccessToken(accessToken));
+        assertTrue(jwtUtil.isRefreshToken(refreshToken));
+        assertEquals("web-1", jwtUtil.getSessionId(accessToken));
+        assertEquals("web-1", jwtUtil.getSessionId(refreshToken));
     }
 
     @Test

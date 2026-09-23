@@ -26,6 +26,15 @@ public class LoginLogQueryBo extends PageBo {
     @Schema(description = "是否登录成功")
     private Boolean success;
 
+    @Schema(description = "登录会话ID")
+    private String sessionId;
+
+    @Schema(description = "IP地址")
+    private String ip;
+
+    @Schema(description = "风险标记")
+    private String riskFlag;
+
     @Schema(description = "开始时间")
     private LocalDateTime begin;
 

@@ -29,6 +29,11 @@ public class EvaConfig {
     private Cloud cloud;
 
     /**
+     * 客户端信息采集配置。
+     */
+    private ClientInfoProperties clientInfo;
+
+    /**
      * 多租户模式专属配置
      */
     private TenantProperties tenant;
@@ -129,6 +134,10 @@ public class EvaConfig {
 
     public Cloud getCloud() {
         return null == cloud ? new Cloud() : cloud;
+    }
+
+    public ClientInfoProperties getClientInfo() {
+        return null == clientInfo ? new ClientInfoProperties() : clientInfo;
     }
 
     public boolean isStandaloneMode() {

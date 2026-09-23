@@ -73,12 +73,17 @@ server:
   shutdown: graceful
 eva:
   mode: standalone
+  client-info:
+    trusted-proxies: []
+    activity-update-interval-seconds: 60
   i18n: true
   norepeat-check: false
   norepeat-ttl: 1s
   # 该配置必须在jwt配置前 30天有效
   cookie:
     maxAge: &maxAge 2592000
+    secure: false
+    same-site: Lax
   # JWT配置
   jwt:
     # 是否持久化token
@@ -87,13 +92,13 @@ eva:
     token-head: Bearer
     sign: PKAQ
     secert: 6MNSobBRCHGIO0fS6MNSobBRCHGIO0fS
-    ttl: *maxAge
-    # 6 小时
-    alphaTtl: 21600000
+    ttl: 2592000000
+    # 30 分钟
+    alphaTtl: 1800000
     # 30 天
     bravoTtl: 2592000000
-    # 过期阈值 默认6小时
-    threshold: 21600000
+    # 过期阈值 默认5分钟
+    threshold: 300000
   # 访问权限
   security:
     webstatic:

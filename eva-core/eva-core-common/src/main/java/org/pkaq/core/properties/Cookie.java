@@ -16,4 +16,14 @@ public class Cookie {
      * cookie有效期
      **/
     private int maxAge = 60 * 60;
+
+    /**
+     * 是否仅允许 HTTPS 传输。
+     */
+    private boolean secure;
+
+    /**
+     * Cookie 跨站策略。
+     */
+    private String sameSite = "Lax";
 }
