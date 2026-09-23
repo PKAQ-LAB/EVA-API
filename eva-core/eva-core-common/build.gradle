@@ -9,6 +9,8 @@ jar {
 project.description='eva common class'
 
 dependencies {
+    api project(":eva-core:eva-core-contract")
+
     api libs.aop,
         libs.jwt,
         libs.json,

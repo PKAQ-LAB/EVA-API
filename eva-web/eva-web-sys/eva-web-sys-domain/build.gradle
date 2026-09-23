@@ -11,5 +11,9 @@ jar {
 }
 
 dependencies {
-    implementation project(":eva-web:eva-web-core")
+    api project(":eva-core:eva-core-contract")
+
+    compileOnly libs.json,
+                libs.springdoc,
+                libs.validation
 }

@@ -1,0 +1,16 @@
+if (project.file('../../publish.gradle').exists()) {
+    apply from: '../../publish.gradle'
+}
+
+jar {
+    archiveBaseName = 'eva-core-contract'
+}
+
+project.description = 'eva stable shared contracts'
+
+dependencies {
+    compileOnly libs.json,
+                libs.springdoc,
+                libs.validation,
+                'org.springframework:spring-context'
+}

@@ -4,7 +4,6 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import org.pkaq.core.properties.EvaConfig;
 
 /**
  * @author PKAQ
@@ -23,10 +22,6 @@ public class PageBo implements Bo {
     @Min(value = 1, message = "每页条数最小值为 1")
     @Max(value = 100, message = "每页条数最大值为 100")
     private Integer pageSize;
-
-    public PageBo(EvaConfig config) {
-        this.pageSize = config.getPage().getSize() != null ? config.getPage().getSize() : DEFAULT_PAGE_SIZE;
-    }
 
     public PageBo() {
         this.pageNo = DEFAULT_PAGE_NO;

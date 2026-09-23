@@ -3,6 +3,7 @@ rootProject.name = 'eva'
 include 'web-booter'
 
 include ':eva-core:eva-core-log'
+include ':eva-core:eva-core-contract'
 include ':eva-core:eva-core-common'
 include ':eva-core:eva-core-data-mybatis'
 include ':eva-core:eva-core-license'

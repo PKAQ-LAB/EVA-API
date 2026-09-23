@@ -1,8 +1,8 @@
 package org.pkaq.core.mvc.bo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
-import org.hibernate.validator.constraints.Length;
 
 /**
  * 实体类基类，用于存放公共属性
@@ -26,6 +26,6 @@ public abstract class StdBo implements Bo {
     private double sort;
 
     @Schema(description = "备注")
-    @Length(max = 400, message = "{validate.length.max}")
+    @Size(max = 400, message = "{validate.length.max}")
     private String remark;
 }
