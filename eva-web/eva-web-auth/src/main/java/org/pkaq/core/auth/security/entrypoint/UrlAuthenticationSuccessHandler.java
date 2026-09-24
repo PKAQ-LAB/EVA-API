@@ -10,6 +10,7 @@ import org.pkaq.core.auth.tenant.TenantLoginIdentity;
 import org.pkaq.core.auth.tenant.TenantLoginResolver;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.constant.CommonConstant;
+import org.pkaq.core.constant.PlatformCapabilities;
 import org.pkaq.core.jwt.JwtUtil;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.properties.EvaConfig;
@@ -27,6 +28,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 自定义登录成功处理器
@@ -110,7 +112,16 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         userInfo.setName(user.getName());
         userInfo.setNickName(user.getNickName());
         userInfo.setAuthorities(extractAuthorities(user));
+        userInfo.setCapabilities(resolveCapabilities(user));
         return userInfo;
+    }
+
+    private Set<String> resolveCapabilities(JwtUserDetail user) {
+        boolean platformAdministrator = evaConfig.isPlatformMode()
+                && user.getTenantId() != null
+                && user.getTenantId() == 0L
+                && extractAuthorities(user).contains(CommonConstant.ADMIN_ROLE_NAME);
+        return platformAdministrator ? Set.of(PlatformCapabilities.TENANT_INSPECT) : Set.of();
     }
 
     /**

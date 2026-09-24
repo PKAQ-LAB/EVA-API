@@ -3,6 +3,7 @@ package org.pkaq.core.auth.security.vo;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 登录用户信息
@@ -19,4 +20,5 @@ public class LoginUserInfoVo {
     private String name;
     private String nickName;
     private List<String> authorities;
+    private Set<String> capabilities;
 }

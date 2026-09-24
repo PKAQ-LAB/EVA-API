@@ -24,7 +24,10 @@ public class TargetTenantExecutor {
         if (!evaConfig.getTenant().isSchemaMode()) {
             return callback.get();
         }
-        if (!evaConfig.isPlatformMode() || !ThreadUserHelper.isAdmin()) {
+        if (targetTenantId == null || targetTenantId <= 0L) {
+            throw new SecurityException("目标租户非法");
+        }
+        if (!evaConfig.isPlatformMode() || ThreadUserHelper.getTenantId() != 0L || !ThreadUserHelper.isAdmin()) {
             throw new SecurityException("只有平台管理员可以指定目标租户");
         }
         if (!TransactionSynchronizationManager.isActualTransactionActive()) {

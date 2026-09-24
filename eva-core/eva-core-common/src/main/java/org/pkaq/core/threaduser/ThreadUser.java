@@ -8,6 +8,7 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 用于trheadlocal存储用户信息的实体类
@@ -49,6 +50,8 @@ public class ThreadUser implements Serializable {
     private String device;
     // 当前用户的应用版本
     private String version;
+    // 当前用户的平台能力
+    private Set<String> capabilities;
 
     @Data
     @AllArgsConstructor

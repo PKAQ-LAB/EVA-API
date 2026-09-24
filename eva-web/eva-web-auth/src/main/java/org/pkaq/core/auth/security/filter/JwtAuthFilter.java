@@ -17,6 +17,7 @@ import org.pkaq.core.auth.tenant.TenantLoginIdentity;
 import org.pkaq.core.auth.tenant.TenantLoginResolver;
 import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.constant.CommonConstant;
+import org.pkaq.core.constant.PlatformCapabilities;
 import org.pkaq.core.enums.FrozenEnumm;
 import org.pkaq.core.exception.BizException;
 import org.pkaq.core.jwt.JwtUtil;
@@ -47,6 +48,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -222,7 +224,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                         .setDeptId(authState.getDeptId() == null ? 0L : authState.getDeptId())
                         .setDataScopes(toDataScopes(authState))
                         .setRoles(roleNames)
-                        .setRolesMap(rolesMap);
+                        .setRolesMap(rolesMap)
+                        .setCapabilities(resolveCapabilities(tenantId, rolesMap));
 
                 // 设置SecurityContext
                 List<SimpleGrantedAuthority> authorities = roleIds == null || roleIds.isEmpty()
@@ -245,6 +248,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             // 没有有效的token, 让Spring Security后续过滤器处理认证
             chain.doFilter(request, response);
         }
+    }
+
+    private Set<String> resolveCapabilities(long tenantId,
+                                            Map<Long, ThreadUser.GrantedRoles> rolesMap) {
+        boolean platformAdministrator = evaConfig.isPlatformMode()
+                && tenantId == 0L
+                && rolesMap.values().stream()
+                .anyMatch(role -> CommonConstant.ADMIN_ROLE_NAME.equals(role.getCode()));
+        return platformAdministrator ? Set.of(PlatformCapabilities.TENANT_INSPECT) : Set.of();
     }
 
     /**

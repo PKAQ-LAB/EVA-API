@@ -216,6 +216,14 @@ public class ThreadUserHelper {
         return roles != null && ArrayUtils.contains(roles, CommonConstant.ADMIN_ROLE_NAME);
     }
 
+    /**
+     * 判断当前用户是否具备指定平台能力。
+     */
+    public static boolean hasCapability(String capability) {
+        ThreadUser user = getCurrentUserOrNull();
+        return user != null && user.getCapabilities() != null && user.getCapabilities().contains(capability);
+    }
+
     // ====================== 模块信息 ======================
 
     /**
