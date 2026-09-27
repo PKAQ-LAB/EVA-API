@@ -74,7 +74,7 @@ public class UserCtrl extends Ctrl {
      * @param rePwdBo 修改密码参数
      * @return 响应结果
      */
-    @PostMapping("repwd")
+    @PostMapping("/repwd")
     @Operation(summary = "重新设置密码")
     @BizLog(operateType = BizLogCodes.EDIT, description = "重新设置了密码[{0}]", args = {"param:0"})
     public Response<Object> repwd(@Parameter(name = "rePwdBo", description = "用户对象")
