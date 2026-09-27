@@ -164,8 +164,9 @@ public class TenantService extends StdService<org.pkaq.sys.tenant.mapper.TenantM
             this.tenantSchemaProvisioner.provision(tenantId);
 
             if (isSchemaTenantMode()) {
-                tenantPrivateAccountService.createAdministrator(
-                        tenantId, adminId, editBo.getAdminAccount(), editBo.getAdminPass());
+                tenantPrivateAccountService.createRootOrganizationAndAdministrator(
+                        tenantId, adminId, editBo.getCode(), editBo.getName(),
+                        editBo.getAdminAccount(), editBo.getAdminPass());
             } else {
                 UserTenantAdminBo admin = new UserTenantAdminBo();
                 admin.setId(adminId);

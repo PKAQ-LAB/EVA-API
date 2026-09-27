@@ -8,6 +8,7 @@ import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.properties.TenantProperties;
 import org.pkaq.core.threaduser.ThreadUser;
 import org.pkaq.core.threaduser.ThreadUserHelper;
+import org.pkaq.core.util.BCryptUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -17,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * 验证平台租户维护不会写入 core 或相邻租户 schema。
@@ -24,6 +26,49 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author PKAQ
  */
 class TenantPrivateAccountSchemaPostgresTest {
+
+    @Test
+    void createsReadOnlyRootOrganizationAndBindsAdministrator() throws Exception {
+        try (EmbeddedPostgres postgres = EmbeddedPostgres.start()) {
+            DataSource dataSource = postgres.getPostgresDatabase();
+            JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+            createSchema(jdbcTemplate, "public");
+            createSchema(jdbcTemplate, "tenant_101");
+
+            EvaConfig config = schemaConfig();
+            TenantSchemaRouter router = new TenantSchemaRouter(dataSource, config,
+                    tenantId -> "tenant_" + tenantId);
+            TenantPrivateAccountService service = new TenantPrivateAccountService(
+                    jdbcTemplate, new TargetTenantExecutor(config, router));
+            TransactionTemplate transaction = new TransactionTemplate(
+                    new DataSourceTransactionManager(dataSource));
+
+            ThreadUserHelper.runWithUser(platformAdministrator(), () -> transaction.executeWithoutResult(status ->
+                    service.createRootOrganizationAndAdministrator(101L, 1011L, "T101", "测试租户",
+                            "tenant-admin", "ChangeMe123!")));
+
+            Map<String, Object> organization = jdbcTemplate.queryForMap("""
+                    SELECT ID, NAME, CODE, PID, PATH, ISLEAF, FROZEN
+                    FROM tenant_101.SYS_ORGANIZATION
+                    """);
+            long organizationId = ((Number) organization.get("id")).longValue();
+            assertEquals("测试租户", organization.get("name"));
+            assertEquals("T101", organization.get("code"));
+            assertEquals(0L, ((Number) organization.get("pid")).longValue());
+            assertEquals("/" + organizationId, organization.get("path"));
+            assertEquals(true, organization.get("isleaf"));
+            assertEquals(9999, ((Number) organization.get("frozen")).intValue());
+
+            Map<String, Object> administrator = jdbcTemplate.queryForMap("""
+                    SELECT ACCOUNT, PASSWORD, DEPT_ID, FROZEN
+                    FROM tenant_101.SYS_USER WHERE ID = 1011
+                    """);
+            assertEquals("tenant-admin", administrator.get("account"));
+            assertEquals(organizationId, ((Number) administrator.get("dept_id")).longValue());
+            assertEquals(9999, ((Number) administrator.get("frozen")).intValue());
+            assertTrue(BCryptUtils.checkpw("ChangeMe123!", administrator.get("password").toString()));
+        }
+    }
 
     @Test
     void routesPrivateAccountChangesToSelectedTenantOnly() throws Exception {
@@ -91,9 +136,19 @@ class TenantPrivateAccountSchemaPostgresTest {
             jdbcTemplate.execute("CREATE SCHEMA " + schema);
         }
         jdbcTemplate.execute("""
-                CREATE TABLE %s.SYS_USER(
-                    ID BIGINT PRIMARY KEY, DELETED BIGINT DEFAULT 0,
-                    FROZEN INTEGER DEFAULT 0, PERM_VER BIGINT DEFAULT 0)
+                    CREATE TABLE %s.SYS_USER(
+                    ID BIGINT PRIMARY KEY, REVISION INTEGER, DELETED BIGINT DEFAULT 0,
+                    FROZEN INTEGER DEFAULT 0, SORT DOUBLE PRECISION DEFAULT 0,
+                    UTC_CREATE TIMESTAMP, CODE VARCHAR(100), ACCOUNT VARCHAR(100),
+                    PASSWORD VARCHAR(200), NAME VARCHAR(100), NICK_NAME VARCHAR(100),
+                    DEPT_ID BIGINT, PERM_VER BIGINT DEFAULT 0)
+                """.formatted(schema));
+        jdbcTemplate.execute("""
+                CREATE TABLE %s.SYS_ORGANIZATION(
+                    ID BIGINT PRIMARY KEY, REVISION INTEGER, DELETED BIGINT DEFAULT 0,
+                    FROZEN INTEGER DEFAULT 0, SORT DOUBLE PRECISION DEFAULT 0,
+                    UTC_CREATE TIMESTAMP, NAME VARCHAR(100), CODE VARCHAR(100),
+                    PID BIGINT NOT NULL DEFAULT 0, PATH VARCHAR(1000), ISLEAF BOOLEAN DEFAULT TRUE)
                 """.formatted(schema));
         jdbcTemplate.execute("""
                 CREATE TABLE %s.SYS_ROLE(ID BIGINT PRIMARY KEY, DELETED BIGINT DEFAULT 0)

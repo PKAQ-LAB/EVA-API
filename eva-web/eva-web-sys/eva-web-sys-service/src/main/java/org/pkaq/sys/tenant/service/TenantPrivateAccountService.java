@@ -1,6 +1,8 @@
 package org.pkaq.sys.tenant.service;
 
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import lombok.RequiredArgsConstructor;
+import org.pkaq.core.enums.FrozenEnumm;
 import org.pkaq.core.mybatis.tenant.TargetTenantExecutor;
 import org.pkaq.core.util.BCryptUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,17 +20,40 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 public class TenantPrivateAccountService {
+    private static final long ROOT_PID = 0L;
+
     private final JdbcTemplate jdbcTemplate;
     private final TargetTenantExecutor targetTenantExecutor;
 
-    public void createAdministrator(Long tenantId, Long adminId, String account, String password) {
+    /**
+     * 初始化租户根组织和管理员账号。
+     *
+     * @param tenantId 租户ID
+     * @param adminId 管理员ID
+     * @param tenantCode 租户编码
+     * @param tenantName 租户名称
+     * @param account 管理员账号
+     * @param password 管理员明文密码
+     */
+    public void createRootOrganizationAndAdministrator(Long tenantId, Long adminId, String tenantCode,
+                                                       String tenantName, String account, String password) {
         targetTenantExecutor.execute(tenantId, () -> {
+            long rootOrganizationId = IdWorker.getId();
+            jdbcTemplate.update("""
+                    INSERT INTO SYS_ORGANIZATION(
+                        ID, REVISION, DELETED, FROZEN, SORT, UTC_CREATE,
+                        NAME, CODE, PID, PATH, ISLEAF)
+                    VALUES (?, 0, 0, ?, 0, CURRENT_TIMESTAMP, ?, ?, ?, ?, TRUE)
+                    """, rootOrganizationId, FrozenEnumm.READ_ONLY.getCode(), tenantName, tenantCode,
+                    ROOT_PID, "/" + rootOrganizationId);
+
             jdbcTemplate.update("""
                     INSERT INTO SYS_USER(
                         ID, REVISION, DELETED, FROZEN, SORT, UTC_CREATE,
-                        CODE, ACCOUNT, PASSWORD, NAME, NICK_NAME, PERM_VER)
-                    VALUES (?, 0, 0, 9999, 0, CURRENT_TIMESTAMP, ?, ?, ?, ?, ?, 0)
-                    """, adminId, account, account, BCryptUtils.hashpw(password), account, account);
+                        CODE, ACCOUNT, PASSWORD, NAME, NICK_NAME, DEPT_ID, PERM_VER)
+                    VALUES (?, 0, 0, ?, 0, CURRENT_TIMESTAMP, ?, ?, ?, ?, ?, ?, 0)
+                    """, adminId, FrozenEnumm.READ_ONLY.getCode(), account, account,
+                    BCryptUtils.hashpw(password), account, account, rootOrganizationId);
             return null;
         });
     }
