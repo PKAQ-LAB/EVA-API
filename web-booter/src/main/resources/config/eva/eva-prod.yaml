@@ -1,0 +1,17 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+eva:
+  jwt:
+    secret: ${EVA_JWT_SECRET}
+  cookie:
+    max-age: 3600
+    secure: true
+    same-site: Lax
+  upload:
+    type: ng
+    temp-path: ${EVA_UPLOAD_TEMP_PATH:E://evapic/temp}
+    storage-path: ${EVA_UPLOAD_STORAGE_PATH:E://evapic/storage}
+    allow-suffix-name: jpg,png,jpeg

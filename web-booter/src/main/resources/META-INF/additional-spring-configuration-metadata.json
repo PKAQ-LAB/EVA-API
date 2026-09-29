@@ -1,6 +1,11 @@
 {
   "properties": [
     {
+      "name": "eva.mode",
+      "type": "java.lang.String",
+      "description": "运行模式：standalone、platform 或 saas"
+    },
+    {
       "name": "eva.i18n",
       "type": "java.lang.Boolean",
       "description": "是否启用国际化"
@@ -16,7 +21,7 @@
       "description": "重复提交 Redis 原子锁定时间"
     },
     {
-      "name": "eva.cookie.maxAge",
+      "name": "eva.cookie.max-age",
       "type": "java.lang.Integer",
       "description": "Cookie 最大存活时间（单位秒）"
     },
@@ -41,7 +46,7 @@
       "description": "JWT 签名名称"
     },
     {
-      "name": "eva.jwt.secert",
+      "name": "eva.jwt.secret",
       "type": "java.lang.String",
       "description": "JWT 签名密钥"
     },
@@ -51,12 +56,12 @@
       "description": "JWT Token 有效期（秒）"
     },
     {
-      "name": "eva.jwt.alphaTtl",
+      "name": "eva.jwt.alpha-ttl",
       "type": "java.lang.Long",
       "description": "Alpha 级别 Token TTL（毫秒）"
     },
     {
-      "name": "eva.jwt.bravoTtl",
+      "name": "eva.jwt.bravo-ttl",
       "type": "java.lang.Long",
       "description": "Bravo 级别 Token TTL（毫秒）"
     },
@@ -66,17 +71,17 @@
       "description": "Token 刷新过期阈值（毫秒）"
     },
     {
-      "name": "eva.security.webstatic",
+      "name": "eva.auth.webstatic",
       "type": "java.lang.String",
       "description": "Web 静态资源路径（保留字段）"
     },
     {
-      "name": "eva.security.anonymous",
+      "name": "eva.auth.anonymous",
       "type": "java.lang.String",
       "description": "无需登录即可访问的路径"
     },
     {
-      "name": "eva.security.permit",
+      "name": "eva.auth.permit",
       "type": "java.lang.String",
       "description": "无需资源鉴权的路径"
     },
@@ -91,12 +96,12 @@
       "description": "是否启用严格鉴权模式"
     },
     {
-      "name": "eva.datapermission.enable",
+      "name": "eva.data-permission.enable",
       "type": "java.lang.Boolean",
       "description": "是否启用数据权限控制"
     },
     {
-      "name": "eva.datapermission.exclude-tables",
+      "name": "eva.data-permission.exclude-tables",
       "type": "java.lang.String",
       "description": "数据权限排除的表"
     },
@@ -121,7 +126,7 @@
       "description": "公钥别名"
     },
     {
-      "name": "eva.license.keystore_pwd",
+      "name": "eva.license.keystore-pwd",
       "type": "java.lang.String",
       "description": "访问密钥库的密码"
     },
@@ -139,6 +144,66 @@
       "name": "eva.license.subject",
       "type": "java.lang.String",
       "description": "项目唯一识别码"
+    },
+    {
+      "name": "eva.tenant.enable",
+      "type": "java.lang.Boolean",
+      "description": "是否启用 schema 租户模式"
+    },
+    {
+      "name": "eva.tenant.mode",
+      "type": "java.lang.String",
+      "description": "租户数据模式：standalone 或 schema"
+    },
+    {
+      "name": "eva.tenant.core-schema",
+      "type": "java.lang.String",
+      "description": "平台控制面 schema"
+    },
+    {
+      "name": "eva.tenant.standalone-schema",
+      "type": "java.lang.String",
+      "description": "standalone 模式 schema"
+    },
+    {
+      "name": "eva.tenant.prefix",
+      "type": "java.lang.String",
+      "description": "租户 schema 名称前缀"
+    },
+    {
+      "name": "eva.auth.jwt.enabled",
+      "type": "java.lang.Boolean",
+      "description": "是否启用 JWT 认证"
+    },
+    {
+      "name": "eva.auth.open-api.enabled",
+      "type": "java.lang.Boolean",
+      "description": "是否启用 OpenAPI 签名认证"
+    },
+    {
+      "name": "eva.auth.open-api.paths",
+      "type": "java.lang.String[]",
+      "description": "OpenAPI 签名认证路径"
+    },
+    {
+      "name": "eva.upload.type",
+      "type": "java.lang.String",
+      "description": "文件存储类型"
+    },
+    {
+      "name": "eva.upload.temp-path",
+      "type": "java.lang.String",
+      "description": "文件上传临时目录"
+    },
+    {
+      "name": "eva.upload.storage-path",
+      "type": "java.lang.String",
+      "description": "文件上传存储目录"
+    },
+    {
+      "name": "eva.upload.min-io.url",
+      "type": "java.lang.String",
+      "description": "MinIO 服务地址"
     }
   ],
   "hints": []

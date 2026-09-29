@@ -9,7 +9,9 @@ logging:
       clean-history-on-start: true
 spring:
   profiles:
-    active: @profile@
+    default: dev
+  config:
+    import: classpath:config/eva/eva.yaml
   servlet:
     # 文件上传配置
     multipart:
@@ -77,108 +79,6 @@ server:
   port: 9016
   #  2.3.0 新支持, 优雅关机
   shutdown: graceful
-eva:
-  mode: standalone
-  client-info:
-    # 仅这些代理来源可以提供 X-Forwarded-For / X-Real-IP；默认不信任任何来源
-    trusted-proxies: []
-    # 在线会话最后活动时间最多每分钟写入一次 Redis
-    activity-update-interval-seconds: 60
-  cloud:
-    # 是否仅允许经过网关转发的请求访问服务，默认关闭
-    enable: false
-    # 网关转发请求头名称及期望值
-    request-header: x-request
-    request-value: eva-gateway-request
-  i18n: true
-  norepeat-check: false
-  norepeat-ttl: 1s
-  # 该配置必须在jwt配置前 30天有效
-  cookie:
-    maxAge: &maxAge 2592000
-    secure: false
-    same-site: Lax
-  # JWT配置
-  jwt:
-    # 是否持久化token
-    persistence: true
-    header: Authorization
-    token-head: Bearer
-    sign: PKAQ
-    secert: 6MNSobBRCHGIO0fS6MNSobBRCHGIO0fS
-    ttl: 2592000000
-    # 30 分钟
-    alphaTtl: 1800000
-    # 30 天
-    bravoTtl: 2592000000
-    # 过期阈值 默认5分钟
-    threshold: 300000
-  # 访问权限
-  auth:
-    jwtEnabled: true
-    openApiEnabled: true
-    webstatic:
-    # 无需鉴权路径(无条件访问)
-    anonymous: /auth/login,/auth/logout,/auth/getAlpha,/wx/**,/doc/**,/actuator/**,/swagger-resources/**,/v3/api-docs/swagger-config
-    # 无需资源鉴权的路径
-    permit: /auth/**,/notices,/wx/**,/doc/**,/actuator/**,/license/**
-    openAPIPaths: /apr/**
-  # 资源权限
-  resource-permission:
-    # 是否启用
-    enable: true
-    # 是否采用严格鉴权模式
-    #    严格模式, 判断 登录角色 请求的资源 是否与 资源需要的角色 一致
-    #    * 一致 return 放行
-    #    * 不一致 抛出权限不足异常
-    #    简单模式 , 判断 登录角色 访问的资源 是否 需要鉴权(在的授权列表里)
-    #    * 存在 放行
-    #    * 不存在 返回权限不足
-    strict: false
-  ## 租户模式
-  tenant:
-    # false: 单 schema standalone；true + mode=schema: core + tenant schema 双层模式
-    enable: false
-    mode: standalone
-    core-schema: eva_core
-    standalone-schema: eva
-    prefix: tenant_
-  # 数据权限
-  datapermission:
-    # 是否开启数据权限控制
-    enable: true
-    # 需要排除的表
-    exclude-tables: sys_module_resources,sys_role_user
-  # 缓存配置
-  cache:
-    config:
-      - name: uploadfiles
-        ttl: 1d
-      - name: dictdata
-        ttl: 0s
-  # 业务日志
-  bizlog:
-    enabled: true
-    archive:
-      enabled: true
-      # 热数据保留月数，超过该期限后迁移到归档表
-      after-months: 6
-      batch-size: 1000
-      max-batches: 100
-      cron: "0 20 2 * * *"
-      zone: Asia/Shanghai
-  license:
-    enable: false
-    # 公钥别名
-    alias: publiccert
-    # 该密码是访问密钥库的密码 — 使用 keytool 生成密钥对时设置，使用者知道该密码
-    keystore_pwd: 7u8i9o0p
-    # 公共库路径（放在 resource 目录下
-    path: /license/publicCerts.store
-    # 证书路径（我这边配置在了 linux 根路径下，即 /license.lic ）
-    license: /license/license.lic
-    # 项目的唯一识别码
-    subject: eva
 springdoc:
   default-flat-param-object: true
 management:

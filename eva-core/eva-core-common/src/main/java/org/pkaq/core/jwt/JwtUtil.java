@@ -54,7 +54,7 @@ public class JwtUtil {
      * 生成密钥
      */
     private byte[] generalKey() {
-        return evaConfig.getJwt().getSecert().getBytes(StandardCharsets.UTF_8);
+        return evaConfig.getJwt().getSecret().getBytes(StandardCharsets.UTF_8);
     }
 
     /**

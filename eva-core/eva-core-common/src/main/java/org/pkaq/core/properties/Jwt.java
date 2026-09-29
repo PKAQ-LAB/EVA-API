@@ -30,7 +30,7 @@ public class Jwt {
     /**
      * 密匙
      **/
-    private String secert = "6MNSobBRCHGIO0fS6MNSobBRCHGIO0fS";
+    private String secret;
     /**
      * Redis 会话有效时间，默认与 refresh token 一致
      **/
@@ -51,5 +51,29 @@ public class Jwt {
      * 可信任域
      **/
     private List<String> creditUrl;
+
+    /**
+     * 获取旧版拼写对应的密钥。
+     *
+     * @return JWT 密钥
+     * @deprecated 请使用 {@link #getSecret()}
+     * @see #getSecret()
+     */
+    @Deprecated
+    public String getSecert() {
+        return secret;
+    }
+
+    /**
+     * 设置旧版拼写对应的密钥。
+     *
+     * @param secret JWT 密钥
+     * @deprecated 请使用 {@link #setSecret(String)}
+     * @see #setSecret(String)
+     */
+    @Deprecated
+    public void setSecert(String secret) {
+        this.secret = secret;
+    }
 
 }

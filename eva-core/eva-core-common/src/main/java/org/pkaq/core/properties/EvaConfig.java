@@ -2,9 +2,6 @@ package org.pkaq.core.properties;
 
 import lombok.Data;
 import org.pkaq.core.constant.CommonConstant;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 
 import java.time.Duration;
 
@@ -14,9 +11,6 @@ import java.time.Duration;
  * @author PKAQ
  */
 @Data
-@Configuration
-@ConfigurationProperties(prefix = "eva")
-@EnableConfigurationProperties(EvaConfig.class)
 public class EvaConfig {
     /**
      * 运行模式：standalone=非租户系统，platform=平台管理端，saas=租户端。
@@ -26,17 +20,17 @@ public class EvaConfig {
     /**
      * 微服务访问配置。
      */
-    private Cloud cloud;
+    private Cloud cloud = new Cloud();
 
     /**
      * 客户端信息采集配置。
      */
-    private ClientInfoProperties clientInfo;
+    private ClientInfoProperties clientInfo = new ClientInfoProperties();
 
     /**
      * 多租户模式专属配置
      */
-    private TenantProperties tenant;
+    private TenantProperties tenant = new TenantProperties();
     /**
      * 是否开启国际化
      */
@@ -54,7 +48,7 @@ public class EvaConfig {
     /**
      * 业务日志配置
      **/
-    private BizLog bizlog;
+    private BizLog bizlog = new BizLog();
     /**
      * 分页配置
      */
@@ -62,35 +56,35 @@ public class EvaConfig {
     /**
      * 文件上传配置
      **/
-    private File upload;
+    private File upload = new File();
     /**
      * jwt配置
      **/
-    private Jwt jwt;
+    private Jwt jwt = new Jwt();
     /**
      * cookie 配置
      **/
-    private Cookie cookie;
+    private Cookie cookie = new Cookie();
     /**
      * 鉴权配置
      **/
-    private Auth auth;
+    private Auth auth = new Auth();
     /**
      * 数据权限配置
      **/
-    private DataPermission dataPermission;
+    private DataPermission dataPermission = new DataPermission();
     /**
      * 资源权限配置
      **/
-    private ResourcePermission resourcePermission;
+    private ResourcePermission resourcePermission = new ResourcePermission();
     /**
      * 是否启用license 授权机制
      **/
-    private License license;
+    private License license = new License();
     /**
      * 缓存配置
      **/
-    private Cache cache;
+    private Cache cache = new Cache();
 
     public BizLog getBizlog() {
         return null == this.bizlog ? new BizLog() : bizlog;

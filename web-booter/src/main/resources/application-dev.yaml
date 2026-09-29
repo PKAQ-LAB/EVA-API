@@ -64,14 +64,6 @@ spring:
       connection-timeout: 30000  # 30 秒
       # 心跳检测 SQL
       connection-test-query: SELECT 1
-eva:
-  # 文件上传
-  file:
-    type: ng
-    minio:
-      url: http://yy.pkaq.org:9899
-      access: qKjV8I0wBcBEflHi
-      secret: IDryrTUgTyZb91sXsPm3Hp2DfwyEStVb
 #    监控配置
 #management:
 #  endpoints:

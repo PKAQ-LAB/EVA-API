@@ -1,0 +1,76 @@
+# EVA 业务配置由 Spring ConfigData 加载，但与 Spring 基础设施配置分文件维护。
+eva:
+  mode: standalone
+  client-info:
+    # 仅这些代理来源可以提供 X-Forwarded-For / X-Real-IP；默认不信任任何来源
+    trusted-proxies: []
+    # 在线会话最后活动时间最多每分钟写入一次 Redis
+    activity-update-interval-seconds: 60
+  cloud:
+    # 是否仅允许经过网关转发的请求访问服务，默认关闭
+    enable: false
+    request-header: x-request
+    request-value: eva-gateway-request
+  i18n: true
+  norepeat-check: false
+  norepeat-ttl: 1s
+  cookie:
+    max-age: 2592000
+    secure: false
+    same-site: Lax
+  jwt:
+    persistence: true
+    header: Authorization
+    token-head: Bearer
+    sign: PKAQ
+    # 非生产环境使用明确的开发密钥；生产配置必须通过环境变量覆盖且不得提供默认值
+    secret: ${EVA_JWT_SECRET:local-development-only-secret-change-me}
+    ttl: 2592000000
+    alpha-ttl: 1800000
+    bravo-ttl: 2592000000
+    threshold: 300000
+  auth:
+    webstatic:
+    anonymous: /auth/login,/auth/logout,/auth/getAlpha,/wx/**,/doc/**,/actuator/**,/swagger-resources/**,/v3/api-docs/swagger-config
+    permit: /auth/**,/notices,/wx/**,/doc/**,/actuator/**,/license/**
+    jwt:
+      enabled: true
+    open-api:
+      enabled: true
+      paths: /apr/**
+  resource-permission:
+    enable: true
+    strict: false
+  tenant:
+    # false: 单 schema standalone；true + mode=schema: core + tenant schema 双层模式
+    enable: false
+    mode: standalone
+    core-schema: eva_core
+    standalone-schema: eva
+    prefix: tenant_
+  data-permission:
+    enable: true
+    exclude-tables: sys_module_resources,sys_role_user
+  cache:
+    config:
+      - name: uploadfiles
+        ttl: 1d
+      - name: dictdata
+        ttl: 0s
+  bizlog:
+    enabled: true
+    archive:
+      enabled: true
+      # 热数据保留月数，超过该期限后迁移到归档表
+      after-months: 6
+      batch-size: 1000
+      max-batches: 100
+      cron: "0 20 2 * * *"
+      zone: Asia/Shanghai
+  license:
+    enable: false
+    alias: publiccert
+    keystore-pwd: ${EVA_LICENSE_KEYSTORE_PASSWORD:}
+    path: /license/publicCerts.store
+    license: /license/license.lic
+    subject: eva

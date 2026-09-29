@@ -1,0 +1,12 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+eva:
+  upload:
+    type: ng
+    min-io:
+      url: ${EVA_MINIO_URL:http://yy.pkaq.org:9899}
+      access: ${EVA_MINIO_ACCESS_KEY:}
+      secret: ${EVA_MINIO_SECRET_KEY:}
