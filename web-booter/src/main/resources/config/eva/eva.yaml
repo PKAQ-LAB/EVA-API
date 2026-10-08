@@ -33,6 +33,9 @@ eva:
     # 安全能力总开关；关闭后仅显式 anonymous 路径公开，其余请求拒绝
     authentication:
       enabled: true
+    # 仅 standalone 且 JWT 认证启用时可开放，不创建部门、岗位或角色。
+    registration:
+      enabled: ${EVA_AUTH_REGISTRATION_ENABLED:false}
     webstatic:
     anonymous: /auth/login,/auth/logout,/auth/getAlpha,/wx/**,/doc/**,/actuator/**,/swagger-resources/**,/v3/api-docs/swagger-config
     permit: /auth/**,/notices,/wx/**,/doc/**,/actuator/**,/license/**

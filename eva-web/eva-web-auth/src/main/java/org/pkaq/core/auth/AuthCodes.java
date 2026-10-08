@@ -30,7 +30,12 @@ public enum AuthCodes implements BizAssert {
     OPENAPI_SIGNATURE_GENERATION_FAILED("生成签名失败", "0x000-00021"),
     OPENAPI_REQUEST_ERROR("请求资源无法访问", "0x000-00022"),
     PERM_VER_CHANGED("权限已变更，请重新登录", "0x000-00023"),
-    RESOURCE_FORBIDDEN("无权访问该资源", "0x000-00024");
+    RESOURCE_FORBIDDEN("无权访问该资源", "0x000-00024"),
+    REGISTRATION_DISABLED("自助注册未开启", "0x000-00025"),
+    REGISTRATION_INVALID_ACCOUNT("账号必须为3至64位字母数字或下划线、点、连字符", "0x000-00026"),
+    REGISTRATION_INVALID_PASSWORD("密码至少8个字符且UTF8编码不超过72字节，不得包含控制字符", "0x000-00027"),
+    REGISTRATION_DUPLICATE_ACCOUNT("账号已存在", "0x000-00028"),
+    REGISTRATION_INVALID_NICKNAME("昵称不超过64个字符且不得包含控制字符", "0x000-00029");
 
     @Getter
     private final String msg;

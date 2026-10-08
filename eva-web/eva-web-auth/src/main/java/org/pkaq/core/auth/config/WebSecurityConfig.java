@@ -116,6 +116,13 @@ public class WebSecurityConfig {
             httpSecurity.authorizeHttpRequests(auth -> auth.requestMatchers("/auth/**").denyAll());
         }
 
+        // 注册入口优先于匿名通配符，只有有效开启的POST才能公开访问。
+        if (RegistrationPolicy.isEnabled(evaConfig)) {
+            httpSecurity.authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.POST, "/auth/register")
+                    .permitAll());
+        }
+        httpSecurity.authorizeHttpRequests(auth -> auth.requestMatchers("/auth/register").denyAll());
+
         // 允许匿名访问的url
         String[] anonymousPaths = evaConfig.getAuth().getAnonymous();
         if (anonymousPaths != null && anonymousPaths.length > 0) {

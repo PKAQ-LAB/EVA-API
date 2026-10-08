@@ -2,6 +2,9 @@ package org.pkaq.core.auth.config;
 
 import org.junit.jupiter.api.Test;
 import org.pkaq.core.auth.openapi.filter.AppKeyAuthenticationFilter;
+import org.pkaq.core.auth.authentication.ctrl.RegistrationCtrl;
+import org.pkaq.core.auth.authentication.service.AccountRegistrationService;
+import org.pkaq.core.auth.spi.IAccountRegistration;
 import org.pkaq.core.auth.spi.IResourcePermissionQuery;
 import org.pkaq.core.auth.authentication.entrypoint.UnauthorizedHandler;
 import org.pkaq.core.auth.authorization.entrypoint.UrlAccessDeniedHandler;
@@ -16,10 +19,10 @@ import org.pkaq.core.auth.spi.ITenantIdentityResolver;
 import org.pkaq.core.auth.spi.model.AccountSnapshot;
 import org.pkaq.core.auth.spi.IAccountQuery;
 import org.pkaq.core.auth.spi.IPermissionSnapshotQuery;
+import org.pkaq.core.auth.spi.IAccountProfileQuery;
 import org.pkaq.core.auth.util.CacheTokenUtil;
 import org.pkaq.core.enums.FrozenEnumm;
 import org.pkaq.core.jwt.JwtUtil;
-import org.pkaq.core.auth.spi.IAccountProfileQuery;
 import org.pkaq.core.properties.Auth;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.threaduser.ThreadUserHelper;
@@ -42,8 +45,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
@@ -55,6 +60,34 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 class WebSecurityCapabilitiesTest {
     private static EvaConfig testConfig;
+
+    @Test
+    void disabledRegistrationCannotBeOpenedByAnonymousWildcard() throws Exception {
+        try (var context = createContext(true)) {
+            MockMvc mvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
+            assertTrue(mvc.perform(post("/auth/register").contentType("application/json")
+                            .content("{\"account\":\"demo\",\"password\":\"Password123\"}"))
+                    .andExpect(status().isOk()).andReturn().getResponse().getContentAsString()
+                    .contains("\"success\":false"));
+            verifyNoInteractions(context.getBean(IAccountRegistration.class));
+        }
+    }
+
+    @Test
+    void enabledRegistrationBypassesOldJwtAndDoesNotAutoLogin() throws Exception {
+        try (var context = createContext(true, true)) {
+            MockMvc mvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
+            when(context.getBean(TokenUtils.class).getToken(any())).thenReturn("expired-old-token");
+            mvc.perform(post("/auth/register").contentType("application/json")
+                            .content("{\"account\":\"demo\",\"password\":\"Password123\",\"nickName\":\"昵称\"}"))
+                    .andExpect(status().isOk()).andExpect(content().string(
+                            org.hamcrest.Matchers.containsString("\"data\":\"7\"")));
+            verifyNoInteractions(context.getBean(JwtUtil.class), context.getBean(TokenUtils.class));
+            assertNull(ThreadUserHelper.getCurrentUserOrNull());
+            assertTrue(mvc.perform(get("/auth/register")).andExpect(status().isOk())
+                    .andReturn().getResponse().getContentAsString().contains("\"success\":false"));
+        }
+    }
 
     @Test
     void disabledAuthenticationOnlyAllowsExplicitPublicEndpoints() throws Exception {
@@ -91,7 +124,12 @@ class WebSecurityCapabilitiesTest {
     }
 
     private AnnotationConfigWebApplicationContext createContext(boolean enabled) {
+        return createContext(enabled, false);
+    }
+
+    private AnnotationConfigWebApplicationContext createContext(boolean enabled, boolean registration) {
         testConfig = new EvaConfig();
+        testConfig.getAuth().getRegistration().setEnabled(registration);
         testConfig.getAuth().getAuthentication().setEnabled(enabled);
         testConfig.getJwt().setPersistence(false);
         Auth.OpenApi openApi = new Auth.OpenApi();
@@ -107,15 +145,23 @@ class WebSecurityCapabilitiesTest {
 
     @Configuration
     @EnableWebMvc
-    @Import(WebSecurityConfig.class)
+    @Import({WebSecurityConfig.class, RegistrationCtrl.class, AccountRegistrationService.class})
     static class TestBeans {
         @Bean EvaConfig evaConfig() { return testConfig; }
+        @Bean org.pkaq.core.i18n.I18NHelper i18nHelper() {
+            return mock(org.pkaq.core.i18n.I18NHelper.class);
+        }
         @Bean DispatcherServletPath dispatcherServletPath() { return () -> "/"; }
         @Bean AuthenticationManager authenticationManager() { return mock(AuthenticationManager.class); }
         @Bean JwtUtil jwtUtil() { return mock(JwtUtil.class); }
         @Bean CacheTokenUtil cacheTokenUtil() { return mock(CacheTokenUtil.class); }
         @Bean TokenUtils tokenUtils() { return mock(TokenUtils.class); }
         @Bean IAccountQuery authUserService() { return mock(IAccountQuery.class); }
+        @Bean IAccountRegistration accountRegistration() {
+            IAccountRegistration registration = mock(IAccountRegistration.class);
+            when(registration.create(any(), any(), any())).thenReturn(7L);
+            return registration;
+        }
         @Bean ITenantIdentityResolver tenantLoginResolver() { return mock(ITenantIdentityResolver.class); }
         @Bean ITenantAuthRouter tenantAuthRoutingService() { return mock(ITenantAuthRouter.class); }
         @Bean AppKeyAuthenticationFilter appKeyFilter() { return mock(AppKeyAuthenticationFilter.class); }

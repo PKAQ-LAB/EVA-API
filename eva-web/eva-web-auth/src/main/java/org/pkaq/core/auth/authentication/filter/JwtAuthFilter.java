@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.auth.AuthCodes;
+import org.pkaq.core.auth.config.RegistrationPolicy;
 import org.pkaq.core.auth.authorization.service.AuthPermissionContextService;
 import org.pkaq.core.auth.authorization.service.ResourceAuthorizationService;
 import org.pkaq.core.auth.spi.model.AccountSnapshot;
@@ -71,6 +72,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     FilterChain chain) throws ServletException, IOException {
 
         String requestPath = resolveRequestPath(request);
+        if (RegistrationPolicy.isPublicRequest(evaConfig, request.getMethod(), requestPath)) {
+            chain.doFilter(request, response);
+            return;
+        }
         if (!evaConfig.getAuth().matchJwtPath(requestPath)) {
             chain.doFilter(request, response);
             return;
@@ -225,7 +230,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (StrUtils.isNotBlank(servletPath)) {
             return servletPath;
         }
-        return request.getRequestURI();
+        String requestUri = request.getRequestURI();
+        String contextPath = request.getContextPath();
+        // 仅剥离真实上下文路径段，防止/api错误匹配/apix等相似前缀。
+        if (StrUtils.isNotBlank(contextPath) && null != requestUri
+                && (requestUri.equals(contextPath) || requestUri.startsWith(contextPath + "/"))) {
+            return requestUri.substring(contextPath.length());
+        }
+        return requestUri;
     }
 
     /**

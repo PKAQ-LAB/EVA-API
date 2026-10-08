@@ -11,6 +11,9 @@ public class Auth {
     // 认证能力总开关，JWT和OpenAPI仍保留各自的机制开关。
     private Authentication authentication = new Authentication();
 
+    // 自助注册默认关闭，运行模式与认证机制由注册服务再次验证。
+    private Registration registration = new Registration();
+
     private String[] webstatic;
 
     // 无需鉴权路径(无条件访问)
@@ -32,6 +35,15 @@ public class Auth {
      */
     public Authentication getAuthentication() {
         return null == authentication ? new Authentication() : authentication;
+    }
+
+    /**
+     * 获取自助注册配置。
+     *
+     * @return 自助注册配置
+     */
+    public Registration getRegistration() {
+        return null == registration ? new Registration() : registration;
     }
 
     /**
@@ -103,6 +115,17 @@ public class Auth {
     @Data
     public static class Authentication {
         private boolean enabled = true;
+    }
+
+    /**
+     * 自助注册配置，不分配管理资料和权限。
+     *
+     * @author PKAQ
+     * @date 2026-10-08
+     */
+    @Data
+    public static class Registration {
+        private boolean enabled;
     }
 
     @Data

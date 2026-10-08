@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.auth.AuthCodes;
+import org.pkaq.core.auth.config.RegistrationPolicy;
 import org.pkaq.core.auth.openapi.consts.OpenApiConsts;
 import org.pkaq.core.auth.spi.model.AppCredentialSnapshot;
 import org.pkaq.core.auth.openapi.exception.AppKeyAuthenticationException;
@@ -77,6 +78,10 @@ public class AppKeyAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String requestPath = resolveRequestPath(request);
+        if (RegistrationPolicy.isPublicRequest(evaConfig, request.getMethod(), requestPath)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         var openApiConfig = evaConfig.getAuth().getOpenApi();
         var headerConfig = openApiConfig.getHeaders();
@@ -197,9 +202,14 @@ public class AppKeyAuthenticationFilter extends OncePerRequestFilter {
         if (servletPath != null && !servletPath.isBlank()) {
             return servletPath;
         }
-        return request.getRequestURI();
+        String requestUri = request.getRequestURI();
+        String contextPath = request.getContextPath();
+        // 仅剥离真实上下文路径段，防止/api错误匹配/apix等相似前缀。
+        if (null != contextPath && !contextPath.isBlank() && null != requestUri
+                && (requestUri.equals(contextPath) || requestUri.startsWith(contextPath + "/"))) {
+            return requestUri.substring(contextPath.length());
+        }
+        return requestUri;
     }
 }
-
-
 
