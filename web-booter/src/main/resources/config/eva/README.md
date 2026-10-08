@@ -27,6 +27,7 @@ java -jar web-booter.jar
 | `EVA_MODE` | `eva.mode` | standalone、platform 或 saas |
 | `EVA_TENANT_ENABLE` | `eva.tenant.enable` | 是否开启 schema 租户模式 |
 | `EVA_TENANT_MODE` | `eva.tenant.mode` | standalone 或 schema |
+| `EVA_AUTH_REGISTRATION_ENABLED` | `eva.auth.registration.enabled` | 默认 false；仅 standalone、非租户且认证和 JWT 有效时开放自助注册 |
 | `EVA_MINIO_URL` | `eva.upload.min-io.url` | MinIO 服务地址 |
 | `EVA_MINIO_ACCESS_KEY` | `eva.upload.min-io.access` | MinIO 访问标识 |
 | `EVA_MINIO_SECRET_KEY` | `eva.upload.min-io.secret` | MinIO 访问密钥 |

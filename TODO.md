@@ -89,6 +89,7 @@
 
 ```powershell
 # 后端：仓库当前没有 Gradle Wrapper，使用已安装的 Gradle
+# 全量 test 仅限已完成数据源隔离的测试环境；开发库不得执行全量 web-booter:test
 gradle clean test
 gradle clean build
 
@@ -100,3 +101,13 @@ pnpm.cmd build
 ```
 
 除构建和自动化测试外，每个产品模式还必须提供实际登录、菜单加载、权限拒绝、CRUD、租户隔离和日志查询的请求或页面操作证据。
+
+## 9. 2026-10-08 账号拆分与注册专项
+
+- [x] 拆分 `SYS_ACCOUNT` 与可选 `SYS_ACCOUNT_PROFILE`，保留账号 ID、密码哈希及既有授权关联，管理端 BO/VO 接口不变。
+- [x] 管理新增与自助注册复用公共账号创建契约；纯认证不读取部门、岗位、角色资料，认证核心不反向依赖系统管理模块。
+- [x] 开发 PostgreSQL 已执行受限备份与 V12，原 1 个账号的账号字段及管理资料逐值校验通过。
+- [x] 实现默认关闭、仅 standalone 有效 JWT 模式开放的注册接口，不创建管理资料、角色或自动登录会话。
+- [ ] 面向公网开放注册前补齐防滥用措施；前端注册页面、邮箱/短信验证和密码找回尚未实现。
+
+专项测试命令、实际 PostgreSQL 和请求证据见 `docs/ACCOUNT_PROFILE_AND_REGISTRATION.md`。本专项不等于全部业务模块的端到端发布验收。

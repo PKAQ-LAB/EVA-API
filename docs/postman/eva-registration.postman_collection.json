@@ -1,0 +1,177 @@
+{
+  "info": {
+    "name": "EVA 账号注册验收",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "仅用于隔离测试环境。先在服务端开启standalone自助注册并重启，再设置唯一测试账号及原始密码。注册发送原始密码，登录发送MD5摘要以兼容现有eva-web协议。默认禁用注册；不得使用真实管理员或生产密码。此集合不切换服务器配置、不自动清理数据。"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:9016/api"
+    },
+    {
+      "key": "registrationAccount",
+      "value": "registration-test-change-me"
+    },
+    {
+      "key": "registrationPassword",
+      "value": ""
+    },
+    {
+      "key": "registrationNickName",
+      "value": "注册测试用户"
+    },
+    {
+      "key": "loginPasswordDigest",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "1. 创建普通账号（注册已开启）",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const password = pm.collectionVariables.get('registrationPassword');",
+              "if (!password) { throw new Error('请设置测试密码，禁止使用生产凭据'); }",
+              "pm.variables.set('registrationBody', JSON.stringify({account:pm.collectionVariables.get('registrationAccount'),password,nickName:pm.collectionVariables.get('registrationNickName')}));"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const result = pm.response.json();",
+              "pm.test('注册成功', () => pm.expect(result.success).to.eql(true));",
+              "pm.test('不自动签发Token', () => { pm.expect(result.data).to.be.a('string'); pm.expect(result).not.to.have.property('access_token'); pm.expect(result).not.to.have.property('refresh_token'); });",
+              "pm.test('不回显密码', () => pm.expect(pm.response.text()).not.to.include(pm.collectionVariables.get('registrationPassword')));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{{registrationBody}}"
+        },
+        "url": "{{baseUrl}}/auth/register"
+      }
+    },
+    {
+      "name": "2. 同账号重复注册必须失败",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.variables.set('registrationBody', JSON.stringify({account:pm.collectionVariables.get('registrationAccount'),password:pm.collectionVariables.get('registrationPassword'),nickName:pm.collectionVariables.get('registrationNickName')}));"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('重复注册不成功', () => pm.expect(pm.response.json().success).to.eql(false));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{{registrationBody}}"
+        },
+        "url": "{{baseUrl}}/auth/register"
+      }
+    },
+    {
+      "name": "3. 按现有登录协议登录（填写MD5摘要）",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const digest = pm.collectionVariables.get('loginPasswordDigest');",
+              "if (!/^[a-f0-9]{32}$/.test(digest || '')) { throw new Error('请填写原始测试密码的32位小写MD5摘要'); }",
+              "pm.variables.set('loginBody', JSON.stringify({account:pm.collectionVariables.get('registrationAccount'),password:digest}));"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('注册账号能够登录', () => pm.expect(pm.response.json().success).to.eql(true));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{{loginBody}}"
+        },
+        "url": "{{baseUrl}}/auth/login"
+      }
+    },
+    {
+      "name": "4. 注入管理员字段必须拒绝",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('不允许特权字段', () => pm.expect(pm.response.code >= 400 || pm.response.json().success === false).to.eql(true));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"account\":\"privilege-test\",\"password\":\"test-only-not-production\",\"nickName\":\"越权测试\",\"roleIds\":[1],\"frozen\":9999,\"tenantId\":1,\"id\":1}"
+        },
+        "url": "{{baseUrl}}/auth/register"
+      }
+    }
+  ]
+}
