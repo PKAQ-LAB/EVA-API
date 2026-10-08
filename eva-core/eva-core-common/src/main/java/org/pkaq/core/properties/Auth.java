@@ -8,6 +8,9 @@ import org.springframework.util.AntPathMatcher;
  */
 @Data
 public class Auth {
+    // 认证能力总开关，JWT和OpenAPI仍保留各自的机制开关。
+    private Authentication authentication = new Authentication();
+
     private String[] webstatic;
 
     // 无需鉴权路径(无条件访问)
@@ -22,12 +25,30 @@ public class Auth {
     // OpenAPI配置
     private OpenApi openApi;
 
+    /**
+     * 获取认证能力配置。
+     *
+     * @return 认证能力配置
+     */
+    public Authentication getAuthentication() {
+        return null == authentication ? new Authentication() : authentication;
+    }
+
+    /**
+     * 判断是否启用身份认证能力。
+     *
+     * @return 是否启用认证
+     */
+    public boolean isAuthenticationEnabled() {
+        return getAuthentication().isEnabled();
+    }
+
     public boolean isJwtEnabled() {
-        return getJwt().isEnabled();
+        return isAuthenticationEnabled() && getJwt().isEnabled();
     }
 
     public boolean isOpenApiEnabled() {
-        return getOpenApi().isEnabled();
+        return isAuthenticationEnabled() && getOpenApi().isEnabled();
     }
 
     public long getSignatureTimestampToleranceSeconds() {
@@ -39,11 +60,11 @@ public class Auth {
     }
 
     public boolean matchJwtPath(String path) {
-        return getJwt().matchPath(path);
+        return isAuthenticationEnabled() && getJwt().matchPath(path);
     }
 
     public boolean matchOpenApiPath(String path) {
-        return getOpenApi().matchPath(path);
+        return isAuthenticationEnabled() && getOpenApi().matchPath(path);
     }
 
     public Jwt getJwt() {
@@ -71,6 +92,17 @@ public class Auth {
         }
 
         return false;
+    }
+
+    /**
+     * 认证能力总开关配置。
+     *
+     * @author PKAQ
+     * @date 2026-10-07
+     */
+    @Data
+    public static class Authentication {
+        private boolean enabled = true;
     }
 
     @Data

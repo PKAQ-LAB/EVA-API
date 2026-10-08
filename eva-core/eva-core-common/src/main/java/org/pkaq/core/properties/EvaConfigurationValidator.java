@@ -26,7 +26,7 @@ public final class EvaConfigurationValidator {
     }
 
     /**
-     * 校验运行模式、租户模式和 JWT 密钥。
+     * 校验运行模式、安全能力组合、租户模式和 JWT 密钥。
      *
      * @param config EVA 业务配置
      */
@@ -37,9 +37,28 @@ public final class EvaConfigurationValidator {
 
         validateMode(config.getMode(), SUPPORTED_RUNTIME_MODES, "eva.mode");
         validateMode(config.getTenant().getMode(), SUPPORTED_TENANT_MODES, "eva.tenant.mode");
+        validateSecurityCapabilities(config);
 
         if (config.getAuth().isJwtEnabled()) {
             validateJwtSecret(config.getJwt().getSecret());
+        }
+    }
+
+    private static void validateSecurityCapabilities(EvaConfig config) {
+        if (config.getAuth().isAuthenticationEnabled()) {
+            if (!config.getAuth().isJwtEnabled() && !config.getAuth().isOpenApiEnabled()) {
+                throw new IllegalStateException("开启认证时必须启用 JWT 或 OpenAPI 认证机制");
+            }
+            return;
+        }
+        if (config.getResourcePermission().isEnable()) {
+            throw new IllegalStateException("eva.resource-permission.enable 开启时必须开启认证");
+        }
+        if (config.getDataPermission().isEnable()) {
+            throw new IllegalStateException("eva.data-permission.enable 开启时必须开启认证");
+        }
+        if (config.getTenant().isEnable()) {
+            throw new IllegalStateException("eva.tenant.enable 开启时必须开启认证");
         }
     }
 

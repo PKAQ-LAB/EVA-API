@@ -30,6 +30,9 @@ eva:
     bravo-ttl: 2592000000
     threshold: 300000
   auth:
+    # 安全能力总开关；关闭后仅显式 anonymous 路径公开，其余请求拒绝
+    authentication:
+      enabled: true
     webstatic:
     anonymous: /auth/login,/auth/logout,/auth/getAlpha,/wx/**,/doc/**,/actuator/**,/swagger-resources/**,/v3/api-docs/swagger-config
     permit: /auth/**,/notices,/wx/**,/doc/**,/actuator/**,/license/**
@@ -39,6 +42,7 @@ eva:
       enabled: true
       paths: /apr/**
   resource-permission:
+    # 可独立关闭接口资源权限；不会关闭登录认证与 Token 撤销校验
     enable: true
     strict: false
   tenant:
@@ -49,6 +53,7 @@ eva:
     standalone-schema: eva
     prefix: tenant_
   data-permission:
+    # 可独立启用数据权限；当前数据范围来源仍为角色配置，与接口权限开关无关
     enable: true
     exclude-tables: sys_module_resources,sys_role_user
   cache:
