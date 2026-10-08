@@ -2,9 +2,11 @@ package org.pkaq.core.auth.authentication.domain;
 
 import org.pkaq.core.auth.spi.model.RoleSnapshot;
 import org.pkaq.core.auth.spi.model.AccountSnapshot;
+import org.pkaq.core.auth.spi.model.AccountProfileSnapshot;
 import org.pkaq.core.enums.FrozenEnumm;
 import org.pkaq.core.util.BeanUtils;
 import org.pkaq.core.util.CollUtils;
+import org.pkaq.core.util.StrUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -14,20 +16,29 @@ import java.util.stream.Collectors;
  * JwtUser 工厂
  *
  * @author PKAQ
+ * @date 2026-10-08
  */
 public final class JwtUserFactory {
 
     private JwtUserFactory() {
     }
 
-    public static JwtUserDetail create(AccountSnapshot user, List<RoleSnapshot> roles) {
+    /**
+     * 组合账号凭据与可选管理资料，不要求资料存在。
+     * @param user 账号快照
+     * @param roles 权限快照
+     * @param profile 可选管理资料
+     * @return 登录身份
+     */
+    public static JwtUserDetail create(AccountSnapshot user, List<RoleSnapshot> roles, AccountProfileSnapshot profile) {
         var detail = new JwtUserDetail(
                 user.getId(),
                 user.getAccount(),
                 user.getTenantId(),
                 user.getPassword(),
-                user.getDeptId(),
-                user.getName(),
+                null == profile ? null : profile.getDeptId(),
+                null != profile && StrUtils.isNotBlank(profile.getName()) ? profile.getName()
+                        : StrUtils.isNotBlank(user.getNickName()) ? user.getNickName() : user.getAccount(),
                 user.getNickName(),
                 FrozenEnumm.FROZEN == user.getFrozen(),
                 CollUtils.isEmpty(roles) ? Collections.emptyList() : mapToGrantedAuthorities(roles));

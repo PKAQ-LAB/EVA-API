@@ -66,6 +66,10 @@ class MybatisPlusDataPermissionHandlerTest {
     void shouldBuildDepartmentTreeScope() {
         String sql = expressionOf(List.of(scope("0002"))).toString();
         assertTrue(sql.contains("dp_user.DEPT_ID"));
+        assertTrue(sql.contains("SYS_ACCOUNT_PROFILE dp_user"));
+        assertTrue(sql.contains("SYS_ACCOUNT dp_account"));
+        assertTrue(sql.contains("dp_account.ID = dp_user.ACCOUNT_ID"));
+        assertTrue(sql.contains("dp_account.DELETED = 0"));
         assertTrue(sql.contains("dp_org.ID = 22"));
         assertTrue(sql.contains("%/22/%"));
     }
@@ -76,6 +80,21 @@ class MybatisPlusDataPermissionHandlerTest {
         ThreadUser.DataScope scope = new ThreadUser.DataScope("0003", List.of(31L, 32L));
         String sql = expressionOf(List.of(scope)).toString();
         assertTrue(sql.contains("dp_user.DEPT_ID IN (31, 32)"));
+    }
+
+    /** 档案没有审计列，应跳过档案表但继续约束主账号表。 */
+    @Test
+    void shouldSkipProfileWithoutSkippingAccount() {
+        ThreadUserHelper.runWithUser(user(List.of(scope("0007"))), () -> {
+            Table profile = new Table("SYS_ACCOUNT_PROFILE");
+            profile.setAlias(new Alias("profile"));
+            assertNull(handler.getSqlSegment(profile, null, "example.Mapper.selectList"));
+            Table account = new Table("SYS_ACCOUNT");
+            account.setAlias(new Alias("account"));
+            String sql = handler.getSqlSegment(account, null, "example.Mapper.selectList").toString();
+            assertTrue(sql.contains("account.CREATE_ID = 11"));
+            assertTrue(sql.contains("account.MODIFY_ID = 11"));
+        });
     }
 
     /** Ignore 注解必须跳过整个 Mapper 的数据权限。 */

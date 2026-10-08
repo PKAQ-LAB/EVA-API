@@ -19,6 +19,7 @@ import org.pkaq.core.auth.spi.IPermissionSnapshotQuery;
 import org.pkaq.core.auth.util.CacheTokenUtil;
 import org.pkaq.core.enums.FrozenEnumm;
 import org.pkaq.core.jwt.JwtUtil;
+import org.pkaq.core.auth.spi.IAccountProfileQuery;
 import org.pkaq.core.properties.Auth;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.threaduser.ThreadUserHelper;
@@ -129,7 +130,7 @@ class WebSecurityCapabilitiesTest {
                     new ResourceAuthorizationService(testConfig, mock(IResourcePermissionQuery.class)),
                     tenantLoginResolver(), tenantAuthRoutingService(),
                     new AuthPermissionContextService(testConfig, mock(IPermissionSnapshotQuery.class),
-                            tenantAuthRoutingService()));
+                            tenantAuthRoutingService(), mock(IAccountProfileQuery.class)));
         }
     }
 

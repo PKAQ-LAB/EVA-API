@@ -19,10 +19,8 @@ public class AccountSnapshot {
     @JsonIgnore
     @ToString.Exclude
     private String password;
-    private String name;
     private String nickName;
     private Long tenantId;
-    private Long deptId;
     private Long permVer;
     private FrozenEnumm frozen;
     private FrozenEnumm tenantFrozen;

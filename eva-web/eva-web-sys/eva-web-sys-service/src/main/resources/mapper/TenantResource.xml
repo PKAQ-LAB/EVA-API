@@ -27,7 +27,7 @@
 
     <select id="selectTenantUserIds" resultType="java.lang.Long">
         SELECT ID
-        FROM SYS_USER
+        FROM SYS_ACCOUNT
         WHERE TENANT_ID = #{tenantId}
           AND (DELETED = 0 OR DELETED IS NULL)
     </select>

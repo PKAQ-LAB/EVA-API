@@ -60,8 +60,9 @@ class TenantPrivateAccountSchemaPostgresTest {
             assertEquals(9999, ((Number) organization.get("frozen")).intValue());
 
             Map<String, Object> administrator = jdbcTemplate.queryForMap("""
-                    SELECT ACCOUNT, PASSWORD, DEPT_ID, FROZEN
-                    FROM tenant_101.SYS_USER WHERE ID = 1011
+                    SELECT a.ACCOUNT, a.PASSWORD, p.DEPT_ID, a.FROZEN
+                    FROM tenant_101.SYS_ACCOUNT a JOIN tenant_101.SYS_ACCOUNT_PROFILE p ON p.ACCOUNT_ID=a.ID
+                    WHERE a.ID = 1011
                     """);
             assertEquals("tenant-admin", administrator.get("account"));
             assertEquals(organizationId, ((Number) administrator.get("dept_id")).longValue());
@@ -116,7 +117,7 @@ class TenantPrivateAccountSchemaPostgresTest {
             DataSource dataSource = postgres.getPostgresDatabase();
             JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
             createSchema(jdbcTemplate, "public");
-            jdbcTemplate.update("INSERT INTO SYS_USER(ID, DELETED, FROZEN, PERM_VER) VALUES (1, 0, 0, 0)");
+            jdbcTemplate.update("INSERT INTO SYS_ACCOUNT(ID, DELETED, FROZEN, PERM_VER) VALUES (1, 0, 0, 0)");
 
             EvaConfig config = new EvaConfig();
             config.setMode("standalone");
@@ -136,13 +137,14 @@ class TenantPrivateAccountSchemaPostgresTest {
             jdbcTemplate.execute("CREATE SCHEMA " + schema);
         }
         jdbcTemplate.execute("""
-                    CREATE TABLE %s.SYS_USER(
+                    CREATE TABLE %s.SYS_ACCOUNT(
                     ID BIGINT PRIMARY KEY, REVISION INTEGER, DELETED BIGINT DEFAULT 0,
                     FROZEN INTEGER DEFAULT 0, SORT DOUBLE PRECISION DEFAULT 0,
-                    UTC_CREATE TIMESTAMP, CODE VARCHAR(100), ACCOUNT VARCHAR(100),
-                    PASSWORD VARCHAR(200), NAME VARCHAR(100), NICK_NAME VARCHAR(100),
-                    DEPT_ID BIGINT, PERM_VER BIGINT DEFAULT 0)
+                    UTC_CREATE TIMESTAMP, ACCOUNT VARCHAR(100),
+                    PASSWORD VARCHAR(200), NICK_NAME VARCHAR(100), PERM_VER BIGINT DEFAULT 0)
                 """.formatted(schema));
+        jdbcTemplate.execute("CREATE TABLE " + schema + ".SYS_ACCOUNT_PROFILE(ACCOUNT_ID BIGINT PRIMARY KEY "
+                + "REFERENCES " + schema + ".SYS_ACCOUNT(ID), CODE VARCHAR(100), NAME VARCHAR(100), DEPT_ID BIGINT)");
         jdbcTemplate.execute("""
                 CREATE TABLE %s.SYS_ORGANIZATION(
                     ID BIGINT PRIMARY KEY, REVISION INTEGER, DELETED BIGINT DEFAULT 0,
@@ -169,7 +171,7 @@ class TenantPrivateAccountSchemaPostgresTest {
     private void seed(JdbcTemplate jdbcTemplate) {
         for (String schema : Set.of("public", "tenant_101", "tenant_102")) {
             jdbcTemplate.update("INSERT INTO " + schema
-                    + ".SYS_USER(ID, DELETED, FROZEN, PERM_VER) VALUES (1011, 0, 0, 0)");
+                    + ".SYS_ACCOUNT(ID, DELETED, FROZEN, PERM_VER) VALUES (1011, 0, 0, 0)");
             jdbcTemplate.update("INSERT INTO " + schema + ".SYS_ROLE(ID, DELETED) VALUES (1, 0)");
             jdbcTemplate.update("INSERT INTO " + schema
                     + ".SYS_ROLERES_REF(ROLE_ID, RESOURCE_ID) VALUES (1, 5001), (1, 5002)");
@@ -177,12 +179,12 @@ class TenantPrivateAccountSchemaPostgresTest {
     }
 
     private long value(JdbcTemplate jdbcTemplate, String schema, long userId) {
-        return jdbcTemplate.queryForObject("SELECT PERM_VER FROM " + schema + ".SYS_USER WHERE ID = ?",
+        return jdbcTemplate.queryForObject("SELECT PERM_VER FROM " + schema + ".SYS_ACCOUNT WHERE ID = ?",
                 Long.class, userId);
     }
 
     private long deleted(JdbcTemplate jdbcTemplate, String schema, long userId) {
-        return jdbcTemplate.queryForObject("SELECT DELETED FROM " + schema + ".SYS_USER WHERE ID = ?",
+        return jdbcTemplate.queryForObject("SELECT DELETED FROM " + schema + ".SYS_ACCOUNT WHERE ID = ?",
                 Long.class, userId);
     }
 

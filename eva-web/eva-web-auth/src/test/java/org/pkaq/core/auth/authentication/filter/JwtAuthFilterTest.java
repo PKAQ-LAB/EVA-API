@@ -8,11 +8,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pkaq.core.auth.spi.IAccountQuery;
 import org.pkaq.core.auth.spi.IPermissionSnapshotQuery;
+import org.pkaq.core.auth.spi.IAccountProfileQuery;
 import org.pkaq.core.auth.authorization.service.AuthPermissionContextService;
 import org.pkaq.core.auth.authorization.service.ResourceAuthorizationService;
 import org.pkaq.core.auth.spi.IResourcePermissionQuery;
 import org.pkaq.core.auth.spi.model.RoleSnapshot;
 import org.pkaq.core.auth.spi.model.AccountSnapshot;
+import org.pkaq.core.auth.spi.model.AccountProfileSnapshot;
 import org.pkaq.core.auth.util.CacheTokenUtil;
 import org.pkaq.core.auth.spi.ITenantAuthRouter;
 import org.pkaq.core.auth.spi.ITenantIdentityResolver;
@@ -57,6 +59,8 @@ class JwtAuthFilterTest {
     @Mock
     private IPermissionSnapshotQuery permissionQuery;
     @Mock
+    private IAccountProfileQuery profileQuery;
+    @Mock
     private IResourcePermissionQuery roleResourceCacheService;
     @Mock
     private ITenantIdentityResolver tenantLoginResolver;
@@ -82,7 +86,7 @@ class JwtAuthFilterTest {
                 new ResourceAuthorizationService(evaConfig, roleResourceCacheService),
                 tenantLoginResolver,
                 tenantAuthRoutingService,
-                new AuthPermissionContextService(evaConfig, permissionQuery, tenantAuthRoutingService)
+                new AuthPermissionContextService(evaConfig, permissionQuery, tenantAuthRoutingService, profileQuery)
         );
 
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/api/user/list");
@@ -116,7 +120,7 @@ class JwtAuthFilterTest {
                 jwtUtil, evaConfig, cacheTokenUtil, tokenUtil, authUserService,
                 new ResourceAuthorizationService(evaConfig, roleResourceCacheService),
                 tenantLoginResolver, tenantAuthRoutingService,
-                new AuthPermissionContextService(evaConfig, permissionQuery, tenantAuthRoutingService));
+                new AuthPermissionContextService(evaConfig, permissionQuery, tenantAuthRoutingService, profileQuery));
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/api/user/list");
         MockHttpServletResponse response = new MockHttpServletResponse();
 
@@ -135,7 +139,9 @@ class JwtAuthFilterTest {
         AccountSnapshot authState = new AccountSnapshot();
         authState.setFrozen(FrozenEnumm.UN_FROZEN);
         authState.setPermVer(3L);
-        authState.setName("管理员");
+        AccountProfileSnapshot profile = new AccountProfileSnapshot();
+        profile.setName("管理员");
+        when(profileQuery.findProfile(1001L)).thenReturn(profile);
         evaConfig.getDataPermission().setEnable(true);
         when(permissionQuery.findRoles(1001L)).thenReturn(List.of(adminRole));
         when(authUserService.getAccountState(1001L)).thenReturn(authState);

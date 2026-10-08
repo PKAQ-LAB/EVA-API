@@ -44,6 +44,7 @@ import org.pkaq.sys.role.vo.RoleGrantedUserVo;
 import org.pkaq.sys.tenant.mapper.TenantResourceMapper;
 import org.pkaq.sys.user.convert.UserConvert;
 import org.pkaq.sys.user.entity.UserEntity;
+import org.pkaq.sys.user.bo.UserQueryBo;
 import org.pkaq.sys.user.mapper.UserMapper;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -54,6 +55,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -369,11 +371,10 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
         }
         ensureRoleExists(roleId);
 
-        LambdaQueryWrapper<UserEntity> userWrapper = new LambdaQueryWrapper<>();
-        userWrapper.eq(deptId != null && deptId != 0L, UserEntity::getDeptId, deptId);
-        userWrapper.eq(UserEntity::getFrozen, FrozenEnumm.UN_FROZEN);
-
-        List<UserEntity> users = this.userMapper.selectList(userWrapper);
+        UserQueryBo query = new UserQueryBo();
+        query.setDeptId(deptId);
+        query.setFrozen(0);
+        List<UserEntity> users = this.userMapper.selectManagedList(query, Collections.emptyList());
         Set<Long> visibleUserIds = users.stream().map(UserEntity::getId).collect(Collectors.toSet());
 
         LambdaQueryWrapper<RoleUserEntity> wrapper = new LambdaQueryWrapper<>();

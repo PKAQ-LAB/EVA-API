@@ -48,19 +48,23 @@ public class TenantPrivateAccountService {
                     ROOT_PID, "/" + rootOrganizationId);
 
             jdbcTemplate.update("""
-                    INSERT INTO SYS_USER(
+                    INSERT INTO SYS_ACCOUNT(
                         ID, REVISION, DELETED, FROZEN, SORT, UTC_CREATE,
-                        CODE, ACCOUNT, PASSWORD, NAME, NICK_NAME, DEPT_ID, PERM_VER)
-                    VALUES (?, 0, 0, ?, 0, CURRENT_TIMESTAMP, ?, ?, ?, ?, ?, ?, 0)
-                    """, adminId, FrozenEnumm.READ_ONLY.getCode(), account, account,
-                    BCryptUtils.hashpw(password), account, account, rootOrganizationId);
+                        ACCOUNT, PASSWORD, NICK_NAME, PERM_VER)
+                    VALUES (?, 0, 0, ?, 0, CURRENT_TIMESTAMP, ?, ?, ?, 0)
+                    """, adminId, FrozenEnumm.READ_ONLY.getCode(), account,
+                    BCryptUtils.hashpw(password), account);
+            jdbcTemplate.update("""
+                    INSERT INTO SYS_ACCOUNT_PROFILE(ACCOUNT_ID, CODE, NAME, DEPT_ID)
+                    VALUES (?, ?, ?, ?)
+                    """, adminId, account, account, rootOrganizationId);
             return null;
         });
     }
 
     public String findAdministratorAccount(Long tenantId, Long adminId) {
         return targetTenantExecutor.execute(tenantId, () -> jdbcTemplate.query("""
-                SELECT ACCOUNT FROM SYS_USER WHERE ID = ? AND COALESCE(DELETED, 0) = 0
+                SELECT ACCOUNT FROM SYS_ACCOUNT WHERE ID = ? AND COALESCE(DELETED, 0) = 0
                 """, resultSet -> resultSet.next() ? resultSet.getString(1) : null, adminId));
     }
 
@@ -68,7 +72,7 @@ public class TenantPrivateAccountService {
         return targetTenantExecutor.execute(tenantId, () -> {
             Set<Long> userIds = activeUserIds();
             jdbcTemplate.update("""
-                    UPDATE SYS_USER SET PERM_VER = COALESCE(PERM_VER, 0) + 1
+                    UPDATE SYS_ACCOUNT SET PERM_VER = COALESCE(PERM_VER, 0) + 1
                     WHERE COALESCE(DELETED, 0) = 0
                     """);
             return userIds;
@@ -79,14 +83,14 @@ public class TenantPrivateAccountService {
         return targetTenantExecutor.execute(tenantId, () -> {
             int limit = Math.max(userLimit, 0);
             List<Long> overflow = jdbcTemplate.queryForList("""
-                    SELECT ID FROM SYS_USER
+                    SELECT ID FROM SYS_ACCOUNT
                     WHERE ID <> ? AND COALESCE(DELETED, 0) = 0 AND COALESCE(FROZEN, 0) = 0
                     ORDER BY UTC_CREATE ASC NULLS FIRST, ID ASC
                     OFFSET ?
                     """, Long.class, adminId, limit);
             for (Long userId : overflow) {
                 jdbcTemplate.update("""
-                        UPDATE SYS_USER SET FROZEN = 1, PERM_VER = COALESCE(PERM_VER, 0) + 1
+                        UPDATE SYS_ACCOUNT SET FROZEN = 1, PERM_VER = COALESCE(PERM_VER, 0) + 1
                         WHERE ID = ? AND COALESCE(DELETED, 0) = 0 AND COALESCE(FROZEN, 0) = 0
                         """, userId);
             }
@@ -102,7 +106,7 @@ public class TenantPrivateAccountService {
             jdbcTemplate.update("DELETE FROM SYS_ROLERES_REF");
             jdbcTemplate.update("UPDATE SYS_ROLE SET DELETED = ID WHERE COALESCE(DELETED, 0) = 0");
             jdbcTemplate.update("""
-                    UPDATE SYS_USER
+                    UPDATE SYS_ACCOUNT
                     SET DELETED = ID, PERM_VER = COALESCE(PERM_VER, 0) + 1
                     WHERE COALESCE(DELETED, 0) = 0
                     """);
@@ -132,7 +136,7 @@ public class TenantPrivateAccountService {
 
     private Set<Long> activeUserIds() {
         return new HashSet<>(jdbcTemplate.queryForList("""
-                SELECT ID FROM SYS_USER WHERE COALESCE(DELETED, 0) = 0
+                SELECT ID FROM SYS_ACCOUNT WHERE COALESCE(DELETED, 0) = 0
                 """, Long.class));
     }
 }

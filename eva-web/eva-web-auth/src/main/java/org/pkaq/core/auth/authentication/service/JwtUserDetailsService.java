@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
  * 认证用户明细服务
  *
  * @author PKAQ
+ * @date 2026-10-08
  */
 @Service
 @RequiredArgsConstructor
@@ -38,15 +39,23 @@ public class JwtUserDetailsService implements UserDetailsService {
         var user = accountQuery.getAccount(account);
         AuthCodes.ACCOUNT_OR_PWD_ERROR.assertNotNull(user);
         ensureTenantAvailable(user);
-        return JwtUserFactory.create(user, permissionContextService.findRoles(user.getId(),
-                null == user.getTenantId() ? 0L : user.getTenantId()));
+        long tenantId = null == user.getTenantId() ? 0L : user.getTenantId();
+        return JwtUserFactory.create(user, permissionContextService.findRoles(user.getId(), tenantId),
+                permissionContextService.findProfile(user.getId(), tenantId));
     }
 
+    /**
+     * 在可信租户路由内加载账号及可选权限资料。
+     * @param account 账号
+     * @param tenantId 可信租户编号
+     * @return 认证详情
+     */
     public UserDetails loadTenantUser(String account, Long tenantId) {
         var user = accountQuery.getTenantAccount(account);
         AuthCodes.ACCOUNT_OR_PWD_ERROR.assertNotNull(user);
         user.setTenantId(tenantId);
-        return JwtUserFactory.create(user, permissionContextService.findRoles(user.getId(), tenantId));
+        return JwtUserFactory.create(user, permissionContextService.findRoles(user.getId(), tenantId),
+                permissionContextService.findProfile(user.getId(), tenantId));
     }
 
     private void ensureTenantAvailable(AccountSnapshot user) {

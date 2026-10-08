@@ -2,6 +2,7 @@ package org.pkaq.core.auth.authentication.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -31,6 +32,7 @@ public class JwtUserDetail implements UserDetails {
      * 密码
      */
     @JsonIgnore
+    @ToString.Exclude
     private final String password;
     /**
      * 权限集合

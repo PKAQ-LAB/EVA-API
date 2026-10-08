@@ -3,8 +3,10 @@ package org.pkaq.core.auth.authorization.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.auth.spi.IPermissionSnapshotQuery;
+import org.pkaq.core.auth.spi.IAccountProfileQuery;
 import org.pkaq.core.auth.spi.ITenantAuthRouter;
 import org.pkaq.core.auth.spi.model.AccountSnapshot;
+import org.pkaq.core.auth.spi.model.AccountProfileSnapshot;
 import org.pkaq.core.auth.spi.model.RoleSnapshot;
 import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.constant.PlatformCapabilities;
@@ -34,6 +36,27 @@ public class AuthPermissionContextService {
     private final EvaConfig evaConfig;
     private final IPermissionSnapshotQuery permissionQuery;
     private final ITenantAuthRouter tenantRouter;
+    private final IAccountProfileQuery profileQuery;
+
+    /**
+     * 仅管理权限应用加载可选管理资料，纯认证不读取资料表。
+     * @param accountId 账号编号
+     * @param tenantId 可信租户编号
+     * @return 可选资料
+     */
+    public AccountProfileSnapshot findProfile(long accountId, long tenantId) {
+        if (!isPermissionContextRequired()) {
+            return null;
+        }
+        return evaConfig.getTenant().isSchemaMode()
+                ? tenantRouter.execute(tenantId, () -> profileQuery.findProfile(accountId))
+                : profileQuery.findProfile(accountId);
+    }
+
+    private boolean isPermissionContextRequired() {
+        return evaConfig.getResourcePermission().isEnable() || evaConfig.getDataPermission().isEnable()
+                || evaConfig.isPlatformMode();
+    }
 
     /**
      * 仅在启用功能权限、数据权限或平台能力时读取角色。
@@ -42,8 +65,7 @@ public class AuthPermissionContextService {
      * @return 角色快照
      */
     public List<RoleSnapshot> findRoles(long userId, long tenantId) {
-        if (!evaConfig.getResourcePermission().isEnable() && !evaConfig.getDataPermission().isEnable()
-                && !evaConfig.isPlatformMode()) {
+        if (!isPermissionContextRequired()) {
             return List.of();
         }
         List<RoleSnapshot> roles = evaConfig.getTenant().isSchemaMode()
@@ -63,6 +85,7 @@ public class AuthPermissionContextService {
      */
     public ThreadUser buildUser(long userId, long tenantId, String account, AccountSnapshot authState) {
         List<RoleSnapshot> roles = findRoles(userId, tenantId);
+        AccountProfileSnapshot profile = findProfile(userId, tenantId);
         Map<Long, ThreadUser.GrantedRoles> rolesMap = roles.stream()
                 .filter(Objects::nonNull)
                 .filter(role -> null != role.getId())
@@ -77,8 +100,9 @@ public class AuthPermissionContextService {
                 .map(role -> new ThreadUser.DataScope(role.getDataScope(), parseOrgIds(role.getDataOrgIds()))).toList()
                 : List.of();
         return new ThreadUser().setUserId(userId).setTenantId(tenantId).setAccount(account)
-                .setName(StrUtils.isBlank(authState.getName()) ? account : authState.getName())
-                .setDeptId(null == authState.getDeptId() ? 0L : authState.getDeptId())
+                .setName(null != profile && StrUtils.isNotBlank(profile.getName()) ? profile.getName()
+                        : StrUtils.isNotBlank(authState.getNickName()) ? authState.getNickName() : account)
+                .setDeptId(null == profile || null == profile.getDeptId() ? 0L : profile.getDeptId())
                 .setRoles(rolesMap.keySet().stream().map(String::valueOf).toArray(String[]::new))
                 .setRolesMap(rolesMap).setDataScopes(dataScopes)
                 .setCapabilities(platformAdmin ? Set.of(PlatformCapabilities.TENANT_INSPECT) : Set.of());

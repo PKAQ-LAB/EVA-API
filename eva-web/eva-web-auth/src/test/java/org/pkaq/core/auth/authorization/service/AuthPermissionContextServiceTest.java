@@ -3,7 +3,9 @@ package org.pkaq.core.auth.authorization.service;
 import org.junit.jupiter.api.Test;
 import org.pkaq.core.auth.spi.model.RoleSnapshot;
 import org.pkaq.core.auth.spi.model.AccountSnapshot;
+import org.pkaq.core.auth.spi.model.AccountProfileSnapshot;
 import org.pkaq.core.auth.spi.IPermissionSnapshotQuery;
+import org.pkaq.core.auth.spi.IAccountProfileQuery;
 import org.pkaq.core.auth.spi.ITenantAuthRouter;
 import org.pkaq.core.properties.EvaConfig;
 
@@ -26,10 +28,11 @@ class AuthPermissionContextServiceTest {
     void dataScopeIsNotParsedWhenDisabled() {
         EvaConfig config = new EvaConfig();
         IPermissionSnapshotQuery permissions = mock(IPermissionSnapshotQuery.class);
-        assertTrue(new AuthPermissionContextService(config, permissions, mock(ITenantAuthRouter.class))
+        IAccountProfileQuery profiles = mock(IAccountProfileQuery.class);
+        assertTrue(new AuthPermissionContextService(config, permissions, mock(ITenantAuthRouter.class), profiles)
                 .buildUser(1L, 0L, "demo", new AccountSnapshot())
                 .getDataScopes().isEmpty());
-        verifyNoInteractions(permissions);
+        verifyNoInteractions(permissions, profiles);
     }
 
     @Test
@@ -39,11 +42,29 @@ class AuthPermissionContextServiceTest {
         IPermissionSnapshotQuery permissions = mock(IPermissionSnapshotQuery.class);
         when(permissions.findRoles(1L)).thenReturn(List.of(roleWithScope("2,2,-1,abc,3")));
         AccountSnapshot user = new AccountSnapshot();
-        user.setDeptId(7L);
-        var current = new AuthPermissionContextService(config, permissions, mock(ITenantAuthRouter.class))
+        IAccountProfileQuery profiles = mock(IAccountProfileQuery.class);
+        AccountProfileSnapshot profile = new AccountProfileSnapshot();
+        profile.setDeptId(7L);
+        when(profiles.findProfile(1L)).thenReturn(profile);
+        var current = new AuthPermissionContextService(config, permissions, mock(ITenantAuthRouter.class), profiles)
                 .buildUser(1L, 0L, "demo", user);
         assertEquals(List.of(2L, 3L), current.getDataScopes().getFirst().getOrgIds());
         assertEquals(7L, current.getDeptId());
+    }
+
+    @Test
+    void missingManagementProfileDoesNotBlockPermissionContext() {
+        EvaConfig config = new EvaConfig();
+        config.getResourcePermission().setEnable(true);
+        IPermissionSnapshotQuery permissions = mock(IPermissionSnapshotQuery.class);
+        IAccountProfileQuery profiles = mock(IAccountProfileQuery.class);
+        AccountSnapshot user = new AccountSnapshot();
+        user.setNickName("昵称");
+        var current = new AuthPermissionContextService(config, permissions, mock(ITenantAuthRouter.class), profiles)
+                .buildUser(1L, 0L, "demo", user);
+        assertEquals("昵称", current.getName());
+        assertEquals(0L, current.getDeptId());
+        assertTrue(current.getRolesMap().isEmpty());
     }
 
     private RoleSnapshot roleWithScope(String organizations) {

@@ -100,7 +100,7 @@ class RoleServiceTest {
         when(roleMapper.selectById(5L)).thenReturn(new RoleEntity());
         UserEntity visibleUser = new UserEntity();
         visibleUser.setId(10L);
-        when(userMapper.selectList(any(LambdaQueryWrapper.class))).thenReturn(List.of(visibleUser));
+        when(userMapper.selectManagedList(any(), any())).thenReturn(List.of(visibleUser));
         when(roleUserMapper.selectObjs(any(LambdaQueryWrapper.class))).thenReturn(List.of(10L, 20L));
         when(userConvert.entityToSimpleVo(List.of(visibleUser))).thenReturn(List.of());
         RoleGrantedUserVo expected = new RoleGrantedUserVo();

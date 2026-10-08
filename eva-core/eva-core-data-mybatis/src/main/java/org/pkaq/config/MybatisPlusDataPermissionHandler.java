@@ -33,6 +33,8 @@ import java.util.stream.Collectors;
 public class MybatisPlusDataPermissionHandler implements MultiDataPermissionHandler {
     private static final String DENY_ALL_SQL = "1 = 0";
     private static final Set<String> INTERNAL_TABLES = Set.of(
+            // 资料通过 JOIN 账号获取数据范围，本身没有创建人或修改人字段。
+            "sys_account_profile",
             "sys_roleuser_ref", "sys_roleres_ref", "sys_postuser_ref",
             "sys_tenant_resource", "sys_tenant_package_resource", "sys_tenant_role");
 
@@ -136,7 +138,8 @@ public class MybatisPlusDataPermissionHandler implements MultiDataPermissionHand
     }
 
     private String departmentCondition(String createId, String modifyId, String departmentPredicate) {
-        return "EXISTS (SELECT 1 FROM SYS_USER dp_user WHERE dp_user.DELETED = 0 AND dp_user.ID IN ("
+        return "EXISTS (SELECT 1 FROM SYS_ACCOUNT_PROFILE dp_user JOIN SYS_ACCOUNT dp_account "
+                + "ON dp_account.ID = dp_user.ACCOUNT_ID WHERE dp_account.DELETED = 0 AND dp_user.ACCOUNT_ID IN ("
                 + createId + ", " + modifyId + ") AND " + departmentPredicate + ")";
     }
 

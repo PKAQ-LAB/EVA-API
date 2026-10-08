@@ -15,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -42,9 +41,7 @@ class AuthUserServiceCapabilitiesTest {
         entity.setId(7L);
         entity.setAccount("demo");
         entity.setPassword("hash");
-        entity.setName("用户");
         entity.setNickName("昵称");
-        entity.setDeptId(9L);
         entity.setPermVer(3L);
         entity.setFrozen(FrozenEnumm.FROZEN);
         entity.setTenantId(11L);
@@ -60,9 +57,7 @@ class AuthUserServiceCapabilitiesTest {
         assertEquals(7L, snapshot.getId());
         assertEquals("demo", snapshot.getAccount());
         assertEquals("hash", snapshot.getPassword());
-        assertEquals("用户", snapshot.getName());
         assertEquals("昵称", snapshot.getNickName());
-        assertEquals(9L, snapshot.getDeptId());
         assertEquals(3L, snapshot.getPermVer());
         assertEquals(FrozenEnumm.FROZEN, snapshot.getFrozen());
         assertEquals(11L, snapshot.getTenantId());
@@ -70,8 +65,6 @@ class AuthUserServiceCapabilitiesTest {
         assertEquals(expiration, snapshot.getTenantExpirationDate());
         assertEquals(snapshot, service.getTenantAccount("demo"));
         assertEquals(snapshot, service.getAccountState(7L));
-        verify(mapper, never()).getUserWithRole(any());
-        verify(mapper, never()).getTenantUserWithRole(any());
     }
 
     @Test
@@ -84,7 +77,6 @@ class AuthUserServiceCapabilitiesTest {
         new AuthUserService(mapper, config).getAccountState(7L);
 
         verify(mapper).getAuthState(7L);
-        verify(mapper, never()).getUserWithRole(any());
     }
 
     @Test

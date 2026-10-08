@@ -1,90 +1,32 @@
 package org.pkaq.sys.user.entity;
 
-import com.baomidou.mybatisplus.annotation.SqlCondition;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.type.Alias;
-import org.pkaq.core.mybatis.mvc.entity.StdEntity;
+import org.pkaq.core.mybatis.account.entity.AccountEntity;
 import org.pkaq.sys.role.entity.RoleEntity;
 
-import java.sql.Date;
 import java.util.List;
 
 /**
- * 用户管理实体类
+ * 管理端账号与可选档案的联合投影，档案字段不写入账号表。
  *
  * @author PKAQ
+ * @date 2026-10-08
  */
 @Data
 @Alias("user")
-@TableName("SYS_USER")
+@TableName(value = "SYS_ACCOUNT", excludeProperty = "tenantId")
 @EqualsAndHashCode(callSuper = true)
-public class UserEntity extends StdEntity {
-
-    /**
-     * 编号
-     **/
+public class UserEntity extends AccountEntity {
+    @TableField(exist = false)
     private String code;
-
-    /**
-     * 账号
-     **/
-    private String account;
-
-    /**
-     * 密码
-     **/
-    private String password;
-
-    /**
-     * 用户头像
-     **/
-    private String avatar;
-
-    /**
-     * 姓名
-     **/
-    @TableField(condition = SqlCondition.LIKE)
+    @TableField(exist = false)
     private String name;
-
-    /**
-     * 昵称
-     **/
-    @TableField(condition = SqlCondition.LIKE)
-    private String nickName;
-
-    /**
-     * 电话
-     **/
-    @TableField(condition = SqlCondition.LIKE)
-    private String tel;
-
-    /**
-     * 邮箱
-     **/
-    private String email;
-
-    /**
-     * 最后登录ip
-     **/
-    private String lastIp;
-
-    /**
-     * 最后登录时间
-     **/
-    private Date lastLogin;
-
-    /**
-     * 所属部门
-     **/
+    @TableField(exist = false)
     private Long deptId;
-
-    /**
-     * 用户拥有的角色（非数据库字段）
-     **/
     @TableField(exist = false)
     private List<RoleEntity> roles;
-
 }

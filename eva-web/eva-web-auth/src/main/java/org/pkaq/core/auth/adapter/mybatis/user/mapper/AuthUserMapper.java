@@ -11,20 +11,11 @@ import org.springframework.stereotype.Repository;
  * 认证用户Mapper
  *
  * @author PKAQ
+ * @date 2026-10-08
  */
 @Mapper
 @Repository
 public interface AuthUserMapper extends BaseMapper<AuthUserEntity> {
-    /**
-     * 根据账号/手机号/邮箱获取包含角色的用户
-     *
-     * @param user 查询条件
-     * @return 用户信息
-     */
-    AuthUserEntity getUserWithRole(AuthUserEntity user);
-
-    AuthUserEntity getTenantUserWithRole(AuthUserEntity user);
-
     /**
      * 获取不包含角色集合的登录账号投影。
      *
@@ -47,7 +38,7 @@ public interface AuthUserMapper extends BaseMapper<AuthUserEntity> {
      * @param userId 用户ID
      * @return 权限版本号
      */
-    @Select("SELECT PERM_VER FROM SYS_USER WHERE ID = #{userId} AND DELETED = 0")
+    @Select("SELECT PERM_VER FROM SYS_ACCOUNT WHERE ID = #{userId} AND DELETED = 0")
     Long getPermVer(Long userId);
 
     /**
@@ -61,20 +52,22 @@ public interface AuthUserMapper extends BaseMapper<AuthUserEntity> {
                 su.ID,
                 su.FROZEN,
                 su.PERM_VER,
-                su.TENANT_ID,
-                su.DEPT_ID,
-                st.FROZEN AS TENANT_FROZEN,
-                st.EXPIRATION_DATE AS TENANT_EXPIRATION_DATE
-            FROM SYS_USER su
-                LEFT JOIN SYS_TENANT st ON su.TENANT_ID = st.ID AND (st.DELETED = 0 OR st.DELETED IS NULL)
+                su.NICK_NAME,
+                0 AS TENANT_ID
+            FROM SYS_ACCOUNT su
             WHERE su.ID = #{userId}
                 AND su.DELETED = 0
             """)
     AuthUserEntity getAuthState(Long userId);
 
+    /**
+     * 获取当前租户schema中的账号安全状态，不查询管理资料。
+     * @param userId 账号编号
+     * @return 安全状态
+     */
     @Select("""
-            SELECT ID, FROZEN, PERM_VER, DEPT_ID
-            FROM SYS_USER
+            SELECT ID, FROZEN, PERM_VER, NICK_NAME
+            FROM SYS_ACCOUNT
             WHERE ID = #{userId} AND COALESCE(DELETED, 0) = 0
             """)
     AuthUserEntity getTenantAuthState(Long userId);
@@ -85,6 +78,6 @@ public interface AuthUserMapper extends BaseMapper<AuthUserEntity> {
      * @param userId 用户ID
      * @return 影响行数
      */
-    @Update("UPDATE SYS_USER SET PERM_VER = COALESCE(PERM_VER, 0) + 1 WHERE ID = #{userId} AND DELETED = 0")
+    @Update("UPDATE SYS_ACCOUNT SET PERM_VER = COALESCE(PERM_VER, 0) + 1 WHERE ID = #{userId} AND DELETED = 0")
     int incrementPermVer(Long userId);
 }

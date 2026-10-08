@@ -20,7 +20,6 @@ import org.pkaq.sys.organization.entity.OrganizationEntity;
 import org.pkaq.sys.organization.mapper.OrganizationMapper;
 import org.pkaq.sys.organization.vo.OrganizationDetailVo;
 import org.pkaq.sys.organization.vo.OrganizationListVo;
-import org.pkaq.sys.user.entity.UserEntity;
 import org.pkaq.sys.user.mapper.UserMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -188,8 +187,7 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
             return;
         }
 
-        if (this.userMapper.selectCount(new LambdaQueryWrapper<UserEntity>()
-                .in(UserEntity::getDeptId, ids)) > 0) {
+        if (this.userMapper.countDepartmentAccounts(ids) > 0) {
             SysCodes.RESOURCE_USED.newException();
             return;
         }

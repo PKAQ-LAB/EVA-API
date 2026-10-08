@@ -3,6 +3,9 @@
 <mapper namespace="org.pkaq.sys.user.mapper.UserMapper">
     <resultMap id="BaseResultMap" type="org.pkaq.sys.user.entity.UserEntity" extends="common.resultMap">
         <id property="id" column="ID"/>
+        <result property="code" column="CODE"/>
+        <result property="name" column="NAME"/>
+        <result property="deptId" column="DEPT_ID"/>
     </resultMap>
     <!-- 获取包含模块权限列表的用户信息 -->
     <resultMap id="UserWithModuleAndRole" type="user" extends="BaseResultMap">
@@ -12,9 +15,71 @@
                     select="org.pkaq.sys.module.mapper.ModuleMapper.getRoleModuleByUserId" ofType="module"/>
     </resultMap>
 
+
+    <!-- 账号是主表，未创建管理档案的注册账号也必须保留在结果中。 -->
+    <sql id="ManagedProjection">
+        SELECT U.*, P.CODE, P.NAME, P.DEPT_ID
+        FROM SYS_ACCOUNT U
+        LEFT JOIN SYS_ACCOUNT_PROFILE P ON P.ACCOUNT_ID = U.ID
+    </sql>
+    <sql id="ManagedConditions">
+        WHERE COALESCE(U.DELETED, 0) = 0
+        <if test="query != null">
+            <if test="query.account != null and query.account != ''">AND U.ACCOUNT = #{query.account}</if>
+            <if test="query.code != null and query.code != ''">AND P.CODE = #{query.code}</if>
+            <if test="query.email != null and query.email != ''">AND U.EMAIL = #{query.email}</if>
+            <if test="query.name != null and query.name != ''">AND P.NAME LIKE CONCAT('%', #{query.name}, '%')</if>
+            <if test="query.tel != null and query.tel != ''">AND U.TEL LIKE CONCAT('%', #{query.tel}, '%')</if>
+            <if test="query.frozen != null">AND U.FROZEN = #{query.frozen}</if>
+            <if test="query.deptId != null and query.deptId != 0">AND P.DEPT_ID = #{query.deptId}</if>
+        </if>
+        <if test="postIds != null and postIds.size() > 0">
+            AND U.ID IN (SELECT USER_ID FROM SYS_POSTUSER_REF WHERE POST_ID IN
+            <foreach collection="postIds" item="postId" open="(" close=")" separator=",">#{postId}</foreach>)
+        </if>
+    </sql>
+    <select id="selectById" resultMap="BaseResultMap">
+        <include refid="ManagedProjection"/>
+        WHERE U.ID = #{id} AND COALESCE(U.DELETED, 0) = 0
+    </select>
+    <select id="selectManagedList" resultMap="BaseResultMap">
+        <include refid="ManagedProjection"/>
+        <include refid="ManagedConditions"/>
+        ORDER BY U.UTC_MODIFY DESC
+    </select>
+    <select id="selectManagedPage" resultMap="BaseResultMap">
+        <include refid="ManagedProjection"/>
+        <include refid="ManagedConditions"/>
+        ORDER BY U.UTC_MODIFY DESC
+    </select>
+    <select id="countDuplicate" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM SYS_ACCOUNT U
+        LEFT JOIN SYS_ACCOUNT_PROFILE P ON P.ACCOUNT_ID = U.ID
+        WHERE COALESCE(U.DELETED, 0) = 0
+        <if test="id != null and id != 0">AND U.ID != #{id}</if>
+        AND (
+        <trim prefixOverrides="OR">
+            <if test="account != null and account != ''">OR U.ACCOUNT = #{account}</if>
+            <if test="code != null and code != ''">OR P.CODE = #{code}</if>
+        </trim>
+        )
+    </select>
+    <select id="countDepartmentAccounts" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM SYS_ACCOUNT_PROFILE P
+        JOIN SYS_ACCOUNT U ON U.ID = P.ACCOUNT_ID
+        WHERE COALESCE(U.DELETED, 0) = 0 AND P.DEPT_ID IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">#{id}</foreach>
+    </select>
+    <select id="countReadOnlyAccounts" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM SYS_ACCOUNT U
+        LEFT JOIN SYS_ACCOUNT_PROFILE P ON P.ACCOUNT_ID = U.ID
+        WHERE COALESCE(U.DELETED, 0) = 0 AND (U.FROZEN = 9999 OR P.CODE = '9999') AND U.ID IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">#{id}</foreach>
+    </select>
+
     <!-- 根据id更新用户锁定状态 -->
     <update id="change">
-        update sys_user set frozen = abs(frozen - 1)
+        update sys_account set frozen = abs(frozen - 1)
         <where>
             <if test="null != ids and '' != ids">
                 id in
@@ -27,29 +92,8 @@
 
     <!-- 根据用户ID获取包含模块权限列表的用户信息 -->
     <select id="getUserWithModuleAndRoleById" resultMap="UserWithModuleAndRole">
-        select *
-        from SYS_USER
-        where id = #{userId}
+        <include refid="ManagedProjection"/>
+        WHERE U.ID = #{userId} AND COALESCE(U.DELETED, 0) = 0
     </select>
 
-    <select id="availableCounts" resultType="java.lang.Integer">
-        SELECT
-        <if test="_databaseId == 'mysql'">
-            T.AUTH_USER_COUNT - IFNULL(U.USER_COUNT, 0) AS ct
-        </if>
-        <if test="_databaseId == 'postgre'">
-            T.AUTH_USER_COUNT - COALESCE(U.USER_COUNT, 0) AS ct
-        </if>
-        FROM SYS_TENANT T
-             LEFT JOIN (
-                SELECT
-                    TENANT_ID, COUNT(*) AS USER_COUNT
-                FROM SYS_USER
-                    WHERE (SYS_USER.DELETED = 0 OR SYS_USER.DELETED IS NULL)
-                        AND TENANT_ID = #{tid}
-                GROUP BY TENANT_ID
-        ) U ON U.TENANT_ID = T.ID
-                WHERE (T.DELETED = 0 OR T.DELETED IS NULL)
-                    AND T.ID = #{tid}
-    </select>
 </mapper>

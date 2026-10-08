@@ -1,44 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.pkaq.core.auth.adapter.mybatis.user.mapper.AuthUserMapper">
-    <resultMap id="UserWithRole" type="authUser">
-        <result property="tenantFrozen" column="TENANT_FROZEN"/>
-        <result property="tenantExpirationDate" column="TENANT_EXPIRATION_DATE"/>
-        <collection property="roles" column="{userId=id}" select="org.pkaq.core.auth.adapter.mybatis.role.mapper.AuthRoleMapper.selectByUserId" ofType="authRole"/>
-    </resultMap>
-
-    <select id="getUserWithRole" resultMap="UserWithRole">
-        SELECT
-            su.*,
-            st.FROZEN AS TENANT_FROZEN,
-            st.EXPIRATION_DATE AS TENANT_EXPIRATION_DATE
-        FROM SYS_USER su
-            LEFT JOIN SYS_TENANT st ON su.TENANT_ID = st.ID
-        <where>
-            <if test="null != id">
-                su.id = #{id,jdbcType=BIGINT}
-            </if>
-            <if test="null != account and account != ''">
-                and (su.account = #{account,jdbcType=VARCHAR} or
-                su.tel = #{account,jdbcType=VARCHAR} or
-                su.email = #{account,jdbcType=VARCHAR} )
-            </if>
-        </where>
-    </select>
-
-    <select id="getTenantUserWithRole" resultMap="UserWithRole">
-        SELECT su.*
-        FROM SYS_USER su
-        WHERE COALESCE(su.DELETED, 0) = 0
-          AND (su.ACCOUNT = #{account,jdbcType=VARCHAR}
-            OR su.TEL = #{account,jdbcType=VARCHAR}
-            OR su.EMAIL = #{account,jdbcType=VARCHAR})
-    </select>
-
     <select id="getUserAccount" resultType="authUser">
-        SELECT su.*, st.FROZEN AS TENANT_FROZEN, st.EXPIRATION_DATE AS TENANT_EXPIRATION_DATE
-        FROM SYS_USER su
-        LEFT JOIN SYS_TENANT st ON su.TENANT_ID = st.ID
+        SELECT su.ID, su.ACCOUNT, su.PASSWORD, su.NICK_NAME, su.FROZEN, su.PERM_VER, 0 AS TENANT_ID
+        FROM SYS_ACCOUNT su
         WHERE COALESCE(su.DELETED, 0) = 0
           AND (su.ACCOUNT = #{account,jdbcType=VARCHAR}
             OR su.TEL = #{account,jdbcType=VARCHAR}
@@ -47,7 +12,7 @@
 
     <select id="getTenantUserAccount" resultType="authUser">
         SELECT su.*
-        FROM SYS_USER su
+        FROM SYS_ACCOUNT su
         WHERE COALESCE(su.DELETED, 0) = 0
           AND (su.ACCOUNT = #{account,jdbcType=VARCHAR}
             OR su.TEL = #{account,jdbcType=VARCHAR}

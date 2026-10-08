@@ -1,10 +1,11 @@
 package org.pkaq.sys.user.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.IdWorker;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.codes.CommonCodes;
+import org.pkaq.core.account.IAccountCreation;
+import org.pkaq.core.account.AccountCreationCommand;
+import org.pkaq.core.account.AccountCreationException;
 import org.pkaq.core.enums.FrozenEnumm;
 import org.pkaq.core.event.UserOfflineEvent;
 import org.pkaq.core.event.UserOfflineEvent.OfflineReason;
@@ -44,6 +45,8 @@ import org.pkaq.sys.user.bo.UserQueryBo;
 import org.pkaq.sys.user.bo.UserTenantAdminBo;
 import org.pkaq.sys.user.convert.UserConvert;
 import org.pkaq.sys.user.entity.UserEntity;
+import org.pkaq.sys.user.entity.AccountProfileEntity;
+import org.pkaq.sys.user.mapper.AccountProfileMapper;
 import org.pkaq.sys.user.mapper.UserMapper;
 import org.pkaq.sys.user.vo.UserDetailVo;
 import org.pkaq.sys.user.vo.UserListVo;
@@ -54,7 +57,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -75,11 +77,6 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
     /** 系统内置管理员账号编码，前端按 frozen = 9999 展示为灰色不可编辑行。 */
     private static final String SYSTEM_ADMIN_CODE = "9999";
 
-    /** 系统保留账号和非法账号黑名单，不区分大小写。 */
-    private static final Set<String> ILLEGAL_USERNAMES = new HashSet<>(Arrays.asList(
-            "null", "undefined", "true", "false", "admin", "root", "", " ", "\t", "\n"
-    ));
-
     private final UserRoleRefSerivce userRoleRefSerivce;
     private final UserPostRefSerivce userPostRefSerivce;
     private final FileProvider fileProvider;
@@ -93,6 +90,8 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
     private final ApplicationEventPublisher eventPublisher;
     private final CoreSchemaExecutor coreSchemaExecutor;
     private final RoleResourceMapper roleResourceMapper;
+    private final IAccountCreation accountCreation;
+    private final AccountProfileMapper accountProfileMapper;
 
     /**
      * 校验账号合法性。
@@ -100,7 +99,9 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
      * @param username 用户账号
      */
     public void validateUsername(String username) {
-        if (username == null || ILLEGAL_USERNAMES.contains(username.trim().toLowerCase())) {
+        try {
+            accountCreation.validateAccount(username);
+        } catch (AccountCreationException exception) {
             throw new BizException(SysCodes.USER_ACCOUNT_ILLEGAL);
         }
     }
@@ -168,12 +169,8 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
     @Transactional(readOnly = true)
     @TenantSchema
     public List<UserListVo> listUser(UserQueryBo queryBo) {
-        UserEntity user = this.convert.boToEntity(queryBo);
-        LambdaQueryWrapper<UserEntity> wrapper = Wrappers.lambdaQuery();
-        wrapper.setEntity(user);
-        this.appendPostFilter(wrapper, queryBo);
-        wrapper.orderByDesc(UserEntity::getUtcModify);
-        return this.convert.entityToListVo(this.mapper.selectList(wrapper));
+        return this.convert.entityToListVo(this.mapper.selectManagedList(queryBo,
+                sanitizeListIds(queryBo == null ? null : queryBo.getPostId())));
     }
 
     /**
@@ -187,12 +184,8 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
     @TenantSchema
     public List<? extends Vo> listUser(UserQueryBo queryBo,
                                        Function<List<? extends Entity>, List<? extends Vo>> convertFn) {
-        UserEntity user = this.convert.boToEntity(queryBo);
-        LambdaQueryWrapper<UserEntity> wrapper = Wrappers.lambdaQuery();
-        wrapper.setEntity(user);
-        this.appendPostFilter(wrapper, queryBo);
-        wrapper.orderByDesc(UserEntity::getUtcModify);
-        return convertFn.apply(this.mapper.selectList(wrapper));
+        return convertFn.apply(this.mapper.selectManagedList(queryBo,
+                sanitizeListIds(queryBo == null ? null : queryBo.getPostId())));
     }
 
     /**
@@ -205,12 +198,10 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
     @Transactional(readOnly = true)
     @TenantSchema
     public PageVo<UserListVo> listPage(UserQueryBo queryBo) {
-        LambdaQueryWrapper<UserEntity> wrapper = Wrappers.lambdaQuery();
-        wrapper.setEntity(this.convert.boToEntity(queryBo));
-        this.appendPostFilter(wrapper, queryBo);
-        wrapper.orderByDesc(UserEntity::getUtcModify);
-        PageResult<UserEntity> pagination = new PageResult<>(queryBo.getPageNo(), queryBo.getPageSize());
-        return this.mapper.selectPage(pagination, wrapper).map(this.convert::entityToListVo);
+        UserQueryBo safeQuery = queryBo == null ? new UserQueryBo() : queryBo;
+        PageResult<UserEntity> pagination = new PageResult<>(safeQuery.getPageNo(), safeQuery.getPageSize());
+        return this.mapper.selectManagedPage(pagination, safeQuery, sanitizeListIds(safeQuery.getPostId()))
+                .map(this.convert::entityToListVo);
     }
 
     /**
@@ -293,11 +284,8 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
         boolean isInsert = userId == null || userId == 0L;
 
         if (isInsert) {
-            userId = IdWorker.getId();
-            user.setId(userId);
             this.ensureTenantUserQuota();
             this.ensurePasswordPresent(user.getPassword());
-            user.setPassword(BCryptUtils.hashpw(user.getPassword()));
         } else {
             UserEntity oldUser = this.mapper.selectById(userId);
             if (oldUser == null) {
@@ -312,11 +300,17 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
 
         UserEntity entity = this.convert.boToEntity(user);
         if (isInsert) {
-            this.mapper.insert(entity);
+            userId = createAccount(entity, user.getPassword());
+            user.setId(userId);
+            entity.setId(userId);
         } else {
-            this.mapper.updateById(entity);
+            // 乐观锁或数据范围导致账号更新失败时，不允许单独更新档案及权限版本。
+            if (1 != this.mapper.updateById(entity)) {
+                throw new IllegalStateException("账号更新失败，请刷新后重试");
+            }
             this.mapper.incrementPermVer(userId);
         }
+        saveProfile(entity);
 
         if (user.getRoleIds() != null) {
             UserGrantBo grantBo = new UserGrantBo();
@@ -371,39 +365,35 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
         if (user == null || (StrUtils.isBlank(user.getAccount()) && StrUtils.isBlank(user.getCode()))) {
             return false;
         }
-        LambdaQueryWrapper<UserEntity> wrapper = new LambdaQueryWrapper<>();
-        wrapper.nested(w -> w.eq(StrUtils.isNotBlank(user.getAccount()), UserEntity::getAccount, user.getAccount())
-                .or()
-                .eq(StrUtils.isNotBlank(user.getCode()), UserEntity::getCode, user.getCode()));
-
-        if (user.getId() != null && user.getId() != 0L) {
-            wrapper.ne(UserEntity::getId, user.getId());
-        }
-        return this.mapper.selectCount(wrapper) > 0;
+        return this.mapper.countDuplicate(user.getAccount(), user.getCode(), user.getId()) > 0;
     }
 
     /**
      * 创建租户管理员。
      *
      * @param user 租户管理员参数
+     * @deprecated 租户初始化由可信 Schema 预置服务完成；此兼容入口仅支持已路由的 Schema 租户。
+     * @see #saveUser(UserAoeBo)
      */
+    @Deprecated
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     @TenantSchema
     public void createTenantAdmin(UserTenantAdminBo user) {
+        if (!this.evaConfig.isSaasMode() || !this.evaConfig.getTenant().isSchemaMode()) {
+            throw new IllegalStateException("租户管理员创建仅支持 Schema 租户模式");
+        }
         this.validateUsername(user.getAccount());
 
         if (StrUtils.isBlank(user.getPassword())) {
             SysCodes.BAD_ORG_PASSWORD.newException();
         }
         UserEntity entity = this.convert.boToEntity(user);
-        if (this.evaConfig.getTenant().isSchemaMode()) {
-            entity.setTenantId(null);
-        }
+        entity.setTenantId(null);
         entity.setName(user.getAccount());
         entity.setCode(user.getAccount());
         entity.setFrozen(FrozenEnumm.READ_ONLY);
-        entity.setPassword(BCryptUtils.hashpw(user.getPassword()));
-        this.mapper.insert(entity);
+        entity.setId(createAccount(entity, user.getPassword()));
+        saveProfile(entity);
     }
 
     private void ensureUniqueUser(UserAoeBo user) {
@@ -435,11 +425,7 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
         if (CollUtils.isEmpty(userIds)) {
             return;
         }
-        Long readOnlyCount = this.mapper.selectCount(new LambdaQueryWrapper<UserEntity>()
-                .in(UserEntity::getId, userIds)
-                .and(w -> w.eq(UserEntity::getFrozen, FrozenEnumm.READ_ONLY)
-                        .or()
-                        .eq(UserEntity::getCode, SYSTEM_ADMIN_CODE)));
+        Long readOnlyCount = this.mapper.countReadOnlyAccounts(userIds);
         if (readOnlyCount != null && readOnlyCount > 0L) {
             SysCodes.READ_ONLY_RECORD.newException();
         }
@@ -471,19 +457,15 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
             return;
         }
 
-        Long tenantId = ThreadUserHelper.getTenantId();
-        if (this.evaConfig.getTenant().isSchemaMode()) {
-            Long userCount = this.mapper.selectCount(new LambdaQueryWrapper<UserEntity>());
-            Integer limit = this.coreSchemaExecutor.execute(template -> template.queryForObject(
-                    "SELECT AUTH_USER_COUNT FROM SYS_TENANT WHERE ID = ? AND COALESCE(DELETED, 0) = 0",
-                    Integer.class, tenantId));
-            if (limit == null || userCount >= limit) {
-                SysCodes.USER_ACCOUNT_LIMIT.newException();
-            }
-            return;
+        if (!this.evaConfig.getTenant().isSchemaMode()) {
+            throw new IllegalStateException("租户模式必须启用 Schema 隔离");
         }
-        Integer leftCt = this.mapper.availableCounts(tenantId);
-        if (leftCt == null || leftCt < 1) {
+        Long tenantId = ThreadUserHelper.getTenantId();
+        Long userCount = this.mapper.selectCount(new LambdaQueryWrapper<UserEntity>());
+        Integer limit = this.coreSchemaExecutor.execute(template -> template.queryForObject(
+                "SELECT AUTH_USER_COUNT FROM SYS_TENANT WHERE ID = ? AND COALESCE(DELETED, 0) = 0",
+                Integer.class, tenantId));
+        if (limit == null || userCount >= limit) {
             SysCodes.USER_ACCOUNT_LIMIT.newException();
         }
     }
@@ -538,20 +520,45 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
                 .collect(Collectors.toList());
     }
 
-    private void appendPostFilter(LambdaQueryWrapper<UserEntity> wrapper, UserQueryBo queryBo) {
-        if (queryBo == null) {
-            return;
+    /** 管理端与注册统一复用账号校验、唯一性和密码哈希。 */
+    private Long createAccount(UserEntity entity, String password) {
+        AccountCreationCommand command = new AccountCreationCommand();
+        command.setId(entity.getId());
+        command.setAccount(entity.getAccount());
+        command.setPassword(password);
+        command.setAvatar(entity.getAvatar());
+        command.setNickName(entity.getNickName());
+        command.setTel(entity.getTel());
+        command.setEmail(entity.getEmail());
+        command.setFrozen(entity.getFrozen());
+        command.setSort(entity.getSort());
+        command.setRemark(entity.getRemark());
+        command.setLastIp(entity.getLastIp());
+        command.setLastLogin(entity.getLastLogin());
+        try {
+            return accountCreation.create(command);
+        } catch (AccountCreationException exception) {
+            switch (exception.getReason()) {
+                case INVALID_ACCOUNT -> SysCodes.USER_ACCOUNT_ILLEGAL.newException();
+                case MISSING_PASSWORD -> SysCodes.BAD_ORG_PASSWORD.newException();
+                case DUPLICATE_ACCOUNT -> SysCodes.ACCOUNT_OR_CODE_ALREADY_EXIST.newException();
+            }
+            throw exception;
         }
+    }
 
-        List<Long> postIds = this.sanitizeListIds(queryBo.getPostId());
-        if (postIds.isEmpty()) {
-            return;
+    /** 按账号主键维护可选管理资料，首次管理员编辑可补建档案。 */
+    private void saveProfile(UserEntity user) {
+        AccountProfileEntity profile = new AccountProfileEntity();
+        profile.setAccountId(user.getId());
+        profile.setCode(user.getCode());
+        profile.setName(user.getName());
+        profile.setDeptId(user.getDeptId());
+        int affectedRows = accountProfileMapper.selectById(user.getId()) == null
+                ? accountProfileMapper.insert(profile) : accountProfileMapper.updateById(profile);
+        if (1 != affectedRows) {
+            // 资料更新同样属于账号事务，失败必须回滚账号变更。
+            throw new IllegalStateException("账号档案更新失败，请刷新后重试");
         }
-
-        String postIdSql = postIds.stream()
-                .map(String::valueOf)
-                .collect(Collectors.joining(","));
-        wrapper.inSql(UserEntity::getId,
-                "SELECT USER_ID FROM SYS_POSTUSER_REF WHERE POST_ID IN (" + postIdSql + ")");
     }
 }

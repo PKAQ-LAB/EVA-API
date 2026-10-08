@@ -8,6 +8,7 @@ import org.pkaq.core.auth.spi.ITenantIdentityResolver;
 import org.pkaq.core.auth.spi.model.AccountSnapshot;
 import org.pkaq.core.auth.spi.IAccountQuery;
 import org.pkaq.core.auth.spi.IPermissionSnapshotQuery;
+import org.pkaq.core.auth.spi.IAccountProfileQuery;
 import org.pkaq.core.auth.authorization.service.AuthPermissionContextService;
 import org.pkaq.core.auth.util.CacheTokenUtil;
 import org.pkaq.core.enums.FrozenEnumm;
@@ -49,6 +50,7 @@ class TokenCtrlCapabilitiesTest {
         ILoginAudit logs = mock(ILoginAudit.class);
         CacheTokenUtil sessions = mock(CacheTokenUtil.class);
         IPermissionSnapshotQuery permissions = mock(IPermissionSnapshotQuery.class);
+        IAccountProfileQuery profiles = mock(IAccountProfileQuery.class);
         var request = new MockHttpServletRequest();
         when(tokens.getRefreshToken(request)).thenReturn("refresh");
         when(jwt.valid("refresh")).thenReturn(true);
@@ -70,12 +72,12 @@ class TokenCtrlCapabilitiesTest {
         when(jwt.buildRefreshToken(config.getJwt().getBravoTtl(), 7L, "demo", List.of(), 2L, 0L, 0L, "new"))
                 .thenReturn("refresh-new");
         TokenCtrl controller = new TokenCtrl(jwt, config, sessions, tokens, accounts, tenants, routing, logs,
-                new AuthPermissionContextService(config, permissions, routing));
+                new AuthPermissionContextService(config, permissions, routing, profiles));
 
         assertTrue(controller.refreshToken(null, request, new MockHttpServletResponse()).isSuccess());
 
         verify(logs).rotateSession(0L, 7L, "old", "new");
-        verifyNoInteractions(permissions, sessions);
+        verifyNoInteractions(permissions, profiles, sessions);
     }
 
     @Test

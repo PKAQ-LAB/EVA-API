@@ -51,7 +51,12 @@ class TenantSchemaModePostgresTest {
             TransactionTemplate transaction = new TransactionTemplate(
                     new DataSourceTransactionManager(dataSource));
 
-            transaction.executeWithoutResult(status -> provisioner.provision(101L));
+            transaction.executeWithoutResult(status -> {
+                String previous = jdbcTemplate.queryForObject("SELECT current_setting('search_path')", String.class);
+                provisioner.provision(101L);
+                assertEquals(previous, jdbcTemplate.queryForObject("SELECT current_setting('search_path')", String.class));
+                assertEquals(1, jdbcTemplate.queryForObject("SELECT COUNT(*) FROM SYS_TENANT", Integer.class));
+            });
             transaction.executeWithoutResult(status -> provisioner.provision(101L));
 
             assertEquals("tenant_101", jdbcTemplate.queryForObject(
@@ -63,13 +68,21 @@ class TenantSchemaModePostgresTest {
                     """, Integer.class));
             assertEquals(1, jdbcTemplate.queryForObject("""
                     SELECT COUNT(*) FROM information_schema.tables
+                    WHERE table_schema = 'tenant_101' AND table_name = 'sys_account'
+                    """, Integer.class));
+            assertEquals(1, jdbcTemplate.queryForObject("""
+                    SELECT COUNT(*) FROM information_schema.tables
+                    WHERE table_schema = 'tenant_101' AND table_name = 'sys_account_profile'
+                    """, Integer.class));
+            assertEquals(0, jdbcTemplate.queryForObject("""
+                    SELECT COUNT(*) FROM information_schema.tables
                     WHERE table_schema = 'tenant_101' AND table_name = 'sys_user'
                     """, Integer.class));
             assertEquals(0, jdbcTemplate.queryForObject("""
                     SELECT COUNT(*) FROM information_schema.columns
                     WHERE table_schema = 'tenant_101'
                       AND table_name IN (
-                          'sys_user', 'sys_organization', 'sys_post', 'sys_dict', 'sys_dict_item',
+                          'sys_account', 'sys_account_profile', 'sys_organization', 'sys_post', 'sys_dict', 'sys_dict_item',
                           'sys_role', 'sys_roleuser_ref', 'sys_roleres_ref', 'sys_postuser_ref')
                       AND column_name = 'tenant_id'
                     """, Integer.class));
@@ -77,11 +90,11 @@ class TenantSchemaModePostgresTest {
                     SELECT table_name FROM information_schema.tables
                     WHERE table_schema = 'tenant_101'
                       AND table_name IN (
-                          'sys_user', 'sys_organization', 'sys_post', 'sys_dict', 'sys_dict_item',
+                          'sys_account', 'sys_account_profile', 'sys_organization', 'sys_post', 'sys_dict', 'sys_dict_item',
                           'sys_role', 'sys_roleuser_ref', 'sys_roleres_ref', 'sys_postuser_ref')
                     ORDER BY table_name
                     """, String.class);
-            assertEquals(9, tenantTables.size());
+            assertEquals(10, tenantTables.size());
             assertEquals("tenant_101", resolver.resolve(101L));
         }
     }
