@@ -1,7 +1,7 @@
 package org.pkaq.core.auth.util;
 
 import org.junit.jupiter.api.Test;
-import org.pkaq.core.auth.session.RedisSessionStore;
+import org.pkaq.core.auth.spi.IAuthSessionStore;
 import org.pkaq.core.jwt.JwtUtil;
 import org.pkaq.core.properties.EvaConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -31,7 +31,7 @@ class CacheTokenUtilTest {
      */
     @Test
     void shouldUseTenantAndUserCompositeScope() {
-        RedisSessionStore sessionStore = mock(RedisSessionStore.class);
+        IAuthSessionStore sessionStore = mock(IAuthSessionStore.class);
         EvaConfig evaConfig = new EvaConfig();
         Object value = new Object();
         when(sessionStore.get(7L, 11L, "web-1")).thenReturn(value);
@@ -53,7 +53,7 @@ class CacheTokenUtilTest {
      */
     @Test
     void shouldListSessionsWithinTenantScope() {
-        RedisSessionStore sessionStore = mock(RedisSessionStore.class);
+        IAuthSessionStore sessionStore = mock(IAuthSessionStore.class);
         Map<String, Object> expected = Map.of("7:11:web-1", Map.of("device", "web"));
         when(sessionStore.list(7L)).thenReturn(expected);
         EvaConfig evaConfig = new EvaConfig();
@@ -71,7 +71,7 @@ class CacheTokenUtilTest {
      */
     @Test
     void shouldStoreHashesAndMatchTokensWithinExactSession() {
-        RedisSessionStore sessionStore = mock(RedisSessionStore.class);
+        IAuthSessionStore sessionStore = mock(IAuthSessionStore.class);
         EvaConfig evaConfig = new EvaConfig();
         evaConfig.getJwt().setSecert("01234567890123456789012345678901");
         JwtUtil jwtUtil = new JwtUtil(evaConfig);

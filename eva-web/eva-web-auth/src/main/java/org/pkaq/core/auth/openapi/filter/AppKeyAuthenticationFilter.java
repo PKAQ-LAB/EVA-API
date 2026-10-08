@@ -10,11 +10,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.core.auth.AuthCodes;
 import org.pkaq.core.auth.openapi.consts.OpenApiConsts;
-import org.pkaq.core.auth.openapi.entity.AppCredentialEntity;
+import org.pkaq.core.auth.spi.model.AppCredentialSnapshot;
 import org.pkaq.core.auth.openapi.exception.AppKeyAuthenticationException;
-import org.pkaq.core.auth.openapi.log.service.OpenApiCallLogService;
+import org.pkaq.core.auth.spi.IOpenApiAudit;
 import org.pkaq.core.auth.openapi.security.SignatureValidator;
-import org.pkaq.core.auth.openapi.service.AppKeyService;
+import org.pkaq.core.auth.spi.IAppCredentialQuery;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.util.json.JsonUtil;
 import org.pkaq.web.core.filter.CachedBodyHttpServletRequest;
@@ -40,9 +40,9 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class AppKeyAuthenticationFilter extends OncePerRequestFilter {
 
-    private final AppKeyService appKeyService;
+    private final IAppCredentialQuery appKeyService;
     private final SignatureValidator signatureValidator;
-    private final OpenApiCallLogService openApiCallLogService;
+    private final IOpenApiAudit openApiCallLogService;
     private final EvaConfig evaConfig;
 
     /**
@@ -103,7 +103,7 @@ public class AppKeyAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        AppCredentialEntity credential = null;
+        AppCredentialSnapshot credential = null;
         try {
             String body = "";
             CachedBodyHttpServletRequest wrapper = getNativeRequest(request, CachedBodyHttpServletRequest.class);
@@ -115,7 +115,7 @@ public class AppKeyAuthenticationFilter extends OncePerRequestFilter {
             body = JsonUtil.normalizeJsonBody(body);
             request.setAttribute(OpenApiConsts.REQUEST_BODY, body);
 
-            credential = appKeyService.getCredential(appKey);
+            credential = appKeyService.findCredential(appKey);
             if (credential == null) {
                 log.warn("AppKey未找到: {}", appKey);
                 AuthCodes.OPENAPI_APP_KEY_NOT_FOUND.newException();

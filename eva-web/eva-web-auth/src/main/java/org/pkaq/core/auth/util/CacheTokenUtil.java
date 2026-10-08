@@ -1,7 +1,7 @@
 package org.pkaq.core.auth.util;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.pkaq.core.auth.session.RedisSessionStore;
+import org.pkaq.core.auth.spi.IAuthSessionStore;
 import org.pkaq.core.jwt.JwtUtil;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.web.core.client.ClientInfo;
@@ -29,7 +29,7 @@ public class CacheTokenUtil {
 
     private final JwtUtil jwtUtil;
 
-    private final RedisSessionStore sessionStore;
+    private final IAuthSessionStore sessionStore;
 
     private final ClientInfoResolver clientInfoResolver;
 
@@ -38,7 +38,7 @@ public class CacheTokenUtil {
     private final Duration activityUpdateInterval;
 
     public CacheTokenUtil(JwtUtil jwtUtil,
-                          RedisSessionStore sessionStore,
+                          IAuthSessionStore sessionStore,
                           ClientInfoResolver clientInfoResolver,
                           EvaConfig evaConfig) {
         this.jwtUtil = jwtUtil;

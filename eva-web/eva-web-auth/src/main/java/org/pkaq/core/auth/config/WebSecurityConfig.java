@@ -2,10 +2,14 @@ package org.pkaq.core.auth.config;
 
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.auth.openapi.filter.AppKeyAuthenticationFilter;
-import org.pkaq.core.auth.security.entrypoint.*;
-import org.pkaq.core.auth.security.filter.JwtAuthFilter;
-import org.pkaq.core.auth.security.provider.JwtUsernamePasswordAuthenticationFilter;
-import org.pkaq.core.auth.tenant.TenantLoginResolver;
+import org.pkaq.core.auth.authentication.entrypoint.UnauthorizedHandler;
+import org.pkaq.core.auth.authentication.entrypoint.UrlAuthenticationFailureHandler;
+import org.pkaq.core.auth.authentication.entrypoint.UrlAuthenticationSuccessHandler;
+import org.pkaq.core.auth.authentication.entrypoint.UrlLogoutSuccessHandler;
+import org.pkaq.core.auth.authorization.entrypoint.UrlAccessDeniedHandler;
+import org.pkaq.core.auth.authentication.filter.JwtAuthFilter;
+import org.pkaq.core.auth.authentication.provider.JwtUsernamePasswordAuthenticationFilter;
+import org.pkaq.core.auth.spi.ITenantIdentityResolver;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.util.ArrayUtils;
 import org.pkaq.core.util.CollUtils;
@@ -53,7 +57,7 @@ public class WebSecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JwtAuthFilter jwtAuthFilter;
     private final AppKeyAuthenticationFilter appKeyAuthenticationFilter;
-    private final TenantLoginResolver tenantLoginResolver;
+    private final ITenantIdentityResolver tenantLoginResolver;
 
     @Value("${server.servlet.context-path:/}")
     private String contextPath;
@@ -107,15 +111,31 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(Customizer.withDefaults());
 
+        // 认证关闭后禁止认证入口，显式开放路径之外一律拒绝。
+        if (!evaConfig.getAuth().isAuthenticationEnabled()) {
+            httpSecurity.authorizeHttpRequests(auth -> auth.requestMatchers("/auth/**").denyAll());
+        }
+
         // 允许匿名访问的url
         String[] anonymousPaths = evaConfig.getAuth().getAnonymous();
         if (anonymousPaths != null && anonymousPaths.length > 0) {
             httpSecurity.authorizeHttpRequests(auth -> auth.requestMatchers(anonymousPaths).permitAll());
         }
 
-        httpSecurity.authorizeHttpRequests(auth -> auth.anyRequest().authenticated());
+        httpSecurity.authorizeHttpRequests(auth -> {
+            if (evaConfig.getAuth().isAuthenticationEnabled()) {
+                auth.anyRequest().authenticated();
+            } else {
+                auth.anyRequest().denyAll();
+            }
+        });
 
-        httpSecurity.logout(logout -> logout.logoutUrl("/auth/logout").logoutSuccessHandler(urlLogoutSuccessHandler));
+        if (evaConfig.getAuth().isAuthenticationEnabled()) {
+            httpSecurity.logout(logout -> logout.logoutUrl("/auth/logout")
+                    .logoutSuccessHandler(urlLogoutSuccessHandler));
+        } else {
+            httpSecurity.logout(AbstractHttpConfigurer::disable);
+        }
 
         httpSecurity.exceptionHandling(ex ->
                 ex.authenticationEntryPoint(unauthorizedHandler)
@@ -209,4 +229,3 @@ public class WebSecurityConfig {
         };
     }
 }
-

@@ -1,5 +1,7 @@
 # EVA-API 项目知识库
 
+当前认证、资源权限与数据权限的配置组合及兼容边界见 [安全能力组合](SECURITY_CAPABILITIES.md)。注册能力暂缓；安全能力仍在现有模块内部解耦，未新增四个 Gradle 模块。
+
 > 基于 GitNexus 索引（3851 个节点 / 8734 条关系 / 146 个功能簇 / 300 条执行流）整理。
 > 数据陈旧后请运行 `node .gitnexus/run.cjs analyze` 重新索引。
 
@@ -148,8 +150,9 @@ EVA-API (root)
   - `UrlLogoutSuccessHandler` / `UrlAccessDeniedHandler` / `UnauthorizedHandler`
 - **JWT 透传**：`JwtAuthFilter` + `CacheTokenUtil` + `JwtUserDetail` + `JwtUserFactory` + `JwtGrantedAuthority`
 - **动态权限**：`DynamicSecurityMetadataSource` + `DynamiclAccessDecisionManager`
-- **领域内 RBAC**：`AuthUserService`、`AuthRolePermissionService`、`RoleResourceCacheService`、`SysRoleResource` / `AuthRoleEntity` / `AuthUserEntity`
-- **OpenAPI AppKey 渠道**：`AppKeyAuthenticationFilter` + `SignatureValidator` + `AppCredentialEntity` + `AppKeyService`
+- **核心依赖边界**：`authentication` / `authorization` 只依赖 `spi` 接口与普通账号、角色快照；不得直接导入数据库实体、Mapper 或具体存储适配器。
+- **存储适配器**：`adapter.mybatis` 包含 `AuthUserService`、`AuthRolePermissionService`、`RoleResourceCacheService` 与持久化实体；`adapter.redis` 保存会话，`adapter.tenant` 实现 schema 路由。Gradle 模块仍包含这些适配器，MyBatis 构建依赖没有删除。
+- **OpenAPI AppKey 渠道**：`AppKeyAuthenticationFilter` + `SignatureValidator`；应用凭据查询与调用审计通过 SPI 对接适配器，不将 `AppCredentialEntity` 传入认证核心。
 - **在线用户**：`OnlineUserCtrl`、`TokenCtrl`
 - **错误码**：`AuthCodes`
 

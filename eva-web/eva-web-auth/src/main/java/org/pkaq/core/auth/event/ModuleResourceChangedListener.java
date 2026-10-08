@@ -1,7 +1,7 @@
 package org.pkaq.core.auth.event;
 
 import lombok.RequiredArgsConstructor;
-import org.pkaq.core.auth.rbac.service.RoleResourceCacheService;
+import org.pkaq.core.auth.adapter.mybatis.rbac.service.RoleResourceCacheService;
 import org.pkaq.core.event.ModuleResourceChangedEvent;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
