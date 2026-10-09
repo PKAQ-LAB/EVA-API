@@ -37,12 +37,13 @@ class TenantSchemaModePostgresTest {
             jdbcTemplate.execute("""
                     CREATE TABLE SYS_TENANT (
                         ID BIGINT PRIMARY KEY,
+                        CODE VARCHAR(6) NOT NULL,
                         DELETED INTEGER DEFAULT 0,
                         FROZEN INTEGER DEFAULT 0
                     )
                     """);
-            jdbcTemplate.update("INSERT INTO SYS_TENANT(ID) VALUES (101)");
             executeMigration(jdbcTemplate);
+            jdbcTemplate.update("INSERT INTO SYS_TENANT(ID, CODE) VALUES (101, 'acme')");
 
             EvaConfig config = schemaConfig();
             TrustedTenantSchemaResolver resolver = new TrustedTenantSchemaResolver(jdbcTemplate, config);
@@ -59,28 +60,28 @@ class TenantSchemaModePostgresTest {
             });
             transaction.executeWithoutResult(status -> provisioner.provision(101L));
 
-            assertEquals("tenant_101", jdbcTemplate.queryForObject(
+            assertEquals("tenant_acme", jdbcTemplate.queryForObject(
                     "SELECT SCHEMA_NAME FROM SYS_TENANT WHERE ID = 101", String.class));
             assertEquals(1, jdbcTemplate.queryForObject("""
                     SELECT COUNT(*) FROM information_schema.tables
-                    WHERE table_schema = 'tenant_101'
+                    WHERE table_schema = 'tenant_acme'
                       AND table_name = 'eva_tenant_schema_version'
                     """, Integer.class));
             assertEquals(1, jdbcTemplate.queryForObject("""
                     SELECT COUNT(*) FROM information_schema.tables
-                    WHERE table_schema = 'tenant_101' AND table_name = 'sys_account'
+                    WHERE table_schema = 'tenant_acme' AND table_name = 'sys_account'
                     """, Integer.class));
             assertEquals(1, jdbcTemplate.queryForObject("""
                     SELECT COUNT(*) FROM information_schema.tables
-                    WHERE table_schema = 'tenant_101' AND table_name = 'sys_account_profile'
+                    WHERE table_schema = 'tenant_acme' AND table_name = 'sys_account_profile'
                     """, Integer.class));
             assertEquals(0, jdbcTemplate.queryForObject("""
                     SELECT COUNT(*) FROM information_schema.tables
-                    WHERE table_schema = 'tenant_101' AND table_name = 'sys_user'
+                    WHERE table_schema = 'tenant_acme' AND table_name = 'sys_user'
                     """, Integer.class));
             assertEquals(0, jdbcTemplate.queryForObject("""
                     SELECT COUNT(*) FROM information_schema.columns
-                    WHERE table_schema = 'tenant_101'
+                    WHERE table_schema = 'tenant_acme'
                       AND table_name IN (
                           'sys_account', 'sys_account_profile', 'sys_organization', 'sys_post', 'sys_dict', 'sys_dict_item',
                           'sys_role', 'sys_roleuser_ref', 'sys_roleres_ref', 'sys_postuser_ref')
@@ -88,14 +89,14 @@ class TenantSchemaModePostgresTest {
                     """, Integer.class));
             List<String> tenantTables = jdbcTemplate.queryForList("""
                     SELECT table_name FROM information_schema.tables
-                    WHERE table_schema = 'tenant_101'
+                    WHERE table_schema = 'tenant_acme'
                       AND table_name IN (
                           'sys_account', 'sys_account_profile', 'sys_organization', 'sys_post', 'sys_dict', 'sys_dict_item',
                           'sys_role', 'sys_roleuser_ref', 'sys_roleres_ref', 'sys_postuser_ref')
                     ORDER BY table_name
                     """, String.class);
             assertEquals(10, tenantTables.size());
-            assertEquals("tenant_101", resolver.resolve(101L));
+            assertEquals("tenant_acme", resolver.resolve(101L));
         }
     }
 
@@ -104,14 +105,14 @@ class TenantSchemaModePostgresTest {
         try (EmbeddedPostgres postgres = EmbeddedPostgres.start()) {
             DataSource dataSource = postgres.getPostgresDatabase();
             JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-            jdbcTemplate.execute("CREATE SCHEMA tenant_101");
+            jdbcTemplate.execute("CREATE SCHEMA tenant_acme");
             jdbcTemplate.execute("CREATE TABLE public.route_probe(value VARCHAR(16))");
-            jdbcTemplate.execute("CREATE TABLE tenant_101.route_probe(value VARCHAR(16))");
+            jdbcTemplate.execute("CREATE TABLE tenant_acme.route_probe(value VARCHAR(16))");
             jdbcTemplate.update("INSERT INTO public.route_probe(value) VALUES ('core')");
-            jdbcTemplate.update("INSERT INTO tenant_101.route_probe(value) VALUES ('tenant')");
+            jdbcTemplate.update("INSERT INTO tenant_acme.route_probe(value) VALUES ('tenant')");
 
             EvaConfig config = schemaConfig();
-            TenantSchemaRouter router = new TenantSchemaRouter(dataSource, config, id -> "tenant_101");
+            TenantSchemaRouter router = new TenantSchemaRouter(dataSource, config, id -> "tenant_acme");
             CoreSchemaExecutor coreExecutor = new CoreSchemaExecutor(jdbcTemplate, config);
             assertThrows(IllegalStateException.class, () -> router.routeCurrentTransaction(101L));
             assertThrows(IllegalStateException.class, () -> coreExecutor.execute(template -> "core"));
@@ -182,12 +183,19 @@ class TenantSchemaModePostgresTest {
     }
 
     private void executeMigration(JdbcTemplate jdbcTemplate) throws IOException {
-        ClassPathResource migration = new ClassPathResource("db/migration/V3__TENANT_SCHEMA_MODE.sql");
-        String script = StreamUtils.copyToString(migration.getInputStream(), StandardCharsets.UTF_8);
-        for (String statement : script.split("--#")) {
-            if (!statement.isBlank()) {
-                jdbcTemplate.execute(statement);
-            }
+        TransactionTemplate transaction = new TransactionTemplate(
+                new DataSourceTransactionManager(jdbcTemplate.getDataSource()));
+        for (String path : List.of("db/migration/V3__TENANT_SCHEMA_MODE.sql",
+                "db/migration/V13__TENANT_CODE_SCHEMA.sql")) {
+            ClassPathResource migration = new ClassPathResource(path);
+            String script = StreamUtils.copyToString(migration.getInputStream(), StandardCharsets.UTF_8);
+            transaction.executeWithoutResult(status -> {
+                for (String statement : script.split("--#")) {
+                    if (!statement.isBlank()) {
+                        jdbcTemplate.execute(statement);
+                    }
+                }
+            });
         }
     }
 }

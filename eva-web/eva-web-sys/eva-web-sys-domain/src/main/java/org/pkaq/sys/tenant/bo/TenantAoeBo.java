@@ -3,10 +3,12 @@ package org.pkaq.sys.tenant.bo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.pkaq.core.mvc.bo.StdBo;
+import org.pkaq.sys.tenant.util.TenantCodeRules;
 
 import java.util.Date;
 import java.util.List;
@@ -26,8 +28,9 @@ public class TenantAoeBo extends StdBo {
     @NotBlank
     private String name;
 
-    @Schema(description = "租户编码")
+    @Schema(description = "不可更改且不可复用的租户编码，首字符为小写字母，其余为小写字母、数字、下划线，最长6字符")
     @Size(max = 6, message = "{validate.length.max}")
+    @Pattern(regexp = TenantCodeRules.CODE_PATTERN, message = "{sys.tenant.code.invalid}")
     @NotBlank
     private String code;
 

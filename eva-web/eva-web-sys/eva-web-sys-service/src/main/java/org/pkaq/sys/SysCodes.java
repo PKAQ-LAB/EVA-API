@@ -27,6 +27,9 @@ public enum SysCodes implements BizAssert {
      * 租户相关 0100x-02
      **/
     TENANT_CODE_ALREADY_EXIST("编码已存在", "0x000-02000"),
+    TENANT_CODE_INVALID("租户编码须以小写字母开头，包含1至6位小写字母、数字或下划线", "0x001-02010"),
+    TENANT_CODE_IMMUTABLE("租户编码创建后不可更改", "0x001-02011"),
+    TENANT_SCHEMA_OCCUPIED("目标租户 Schema 已存在或归属不明，禁止复用", "0x001-02012"),
     TENANT_NAME_ALREADY_EXIST("名称已存在", "0x000-02001"),
     TENANT_CODE_OR_NAME_ALREADY_EXIST("名称已存在", "0x000-02001"),
     /**

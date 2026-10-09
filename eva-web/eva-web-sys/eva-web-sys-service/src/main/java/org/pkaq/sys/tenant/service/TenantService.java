@@ -27,6 +27,7 @@ import org.pkaq.sys.tenant.entity.TenantEntity;
 import org.pkaq.sys.tenant.entity.TenantResourceEntity;
 import org.pkaq.sys.tenant.mapper.TenantResourceMapper;
 import org.pkaq.sys.tenant.mapper.TenantAuthorizationMapper;
+import org.pkaq.sys.tenant.util.TenantCodeRules;
 import org.pkaq.sys.tenant.vo.TenantDetailVo;
 import org.pkaq.sys.tenant.vo.TenantListVo;
 import org.springframework.context.ApplicationEventPublisher;
@@ -125,13 +126,23 @@ public class TenantService extends StdService<org.pkaq.sys.tenant.mapper.TenantM
         }
 
         boolean isNew = editBo.getId() == null || editBo.getId() == 0L;
+        if (!TenantCodeRules.isValid(editBo.getCode())) {
+            SysCodes.TENANT_CODE_INVALID.newException();
+        }
         if (isNew && StrUtils.isBlank(editBo.getAdminPass())) {
             CommonCodes.PARAM_ERROR.newException();
         }
         long tenantId = isNew ? IdWorker.getId() : editBo.getId();
         editBo.setId(tenantId);
         if (!isNew) {
-            ensureTenantEditable(this.mapper.selectById(tenantId));
+            TenantEntity existing = this.mapper.selectById(tenantId);
+            ensureTenantEditable(existing);
+            if (!editBo.getCode().equals(existing.getCode())) {
+                SysCodes.TENANT_CODE_IMMUTABLE.newException();
+            }
+        }
+        if (this.mapper.countCodeAll(editBo.getCode(), isNew ? null : tenantId) > 0L) {
+            SysCodes.TENANT_CODE_ALREADY_EXIST.newException();
         }
         validateTenantAuth(editBo);
 
@@ -221,11 +232,15 @@ public class TenantService extends StdService<org.pkaq.sys.tenant.mapper.TenantM
         if (checkBo == null) {
             return false;
         }
+        Long excludedId = null != checkBo.getId() && 0L != checkBo.getId() ? checkBo.getId() : null;
+        if (StrUtils.isNotBlank(checkBo.getCode()) && this.mapper.countCodeAll(checkBo.getCode(), excludedId) > 0L) {
+            return true;
+        }
+        if (StrUtils.isBlank(checkBo.getName())) {
+            return false;
+        }
         LambdaQueryWrapper<TenantEntity> wrapper = new LambdaQueryWrapper<>();
-        wrapper.nested(w -> w
-                .eq(checkBo.getName() != null && !checkBo.getName().isEmpty(), TenantEntity::getName, checkBo.getName())
-                .or()
-                .eq(checkBo.getCode() != null && !checkBo.getCode().isEmpty(), TenantEntity::getCode, checkBo.getCode()));
+        wrapper.eq(TenantEntity::getName, checkBo.getName());
 
         if (checkBo.getId() != null && checkBo.getId() != 0L) {
             wrapper.ne(TenantEntity::getId, checkBo.getId());

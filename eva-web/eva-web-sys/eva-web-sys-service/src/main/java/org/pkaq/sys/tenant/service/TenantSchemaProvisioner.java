@@ -3,6 +3,8 @@ package org.pkaq.sys.tenant.service;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.mybatis.tenant.TrustedTenantSchemaResolver;
 import org.pkaq.core.properties.EvaConfig;
+import org.pkaq.sys.SysCodes;
+import org.pkaq.sys.tenant.util.TenantCodeRules;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.support.EncodedResource;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,20 +18,29 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * 由平台控制面创建可信租户 schema 并执行租户侧迁移。
  *
  * @author PKAQ
+ * @date 2026-10-09
  */
 @Service
 @RequiredArgsConstructor
 public class TenantSchemaProvisioner {
+    private static final Pattern SAFE_SCHEMA = Pattern.compile("^[a-z][a-z0-9_]{0,62}$");
     private final JdbcTemplate jdbcTemplate;
     private final DataSource dataSource;
     private final EvaConfig evaConfig;
     private final TrustedTenantSchemaResolver resolver;
 
+    /**
+     * 使用平台数据库的编码和映射创建或幂等初始化租户 Schema，不接受客户端名称。
+     *
+     * @param tenantId 租户主键
+     */
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void provision(Long tenantId) {
         if (!evaConfig.getTenant().isSchemaMode()) {
@@ -38,15 +49,60 @@ public class TenantSchemaProvisioner {
         if (tenantId == null || tenantId <= 0L) {
             throw new IllegalArgumentException("租户 ID 非法");
         }
-        String schema = evaConfig.getTenant().getPrefix() + tenantId;
-        resolver.validate(schema);
-        jdbcTemplate.queryForObject("SELECT EVA_PROVISION_TENANT_SCHEMA(?)", Object.class, schema);
-        int updated = jdbcTemplate.update("""
-                UPDATE SYS_TENANT SET SCHEMA_NAME = ?
-                WHERE ID = ? AND COALESCE(DELETED, 0) = 0 AND COALESCE(FROZEN, 0) <> 1
-                """, schema, tenantId);
-        if (1 != updated) {
+        String core = evaConfig.getTenant().getCoreSchema();
+        if (null == core || !SAFE_SCHEMA.matcher(core).matches()) {
+            throw new IllegalStateException("平台 Schema 配置非法");
+        }
+        String coreTable = "\"" + core + "\".SYS_TENANT";
+        List<TenantMetadata> tenants = jdbcTemplate.query(
+                "SELECT CODE, SCHEMA_NAME FROM " + coreTable
+                        + " WHERE ID = ? AND COALESCE(DELETED, 0) = 0 AND COALESCE(FROZEN, 0) <> 1 FOR UPDATE",
+                (result, rowNumber) -> new TenantMetadata(result.getString("CODE"), result.getString("SCHEMA_NAME")),
+                tenantId);
+        if (1 != tenants.size()) {
             throw new IllegalStateException("租户不存在或已禁用");
+        }
+        TenantMetadata tenant = tenants.getFirst();
+        if (!TenantCodeRules.isValid(tenant.code())) {
+            SysCodes.TENANT_CODE_INVALID.newException();
+        }
+        Long codeOwners = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM " + coreTable + " WHERE CODE = ? AND ID <> ?",
+                Long.class, tenant.code(), tenantId);
+        if (null == codeOwners || 0L != codeOwners) {
+            SysCodes.TENANT_CODE_ALREADY_EXIST.newException();
+        }
+        String prefix = evaConfig.getTenant().getPrefix();
+        if (null == prefix || !SAFE_SCHEMA.matcher(prefix).matches()) {
+            throw new IllegalStateException("租户 Schema 前缀配置非法");
+        }
+        // 已保存的映射始终权威，重复初始化不得凭 code 推导后改绑到另一套数据。
+        String schema = null == tenant.schema() ? prefix + tenant.code() : tenant.schema();
+        resolver.validate(schema);
+        Long otherOwners = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM " + coreTable + " WHERE SCHEMA_NAME = ? AND ID <> ?",
+                Long.class, schema, tenantId);
+        Boolean exists = jdbcTemplate.queryForObject(
+                "SELECT EXISTS (SELECT 1 FROM pg_catalog.pg_namespace WHERE nspname = ?)", Boolean.class, schema);
+        if (null == otherOwners || 0L != otherOwners || null == exists
+                || (Boolean.TRUE.equals(exists) && !schema.equals(tenant.schema()))) {
+            SysCodes.TENANT_SCHEMA_OCCUPIED.newException();
+        }
+        // 已绑定的 Schema 消失意味着可能丢失数据，禁止自动重建空库掩盖问题。
+        if (null != tenant.schema() && !Boolean.TRUE.equals(exists)) {
+            SysCodes.TENANT_SCHEMA_OCCUPIED.newException();
+        }
+        if (!exists) {
+            // 数据库函数同样必须严格创建，禁止 IF NOT EXISTS 跨租户复用并发出现的 Schema。
+            jdbcTemplate.queryForObject("SELECT \"" + core + "\".EVA_PROVISION_TENANT_SCHEMA(?)", Object.class, schema);
+        }
+        if (null == tenant.schema()) {
+            int updated = jdbcTemplate.update("UPDATE " + coreTable + " SET SCHEMA_NAME = ?"
+                    + " WHERE ID = ? AND SCHEMA_NAME IS NULL AND COALESCE(DELETED, 0) = 0"
+                    + " AND COALESCE(FROZEN, 0) <> 1", schema, tenantId);
+            if (1 != updated) {
+                throw new IllegalStateException("租户 Schema 映射更新失败");
+            }
         }
         executeTenantMigrations(schema);
     }
@@ -99,5 +155,9 @@ public class TenantSchemaProvisioner {
                 return result.next();
             }
         }
+    }
+
+    /** 平台记录提供的初始化元数据，不包含客户端输入。 */
+    private record TenantMetadata(String code, String schema) {
     }
 }
