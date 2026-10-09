@@ -31,6 +31,7 @@ boot = { module = "org.springframework.boot:spring-boot-dependencies", version.r
 p6spy = { module = "p6spy:p6spy", version.ref = "p6spy" }
 # 数据库版本
 flyway = { module = "org.flywaydb:flyway-mysql", version.ref = "flyway" }
+flywaypg = { module = "org.flywaydb:flyway-database-postgresql", version.ref = "flyway" }
 # ORM
 mybatis_plus_starter = { module = "com.baomidou:mybatis-plus-spring-boot4-starter", version.ref = "mybatis_plus_starter" }
 mybatis_plus_jsqlparser = { module = "com.baomidou:mybatis-plus-jsqlparser", version.ref = "mybatis_plus_jsqlparser" }

@@ -1,4 +1,4 @@
-package org.pkaq.sys.tenant.ctrl;
+package org.pkaq.sys.platform.tenant.ctrl;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;

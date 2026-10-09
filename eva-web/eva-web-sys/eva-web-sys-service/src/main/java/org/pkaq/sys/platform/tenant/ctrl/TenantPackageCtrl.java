@@ -1,4 +1,4 @@
-package org.pkaq.sys.tenant.pkg.ctrl;
+package org.pkaq.sys.platform.tenant.ctrl;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -14,7 +14,12 @@ import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.sys.tenant.pkg.bo.TenantPackageAoeBo;
 import org.pkaq.sys.tenant.pkg.bo.TenantPackageQueryBo;
 import org.pkaq.sys.tenant.pkg.service.TenantPackageService;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 租户套餐管理控制器。

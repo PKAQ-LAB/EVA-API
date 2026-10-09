@@ -7,7 +7,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.pkaq.core.codes.CommonCodes;
-import org.pkaq.core.cache.store.RedisIdempotencyStore;
+import org.pkaq.core.idempotency.IIdempotencyStore;
 import org.pkaq.core.exception.BizException;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.threaduser.ThreadUser;
@@ -33,7 +33,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @RequiredArgsConstructor
 public class NoRepeatSubmitAdvice {
 
-    private final RedisIdempotencyStore idempotencyStore;
+    private final IIdempotencyStore idempotencyStore;
 
     private final TokenUtils tokenUtil;
 
@@ -52,7 +52,7 @@ public class NoRepeatSubmitAdvice {
                     + "-" + request.getServletPath();
             key = SecureUtils.md5(key);
 
-            // Redis 原子写入失败表示同一窗口内已经存在相同请求。
+            // 存储原子占用失败表示同一窗口内已经存在相同请求。
             if (!idempotencyStore.acquire(key, evaConfig.getNorepeatTtl())) {
                 throw new BizException(CommonCodes.REQUEST_TOO_MORE);
             }

@@ -12,5 +12,4 @@ dependencies {
     api libs.web
 
     api project(":eva-core:eva-core-common")
-    implementation project(":eva-core:eva-core-cache")
 }

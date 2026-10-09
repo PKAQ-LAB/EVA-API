@@ -1,6 +1,7 @@
 package org.pkaq.core.cache.store;
 
 import lombok.RequiredArgsConstructor;
+import org.pkaq.core.idempotency.IIdempotencyStore;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -10,10 +11,11 @@ import java.time.Duration;
  * Redis 幂等状态存储。
  *
  * @author PKAQ
+ * @date 2026-10-09
  */
 @Component
 @RequiredArgsConstructor
-public class RedisIdempotencyStore {
+public class RedisIdempotencyStore implements IIdempotencyStore {
 
     private static final String KEY_PREFIX = "eva:idempotency:";
 
@@ -26,6 +28,7 @@ public class RedisIdempotencyStore {
      * @param ttl 锁定时间
      * @return 是否成功占用
      */
+    @Override
     public boolean acquire(String key, Duration ttl) {
         Boolean acquired = redisTemplate.opsForValue()
                 .setIfAbsent(KEY_PREFIX + key, Boolean.TRUE, ttl);

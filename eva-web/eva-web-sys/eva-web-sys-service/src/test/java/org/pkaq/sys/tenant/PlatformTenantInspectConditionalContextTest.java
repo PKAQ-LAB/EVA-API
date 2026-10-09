@@ -9,7 +9,7 @@ import org.pkaq.sys.organization.convert.OrganizationConvert;
 import org.pkaq.sys.organization.mapper.OrganizationMapper;
 import org.pkaq.sys.role.convert.RoleConvert;
 import org.pkaq.sys.role.mapper.RoleMapper;
-import org.pkaq.sys.tenant.ctrl.PlatformTenantInspectCtrl;
+import org.pkaq.sys.platform.tenant.ctrl.PlatformTenantInspectCtrl;
 import org.pkaq.sys.tenant.mapper.TenantMapper;
 import org.pkaq.sys.tenant.service.PlatformTenantInspectService;
 import org.springframework.boot.test.context.runner.WebApplicationContextRunner;

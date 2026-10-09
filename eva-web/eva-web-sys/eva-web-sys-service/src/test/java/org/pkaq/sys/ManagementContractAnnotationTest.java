@@ -6,7 +6,7 @@ import org.pkaq.core.log.base.BizLogCodes;
 import org.pkaq.sys.dict.ctrl.DictCtrl;
 import org.pkaq.sys.module.service.ModuleService;
 import org.pkaq.sys.role.ctrl.RoleCtrl;
-import org.pkaq.sys.tenant.ctrl.TenantCtrl;
+import org.pkaq.sys.platform.tenant.ctrl.TenantCtrl;
 import org.pkaq.sys.tenant.pkg.service.TenantPackageService;
 import org.pkaq.sys.tenant.service.TenantService;
 import org.pkaq.sys.user.ctrl.UserCtrl;

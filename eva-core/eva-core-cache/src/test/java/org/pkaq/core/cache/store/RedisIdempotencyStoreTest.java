@@ -1,6 +1,7 @@
 package org.pkaq.core.cache.store;
 
 import org.junit.jupiter.api.Test;
+import org.pkaq.core.idempotency.IIdempotencyStore;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
@@ -30,12 +31,26 @@ class RedisIdempotencyStoreTest {
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
         when(valueOperations.setIfAbsent("eva:idempotency:request", Boolean.TRUE, ttl))
                 .thenReturn(true, false);
-        RedisIdempotencyStore store = new RedisIdempotencyStore(redisTemplate);
+        IIdempotencyStore store = new RedisIdempotencyStore(redisTemplate);
 
         assertTrue(store.acquire("request", ttl));
         assertFalse(store.acquire("request", ttl));
 
         verify(valueOperations, org.mockito.Mockito.times(2))
                 .setIfAbsent("eva:idempotency:request", Boolean.TRUE, ttl);
+    }
+
+    /** Redis 未确认写入时仍视为占用失败，不改变既有语义。 */
+    @Test
+    void shouldRejectUnconfirmedWrite() {
+        RedisTemplate<Object, Object> redisTemplate = mock(RedisTemplate.class);
+        ValueOperations<Object, Object> valueOperations = mock(ValueOperations.class);
+        Duration ttl = Duration.ofSeconds(2);
+        when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+        IIdempotencyStore store = new RedisIdempotencyStore(redisTemplate);
+
+        assertFalse(store.acquire("request", ttl));
+
+        verify(valueOperations).setIfAbsent("eva:idempotency:request", Boolean.TRUE, ttl);
     }
 }

@@ -7,9 +7,9 @@ import org.pkaq.sys.notice.ctrl.NoticeCtrl;
 import org.pkaq.sys.organization.ctrl.OrganizationCtrl;
 import org.pkaq.sys.post.ctrl.PostCtrl;
 import org.pkaq.sys.role.ctrl.RoleCtrl;
-import org.pkaq.sys.tenant.ctrl.PlatformTenantInspectCtrl;
-import org.pkaq.sys.tenant.ctrl.TenantCtrl;
-import org.pkaq.sys.tenant.pkg.ctrl.TenantPackageCtrl;
+import org.pkaq.sys.platform.tenant.ctrl.PlatformTenantInspectCtrl;
+import org.pkaq.sys.platform.tenant.ctrl.TenantCtrl;
+import org.pkaq.sys.platform.tenant.ctrl.TenantPackageCtrl;
 import org.pkaq.sys.user.ctrl.UserCtrl;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +20,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -29,6 +31,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @date 2026-09-27
  */
 class SystemManagementEndpointContractTest {
+
+    @Test
+    void platformEntriesRemainSeparateFromInstanceManagement() {
+        for (Class<?> controller : Set.of(TenantCtrl.class, TenantPackageCtrl.class,
+                PlatformTenantInspectCtrl.class)) {
+            assertEquals("org.pkaq.sys.platform.tenant.ctrl", controller.getPackageName());
+        }
+        for (Class<?> controller : Set.of(ModuleCtrl.class, RoleCtrl.class, DictCtrl.class,
+                OrganizationCtrl.class, PostCtrl.class, UserCtrl.class)) {
+            assertFalse(controller.getPackageName().startsWith("org.pkaq.sys.platform."));
+        }
+    }
 
     @Test
     void exposesSystemManagementCrudAndLinkageEndpoints() {

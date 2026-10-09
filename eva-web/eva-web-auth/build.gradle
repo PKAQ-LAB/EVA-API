@@ -7,9 +7,37 @@ jar {
 project.description = 'web auth module'
 
 dependencies {
-    api     project(":eva-web:eva-web-core"),
-            project(":eva-core:eva-core-cache"),
-            project(":eva-core:eva-core-log"),
-            project(":eva-core:eva-core-data-mybatis"),
-            libs.security
+    // HTTP辅助类型、Servlet和Spring Security类型属于现有认证公开签名。
+    api project(":eva-web:eva-web-core")
+    api libs.security
+
+    // 存储和日志实现仅供内部adapter装配；直接使用adapter的宿主必须显式声明依赖。
+    implementation project(":eva-core:eva-core-cache"),
+                   project(":eva-core:eva-core-log"),
+                   project(":eva-core:eva-core-data-mybatis")
+}
+
+// 独立验证声明边界，不解析数据库、不启动服务，也不新增自动质量门禁。
+tasks.register('verifyAuthDependencyBoundary') {
+    group = 'verification'
+    description = '验证认证公开依赖与内部存储实现依赖的声明边界'
+    doLast {
+        Set<String> apiProjects = configurations.api.dependencies
+                .withType(org.gradle.api.artifacts.ProjectDependency).collect { it.path }.toSet()
+        Set<String> internalProjects = configurations.implementation.dependencies
+                .withType(org.gradle.api.artifacts.ProjectDependency).collect { it.path }.toSet()
+        Set<String> expectedInternal = [':eva-core:eva-core-cache', ':eva-core:eva-core-log',
+                                       ':eva-core:eva-core-data-mybatis'] as Set
+        Set<String> expectedApi = [':eva-web:eva-web-core'] as Set
+        if (apiProjects != expectedApi || internalProjects != expectedInternal) {
+            throw new GradleException('认证项目依赖边界不符合公开Web契约与内部存储实现的分离规则')
+        }
+        Set<String> apiLibraries = configurations.api.dependencies
+                .withType(org.gradle.api.artifacts.ExternalModuleDependency)
+                .collect { "${it.group}:${it.name}".toString() }.toSet()
+        Set<String> expectedLibraries = ['org.springframework.boot:spring-boot-starter-security'] as Set
+        if (apiLibraries != expectedLibraries) {
+            throw new GradleException('认证公开库依赖必须仅保留现有Spring Security契约')
+        }
+    }
 }

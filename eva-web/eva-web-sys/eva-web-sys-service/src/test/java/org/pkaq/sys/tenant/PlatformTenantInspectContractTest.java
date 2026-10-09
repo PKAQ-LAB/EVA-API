@@ -3,7 +3,7 @@ package org.pkaq.sys.tenant;
 import org.junit.jupiter.api.Test;
 import org.pkaq.core.constant.PlatformCapabilities;
 import org.pkaq.core.threaduser.ThreadUser;
-import org.pkaq.sys.tenant.ctrl.PlatformTenantInspectCtrl;
+import org.pkaq.sys.platform.tenant.ctrl.PlatformTenantInspectCtrl;
 import org.pkaq.sys.tenant.service.PlatformTenantInspectService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
