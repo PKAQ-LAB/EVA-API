@@ -139,6 +139,8 @@ EVA-API (root)
 - `WebLogAdvice`、`NoRepeatSubmitAdvice`、`HttpExceptionAdvice`、`ErrorLogEnricher`
 - `CachedBodyFilter` + `CachedBodyHttpServletRequest`（多次读取 Body）
 - `RequestFilter`
+- `NoRepeatSubmitAdvice` 只依赖 `eva-core-contract` 的 `IIdempotencyStore`；默认 Redis 实现由宿主的 `eva-core-cache` 提供，`web-core` 不再直接依赖缓存模块。没有恢复 supporter 框架。
+- 默认首页 `/ -> doc.html` 属于应用装配，`IndexCtrl` 位于 `web-booter`，通用 Web 模块不携带应用首页。
 - Web 工具：`WebUtil`、`RequestUtil`、`ResponseUtil`、`HeaderUtil`、`CookieUtils`、`IpUtils`、`TokenUtils`、`CachedRequestUtil`
 
 ### 5.2 `eva-web-auth` —— 鉴权与权限
@@ -152,6 +154,7 @@ EVA-API (root)
 - **动态权限**：`DynamicSecurityMetadataSource` + `DynamiclAccessDecisionManager`
 - **核心依赖边界**：`authentication` / `authorization` 只依赖 `spi` 接口与普通账号、角色快照；不得直接导入数据库实体、Mapper 或具体存储适配器。
 - **存储适配器**：`adapter.mybatis` 包含 `AuthUserService`、`AuthRolePermissionService`、`RoleResourceCacheService` 与持久化实体；`adapter.redis` 保存会话，`adapter.tenant` 实现 schema 路由。Gradle 模块仍包含这些适配器，MyBatis 构建依赖没有删除。
+- **Gradle 可见性**：`api` 保留公开签名所需的 `web-core` 与 Spring Security；缓存、日志、MyBatis 改为 `implementation`。这不代表物理拆分适配器，也不代表无数据库即可启动默认认证装配。直接使用适配器或日志、缓存类型的消费者必须显式声明对应依赖。
 - **OpenAPI AppKey 渠道**：`AppKeyAuthenticationFilter` + `SignatureValidator`；应用凭据查询与调用审计通过 SPI 对接适配器，不将 `AppCredentialEntity` 传入认证核心。
 - **在线用户**：`OnlineUserCtrl`、`TokenCtrl`
 - **错误码**：`AuthCodes`
@@ -162,18 +165,37 @@ EVA-API (root)
 - **后续若拆分微服务，此模块即为对外契约**
 
 ### 5.4 `eva-web-sys-service` —— 系统域实现
-- **业务子域**（每个均含 ctrl/service/entity/mapper/convert，user 域还含 `AuthCtrl`）：
+- **业务子域**（按职责保留现有 domain/service 双层，user 域还含菜单、字典查询 `AuthCtrl`）：
   - `dict` —— 数据字典（含 `@Dict` 注解 + `JacksonCodeSerializer` 自动翻译 + `DictCacheHelper` + `DictInit`）
   - `module` —— 菜单 / 资源（`ModuleEntity` + `ModuleResources`，含资源权限映射）
   - `organization` —— 组织机构（树形）
   - `post` —— 岗位（`PostUserEntity` 关联用户）
   - `role` —— 角色（`RoleResourceEntity` 关联资源、`RoleUserEntity` 关联用户）
-  - `tenant` —— 租户（多租户模式开关下生效）
-  - `user` —— 用户 + 登录入口 `AuthCtrl`
+  - `platform.tenant.ctrl` —— 平台租户、套餐和跨租户只读查看入口；HTTP 路径仍为 `/sys/tenant/**` 和 `/sys/platform/tenants/**`，模式及权限行为未变。
+  - `tenant` —— 平台租户持久化、套餐服务、schema 初始化和管理员创建的现有实现；本次不迁移共享 BO/VO、Service 接口或 Mapper/XML，避免扩大契约变更。
+  - `user` —— 账号管理及 `/auth/fetchMenus`、`/auth/fetchDicts`；密码登录属于认证模块，不是此处的 `AuthCtrl`。
   - `notice` —— 通知
   - `log` —— 业务日志 / 错误日志查询 `BizLogCtrl` / `ErrorCtrl`
 - **错误码**：`SysCodes`
 - **Web 配置**：`SysApiConfiguration`
+- **归属规则**：实例/租户用户、组织、岗位、角色、字典由系统域管理；租户开通、套餐授权上限和跨租户查看由平台入口承载。菜单与资源定义在 standalone 仍需可用，不整体搬到仅平台模块。当前是包级入口区分，不是两个独立 Gradle 模块，不能据此宣称业务隔离验收全部完成。
+
+### 5.5 2026-10-09 职责收口验证
+
+独立审查执行以下命令，未启动用户服务、浏览器或连接真实开发库：
+
+```powershell
+$env:GRADLE_USER_HOME = 'C:\home\DevApp\cache\gradle'
+gradle.bat :eva-core:eva-core-common:test :eva-core:eva-core-contract:test :eva-core:eva-core-cache:test :eva-core:eva-core-data-mybatis:test :eva-core:eva-core-log:test :eva-web:eva-web-core:test :eva-web:eva-web-auth:test :eva-web:eva-web-sys:eva-web-sys-service:test :eva-web:eva-web-auth:verifyAuthDependencyBoundary --no-daemon
+gradle.bat :web-booter:test --tests org.pkaq.app.doc.IndexCtrlTest --tests org.pkaq.app.doc.IdempotencyWiringTest --tests org.pkaq.sys.user.AccountProfileSplitMigrationPostgresTest --tests org.pkaq.sys.user.UserAccountProfileMapperPostgresTest --tests org.pkaq.sys.user.RegistrationAccountPostgresTest --tests org.pkaq.sys.tenant.service.TenantPrivateAccountSchemaPostgresTest --tests org.pkaq.core.mybatis.tenant.TenantSchemaModePostgresTest --no-daemon
+gradle.bat build :web-booter:compileTestJava -x test --no-daemon
+```
+
+- 模块测试 201 项（common 9、cache 3、MyBatis 28、log 7、web-core 13、auth 89、sys-service 52）；启动模块定向测试 21 项（临时 PostgreSQL 17、首页 2、防重装配及代理 2），累计 222 项，失败、错误、跳过均为 0。构建和消费者测试代码编译通过。
+- MockMvc 实际请求 `/`、`/api/` 返回 302 与 `Location: doc.html`；Spring 防重代理两次请求业务仅执行一次，并核对 Redis 实现键前缀、哈希与 TTL。底层 Redis 客户端为 mock，未验证真实 Redis 部署。
+- 三个平台控制器迁移前后除 package/import/格式外保持一致；条件装配验证 standalone 无跨租户查看路由、platform 保留三个 GET 路由。旧路径编译类已移除。
+- GitNexus 索引滞后 9 提交；迁移前 impact 为 UNKNOWN，变更扫描将旧路径方法计入高风险链路，不能据此声称无影响。本轮以逐文件比对、编译和运行测试补证。
+- 该验证不等于全部系统管理 CRUD 与真实部署的端到端验收，也不证明默认认证装配已不依赖数据库或 Redis。
 
 ---
 

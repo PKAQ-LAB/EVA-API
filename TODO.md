@@ -111,3 +111,19 @@ pnpm.cmd build
 - [ ] 面向公网开放注册前补齐防滥用措施；前端注册页面、邮箱/短信验证和密码找回尚未实现。
 
 专项测试命令、实际 PostgreSQL 和请求证据见 `docs/ACCOUNT_PROFILE_AND_REGISTRATION.md`。本专项不等于全部业务模块的端到端发布验收。
+
+## 10. 2026-10-09 Web 模块职责收口
+
+- [x] 应用默认首页入口移到 `web-booter`；重复提交 Advice 依赖中立 `IIdempotencyStore`，默认实现仍为 Redis，不恢复 supporter。
+- [x] 认证模块保留公开 Web/Security 依赖，缓存、日志、MyBatis 使用内部实现依赖；适配器仍处于同一物理模块。
+- [x] 平台租户、套餐、跨租户查看控制器整理到 `platform.tenant.ctrl`；domain 契约和 standalone 菜单资源能力保留。
+- [ ] 全部系统管理真实登录、CRUD、权限拒绝与业务联动的端到端验收仍按阶段二清单执行；本次职责收口不替代该验收。
+
+## 11. 2026-10-09 租户 code schema
+
+- [x] 租户主键 ID 与现有权限关联保留；新 schema 默认使用 `tenant_<code>`，路由以已保存的 `SCHEMA_NAME` 为准。
+- [x] code 规范、管理 API 不可变、包含软删除记录的唯一性和 schema 冲突拒绝实现；禁止复用删除租户遗留的数据。
+- [x] 增加 V13 保数据重命名迁移、PostgreSQL Flyway 插件和独立迁移测试，非默认前缀或异常映射阻断而非猜测。
+- [ ] 真实环境执行 V13 前需盘点、备份与维护窗口；本轮没有执行开发库迁移，也没有开启 dev/prod 自动迁移。
+
+命名规则和真实数据库执行边界见 `web-booter/src/main/resources/config/eva/README.md`。隔离测试结果不能替代真实环境迁移确认。

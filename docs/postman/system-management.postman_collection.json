@@ -280,7 +280,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"id\": null,\n  \"name\": \"测试租户\",\n  \"code\": \"T001\",\n  \"type\": \"0001\",\n  \"fullName\": \"测试租户有限公司\",\n  \"cardType\": \"0001\",\n  \"cardNo\": \"91310000000000000X\",\n  \"contactName\": \"测试联系人\",\n  \"contactTel\": \"13800000000\",\n  \"authUserCount\": 50,\n  \"expirationDate\": \"2030-12-31 23:59:59\",\n  \"adminAccount\": \"tenant_admin\",\n  \"adminPass\": \"123456\",\n  \"resourceIds\": [{{resourceId}}],\n  \"remark\": \"Postman 测试租户\"\n}"
+              "raw": "{\n  \"id\": null,\n  \"name\": \"测试租户\",\n  \"code\": \"t001\",\n  \"type\": \"0001\",\n  \"fullName\": \"测试租户有限公司\",\n  \"cardType\": \"0001\",\n  \"cardNo\": \"91310000000000000X\",\n  \"contactName\": \"测试联系人\",\n  \"contactTel\": \"13800000000\",\n  \"authUserCount\": 50,\n  \"expirationDate\": \"2030-12-31 23:59:59\",\n  \"adminAccount\": \"tenant_admin\",\n  \"adminPass\": \"123456\",\n  \"resourceIds\": [{{resourceId}}],\n  \"remark\": \"Postman 测试租户\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/sys/tenant/edit",
