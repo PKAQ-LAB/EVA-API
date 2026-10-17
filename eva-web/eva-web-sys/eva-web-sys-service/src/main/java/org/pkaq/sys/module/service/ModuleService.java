@@ -190,7 +190,15 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
      * @return 模块详情
      */
     public ModuleDetailVo getModule(Long id) {
-        ModuleEntity entity = this.get(id);
+        if (0 == id) {
+            CommonCodes.PARAM_ERROR.newException();
+        }
+
+        // 通用 get 已执行视图转换，详情查询必须直接读取实体后使用模块转换器。
+        ModuleEntity entity = this.mapper.selectById(id);
+        if (null == entity) {
+            CommonCodes.CAN_NOT_FIND_RECORD.newException(id);
+        }
         ModuleDetailVo md = this.convert.entityToDetailVo(entity);
 
         List<ModuleResources> resources = this.moduleResourceMapper.selectList(
