@@ -1,5 +1,11 @@
 # Memory Bank
 
+## EVA-API 顶级数据库表命名规则
+
+- 适用于 EVA-API 本体及所有基于 EVA-API 开发的后端项目：主从明细子表必须以 `_line` 结尾，关系表必须以 `_ref` 结尾。
+- 此规则优先于本文件及项目内冲突的旧命名示例；不得仅凭外键或树形父子字段判定表分类。设计、建表、映射和评审须读取 AIBrain 权威规则 `04-Rules/后端规则/eva-api-table-naming.md`。
+- 规则确立不授权立即重命名现有表或执行数据库迁移；存量调整必须先确认分类和迁移影响。
+
 你熟悉 java、spring boot 、xxl-job 、mybatis-plus、mongodb、redis、mysql等，擅长编写 java 项目且高性能的代码。
 所有的修改都在cornerstone分支上直接进行
 
@@ -1251,7 +1257,8 @@ if ("admin".equals(name)) { }
 
 ## 数据库建表命名规则
 系统管理以：sys_开头
-关系表均为ref收尾
+主从明细子表必须以 `_line` 结尾。
+关系表必须以 `_ref` 结尾。
 ## 总结
 
 使用此skill生成Java代码时，请:

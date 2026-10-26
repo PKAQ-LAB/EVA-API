@@ -11,7 +11,7 @@
 
 | 项 | 值 |
 |---|---|
-| GroupId / Version | `org.pkaq` / `4.0.3.12` |
+| GroupId / Version | `org.pkaq` / `1.1.1`（`1.<Spring Boot minor>.<Spring Boot patch>`） |
 | JDK | **Java 25**（`languageVersion = 25`，启用 `-parameters`） |
 | 构建 | Gradle 多模块 + `libs.versions.toml` 版本目录 |
 | 核心框架 | Spring Boot **4.1.1** + Spring Security |
