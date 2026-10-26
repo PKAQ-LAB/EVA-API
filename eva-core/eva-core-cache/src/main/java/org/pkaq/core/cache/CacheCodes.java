@@ -1,7 +1,7 @@
 package org.pkaq.core.cache;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.pkaq.core.exception.BizAssert;
 
 /**
@@ -11,7 +11,7 @@ import org.pkaq.core.exception.BizAssert;
  * @author PKAQ
  */
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public enum CacheCodes implements BizAssert {
     //    Unsupported reset period
     SERVER_ERROR_CACHE_PERIOD("服务器发生错误,请联系管理员", "0x000-07000");

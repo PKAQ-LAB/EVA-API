@@ -4,9 +4,14 @@ plugins {
     alias(libs.plugins.ben.manes.versions)
 }
 
+def springBootVersion = libs.versions.spring.boot.get()
+if (!(springBootVersion ==~ /\d+\.\d+\.\d+/)) {
+    throw new GradleException('Spring Boot 版本必须为三段数字')
+}
+
 allprojects {
     group = 'org.pkaq'
-    version = '4.0.3.12'
+    version = springBootVersion.replaceFirst(/^\d+\./, '1.')
 }
 
 subprojects {
