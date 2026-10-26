@@ -10,6 +10,7 @@ import org.pkaq.core.mvc.vo.PageVo;
 import org.pkaq.core.mybatis.exception.entity.ErrorIncidentEntity;
 import org.pkaq.core.mybatis.exception.mapper.ErrorIncidentMapper;
 import org.pkaq.core.mybatis.util.PageResult;
+import org.pkaq.core.mybatis.log.LogQueryAccess;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.threaduser.ThreadUser;
 import org.pkaq.core.threaduser.ThreadUserHelper;
@@ -56,6 +57,7 @@ public class PostgresErrorIncidentRepository implements ErrorIncidentRepository 
 
     @Override
     public ErrorIncident get(String id) {
+        LogQueryAccess.requireAll();
         QueryWrapper<ErrorIncidentEntity> wrapper = new QueryWrapper<>();
         wrapper.eq("id", id);
         applyTenantFilter(wrapper);
@@ -64,6 +66,7 @@ public class PostgresErrorIncidentRepository implements ErrorIncidentRepository 
 
     @Override
     public PageVo<? extends ErrorIncident> list(DateRangeBo dateRangeBo, int pageNo, int pageSize) {
+        LogQueryAccess.requireAll();
         QueryWrapper<ErrorIncidentEntity> wrapper = new QueryWrapper<>();
 
         Date begin = dateRangeBo.getBegin();
@@ -74,10 +77,16 @@ public class PostgresErrorIncidentRepository implements ErrorIncidentRepository 
         }
         if (end == null) {
             end = new Date();
+        } else {
+            end = DateUtils.addDay(DateUtils.beginOfDay(end), 1);
         }
 
         wrapper.ge("request_time", DateUtils.format(begin, DatePatterns.NORM_DATETIME_PATTERN));
-        wrapper.le("request_time", DateUtils.format(end, DatePatterns.NORM_DATETIME_PATTERN));
+        if (dateRangeBo.getEnd() == null) {
+            wrapper.le("request_time", DateUtils.format(end, DatePatterns.NORM_DATETIME_PATTERN));
+        } else {
+            wrapper.lt("request_time", DateUtils.format(end, DatePatterns.NORM_DATETIME_PATTERN));
+        }
         wrapper.orderByDesc("last_occurred_at");
 
         applyTenantFilter(wrapper);

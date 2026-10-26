@@ -43,6 +43,7 @@ public class BusinessLogEventHandler {
         if (logEntity == null) {
             return;
         }
+        logEntity.setSuccess(Boolean.FALSE);
         logEntity.setDescription(FAILURE_PREFIX + logEntity.getDescription());
         this.businessLogRepository.save(logEntity);
     }

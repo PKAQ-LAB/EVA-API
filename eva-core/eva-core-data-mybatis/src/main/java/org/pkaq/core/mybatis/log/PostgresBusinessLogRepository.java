@@ -51,6 +51,7 @@ public class PostgresBusinessLogRepository implements BusinessLogRepository {
 
     @Override
     public String get(String id) {
+        LogQueryAccess.requireAll();
         try {
             MybatisBizLogEntity entity = this.businessLogMapper.selectLogById(
                     Long.valueOf(id), currentTenantId(null));
@@ -62,14 +63,19 @@ public class PostgresBusinessLogRepository implements BusinessLogRepository {
 
     @Override
     public Object list(LogQueryBo queryBo) {
+        LogQueryAccess.requireAll();
         LogQueryBo safeQuery = queryBo == null ? new LogQueryBo() : queryBo;
         Date begin = safeQuery.getBegin();
         Date end = safeQuery.getEnd();
+        boolean endExclusive = end != null;
         if (null == begin) {
             begin = DateUtils.addDay(new Date(), -7);
         }
         if (null == end) {
             end = new Date();
+        } else {
+            // 按本地日历推进到次日零点，避免夏令时及数据库小数秒精度遗漏。
+            end = DateUtils.addDay(DateUtils.beginOfDay(end), 1);
         }
 
         String beginText = DateUtils.format(begin, DatePatterns.NORM_DATETIME_PATTERN);
@@ -80,11 +86,11 @@ public class PostgresBusinessLogRepository implements BusinessLogRepository {
         long offset = (pageNo - 1) * pageSize;
         Long tenantId = currentTenantId(safeQuery.getTargetTenantId());
 
-        long total = this.businessLogMapper.countLogs(tenantId, beginText, endText,
+        long total = this.businessLogMapper.countLogs(tenantId, beginText, endText, endExclusive,
                 safeQuery.getOperator(), safeQuery.getOperateType(), safeQuery.getMCode(),
                 safeQuery.getBId(), includeArchived);
         List<MybatisBizLogEntity> records = this.businessLogMapper.selectLogPage(
-                tenantId, beginText, endText, safeQuery.getOperator(), safeQuery.getOperateType(),
+                tenantId, beginText, endText, endExclusive, safeQuery.getOperator(), safeQuery.getOperateType(),
                 safeQuery.getMCode(), safeQuery.getBId(), includeArchived, offset, pageSize);
 
         PageVo<MybatisBizLogEntity> page = new PageVo<>();

@@ -17,7 +17,11 @@ import org.pkaq.core.log.events.BusinessLogEventHandler;
 import org.pkaq.core.log.util.LogSanitizer;
 import org.pkaq.core.threaduser.ThreadUser;
 import org.pkaq.core.threaduser.ThreadUserHelper;
-import org.pkaq.core.util.*;
+import org.pkaq.core.util.ArrayUtils;
+import org.pkaq.core.util.CollUtils;
+import org.pkaq.core.util.DateUtils;
+import org.pkaq.core.util.ReflectUtils;
+import org.pkaq.core.util.StrUtils;
 import org.pkaq.core.util.json.JsonUtil;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -25,7 +29,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * 异步记录日志
@@ -40,6 +51,7 @@ import java.util.*;
 public class BizLogAdvice {
     private static final int MAX_PARAMS_LENGTH = 16_000;
     private static final int MAX_RESPONSE_LENGTH = 32_000;
+    private static final int MAX_DESCRIPTION_LENGTH = 4_000;
 
     private final ApplicationEventPublisher eventPublisher;
     private final I18NHelper i18NHelper;
@@ -123,15 +135,51 @@ public class BizLogAdvice {
             if (BizLogCodes.CREATE.equals(operatorType)) {
                 processArgs(joinPoint.getArgs(), descriptionArgs, formatArgs);
             }
-            if (StrUtils.isNotBlank(bizlog.bizId())) {
-                bizLogEntity.setBId(formatArgs[formatArgs.length - 1].toString());
+            Object[] safeFormatArgs = new Object[formatArgs.length];
+            for (int index = 0; index < formatArgs.length; index++) {
+                safeFormatArgs[index] = safeDescriptionArgument(descriptionArgs[index], formatArgs[index]);
             }
-            bizLogEntity.setDescription(MessageFormat.format(description, formatArgs));
+            if (StrUtils.isNotBlank(bizlog.bizId()) && safeFormatArgs[safeFormatArgs.length - 1] != null) {
+                bizLogEntity.setBId(String.valueOf(safeFormatArgs[safeFormatArgs.length - 1]));
+            }
+            bizLogEntity.setDescription(LogSanitizer.sanitize(
+                    MessageFormat.format(description, safeFormatArgs), MAX_DESCRIPTION_LENGTH));
             bizLogEntity.setSpendTime(String.valueOf(System.currentTimeMillis() - beginTime));
             // 触发事件 使用事务监听器异步保存操作记录
             eventPublisher.publishEvent(new BizLogEvent(bizLogEntity));
         }
         return result;
+    }
+
+    private Object safeDescriptionArgument(String source, Object value) {
+        if (LogSanitizer.isSecretField(source)) {
+            return "******";
+        }
+        if (value == null || value instanceof Number || value instanceof Boolean) {
+            return value;
+        }
+        if (value instanceof CharSequence) {
+            String sanitized = LogSanitizer.sanitize(value.toString(), MAX_DESCRIPTION_LENGTH);
+            // 结构化参数不重新嵌入描述，避免整个模板退化为无法完整解析的JSON文本。
+            return sanitized.startsWith("{") || sanitized.startsWith("[") || sanitized.startsWith("\"")
+                    ? "******" : sanitized;
+        }
+        if (value instanceof Collection<?> values && values.stream().allMatch(Number.class::isInstance)) {
+            return JsonUtil.toJson(values);
+        }
+        // 整个业务对象仅投影数字标识，避免调用未知对象的toString或携带凭据字段。
+        Map<String, Object> identifiers = new LinkedHashMap<>();
+        for (String field : List.of("id", "userId", "roleId", "tenantId", "mainId", "param")) {
+            Object identifier = value instanceof Map<?, ?> values
+                    ? values.get(field) : ReflectUtils.getFieldValue(value, field);
+            if (identifier instanceof Number || identifier instanceof Collection<?> values
+                    && values.stream().allMatch(Number.class::isInstance)) {
+                identifiers.put(field, identifier);
+            }
+        }
+        return value.getClass().getSimpleName() + identifiers.entrySet().stream()
+                .map(entry -> entry.getKey() + "=" + entry.getValue())
+                .collect(java.util.stream.Collectors.joining(", ", "[", "]"));
     }
 
     /**
@@ -193,15 +241,18 @@ public class BizLogAdvice {
                             val = getFieldValue(obj, n);
                         } catch (Exception e) {
                             val = "";
-                            log.error("根据方法实参构造格式化参数异常:" + e.getMessage());
+                            log.error("根据方法实参构造格式化参数异常");
                         }
+                        Object fieldValue = val;
+                        pMap.get(key).forEach(index -> formatArgs[index] = fieldValue);
                     }
+                    return;
                 }
                 Object finalVal = val;
                 pMap.get(key).forEach(index -> formatArgs[index] = finalVal);
             });
         } catch (Exception e) {
-            log.error("构造业务日志入参摘要失败", e);
+            log.error("构造业务日志入参摘要失败");
         }
         return rMap;
     }
@@ -225,14 +276,14 @@ public class BizLogAdvice {
                         value = getFieldValue(result, k);
                     } catch (Exception e) {
                         value = "";
-                        log.error("根据返回对象构造格式化参数异常:" + e.getMessage());
+                        log.error("根据返回对象构造格式化参数异常");
                     }
                 }
                 Object finalValue = value;
                 v.forEach(index -> formatArgs[index] = finalValue);
             });
         } catch (Exception e) {
-            log.error("构造业务日志返回值摘要失败", e);
+            log.error("构造业务日志返回值摘要失败");
         }
     }
 

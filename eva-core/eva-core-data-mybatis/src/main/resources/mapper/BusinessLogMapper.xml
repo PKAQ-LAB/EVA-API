@@ -30,7 +30,9 @@
             WHERE 1 = 1
             <if test="tenantId != null">AND TENANT_ID = #{tenantId}</if>
             <if test="begin != null">AND OPERATE_DATETIME &gt;= #{begin}</if>
-            <if test="end != null">AND OPERATE_DATETIME &lt;= #{end}</if>
+            <if test="end != null">AND OPERATE_DATETIME
+                <choose><when test="endExclusive">&lt;</when><otherwise>&lt;=</otherwise></choose> #{end}
+            </if>
             <if test="operator != null and operator != ''">AND OPERATOR LIKE CONCAT('%', #{operator}, '%')</if>
             <if test="operateType != null and operateType != ''">AND OPERATE_TYPE = #{operateType}</if>
             <if test="mCode != null and mCode != ''">AND M_CODE = #{mCode}</if>
@@ -42,7 +44,9 @@
                 WHERE 1 = 1
                 <if test="tenantId != null">AND TENANT_ID = #{tenantId}</if>
                 <if test="begin != null">AND OPERATE_DATETIME &gt;= #{begin}</if>
-                <if test="end != null">AND OPERATE_DATETIME &lt;= #{end}</if>
+                <if test="end != null">AND OPERATE_DATETIME
+                    <choose><when test="endExclusive">&lt;</when><otherwise>&lt;=</otherwise></choose> #{end}
+                </if>
                 <if test="operator != null and operator != ''">AND OPERATOR LIKE CONCAT('%', #{operator}, '%')</if>
                 <if test="operateType != null and operateType != ''">AND OPERATE_TYPE = #{operateType}</if>
                 <if test="mCode != null and mCode != ''">AND M_CODE = #{mCode}</if>
@@ -59,7 +63,9 @@
             WHERE 1 = 1
             <if test="tenantId != null">AND log_data.TENANT_ID = #{tenantId}</if>
             <if test="begin != null">AND log_data.OPERATE_DATETIME &gt;= #{begin}</if>
-            <if test="end != null">AND log_data.OPERATE_DATETIME &lt;= #{end}</if>
+            <if test="end != null">AND log_data.OPERATE_DATETIME
+                <choose><when test="endExclusive">&lt;</when><otherwise>&lt;=</otherwise></choose> #{end}
+            </if>
             <if test="operator != null and operator != ''">AND log_data.OPERATOR LIKE CONCAT('%', #{operator}, '%')</if>
             <if test="operateType != null and operateType != ''">AND log_data.OPERATE_TYPE = #{operateType}</if>
             <if test="mCode != null and mCode != ''">AND log_data.M_CODE = #{mCode}</if>
@@ -71,7 +77,9 @@
                 WHERE 1 = 1
                 <if test="tenantId != null">AND log_data.TENANT_ID = #{tenantId}</if>
                 <if test="begin != null">AND log_data.OPERATE_DATETIME &gt;= #{begin}</if>
-                <if test="end != null">AND log_data.OPERATE_DATETIME &lt;= #{end}</if>
+                <if test="end != null">AND log_data.OPERATE_DATETIME
+                    <choose><when test="endExclusive">&lt;</when><otherwise>&lt;=</otherwise></choose> #{end}
+                </if>
                 <if test="operator != null and operator != ''">AND log_data.OPERATOR LIKE CONCAT('%', #{operator}, '%')</if>
                 <if test="operateType != null and operateType != ''">AND log_data.OPERATE_TYPE = #{operateType}</if>
                 <if test="mCode != null and mCode != ''">AND log_data.M_CODE = #{mCode}</if>

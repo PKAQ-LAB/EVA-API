@@ -43,9 +43,7 @@ public class ErrorCtrl extends Ctrl {
         if (dateRange.getBegin() == null) {
             dateRange.setBegin(DateUtils.addDay(new Date(), -7));
         }
-        if (dateRange.getEnd() == null) {
-            dateRange.setEnd(new Date());
-        }
+        // 保留未传结束日的语义，由Repository按当前时刻处理默认上界。
 
         return Response.success(this.errorIncidentRepository.list(
                 dateRange,

@@ -76,7 +76,7 @@ public class UserCtrl extends Ctrl {
      */
     @PostMapping("/repwd")
     @Operation(summary = "重新设置密码")
-    @BizLog(operateType = BizLogCodes.EDIT, description = "重新设置了密码[{0}]", args = {"param:0"})
+    @BizLog(operateType = BizLogCodes.UPDATE, description = "重新设置了本人密码")
     public Response<Object> repwd(@Parameter(name = "rePwdBo", description = "用户对象")
                                   @RequestBody RePwdBo rePwdBo) {
         this.service.repwd(rePwdBo);
@@ -120,7 +120,7 @@ public class UserCtrl extends Ctrl {
      */
     @PostMapping("/grant")
     @Operation(summary = "授权角色")
-    @BizLog(operateType = BizLogCodes.EDIT, description = "重新授权了用户角色[{0}]", args = {"param:0.userId"})
+    @BizLog(operateType = BizLogCodes.UPDATE, description = "重新授权了用户角色[{0}]", args = {"param:0.userId"})
     public Response<Object> grant(@Parameter(name = "bo", description = "授权角色")
                                   @RequestBody @Valid UserGrantBo bo) {
         this.userRoleRefSerivce.saveRoles(bo);
@@ -134,7 +134,7 @@ public class UserCtrl extends Ctrl {
      */
     @PostMapping("/grantPost")
     @Operation(summary = "授权岗位")
-    @BizLog(operateType = BizLogCodes.EDIT, description = "重新授权了用户岗位[{0}]", args = {"param:0.userId"})
+    @BizLog(operateType = BizLogCodes.UPDATE, description = "重新授权了用户岗位[{0}]", args = {"param:0.userId"})
     public Response<Object> grantPost(@Parameter(name = "bo", description = "授权岗位")
                                       @RequestBody @Valid UserPostBo bo) {
         this.userPostRefSerivce.savePosts(bo);

@@ -8,6 +8,8 @@ import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Table;
 import org.pkaq.core.annotation.Ignore;
 import org.pkaq.core.mybatis.enums.DataPermissionEnumm;
+import org.pkaq.core.mybatis.log.LogQueryAccess;
+import org.pkaq.core.mybatis.log.OpenApiAuditQueryScope;
 import org.pkaq.core.properties.DataPermission;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.threaduser.ThreadUser;
@@ -51,6 +53,17 @@ public class MybatisPlusDataPermissionHandler implements MultiDataPermissionHand
      */
     @Override
     public Expression getSqlSegment(Table table, Expression where, String mappedStatementId) {
+        if ("api_call_log".equals(normalizeTableName(table.getName()))) {
+            OpenApiAuditQueryScope.requireAuthorized(mappedStatementId);
+            return null;
+        }
+        // 仅保护日志读取语句，后台写入和归档不能依赖请求身份。
+        if (Set.of("log_biz", "log_biz_archive", "log_error").contains(normalizeTableName(table.getName()))
+                && (mappedStatementId.startsWith("org.pkaq.core.mybatis.log.mapper.BusinessLogMapper.select")
+                || mappedStatementId.startsWith("org.pkaq.core.mybatis.log.mapper.BusinessLogMapper.countLogs")
+                || mappedStatementId.startsWith("org.pkaq.core.mybatis.exception.mapper.ErrorIncidentMapper.select"))) {
+            LogQueryAccess.requireAll();
+        }
         DataPermission config = this.evaConfig.getDataPermission();
         if (!config.isEnable() || shouldIgnore(table, mappedStatementId, config)) {
             return null;
@@ -77,7 +90,8 @@ public class MybatisPlusDataPermissionHandler implements MultiDataPermissionHand
         if (scopes == null || scopes.isEmpty()) {
             return DENY_ALL_SQL;
         }
-        if (scopes.stream().anyMatch(scope -> DataPermissionEnumm.ALL.getCode().equals(scope.getCode()))) {
+        if (scopes.stream().anyMatch(scope -> scope != null
+                && DataPermissionEnumm.ALL.getCode().equals(scope.getCode()))) {
             return "1 = 1";
         }
 
@@ -88,6 +102,9 @@ public class MybatisPlusDataPermissionHandler implements MultiDataPermissionHand
         long deptId = currentUser.getDeptId();
         Set<String> conditions = new HashSet<>();
         for (ThreadUser.DataScope scope : scopes) {
+            if (scope == null) {
+                continue;
+            }
             DataPermissionEnumm permission = DataPermissionEnumm.getByCode(scope.getCode());
             if (permission == null) {
                 continue;

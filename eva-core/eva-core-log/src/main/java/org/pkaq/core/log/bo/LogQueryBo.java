@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.pkaq.core.mvc.bo.PageBo;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -18,9 +19,11 @@ import java.util.Date;
 public class LogQueryBo extends PageBo {
 
     @Schema(description = "开始时间")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date begin;
 
     @Schema(description = "结束时间")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date end;
 
     @Schema(description = "操作人")

@@ -15,9 +15,12 @@ import org.pkaq.core.mybatis.exception.mapper.ErrorIncidentMapper;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.threaduser.ThreadUser;
 import org.pkaq.core.threaduser.ThreadUserHelper;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verify;
 import static org.mockito.ArgumentMatchers.any;
 
@@ -51,7 +54,7 @@ class PostgresErrorIncidentRepositoryTest {
     void shouldFilterGetByCurrentTenant() {
         this.evaConfig.setMode(CommonConstant.MODE_SAAS);
 
-        ThreadUserHelper.runWithUser(new ThreadUser().setTenantId(12L), () -> this.repository.get("error-1"));
+        ThreadUserHelper.runWithUser(allUser(12L), () -> this.repository.get("error-1"));
 
         assertTenantValue(captureGetWrapper(), 12L);
     }
@@ -63,9 +66,9 @@ class PostgresErrorIncidentRepositoryTest {
     void shouldDenyUnauthenticatedGet() {
         this.evaConfig.setMode(CommonConstant.MODE_PLATFORM);
 
-        this.repository.get("error-1");
-
-        assertTenantValue(captureGetWrapper(), -1L);
+        assertThrows(RuntimeException.class, () -> this.repository.get("error-1"));
+        assertThrows(RuntimeException.class, () -> this.repository.list(new DateRangeBo(), 1, 10));
+        verifyNoInteractions(errorIncidentMapper);
     }
 
     /**
@@ -75,7 +78,7 @@ class PostgresErrorIncidentRepositoryTest {
     void shouldUseTenantZeroInStandaloneMode() {
         this.evaConfig.setMode(CommonConstant.MODE_STANDALONE);
 
-        this.repository.get("error-1");
+        ThreadUserHelper.runWithUser(allUser(9L), () -> this.repository.get("error-1"));
 
         assertTenantValue(captureGetWrapper(), 0L);
     }
@@ -87,13 +90,51 @@ class PostgresErrorIncidentRepositoryTest {
     void shouldFilterListByCurrentTenant() {
         this.evaConfig.setMode(CommonConstant.MODE_SAAS);
 
-        ThreadUserHelper.runWithUser(new ThreadUser().setTenantId(34L),
+        ThreadUserHelper.runWithUser(allUser(34L),
                 () -> this.repository.list(new DateRangeBo(), 1, 10));
 
         @SuppressWarnings({"rawtypes", "unchecked"})
         ArgumentCaptor<QueryWrapper<ErrorIncidentEntity>> captor = ArgumentCaptor.forClass(QueryWrapper.class);
         verify(this.errorIncidentMapper).selectPage(any(), captor.capture());
         assertTenantValue(captor.getValue(), 34L);
+    }
+
+    @Test
+    void shouldRejectRestrictedAndUnknownScopesBeforeAnyQuery() {
+        for (String code : List.of("0001", "0002", "0003", "0004", "0005", "0006", "0007", "unknown")) {
+            ThreadUser user = allUser(12L).setDataScopes(List.of(new ThreadUser.DataScope(code, List.of())));
+            ThreadUserHelper.runWithUser(user, () -> {
+                assertThrows(RuntimeException.class, () -> repository.get("1"));
+                assertThrows(RuntimeException.class, () -> repository.list(new DateRangeBo(), 1, 10));
+            });
+        }
+        verifyNoInteractions(errorIncidentMapper);
+    }
+
+    private ThreadUser allUser(long tenantId) {
+        return new ThreadUser().setUserId(11L).setTenantId(tenantId)
+                .setDataScopes(List.of(new ThreadUser.DataScope("0000", List.of())));
+    }
+
+    @Test
+    void usesExclusiveNextLocalDayForSelectedEndAndKeepsTenantAndInclusiveBegin() throws Exception {
+        evaConfig.setMode(CommonConstant.MODE_SAAS);
+        DateRangeBo bo = new DateRangeBo();
+        java.text.SimpleDateFormat format = new java.text.SimpleDateFormat("yyyy-MM-dd");
+        bo.setBegin(format.parse("2026-12-31"));
+        bo.setEnd(format.parse("2026-12-31"));
+
+        ThreadUserHelper.runWithUser(allUser(34L), () -> repository.list(bo, 1, 10));
+
+        @SuppressWarnings({"rawtypes", "unchecked"})
+        ArgumentCaptor<QueryWrapper<ErrorIncidentEntity>> captor = ArgumentCaptor.forClass(QueryWrapper.class);
+        verify(errorIncidentMapper).selectPage(any(), captor.capture());
+        QueryWrapper<ErrorIncidentEntity> wrapper = captor.getValue();
+        assertTrue(wrapper.getSqlSegment().contains("request_time < "));
+        assertTrue(wrapper.getSqlSegment().contains("request_time >= "));
+        assertTrue(wrapper.getParamNameValuePairs().containsValue("2027-01-01 00:00:00"));
+        assertTrue(wrapper.getParamNameValuePairs().containsValue("2026-12-31 00:00:00"));
+        assertTenantValue(wrapper, 34L);
     }
 
     /**

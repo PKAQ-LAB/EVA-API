@@ -36,6 +36,7 @@ public class OpenApiCallLogService implements org.pkaq.core.auth.spi.IOpenApiAud
     private final OpenApiCallLogMapper openApiCallLogMapper;
 
     private final ClientInfoResolver clientInfoResolver;
+    private final OpenApiAuditReadAccess readAccess;
 
     /**
      * 根据ID查询调用日志。
@@ -44,7 +45,8 @@ public class OpenApiCallLogService implements org.pkaq.core.auth.spi.IOpenApiAud
      * @return 调用日志
      */
     public OpenApiCallLogVo get(Long id) {
-        return toVo(this.openApiCallLogMapper.selectById(id));
+        return readAccess.read("/monitor/log/openapi/get/" + id,
+                () -> toVo(this.openApiCallLogMapper.selectById(id)));
     }
 
     /**
@@ -54,6 +56,10 @@ public class OpenApiCallLogService implements org.pkaq.core.auth.spi.IOpenApiAud
      * @return 调用日志分页数据
      */
     public IPage<OpenApiCallLogVo> list(OpenApiCallLogQueryBo queryBo) {
+        return readAccess.read("/monitor/log/openapi/list", () -> listAuthorized(queryBo));
+    }
+
+    private IPage<OpenApiCallLogVo> listAuthorized(OpenApiCallLogQueryBo queryBo) {
         OpenApiCallLogQueryBo safeQueryBo = queryBo == null ? new OpenApiCallLogQueryBo() : queryBo;
         Page<OpenApiCallLogEntity> page = new Page<>(safeQueryBo.getPageNo(), safeQueryBo.getPageSize());
         return this.openApiCallLogMapper.selectPage(page, Wrappers.<OpenApiCallLogEntity>lambdaQuery()

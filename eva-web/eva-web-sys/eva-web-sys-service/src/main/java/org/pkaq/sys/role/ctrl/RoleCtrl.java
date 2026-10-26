@@ -66,7 +66,7 @@ public class RoleCtrl extends StdCtrl<RoleService> {
 
     @PostMapping({"/grantResource"})
     @Operation(summary = "保存角色模块关系")
-    @BizLog(operateType = BizLogCodes.EDIT, description = "更新了角色资源授权[{0}]", args = {"param:0"})
+    @BizLog(operateType = BizLogCodes.UPDATE, description = "更新了角色资源授权[{0}]", args = {"param:0.roleId"})
     public Response<Object> grantResource(@Parameter(name = "param", description = "角色详情")
                                           @RequestBody RoleResourceRefBo roleAoeBo) {
         this.service.grantResource(roleAoeBo);
@@ -84,7 +84,7 @@ public class RoleCtrl extends StdCtrl<RoleService> {
 
     @PostMapping({"/grantUser"})
     @Operation(summary = "保存角色用户关系")
-    @BizLog(operateType = BizLogCodes.EDIT, description = "更新了角色授权用户[{0}]", args = {"param:0"})
+    @BizLog(operateType = BizLogCodes.UPDATE, description = "更新了角色授权用户[{0}]", args = {"param:0.roleId"})
     public Response<Object> grantUser(@Parameter(name = "param", description = "角色用户id关系")
                                       @RequestBody @Valid RoleUserRefBo role) {
         this.service.grantUser(role);
