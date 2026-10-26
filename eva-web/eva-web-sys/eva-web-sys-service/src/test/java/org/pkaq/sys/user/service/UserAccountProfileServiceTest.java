@@ -12,7 +12,12 @@ import org.pkaq.core.account.IAccountCreation;
 import org.pkaq.core.enums.FrozenEnumm;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.sys.post.service.UserPostRefSerivce;
-import org.pkaq.sys.role.mapper.RoleUserMapper;
+import org.pkaq.sys.post.mapper.PostUserMapper;
+import org.pkaq.sys.post.entity.PostUserEntity;
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.pkaq.sys.role.service.UserRoleRefSerivce;
 import org.pkaq.sys.user.bo.UserAoeBo;
 import org.pkaq.sys.user.convert.UserConvert;
 import org.pkaq.sys.user.entity.AccountProfileEntity;
@@ -46,13 +51,15 @@ class UserAccountProfileServiceTest {
     @Mock private IAccountCreation accountCreation;
     @Mock private UserConvert convert;
     @Mock private EvaConfig evaConfig;
-    @Mock private RoleUserMapper roleUserMapper;
+    @Mock private UserRoleRefSerivce userRoleRefSerivce;
     @Mock private UserPostRefSerivce userPostRefSerivce;
+    @Mock private PostUserMapper postUserMapper;
     @InjectMocks private UserService service;
 
     @BeforeEach
     void setUp() {
         ReflectionTestUtils.setField(service, "mapper", mapper);
+        TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), PostUserEntity.class);
     }
 
     /** 管理新增委托共享原语创建账号，然后创建同主键档案。 */
@@ -176,10 +183,10 @@ class UserAccountProfileServiceTest {
         UserDetailVo detail = new UserDetailVo();
         detail.setId(101L);
         detail.setAccount("ordinary-account");
-        when(mapper.selectById(101L)).thenReturn(account);
         when(convert.entityToDetailVo(account)).thenReturn(detail);
-        when(roleUserMapper.selectRoleIds(101L)).thenReturn(List.of());
-        when(userPostRefSerivce.listPostIdsByUserId(101L)).thenReturn(List.of());
+        when(userRoleRefSerivce.readUserRoles(101L)).thenReturn(
+                new UserRoleRefSerivce.UserRolesDetail(account, List.of(), List.of()));
+        when(postUserMapper.selectList(any())).thenReturn(List.of());
 
         assertEquals(detail, service.getUser(101L));
         assertNull(detail.getDeptId());

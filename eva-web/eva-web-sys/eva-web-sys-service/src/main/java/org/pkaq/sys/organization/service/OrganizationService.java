@@ -131,6 +131,7 @@ public class OrganizationService extends StdService<OrganizationMapper, Organiza
             return;
         }
         ensureOrganizationEditable(origin);
+        org.setFrozen(origin.getFrozen());
 
         if (!Objects.equals(origin.getPid(), pid)) {
             assertValidParent(origin, pid);

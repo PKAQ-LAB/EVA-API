@@ -249,15 +249,14 @@ public class UserService extends StdService<UserMapper, UserEntity> implements I
     @Transactional(readOnly = true)
     @TenantSchema
     public UserDetailVo getUser(Long id) {
-        UserEntity user = this.mapper.selectById(id);
-        if (user == null) {
-            SysCodes.CANNOT_FIND_USER.newException();
-            return null;
-        }
-
-        UserDetailVo vo = this.convert.entityToDetailVo(user);
-        vo.setRoleIds(this.roleUserMapper.selectRoleIds(id));
-        vo.setPostId(this.userPostRefSerivce.listPostIdsByUserId(id));
+        UserRoleRefSerivce.UserRolesDetail detail = this.userRoleRefSerivce.readUserRoles(id);
+        UserDetailVo vo = this.convert.entityToDetailVo(detail.user());
+        vo.setRoleIds(detail.roleIds());
+        vo.setAssignedRoles(detail.assignedRoles());
+        // 保持在已核实来源的原事务内，避免岗位service的嵌套schema路由再次改变查询来源。
+        vo.setPostId(this.postUserMapper.selectList(new LambdaQueryWrapper<PostUserEntity>()
+                        .select(PostUserEntity::getPostId).eq(PostUserEntity::getUserId, id))
+                .stream().map(PostUserEntity::getPostId).collect(Collectors.toList()));
         return vo;
     }
 

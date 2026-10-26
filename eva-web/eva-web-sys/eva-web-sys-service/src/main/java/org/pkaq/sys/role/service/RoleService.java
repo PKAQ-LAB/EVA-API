@@ -18,7 +18,12 @@ import org.pkaq.core.mybatis.tenant.TenantSchema;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.mybatis.util.PageResult;
 import org.pkaq.core.mybatis.util.TreeHelper;
+import org.pkaq.core.mybatis.enums.DataPermissionEnumm;
+import org.pkaq.sys.organization.mapper.OrganizationMapper;
+import org.pkaq.sys.organization.entity.OrganizationEntity;
 import org.pkaq.core.threaduser.ThreadUserHelper;
+import org.pkaq.core.threaduser.ThreadUser;
+import org.pkaq.core.tenant.TenantContext;
 import org.pkaq.core.util.CollUtils;
 import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.module.mapper.ModuleMapper;
@@ -48,6 +53,8 @@ import org.pkaq.sys.user.bo.UserQueryBo;
 import org.pkaq.sys.user.mapper.UserMapper;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -68,8 +75,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class RoleService extends StdService<RoleMapper, RoleEntity> implements IRoleService {
-    /** 默认数据权限：全部权限。 */
-    private static final String DEFAULT_DATA_SCOPE = "0000";
+    private final OrganizationMapper organizationMapper;
 
     private final RoleResourceMapper roleResourceMapper;
 
@@ -92,6 +98,8 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
     private final CoreSchemaExecutor coreSchemaExecutor;
 
     private final EvaConfig evaConfig;
+
+    private final JdbcTemplate jdbcTemplate;
 
     /**
      * 根据ID查询角色详情。
@@ -174,12 +182,8 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
             CommonCodes.PARAM_ERROR.newException();
             return;
         }
-        if (bo.getId() != null && bo.getId() != 0L) {
-            ensureRoleEditable(bo.getId());
-        }
-        if (!hasText(bo.getDataScope())) {
-            bo.setDataScope(DEFAULT_DATA_SCOPE);
-        }
+        RoleEntity origin = bo.getId() != null && bo.getId() != 0L ? ensureRoleEditable(bo.getId()) : null;
+        validateDataScope(bo, origin);
         IdCodeBo codeCheck = new IdCodeBo();
         codeCheck.setId(bo.getId());
         codeCheck.setCode(bo.getCode());
@@ -188,6 +192,10 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
             return;
         }
         RoleEntity entity = this.roleConvert.fromBo(bo);
+        if (origin != null) {
+            // 普通编辑保留可信原状态，冻结切换仍由专用操作处理。
+            entity.setFrozen(origin.getFrozen());
+        }
         this.mapper.insertOrUpdate(entity);
         if (bo.getId() != null && bo.getId() != 0L) {
             incrementPermVer(fetchUsersByRoleIds(Set.of(bo.getId())));
@@ -446,14 +454,107 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
         }
     }
 
-    private void ensureRoleEditable(Long roleId) {
+    private RoleEntity ensureRoleEditable(Long roleId) {
         RoleEntity role = this.mapper.selectById(roleId);
         if (role == null) {
             CommonCodes.CAN_NOT_FIND_RECORD.newException(roleId);
-            return;
+            return null;
         }
         if (role.getFrozen() == FrozenEnumm.READ_ONLY) {
             SysCodes.READ_ONLY_RECORD.newException();
+        }
+        return role;
+    }
+
+    private void validateDataScope(RoleAoeBo bo, RoleEntity origin) {
+        if (origin != null && bo.getDataScope() == null) {
+            // 未提交范围表示未修改，连同原组织关联保留，不能通过默认值扩大权限。
+            bo.setDataScope(origin.getDataScope());
+            bo.setDataOrgIds(origin.getDataOrgIds());
+            return;
+        }
+        DataPermissionEnumm scope = DataPermissionEnumm.getByCode(bo.getDataScope());
+        if (scope == null || Set.of("0004", "0005", "0006").contains(bo.getDataScope())) {
+            CommonCodes.PARAM_ERROR.newException();
+        }
+        if (origin != null && "0003".equals(bo.getDataScope())
+                && bo.getDataScope().equals(origin.getDataScope()) && bo.getDataOrgIds() == null) {
+            bo.setDataOrgIds(origin.getDataOrgIds());
+        }
+        Set<Long> orgIds = new HashSet<>();
+        if (hasText(bo.getDataOrgIds())) {
+            try {
+                for (String value : bo.getDataOrgIds().split(",", -1)) {
+                    if (!value.trim().matches("[0-9]+")) {
+                        throw new IllegalArgumentException();
+                    }
+                    long orgId = Long.parseLong(value.trim());
+                    if (orgId <= 0L) {
+                        throw new IllegalArgumentException();
+                    }
+                    if (!orgIds.add(orgId) && this.evaConfig.isStandaloneMode()) {
+                        CommonCodes.PARAM_ERROR.newException();
+                    }
+                }
+            } catch (IllegalArgumentException exception) {
+                CommonCodes.PARAM_ERROR.newException();
+            }
+        }
+        if ("0003".equals(bo.getDataScope()) && orgIds.isEmpty()) {
+            CommonCodes.PARAM_ERROR.newException();
+        }
+        if (!orgIds.isEmpty()) {
+            if (!this.evaConfig.isStandaloneMode() && !this.evaConfig.isPlatformMode()
+                    && !this.evaConfig.isSaasMode()) {
+                CommonCodes.PERMISSION_DENY.newException();
+            }
+            LambdaQueryWrapper<OrganizationEntity> query = new LambdaQueryWrapper<OrganizationEntity>()
+                    .select(OrganizationEntity::getId).in(OrganizationEntity::getId, orgIds);
+            if (this.evaConfig.isStandaloneMode()) {
+                requireStandaloneOrgSource();
+                query.and(ownership -> ownership.isNull(OrganizationEntity::getTenantId)
+                        .or().eq(OrganizationEntity::getTenantId, 0L));
+            } else {
+                query.eq(OrganizationEntity::getTenantId, ThreadUserHelper.getTenantId());
+            }
+            Set<Long> visibleIds = this.organizationMapper.selectList(query)
+                    .stream().map(OrganizationEntity::getId).collect(Collectors.toSet());
+            if (!visibleIds.equals(orgIds)) {
+                CommonCodes.PARAM_ERROR.newException();
+            }
+        }
+    }
+
+    /** 仅在同一可信事务和唯一组织表来源已核实后兼容单体历史NULL归属。 */
+    private void requireStandaloneOrgSource() {
+        ThreadUser user = ThreadUserHelper.getCurrentUserOrNull();
+        String schema = this.evaConfig.getTenant().getStandaloneSchema();
+        if (this.evaConfig.getTenant().isEnable() || this.evaConfig.getTenant().isSchemaMode()
+                || user == null || user.getUserId() <= 0L || user.getTenantId() != 0L
+                || schema == null || !schema.matches("[a-z_][a-z0-9_]{0,62}")) {
+            CommonCodes.PERMISSION_DENY.newException();
+        }
+        Long tenant = TenantContext.tenantId();
+        String boundSchema = TenantContext.schemaName();
+        if ((tenant != null || boundSchema != null)
+                && (!Long.valueOf(0L).equals(tenant) || !schema.equals(boundSchema))) {
+            CommonCodes.PERMISSION_DENY.newException();
+        }
+        if (!TransactionSynchronizationManager.isActualTransactionActive()
+                || this.jdbcTemplate.getDataSource() == null
+                || !TransactionSynchronizationManager.hasResource(this.jdbcTemplate.getDataSource())) {
+            CommonCodes.PERMISSION_DENY.newException();
+        }
+        // current_schema正确仍可能从search_path回退到第三schema的同名表，必须同时核关系namespace。
+        Map<String, Object> source = this.jdbcTemplate.queryForMap("""
+                SELECT pg_catalog.current_schema() AS current_schema_name,
+                    (SELECT n.nspname FROM pg_catalog.pg_class c
+                        JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+                        WHERE c.oid = pg_catalog.to_regclass(?)) AS organization_schema_name
+                """, "sys_organization");
+        if (!schema.equals(source.get("current_schema_name"))
+                || !schema.equals(source.get("organization_schema_name"))) {
+            CommonCodes.PERMISSION_DENY.newException();
         }
     }
 

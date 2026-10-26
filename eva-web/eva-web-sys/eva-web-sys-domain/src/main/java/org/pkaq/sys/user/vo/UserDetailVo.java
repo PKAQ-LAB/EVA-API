@@ -53,4 +53,7 @@ public class UserDetailVo extends StdVo {
     @Schema(description = "用户拥有的角色")
     private List<Long> roleIds = new ArrayList<>();
 
+    @Schema(description = "当前操作者可读取的已授角色摘要，缺项不修改原角色关系")
+    private List<AssignedRoleSummaryVo> assignedRoles = new ArrayList<>();
+
 }

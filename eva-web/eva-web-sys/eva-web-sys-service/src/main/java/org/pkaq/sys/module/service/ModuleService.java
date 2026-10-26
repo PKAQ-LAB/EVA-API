@@ -160,6 +160,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
                 return;
             }
             ensureModuleEditable(origin);
+            module.setFrozen(origin.getFrozen());
 
             if (origin.getPid() != pid) {
                 assertValidParent(origin, pid);

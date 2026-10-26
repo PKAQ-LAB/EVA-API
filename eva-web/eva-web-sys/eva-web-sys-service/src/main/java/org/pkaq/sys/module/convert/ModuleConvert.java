@@ -1,6 +1,9 @@
 package org.pkaq.sys.module.convert;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.pkaq.core.enums.BaseEnum;
+import org.pkaq.core.enums.FrozenEnumm;
 import org.pkaq.core.mvc.convert.MapConvertConfig;
 import org.pkaq.core.mybatis.mvc.entity.StdTreeEntity;
 import org.pkaq.sys.module.bo.ModuleAoeBo;
@@ -22,13 +25,14 @@ import java.util.stream.Collectors;
 /**
  * @author PKAQ
  */
-@Mapper(config = MapConvertConfig.class)
+@Mapper(config = MapConvertConfig.class, imports = {BaseEnum.class, FrozenEnumm.class})
 public interface ModuleConvert {
 
     List<ModuleListVo> entityToListVo(List<ModuleEntity> entity);
 
     ModuleListVo entityToListVo(ModuleEntity entity);
 
+    @Mapping(target = "frozen", expression = "java(BaseEnum.of(FrozenEnumm.class, bo.getFrozen()))")
     ModuleEntity boToEntity(ModuleAoeBo bo);
 
     ModuleEntity boToEntity(ModuleQueryBo bo);

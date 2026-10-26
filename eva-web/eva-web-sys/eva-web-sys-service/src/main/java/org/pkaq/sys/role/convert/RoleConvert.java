@@ -1,6 +1,9 @@
 package org.pkaq.sys.role.convert;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.pkaq.core.enums.BaseEnum;
+import org.pkaq.core.enums.FrozenEnumm;
 import org.pkaq.core.mvc.convert.Convert;
 import org.pkaq.core.mvc.convert.MapConvertConfig;
 import org.pkaq.sys.module.entity.ModuleEntity;
@@ -21,7 +24,7 @@ import java.util.Set;
 /**
  * @author PKAQ
  */
-@Mapper(componentModel = "spring", config = MapConvertConfig.class)
+@Mapper(componentModel = "spring", config = MapConvertConfig.class, imports = {BaseEnum.class, FrozenEnumm.class})
 public abstract class RoleConvert extends Convert {
 
     public abstract RoleEntity fromBo(RoleQueryBo queryBo);
@@ -32,6 +35,8 @@ public abstract class RoleConvert extends Convert {
 
     public abstract List<RoleListVo> toListVo(List<RoleEntity> roleEntities);
 
+    @Mapping(target = "frozen", expression = "java(BaseEnum.of(FrozenEnumm.class, "
+            + "roleAoeBo == null ? null : roleAoeBo.getFrozen()))")
     public abstract RoleEntity fromBo(RoleAoeBo roleAoeBo);
 
     public abstract List<RoleGrantedModuleVo> entityToModuleList(List<ModuleEntity> entities);

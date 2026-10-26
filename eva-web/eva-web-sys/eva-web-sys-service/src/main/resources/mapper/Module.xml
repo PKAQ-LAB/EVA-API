@@ -262,7 +262,7 @@
         ORDER BY m.SORT ASC
     </select>
 
-    <select id="selectModuleMapList" resultMap="BaseResultMap">
+    <select id="selectModuleMapList" resultMap="FlatResultMap">
         SELECT
             <include refid="ModuleDetailColumns"><property name="alias" value="t"/></include>
         FROM SYS_MODULE t
