@@ -1,0 +1,33 @@
+# 菜单隔离验证：Windows进程收尾前置能力
+
+2026-10-28，technical_designer。依据backend交付的只读能力检查提出设计，不执行进程预检、PG、Gradle、安装依赖或环境修改。
+
+当前StartTrace/已读Kernel-Process事件没有CommandLine，CIM补读短命initdb/pg_ctl存在退出竞态，不能将“订阅成功”写成exe/SHA/-D/启动身份完整取证。保持执行阻塞，不能缺证按进程名或复用PID清理。现有证据只排除已检查路径，不证明Windows原生能力全部不可用。
+
+建议优先评估等强度的启动前Job containment，而非先扩ETW取证：由独立runner持有新Job句柄、设置KILL_ON_JOB_CLOSE且不设置BREAKAWAY_OK/SILENT_BREAKAWAY_OK，以CREATE_SUSPENDED创建本轮唯一Gradle启动进程，在AssignProcessToJobObject成功且属性回读符合后才ResumeThread。任何配置/嵌套Job兼容性或分配失败都只终止仍挂起且由本次CreateProcess返回句柄标识的进程，不启动Gradle。Python标准库ctypes可调用原生API，是否本机可用须单独验证，不能据设计宣布通过。
+
+Gradle须仍为本轮--no-daemon/独立缓存/无旧producer，启动器、single-use daemon、worker、测试JVM及其PG子进程应全留在同一新Job；不得附加到已运行Gradle或开发PG，不允许breakaway。每个阶段可使用独立Job并在离开阶段前关停确认，或整轮共享Job，实施者必须说明句柄继承、唯一拥有者、所有异常/中断路径和何时关闭。关闭Job后通过Job信息/已持有进程句柄确认无活动进程；不能用PID快照代替持有身份句柄。不得把Job放入已有9016或其它服务。
+
+这条路线改变的是收尾依据：只通过本runner创建且启动前已纳入新Job的进程集合执行容器收尾，不以事后缺-D的进程认领来杀进程。exe规范路径/SHA、RUN内数据/解包/tmp、loopback端口与classpath唯一离线归档仍分别必须核验；短命进程命令行可作为审计证据，但不再承担容器成员身份的唯一证明。若总控认可该等强度模型，须明确更新原“每个短命进程均拿到-D才可收尾”的验收口径，不能在helper里暗改门禁。
+
+新增能力预检应先只建立空Job、设置/回读限制；再经总控单独授权以可立即退出的合成子进程验证挂起→入Job→恢复、子进程继承、禁止breakaway、正常结束及runner异常/句柄关闭后无残留。所有合成进程由创建返回句柄识别，不运行PG/Gradle，不扫描/终止服务、不安装第三方库。若宿主嵌套Job限制导致无法保证容器，停报，不对既有进程尝试强制迁移。
+
+实现还应避免控制器失联后Job句柄被子进程继承而保持存活：Job句柄不可继承，明确关闭冗余句柄并以finally负责释放。KILL_ON_JOB_CLOSE仅是失败兜底，正常结束仍让测试close收尾并确认Job活动数为零。安全停止不等于测试通过，因容器收尾中断的阶段必须记失败/未完成。
+
+若上述预检不可用，再考虑原生classic kernel ETW是否能在当前权限下提供完整命令行；不预先扩大到系统级监控或安装驱动。纯manifest/三阶段框架可单独实现，但在收尾能力及实际PG目录/监听门禁未完成前，不可标为可执行交付。
+
+## 总控收口后的最小方案（替代前述优先Job建议）
+
+总控明确短命initdb/pg_ctl全参数审计为内部验收要求，非用户契约；已自然退出者不需要认领或清理，其命令行未捕获不构成安全失败。本轮不再建议实现ETW、Job、新依赖或系统设置。前文Job仅为曾讨论的备选，不是当前实施要求或执行授权。
+
+在此收口下，最小方案可以是：现有离线库/binary/classpath唯一归档核验＋整个Test JVM的RUN内working/unpack/tmp/TEMP/TMP＋五处显式loopback＋测试fixture构造异常close＋正常测试结束close＋结束时限定存活进程证据检查。无需追踪所有已结束短命进程。该方案可准备实现，但目前未证PG实际启动/监听/退出。
+
+新菜单Fixture在EmbeddedPostgres.start成功返回之后、初始化JDBC/建表/解析Mapper等任意一步失败时，应在构造catch中关闭已取得的该PG实例并重抛原异常，close失败作为suppressed保留；不能让close异常覆盖根因。try-with-resources仍负责成功构造后的正常/异常收尾。Builder.start自身未返回便失败的路径只能由库本身或残留检查处理，不能虚称构造catch已覆盖。旧三测试start后立即由try资源接管，勿为此批量重写。当前源冻结，是否授权这处新fixture窄补由总控决定。
+
+末态仅对仍存活的本轮测试JVM派生PG候选取证：PID及启动身份、派生链、exe规范RUN路径及SHA、命令行-D的RUN数据目录共同成立才可认领。采集到处理前须再次核同一启动身份，避免PID复用；证据缺失、关系不明或状态变化则不kill，停止并报告，不扩大为按名扫描/清理。正常library.close优先，不能因close返回就省略末态检查；不能因证据不足就报告无残留。
+
+此路径允许在无法安全清理时以明确失败保留证据并交用户/总控处理，不承诺任意启动失败都能自动收尾。执行前须明确这一失败政策。没有残留候选或已自然退出短命进程的场景，不需为补命令行启动监控工程。实际运行时若出现不可证明归属的存活PG，就按该失败政策停，不为通过改条件。
+
+本角色续读安装2.2.2源码close397–428：closed标记幂等；pgCtl stop异常只记录，随后释放锁并尝试删目录，不能以close返回证明postmaster退出。现新Fixture201成功start后至构造返回前有建表/Mapper解析等可抛步骤，确存在“start成功、XML解析抛错、外层try尚未取得Fixture”的漏close反例，最窄修改仅该新Fixture的start后初始化捕获原Exception及AssertionError（或在允许的异常类型内统一处理），失败close并保留原因为主，成功构造不提前close。旧三个测试均start即try资源接管，维持五处loopback外不改。
+
+backend补充getProcess来自pg_ctl start，不是持久postgres身份；没有公开getDataDirectory。不能凭getProcess或toString认领postmaster，亦不引私有反射。可由未来辅助在RUN目录与存活进程-D中取严格交集，未知归属只报告。当前无新生命周期源修改授权或执行动作；建议root仅授上述新Fixture窄补并让新辅助按收口策略实现。

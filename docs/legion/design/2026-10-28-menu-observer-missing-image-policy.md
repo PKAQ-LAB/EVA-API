@@ -1,0 +1,37 @@
+# 9e4396c6缺image观察分类及定向补验边界
+
+2026-10-28 technical_designer，限定恢复只读方案审查。实读当前helper SHA CD399140BBB07A6F123F2B29844C604127BEE04A7F2E05CE7BF5AEF29A60B441，未改helper/源或运行observer、PG、Gradle、UI。
+
+总控/实现者交付219项业务全pass，观察仍fail；缺image异常在refresh提交history后抛，当前批records只有完整返回才进入observations，故异常丢该批先前已验证记录，终态刷新又覆盖current。不能根据旧已存24条/0postgres认定所有postmaster均不可观察；不能以终态空残留补八实例。保留该轮测试成功与整体观察失败的独立结论。
+
+## 可授权的最小helper窄修
+
+缺image事件先保存安全摘要：pid、完整规范UTC start、PG名称、imageReadable/dataPresent布尔、采样UTC、已证父实例布尔、分类原因。保存发生错误时的必要实例边，不能只依赖稍后terminal覆盖的current。未知外部路径、完整命令行、用户身份或业务参数不进入摘要。
+
+当前批已逐项核验通过的records应无论后续异常都交付run_phase并写证据；可使用携带partialRecords/safeFailure的小异常类型或显式结果对象，选择最少改动，不引框架。partial记录只表示各条已核事实，不能使失败批或阶段变成功，不能将未核行加入完整proof。
+
+仅当缺image行已证明属于本树PG实例时，对该精确PID作一次新的CIM读取，限PID/CreationDate/imageReadable。使用既有严格binary UTF8/JSON协议；查询错误、字段缺失或时间不可比较均失败。若成功查询无此PID，或start与原实例不同，则仅说明旧实例已退出/原PID已复用：记录该分类、跳过旧行的完整归属/端口采样、不认领新实例、不kill、不为旧实例补造exe/hash/-D；可以继续处理本批其它行及后续正常观察。
+
+若同一实例仍在，无论第二次imageReadable为false还是已恢复true，都不能仅凭布尔完成原缺失exe路径/SHA/-D证明；维持缺证失败交接。若未来希望对恢复可读者取得完整字段，属于另一个明确字段读取方案，不能在本次一次三字段复核里暗加。保持root锚/父实例/路径/hash/-D/loopback/terminal歧义/八实例门禁，不全豁免initdb或pg_ctl，不提高频率或循环重试该PID。
+
+纯合成自检至少覆盖：缺PID、复用start、同实例不可读、同实例恢复可读但仍缺完整proof、查询失败、坏时间/字段、partialRecords保留且阶段仍fail、不继承新PID归属。终态不可读的未知PG仍原ambiguity失败，不借此复核策略略过无归属残留。
+
+## 定向补验而非重新编译的候选
+
+可以另设计新独立RUN仅四PG类定向执行观察验证，不直接授权复用旧run/跳门禁。前置是对9e封存main、generated/header、四模块prepared内容和原锁定source/config/test/build/external/presence全量重算；新helper变更必须作为明确允许的observer-only输入差异，其余源/测试/编译输入完全一致。任何其它漂移须重新编译对应闭包，不以219绿兜底。
+
+从已重新证明完整的只读封存复制所需字节到新RUN，重新封存清单；不能让测试classpath指向旧RUN、live build或内部jar。四PG类均属web-booter，同一精确Test任务且无producer；CP与wholeJVM目录全部映射新RUN，离线library/binary唯一资源、exeSHA、loopback/动态端口及末态门禁全部保留。原四PG类产生八cluster的严格要求保持；本轮其它22类旧208结果独立引用，不把四类新11项与旧轮算术合成“新26类通过”。
+
+成功定向补验的表述只能是同批准源/产物身份下四PG类及观察门禁新轮通过，连同9e219业务通过组成证据链；是否还需整套新26类回归由总控按变更范围决定。新验证方案/输入差异/路径映射与辅助须另审另授，当前未创建或执行。
+
+## 7392窄修与定向PLAN独立复核
+
+已实读Python7392C5DB44E74DBE35D443B39E848D4F64190AA50E11D563C47B13747D5BE00F并重算SHA，init7AFE/menuTestA782仍同。ProcessObservationFailure复制此前partial_records与安全summary，run_phase接收后仍写observerError/terminalError，partial不覆盖失败判定；终态partial单独保存，不充作完整residual。
+
+一次复核查询精确正整数PID，CIM只取ProcessId/CreationDate/ExecutablePath并输出pid/started/imageReadable；专用validator限制list至多一行、精确三字段、严格int非bool与UTC o七位小数时间、bool可读标记。powershell_json默认normal/ambiguity校验保持，专用validator只用于该复核。缺PID及不同start只分类旧实例exited/reused、从current移除旧行，不将新实例写history/latest，不给端口或完整proof；同实例无论可读布尔真/假仍缺证失败，复核错误/错PID/坏身份失败。缺父证明不发起复核、也不建立归属。terminal未知歧义和严格八目录门禁保持，未加kill。
+
+本修专门保证缺image异常分支的partial保存，不能泛称所有类型的路径/hash/root错误都已保存完整失败批；其它异常仍按原失败策略处理。当前获授范围内未见静态阻断，无需扩展本次修复。
+
+已读menu-missing-image-fix-plan：先重核9e全锁、仅允许observer Python差异，复制到新RUN重封、全Project隔离及新CP、四PG精确Test无producer，结果与旧26类219分列。该PLAN符合本设计，可由总控授权新增定向模式和对应init的实现；不是执行许可。backend报告685输入/529main等重算本角色未逐项重做，不冒称独立产物证明，未来新模式必须实际重核并持久化允许差异与源/目标hash。尤其init本身是新模式的受审新增验证工具，须单独锁其最终SHA，不能把新init变动伪装成未变构建输入或宽放参考锁。
+
+定向模式提交后仍须独审：复制路径/清单、所有CP旧路径拒绝、外部锁累计、原源/构建/测试/presence一致性、新fresh XML与观察结果分离。当前本角色无运行/复制/创建RUN或改helper，真实三字段协议/CIM复核与四PG采样尚未执行。

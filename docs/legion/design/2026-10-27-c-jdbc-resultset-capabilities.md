@@ -1,0 +1,43 @@
+# C合成JDBC：前向单结果集能力的精确补齐
+
+2026-10-27，technical_designer；只读分析，未修改测试或执行。
+
+## 1. 实际结果与源码链
+
+独立读取run `.gradle/C-isolated-runs/20261027T153549Z-d3f8469b` 实际XML：BootstrapTest14项、12fail；ConsumerTest12项、12fail；errors/skipped均0。共26中2pass、24fail，失败为strict getType AssertionError及其中一个assertThrows包装。已通过的增强白名单/未知JDBC拒绝不能代替其余Mapper/消费者验证；本轮不声称业务已过。
+
+已读安装MyBatis3.5.19 sources：DefaultResultSetHandler359–368简单结果map先skipRows再isClosed/next；391–402的skipRows无论offset是否0都先getType。TYPE_FORWARD_ONLY分支按offset只用next，非forward才可能absolute。现合成cursor初值-1、next先increment并比较rows.size，与前向游标匹配。
+
+ResultSetWrapper53–62会读getMetaData、columnCount、label/name、type和className，当前新bootstrap均有实现；LocalDateTimeTypeHandler用getObject(column, LocalDateTime.class)，亦有精确支持。无需据此次getType失败猜测开放getConcurrency/getRow/scroll/absolute等。
+
+继续通读发现另一个确定后续必经点：handleResultSets200–205在每次handleResultSet后调用getNextResultSet；259–278第一步为stmt.getConnection().getMetaData().supportsMultipleResultSets()，只catch Exception，不吞AssertionError。因此只修getType仍会在完成映射后遇到metadata strict缺项；此补充依据实际源码，不是用反复重跑猜下一个方法。
+
+## 2. 已明确合并授权的窄范围
+
+据总控明确授权，仅AssignedRoleDetailJdbcFixture及必要BootstrapTest：
+
+- 新bootstrap的无参ResultSet.getType返回TYPE_FORWARD_ONLY，不改变cursor、行集合、wasNull或任何getter；原manual分支保持原unknownJdbc默认行为。
+- 新bootstrap的无参DatabaseMetaData.supportsMultipleResultSets返回false，加确定值断言；仅表达本fixture只处理单SELECT/单ResultSet的合成协议，不等于真实PostgreSQL驱动能力。不因此开放getMoreResults、写、batch或未知metadata。
+- Connection.getMetaData的新strict metadata对象只在order!=null的bootstrap分支返回；order==null旧manual恢复原默认null。不得把修改无条件套给旧fixture。
+
+manual历史已通过git HEAD实际核实：原连接Answer仅getAutoCommit/setAutoCommit/prepareStatement/createStatement，其他RETURNS_DEFAULTS，包括getMetaData为null。C新增无条件返回strict metadata，使旧MyBatis getNextResultSet中原本可被catch(Exception)处理的null/NPE变为不可被该catch吞的AssertionError，属于新引入的行为偏移。恢复manual默认不等于放宽新bootstrap；其unknown/write拒绝规则仍分别按原分支保持。
+
+false单结果能力与当前模拟只产生一个ResultSet一致；它让MyBatis不进入多结果协议，不执行或隐藏额外SQL。若以后要测试真实多结果集/存储过程，必须另明示模型和用例，不借本窄修假称覆盖。真实行映射/type handler/原SQL与dataPlugin不得改动。
+
+## 3. 初步getType差异已核事实
+
+已实读仅getType修时的Fixture SHA004EC67F384DEDC970D79298512EA20256723591787613AF296B86106D4C9B7E、BootstrapTest745F2D35826C3F28687C5B646691F09A3653440A7B22E8450ED2DF1058BF08D5：新增分支有bootstrap非null、方法名getType和参数长度0条件，直接返回常量；测试在首次next前断言值，后续仍校验next，不通过移动游标伪造查询。该中间版本尚未包含第2节metadata合并修，不能据它申请重跑以逐项探缺。
+
+最终两文件diff/SHA待backend交后再独立核：只该能力补齐与manual恢复、值/回退断言；无生产/Consumer/helper/其它测试改动，未知方法及原负例仍保留。编译/实际计数和新失败位置由获准新run证明，不以静态断言存在就称26已通过。
+
+本轮仅本人设计/status，未运行helper/Gradle/测试/DB/UI/服务、未改测试或生产文件。
+
+## 4. 最终两文件只读验收
+
+最终实读SHA256：AssignedRoleDetailJdbcFixture.java为3EBECA1DD74A9FDEAE7D6B2535E93102D9D659EB78053D1D55BB5F8F5A4D0D5C；UserMapperBootstrapTest.java为22B14EFBDFF11006C0DDC36EE58D0E736437F16D597A8D0305CC72F982CE9F15。第3节中间版本及待交状态由本节替代。
+
+以d3f8469b locked-inputs.json为基线，内存反向撤销本次三个fixture改点后SHA与该基线一致；测试反向撤销productName、supportsMultipleResultSets、getType三个断言及manual null断言块后SHA亦与基线9DE3EFE620F4C72766392677558FFD447E118992F7E7809B10BB4F7AB2F92EC7一致。因此原未知调用、写入、batch及重载setter负例、游标/行映射和其它测试内容未被本轮替换。
+
+最终分支严格限制新bootstrap无参getType及supportsMultipleResultSets；manual getMetaData恢复RETURNS_DEFAULTS。getType断言在首次next前，未移动游标；false仅表达合成单结果协议。逐项复核基线中非presence的现存文件哈希，仅这两个测试文件变化；生产、Consumer、BootstrapFixture和两个隔离helper内容保持冻结。本次未将presence条目计入该内容哈希结论。
+
+静态复核未发现阻止一次新隔离RUN的缺口，可交总控按既有唯一执行槽、全新RUN、锁定输入及失败停报边界授权执行；本结论不构成编译、26项通过或真实驱动兼容性证明，不自动授权扩大JDBC白名单或继续重跑。实际结果须由新RUN的编译日志和测试XML证明。本角色未执行任何构建或测试。

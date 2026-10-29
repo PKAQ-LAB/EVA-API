@@ -1,0 +1,61 @@
+# 已授权菜单元数据与业务数据范围的边界方案
+
+2026-10-28，technical_designer。仅源层只读分析，未修改源、配置、helper，未运行测试、HTTP、DB、浏览器、IDE或服务。恢复授权仅覆盖本设计，不恢复其它暂停工作。
+
+## 1. 结论与证据等级
+
+建议用户确认以下权限语义后，再实施专用菜单路径：当前已认证用户获授资源所对应的菜单及其获授资源元数据，不按菜单维护者的CREATE_ID/MODIFY_ID套用业务SELF/部门数据范围；实际业务查询继续按原数据范围执行。此规则改变受限用户可读的元数据集合，属于权限语义变更，不能作为普通显示修复直接实施。
+
+总控与backend已交当前开发PG只读对照：LIMIT、PEER各仅SELF0007及精确四组织接口资源，生产JOIN和删除条件下各有一个组织模块；施加SELF作者条件后均为零。backend报告事务只读、rollback/closed、零写且只取计数/布尔。本角色未执行或独立复算DB结果。该证据证明当前数据上存在该过滤机制；真实fetchMenus响应、运行MappedStatement及拦截后SQL仍缺，不能宣布该次403的最终根因。前端成功bootstrap无叶主动转403与认证失败必须分开描述。
+
+## 2. 当前源链及不能直接复用的边界
+
+AuthCtrl.fetchMenus从ThreadUserHelper取uid→ModuleService.fetchUserMenus→fetchUserModules→ModuleMapper.listGrantedModules。Module.xml该语句按ru.USER_ID绑定，连接SYS_ROLEUSER_REF→SYS_ROLERES_REF→SYS_MODULE_RESOURCES→SYS_MODULE；现有条件仅资源和模块DELETED为0或NULL，没有这两表的FROZEN过滤，也没有角色表有效性条件。
+
+MybatisPlusDataPermissionHandler对关系表有INTERNAL_TABLES豁免，配置排除sys_module_resources与旧sys_role_user，未排除sys_module；SELF分支按当前表别名生成CREATE_ID或MODIFY_ID等于当前uid。该handler的@Ignore判断按精确statement的方法/类注解处理，不能把mapper整类忽略或全局excludeTable当作专用菜单规则。
+
+现listGrantedModules还被RoleService.fetchResource调用，fetchUserModules还被UserService.fetchModuleByUid调用。因此在原共用方法上直接加忽略会同时改变角色授权界面或其它资源查询，超出专用菜单修复。另一个重要范围：handleFetchResource只按模块ID装载该模块全部资源，随后convert把这些资源的code/url/type送进菜单VO；不能用模块已获授来替代每个资源已获授。修新路径时须绕开该共享装载逻辑，避免同模块兄弟资源随菜单修复进入权限元数据。
+
+当前MybatisPlusConfig仅见数据权限/分页/乐观锁插件，不能引用历史TenantLine配置自证租户保护。UserService.fetchModuleByUid具@Transactional(readOnly=true)+@TenantSchema，并在schema模式先查租户资源ID、再通过coreSchemaExecutor查核心模块；AuthCtrl现菜单直达ModuleService没有这条显式路由。专用路径必须结合当前可信TenantContext及现有schema机制设计，不能仅加一个dataPermission忽略就声称租户隔离已保留。
+
+## 3. 可审最小实现范围（须先批准）
+
+新增仅供当前登录用户菜单使用的服务入口与精确Mapper语句，现listGrantedModules、模块管理list/detail、RoleService授权树及业务Mapper保持原语义。服务从认证上下文读取正有效uid；不接受请求uid、角色、资源ID或schema替换身份。缺身份/可信租户上下文时拒绝，不让handler当前无用户返回null的行为成为此专用读取的匿名放行依据。不调整/auth/**或任何permit配置。
+
+专用查询必须保留当前用户→有效角色→获授资源→模块的关联约束；资源集合和模块集合采用同一授权来源。只返回ModuleMenuVo/ModuleMenuResourceVo现需字段，排除作者/修改者、业务记录和同模块未授权资源。不走handleFetchResource按模块全取；可用一个扁平授权投影在服务聚合，或两个均带同一授权约束的精确语句，选择最少且可验证的实现。若为多个语句，不得把无约束资源ID查询暴露给控制器或通用调用。
+
+数据范围豁免只作用于这些专用SELECT：可沿当前handler支持的精确方法级@Ignore实现，实施前审明该注解仅取消业务数据范围，不取消认证、角色资源条件或租户路由；禁止整mapper/class、sys_module全表排除、ALL角色、线程级宽豁免或关闭插件。当前无代码修改授权。
+
+保留资源/模块删除为0或NULL的兼容条件，并按既有规则排除冻结1；9999只读保护不得被改成可写或未经确认改成隐藏，未知冻结码不得在本设计中新增解释。角色有效性沿当前认证/授权的权威策略判定，不新造一套角色删除/冻结定义。删除/冻结资源不得成为进入模块的授权依据；没有剩余有效资源的模块不出叶菜单。父容器如树算法必需，仅补当前租户内最小展示字段，不附带未授权兄弟节点/资源；若当前树结构无需补父，不新增祖先查询。
+
+standalone保持已配置schema；schema模式从可信租户事务上下文取得授权关系，只有已有受控core查询允许读取模块元数据，不跨租户取关联关系、不信任前端tenant/schema、不改search_path或绕路由。先实读当前router/core executor再定具体调用，包含事务先后次序与finally恢复；不能复制standalone SQL后假定schema模式等价。若本轮仅修standalone，必须显式限定并让schema原路径不受影响，不宣称schema已验收。
+
+用户需批准的单一业务决策是：已授权的导航/权限元数据按授权关联可见，不受其维护者的业务SELF/部门范围裁剪；业务数据范围、接口授权和租户边界继续成立。批准后实现成员先提交精确文件/statement范围，不把此设计扩成全局权限重构。既有物理表只引用，不授权重命名或迁移。
+
+## 4. 有意义的验证方案
+
+使用真实Mapper/XML与安装的数据权限插件，在合成数据或获准的隔离fixture中构造用户SELF、菜单作者为他人（含NULL）、获授组织资源和同模块未获授资源。先证明旧一般模块查询仍带SELF且被过滤，再证明专用菜单只返回授权模块及准确获授资源；不能只mock mapper返回预置菜单来证明豁免生效。断言最终statement ID、SQL权限谓词/参数及返回集合，防止误接旧语句。
+
+负例覆盖无身份、伪造uid不被采纳、无角色/无资源、同模块兄弟资源、其它用户授权、删除/冻结模块或资源、角色有效性、重复关联和空结果；NULL删除兼容及9999原只读保护独立保留。SELF、部门、自定义范围用户均只能获得其资源关联元数据，实际组织/用户/模块管理查询仍受各自范围限制。未授权接口继续拒绝，菜单出现不能充当后端接口许可。令牌过期/退出/权限版本变化按原缓存失效策略处理，不新增菜单长期缓存。
+
+租户用同ID不同授权与不同数据的A/B上下文验证互不串读，检查schema选择、core访问范围、异常时上下文与连接状态恢复；standalone单独验证。若受测试环境限制不能真实执行schema路由，只能记录未证，不能用SQL字符串存在替代隔离证明。
+
+最小回归包括新专用查询和服务契约、原Module/角色授权读取、dataPermission handler原SELF/部门/未知范围负例及认证/资源授权门禁；已有20类203通过作为历史基线保存，不计作新修改验证。具体执行清单/隔离辅助另审另授，本角色不运行。
+
+## 5. 尚缺的现场证据与验收
+
+用户正常加载获准新产物后，取得当前实例/配置绑定、fetchMenus精确MappedStatement及最终SQL（参数仅安全摘要）、LIMIT成功HTTP响应与菜单集合，再核组织页面只读可见及原SELF业务过滤不变；对照PEER与无授权账号的正负结果。不能读取秘密或作者身份，不通过补业务数据、改角色/资源、ALL或扩匿名许可制造通过。
+
+目前PG聚合已足够支持源层语义方案与回归设计，缺运行证据不阻塞用户审方案；但不能据此把HTTP根因、重启后D1、新菜单、S权限全链或联合现场验收标为完成。
+
+## 6. 实施前真实字段与schema平台0精确收口
+
+用户已批准第3节权限语义，backend开始前提出的字段/路由事实经本角色实读确认。前文“资源/模块冻结”及“冻结资源”属于过宽概括，以本节为准：ModuleResources继承StdLineEntity，只有deleted而无frozen；资源有效性只用真实删除字段，模块/角色按已存在的有效接口授权SQL采用deleted为0或NULL、frozen不等1或NULL。禁止新增r.FROZEN、假实体字段或数据库迁移。9999仍不当冻结1或写入许可。
+
+SysRoleResourceMapper.selectEffectiveResourcesByRoleId已有上述role/module有效性及role tenant资源授权交集，宜作为菜单有效授权语义的依据；AuthRole.selectByUserId的单FROZEN!=1与无deleted并不等价。专用菜单不修改这些既有语句。接口SQL的HTTP_METHOD集合不能未经审查机械照搬成全部导航资源类型政策，保持本菜单支持类型及真实资源关联边界。
+
+schema正tenant：事务内可信resolver/router选租户，读取该用户有效角色的资源ID，在受控core访问内再与当前tenant授权资源ID求交并取精确元数据。旧selectResourceIdsByUserId仅关系JOIN无角色有效性，不能直接当最终有效授权；原fetchModulesByResourceIds关联SQL含资源FROZEN引用亦不能照抄。路由异常与正常结束均需恢复search_path及TenantContext，不能只恢复其中一项。
+
+schema tenant=0：当前TrustedTenantSchemaResolver.resolve与TenantLoginResolver.resolveId均明确拒绝<=0，本轮没有可信的独立schema平台0认证契约证据。该分支必须默认拒绝，不能仅凭tenantId=0转core查询用户授权关系，也不能修改resolver特判或伪造schema。standalone模式的tenant0按原模式单独成立，不受schema拒绝条件误伤。如产品必须支持schema平台0，先报总控明确平台认证身份与core授权契约，再定实施范围，不能将这项扩展混入菜单修复。
+
+新增针对性测试应分别覆盖standalone0正常、schema0/null/负值拒绝、schema正tenant有效授权交集及角色NULL冻结兼容；冻结/删除字段只在确有字段的实体上构造。本轮仅设计澄清，无源修改或执行。

@@ -1,0 +1,35 @@
+# 认证能力boolean后端源码独立复核
+
+2026-10-28 technical_designer，只读六文件实际源码/hash、调用及CommonResponseAdvice；未编译、Gradle、HTTP、DB、PG、UI或服务操作。
+
+实核六SHA与backend交接完全一致：DTO C436DF0E4CDE1234BC22B6DC4DFA286C99DD74F1ABB17C4C5D8341FE928F5A31；登录handler E9FB95EA1EE37A4B9975FBAB292E4E83005ABE7A0137A2162BB5B558A5AAD5C9；AuthCtrl2E04277F9F27F5FCDD64B0202BD63460C886B357020E13118515DBD9453C15C7；BindingTest CE4192E4D3E2EB59A88C756CB92EB7ABDF2B2F81B5302AF66436D7CFD0EE3555；LoginTest B8E1E84D6D798B5E384395D86115C20F87C1ED8CDFF20BA437189A4446478961；MenuTest BCBF3315664A41B083C59B5565549D3C363AEA0A8FA74C1B90DBF84F7F217988。
+
+结论：无新增静态阻断，可进入新隔离验证工具准备，非执行许可。使用一个共享core-contract认证响应DTO服务auth/sys两个真实调用点，未引入非必要权限框架或反向依赖。
+
+## 契约与序列化
+
+AuthBootstrapResponse继承Response，final primitive boolean配字段级JsonInclude.ALWAYS；Lombok getter按boolean属性名导出resourcePermissionEnabled，false应覆盖全局NON_DEFAULT省略策略，仍须实际测试证明。fromSuccess不是继承基类success工厂，显式new子类并复制success/code/message/mtype/args/data，返回子类类型且拒null/failed；原args/data引用与泛型保持，未改全局Response或Advice。
+
+CommonResponseAdvice按instanceof Response处理并返回原对象，能保留子类；原BizCode/欢迎消息与参数沿原链，不因加字段丢i18n。登录handler仍先构造原LoginSuccessVo及欢迎Response，再包装；菜单仍原AuthorizedMenuService的数据数组，失败catch仍返回无字段基类。均每次读取当前已绑定EvaConfig.getResourcePermission().isEnable，不读strict/yaml/cache，不改变token轮换、许可、认证或菜单资源条件。
+
+字段只成功响应外层，不进入登录data/user_info、JWT、cookie用户信息或菜单元素。无新增endpoint、配置或sys→auth依赖。原AuthCtrl构造器变化的项目源码直接new调用仅新focused测试，现已按新参数构造；Spring实际注入尚待编译/验证。
+
+## 三类六方法测试边界
+
+登录三个方法通过真实success/failure handler和ResponseUtil/JsonUtil链，JWT、身份resolver、审计与缓存mock，不签真实token/访问存储；循环改同config true/false并反向strict，核外层boolean/原token-user_info shape。工厂元数据与NON_DEFAULT false测试合理，不以反射字段存在代替序列化。
+
+菜单两个方法真实controller→Advice→ResponseUtil，同对象子类保留、资源数组/空数组/失败无字段均核。菜单读取服务mock，因此不声称覆盖真实授权查询或AOP认证。Advice的i18n helper为mock，只证明元数据不丢/链路保留，不宣称真实国际化字典翻译已验收。
+
+绑定一个方法只加载EvaPropertiesConfiguration，精确eva.resource-permission.enable高优先MapPropertySource覆盖相反低值、strict独立；JWT关闭/OpenAPI开启是合成校验前提，不需要真实secret或连接服务。证明Spring环境优先级绑定，不冒称已测OS环境变量/线上运行配置。所有六@Test源码未执行。
+
+## 新验证工具最小准备范围
+
+生产已新增DTO及改变handler/AuthCtrl，旧529及686封存只作差异参考，不能继续复用为当前实现产物。新690输入锁须精确列新增DTO+三测试、两生产源变化及此前批准差异；生产源码/config/build/资源其它键不宽放。
+
+建议保持19Project早期隔离和固定11main闭包离线编译/资源处理。主产物基线只准新增core-contract对应DTO.class、修改AUTH handler.class和SYS AuthCtrl.class，旧其它529完整键/hash及UserC/opaque资源保持；预计530只是候选，实际生成键多/少须停审，不放整个包目录或所有class变化。
+
+focused测试仅COMMON BindingTest、AUTH LoginCapabilityTest、SYS MenuCapabilityTest三类。各类均无其它测试helper依赖，可采用各模块精确新测试源编译；若沿既有compileTestJava全源准备模式，必须明确实际source闭包与允许测试产物清单，不把“只执行三类”混称“只编译三类”。COMMON是新增测试模块，必须从真实SourceSet核test roots、测试resources存在/NO-SOURCE、实际compile/processor CP及源资源字节；不直接复制SYS测试模型。prepare tasks分别锁定三模块，最终恰三Test且逐task精确filter、无producer，不启动web-booter或PG/开发库。
+
+测试依赖离线可得性、ApplicationContextRunner/AssertJ/Mockito及mock servlet类需实际classpath和编译日志证明；缺包不联网临时安装，不移用旧内部jar。源码仅六方法不是动态case计数，结果以fresh XML/suite为准。可以先三新类focused，若需扩既有配置/登录userinfo/资源鉴权/WebSecurity/Module回归由总控另列精确集合，不隐含全仓。
+
+新工具及源任一SHA变化重审；三类通过也只证明新能力响应与绑定，不替代前端刷新/缺失值/晚回调保护、真实组织按钮或JDBCv1新main回归。旧219/4b11及其它轮结果分列，不累计成新通过数。

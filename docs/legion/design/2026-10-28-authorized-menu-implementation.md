@@ -1,0 +1,37 @@
+# 已批准菜单元数据边界：源码实现交接
+
+backend_developer，2026-10-28；cwd=C:/home/workspace/lab/EVA-API，cornerstone，HEAD 1f708e202af0ba817b55c0f6be9a9085eea054ea。依据用户对authorized-menu-metadata-boundary设计的明确批准及designer第6节真实字段/租户收口实施。本次仅源码、测试源码和本附件；没有编译或运行测试。
+
+## 变更范围及身份边界
+
+AuthCtrl.fetchMenus仅改为调用AuthorizedMenuService.fetchCurrentMenus()，不再传用户ID。新service从ThreadUserHelper获取认证身份，要求有效正userId和实际只读事务；没有客户端uid/role/resource/schema入口。新AuthorizedMenuMapper只含两个方法级@Ignore SELECT：selectCurrentResourceIds和selectMenuRows；不改handler、mapper整类、全局exclude、ALL或permit。
+
+selectCurrentResourceIds在当前可信本地schema按USER_ID关联SYS_ROLEUSER_REF→有效SYS_ROLE→SYS_ROLERES_REF。角色删除0/NULL、冻结非1/NULL沿有效接口授权策略，9999仍可读。独立模式仅NULL/0归属角色。selectMenuRows只按前一步授权ID精确取SYS_MODULE_RESOURCES→SYS_MODULE，拒空集合，资源删除0/NULL、模块删除0/NULL及冻结非1/NULL；资源无FROZEN列，未伪造字段或迁移。schema模式另以可信tenantId与core SYS_TENANT_RESOURCE求交。不会按模块全取资源或暴露同模块兄弟授权。
+
+AuthorizedMenuRow仅包含ModuleMenuVo/ModuleMenuResourceVo；XML显式autoMapping=false，无实体、作者或修改人投影。service按授权模块、资源ID去重并组树，父模块不在授权集合则作为根展示，不补祖先/兄弟查询；循环父关系拒绝。旧ModuleService（含fetchUserModules/fetchUserMenus/handleFetchResource）、ModuleMapper/Module.xml、RoleService和UserService没有本次修改；旧角色授权树及业务scope保留。没有修改前端。
+
+## 真实租户及事务机制
+
+standalone要求运行模式standalone/singleton、tenant功能关闭、认证tenantId=0、已配置standaloneSchema及无矛盾TenantContext；核同一JdbcTemplate datasource绑定事务、实际current_schema和五个授权/元数据表to_regclass解析namespace全部与配置相等。不会通过修改search_path补齐独立模式来源。
+
+schema仅接受正认证tenantId；缺失、0、负值拒绝，不给TrustedTenantSchemaResolver加特例。先由现有TenantSchemaRouter在已建立只读事务内通过可信resolver路由，再核三张租户授权表实际namespace以阻止缺表时回落core。租户查询有效资源ID后，现有CoreSchemaExecutor暂转core查询精确元数据及租户平台授权交集。外层finally恢复search_path，内层finally恢复TenantContext，包含异常分支。没有依赖不存在的TenantLine插件，不跨sys-service依赖auth模块，不改router/executor或数据库/API契约。
+
+## 必要测试源码（尚未执行）
+
+新增web-booter/src/test/java/org/pkaq/sys/module/AuthorizedMenuPostgresTest.java，四个测试方法；仅使用项目现有EmbeddedPostgres依赖、合成表/记录和真实MyBatis/XML/安装的数据权限插件，不读取应用配置或连接开发库。测试SQL记录仅在合成fixture内。该fixture运行将启动独立测试PostgreSQL并建立临时合成数据，须在QA隔离方案审清后另获执行授权。
+
+覆盖：SELF/部门/自定义范围下旧ModuleMapper仍过滤、专用菜单仅获授资源；同模块兄弟资源不泄露；角色/模块删除冻结及资源删除、NULL删除与9999保留、重复引用去重、无角色空集合；缺身份/事务和矛盾上下文拒绝；A/B租户相同userId、不同资源及core授权交集；缺租户授权表不得回落core；正常及异常路由后search_path/TenantContext恢复、schema0拒绝。测试resolver只允许fixture创建的101/102，不替代真实TrustedTenantSchemaResolver有效性测试。旧接口许可和组织业务scope回归应纳入后续QA。
+
+## 已完成静态检查与未证范围
+
+Python标准库XML解析通过，新XML恰两个批准SELECT；新Java UTF-8/LF、无tab、行长不超过120。AuthCtrl scoped git diff --check通过，仅Git换行转换提示。共享Java当前与HEAD原字节相等；Module.xml本次未编辑且规范化LF后与HEAD相等，原字节差异为工作区换行。新文件SHA详见交接消息，最终审查须读取实际差异。
+
+没有运行Gradle/javac/测试/应用、实际DB/HTTP/Redis/IDE/服务，未写用户配置或验证helpers，未暂存/提交/推送。静态检查不等于编译通过或实际SQL/租户测试通过；历史20类203/203保留但不作为本次新变更结果。
+
+## QA隔离执行候选（待审，禁止直接运行）
+
+先由designer审精确差异及以上安全边界，再批准新独立RUN验证方案。原C-only和固定20类helper、RUN与seal保持原样，不能修改其锁或复用旧main快照冒充新结果。本次需要隔离重编十原模块及web-booter测试所需完整依赖项目，锁定新增service/mapper/row、AuthCtrl和新XML的允许产物差异；所有项目产品/生成/测试/工作目录及project-cache放新RUN，禁止读旧live build产物，重新封存合法main和prepared test集合/累计外部jar。
+
+三阶段：固定main生产者→批准模块testClasses→精确Test且无producer。新增测试命令选择器候选为:web-booter:test --tests org.pkaq.sys.module.AuthorizedMenuPostgresTest；必须加到已审隔离init/runner，不能直接在标准build目录执行。嵌入PG二进制是否已离线可用及独立临时数据目录归属需在PLAN里预检，缺失则停报，不自动联网安装或改连接配置。
+
+建议回归集合在历史固定20类基础上加本新增类，以及SYS ModuleServiceTest、ModuleListMappingTest、现有dataPermission handler/ResourceAuthorizationService/JwtAuthFilter（其中后三已在20类）、RoleService与schema恢复相关独立测试。精确类清单、任务图、额外web-booter依赖闭包和预计覆盖由QA/总控审定，实际计数来自fresh XML，不预填通过。真实新产物加载、LIMIT/PEER菜单响应及SELF业务拒读拒改另行现场验收。

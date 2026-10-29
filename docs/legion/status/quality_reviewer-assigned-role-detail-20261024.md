@@ -63,3 +63,67 @@ jcmd仅VM.system_properties在命令内取java.class.path和sun.java.command允�
 结束后另用QA独立PowerShell遍历当前十模块输出、封存d副本完整清单与SHA：当前494/副本494完全吻合，27源资源逐字节同输出，manifest仍D87ED7CCFD71317A2A1909451D0425F4721A4B7636BF6CC51A798A02CD349EED。index空。前29s门禁失败及原因未全证的历史仍保留，不用这次成功抹去；当前只说明分阶段调度这一轮完整通过，不宣称原单图dependsOn已足以消除所有竞态。
 
 所有进程/命令结束，后端验证槽交总控。前端sys242/242、日志23/23、TanStack20/20与生产build0各独立保留，fulltsc59诊断不漂白。当前实例43412/21:01、关键类路径与封存字节前置已证，但仍没有实际get响应或内存加载证明；后续统一运行界面验证新assignedRoles及同布局，必要重启由用户/总控协调，不由QA启停或热换class。S账户PEER1+九对象保护、账号LIMIT/作者样本未建、S0/跨tenant/日志现场边界未完；无实际DBHTTPRedis/秘密/授权/业务源/依赖/Git发布/vault写。
+## 2026-10-28 C隔离26项交付独立只读证据复核（非QA重跑）
+
+按总控只读授权审.gradle/C-isolated-runs/20261027T155115Z-7f8f0654，不运行辅助/PLAN/Gradle/浏览器/IDE。identity HEAD1f708e202af0ba817b55c0f6be9a9085eea054ea；main/test-classes/test gate各exit0。实际图30/15/1，Test唯一SYS:test、forbidden0，命令仅UserMapperBootstrapTest/UserMapperConsumerTest两类及producer排除；非全仓/原18类。
+
+独立解析RUN内fresh XML（非读取实现者摘要计数）：Bootstrap14/Consumer12，26testcase，均fail0/error0/skip0，XML UTC15:55:24.640与15:56:05.093；executed-suite26/SUCCESS一致。实际case含legacyUserBeforeCommon、NORMAL/USER_FIRST/COMMON_FIRST、Frozen0/1/9999/NULL/非法、缺tenant列、optionalprofile/NULLdeleted、权限隐藏、角色raw/post同源、JDBC未知写拒与配置增强正负边界；Consumer含真实C映射有/无profile普通save+role/post、保留编码/READ_ONLY拒写和原repwd规则。只证明实际安装MP/Spring最小auto-config+合成DS隔离链通过，不是整个真实Web应用/数据库/HTTP。
+
+独立Get-FileHash逐项复算snapshot494均match，manifestSHA44D18D9417FB88E868530A9134881CABFF8481618D9B92A1850A0079984876BF。相对旧d494唯一不同key为eva-web-sys-service/resources/mapper/User.xml；三个phase main-output各494与新manifest0差异，实际products主classes/resources现值核0hash差，prepared-test-output38项现值0差；源/构建/辅助锁中64位SHA键当前0差；累计外部jar178逐项重算0差。path-model19projects/10modules，main目录无RUN外路径，Test CP22目录全在RUN（snapshot20+SYS test2），无拿live/旧jar重复User资源冒C；完整路径模型审计仍以其actual文件为证。
+
+当前生产diff仍User.xml的BaseResultMap13增1删，16显式属性/原SQL和嵌套引用保持。最新fixture窄修getType仅新bootstrap+无参返回TYPE_FORWARD_ONLY，旧manual不变；配置增强仅明确mybatisPlusConfig且已解析ClassUtils原类身份/direct父类/注解metadata/BeanFactoryAware，增强工厂仅两方法，不以CGLIB后缀或Spring整包放行。26通过不能抹掉此前配置/API/白名单/getType失败；此前所有run保留。证据复核通过，无新增真实安全mustfix；不是本人独立执行通过。
+
+仍缺：新fixture旧order=null手工路径的AssignedRoleDetailTest42本轮回归；UserAccountProfileServiceTest原普通创建/补档案/乐观锁/失败保护；SYS其余原门禁及AUTH6/DATA3。建议下一获授的独立运行固定20类=原明确SYS9/AUTH6/DATA3+新C2，一次fresh RUN沿隔离main→三模块testClasses→严格3个Test tasks（SYS/AUTH/DATA，逐task精确filter，无producer），只接受当前锁定源/外部及新C snapshot，不盲套旧177或预填203为通过，实际XML定当轮数。新2可在该独立集合再验一次；不必先重复单独26又再跑相同2。
+
+list/page/嵌套仅注册SQL/映射引用尚未执行完整分页/嵌套；原六调用mock写不等真实权限写。后续用户正常加载新运行产物后，仍需真实factory selectById来源/BoundSql、PEER与LIMIT/D1正常只读展示/空profile及9999原保护的限定验收，不通过真实改密/DB回填/管理员写来证明。IDE临时设置恢复证据、浏览器扩展清阻后九格现场均待；C/S11/字典明细冲突不all done，无新commitpush。
+
+## 2026-10-28 固定20类隔离独立执行：203/203通过，live验收未完成
+
+总控正式授唯一重验证槽后，先读designer终审附件并核新Py833A4293D895E9CE58608CA4A4D4E5F8CC95F2E721DA7B479DC506D33A17D359/init4E0F05675184875E56984B575E42D1D7DB3DA3BEC233D9A90935565DF36093A2精确一致；对7f8f0654冻结清单逐项SHA及presence重核0差，HEAD1f708e202af0ba817b55c0f6be9a9085eea054ea、cornerstone保护旧docs/.vscode/GO计划，未暂存/提交。python命令解析C:/home/DevApp/python3/python.exe，与批准入口一致；只执行一次新helper --execute，无PLAN重跑/失败后自动改动。
+
+本人独立RUN=.gradle/C-full-regression-runs/20261027T162106Z-4bef1b8a（北京10-28 00:21起），session58237最终exit0。三独立串行阶段main2m12s、test-classes1m39s、test2m22s均BUILD SUCCESSFUL/gateexit0无gateError；实际图30/25/3，forbidden0，末图仅SYS:test、AUTH:test、DATA:test，无producer。非全仓build、不启动应用或真实DBRedis、不回拷live，原失败run不覆盖。完整shell及等待的子命令已退出，按当前RUN命令行未发现派生进程；没有杀进程/操作服务或IDE。
+
+独立读取本RUN实际20份JUnit XML，classname集合与批准SYS11/AUTH6/DATA3精确20/20、无重复/零项，testcase数与每suite tests一致；零fail/error/skip。模块实际SYS152、AUTH37、DATA14，总203/203，当轮三executed-suite均SUCCESS且与XML对应，不以旧177+26推算通过。XML时间UTC16:25:47.276至16:27:36.615（本地10-28 00:25至00:27），新RUN内正常执行，未用历史XML。关键AssignedRoleDetailTest42/RoleCustomScopeStandalone48/UserAccountProfile8/Bootstrap14/Consumer12均实际执行，其余原资源/认证/日志/数据权限安全用例在本轮固定范围。
+
+执行后再独立复算source/config/test/helper锁及presence0差；snapshot494逐项SHA0差，manifest44D18D9417FB88E868530A9134881CABFF8481618D9B92A1850A0079984876BF，对旧d唯一UserXML key差且批准C5ED；源/隔离main产物门禁均过。三模块prepared清单SYS38/AUTH33/DATA15实际SHA0差，累计外部178jar逐项重算0差。actual CP目录SYS22/AUTH21/DATA21，逐项属于新snapshot或本模块声明test roots，无其它模块测试目录/标准build/旧run混入；AUTH/DATA无testresources仅省精确NO-SOURCE根。一次手工CP核因把model.classes单根数组嵌套成own数组而误标3个合法own classes，已按模型展开重核invalid0，非实际CP越界/未改门禁。新model与3phase图/gates、suite/XML/CP/prepared/external证据全在该RUN。
+
+结论：本次固定20类受控隔离独立回归通过，包含新C机制与六消费者合成控制流及原manual fixture/安全回归，不是实现者26转述。本结论不等真实PG/Redis/运行中factory/HTTP/UI/管理员业务写通过。分页/嵌套仍主要注册与结果引用核，未新增完整业务分页/嵌套case；实际live新statement来源/BoundSql及PEER、LIMIT正常详情D1展示、原9999保护的限定现场仍待总控安排。不会通过改密码/重填部门/DB回填/真实授权扩大自证。
+
+浏览器扩展阻挡仍未人侧清除，未尝试浏览器/IDE，九宫格实际亮暗/尺寸/节奏及其它未完矩阵仍待；S11与字典明细A/B冲突不变。IDE临时自动构建设置恢复以专属后台证据核，不冒本轮操控。所有命令结束主动交回唯一验证槽，源/helper/配置均未写，只有ownQA卡新增提交后dirty；无新commitpush，不all done。
+
+## 2026-10-28 继续现场复验：Edge扩展阻挡仍在
+
+用户继续后，官方CUA恢复文档并fresh Edge3 inventory，实际仅业务tab328082602，http://localhost:8000/#/sys/role。claim该用户tab后只读DOM白名单成功：dialogs0、modal/drawer forms0、visible password false，未读取任何输入值或账号联系信息。随后唯一一次正常reload调用返回Edge另一个扩展UI已打开、需人完成或关闭的阻挡；不能证明reload已执行或runtime已更新，立即停止，无低层绕过或重复重试。
+
+本轮PEER/LIMIT详情与正常编辑打开、D1回填、assigned-only角色、左右加载稳定布局，以及Cube九格动画/40px/尺寸/亮暗现场均未取得新证据，继续待验。既有独立203自动回归与36前端自动验证结论保留，未重跑、未拿自动结果替代实屏。未修改源/配置/业务数据/角色授权/密码/服务/cache/Git；S对象11、S1-S8未开始不变。需人先在Edge完成或关闭阻挡扩展界面，再交唯一UI锁；本轮释放锁并向总控回报。
+## 2026-10-28 用户清阻后恢复：刷新被Fitkun图片批量下载界面接管
+
+用户经总控明确可以了后fresh官方连接：旧Edge3不可用；inventory实际Edge5/6（同业务tab328082721），依fresh选Edge6并claim，实际http://localhost:8000/#/sys/role。最小DOM确认dialogs0、modal/drawer forms0、visible password false，未读取input值/contact。唯一一次正常reload后官方domSnapshot返回四项：×、拖拽到此处、图片将完成下载、由Fitkun图片批量下载提供。此轮未返回先前blocking错误字符串，而是实际读到Fitkun扩展界面，不能说已进入正常业务页或完成加载验收。
+
+按仍拦截一次即停，未点击扩展关闭/改变扩展设置、未换连接绕过、未反复reload、未继续账号菜单/详情/编辑；未截取任何账号或凭据信息。PEER/LIMIT D1回填与assigned-only、左右loading稳定布局、Cube九格/40px/尺寸/明暗均无新实屏结论。自动203/36未重跑，源/helper/config/服务/DB/Redis/授权/密码/Git不变，S对象11、S1-S8未开始。交回唯一UI锁；需用户在Edge关闭Fitkun当前拖拽界面后再派发。
+## 2026-10-28 Fitkun状态澄清与PEER真实部门复验
+
+总控允许正常关闭已识别Fitkun浮层后，fresh Edge6/tab328082721官方snapshot同时读到正常角色业务页与Fitkun文本。进一步只读DOM定位其自身#fitkun-drop-panel及唯一#fitkun-drop-panel-close-btn，实际panel y=-33554430、close y=-33554428，位于屏外；本轮无需也未强点关闭。此前仅看到Fitkun文本即停不足以证明其可见阻挡，本段更正该判断，不推断浏览器实际错误已被脚本处理。
+
+正常用户管理link导航成功，URL#/sys/account；仅查查询控件元数据及表头，跳过手机/邮箱/密码值。合法精确账号QA_PEER_20261023查询完成spin0唯一行，技术ID2113894345662021633、dept—、未锁定。正常查看该唯一行：初始1040×608Modal，左右aria-busy true；ready左右false、表Spinfalse，资料645.328×458、角色322.656×458同top375.5，view输入/textarea/select/combobox0。所属部门纯文本仍—；角色区仅表头与暂无已分配角色（0候选选择控件）。只证明本次空角色assigned-only消费和独立busy转变，不冒称实际拿过响应JSON、完整左右pending-ready像素零位移、C已生效或后端已重启。
+
+证据runtime-20261028/peer-department-runtime.json、peer-department.png、peer-assigned-role.png，安全裁图已视觉核，均无contact/密码。按部门仍缺即停链，未重开PEER编辑、未重选部门、未验证LIMIT或继续S权限；Cube九格/40px/尺寸/亮暗实屏也尚未完成。已正常关闭只读详情，当前#/sys/account dialogs0、visiblepasswordfalse，无未保存输入，交回唯一UI锁。无业务写/授权/密码/服务/source/helper/config/Git操作，无203/36重复自动。S11、S1-S8未开始不变。
+## 2026-10-28 用户确认后台已重启后：正常刷新被官方扩展阻挡拒绝
+
+总控转述用户明确后台已经重启，授仅PEER/LIMIT部门回填只读UI，不检查动画偏好。fresh官方Edge6用户tab328082721，实际http://localhost:8000/#/sys/account；最小DOM成功：visibleDialogs0、visible modal/drawer forms0、visible password false，未读取contact/input值。唯一正常reload立即由官方工具明确返回Microsoft Edge is blocking automation because another extension UI is open on this page. Complete or dismiss that extension UI in Microsoft Edge, then ask me to continue. 本次为真正官方拒绝，区别于之前DOM中屏外Fitkun文本；没有可安全取得的关闭target，不猜扩展身份/关闭目标、不再刷新或换连接绕过。
+
+本轮未取得重启后PEER/LIMIT详情、部门D1或role/busy新证据，不能沿用此前dept—当重启后结论，也不能宣称修复通过。未调用matchMedia、未推断OS；未作动画验收。未打开编辑/补部门/提交/改密/授权/读秘密/业务写/服务IDE断点/source/helper/config/Git操作，无203/36重复。阶段安全停止并交回UI锁；需人关闭或完成当前扩展界面后再恢复只读详情。
+## 2026-10-28 暂停后明确继续：新连接正常刷新仍被官方拒绝
+
+已读前端docs/legion/tasks/2026-10-28-orchestrator-paused-checkpoint.md（后端同路径不存在，已在前端找到）、本人卡及军团权威规则；无本人旧运行命令/持锁，恢复唯一UI锁。已重新读取computer-use 26.1023.50603 SKILL及更新官方CUA文档，无native操作。fresh Edge4对应此前同一扩展连接6795b222，用户新tab328083472实际http://localhost:8000/#/sys/role。claim后最小DOM成功：visibleDialogs0、visibleForms0、visiblePasswordfalse，未读任何输入值/联系方式。
+
+唯一正常reload被官方直接拒绝：Microsoft Edge is blocking automation because another extension UI is open on this page. Complete or dismiss that extension UI in Microsoft Edge, then ask me to continue. 已按一次即停，无第二次刷新/切连接/原生绕过/猜关目标；本轮不是因snapshot含屏外Fitkun文字而判阻挡。没有可辨识官方关闭target的新证据。重启后PEER/LIMIT部门D1、角色/布局及CSS后普通九格动画本轮仍无新实屏证，不用旧dept—当本轮失败或旧203/36当真实通过。未调matchMedia、不推断OS、不改偏好；未业务/授权/密码/source/helper/config/IDE/服务/Git操作，S链未推进。交回唯一UI锁，等待总控协调解除官方扩展阻挡。
+## 2026-10-28 副屏Edge正常导航完成重启后部门验收：PEER/LIMIT均D1
+
+用户继续并明确Edge副屏后fresh官方库存仍Edge3/4，沿同扩展6795b222的Edge4绑定，fresh用户tab328083472实际#/sys/role；无visible dialog/form/password。没有reload。当前业务role表正常但侧栏仅TanStack，用户管理link不存在；未猜权限原因。一次正常goto此前已核实http://localhost:8000/#/sys/account成功进入实际账号页，无官方拒绝。未凭屏外扩展文本判断遮挡、未操作扩展配置或换连接绕过。
+
+精确账号查询QA_PEER_20261023，完成唯一ID2113894345662021633后正常查看；pending左右及表busytrue、12Skeleton。ready均false、controls0，实际部门纯文本QA_D1_20261023、角色区暂无已分配角色。正常关闭后精确查询QA_LIM_20261023唯一ID2114719096971497474，正常查看同样pending三busytrue/12Skeleton，ready全false/controls0、实际部门QA_D1_20261023、暂无已分配角色。未读取contact/密码/完整JSON或重选部门/保存。本轮是真实重启后新UI证，两个详情部门回填均通过；不据UI推断mapper具体加载来源或替代S受限身份授权链。ready左右同y139/h458，资料x442/w645.328、角色x1111.328/w322.656；未采集本轮pending外框几何，不称本轮像素零位移。
+
+证据runtime-20261028-resumed/peer.json、limit.json及两张department安全裁图，均已视觉核显示D1、无联系方式。LIMIT pending顺便捕捉真实9cube animationName cubeScaleDelay/duration1.3s，其中第7块transform matrix(0.989529,0,0,0.989529,0,0)，其余尚none，证明当前普通动画已运行；Modal进场缩放阶段指示器bounding4×4不可误称实际设计尺寸4px。该样式输出在本会话工具证据，未独立保存该pendingJSON或动画截图，不当成完整周期视觉验收。未调用matchMedia或推断OS、未改偏好。40px首屏/14pxsmall/32pxlarge/暗色loading仍未取得本轮证据。
+
+已正常关闭LIMIT详情，停#/sys/account visibleDialogs0/visiblePasswordfalse，无草稿，唯一UI锁交回。未业务写/授权/改密/部门补填/源/helper/config/服务/IDE/Git操作，无203/36重跑。S对象11、S1-S8仍未开展，交总控另排。侧栏系统菜单缺失仅记录实际现象，不擅自定新缺陷或扩展范围。

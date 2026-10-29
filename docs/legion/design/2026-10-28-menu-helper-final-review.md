@@ -1,0 +1,67 @@
+# 菜单隔离辅助终审
+
+2026-10-28 technical_designer；只读源审，未PLAN/编译/Gradle/PG/进程观察/DB/服务操作。
+
+实核Python8BA40EC8C6A90F360AAAF66F2CB0C5ECE82486281942ED991AB6E9D828262F21、init5550EC20B3E7DF989ADEF2DC898589FD9674F1C9F664486454729B0EF7B9BCCE、menuTestA78269ABACA1B9B871F4969D40B74F800C4B11BE0D8DDECBE6739A5159472D28与交付一致。
+
+11模块固定main、四模块prepare与精确四Test/26类、原Project布局隔离/实际CP目录及内部jar拒绝/源码presence与生成头文件/主与测试清单/累计外部锁/逐模块XML-suite门禁继续存在。主清单只允许AuthCtrl变、三个class和新XML增、web-booter四class与27资源，未知产物拒绝；不预认529或实际图。PG库及唯一binary/txz在实际Test CP校验，wholeJVM目录配置执行前回读；源码无网络下载或kill分支。Fixture仅start成功后初始化catch Exception|Error close同实例，close失败suppressed保原异常，符合批准窄补。
+
+## 必须收口的终态观察歧义
+
+Python observe_processes终态PowerShell全局PG候选先用ExecutablePath非空且StartsWith RUN筛选。若本轮PG因短命pg_ctl父节点未及时采到而不在known，终态又无法读取ExecutablePath，该候选会在Where-Object处被丢弃；后面的Owned-tree PG image unavailable检查只保护known成员，无法发现它。函数可能回residual=[]，却没有证明无本RUN残留。此问题不授权杀任何未知PG。
+
+最小修正只涉及当前终态查询：保留路径不可读的PG候选为ambiguous标记（不输出其完整命令行、身份或外部路径内容），若不能基于已有证据排除本轮归属则terminal观察失败、无kill、交接；仅当路径可读且明确RUN外才排除。不得把ambiguity算成已认领本RUN进程。终态枚举读取错误仍失败。无需ETW/Job、新依赖、额外系统扫描或源测试重构。
+
+## 八实例采样限制
+
+run_phase每次powershell_json可耗数秒（timeout20），再间隔0.2秒；严格八个dataDir完整链及loopback样本不是可保证采到的事实。四个新fixture可在相邻快照间完成start/close，尤其短命pg_ctl未采到时父链无法补齐。观察不足会令code0测试被guard判失败，这是fail closed而非业务错误，但有明显误阻塞风险。
+
+建议总控明确八样本是本轮严格观察验收还是可独立记录的覆盖限制；若保留则执行前说明可能因漏采停报且不自动重跑，不能在失败后悄降为成功。若要放宽，只允许撤销“所有已自然退出实例须采到”的内部采样完整性要求，不能放宽实际已观察到的非loopback、目录越界或存活残留/歧义。不得用提高轮询频率承诺消除竞态。
+
+当前结论：主体静态隔离与测试窄补无新增阻断；终态路径不可读候选须明确fail closed后再交执行决策。八样本属于待总控决定的观察完整性策略，不以此要求新系统框架。编译、Groovy求值、实际任务图/CP、监听和无残留仍未证。
+
+## 终态歧义窄修复审结论
+
+实核最终Python SHA B58F948FB3715C6C987DFB8017DBA87293910619D22347C8DAE2F3F6F0480ADA；init仍5550EC20B3E7DF989ADEF2DC898589FD9674F1C9F664486454729B0EF7B9BCCE，menuTest仍A78269ABACA1B9B871F4969D40B74F800C4B11BE0D8DDECBE6739A5159472D28。
+
+终态Where现保留无ExecutablePath或明确RUN内的PG；路径不可读分支在读取CommandLine前仅输出pid、ambiguous、imageReadable。Python跳过其known归属更新，按completeProof=false保存歧义记录；终态residual非空使阶段guard失败，不kill、不认领、不输出外部命令行。可读明确RUN外仍排除；原known派生树路径缺失/越界拒绝不变。该修复消除本报告唯一阻塞。
+
+总控已明确保留八dataDir严格观察门禁；采样不足按观察失败停报，不计业务回归失败，不自动重跑、不事后放宽。当前组合未见新增静态阻断，可交总控决定一次受控独立执行；不以此称已编译、Groovy通过、实际图/CP/8实例监听或26类通过。本角色未运行PLAN/自检脚本/进程观察/Gradle/PG。
+
+## ecc70444中断后编码协议修复静态审查
+
+总控/QA交付ecc70444已安全中断：main529与输入独核保留，但observer双管道reader反复UTF8异常却记空错误，整体观察无效；testClasses未完成、fresh XML0。本角色未执行该RUN，不以main gate0或旧残留空数组证明观察可信，不复用其产物作新验证。
+
+实核新Python8403CB7DB4E291F8EDEA2AFBFD8168599F3BFE7B44FABFC8CB966FB84E3C553F，init5550…与menuTestA782…仍原哈希。powershell_json显式PS无BOM UTF8输出/Stop/无进度，子进程binary pipes，主线程先双bytes完整性再strict UTF8 decode；非0exit、任意非空stderr、缺失读取结果/空输出/JSON或schema错误均拒。Timeout/OSError固定安全错误，不输出EncodedCommand、原文或异常管道内容。无replace/ignore/猜编码回退。
+
+此实现关闭原UnicodeDecodeError仅在reader线程抛出却可能被主线程忽略的通路；binary读取自身失败若导致None也被完整性检查拒绝。list必须是实际JSON载荷，不能从None兜底[]。normal八字段、ambiguity三字段分别精确校验，bool拒作整数PID/port，UTC时间需带零偏移，路径可null但非空字符串才接受，端口数组每项含地址与1..65535正整数。
+
+源层生产者与校验器未见必然不匹配：PowerShell ToUniversalTime().ToString('o')产生零偏移/Z时间，当前Python fromisoformat需实机协议预检确认；@($ports)与ConvertTo-Json -InputObject $out保持空/单/多元素数组，空CIM路径应为JSON null，端口LocalPort序列化为整数、-match为bool。若实机返回异常形状，应明确拒绝并修生产协议，不能为通过放宽为任意dict或猜时间。非空CLIXML诊断亦应拒绝。
+
+静态无新增阻断，但下一步应先另授独立协议预检，而非直接重跑三阶段：调用冻结的生产powershell_json路径，以真实PowerShell生成UTF8中文/ASCII、UTC o格式、null路径、零/单/多port数组及ambiguity/混合载荷，核严格解码与schema；再用可控stderr、exit非0及坏JSON证明主线程拒绝且只输出技术摘要。可追加仅对自身PID的CIM读验证实际CreationDate转换形状，不读取其它进程命令行/业务日志，不运行完整terminal观察、不PG/Gradle、不写旧RUN或改helper。准确范围由总控批准后执行，本角色当前不做。
+
+真实协议预检通过仍不证明进程归属、八实例采样或PG终态；之后再按最新hash/输入锁、全新RUN和唯一槽另授正式执行，不沿用ecc70444的观察结论。不预认26类通过。
+
+## 真实协议预检交付只读复核
+
+已读backend专项获授执行记录menu-powershell-protocol-preflight.md，六合法/三拒绝共九项，真实自身CIM的UTC o时间、中文ASCII、null及0/1/2端口数组、空数组、ambiguity/混合均经冻结生产路径；stderr中文、exit7、坏JSON各被预期类别拒绝。该运行由backend执行，本角色仅读附件及重算当前8403哈希一致，未独立重跑或宣称本人动态执行。
+
+附件明确observerCalls/pgStarts/gradleStarts为0、端口为合成对象、仅自身PID CIM，范围未越出协议预检。它补足本机Python3.15.0b2/WinPS5.1真实编码和序列化形状证据，未见需重复预检的新问题。可交总控决定下一次全新RUN受控独立执行；真实observer树/端口采样/八实例及终态仍是该RUN门禁，不因协议过而豁免。ecc70444观察无效及测试未完成保持原历史状态。
+
+## b0c6643f路径门禁只读诊断
+
+总控/QA交付新RUN main/prepare成功、22类208全绿，web-booter在init344的doFirst拒PG whole-JVM directory settings changed，未进PG测试，整体失败。实读test gate为缺web-booter类集合/suite记录，实际path-model含独立RUN Test目录；不将该部分结果叫26类通过，也不覆盖旧失败证据。
+
+本角色只读javap安装Gradle9.5.1的gradle-process-services jar及testing-jvm jar：Test.getSystemProperties委托DefaultJavaForkOptions；后者只返回JvmOptions.getMutableSystemProperties。JvmOptions.systemProperty将IMMUTABLE_SYSTEM_PROPERTIES中的键另存immutableSystemProperties，静态集合明确包含java.io.tmpdir。因此init340读取test.systemProperties['java.io.tmpdir']并非实际完整fork属性读取，可能null而错误拒绝已设置的有效tmpdir。此为确定API语义缺口，无需用新PG执行碰原因。b0c未持久化四值，不能声称已观察每一键的运行值或TEMP/TMP实际冲突。
+
+最小候选是仅对tmpdir从公开test.allJvmArgs按精确-Djava.io.tmpdir=前缀提取，要求恰一个值并严格等新RUN/pg/tmp canonicalPath；拒零值/重复/冲突，不用宽contains/null放行。ot.epg.working-dir和TEMP/TMP保原严核；审计web-booter-pg-jvm.json亦须改记该有效tmpdir值，否则修门禁后仍写null。禁止全量输出allJvmArgs/环境；只允许四批准键的类型、匹配布尔与已批准RUN路径。不用私有反射或读取未知属性。
+
+DefaultProcessForkOptions环境map由HashMap实现，键不自动规范化；Windows TEMP/Temp重复是可另审风险，但无本轮对应运行证据，不据此扩大本次修复。有效JVM参数唯一性与其他三键严格比较须在最终diff再核。当前仅设计建议，未改init/配置或跑Gradle/PG/observer。
+
+## 单键tmpdir最终窄修验收
+
+实核init7AFEA135B5DF8D8E95613CAAB707B543CE7DB0BC369ADC3379D4AE2536078BB8，Python8403与menuTestA782保持。严格按总控单键授权，不扩大为两键解析。tmpArguments仅筛String型精确-Djava.io.tmpdir或-Djava.io.tmpdir=前缀；count恰1且有=才能得到tmpValue，裸键/正确加裸键/重复/冲突/空值均无法等于预期canonical String，因此拒绝。原设置未改，其余三键比较与PG库/归档/图/过滤/观察门禁保持。
+
+门禁前安全JSON仅四项读取类型/匹配布尔，tmp项另有来源/count，无全量args/env或实际未知路径；成功pg-jvm temporary使用已验证tmpValue。内存逆向撤销新读取/安全审计块、原首项比较和成功审计字段三处变化，SHA精确回到原已审5550EC20B3E7DF989ADEF2DC898589FD9674F1C9F664486454729B0EF7B9BCCE，ReverseExactToReviewed5550=true；证实无其它init变化。
+
+独立静态审无新增阻断，可交总控按既有唯一槽/全新RUN/严格门禁另授一次验证，不复用b0c产物。实际Gradle allJvmArgs、四键有效目录、PG/IPv4/八实例与26类仍由新RUN证明；backend纯Groovy2正8负不当真实Task验证。本角色未执行合成自检、PLAN、Gradle、PG或观察。

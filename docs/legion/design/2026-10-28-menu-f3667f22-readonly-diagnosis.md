@@ -1,0 +1,31 @@
+# f3667f22局部测试失败与PID身份门禁诊断
+
+2026-10-28 technical_designer；只读源、实际安全XML摘要及进程观察JSON，不执行Gradle/PG/observer或修改源/helper。
+
+实际XML四web-booter类合计11项、10通过1失败：菜单首项keepsBusinessScopeButReturnsOnlyAuthorizedMetadata在服务租户上下文冲突拒绝；同类其余三项通过。全轮26类219项为218通过1失败，另PID复用观察门禁失败、observations空、严格八实例未证，整体不通过。四目录真实Task检查本轮已过，旧tmpdir getter问题不再作为本轮失败原因。
+
+## 租户上下文
+
+ThreadUserHelper.runWithUser只绑定ScopedValue用户，不修改TenantContext。TenantContext是独立ThreadLocal；TenantSchemaRouter.routeCurrentTransaction绑定tenant/schema，restoreCurrentTransaction只还原连接search_path，不清线程上下文。菜单服务在任一已有上下文与用户不一致或不完整时拒绝，是正确默认拒绝，不能为了standalone测试去掉该检查。
+
+已核实际suite时间：Advisor08:55:27.108Z，Mode08:55:44.660Z，Menu08:55:58.644Z，Role08:56:28.804Z。Mode测试直接路由101但没有TenantContext生命周期清理；其部分代码即便restore search_path仍留下ThreadLocal。菜单首用例standalone tenant0因此存在受前序租户测试遗留污染的可触发路径；新Fixture构造不建立租户context而close会clear，符合“首例失败、后续三个通过”的现象。未记录失败当刻上下文具体值，不能假称已实测其为101；但源层泄漏及执行顺序已构成可修的具体测试隔离缺陷。Role虽在Menu后，不是此次首例的前序原因，也直接路由101/102且无清理，可能污染后续测试，不能忽略同模式缺陷。
+
+最小候选为仅这两个直接router测试类的测试生命周期清理：在每个测试结束的finally或@AfterEach清理本测试建立的TenantContext，正常、断言失败、PG启动失败均执行；必要时在本测试前清理以建立干净fixture，但不能在业务服务调用前无条件clear来掩盖冲突。优先修泄漏来源，不改production service57/router/ThreadUserHelper，不靠调类顺序、单独fork每类或全局关闭租户检查解决。菜单现有故意绑定冲突、合法嵌套非空恢复断言必须保持。若额外给新菜单类加@BeforeEach/@AfterEach，仅作为测试生命周期隔离，不替代上述泄漏来源修复，不在每次withUser内部清理以免破坏嵌套测试。
+
+## PID自然复用
+
+实读本RUN test观察JSON：observerError为Observed PID reuse，observations=[]，terminalError=null、residual=[]。这不证明恶意复用或PG安全违规，只说明旧pid单键表发现启动身份变化后fail closed；也不能以XML全量存在替代观察通过。
+
+合理最小模型是将进程实例身份视为(pid,startTime)，pid仅为当前索引。发现同pid新start时，将旧实例封存，禁止将旧parent/isTestJvm/归属边或旧后代链转给新实例；新实例只在其当前父实例及出生时间/观察证据足够时重新入链，否则保持未归属候选。旧PG记录关联旧实例不可因PID再出现被重写。若当前父身份不能排除复用，拒绝完成proof，不用父pid和时间大小比较单独继承旧权利。无需ETW/Job或放松RUN路径/sha/-D/loopback/残留歧义门禁。
+
+没有kill分支继续保持；将来任何清理都须重核当前完整启动身份。自然已退出实例不因pid复用而自动判安全失败，但新实例无法证明归属或存活RUN候选缺证仍失败交接。具体helper差异另授后再审，不能用本轮旧采样补八实例或复用产物冒新结果。
+
+## 两项窄修最终静态复核
+
+实核Python CD399140BBB07A6F123F2B29844C604127BEE04A7F2E05CE7BF5AEF29A60B441、Mode662505E45B6B54383EA616BF36BA757090926FBCD7657229AE786AE13D6A7DBD、Role9136D6154B437554FD2DBE683B1F79B863BF351AC40985B0E58E2BC0D6677F6C，init仍7AFE。两测试仅新增AfterEach及TenantContext imports与单一clear方法；内存逐字节逆撤后精确回原8F3D/E8F6，两个ReverseExact均true，原测试与loopback不变。JUnit AfterEach覆盖方法正常/断言失败结束，不在withUser或业务入口清理，不干扰菜单合法嵌套/冲突负例。
+
+实例键将UTC规范为七位小数不丢原o精度，history按pid|start存旧记录、当前快照及latest仅作索引/转换诊断。新实例必须同快照唯一parent且出生时间不晚于child、递归证明至root；已证明同实例保留封存旧父边，不接当前复用的新父。root实例变化/歧义仍拒，首次锚定后用持有Popen的poll确认未退出。新增无关同pid实例不因历史pid本身继承角色或归属；缺父/跨代证据不足不会入history。RUN内PG无root+Test JVM链仍明确失败，未加kill或降低路径/hash/-D/loopback/残留歧义/八实例门禁。
+
+合法旧父自然退出后，同一子实例可沿既存不可变历史边继续证明，不要求旧父必须每次仍出现在快照；新子实例若父已退出且从未取证则仍拒绝完成proof，这是现有严格采样边界，不靠新框架补齐。root自然退出后观察终态不重新锚定；若root PID已被复用则严格报错的政策保持，不把它当普通无关子实例。未发现该实现引入新的必须阻断情形。
+
+当前组合可交总控按原唯一槽/全新RUN/失败停报条件授权一次独立验证；这是静态可执行结论，不是观察或测试已通过。生产guard不改，f366218pass1fail与观察无效历史保持；本角色未运行合成快照自检、实际observer、Gradle或PG。

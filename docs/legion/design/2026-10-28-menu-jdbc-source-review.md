@@ -1,0 +1,31 @@
+# JDBC八实例测试源码独立复核
+
+2026-10-28 technical_designer，仅实读五个实际文件及交接契约，未编译、SQL、PG、Gradle、文件发布预检、observer或UI操作，未改源/tool。
+
+实核SHA均与交付一致：新PostgresInstanceEvidence B449DF73CEE7CDC118CE0ACF9BDF70A79A4F43DA49A1DF51A445606F1F3BF3D4；菜单FF820726E8771229A8245196C6174FAE052073CAE9CA418979C84D8832A6C9D5；Mode17C37FD4442FB35D5945AD5CAA077A7172F1448DBD7D35E71ADB57B9C16A1756；Advisor F04AA5721AEEABE2C0E8085BF68E161A18051F80924382757A7B858448BE5D1A；Role3E536DE69E3D2937F70120792B500122C1F6D949C134E1796E7C8ABB0C4DC025。
+
+结论：未见阻止进入新验证工具准备的静态问题。不是执行许可，也不是Java编译、JDBC或Windows文件发布已通过。
+
+## 连接、生命周期与事实
+
+四菜单方法传四个固定label给Fixture；唯一capture在start成功后的原try/catch-close内；Mode两处及Advisor/Role各一处在既有try-with内取得DataSource后、DDL前调用。八标签唯一且映射到正确测试类，原业务/租户冲突断言不被采证替代。
+
+只接已有合成DataSource，新Connection设只读，Connection/Statement/ResultSet均try-with；SELECT仅pg_catalog限定的六个技术字段，无应用URL/凭据/业务数据或search_path写入。addr与listenAddresses均精确127.0.0.1、port1..65535、版本140022匹配批准14.22，启动时间非空；data目录toRealPath严格在已绑定RUN/pg/tmp下，非相邻前缀或仅字符串包含。连接成功关闭后才publish。采证断言失败受原PG close保护；start尚未返回时失败仍不宣称保证自动回收。
+
+## 新RUN绑定与证据
+
+缺JVM版本/nonce/RUN/evidence属性即失败；nonce64位小写hex、RUN名称校验、evidence及java.tmp与真实RUN子目录一致；jdbc-context五键和八标签映射严格核且其hash匹配control seal。seal可信锚来自未来runner/init，测试helper本身不能独立证明新RUN创建，工具端仍须回读属性并锁控制文件。
+
+JSON使用既有Jackson拒重复键/尾随token，证据十字段、类型/版本/loopback/绑定与标签文件名严格校验。逐条拒旧nonce/未知额外文件及重复label/data/start；历史data目录可能已被close删除，既有条目只验证规范绝对路径，不强求仍存在，符合生命周期。最终消费者必须按Windows路径语义去重，不能只Java字符串Set；须另验恰八预期标签和八实例、无pending/多文件，并与fresh成功XML联合判定。postmasterStart及data身份不以port唯一替代。
+
+## 发布与最小性
+
+CREATE_NEW pending完整关闭→同目录createLink固定label.json→删除pending，不会覆盖既有标签文件；不支持硬链接则失败无move覆盖回退。链接发布后pending删除失败仍抛原错误，消费者拒额外pending，因此不误成功。目录关闭/连接关闭异常亦使测试失败。单fork/JUnit禁并行是已审测试执行条件，不能将逐条verifyExisting当通用多写者同步。
+
+这是一个test-only helper，无新依赖/服务/配置扫描，针对批准的证据契约可保留；不必另造文件框架或改生产。硬链接在本机实际文件系统的支持尚未验证，应在已授权工具轻量测试范围内用专用临时目录核一次发布、目标存在拒覆盖及cleanup行为；不需PG或系统设置，当前不执行。若失败先报具体限制再审最小替代，不引覆盖fallback。
+
+## 下一工具准备条件
+
+五测试源合法改变，旧prepared45不能当新源码产物；686输入锁须显式列新增helper/四测试及observer变化，生产/build/config保持。PLAN复用已核main529、仅编译五源/精确十class、合并旧未受影响36项为新prepared46合理，但十/46是候选，实际生成多余class/processor产物应停审，不宽放包目录。
+
+新tool/init应锁JDBC口径版本与八标签、生成nonce/context并seal、doFirst精确属性回读、evidence初始空目录、最终严格JSON/路径/schema校验、fresh四类XML与八证据及终态联合判定；已观测-D交叉一致但不重新要求八采样覆盖。原7392八端口coverage不能直接用于本新口径。旧26/219、4b四类11业务成功及未来新结果继续分列。工具差异交后再独审，当前不授权运行。

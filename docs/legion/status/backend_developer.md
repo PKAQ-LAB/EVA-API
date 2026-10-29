@@ -819,3 +819,100 @@ buildSrc单独仅做exists/is_symlink元数据判定，任意形式出现即在�
 静态验收：仅Python ast.parse及文本/AST diff；逆向移除本次code_inputs变更可精确恢复前次78CA27D01CBF7796E9C22A79A0E6E2C6CF6D54B7C28F35782D99BE09A46ED37C；所有函数中唯code_inputs的AST改变，commands/main阶段顺序/参数、测试筛选、原哈希门禁、图guard均未变。无helper执行（包括PLAN）、Gradle/任务图/测试/重验证或快照操作，QA仍sys整轮唯一槽。本成员未改业务源/数据/依赖/服务/QA卡/提交push。
 
 新冻结Python SHA256 0A85F5E26C226D6B231E3D3C4DFD1AE82401190BE6C24737A3A87B165207B7C1。Groovy guard保持68417F27830D9209F8B5DAF530F8E45C38B380D9F53139C905640326DD165125；原init保持DF6C0C52D56EFD41D819C67663458830F4C4F23A6E0350450902DBF0F449DACF。此为静态修订已完成，不称辅助实际执行或独立177通过；主动报root后冻结。
+
+
+## 2026-10-27 C方案授权范围与隔离验证准备
+
+用户经总控明确选择C；当前cornerstone/HEAD 1f708e20，生产写入仅限eva-web/eva-web-sys/eva-web-sys-service/src/main/resources/mapper/User.xml的BaseResultMap。保所有SQL、方法、全局配置、实体/转换/接口/DB及前端不变。正式设计第8节、仓库规则和权威军团/表命名规则已重新读取；graph impact selectById为UNKNOWN，原索引落后25提交，实际源补核6调用与写保护，不能当低风险。现有QA/designer脏文件及.vscode/GO计划保留。
+
+精确测试文件计划（均属eva-web/eva-web-sys/eva-web-sys-service）：新增src/test/java/org/pkaq/sys/role/service/UserMapperBootstrapFixture.java、UserMapperBootstrapTest.java、UserMapperConsumerTest.java；扩展已有同目录AssignedRoleDetailJdbcFixture.java；新增src/test/resources/fixtures/user-before-c.xml，封存改前User.xml作为隔离反例，放fixtures目录防止生产mapper扫描拾取。既有AssignedRoleDetailTest及其它生产Java不改；保已有手工正序语义用例，但新增普通生产MybatisPlusAutoConfiguration/MybatisPlusConfig组件bootstrap，不能用旧177替代。
+
+隔离方案：只用Mockito DataSource/Connection/ResultSet与合成行，连接元数据仅返回PostgreSQL，任何非允许SELECT抛错计数；无URL/DriverManager/Hikari/Flyway/Redis/网络/实际账号数据。真实Boot4 MyBatis自动配置和现插件创建factory；正常classpath扫描、测试资源User先common/反序分别验证，旧XML反例在内存资源数组中User先common，绝不将旧XML复制回生产或改全局排序。枚举/日期/审计/自动账号字段使用真实Mapper/type handler映射；service写保护用真实映射后的合成实体与写入mock，验证拒绝前无关联/档案/permVer写。repwd只用合成密码，保持原校验逻辑，不加新只读限制。
+
+生产准备需静态XML16项唯一映射和除BaseResultMap外字节/结构不变证明。当前仅获文件准备与静态差异窗口，尚无Gradle/Test/全工程编译槽；旧snapshot-d及全部旧helper封存不覆盖。后续新验证/产物证据使用独立C-20261027命名，先记录源/构建配置/测试/所有classpath产物来源与变更，不能借旧snapshot哈希或旧177称新代码通过。QA独立复验、用户正常重启、live statement及合法UI验收仍待后续调度。无自动commit/push。
+
+## 2026-10-27 C源文件准备完成，等待独立静态审与验证槽
+
+已落唯一生产User.xml BaseResultMap及计划的3个新Java/旧fixture扩展/fixtures原XML反例，新增实施附件docs/legion/design/2026-10-27-user-result-map-c-implementation.md。Python标准库仅静态XML/字节/格式检查：16唯一属性与common13+profile3等价，除整个map块外与HEAD原字节完全一致；旧反例与HEAD原User.xml全字节一致；旧AssignedRoleDetailTest与HEAD一致。XML SHA256 5ED33960854D9203F6AE3D9D1F0F5D8D4F2F822409C49D6169B097C93A89B9E9，旧反例BFC0F6B427D65F8E1F62D3D5364FECDD2F181DBC05C3AC40729BD0144A5F24EF。scoped git diff --check通过，未暂存；LF/CRLF Git转换提示不等于测试执行结果。
+
+最小context仅MPauto/MybatisPlusConfig+合成EvaConfig+唯一mockDS，移除系统环境/属性源，无ConfigData/WebBooter/组件扫描。与WebBooter一致的org.pkaq自动配置根包元数据仅供实际MP注册器扫@Mapper，解决无XML的PostUserMapper而不提前手工addMapper。普通resolver原glob原顺序，无customizer；强制顺序与旧反例单独factory。加组件数量、未知连接/metadata/SQL拒绝及Isolated；共用fixture保旧入口，只有实际JOIN才供profile列。新测试覆盖计划与确切类/命令形态/新C产物门禁方案均见附件。
+
+没有运行任何Gradle、Java编译、Spring context或新旧测试；因此旧反例是否实际复现、C三顺序是否实际通过、全字段handler等价和旧42项回归均待验证，不报绿。旧snapshot-d/全部旧helper保持封存，未新造快照。designer/QA正独立仅读实际文件；本成员交回源码准备锁等待重大静态意见和总控唯一验证槽。无IDE/服务/真实数据访问、依赖、vault、前端、其他成员卡或提交push操作。
+
+## 2026-10-27 QA预审隔离mustfix已静态修订，再冻结待复核
+
+按root转QA具体意见，仅改本轮新tests/fixture与本人文档：新bootstrap的PreparedStatement/Statement/ResultSetMetaData/ResultSet未知调用现统一AssertionError，原手工入口仍用原默认应答；参数setter改精确名称/两参数标量白名单，禁止任意set及流/三参数setObject重载。新增合成负向用例核未知DS/Connection/metadata/statement/setter/resultset及写+batch均拒绝，正向读取零写和负向预期拒绝计数分开。新容器增加单例初始化前BeanDefinition固定类/工厂方法白名单，不仅靠类型数量。
+
+新增实际C映射后的普通账号有/无profile正向save/role/post服务mock写入，补缺tenant列保持NULL、managedList/page/UserWithModuleAndRole注册引用检查、VO无password/合成哈希。原UserAccountProfileServiceTest8项列本批补证，旧实体mock不冒充C端到端；list/page/嵌套仅statement检查未实际分页/嵌套执行的缺口已明确。附件同步具体覆盖及限制。此轮依然只有apply_patch文件修订/静态格式与差异检查，没有Gradle/编译/容器/测试，未称mustfix已执行验证；交回锁待QA读最新文件，再由总控授唯一验证槽。
+
+## 2026-10-27 C受控验证因共享产物瞬态阻塞，临时IDE配置已恢复并交槽
+
+经总控逐轮授权和QA静态审的新C辅助最终Python C06A8B3AA91EFCC4D8412F2D9972EA250182690B893FCFB594E51E74D4273D27、init A053111FAE1D1E07777B0A587B7EFFFE8DF4EAAC4004B2B510BEC5250B1A8C54。旧snapshot-d/旧helpers全部封存。实际各run及失败分类已补实施附件：配置时提前classpath解析、交叉中断、upload缺common、contract快照NoSuchFileException，均保原日志，未测试通过。
+
+用户准A临时关闭workspace自动构建后，最新单次run为.gradle/C-20261027-runs/20261027T143903Z-df529796，main1m17s、9actionable7执行2uptodate，在auth编译前copy门禁停止。诊断实际核到common此前多个依赖source/copy81完整；auth现场sourceReadable=true但before/after/copy均0、didWork=false，故源目录当时为空，不是已证Project.copy漏复制，未判写者。SYS编译/资源和两新Test尚未执行，不能给C报绿；无C快照封存、无弱化门禁/跳upload/关tracking/清cache/改依赖或Files.copy替换。
+
+settings操作前发现用户新增suspendAllThreads:true，最新原SHA059FF8E0D20427CF6AED4E40C0A525942031D5E96E9D9E5B4A427BB8C290DDAE已保字节。仅临时新增java.autobuild.enabled:false；本轮失败后已apply_patch仅删除本次键，恢复SHA精确059FF8，用户新改保留。没有IDE输入/服务Stop/Restart/语言serverkill；后台9016仍PID18544监听。文件false与20s稳定曾证，IDE全idle未证，不把设置当根因或暂停全任务已完成。
+
+结束当前main494对旧d added/missing/changed全空，User输出仍旧BFC0，源仍C5ED；源码/tests/辅助冻结，不再盲目新run。交回唯一验证槽，无实际DB/Redis/HTTP写读验证、发布或提交push；后续需另定共享输出排除范围或受控构建方案，QA/live加载/页面验收未完成。
+
+## 2026-10-27 独立输出辅助按方案静态准备完成，未占执行槽
+
+完整读设计隔离方案，Git仍cornerstone/HEAD1f708e20，现有QA/designer/.vscode/GO计划保护。仅apply_patch新增ignored C-isolated-20261027.py/init及本人附件/status，旧C06A/A053/旧d/全部历史run冻结不动，未改生产/XML/tests/IDE/服务/依赖。新Py SHA8596837C64CE8C1EFC5D3EFC375171D0F256BD07766F807EC08B3492645FBB71；init B905456A6D564BFF8C9F37F520EEC7B08155DC684D9F5747E5661E3F040C32A7。
+
+所有Project早期RUN/products/full-path/build绑定，独立project-cache；所有SourceSet/compile/generated/header/tmp/Test工作/报告及archive/variant/graph输出模型核RUN。源码sourceElements只作为精确已声明只读输入分类，不冒输出、不作compiled CP。编译复制和main/test清单全部实际隔离路径，无旧live产物函数；固定十模块/顺序与两类、offline单worker三阶段、Test-only图、旧d仅User C5ED差异、源/产物/外部jar前后hash门禁保留。classpath配置期保持惰性，任务中实际分类拒旧run/标准build/internal jar。root problems报告预期与实际日志位置另核；插件运行时路径仍待执行证明。
+
+只跑轻量Python AST与默认PLAN：确认无Gradle调用、无run目录创建、三阶段flags/精确筛选，旧辅助/旧manifest哈希未变。Groovy/路径模型/编译/测试尚未运行，不报绿；具体门禁、限制及候选--execute命令已写实施附件。交新文件SHA供designer/QA独立静态审，等待总控另授一次隔离验证槽；本轮不占前端loading QA槽，不轮询等待、不提交push。
+
+## 2026-10-27 隔离首轮配置失败已停报交槽
+
+终审组合为Python3C944ECBA933068FF58E0513C894D40711D43BB5D741E2252621306E0A44561E+init A0BD3342E2A553CBC96B585103C43138BB6A8457754918402D96DFF71EABC63D，含仅自身test编译main.resources白名单及外部jar跨阶段累计锁。合成文件负测与窄diff已报，不改真实缓存。
+
+单次获准run=.gradle/C-isolated-runs/20261027T151302Z-69bf3297，main配置22s exit1，Groovy221行首多行+触发String.positive()错误；未taskgraph/model、未compile/resources/Test准备或测试，测试计数无，不以0项当通过。实际root Problems报告在RUN/products/_root/build/reports/problems；仅此实际路径已证隔离，其它模型未证。未自动修/重跑，源/tests/helper冻结，所有失败证据保留并释放唯一槽。
+
+结束settings仍恢复SHA059FF8，9016仍18544监听，无本轮Gradleclient。live494无增缺，相对旧d唯一User.xml资源现C5ED、mtime22:43:15；本隔离run无任务且不回拷live，归因未知、不作factory已加载证据，隔离baseline不读live。其它493等旧d。完整事实及限制已入实施附件，无IDE/服务/依赖/源码改动或提交push。
+
+## 2026-10-27 隔离c7099319编译通过，25项止于fixture CGLIB白名单
+
+仅获准init二元+窄修经designer审后，以Python3C944ECB/init E1BA9AC3新run=.gradle/C-isolated-runs/20261027T151732Z-c7099319。main/test-classes均exit0，实际图30/15任务；main494(467class27resource)对旧d仅User C5ED差异，新snapshot manifest44D18D9417FB88E868530A9134881CABFF8481618D9B92A1850A0079984876BF。模型19Project/10固定module，SYS测试产物36项，外部累计jar143→169→178，执行前后源/产物/快照/累计依赖门禁均核。
+
+Test图仅SYS:test，45s exit1；实际两类13+12=25项，全25fail/0error/0skip，suite与XML一致。全部同一消息：MybatisPlusConfig被Spring合法增强为$$SpringCGLIB$$0，BootstrapFixture139按原类名白名单拒绝；尚未到Mapper/consumer断言，不报C业务通过/生产回归。分类fixture门禁形态兼容不足，未自动放宽/修复/重跑，源码/tests/helper冻结，结果与候选精确userClass判别方向已报总控待另审。
+
+settings仍恢复059FF8，9016/PID18544仍运行，无本轮client残留；不操作IDE/服务/源/缓存/依赖，不回拷live/提交push。实际model/CP/累计hash/XML/gate保run，实施附件同步。已交回唯一验证槽，无原42及其它消费者回归/独立QA/live/UI通过结论。
+
+## 2026-10-27 d3f8469b实际26项：2通过，24止于getType漏项，已交槽
+
+精确CGLIB窄修仅Fixture ADDFD47C/Test9DE3EFE6后经独立审，新run=.gradle/C-isolated-runs/20261027T153549Z-d3f8469b。main/test-classes0，图30/15/1不变，Test阶段1m31s exit1；26项2pass/24fail/0error/0skip。实际通过配置增强正负边界与JDBC未知/写拒绝负例；其余全部底层strict ResultSet.getType拒绝(23直接、1断言异常类型包裹)而未进入业务判断。MyBatis3.5.19 skipRows391起无条件rs.getType已源码核，分类fixture只读cursor元数据漏项，非C生产回归结论。
+
+候选新bootstrap getType返回TYPE_FORWARD_ONLY与合成next-only游标一致、旧手工路径保原默认，但当前未改/重跑，待另授。原输入/隔离产物/快照/累计jar门禁已核至结果失败前，settings仍059FF8/9016PID18544，无client残留。结果入附件，源/tests/helper冻结，唯一槽已交还，不操作IDE/服务/缓存/依赖/DB/回拷live/commitpush；C业务验收及旧回归/独立QA/live未完成。
+
+## 2026-10-27 7f8f0654三阶段及两新类26项通过，交槽待原回归/独立QA
+
+经独立审准确补getType/单结果metadata false与manual原默认，锁定共用fixture3EBECA1D/Test22B14EFB，BootstrapFixture ADDF/Consumer B9FD/生产/helper3C944+E1BA冻结。单次run=.gradle/C-isolated-runs/20261027T155115Z-7f8f0654，main2m/test准备1m25s/Test1m31s均exit0，图30/15/1，Test仅SYS:test。实际Bootstrap14+Consumer12=26，26pass/0fail/0error/0skip，fresh suite/XML一致，非COMPLETED字符串或旧177。
+
+模型19Project/10module；新main494(467class27resource)对旧d仅User C5ED差异，snapshot manifest44D18D9417FB88E868530A9134881CABFF8481618D9B92A1850A0079984876BF，test产物38，external累计143→169→178。源/构建/辅助/隔离main-generated-header-test-snapshot/跨阶段jar前后门禁全部通过，原失败run保留。细粒度NORMAL逐资源顺序未持久化，现只有资源唯一性断言与实际CP，限制入附件；不夸大完整分页/嵌套执行。
+
+本轮仅这两类26通过，原AssignedRoleDetail42、原档案/其他安全回归及独立QA/live加载/UI仍待。settings恢复059FF8、9016PID18544保持，无client残留，无IDE/DB/服务/缓存/依赖/回拷live/commitpush。源码/tests/helper冻结，实际证据及限制已报总控，唯一槽交还；下一回归需先精确清单另授，不追加运行或轮询。
+
+## 固定20类fresh隔离回归辅助静态准备完成，待QA独占执行
+
+按总控新授权仅新增ignored C-full-regression-20261028.py/init和本人文档；Py SHA833A4293D895E9CE58608CA4A4D4E5F8CC95F2E721DA7B479DC506D33A17D359，init4E0F05675184875E56984B575E42D1D7DB3DA3BEC233D9A90935565DF36093A2。旧C3C944/E1BA、7f8f0654/run/seal及生产/tests/依赖/IDE服务全部未改。精确SYS11/AUTH6/DATA3全类名/源路径规则/先前计数和直接/共享影响已入实施附件，不拿历史177或C26预填新总数。
+
+新三阶段仍10main→三模块testClasses→准确3Test0producer、逐任务exact filters，单worker/offline/全Project RUN产品/project-cache及全部源/产物/跨阶段jar门禁保。Py五函数作多模块输入/清单/命令/实际XML汇总适配，其它门禁函数AST同原C；每个Test前核三个prepared集合，CP仅sealed main+对应module test输出+外部缓存。AUTH/DATA无testresources只省精确已声明且未生成的NO-SOURCE test根，类产物与每类XML必须正，未知目录/缺失/旧run/live/internaljar仍拒。
+
+仅运行轻量AST/defaultPLAN/20源声明及flags比对，确认PLAN无目录/Gradle副作用；用临时合成XML核校验器正例与零项/skip/漏类拒绝，合成目录清理，不算真实测试。正式候选C:/home/DevApp/python3/python.exe .gradle/C-full-regression-20261028.py --execute已交designer和总控供QA审，尚未Gradle、不占重验证槽，不轮询/提交推送。最终实际计数、独立QA与live验收仍待。
+
+## 2026-10-28 QA固定20类当轮203/203通过，待真实运行与UI验收
+
+前述待原回归及独立QA执行项已由QA本轮证据更新：执行者为quality_reviewer，本人backend_developer非本轮执行者，未另起Gradle或复跑。引用QA状态docs/legion/status/quality_reviewer-assigned-role-detail-20261024.md的2026-10-28固定20类独立执行记录；RUN=.gradle/C-full-regression-runs/20261027T162106Z-4bef1b8a。本次只读核对该RUN的identity.json、audit/test/gate.json与audit/test/xml-summary.json：HEAD为1f708e202af0ba817b55c0f6be9a9085eea054ea，test阶段exit0，SYS11类152项、AUTH6类37项、DATA3类14项，共20类203/203通过，fail/error/skip均0，problems为空，各executedSuite均SUCCESS且计数一致；不是以历史177加26推算结果。
+
+QA独立记录三阶段均exit0，实际任务图30/25/3，末图仅三个批准Test且无producer；其独核source/config/test/helper及presence、snapshot494、三模块prepared清单、实际CP及累计178外部jar锁均通过。上述完整门禁结论引用QA当轮独核，本人本次仅核状态与指定汇总文件，未重新执行这些门禁。此前7f8f0654两类26项与失败RUN继续保留为历史证据，不替代本轮固定20类结论，也不扩大为全仓或live/UI验收通过。
+
+源码、tests、helper和配置继续冻结；本次仅更新本人status，不新run、不暂存/提交/推送、不操作IDE或服务。下一阶段待用户正常重启后台并解除Edge扩展UI阻塞后，由总控安排核PEER/LIMIT真实详情D1、运行加载证据及S权限链；当前这些验收仍未完成。不为验收改密或重填部门，不擅设断点或读取秘密。
+
+## 2026-10-28 保存检查点并暂停，等待用户明确继续
+
+暂停前已完成并向总控报告的只读运行核查：当时9016为PID18544，启动时间2026-10-27 21:43:45+08；源码User.xml及标准输出eva-web/eva-web-sys/eva-web-sys-service/build/resources/main/mapper/User.xml均为C修复SHA256 5ED33960854D9203F6AE3D9D1F0F5D8D4F2F822409C49D6169B097C93A89B9E9。标准输出mtime为2026-10-27 22:43:15.831+08，晚于当时进程启动，仅作线索，不证明内存加载旧或新。通过系统进程信息定位启动argfile，内部仅提取classpath/入口允许字段，199项中索引170为该标准资源目录；逐目录/JAR查mapper/User.xml仅此一处提供。未attach/jcmd/断点/自定义HTTP/DB/Redis/服务操作，未扫描未知运行日志；当前factory实际statement及详情链加载证据仍缺。一次路径提取正则误带Java/JDWP启动串，已立即改为精确argfile匹配，未含凭据或环境信息；不在状态卡复制启动串。
+
+上述PID及时间仅为用户此次重启前的历史观测。总控随后转达用户已正常重启后台，但本人未再查新PID或作任何运行操作；重启后PEER/LIMIT部门D1新证尚未取得，Edge官方扩展UI拒绝阻挡复验，不能以用户重启或203/203隔离通过宣称live恢复。独立固定20类203/203证据保留；S权限链未完成。总控转达Cube已移除reduced-motion静态覆盖且CSS检查通过，但真实动画待验，此项不是本人实施或验证结论。
+
+遵照用户“保存进度暂停 等待我继续”，本次仅补本人状态卡保存以上未落卡结果。没有本人在途命令、待恢复的临时设置或持有的验证锁；此前本人临时autobuild键已移除，不重复操作用户设置。立即停止测试、浏览器、IDE、源/helper/配置、数据及服务操作，不启动任务、重试或轮询，不暂存/提交/推送；其余文件保持冻结。等待用户明确“继续”后由总控重新派发，当前任务未全部完成。
