@@ -1,11 +1,14 @@
 package org.pkaq.sys.role.service;
 
 import io.zonky.test.db.postgres.embedded.EmbeddedPostgres;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.pkaq.core.mybatis.tenant.CoreSchemaExecutor;
 import org.pkaq.core.mybatis.tenant.TenantSchemaRouter;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.properties.TenantProperties;
+import org.pkaq.core.tenant.TenantContext;
+import org.pkaq.test.PostgresInstanceEvidence;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -23,11 +26,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author PKAQ
  */
 class RoleSchemaIsolationPostgresTest {
+    /** 直接调用路由器的测试负责清理上下文，防止污染后续同线程用例。 */
+    @AfterEach
+    void clearTenantContext() {
+        TenantContext.clear();
+    }
+
 
     @Test
     void readsTenantRoleRefsAndCoreResourceLimitInSeparateSteps() throws Exception {
-        try (EmbeddedPostgres postgres = EmbeddedPostgres.start()) {
+        try (EmbeddedPostgres postgres = EmbeddedPostgres.builder()
+                .setServerConfig("listen_addresses", "127.0.0.1").start()) {
             DataSource dataSource = postgres.getPostgresDatabase();
+            PostgresInstanceEvidence.capture(dataSource, "role-isolation");
             JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
             createTables(jdbcTemplate);
             seedData(jdbcTemplate);

@@ -12,6 +12,7 @@ import org.pkaq.core.codes.CommonCodes;
 import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.constant.PlatformCapabilities;
 import org.pkaq.core.jwt.JwtUtil;
+import org.pkaq.core.mvc.vo.AuthBootstrapResponse;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.util.json.JsonUtil;
@@ -95,8 +96,9 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
 
         loginLogService.saveSuccess(request, user.getTenantId(), user.getId(), user.getAccount(), sessionId);
 
-        ResponseUtil.write(httpServletResponse, Response
-                .success(loginSuccessVo, CommonCodes.LOGIN_SUCCESS_WELCOME, user.getName()));
+        ResponseUtil.write(httpServletResponse, AuthBootstrapResponse.fromSuccess(Response
+                .success(loginSuccessVo, CommonCodes.LOGIN_SUCCESS_WELCOME, user.getName()),
+                evaConfig.getResourcePermission().isEnable()));
     }
 
     /**

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.pkaq.sys.module.mapper.AuthorizedMenuMapper">
+    <resultMap id="MenuRow" type="org.pkaq.sys.module.mapper.AuthorizedMenuRow" autoMapping="false">
+        <association property="module" javaType="org.pkaq.sys.module.vo.ModuleMenuVo" autoMapping="false">
+            <id property="id" column="MODULE_ID"/>
+            <result property="code" column="MODULE_CODE"/>
+            <result property="name" column="MODULE_NAME"/>
+            <result property="pid" column="MODULE_PID"/>
+            <result property="path" column="MODULE_PATH"/>
+            <result property="isleaf" column="MODULE_ISLEAF"/>
+            <result property="icon" column="MODULE_ICON"/>
+            <result property="routeUrl" column="MODULE_ROUTE_URL"/>
+            <result property="componentUrl" column="MODULE_COMPONENT_URL"/>
+            <result property="sort" column="MODULE_SORT"/>
+        </association>
+        <association property="resource" javaType="org.pkaq.sys.module.vo.ModuleMenuResourceVo" autoMapping="false">
+            <id property="id" column="RESOURCE_ID"/>
+            <result property="code" column="RESOURCE_CODE"/>
+            <result property="resourceDesc" column="RESOURCE_DESC"/>
+            <result property="resourceUrl" column="RESOURCE_URL"/>
+            <result property="resourceType" column="RESOURCE_TYPE"/>
+        </association>
+    </resultMap>
+
+    <select id="selectCurrentResourceIds" resultType="java.lang.Long" useCache="false" flushCache="true">
+        SELECT DISTINCT rr.RESOURCE_ID
+        FROM SYS_ROLEUSER_REF ru
+            JOIN SYS_ROLE role ON ru.ROLE_ID = role.ID
+            JOIN SYS_ROLERES_REF rr ON role.ID = rr.ROLE_ID
+        WHERE ru.USER_ID = #{userId}
+            AND COALESCE(role.DELETED, 0) = 0
+            AND COALESCE(role.FROZEN, 0) &lt;&gt; 1
+            <if test="standalone">
+                AND COALESCE(role.TENANT_ID, 0) = 0
+            </if>
+    </select>
+
+    <select id="selectMenuRows" resultMap="MenuRow" useCache="false" flushCache="true">
+        SELECT DISTINCT m.ID AS MODULE_ID, m.CODE AS MODULE_CODE, m.NAME AS MODULE_NAME,
+            m.PID AS MODULE_PID, m.PATH AS MODULE_PATH, m.ISLEAF AS MODULE_ISLEAF,
+            m.ICON AS MODULE_ICON, m.ROUTE_URL AS MODULE_ROUTE_URL,
+            m.COMPONENT_URL AS MODULE_COMPONENT_URL, m.SORT AS MODULE_SORT,
+            r.ID AS RESOURCE_ID, r.CODE AS RESOURCE_CODE, r.RESOURCE_DESC,
+            r.RESOURCE_URL, r.RESOURCE_TYPE, r.SORT AS RESOURCE_SORT
+        FROM SYS_MODULE_RESOURCES r JOIN SYS_MODULE m ON r.MAIN_ID = m.ID
+        WHERE COALESCE(r.DELETED, 0) = 0 AND COALESCE(m.DELETED, 0) = 0
+            AND COALESCE(m.FROZEN, 0) &lt;&gt; 1
+            <choose>
+                <when test="resourceIds != null and !resourceIds.isEmpty()">
+                    AND r.ID IN
+                    <foreach collection="resourceIds" item="resourceId" open="(" separator="," close=")">
+                        #{resourceId}
+                    </foreach>
+                </when>
+                <otherwise>AND 1 = 0</otherwise>
+            </choose>
+            <choose>
+                <when test="schemaMode">
+                    AND EXISTS (SELECT 1 FROM SYS_TENANT_RESOURCE tr
+                        WHERE tr.TENANT_ID = #{tenantId} AND tr.RESOURCE_ID = r.ID)
+                </when>
+                <otherwise>
+                    AND COALESCE(m.TENANT_ID, 0) = 0 AND COALESCE(r.TENANT_ID, 0) = 0
+                </otherwise>
+            </choose>
+        ORDER BY MODULE_SORT, MODULE_ID, RESOURCE_SORT, RESOURCE_ID
+    </select>
+</mapper>

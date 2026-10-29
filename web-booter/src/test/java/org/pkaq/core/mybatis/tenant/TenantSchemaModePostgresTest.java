@@ -1,10 +1,13 @@
 package org.pkaq.core.mybatis.tenant;
 
 import io.zonky.test.db.postgres.embedded.EmbeddedPostgres;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.properties.TenantProperties;
+import org.pkaq.core.tenant.TenantContext;
 import org.pkaq.sys.tenant.service.TenantSchemaProvisioner;
+import org.pkaq.test.PostgresInstanceEvidence;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -28,11 +31,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author PKAQ
  */
 class TenantSchemaModePostgresTest {
+    /** 每个用例结束时清理直接路由留下的线程上下文，断言失败也必须执行。 */
+    @AfterEach
+    void clearTenantContext() {
+        TenantContext.clear();
+    }
+
 
     @Test
     void provisionsTrustedSchemaAndTenantMigrationIdempotently() throws Exception {
-        try (EmbeddedPostgres postgres = EmbeddedPostgres.start()) {
+        try (EmbeddedPostgres postgres = EmbeddedPostgres.builder()
+                .setServerConfig("listen_addresses", "127.0.0.1").start()) {
             DataSource dataSource = postgres.getPostgresDatabase();
+            PostgresInstanceEvidence.capture(dataSource, "mode-provision");
             JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
             jdbcTemplate.execute("""
                     CREATE TABLE SYS_TENANT (
@@ -102,8 +113,10 @@ class TenantSchemaModePostgresTest {
 
     @Test
     void routesOnlyInsideTransactionAndRestoresCoreAccess() throws Exception {
-        try (EmbeddedPostgres postgres = EmbeddedPostgres.start()) {
+        try (EmbeddedPostgres postgres = EmbeddedPostgres.builder()
+                .setServerConfig("listen_addresses", "127.0.0.1").start()) {
             DataSource dataSource = postgres.getPostgresDatabase();
+            PostgresInstanceEvidence.capture(dataSource, "mode-route");
             JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
             jdbcTemplate.execute("CREATE SCHEMA tenant_acme");
             jdbcTemplate.execute("CREATE TABLE public.route_probe(value VARCHAR(16))");

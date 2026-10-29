@@ -6,6 +6,7 @@ import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.properties.TenantProperties;
 import org.pkaq.core.threaduser.ThreadUser;
 import org.pkaq.core.threaduser.ThreadUserHelper;
+import org.pkaq.test.PostgresInstanceEvidence;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -33,8 +34,10 @@ class TenantSchemaAdvisorOrderPostgresTest {
 
     @Test
     void startsTransactionBeforeRoutingAndRestoresSearchPathAfterInvocation() throws Exception {
-        try (EmbeddedPostgres postgres = EmbeddedPostgres.start()) {
+        try (EmbeddedPostgres postgres = EmbeddedPostgres.builder()
+                .setServerConfig("listen_addresses", "127.0.0.1").start()) {
             DataSource dataSource = postgres.getPostgresDatabase();
+            PostgresInstanceEvidence.capture(dataSource, "advisor-order");
             JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
             jdbcTemplate.execute("CREATE SCHEMA tenant_101");
             ProxyTestConfiguration.dataSource = dataSource;
