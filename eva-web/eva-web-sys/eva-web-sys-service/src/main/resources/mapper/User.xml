@@ -1,8 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.pkaq.sys.user.mapper.UserMapper">
-    <resultMap id="BaseResultMap" type="org.pkaq.sys.user.entity.UserEntity" extends="common.resultMap">
+    <resultMap id="BaseResultMap" type="org.pkaq.sys.user.entity.UserEntity">
         <id property="id" column="ID"/>
+        <result property="revision" column="revision"/>
+        <result property="deleted" column="deleted"/>
+        <result property="frozen" column="frozen"/>
+        <result property="sort" column="sort"/>
+        <result property="tenantId" column="tenant_id"/>
+        <result property="createId" column="create_id"/>
+        <result property="createBy" column="create_by"/>
+        <result property="utcCreate" column="utc_create"/>
+        <result property="modifyId" column="modify_id"/>
+        <result property="modifyBy" column="modify_by"/>
+        <result property="utcModify" column="utc_modify"/>
+        <result property="remark" column="remark"/>
         <result property="code" column="CODE"/>
         <result property="name" column="NAME"/>
         <result property="deptId" column="DEPT_ID"/>

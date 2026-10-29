@@ -19,6 +19,7 @@ import net.sf.jsqlparser.statement.select.Select;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.mapping.Environment;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.mapstruct.factory.Mappers;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.transaction.SpringManagedTransactionFactory;
@@ -57,10 +58,12 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.AnnotationTransactionAttributeSource;
 import org.springframework.transaction.interceptor.TransactionInterceptor;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.mockito.invocation.InvocationOnMock;
 
 import javax.sql.DataSource;
 import java.io.InputStream;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -89,9 +92,12 @@ import static org.mockito.Mockito.when;
  * @author PKAQ
  * @date 2026-10-24
  */
-final class AssignedRoleDetailJdbcFixture {
+final class AssignedRoleDetailJdbcFixture implements AutoCloseable {
     final EvaConfig config = new EvaConfig();
-    final DataSource dataSource = mock(DataSource.class);
+    final DataSource dataSource;
+    final UserMapperBootstrapFixture bootstrap;
+    final SqlSessionFactory factory;
+    final UserMapper users;
     final Connection connection;
     final UserService service;
     final UserRoleRefSerivce roleReads;
@@ -114,6 +120,8 @@ final class AssignedRoleDetailJdbcFixture {
     int roleQueries;
     int accountQueries;
     int writes;
+    int connectionRequests;
+    int metadataReads;
     String currentSchema = "eva";
     String searchPath = "eva";
     String failingTable;
@@ -121,6 +129,11 @@ final class AssignedRoleDetailJdbcFixture {
     boolean accountPresent = true;
     long accountCreator = 7L;
     int accountFrozen;
+    boolean profilePresent = true;
+    boolean tenantColumnPresent = true;
+    Long accountDeleted = 0L;
+    String profileCode = "fixture-worker";
+    final Map<String, Object> accountValues = new HashMap<>();
     long target = 2113894345662021633L;
 
     AssignedRoleDetailJdbcFixture(boolean dataEnabled) throws Exception {
@@ -128,12 +141,35 @@ final class AssignedRoleDetailJdbcFixture {
     }
 
     AssignedRoleDetailJdbcFixture(boolean dataEnabled, boolean routedEntry) throws Exception {
+        this(dataEnabled, routedEntry, null);
+    }
+
+    AssignedRoleDetailJdbcFixture(boolean dataEnabled, boolean routedEntry,
+            UserMapperBootstrapFixture.Order order) throws Exception {
+        dataSource = order == null ? mock(DataSource.class) : mock(DataSource.class, invocation -> {
+            if ("getConnection".equals(invocation.getMethod().getName()) && invocation.getArguments().length == 0) {
+                connectionRequests++;
+                return syntheticConnection();
+            }
+            throw new AssertionError("隔离数据源拒绝未知调用: " + invocation.getMethod().getName());
+        });
         config.getDataPermission().setEnable(dataEnabled);
         for (String table : List.of("sys_account", "sys_account_profile", "sys_roleuser_ref", "sys_role",
                 "sys_organization", "sys_postuser_ref")) {
             namespaces.put(table, "eva");
         }
         AtomicBoolean autoCommit = new AtomicBoolean(true);
+        DatabaseMetaData databaseMetadata = mock(DatabaseMetaData.class, invocation -> {
+            if ("getDatabaseProductName".equals(invocation.getMethod().getName())) {
+                metadataReads++;
+                return "PostgreSQL";
+            }
+            if (order != null && "supportsMultipleResultSets".equals(invocation.getMethod().getName())
+                    && invocation.getArguments().length == 0) {
+                return false;
+            }
+            throw new AssertionError("隔离元数据拒绝未知调用: " + invocation.getMethod().getName());
+        });
         connection = mock(Connection.class, invocation -> switch (invocation.getMethod().getName()) {
             case "getAutoCommit" -> autoCommit.get();
             case "setAutoCommit" -> {
@@ -142,24 +178,44 @@ final class AssignedRoleDetailJdbcFixture {
             }
             case "prepareStatement" -> statement(invocation.getArgument(0));
             case "createStatement" -> plainStatement();
-            default -> RETURNS_DEFAULTS.answer(invocation);
-        });
-        when(dataSource.getConnection()).thenReturn(connection);
-        MybatisConfiguration mapperConfig = new MybatisConfiguration();
-        mapperConfig.setEnvironment(new Environment("synthetic", new SpringManagedTransactionFactory(), dataSource));
-        mapperConfig.getTypeAliasRegistry().registerAlias("user", UserEntity.class);
-        mapperConfig.getTypeAliasRegistry().registerAlias("role", RoleEntity.class);
-        mapperConfig.getTypeAliasRegistry().registerAlias("module", ModuleEntity.class);
-        mapperConfig.addInterceptor(new MybatisPlusConfig(config).mybatisPlusInterceptor());
-        for (String resource : List.of("mapper/common.xml", "mapper/User.xml", "mapper/UserRoleRef.xml")) {
-            try (InputStream stream = Resources.getResourceAsStream(resource)) {
-                new XMLMapperBuilder(stream, mapperConfig, resource, mapperConfig.getSqlFragments()).parse();
+            case "getMetaData" -> order == null ? RETURNS_DEFAULTS.answer(invocation) : databaseMetadata;
+            case "isReadOnly" -> connectionIsReadOnly();
+            case "setReadOnly", "commit", "rollback", "close", "clearWarnings" -> null;
+            case "isClosed" -> false;
+            case "getWarnings" -> null;
+            default -> {
+                if (order != null) {
+                    throw new AssertionError("隔离连接拒绝未知调用: " + invocation.getMethod().getName());
+                }
+                yield RETURNS_DEFAULTS.answer(invocation);
             }
+        });
+        if (order == null) {
+            when(dataSource.getConnection()).thenReturn(connection);
         }
-        mapperConfig.addMapper(RoleMapper.class);
-        mapperConfig.addMapper(PostUserMapper.class);
-        SqlSessionTemplate session = new SqlSessionTemplate(new MybatisSqlSessionFactoryBuilder().build(mapperConfig));
-        UserMapper users = session.getMapper(UserMapper.class);
+        if (order == null) {
+            bootstrap = null;
+            MybatisConfiguration mapperConfig = new MybatisConfiguration();
+            mapperConfig.setEnvironment(new Environment("synthetic",
+                    new SpringManagedTransactionFactory(), dataSource));
+            mapperConfig.getTypeAliasRegistry().registerAlias("user", UserEntity.class);
+            mapperConfig.getTypeAliasRegistry().registerAlias("role", RoleEntity.class);
+            mapperConfig.getTypeAliasRegistry().registerAlias("module", ModuleEntity.class);
+            mapperConfig.addInterceptor(new MybatisPlusConfig(config).mybatisPlusInterceptor());
+            for (String resource : List.of("mapper/common.xml", "mapper/User.xml", "mapper/UserRoleRef.xml")) {
+                try (InputStream stream = Resources.getResourceAsStream(resource)) {
+                    new XMLMapperBuilder(stream, mapperConfig, resource, mapperConfig.getSqlFragments()).parse();
+                }
+            }
+            mapperConfig.addMapper(RoleMapper.class);
+            mapperConfig.addMapper(PostUserMapper.class);
+            factory = new MybatisSqlSessionFactoryBuilder().build(mapperConfig);
+        } else {
+            bootstrap = new UserMapperBootstrapFixture(dataSource, config, order);
+            factory = bootstrap.factory;
+        }
+        SqlSessionTemplate session = new SqlSessionTemplate(factory);
+        users = session.getMapper(UserMapper.class);
         RoleUserMapper refs = session.getMapper(RoleUserMapper.class);
         PostUserMapper postRefs = session.getMapper(PostUserMapper.class);
         JdbcTemplate jdbc = new JdbcTemplate(dataSource);
@@ -221,12 +277,25 @@ final class AssignedRoleDetailJdbcFixture {
         AtomicReference<ResultSet> result = new AtomicReference<>();
         return mock(PreparedStatement.class, invocation -> {
             String method = invocation.getMethod().getName();
-            if (method.startsWith("set") && invocation.getArguments().length >= 2
-                    && invocation.getArgument(0) instanceof Integer index) {
+            if (bootstrap != null && List.of("executeUpdate", "executeLargeUpdate", "addBatch", "executeBatch",
+                    "executeLargeBatch").contains(method)) {
+                writes++;
+                throw new AssertionError("只读测试禁止写入或批处理");
+            }
+            boolean parameterSetter = bootstrap == null ? method.startsWith("set")
+                    : List.of("setLong", "setInt", "setString", "setObject", "setNull").contains(method);
+            if (parameterSetter && (bootstrap == null ? invocation.getArguments().length >= 2
+                    : invocation.getArguments().length == 2)
+                    && invocation.getArgument(0) instanceof Integer index && index > 0) {
+                Object value = invocation.getArgument(1);
+                if (bootstrap != null && !(value == null || value instanceof Number || value instanceof String)) {
+                    throw new AssertionError("隔离参数拒绝非标量值");
+                }
                 bound.put(index, "setNull".equals(method) ? null : invocation.getArgument(1));
                 return null;
             }
-            if ("execute".equals(method) || "executeQuery".equals(method)) {
+            if (("execute".equals(method) || "executeQuery".equals(method))
+                    && (bootstrap == null || invocation.getArguments().length == 0)) {
                 result.set(execute(query, bound));
                 return "execute".equals(method) ? true : result.get();
             }
@@ -234,7 +303,15 @@ final class AssignedRoleDetailJdbcFixture {
                 case "getResultSet" -> result.get();
                 case "getUpdateCount" -> -1;
                 case "getConnection" -> connection;
-                default -> RETURNS_DEFAULTS.answer(invocation);
+                case "getMoreResults" -> {
+                    if (bootstrap != null && invocation.getArguments().length != 0) {
+                        throw new AssertionError("隔离Statement拒绝多结果集重载");
+                    }
+                    yield false;
+                }
+                case "isClosed" -> false;
+                case "close", "setQueryTimeout", "setFetchSize" -> null;
+                default -> unknownJdbc(invocation);
             };
         });
     }
@@ -249,17 +326,29 @@ final class AssignedRoleDetailJdbcFixture {
         assertSame(connection, Objects.requireNonNull(holder).getConnection());
         assertTrue(connectionIsReadOnly());
         return mock(Statement.class, invocation -> {
+            if (bootstrap != null && List.of("execute", "executeUpdate", "executeLargeUpdate", "addBatch",
+                    "executeBatch", "executeLargeBatch").contains(invocation.getMethod().getName())) {
+                writes++;
+                throw new AssertionError("只读测试禁止不受控Statement执行");
+            }
             if ("executeQuery".equals(invocation.getMethod().getName())) {
                 return execute(invocation.getArgument(0), Map.of());
             }
             if ("getConnection".equals(invocation.getMethod().getName())) {
                 return connection;
             }
-            return RETURNS_DEFAULTS.answer(invocation);
+            return switch (invocation.getMethod().getName()) {
+                case "close", "setQueryTimeout", "setFetchSize" -> null;
+                case "isClosed" -> false;
+                default -> unknownJdbc(invocation);
+            };
         });
     }
 
     private ResultSet execute(String query, Map<Integer, Object> bound) throws Exception {
+        if (bootstrap != null && (query.contains(";") || query.contains("--") || query.contains("/*"))) {
+            throw new AssertionError("隔离SQL禁止多语句或注释");
+        }
         sql.add(query);
         parameters.add(new HashMap<>(bound));
         if (!query.stripLeading().toLowerCase().startsWith("select")) {
@@ -321,11 +410,53 @@ final class AssignedRoleDetailJdbcFixture {
         switch (table) {
             case "sys_account" -> {
                 accountQueries++;
-                if (accountPresent) {
-                    rows.add(new HashMap<>(Map.of("id", target, "dept_id", 42L, "deleted", 0L,
-                            "frozen", accountFrozen, "create_id", accountCreator, "modify_id", accountCreator)));
+                if (bootstrap == null) {
+                    if (accountPresent) {
+                        rows.add(new HashMap<>(Map.of("id", target, "dept_id", 42L, "deleted", 0L,
+                                "frozen", accountFrozen, "create_id", accountCreator, "modify_id", accountCreator)));
+                    }
+                    columns = List.of("id", "dept_id", "deleted", "frozen", "create_id", "modify_id");
+                } else {
+                    Map<String, Object> row = new LinkedHashMap<>();
+                    row.put("id", target);
+                    row.put("revision", 3);
+                    row.put("deleted", accountDeleted);
+                    row.put("frozen", accountFrozen);
+                    row.put("sort", 1.5D);
+                    row.put("tenant_id", 0L);
+                    row.put("create_id", accountCreator);
+                    row.put("create_by", "合成创建人");
+                    row.put("utc_create", java.time.LocalDateTime.of(2026, 10, 1, 8, 30));
+                    row.put("modify_id", accountCreator);
+                    row.put("modify_by", "合成修改人");
+                    row.put("utc_modify", java.time.LocalDateTime.of(2026, 10, 2, 9, 45));
+                    row.put("remark", "合成备注");
+                    row.put("account", "synthetic-worker");
+                    row.put("password", "synthetic-unused-hash");
+                    row.put("avatar", "synthetic-avatar");
+                    row.put("nick_name", "合成昵称");
+                    row.put("tel", "synthetic-tel");
+                    row.put("email", "worker@example.invalid");
+                    row.put("last_ip", "192.0.2.1");
+                    row.put("last_login", java.sql.Date.valueOf("2026-10-02"));
+                    row.put("perm_ver", 9L);
+                    row.putAll(accountValues);
+                    if (!tenantColumnPresent) {
+                        row.remove("tenant_id");
+                    }
+                    // 只有实际JOIN查询才返回档案列，避免替框架生成查询伪造部门。
+                    if (select.getJoins() != null && select.getJoins().stream()
+                            .anyMatch(join -> join.getRightItem().toString().toLowerCase()
+                                    .startsWith("sys_account_profile"))) {
+                        row.put("code", profilePresent ? profileCode : null);
+                        row.put("name", profilePresent ? "合成档案" : null);
+                        row.put("dept_id", profilePresent ? 42L : null);
+                    }
+                    columns = new ArrayList<>(row.keySet());
+                    if (accountPresent) {
+                        rows.add(row);
+                    }
                 }
-                columns = List.of("id", "dept_id", "deleted", "frozen", "create_id", "modify_id");
             }
             case "sys_roleuser_ref" -> {
                 referenceReads++;
@@ -422,7 +553,12 @@ final class AssignedRoleDetailJdbcFixture {
             if ("getColumnType".equals(method)) {
                 return columns.size() == 1 ? Types.BIGINT : Types.VARCHAR;
             }
-            return RETURNS_DEFAULTS.answer(invocation);
+            if (bootstrap != null && "getColumnClassName".equals(method)) {
+                String column = columns.get((int) invocation.getArgument(0) - 1);
+                return rows.stream().map(row -> row.get(column)).filter(Objects::nonNull)
+                        .findFirst().map(value -> value.getClass().getName()).orElse(Object.class.getName());
+            }
+            return unknownJdbc(invocation);
         });
         return mock(ResultSet.class, invocation -> {
             String method = invocation.getMethod().getName();
@@ -435,18 +571,54 @@ final class AssignedRoleDetailJdbcFixture {
             if ("wasNull".equals(method)) {
                 return wasNull.get();
             }
-            if (List.of("getObject", "getLong", "getString").contains(method)) {
+            if (bootstrap != null && "getType".equals(method) && invocation.getArguments().length == 0) {
+                return ResultSet.TYPE_FORWARD_ONLY;
+            }
+            if (List.of("getObject", "getLong", "getInt", "getDouble", "getDate", "getString").contains(method)) {
+                if (bootstrap != null && !(invocation.getArguments().length == 1
+                        || ("getObject".equals(method) && invocation.getArguments().length == 2
+                        && invocation.getArgument(1) instanceof Class<?>))) {
+                    throw new AssertionError("隔离结果集拒绝未知getter重载");
+                }
                 Object key = invocation.getArgument(0);
                 String column = key instanceof Integer index ? columns.get(index - 1) : key.toString().toLowerCase();
+                if (bootstrap != null && !columns.contains(column)) {
+                    throw new AssertionError("隔离结果集拒绝不存在的列");
+                }
                 Object result = rows.get(cursor.get()).get(column);
                 wasNull.set(result == null);
                 return switch (method) {
                     case "getLong" -> result == null ? 0L : ((Number) result).longValue();
+                    case "getInt" -> result == null ? 0 : ((Number) result).intValue();
+                    case "getDouble" -> result == null ? 0D : ((Number) result).doubleValue();
                     case "getString" -> result == null ? null : result.toString();
                     default -> result;
                 };
             }
-            return RETURNS_DEFAULTS.answer(invocation);
+            return switch (method) {
+                case "close" -> null;
+                case "isClosed" -> false;
+                default -> unknownJdbc(invocation);
+            };
         });
+    }
+
+    private Object unknownJdbc(InvocationOnMock invocation) throws Throwable {
+        if (bootstrap == null) {
+            return RETURNS_DEFAULTS.answer(invocation);
+        }
+        throw new AssertionError("隔离JDBC拒绝未知调用: " + invocation.getMethod().getName());
+    }
+
+    private Connection syntheticConnection() {
+        return connection;
+    }
+
+    /** 关闭新增隔离启动容器，既有手工配置用例无需额外资源操作。 */
+    @Override
+    public void close() {
+        if (bootstrap != null) {
+            bootstrap.close();
+        }
     }
 }
