@@ -17,6 +17,8 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.HexFormat;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -32,15 +34,18 @@ public final class PostgresInstanceEvidence {
     private static final ObjectMapper JSON = new ObjectMapper()
             .enable(JsonParser.Feature.STRICT_DUPLICATE_DETECTION)
             .enable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS);
-    private static final Map<String, String> LABELS = Map.of(
-            "menu-scope", "org.pkaq.sys.module.AuthorizedMenuPostgresTest",
-            "menu-state", "org.pkaq.sys.module.AuthorizedMenuPostgresTest",
-            "menu-tenant", "org.pkaq.sys.module.AuthorizedMenuPostgresTest",
-            "menu-identity", "org.pkaq.sys.module.AuthorizedMenuPostgresTest",
-            "mode-provision", "org.pkaq.core.mybatis.tenant.TenantSchemaModePostgresTest",
-            "mode-route", "org.pkaq.core.mybatis.tenant.TenantSchemaModePostgresTest",
-            "advisor-order", "org.pkaq.core.mybatis.tenant.TenantSchemaAdvisorOrderPostgresTest",
-            "role-isolation", "org.pkaq.sys.role.service.RoleSchemaIsolationPostgresTest");
+    private static final Map<String, String> LABELS = Map.ofEntries(
+            Map.entry("menu-scope", "org.pkaq.sys.module.AuthorizedMenuPostgresTest"),
+            Map.entry("menu-state", "org.pkaq.sys.module.AuthorizedMenuPostgresTest"),
+            Map.entry("menu-tenant", "org.pkaq.sys.module.AuthorizedMenuPostgresTest"),
+            Map.entry("menu-identity", "org.pkaq.sys.module.AuthorizedMenuPostgresTest"),
+            Map.entry("mode-provision", "org.pkaq.core.mybatis.tenant.TenantSchemaModePostgresTest"),
+            Map.entry("mode-route", "org.pkaq.core.mybatis.tenant.TenantSchemaModePostgresTest"),
+            Map.entry("advisor-order", "org.pkaq.core.mybatis.tenant.TenantSchemaAdvisorOrderPostgresTest"),
+            Map.entry("role-isolation", "org.pkaq.sys.role.service.RoleSchemaIsolationPostgresTest"),
+            Map.entry("migration-empty13", "org.pkaq.sys.tenant.TenantCodeFlywayChainPostgresTest"),
+            Map.entry("migration-legacy11to13", "org.pkaq.sys.tenant.TenantCodeFlywayChainPostgresTest"),
+            Map.entry("migration-rename-rollback", "org.pkaq.sys.tenant.TenantCodeFlywayChainPostgresTest"));
     private static final Set<String> FIELDS = Set.of("version", "nonce", "testClass", "label", "dataDirectory",
             "serverAddress", "serverPort", "listenAddresses", "serverVersionNum", "postmasterStart");
     private static final String SELECT = """
@@ -134,7 +139,7 @@ public final class PostgresInstanceEvidence {
                                        Map<String, Object> record) throws Exception {
         Set<String> labels = new HashSet<>();
         Set<String> directories = new HashSet<>();
-        Set<String> starts = new HashSet<>();
+        Set<List<String>> instances = new HashSet<>();
         try (var entries = Files.list(evidence)) {
             for (Path file : entries.toList()) {
                 require(Files.isRegularFile(file) && !Files.isSymbolicLink(file), "证据目录存在额外条目");
@@ -156,12 +161,14 @@ public final class PostgresInstanceEvidence {
                         && directory.startsWith(temporary) && !directory.equals(temporary), "既有证据数据目录越界");
                 String started = text(previous, "postmasterStart");
                 require(Instant.parse(started).toString().equals(started), "既有证据启动时间不符");
-                require(labels.add(label) && directories.add(directory.toString())
-                        && starts.add(started), "既有证据实例重复");
+                String dataKey = directory.toString().toLowerCase(Locale.ROOT);
+                require(labels.add(label) && directories.add(dataKey)
+                        && instances.add(List.of(dataKey, started)), "既有证据实例重复");
             }
         }
-        require(!labels.contains(record.get("label")) && !directories.contains(record.get("dataDirectory"))
-                && !starts.contains(record.get("postmasterStart")), "合成实例重复");
+        String dataKey = record.get("dataDirectory").toString().toLowerCase(Locale.ROOT);
+        require(!labels.contains(record.get("label")) && !directories.contains(dataKey)
+                && !instances.contains(List.of(dataKey, record.get("postmasterStart").toString())), "合成实例重复");
     }
 
     private static void publish(Path evidence, String label, byte[] bytes) throws Exception {

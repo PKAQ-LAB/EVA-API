@@ -21,6 +21,9 @@ subprojects {
 
     apply plugin: 'io.spring.dependency-management'
 
+    // 统一 Boot BOM 的 Flyway 属性，避免数据库插件与 core 使用不同版本。
+    ext['flyway.version'] = libs.versions.flyway.get()
+
     java {
         toolchain {
             languageVersion = JavaLanguageVersion.of(25)

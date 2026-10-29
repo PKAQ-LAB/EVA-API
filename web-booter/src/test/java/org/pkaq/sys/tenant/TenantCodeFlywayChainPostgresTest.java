@@ -3,6 +3,7 @@ package org.pkaq.sys.tenant;
 import io.zonky.test.db.postgres.embedded.EmbeddedPostgres;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.Test;
+import org.pkaq.test.PostgresInstanceEvidence;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
@@ -25,8 +26,10 @@ class TenantCodeFlywayChainPostgresTest {
     /** 全新数据库必须完整初始化至 V13，重复执行不得重新运行已完成迁移。 */
     @Test
     void initializesEmptyDatabaseThroughAllThirteenMigrations() throws Exception {
-        try (EmbeddedPostgres postgres = EmbeddedPostgres.start()) {
+        try (EmbeddedPostgres postgres = EmbeddedPostgres.builder()
+                .setServerConfig("listen_addresses", "127.0.0.1").setPort(0).start()) {
             DataSource source = postgres.getPostgresDatabase();
+            PostgresInstanceEvidence.capture(source, "migration-empty13");
             Flyway flyway = configured(source, null);
             assertEquals(13, flyway.migrate().migrationsExecuted);
             JdbcTemplate database = new JdbcTemplate(source);
@@ -55,8 +58,10 @@ class TenantCodeFlywayChainPostgresTest {
     /** V12 升级旧租户账号后，V13 重命名 schema 必须保留主键、凭据和平台零号记录。 */
     @Test
     void upgradesLegacyTenantAccountBeforeRenamingSchema() throws Exception {
-        try (EmbeddedPostgres postgres = EmbeddedPostgres.start()) {
+        try (EmbeddedPostgres postgres = EmbeddedPostgres.builder()
+                .setServerConfig("listen_addresses", "127.0.0.1").setPort(0).start()) {
             DataSource source = postgres.getPostgresDatabase();
+            PostgresInstanceEvidence.capture(source, "migration-legacy11to13");
             assertEquals(11, configured(source, "11").migrate().migrationsExecuted);
             JdbcTemplate database = new JdbcTemplate(source);
             database.execute("CREATE SCHEMA tenant_1");
@@ -90,8 +95,10 @@ class TenantCodeFlywayChainPostgresTest {
     /** 后续租户冲突时，真实 Flyway 必须回滚先前重命名及映射写入。 */
     @Test
     void rollsBackEarlierRenameWhenLaterTenantTargetIsOccupied() throws Exception {
-        try (EmbeddedPostgres postgres = EmbeddedPostgres.start()) {
+        try (EmbeddedPostgres postgres = EmbeddedPostgres.builder()
+                .setServerConfig("listen_addresses", "127.0.0.1").setPort(0).start()) {
             DataSource source = postgres.getPostgresDatabase();
+            PostgresInstanceEvidence.capture(source, "migration-rename-rollback");
             assertEquals(12, configured(source, "12").migrate().migrationsExecuted);
             JdbcTemplate database = new JdbcTemplate(source);
             database.execute("CREATE SCHEMA tenant_1");
