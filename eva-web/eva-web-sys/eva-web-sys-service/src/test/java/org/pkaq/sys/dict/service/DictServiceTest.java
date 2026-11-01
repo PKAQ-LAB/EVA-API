@@ -14,6 +14,12 @@ import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.sys.dict.bo.DictAoeBo;
 import org.pkaq.sys.dict.bo.DictLineBo;
 import org.pkaq.sys.dict.cache.DictCacheHelper;
+import org.pkaq.sys.dict.cache.DictCacheHelper.Owner;
+import org.pkaq.core.threaduser.ThreadUser;
+import org.pkaq.core.threaduser.ThreadUserHelper;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.argThat;
 import org.pkaq.sys.dict.convert.DictConvert;
 import org.pkaq.sys.dict.entity.DictEntity;
 import org.pkaq.sys.dict.entity.DictItemEntity;
@@ -42,6 +48,150 @@ import static org.mockito.Mockito.when;
  */
 @ExtendWith(MockitoExtension.class)
 class DictServiceTest {
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(strings = {"key", "value", "sort", "remark", "frozen",
+            "omit", "foreign", "duplicate", "ordinary9999", "new9999", "main9999", "unknown", "null", "blank"})
+    void rejectsWholeEditBeforeAnyWrite(String change) {
+        ThreadUserHelper.runWithUser(new ThreadUser().setUserId(7L).setName("synthetic"), () -> {
+            DictEntity main = new DictEntity();
+            main.setId(1L);
+            main.setFrozen(FrozenEnumm.UN_FROZEN);
+            DictItemEntity protectedItem = protectedItem();
+            org.mockito.Mockito.lenient().when(dictMapper.selectById(1L)).thenReturn(main);
+            org.mockito.Mockito.lenient().when(dictItemMapper.selectList(any(Wrapper.class)))
+                    .thenReturn(List.of(protectedItem));
+            DictLineBo line = this.line(11L, "fixed", "固定");
+            DictAoeBo bo = new DictAoeBo();
+            bo.setId(1L);
+            bo.setCode("status");
+            bo.setName("状态");
+            bo.setLines(new java.util.ArrayList<>(List.of(this.line(null, "normal", "正常"), line)));
+            switch (change) {
+                case "key" -> line.setKeyName("changed");
+                case "value" -> line.setKeyValue("改变");
+                case "sort" -> line.setOrders(8D);
+                case "remark" -> line.setRemark("");
+                case "frozen" -> line.setFrozen(0);
+                case "omit" -> bo.getLines().remove(line);
+                case "foreign" -> line.setId(999L);
+                case "duplicate" -> bo.getLines().add(line);
+                case "ordinary9999" -> {
+                    protectedItem.setFrozen(FrozenEnumm.UN_FROZEN);
+                    line.setFrozen(9999);
+                }
+                case "new9999" -> bo.getLines().getFirst().setFrozen(9999);
+                case "main9999" -> bo.setFrozen(9999);
+                case "unknown" -> bo.getLines().getFirst().setFrozen(2);
+                case "null" -> bo.getLines().add(null);
+                case "blank" -> line.setKeyValue("");
+                default -> throw new AssertionError(change);
+            }
+            assertThrows(RuntimeException.class, () -> service.edit(bo));
+            verify(dictMapper, never()).updatePrivate(eq("eva"), any(DictEntity.class), anyInt());
+            verify(dictMapper, never()).insertPrivate(eq("eva"), any(DictEntity.class));
+            verify(dictItemMapper, never()).updatePrivate(eq("eva"), any(DictItemEntity.class), anyInt());
+            verify(dictItemMapper, never()).insertPrivate(eq("eva"), any(DictItemEntity.class));
+            verify(dictItemMapper, never()).deletePrivate(eq("eva"), any(), anyInt());
+            org.mockito.Mockito.verifyNoInteractions(dictCacheHelper);
+
+        });
+    }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(booleans = {true, false})
+    void unchangedProtectedLineIsRetainedWithoutUpdateAndRemarkReadsBack(boolean explicit) {
+        ThreadUserHelper.runWithUser(new ThreadUser().setUserId(7L).setName("synthetic"), () -> {
+            DictEntity main = new DictEntity();
+            main.setId(1L);
+            main.setCode("status");
+            main.setFrozen(FrozenEnumm.UN_FROZEN);
+            main.setRemark("真实备注");
+            when(dictMapper.selectById(1L)).thenReturn(main);
+            DictAoeBo bo = new DictAoeBo();
+            bo.setId(1L);
+            bo.setCode("status");
+            bo.setName("状态");
+            bo.setRemark("真实备注");
+            DictLineBo fixed = this.line(11L, "fixed", "固定");
+            if (explicit) {
+                fixed.setOrders(7D);
+                fixed.setFrozen(9999);
+            }
+            DictItemEntity ordinary = new DictItemEntity();
+            ordinary.setId(12L);
+            ordinary.setMainId(1L);
+            ordinary.setFrozen(FrozenEnumm.UN_FROZEN);
+            when(dictItemMapper.selectList(any(Wrapper.class))).thenReturn(List.of(protectedItem(), ordinary));
+            bo.setLines(List.of(fixed, this.line(12L, "normal", "修改")));
+            service.edit(bo);
+            verify(dictMapper).updatePrivate(eq("eva"), any(DictEntity.class), anyInt());
+            ArgumentCaptor<DictItemEntity> updated = ArgumentCaptor.forClass(DictItemEntity.class);
+            verify(dictItemMapper).updatePrivate(eq("eva"), updated.capture(), anyInt());
+            assertEquals(12L, updated.getValue().getId());
+            verify(dictItemMapper, never()).deletePrivate(eq("eva"), any(), anyInt());
+            assertEquals("真实备注", service.getDict(bo).getRemark());
+            when(dictMapper.selectList(any(Wrapper.class))).thenReturn(List.of(main));
+            assertEquals("真实备注", service.listDict().getFirst().getRemark());
+
+        });
+    }
+
+    @Test
+    void deletingMainWithProtectedLineIsRejected() {
+        ThreadUserHelper.runWithUser(new ThreadUser().setUserId(7L).setName("synthetic"), () -> {
+            DictEntity main = new DictEntity();
+            main.setId(1L);
+            main.setFrozen(FrozenEnumm.UN_FROZEN);
+            when(dictMapper.selectById(1L)).thenReturn(main);
+            when(dictItemMapper.selectList(any(Wrapper.class))).thenReturn(List.of(protectedItem()));
+            assertThrows(RuntimeException.class, () -> service.delDict(1L));
+            verify(dictMapper, never()).deletePrivate(eq("eva"), any(), anyInt());
+            verify(dictItemMapper, never()).delete(any(Wrapper.class));
+
+        });
+    }
+
+    private DictItemEntity protectedItem() {
+        DictItemEntity item = new DictItemEntity();
+        item.setId(11L);
+        item.setMainId(1L);
+        item.setDCode("fixed");
+        item.setDValue("固定");
+        item.setSort(7D);
+        item.setFrozen(FrozenEnumm.READ_ONLY);
+        return item;
+    }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(strings = {"missing", "readonly", "null", "zero", "negative"})
+    void rejectsWholeSwitchBeforeAnyWrite(String invalid) {
+        ThreadUserHelper.runWithUser(new ThreadUser().setUserId(7L).setName("synthetic"), () -> {
+            DictEntity normal = new DictEntity();
+            normal.setId(1L);
+            normal.setFrozen(FrozenEnumm.UN_FROZEN);
+            org.mockito.Mockito.lenient().when(dictMapper.selectById(1L)).thenReturn(normal);
+            if ("readonly".equals(invalid)) {
+                DictEntity readOnly = new DictEntity();
+                readOnly.setFrozen(FrozenEnumm.READ_ONLY);
+                when(dictMapper.selectById(2L)).thenReturn(readOnly);
+            }
+            Long bad = switch (invalid) {
+                case "null" -> null;
+                case "zero" -> 0L;
+                case "negative" -> -1L;
+                default -> 2L;
+            };
+            org.pkaq.core.mvc.bo.SingleArray<Long> ids = new org.pkaq.core.mvc.bo.SingleArray<>();
+            java.util.Set<Long> values = new java.util.LinkedHashSet<>();
+            values.add(1L);
+            values.add(bad);
+            ids.setParam(values);
+            assertThrows(RuntimeException.class, () -> service.switchFrozen(ids));
+            verify(dictMapper, never()).updatePrivate(eq("eva"), any(DictEntity.class), anyInt());
+            org.mockito.Mockito.verifyNoInteractions(dictCacheHelper);
+
+        });
+    }
     @Mock
     private DictMapper dictMapper;
 
@@ -53,14 +203,61 @@ class DictServiceTest {
 
     private DictService service;
 
+    @Mock
+    private DictItemSnapshot itemSnapshot;
+
+    @Mock
+    private DictBusinessAccess businessAccess;
+
     /**
      * 初始化待测服务和事务同步上下文。
      */
     @BeforeEach
     void setUp() {
         DictConvert convert = Mappers.getMapper(DictConvert.class);
-        this.service = new DictService(this.dictCacheHelper, this.dictItemMapper, convert, new EvaConfig());
+        this.service = new DictService(this.dictCacheHelper, this.dictItemMapper, convert, new EvaConfig(),
+                itemSnapshot, businessAccess);
+        org.mockito.Mockito.lenient().when(itemSnapshot.load(any(Long.class))).thenAnswer(invocation -> {
+            Long id = invocation.getArgument(0);
+            DictEntity main = dictMapper.selectById(id);
+            if (main == null || main.getFrozen() == FrozenEnumm.READ_ONLY) {
+                org.pkaq.sys.SysCodes.READ_ONLY_RECORD.newException();
+            }
+            List<DictItemEntity> items = dictItemMapper.selectList(
+                    new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<DictItemEntity>()
+                            .eq(DictItemEntity::getMainId, id));
+            return new DictItemSnapshot.Snapshot(main, items.stream()
+                    .filter(item -> item.getFrozen() == FrozenEnumm.READ_ONLY).toList());
+        });
         ReflectionTestUtils.setField(this.service, "mapper", this.dictMapper);
+        org.mockito.Mockito.lenient().when(businessAccess.businessOwner()).thenReturn(new Owner("eva", "BUSINESS"));
+        org.mockito.Mockito.lenient().when(businessAccess.sources())
+                .thenReturn(List.of(new Owner("eva", "BUSINESS")));
+        org.mockito.Mockito.lenient().when(dictMapper.selectVisible(eq("eva"), any(Wrapper.class)))
+                .thenAnswer(call -> {
+                    var wrapper = (com.baomidou.mybatisplus.core.conditions.AbstractWrapper<?, ?, ?>)
+                            call.getArgument(1);
+                    wrapper.getSqlSegment();
+                    Long id = wrapper.getParamNameValuePairs().values().stream()
+                            .filter(Long.class::isInstance).map(Long.class::cast).findFirst().orElse(null);
+                    if (id == null) {
+                        return dictMapper.selectList((Wrapper<DictEntity>) call.getArgument(1));
+                    }
+                    DictEntity found = dictMapper.selectById(id);
+                    if (found != null && found.getCategory() == null) {
+                        found.setCategory("BUSINESS");
+                    }
+                    return found == null ? List.of() : List.of(found);
+                });
+        org.mockito.Mockito.lenient().when(dictItemMapper.selectVisible(eq("eva"), any(Wrapper.class)))
+                .thenAnswer(call -> dictItemMapper.selectList((Wrapper<DictItemEntity>) call.getArgument(1)));
+        org.mockito.Mockito.lenient().when(dictMapper.updatePrivate(eq("eva"), any(), anyInt())).thenReturn(1);
+        org.mockito.Mockito.lenient().when(dictMapper.insertPrivate(eq("eva"), any())).thenReturn(1);
+        org.mockito.Mockito.lenient().when(dictMapper.deletePrivate(eq("eva"), any(), anyInt())).thenReturn(1);
+        org.mockito.Mockito.lenient().when(dictItemMapper.updatePrivate(eq("eva"), any(), anyInt())).thenReturn(1);
+        org.mockito.Mockito.lenient().when(dictItemMapper.insertPrivate(eq("eva"), any())).thenReturn(1);
+        org.mockito.Mockito.lenient().when(dictItemMapper.deletePrivate(eq("eva"), any(), anyInt())).thenReturn(1);
+        TransactionSynchronizationManager.setActualTransactionActive(true);
         TransactionSynchronizationManager.initSynchronization();
     }
 
@@ -69,6 +266,7 @@ class DictServiceTest {
      */
     @AfterEach
     void tearDown() {
+        TransactionSynchronizationManager.setActualTransactionActive(false);
         if (TransactionSynchronizationManager.isSynchronizationActive()) {
             TransactionSynchronizationManager.clearSynchronization();
         }
@@ -79,45 +277,48 @@ class DictServiceTest {
      */
     @Test
     void shouldDiffSaveItemsWhenEditingDict() {
-        DictEntity oldDict = new DictEntity();
-        oldDict.setId(1L);
-        oldDict.setCode("status");
-        oldDict.setFrozen(FrozenEnumm.UN_FROZEN);
+        ThreadUserHelper.runWithUser(new ThreadUser().setUserId(7L).setName("synthetic"), () -> {
+            DictEntity oldDict = new DictEntity();
+            oldDict.setId(1L);
+            oldDict.setCode("status");
+            oldDict.setFrozen(FrozenEnumm.UN_FROZEN);
 
-        DictItemEntity retainedItem = new DictItemEntity();
-        retainedItem.setId(11L);
-        retainedItem.setMainId(1L);
-        retainedItem.setDCode("enabled");
-        DictItemEntity removedItem = new DictItemEntity();
-        removedItem.setId(12L);
-        removedItem.setMainId(1L);
-        removedItem.setDCode("disabled");
+            DictItemEntity retainedItem = new DictItemEntity();
+            retainedItem.setId(11L);
+            retainedItem.setMainId(1L);
+            retainedItem.setDCode("enabled");
+            DictItemEntity removedItem = new DictItemEntity();
+            removedItem.setId(12L);
+            removedItem.setMainId(1L);
+            removedItem.setDCode("disabled");
 
-        when(this.dictMapper.selectCount(any(Wrapper.class))).thenReturn(0L);
-        when(this.dictMapper.selectById(1L)).thenReturn(oldDict);
-        when(this.dictItemMapper.selectList(any(Wrapper.class))).thenReturn(List.of(retainedItem, removedItem));
+            when(this.dictMapper.selectById(1L)).thenReturn(oldDict);
+            when(this.dictItemMapper.selectList(any(Wrapper.class))).thenReturn(List.of(retainedItem, removedItem));
 
-        DictAoeBo bo = new DictAoeBo();
-        bo.setId(1L);
-        bo.setCode("status");
-        bo.setName("状态");
-        bo.setLines(List.of(this.line(11L, "enabled", "启用"), this.line(null, "pending", "待处理")));
+            DictAoeBo bo = new DictAoeBo();
+            bo.setId(1L);
+            bo.setCode("status");
+            bo.setName("状态");
+            bo.setLines(List.of(this.line(11L, "enabled", "启用"), this.line(null, "pending", "待处理")));
 
-        this.service.edit(bo);
+            this.service.edit(bo);
 
-        ArgumentCaptor<DictItemEntity> insertedItem = ArgumentCaptor.forClass(DictItemEntity.class);
-        verify(this.dictMapper).updateById(any(DictEntity.class));
-        verify(this.dictItemMapper).updateById(any(DictItemEntity.class));
-        verify(this.dictItemMapper).insert(insertedItem.capture());
-        verify(this.dictItemMapper).deleteById(12L);
-        verify(this.dictItemMapper, never()).deleteById(11L);
-        verify(this.dictCacheHelper, never()).remove(any(String.class));
-        assertEquals(1L, insertedItem.getValue().getMainId());
-        assertEquals("pending", insertedItem.getValue().getDCode());
-        assertTrue(insertedItem.getValue().getId() > 0L);
-        assertNotEquals(11L, insertedItem.getValue().getId());
-        assertNotEquals(12L, insertedItem.getValue().getId());
-        assertEquals(1, TransactionSynchronizationManager.getSynchronizations().size());
+            ArgumentCaptor<DictItemEntity> insertedItem = ArgumentCaptor.forClass(DictItemEntity.class);
+            verify(this.dictMapper).updatePrivate(eq("eva"), any(DictEntity.class), anyInt());
+            verify(this.dictItemMapper).updatePrivate(eq("eva"), any(DictItemEntity.class), anyInt());
+            verify(this.dictItemMapper).insertPrivate(eq("eva"), insertedItem.capture());
+            verify(this.dictItemMapper).deletePrivate(eq("eva"), argThat(row -> row.getId().equals(12L)), anyInt());
+            verify(this.dictItemMapper, never()).deletePrivate(eq("eva"), argThat(row -> row.getId().equals(11L)),
+                    anyInt());
+            verify(this.dictCacheHelper, never()).remove(any(Owner.class), any(String.class));
+            assertEquals(1L, insertedItem.getValue().getMainId());
+            assertEquals("pending", insertedItem.getValue().getDCode());
+            assertTrue(insertedItem.getValue().getId() > 0L);
+            assertNotEquals(11L, insertedItem.getValue().getId());
+            assertNotEquals(12L, insertedItem.getValue().getId());
+            assertEquals(1, TransactionSynchronizationManager.getSynchronizations().size());
+
+        });
     }
 
     /**
@@ -125,27 +326,29 @@ class DictServiceTest {
      */
     @Test
     void shouldReloadCacheOnlyAfterCommit() {
-        DictEntity oldDict = new DictEntity();
-        oldDict.setId(1L);
-        oldDict.setCode("old-status");
-        oldDict.setFrozen(FrozenEnumm.UN_FROZEN);
-        when(this.dictMapper.selectCount(any(Wrapper.class))).thenReturn(0L);
-        when(this.dictMapper.selectById(1L)).thenReturn(oldDict);
-        when(this.dictItemMapper.selectList(any(Wrapper.class))).thenReturn(Collections.emptyList());
+        ThreadUserHelper.runWithUser(new ThreadUser().setUserId(7L).setName("synthetic"), () -> {
+            DictEntity oldDict = new DictEntity();
+            oldDict.setId(1L);
+            oldDict.setCode("old-status");
+            oldDict.setFrozen(FrozenEnumm.UN_FROZEN);
+            when(this.dictMapper.selectById(1L)).thenReturn(oldDict);
+            when(this.dictItemMapper.selectList(any(Wrapper.class))).thenReturn(Collections.emptyList());
 
-        DictAoeBo bo = new DictAoeBo();
-        bo.setId(1L);
-        bo.setCode("new-status");
-        bo.setName("新状态");
-        this.service.edit(bo);
+            DictAoeBo bo = new DictAoeBo();
+            bo.setId(1L);
+            bo.setCode("new-status");
+            bo.setName("新状态");
+            this.service.edit(bo);
 
-        verify(this.dictCacheHelper, never()).remove(any(String.class));
-        for (TransactionSynchronization synchronization : TransactionSynchronizationManager.getSynchronizations()) {
-            synchronization.afterCommit();
-        }
+            verify(this.dictCacheHelper, never()).remove(any(Owner.class), any(String.class));
+            for (TransactionSynchronization synchronization : TransactionSynchronizationManager.getSynchronizations()) {
+                synchronization.afterCommit();
+            }
 
-        verify(this.dictCacheHelper).remove("old-status");
-        verify(this.dictCacheHelper).remove("new-status");
+            verify(this.dictCacheHelper).remove(new Owner("eva", "BUSINESS"), "old-status");
+            verify(this.dictCacheHelper).remove(new Owner("eva", "BUSINESS"), "new-status");
+
+        });
     }
 
     /**
@@ -153,25 +356,27 @@ class DictServiceTest {
      */
     @Test
     void shouldNotReloadCacheAfterRollback() {
-        DictEntity oldDict = new DictEntity();
-        oldDict.setId(1L);
-        oldDict.setCode("status");
-        oldDict.setFrozen(FrozenEnumm.UN_FROZEN);
-        when(this.dictMapper.selectCount(any(Wrapper.class))).thenReturn(0L);
-        when(this.dictMapper.selectById(1L)).thenReturn(oldDict);
-        when(this.dictItemMapper.selectList(any(Wrapper.class))).thenReturn(Collections.emptyList());
+        ThreadUserHelper.runWithUser(new ThreadUser().setUserId(7L).setName("synthetic"), () -> {
+            DictEntity oldDict = new DictEntity();
+            oldDict.setId(1L);
+            oldDict.setCode("status");
+            oldDict.setFrozen(FrozenEnumm.UN_FROZEN);
+            when(this.dictMapper.selectById(1L)).thenReturn(oldDict);
+            when(this.dictItemMapper.selectList(any(Wrapper.class))).thenReturn(Collections.emptyList());
 
-        DictAoeBo bo = new DictAoeBo();
-        bo.setId(1L);
-        bo.setCode("status");
-        bo.setName("状态");
-        this.service.edit(bo);
+            DictAoeBo bo = new DictAoeBo();
+            bo.setId(1L);
+            bo.setCode("status");
+            bo.setName("状态");
+            this.service.edit(bo);
 
-        for (TransactionSynchronization synchronization : TransactionSynchronizationManager.getSynchronizations()) {
-            synchronization.afterCompletion(TransactionSynchronization.STATUS_ROLLED_BACK);
-        }
+            for (TransactionSynchronization synchronization : TransactionSynchronizationManager.getSynchronizations()) {
+                synchronization.afterCompletion(TransactionSynchronization.STATUS_ROLLED_BACK);
+            }
 
-        verify(this.dictCacheHelper, never()).remove(any(String.class));
+            verify(this.dictCacheHelper, never()).remove(any(Owner.class), any(String.class));
+
+        });
     }
 
     /**
@@ -179,60 +384,67 @@ class DictServiceTest {
      */
     @Test
     void shouldDeleteAllItemsWhenLinesAreEmpty() {
-        DictEntity oldDict = new DictEntity();
-        oldDict.setId(1L);
-        oldDict.setCode("status");
-        oldDict.setFrozen(FrozenEnumm.UN_FROZEN);
-        DictItemEntity firstItem = new DictItemEntity();
-        firstItem.setId(11L);
-        DictItemEntity secondItem = new DictItemEntity();
-        secondItem.setId(12L);
-        when(this.dictMapper.selectCount(any(Wrapper.class))).thenReturn(0L);
-        when(this.dictMapper.selectById(1L)).thenReturn(oldDict);
-        when(this.dictItemMapper.selectList(any(Wrapper.class))).thenReturn(List.of(firstItem, secondItem));
+        ThreadUserHelper.runWithUser(new ThreadUser().setUserId(7L).setName("synthetic"), () -> {
+            DictEntity oldDict = new DictEntity();
+            oldDict.setId(1L);
+            oldDict.setCode("status");
+            oldDict.setFrozen(FrozenEnumm.UN_FROZEN);
+            DictItemEntity firstItem = new DictItemEntity();
+            firstItem.setId(11L);
+            DictItemEntity secondItem = new DictItemEntity();
+            secondItem.setId(12L);
+            when(this.dictMapper.selectById(1L)).thenReturn(oldDict);
+            when(this.dictItemMapper.selectList(any(Wrapper.class))).thenReturn(List.of(firstItem, secondItem));
 
-        DictAoeBo bo = new DictAoeBo();
-        bo.setId(1L);
-        bo.setCode("status");
-        bo.setName("状态");
-        bo.setLines(Collections.emptyList());
-        this.service.edit(bo);
+            DictAoeBo bo = new DictAoeBo();
+            bo.setId(1L);
+            bo.setCode("status");
+            bo.setName("状态");
+            bo.setLines(Collections.emptyList());
+            this.service.edit(bo);
 
-        verify(this.dictItemMapper).deleteById(11L);
-        verify(this.dictItemMapper).deleteById(12L);
-        verify(this.dictItemMapper, never()).insert(any(DictItemEntity.class));
-        verify(this.dictItemMapper, never()).updateById(any(DictItemEntity.class));
+            verify(this.dictItemMapper).deletePrivate(eq("eva"), argThat(row -> row.getId().equals(11L)), anyInt());
+            verify(this.dictItemMapper).deletePrivate(eq("eva"), argThat(row -> row.getId().equals(12L)), anyInt());
+            verify(this.dictItemMapper, never()).insertPrivate(eq("eva"), any(DictItemEntity.class));
+            verify(this.dictItemMapper, never()).updatePrivate(eq("eva"), any(DictItemEntity.class), anyInt());
+
+        });
     }
 
     @Test
     void shouldRejectEditingReadOnlyDict() {
-        DictEntity readOnly = new DictEntity();
-        readOnly.setId(1L);
-        readOnly.setCode("status");
-        readOnly.setFrozen(FrozenEnumm.READ_ONLY);
-        when(this.dictMapper.selectCount(any(Wrapper.class))).thenReturn(0L);
-        when(this.dictMapper.selectById(1L)).thenReturn(readOnly);
+        ThreadUserHelper.runWithUser(new ThreadUser().setUserId(7L).setName("synthetic"), () -> {
+            DictEntity readOnly = new DictEntity();
+            readOnly.setId(1L);
+            readOnly.setCode("status");
+            readOnly.setFrozen(FrozenEnumm.READ_ONLY);
+            when(this.dictMapper.selectById(1L)).thenReturn(readOnly);
 
-        DictAoeBo bo = new DictAoeBo();
-        bo.setId(1L);
-        bo.setCode("status");
-        bo.setName("状态");
+            DictAoeBo bo = new DictAoeBo();
+            bo.setId(1L);
+            bo.setCode("status");
+            bo.setName("状态");
 
-        assertThrows(RuntimeException.class, () -> this.service.edit(bo));
-        verify(this.dictMapper, never()).updateById(any(DictEntity.class));
+            assertThrows(RuntimeException.class, () -> this.service.edit(bo));
+            verify(this.dictMapper, never()).updatePrivate(eq("eva"), any(DictEntity.class), anyInt());
+
+        });
     }
 
     @Test
     void shouldRejectDeletingReadOnlyDict() {
-        DictEntity readOnly = new DictEntity();
-        readOnly.setId(1L);
-        readOnly.setCode("status");
-        readOnly.setFrozen(FrozenEnumm.READ_ONLY);
-        when(this.dictMapper.selectById(1L)).thenReturn(readOnly);
+        ThreadUserHelper.runWithUser(new ThreadUser().setUserId(7L).setName("synthetic"), () -> {
+            DictEntity readOnly = new DictEntity();
+            readOnly.setId(1L);
+            readOnly.setCode("status");
+            readOnly.setFrozen(FrozenEnumm.READ_ONLY);
+            when(this.dictMapper.selectById(1L)).thenReturn(readOnly);
 
-        assertThrows(RuntimeException.class, () -> this.service.delDict(1L));
-        verify(this.dictMapper, never()).deleteById(1L);
-        verify(this.dictItemMapper, never()).delete(any(Wrapper.class));
+            assertThrows(RuntimeException.class, () -> this.service.delDict(1L));
+            verify(this.dictMapper, never()).deletePrivate(eq("eva"), argThat(row -> row.getId().equals(1L)), anyInt());
+            verify(this.dictItemMapper, never()).delete(any(Wrapper.class));
+
+        });
     }
 
     private DictLineBo line(Long id, String code, String value) {

@@ -15,6 +15,7 @@ import org.pkaq.core.util.StrUtils;
 import org.pkaq.sys.dict.bo.DictAoeBo;
 import org.pkaq.sys.dict.service.DictService;
 import org.pkaq.sys.dict.vo.DictViewVo;
+import org.pkaq.sys.dict.vo.DictListResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -57,7 +58,8 @@ public class DictCtrl extends Ctrl {
     @GetMapping("/list")
     @Operation(summary = "获取字典列表")
     public Response<List<DictViewVo>> listDict() {
-        return this.success(this.service.listDict());
+        DictService.Listing listing = this.service.listWithCapability();
+        return DictListResponse.fromSuccess(this.success(listing.data()), listing.businessWritable());
     }
 
     /**
@@ -85,10 +87,13 @@ public class DictCtrl extends Ctrl {
     @GetMapping("/get/{id}")
     @Operation(summary = "根据 ID 获取字典")
     public Response<DictViewVo> getDict(@Parameter(name = "id", description = "字典 ID")
-                                        @PathVariable("id") Long id) {
+                                        @PathVariable("id") Long id,
+                                        @org.springframework.web.bind.annotation.RequestParam(required = false)
+                                        String category) {
         CommonCodes.NULL_ID.assertNotNull(id);
         DictAoeBo bo = new DictAoeBo();
         bo.setId(id);
+        bo.setCategory(category);
         return this.success(this.service.getDict(bo));
     }
 
@@ -139,7 +144,7 @@ public class DictCtrl extends Ctrl {
                                     @PathVariable("id") Long id) {
         CommonCodes.NULL_ID.assertNotNull(id);
 
-        this.service.delDict(id);
+        this.service.delDict(id, "GET");
         return success();
     }
 

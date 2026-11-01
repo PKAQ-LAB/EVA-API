@@ -26,6 +26,15 @@ public class DictViewVo implements Vo {
     @Schema(description = "字典名称")
     private String name;
 
+    @Schema(description = "备注")
+    private String remark;
+
+    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS)
+    private String category;
+
+    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS)
+    private boolean readOnly;
+
     @Schema(description = "是否锁定：0-正常，1-已锁定，9999-只读")
     private Integer frozen;
 

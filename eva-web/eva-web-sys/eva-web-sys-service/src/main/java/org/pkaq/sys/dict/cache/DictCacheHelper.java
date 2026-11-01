@@ -1,12 +1,8 @@
 package org.pkaq.sys.dict.cache;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import lombok.Data;
 import org.pkaq.core.cache.util.RedisUtil;
 import org.pkaq.core.constant.CommonConstant;
 import org.pkaq.core.util.json.JsonUtil;
-import org.pkaq.core.tenant.TenantContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
@@ -15,140 +11,65 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * 初始化字典信息
- *
+ * 字典内部缓存；来源必须由服务端核验后显式传入。
  * @author PKAQ
+ * @date 2026-11-01
  */
-@Data
 @Component
 public class DictCacheHelper {
     private final RedisUtil redisUtil;
-    private Cache cache;
+    private final Cache cache;
 
-    @Autowired
     public DictCacheHelper(CacheManager cacheManager, RedisUtil redisUtil) {
         this.cache = cacheManager.getCache(CommonConstant.CACHE_DICTDATA);
         this.redisUtil = redisUtil;
     }
 
-    public Map<?, ?> getAll() {
-        Map<?, ?> all = rawAll();
-        String schema = TenantContext.schemaName();
-        if (schema == null || all == null) {
-            return all;
-        }
-        String prefix = schema + "::";
-        Map<String, Object> scoped = new LinkedHashMap<>();
-        all.forEach((key, value) -> {
-            String cacheKey = String.valueOf(key);
-            if (cacheKey.startsWith(prefix)) {
-                scoped.put(cacheKey.substring(prefix.length()), value);
+    /** 不从临时线程上下文或客户端参数猜测归属。 */
+    public record Owner(String schema, String category) {
+        public Owner {
+            if (schema == null || !schema.matches("[a-z_][a-z0-9_]{0,62}")
+                    || !("SYSTEM".equals(category) || "BUSINESS".equals(category))) {
+                throw new IllegalArgumentException("字典缓存来源非法");
             }
-        });
-        return scoped;
-    }
-
-    private Map<?, ?> rawAll() {
-        return redisUtil.scanPureAll(CommonConstant.CACHE_DICTDATA, "");
-    }
-
-    /**
-     * 根据code查找值
-     *
-     * @param code
-     * @return
-     */
-
-    public Map<String, String> get(String code) {
-        Cache.ValueWrapper jsonStr = this.cache.get(scopedKey(code));
-        return null != jsonStr ? JsonUtil.parse((String) jsonStr.get(), LinkedHashMap.class) : null;
-    }
-
-    public <T> T getObject(String key, TypeReference<T> typeReference) {
-        Cache.ValueWrapper jsonStr = this.cache.get(scopedKey(key));
-        return null != jsonStr ? JsonUtil.parse((String) jsonStr.get(), typeReference) : null;
-    }
-
-    /**
-     * 获取字典项值
-     *
-     * @param code
-     * @param key
-     * @return
-     */
-
-    public String get(String code, String key) {
-        String value = null;
-        Map<String, String> itemMap = this.get(code);
-        if (null != itemMap) {
-            value = itemMap.get(key);
         }
-        return value;
-    }
 
-
-    public void remove(String code) {
-        this.cache.evict(scopedKey(code));
-    }
-
-
-    public void remove(String code, String key) {
-        Map<String, String> itemMap = this.get(code);
-        if (null != itemMap) {
-            itemMap.remove(key);
+        String prefix() {
+            return "v2::" + schema + "::" + category + "::";
         }
     }
 
+    /** 仅读取已确认来源的第二版键，旧版键不参与命中。 */
+    @SuppressWarnings("unchecked")
+    public Map<String, String> get(Owner owner, String code) {
+        Cache.ValueWrapper value = cache.get(key(owner, code));
+        return value == null ? null : JsonUtil.parse((String) value.get(), LinkedHashMap.class);
+    }
 
-    public void removeAll() {
-        String schema = TenantContext.schemaName();
-        if (schema == null) {
-            this.cache.clear();
-            return;
+    /** 只接收受控数据库读取形成的完整字典值。 */
+    public void cachePut(Owner owner, String code, Map<String, String> items) {
+        cache.put(key(owner, code), JsonUtil.toJson(items));
+    }
+
+    /** 提交回调使用已捕获来源，无须重新绑定上下文。 */
+    public void remove(Owner owner, String code) {
+        cache.evict(key(owner, code));
+    }
+
+    /** 限定非空精确前缀，禁止全缓存清理及读取旧键。 */
+    public void removeAll(Owner owner) {
+        String prefix = owner.prefix();
+        Map<?, ?> entries = redisUtil.scanPureAll(CommonConstant.CACHE_DICTDATA, prefix);
+        if (entries != null) {
+            entries.keySet().stream().map(String::valueOf)
+                    .filter(value -> value.startsWith(prefix)).forEach(cache::evict);
         }
-        rawAll().keySet().stream()
-                .map(String::valueOf)
-                .filter(key -> key.startsWith(schema + "::"))
-                .forEach(this.cache::evict);
     }
 
-
-    public void update(String code, String key, String value) {
-        Map<String, String> itemMap = this.get(code);
-        if (null != itemMap) {
-            itemMap.put(key, value);
-            this.cachePut(code, itemMap);
+    private String key(Owner owner, String code) {
+        if (code == null || code.isBlank()) {
+            throw new IllegalArgumentException("字典编码不能为空");
         }
-    }
-
-
-    public void update(String code, Map<String, String> item) {
-        this.cachePut(code, item);
-    }
-
-
-    public void add(String code, Map<String, String> item) {
-        this.cachePut(code, item);
-    }
-
-
-    public void add(String code, String key, String value) {
-        this.update(code, key, value);
-    }
-
-
-    /**
-     * 写入缓存
-     *
-     * @param k
-     * @param object
-     */
-    public void cachePut(String k, Object object) {
-        this.cache.put(scopedKey(k), JsonUtil.toJson(object));
-    }
-
-    private String scopedKey(String key) {
-        String schema = TenantContext.schemaName();
-        return schema == null ? key : schema + "::" + key;
+        return owner.prefix() + code;
     }
 }

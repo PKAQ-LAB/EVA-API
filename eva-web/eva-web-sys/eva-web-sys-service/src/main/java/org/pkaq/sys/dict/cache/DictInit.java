@@ -3,6 +3,7 @@ package org.pkaq.sys.dict.cache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pkaq.sys.dict.service.IDictService;
+import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,9 @@ public class DictInit implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        if (ThreadUserHelper.getCurrentUserOrNull() == null) {
+            return;
+        }
         dictService.init();
         log.info("------------------ 字典初始化完成[order - 2] ------------------ ");
     }

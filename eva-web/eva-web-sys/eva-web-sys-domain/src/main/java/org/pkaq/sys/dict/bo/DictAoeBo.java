@@ -31,6 +31,9 @@ public class DictAoeBo implements Bo {
     @Schema(description = "备注")
     private String remark;
 
+    @Schema(description = "分类，仅SYSTEM或BUSINESS；不作为授权依据")
+    private String category;
+
     @Schema(description = "字典类型编码，单级字典模式下默认等于 code")
     private String type;
 

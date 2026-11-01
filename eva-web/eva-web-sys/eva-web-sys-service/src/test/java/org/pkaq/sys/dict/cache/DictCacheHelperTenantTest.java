@@ -32,24 +32,26 @@ class DictCacheHelperTenantTest {
         RedisUtil redisUtil = mock(RedisUtil.class);
         DictCacheHelper helper = new DictCacheHelper(manager, redisUtil);
 
+        DictCacheHelper.Owner one = new DictCacheHelper.Owner("tenant_101", "BUSINESS");
+        DictCacheHelper.Owner two = new DictCacheHelper.Owner("tenant_102", "BUSINESS");
         TenantContext.bind(101L, "tenant_101");
-        helper.cachePut("status", Map.of("1", "启用"));
+        helper.cachePut(one, "status", Map.of("1", "启用"));
 
         TenantContext.bind(102L, "tenant_102");
-        assertNull(helper.get("status"));
-        helper.cachePut("status", Map.of("1", "正常"));
+        assertNull(helper.get(two, "status"));
+        helper.cachePut(two, "status", Map.of("1", "正常"));
 
         TenantContext.bind(101L, "tenant_101");
-        assertEquals("启用", helper.get("status").get("1"));
+        assertEquals("启用", helper.get(one, "status").get("1"));
         Map<String, Object> cachedDictionaries = Map.of(
-                "tenant_101::status", Map.of("1", "启用"),
-                "tenant_102::status", Map.of("1", "正常"));
+                "v2::tenant_101::BUSINESS::status", Map.of("1", "启用"),
+                "v2::tenant_102::BUSINESS::status", Map.of("1", "正常"));
         doReturn(cachedDictionaries).when(redisUtil)
-                .scanPureAll(CommonConstant.CACHE_DICTDATA, "");
-        helper.removeAll();
-        assertNull(helper.get("status"));
+                .scanPureAll(CommonConstant.CACHE_DICTDATA, "v2::tenant_101::BUSINESS::");
+        helper.removeAll(one);
+        assertNull(helper.get(one, "status"));
 
         TenantContext.bind(102L, "tenant_102");
-        assertEquals("正常", helper.get("status").get("1"));
+        assertEquals("正常", helper.get(two, "status").get("1"));
     }
 }

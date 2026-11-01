@@ -9,7 +9,8 @@ import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 import lombok.NoArgsConstructor;
 import org.pkaq.core.util.SpringUtils;
 import org.pkaq.sys.dict.annotation.Dict;
-import org.pkaq.sys.dict.cache.DictCacheHelper;
+import org.pkaq.sys.dict.service.IDictService;
+import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -43,21 +44,21 @@ public class JacksonCodeSerializer extends JsonSerializer<String> implements Con
      */
     @Override
     public void serialize(String value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-        if (!StringUtils.hasText(value)) {
+        if (!StringUtils.hasText(value) || ThreadUserHelper.getCurrentUserOrNull() == null) {
             gen.writeString(value);
             return;
         }
 
         try {
-            DictCacheHelper dictCacheHelper = SpringUtils.getBean(DictCacheHelper.class);
-            if (dictCacheHelper != null && StringUtils.hasText(codeKey)) {
-                String translated = dictCacheHelper.get(codeKey).getOrDefault(value, value);
+            IDictService dictService = SpringUtils.getBean(IDictService.class);
+            if (dictService != null && StringUtils.hasText(codeKey)) {
+                String translated = dictService.queryDict(codeKey).getOrDefault(value, value);
                 gen.writeString(translated);
             } else {
                 gen.writeString(value);
             }
-        } catch (Exception e) {
-            log.warn("Failed to translate code value for key: {}, value: {}", codeKey, value, e);
+        } catch (Exception exception) {
+            log.debug("字典翻译来源不可用，保留原码");
             gen.writeString(value);
         }
     }
@@ -66,7 +67,8 @@ public class JacksonCodeSerializer extends JsonSerializer<String> implements Con
      * 根据字段注解动态创建带上下文信息的序列化器实例。
      */
     @Override
-    public JsonSerializer<?> createContextual(SerializerProvider prov, BeanProperty property) throws JsonMappingException {
+    public JsonSerializer<?> createContextual(SerializerProvider prov, BeanProperty property)
+            throws JsonMappingException {
         if (property == null) {
             // 根据需要返回默认序列化器
             return prov.findNullValueSerializer(null);

@@ -27,4 +27,7 @@ public class DictEntity extends StdEntity implements Serializable {
 
     /** 字典名称 */
     private String name;
+
+    /** 分类NULL表示未分类，不能按type或code推断。 */
+    private String category;
 }
