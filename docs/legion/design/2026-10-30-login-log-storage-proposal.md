@@ -1,0 +1,51 @@
+# 历史登录日志集中来源最小方案
+
+当前决策：总控已转达用户明确“批准集中方案（推荐）”。本方案的schema未来审计core同源与独立短事务、standalone不变、旧日志不迁均已获批准；下文确认问题保留历史决策依据，不再作为待选项或阻止已授权实现。backend拥有实现/测试槽，technical_designer仅独立只读审方案及定稿diff，QA按总控安排验收。
+
+2026-10-30 technical_designer。已确认的查看政策保持：standalone有效管理员；租户管理员本租户；可信平台tenant0有效管理员各租户；普通用户不可读。以下收口存储与事务方案，避免继续无界源码排查。仅设计、不实现/HTTP/DB/测试/授权或服务操作。
+
+## 推荐选择
+
+推荐未来登录审计统一受信来源：standalone沿既配置standaloneSchema；schema模式统一现配置coreSchema的SYS_LOGIN_LOG。统一范围包括saveSuccess、saveFailure、saveLogout各重载、closeSession、rotateSession、closeUserSessions，以及saveSuccess内部resolveRiskFlags读取。不能只改历史查询而让内部风控/会话关闭继续按调用者search_path落其它表。
+
+不增加API、字段、表或SQL迁移，不改返回形状，也不自动复制任何历史日志。此方案明确改变schema模式新日志的物理落点及审计事务边界，超出单纯“查看政策”批准，需要总控向用户确认后才能实施。
+
+## 复用方式与事务影响
+
+复用现CoreSchemaExecutor：已实读其schema模式必须有活动事务、临时set_config(search_path,coreSchema,true)、finally恢复原search_path，非schema模式直接调用。它本身不建立事务、也不维护TenantContext，故新增的最小本日志存储边界负责事务和上下文保存/恢复，不改执行器全局行为。
+
+写侧采用每个外部审计动作一个短REQUIRES_NEW事务，在其内部验证并绑定受信源、调用CoreSchemaExecutor完成风险查询与插入或会话日志更新。saveSuccess的risk查询和本次insert同源同事务；其余内部重载不得重复嵌套开多次事务。事务异常由外层捕获，保留既有best-effort：不因审计库失败使登录、注销或业务事务失败，不把已失败数据库事务吞在共享调用者事务内。不能仅依赖同类方法上的@Transactional自调用生效；可用现TransactionTemplate或独立本日志组件二选一，避免新框架。
+
+此设计使审计可独立提交，不随调用者业务回滚撤销；外层有事务时会暂挂且额外使用短连接，须纳入实施评估。该行为变化必须包含在用户确认中。它不会使JWT/session缓存、审计表与业务数据库变成分布式原子事务，也不承诺审计绝不丢失。
+
+人类历史读取采用独立只读事务，隔离来路事务/search_path；资格核验与读取在同一受信边界内完成。standalone验证配置源和账号/角色/日志表实际关系来源；schema平台tenant0在core验证有效管理员并读取。正租户先用可信SYS_TENANT映射与私有账号—系统TENANT_ADMIN角色—membership核资格，恢复路由后在core按可信tenant_id读取。
+
+TargetTenantExecutor不能直接套给普通正租户自身核验：现实现要求platform模式/当前tenant0/isAdmin。应复用已有可信租户resolver/router或认证查询的自租户执行链；路由参数只能来自已验证主体，不从targetTenantId拼schema。不得扩大TargetTenantExecutor的全局准入。实际方案交代码前由backend明确其选定复用链，不新增adminId-only或legacy core角色OR兜底。
+
+standalone不悄然重定向数据源：验证配置standaloneSchema等于当前受信物理源及相关表来源，否则读拒、写按best-effort告警，不回退到public/其它schema。schema同样须验证core已有SYS_LOGIN_LOG存在且实际relation归属正确；缺表时不runtime建表、不自动执行迁移、不搜索其它schema兜底。
+
+## 历史边界
+
+未来查询只读上述唯一受信表，使用现存TENANT_ID值执行已批租户过滤。平台管理员null target可见该受信表的全范围，指定非负target只缩小；正租户管理员只自己的可信tenant_id，get也叠此条件，不增加get目标参数。
+
+历史上落到其它schema的日志本次不自动搬迁、不多schema UNION、不回填tenant_id或按账号猜归属；不会在新页面跨库自动找齐。受信表既有记录也不因切换而改写归属。旧数据可见性/完整性无法保证，须在交付中明确；若用户以后要求补齐，应另做清单、归属证据、权限与迁移方案并授权，不能夹入本次。
+
+## 最小常驻读取门禁
+
+只为历史detail/page/count添加固定专用Mapper及SQL Provider/局部授权scope，管理员与可信tenant范围经验证后进入；Provider在BoundSql生成时先require，data=false仍有效。SQL固定、租户条件来自可信scope，不暴露任意SQL/wrapper来决定范围。通用data handler只对精确历史statement及已授权scope跳过缺失CREATE_ID/MODIFY_ID处理，既有risk BaseMapper不套人类资格，不全局Ignore/补ALL/改拦截器注册。
+
+分页count与records保持同一源/范围，scope异常finally恢复；resource开时原GET资源仍叠加，resource/data关闭都不撤资格。此常驻Provider是现data开关会取消插件注册后的必要边界，不是通用权限框架或新API。内部风控应在统一存储事务中执行其明确系统职责，不能被历史入口当绕权通道。
+
+## 需用户确认的最小一句
+
+“是否同意：未来schema模式登录审计统一写入并读取配置core库，standalone保持配置单库；审计用独立短事务，失败不阻登录或业务、也不随业务回滚撤销；旧其它schema日志不自动搬迁或并入新视图，缺表/来源不符不自动建表或回退？”
+
+建议确认整体方案后再实施，暂不拆出假设core已成立的部分。若用户只同意查看政策而不同意来源/事务变化，则暂停schema集中读写实现；可另明确限定仅standalone的交付范围，不擅称完整租户政策已实现。无需重新询问管理员查看政策或扩测试账号权限。
+
+实施后必要定向验收为：所有审计入口与risk同源；外层租户事务/search_path及上下文恢复；审计独立失败不污染原流程；管理员/普通主体及开关矩阵、tenant target/get/count一致、Provider直接读拒、来源缺失/回退拒，以及不自动触碰历史其它schema。仅规划，不授权真实DB/HTTP/服务或重跑历史228。
+
+## 后端方案合并收口
+
+backend随后交付的A/B/C建议与上述推荐一致，已按现TransactionTemplate/CoreSchemaExecutor和可信租户router确定最小方向，无需继续开启来源验证进程。候选改动为LoginLogService、专用历史Mapper、最小readAccess/queryScope及data handler精确接管；集中来源获批后再加仅登录审计事务协作者，不改全局MybatisConfig、DB/API/VO、其它日志或开关。
+
+内部risk的通用owner列问题也必须定向处理，但与人类历史资格分开：保留其既有tenant/user/device条件和系统职责，在本日志统一存储边界内用固定内部查询或仅对应内部风险语句的最小系统scope处理，不能使全部BaseMapper.select*无条件跳过，也不能给人类历史入口借用该内部scope。此为SYS_LOGIN_LOG无owner列的同一局部兼容点，不引入通用权限框架。Provider每BoundSql/count路径的实际依赖行为仍列实施时定向验证，不把方案文字称为已证。

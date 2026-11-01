@@ -743,3 +743,822 @@ Escape关闭部门下拉时也关闭了编辑modal；随后取消按钮无匹配
 本轮没有读取name/tel/email/remark实际值，也未取得其与原详情相等的安全布尔证据；未读取私有React/store/response补证。密码两空及保存可用不证明个人资料全列保持。按“若不能安全验证完整则停不保存”，本次未展开/选择D1C、未变任何字段、未上传、未保存，直接明确取消；关闭后visibleModals0/password0，管理员保留/markHandoff，UI锁交回。C3仍未执行/部门仍以前次已证D1为准，须backend后续若需另独核，不伪报DB当前值或permVer未变。
 
 总控下一可考虑让用户本人本地核实整表单原资料/角色后只改部门并保存，再由backend独立后核；此仅建议非本轮授权，不要求新工具/绕过校验/修改源。无DB/HTTP私请求/服务/源码/测试或其它grant/TREE/ALL/样本变化；没有password/contact截图。
+
+## 2026-10-30 C3用户跳过，恢复非依赖只读验收
+
+用户最新明确“这一项跳过测试 继续”，总控限定对应PEER部门D1→D1C的C3：状态USER_SKIPPED / NOT_VERIFIED，不要求用户保存，不运行hidden探针，不据此跳过所有权限验收。backend本轮00:02独核PEER仍D1/SELF/permVer6，LIMIT D1/DEPT/permVer3，两R资源和两作者样本无漂移；此为总控转达的独核窗口，非QA再次访问数据库。既有C2 visible六请求与C1资源GET门禁证据保持，各项未覆盖边界保持。
+
+本轮只授唯一浏览器只读锁，准备核对现有身份/草稿和非依赖系统管理、三日志待补项；无新授权、部门变更、业务写、源码/HMR/服务/测试/Git发布。三日志未有批准精确QA样本不得扫描历史或任意详情，228单测不替代live通过。实际浏览器结果另追加，不把计划写为已完成。
+
+## 2026-10-30 非依赖只读UI补缺与浏览器交锁
+
+fresh官方Edge4库存只见本项目tab328085223，当前连接实例已更新；本轮REPL原绑定不存在，正常绑定当前Edge并claim该既有tab后安全DOM可读，未发生前轮派发超时。初始#/sys/account：系统管理员可见、visibleDialogs0/passwordControls0/nonSearchForms0，无未保存编辑。精确账号搜索QA_PEER_20261023，异步稳定后唯一技术行2113894345662021633匹配；只读取该行标识/按钮样式，不打开账号详情或读取联系字段。五操作按钮及操作单元格white-space均nowrap。用户表未带ant-table-bordered，操作单元格右边框0px，仅记实际样式，不将其与日志表一致性混报通过。
+
+经正常菜单到组织页，批准作者样本L行2115435549295775746/QA_SAMPLE_LIMIT_20261023匹配，操作列nowrap。仅打开其只读查看，700px框、无input/textarea/select/combobox/switch；十项已有字段为部门名称/编码/上级/顺序/启用/备注及四审计，合成值与既有样本一致。直接内容表面eva-view-value（多行备注同规则）实测rgba(0,0,0,0.02)底、1px solid rgb(240,240,240)边框、4px 12px内边距。外层control容器本身透明无框不判缺陷，底框在内层实际存在。本次第一次可读状态已完成回填，未捕获加载中...或先开框后加载时序，该时序仍未补证。只读框正常关闭，无编辑/保存。
+
+系统日志正常展开实际三个入口为在线用户#/log/online、业务日志#/log/biz、错误日志#/log/error。仅读表头/查询控件/样式，不读历史日志正文或响应。业务日志查询仅操作时间起止日期及查询/重置；表头操作时间/操作类型/操作人/描述/操作。表格ant-table-bordered、单元格1px边框；实际可见操作内容white-space nowrap。按总控提供白名单仅检查当前页三技术ID2115792898971795458、2115792896765591554、2115579583825846273是否存在，均false；不翻页、无任意详情，日期不能代替精确主体/ID定位，批准日志详情字段/加载/底框仍缺安全定位。本窗口未用业务R日志反推其关联精确组织，后端已说明b_id为NULL。
+
+错误日志同为日期查询、ant-table-bordered及操作内容nowrap；表头类名/异常描述/请求IP/方法名/方法参数/记录时间/请求耗时/操作。无批准精确错误样本，未读取任何行正文、未点详情、未造异常。在线用户入口表头用户名/设备/版本/登录时间/签发时间/过期时间/token/操作，查询用户名/操作；未读取token/行内容，也不把在线会话当历史PASSWORD登录日志。两批准成功登录ID在当前页均无对应技术行；没有由此猜历史日志路由或开新入口。在线表未带ant-table-bordered，表格外框一致性保留差异，不能据此宣称三日志视觉全通过。
+
+日志父菜单展开后系统管理子项正常折叠，首次返回组织点击因不可见未执行；安全菜单结构核后正常展开系统管理再点击组织成功。另一次系统日志精确accessible-name定位不匹配，改用已观察role菜单项文本定位正常展开；均无业务写或页面强刷。最终#/sys/organization、系统管理员、busy0/dialogs0/passwordControls0，markHandoff并交还唯一浏览器锁。未截含账号PII或在线token的全屏；仅本卡修改，无源码/服务/HMR/DB/私请求/自动测试/身份切换/授权/部门变更/提交推送。C3继续USER_SKIPPED / NOT_VERIFIED；TREE/CUSTOM/并集/ALL/log受限负向/回收及日志安全样本详情仍未完成，不以228单测或本轮管理员页面核验替代。
+
+## 2026-10-30 单次组织查看加载态尺寸取证
+
+总控另授最后窄窗口，仅批准组织L原技术行。fresh官方Edge库存仍tab328085223/组织管理，安全前置管理员true/dialogs0/passwordControls0/批准行存在。未安装监听器、注入事件、改网络节流/配置/脚本资产或取正文；仅正常官方dblclick一次该行查看按钮，并分别只读采弹窗几何/加载布尔与时间。
+
+北京时间07:14:04.291操作前记录；07:14:05.385首个可观察dialog恰1个，width700/height608、aria-busy=null、busy=true、skeleton=true、loadingText=false。07:14:13.220下一观察同一框width700/height608、aria-busy=null、busy=false、skeleton=false、loadingText=false。可补证本次加载骨架已出现在稳定700×608框内，完成后框体尺寸不跳变；两个观察时刻间隔不等于实际请求/加载耗时，不从采样推出精确完成时间。未捕获加载中...文字，亦不推断所有中间帧从未出现该文字；未收任何字段正文，字段完整性沿前一只读窗口证据，不在本次重读。
+
+只正常关闭一次，07:14:21.019最终#/sys/organization/dialogs0/passwordControls0，markHandoff并归还唯一浏览器锁。没有重复打开/重试、保存、网络/服务/源码/授权/数据或Git操作。本补证仅适用于批准组织L的这次查看，三日志加载/详情安全定位仍未补齐，表框差异等待前端只读原实现核定，当前不写为已确认缺陷；C3保持USER_SKIPPED / NOT_VERIFIED。
+
+## 2026-10-30 用户要求保存进度并暂停：最后有界日志任务未执行完
+
+前端只读结论由总控转达：account/online默认不带bordered、biz/error显式bordered均为EVA历史实现，现规范无全表强制bordered；本轮不认定其为回归缺陷，不改源码。随后获一次有界日志验收授权：日期起止均2026-10-29、原pageSize、最多当前第一页和下一页，仅查批准三ID，命中才开一个安全详情；该计划未完成，不能列为通过。
+
+暂停前实际仅完成：官方当前页面安全DOM证管理员true、#/sys/organization、dialogs0/passwordControls0；正常展开系统日志菜单，确认业务日志可见，再正常点击业务日志菜单。下一只读日期/分页控件检查返回Browser is not available:4，未取得结果。按官方连接恢复流程仅读取一次浏览器库存，Edge连接现列5/6，旧4已不可用；尚未绑定新连接或读取任何标签页，即收到用户明确保存进度、暂停。最后确认路由是点击导航前的#/sys/organization；业务日志导航动作已派发成功，但导航后的实际当前路由未核，不把意图路由当实证。
+
+本次未输入或选择日期、未点击查询、未检查分页数据ID、未点下一页、未打开或关闭任何日志详情，未读取任何日志正文/操作人/姓名/token/PII，也未截全页。QA未创建编辑草稿；最后安全DOM的dialogs0只代表断连前组织页，断连后是否有人本地操作或存在草稿未知，按暂停不再观察、不刷新/导航/关闭。前一轮已成功markHandoff的组织页保留记录不等于断连后新窗口状态；本轮不再调用markHandoff或关闭新连接窗口。唯一浏览器操作锁由QA立即归还总控，QA无在跑脚本、测试、服务或待续自动操作，未认领Edge5/6或操作其它窗口。
+
+当前暂停终态：C3 USER_SKIPPED / NOT_VERIFIED；不要求部门保存或hidden探针。待用户以后明确继续，再由总控分配浏览器并先核登录/草稿，继续尚未设置的2026-10-29业务日志日期条件及最多两页技术ID定位：2115792898971795458、2115792896765591554，备选2115579583825846273；仅精确命中才验一个详情字段标签/0编辑控件/只读底框/几何，不采值，无命中即停。error无批准样本、历史登录日志无已证正式入口，继续未验，不以online代替。TREE/CUSTOM/并集/ALL/log受限负向/回收等其余权限待办保持原状态；228单测不替代live验收。本次仅保存本人S卡，不commit/push，不执行任何源码、数据、授权、服务、HTTP或额外检查。
+
+## 2026-10-30 用户继续后的两页有界定位及查看入口未打开详情
+
+用户明确继续，总控恢复唯一浏览器锁；读取本卡暂停检查点和新版computer-use技能。fresh官方库存Edge1/2均映射同一项目tab328085762，不沿旧Edge4/坐标；正常绑定Edge1并claim。安全DOM确认#/sys/account、管理员true/dialogs0/passwordControls0/nonSearchForms0，未读取任何账号行PII或凭据。正常系统日志→业务日志，日期初值2026-10-23至2026-10-30。仅通过可编辑日期控件填起止均2026-10-29、Tab提交控件后回读两值准确，点击查询一次。pageSize始终20条/页。
+
+查询稳定第一页activePage1/busy0，读取20条rowKey技术ID，无三批准ID；只点下一页一次，稳定activePage2/busy0/20条，精确命中2115792898971795458及2115792896765591554。备选PEER ID未命中。未读取任何行正文/操作人/姓名，未截图整页，不再翻页或改分页量。此处仅证明批准ID可经日期+两页正常UI定位，不证明日志b_id关联精确组织样本。
+
+仅对批准行2115792898971795458读取其查看控件标签“查看明细”，正常dblclick一次。北京时间10:51:05.874首个只读观察dialogs[]；10:51:19.512再核dialog/modal-wrap/drawer均无可见承载容器。随后安全结构确认route仍#/log/biz、expandedRows0，无可见详情容器；仅存在role=alert。提示元数据为ant-message-notice-success且已fade-leave、errorIcon=false；没有读取提示正文，因此不猜“未实现”、权限拒绝、API错误或请求次数。没有重复点击/尝试其它ID、私请求或读取React/store。详情字段标签、只读控件数、底框/几何/加载骨架均未验，不能把暂无详情当空字段通过。本轮无已打开详情可关闭。
+
+正常展开系统管理并返回组织管理，最终#/sys/organization/busy0/dialogs0/passwordControls0，markHandoff后归还唯一浏览器锁。最小复现为管理员业务日志起止2026-10-29、20条/页、第二页目标技术ID→双击查看明细，未出现可见详情容器，仅success提示类型；是否入口实现问题交总控限定只读源核，QA不自行改源或再试。C3仍USER_SKIPPED / NOT_VERIFIED；边框差异已按前端结论归为历史非回归，不再分析。error与历史登录详情及其它权限待办未扩展。仅本S卡写入，无业务保存/数据授权变更/服务/HMR/测试/提交推送；原backend卡与保护文件不动。
+
+## 2026-10-30 正常单击复验：批准业务日志详情已打开
+
+总控转达前端只读源核：查看按钮非占位，handleView→view.read先open/loading再GET，按钮只有onClick，行dblclick刻意忽略按钮；前次官方dblclick是否产生click序列未证，故前次仅记录操作观察，不认定产品bug。本次另授窄窗口，现有Edge1/tab328085762安全DOM管理员true/组织页/dialog0/password0，无草稿；不改源码或服务。
+
+正常业务日志页重新显式设日期起止均2026-10-29并回读准确，查询一次、原20条/页；第一页无两批准LIMIT ID，只翻下一页一次，第二页精确命中2115792898971795458及2115792896765591554。目标2115792898971795458的“查看明细”匹配唯一控件，仅官方click单击一次，无dblclick/事件派发/私请求/额外身份或数据操作。
+
+北京时间10:58:34.569首个观察出现600×1221抽屉（wrapper及role=dialog section同尺寸），busy=true、skeleton=false、可编辑控件0、尚无标签；10:58:54.251完成态同600×1221、busy=false、skeleton=false、控件0、errorSurface=false，显示标签操作时间/操作人/操作类型/描述共四项。未读取任何值、姓名、描述正文或响应，未展开复制原始区，pre/code数量0；四标签仅按实际显示记账，不冒称全部后端字段或敏感原始内容已核。两采样点尺寸一致可证该次加载框稳定，不把间隔当请求耗时。
+
+只读布局为原生ant-descriptions-view外框1px solid rgba(5,5,5,0.06)，底色透明；四项content为TD，padding8px 16px、透明底色，内部SPAN无单独边框；无eva-view-value表面。不把组织页浅底独立框要求直接套用日志页，也不凭透明色定回归。正常点“关闭”一次后dialog0，再正常系统管理→组织管理，最终#/sys/organization/busy0/dialog0/password0，markHandoff归还唯一浏览器锁。可收口批准业务日志单击入口、加载期稳定抽屉、四标签及只读控件/现有外框样式；前次双击未开窗不作为阻断缺陷。无整页或详情截图、字段值/PII/token读取，未重测228/改源码HMR/服务/权限数据/提交推送。C3 USER_SKIPPED及error/历史login/其它权限未验边界保持。
+
+## 2026-10-30 历史login前端独立源审及一次六文件离线复验
+
+仅获前端源码只读及唯一离线测试槽，无浏览器/DB/HTTP/后端重测试或菜单授权。重读EVA权威前端规则、当前AGENTS/CLAUDE及审查技能；前端HEAD75e6293f9b8bd457bdde0ee6a3e0f05b7d66ffef，当前既有五跟踪源改动、login新目录及总控checkpoint未跟踪均保留。冻结清单.git/login-log-source-20261030.json SHA CCC976F2E31FEDFDF455A93C6B2F7BFD9F83AE3F7460CF260D70E4CB90E140BA，实际12文件（新login7、已有routes/access/apis/routes.test/menuNavigation5）测试前后逐SHA均0漂移；biz/online/error及appicon/organization源码相对HEAD无差异，QA未改生产或test源。
+
+独立沿route/access→canReadLoginLog→getMenuPath/canRequestResource及页面request/view.read/get/http链核验：必须有服务端明确/log/login菜单且逐GET list/get资源满足（开关false仍需菜单、unknown拒绝），无admin/ROLE OR、菜单别名/API code硬造登录叶或新fallback。页面loading/error/mounted均关门，详情前后复核权限，user/loading/error变化使共享viewer sequence失效并关闭，晚响应不恢复详情；路由与页面调用同一权限函数。只GET既有monitor/log/login/list及get/{id}；IPage适配pageNo/pageSize、字符串Long ID不转浮点；false条件保留，LocalDateTime起止直接YYYY-MM-DDTHH:mm:ss，与后端ge/le闭区间吻合，不套biz日期次日排他。未提供targetTenantId/session或新API参数，不改后端契约。
+
+显示字段显式21项白名单，详情无sessionId/deviceFingerprint/userAgent，文本经React字符串渲染无HTML注入；false展示失败、缺值—，600抽屉及21个固定字段框在loading/error保留，错误不展示服务器原文，无提交控件/写入service。类型中的完整VO字段不等于页面展示许可。源审未发现本轮阻断问题；本次测试mock Umi transport、使用实际AntD/ProTable，不能代替live或后端管理员/core边界验证。
+
+唯一执行pnpm.cmd exec vitest run src/pages/log/login/index.test.tsx src/pages/log/login/service.test.ts src/pages/log/login/permissions.test.ts src/utils/menuNavigation.test.ts src/utils/resourcePermission.test.ts src/routes.test.ts --maxWorkers=1 --reporter=verbose。实际六文件74/74、exit0、25.08s，日志eva-web/.git/login-log-qa-20261030.log SHA59309D7940FFAF11FEDE0ADD40B02823FF30DD9825E84E1DFDEC52D11B135C30。本次74是同一当前版本运行，不拼前端先6文件72及后2文件12的跨轮数。resourcePermission.test.ts为仓库实际纯资源判定文件，未猜pureResource路径或追加其它测试。无下载/生产build/全仓测试/重跑228。
+
+只读核前端已有.git/login-log-targeted-types-final-20261030.log：exit1诊断位于src/appicon.tsx(3,8)/(48,7)及src/pages/sys/organization/index.tsx(118,19)共三处；这些文件不在12清单且当前未改，未见本轮login文件诊断。本QA未另跑tsc、不修范围外错误，不称类型检查全绿。GitNexus存储43/runtime42 UNKNOWN作为已知限制保留，无索引重建或图谱安全证明。
+
+下一可live前提：用户决定core集中归属，后端相应边界独审/验证完成，并由总控另组织正式/log/login菜单叶及所需GET授权与批准样本/身份窗口；当前缺菜单依赖不能造fallback或借admin越过。QA本轮未启浏览器、未取token/密码或真实日志，live尚未执行；C3 USER_SKIPPED不变。只写本人S卡与ignored测试日志，正常交还唯一测试槽，无commit/push/服务/HMR/数据变更。
+
+## 2026-10-30 集中登录审计后端独立局部编译与四类复验
+
+前段前端卡中的core待决为当时检查点；随后总控正式派后端复验并通知designer冻结源码审查通过，读取2026-10-30-login-log-source-review.md明确绑定manifest D582E2130B00A9799DB4361A61496A43A4D04E9E602E283209AF64BADE090ABB后才执行。仅7main+4test，不做浏览器/HTTP/真实DB/PG/服务/Gradle全构建或228旧测试。先独立核11source、backend16products、7命令/原日志artifact锁、150external jar及3保护文件，旧1df9642b prepared-seal仍0E6627722DB6B431097B90FE3D0D30E09FFF895BC858F28ABD5E5787F7578537，全部66封存根presence/files一致，classpaths引用旧snapshot-C及旧auth test根有当前哈希依据。
+
+唯一执行ignored最小QA脚本.gradle/login-log-qa-20261030.py，新目录.gradle/login-log-qa-20261030T043709Z-8ea9528d。复用被锁原main/test/run.args，仅把backend classes路径及runner源替换为fresh QA路径；JDK25 javac主编译7源、测试编译4源各一次，processor路径沿原Lombok，测试proc:none。原runner仅复制到QA目录，最小增加JUnit现有TestExecutionListener逐case写cases.tsv，不改backend原runner/日志或生产/test源，无新测试框架。运行明确选四类、不扫描其它测试，新classes置classpath首项，7main生成9class、测试及QA runner后共17class，11源码各顶级class在新目录实际存在，主产物前后稳定。
+
+main/test/run阶段各exit0；实际四类30个唯一JUnit testcase均SUCCESSFUL：LoginLogServiceTest6、LoginLogReadAccessTest14、LoginLogStorageTest6、LoginLogMapperSqlTest4。qa-result.json状态PASSED_LOCAL_4_CLASSES_30_CASES、primaryError=null、originalPostcheck=PASSED，SHA BD1B5A402B97DB6EC664DB5C56F90B2DBC34E537CD201766F50A1C6E5B1565F6；cases.tsv SHA687AEB2428FDD2EE6981CE21AE33D1A078DDDA43FEDDA181B0A995C15D95B18C，逐用例uniqueId/displayName/status可追溯。原11源/manifest/backend产品和锁定原日志/150依赖jar/66旧根/保护3文件finally均无漂移。无失败重跑/降门禁/覆盖旧结果，历史backend失败日志保持。
+
+独立审覆盖：成功登录risk两查询与insert同storage动作、注销close+insert同动作、会话close/rotate/closeAll；登录失败包括真实Spring代理提交异常被facade外catch及插入调用（不冒称真实落库）。Storage用实际Spring事务代理/CoreSchemaExecutor、合成JDBC/事务manager，核REQUIRES_NEW suspend/resume、readonly、来源拒绝/standalone不路由、schema/TenantContext恢复、审计commit不随外层rollback撤销。ReadAccess普通/伪ROLE_ADMIN与真实资格mock、data/resource四组合、平台target/私租户membership/缺映射/GET资源拒绝；Provider在无data插件及重复BoundSql时核scope、实际MP派生count与records固定同tenant、data handler只精确语句窗口接管，内部system与history不能互替。顺带只读检索生产调用与构造引用，新增构造直调用仅两测试，生产注入沿@Service/Lombok，无本轮调用签名遗漏发现。
+
+边界明确：私租户角色/路由及管理员资格依赖为mock，未真实执行PostgreSQL membership SQL；JDBC、分页Executor及事务状态为合成，未证真实search_path/数据库提交持久化、连接池余量/锁/生产并发或应用完整Bean装配。旧HEAD依赖封存+局部fresh javac不等于当前完整Gradle构建，真实HTTP/菜单/live及旧跨schema历史完整性未验；旧日志未迁移。此处仅局部源码兼容与上述四类通过，不将前端74或旧228拼成同轮。本次无阻断失败，唯一测试槽已交还总控，C3 USER_SKIPPED与其它未验边界保持；仅本人S卡及ignored QA证据写，无Git发布/源码变更。
+
+## 2026-10-30 菜单COMMIT后独立RO连接失败，未取得独核结论
+
+总控授权前置为backend明确COMMIT与交锁，收到后才准备独立RO。先核plan SHA18A055BD787A747D2D1BCF09B5914C52E40E7BB9C6EEE02C67947A22882E919B及提交result SHA D0EF103C7B34A55080F636D5CDCA746576DF0334BB5337EE36C6B53731551082，读取预像/提交前核验的精确结构与集合count/digest；没有把这些后端证据称为QA live独核。dev/prod辨别、source/build datasource完全一致及目标eva/eva、指纹d22bc534e71c均通过本地布尔核验，不输出存储凭据/连接地址。
+
+最小ignored脚本.gradle/login-log-menu-qa-20261030.py仅复用现有datasource函数AST，不导入旧脚本顶层执行；配置connect_timeout8s、default_transaction_read_only=on、statement_timeout5s、search_path=eva，预定事务REPEATABLE READ+readonly，finally rollback/close。唯一一次connect实际OperationalError，尚未返回连接，未进入set_session/BEGIN/任何SELECT，未读数据库行或集合；没有重试/绕过/改配置或服务。输出.gradle/login-log-menu-qa-20261030T051104Z-02b093eb/result.json，SHA E39D73E9567982B90C8B0466780E7C1C97142BEC29999B4DDEAA1B24835C87D7，INDEPENDENT_RO_STOPPED、无begin、writes0。rollback=false/closed=false在本报告表示没有建立连接可回滚/关闭，不表示遗留可用连接或事务；原异常正文未输出，不能只凭异常类判定根因。
+
+backend随后主动撤回其第一版分隔符chr(92)||n说明，表示多层转义待纯本地核；QA该SQL尚未送到PG，无hash不符现场可解释，也不猜其它算法凑相等。本轮独立module204/resource1407及角色/租户grant和其它module/resource集合核验均NOT_VERIFIED，backend的两行COMMIT仍仅为backend证据。已停下并将唯一复核窗口归还总控，待正确算法/环境可达及另行复验派发；不以连接失败否认或重复执行原DML，不清缓存/HTTP/UI/服务/授权/数据/Git操作。C3仍USER_SKIPPED，当前运行后端未重启新实现，菜单变化不等于新权限live就绪。
+
+## 2026-10-30 总控另授一次连接重试后独立菜单RO复核通过
+
+backend纯本地重放原转义并交冻结fingerprints-readonly.sql SHA A1BBCF0BCEEB429DBD1206DA7CABB967A89F3B13F175BFE1D0DAF24B7D0BFB0E，原SQL分隔符为PostgreSQL E反斜杠n解释的LF，等价chr(10)。QA读取五条纯SELECT及冻结hash后，仅将自身未送PG的错误分隔说明替换为明确chr(10)，不改历史digest/后端证据。总控明确另授一次连接重试，仍connect_timeout8s、零内部重试，先核plan/result及dev≠prod/source-build/eva/eva/fingerprint；本次真实建立独立连接并执行REPEATABLE READ readonly，transaction_read_only与default_transaction_read_only始末均on，五张关系实际schema均eva。
+
+新证据.gradle/login-log-menu-qa-20261030T051213Z-ab346e0f/result.json SHA04C103D837B36342D8863C8BA9CE120FDDE6B7454478BD7A325905FDC2B85ADC，状态INDEPENDENT_RO_PASSED。实际新leaf204的parent200、完整path、/log/login、./log/login、sort4/revision0/tenant0/deleted0/frozen0/isleaf及父200前像逐字段一致；resource1407当前main204，其ID/code API_LOG_LOGIN/URL /monitor/log/login/**/TYPE*等字段与提交记录一致。相关parent1200/login1407原角色grant四行、login租户grant一行集合精确与前像相等；全角色资源grant50及全租户资源grant23的完整行有序digest前后相等。其余module12/resource77及resource1407除main_id的完整行digest也全部等于preimage及verified-before-commit，未通过换算法试探凑相等。
+
+事务finally明确rollback=true、closed=true、writes0，无账号/PII/日志正文读取。首次连接失败证据保持，不能抹为首次即成功；本次是另获授权的一次连接，不继续轮询。独立结论仅为已提交两行菜单/资源元数据与授权及其它集合未漂移，非新后端实现启动/HTTP/live权限通过；不动平台0/C3skip。唯一DB复核窗口交还总控，仅本人S卡与ignored QA证据写，无DML/缓存/服务/配置/浏览器/HTTP/测试/Git操作。
+
+## 2026-10-30 用户重启后历史login live前置连接受阻
+
+总控转用户明确后端已重新构建重启完成，另授历史login管理员live窗口。该重启作为用户事实登记，不据此认定新Bean/接口已过；前端74、后端局部30和应用compile及菜单RO既有证据保持各自边界。重读当前computer-use技能，fresh官方Edge库存1/2，现项目tab328085762/组织管理，URL http://localhost:8000/#/sys/organization，未沿旧Edge4或坐标。
+
+首次仅尝试受限只读DOM：路由、管理员布尔、dialog/form/password控件数量，不读字段值；在命令派发前超时。按官方已有恢复路径正常重新claim同一现tab一次，第二次同样仅受限安全结构检查仍在派发前超时。没有refresh/goto/点击菜单/输入查询/查看详情、切号或任何页面状态修改，不能确认当前身份或有无用户draft。未把库存title当管理员实证，未读取token/store/privateReact、密码或日志正文，未用原始HTTP绕过工具。
+
+markHandoff成功保留当前页并立即归还唯一浏览器锁，不继续连环重试或改网络/服务/扩展配置。本轮新增菜单/默认列表与分页、批准S账号及最多两页定位、success=false及重置、21字段只读600框和加载/错误状态均NOT_VERIFIED；普通LIMIT拒绝同未验，不擅退出管理员或索密码。后续先恢复官方页面连接，再核身份/草稿，无草稿才按本次原授权正常刷新一次菜单；新后端重启后live不能以旧业务日志详情或离线74/30顶替。C3 USER_SKIPPED、平台0另案、error无样本与权限不变边界保持。本次仅本人S卡更新，无源码/HMR/服务/DB/授权/测试/Git动作。
+
+## 2026-10-30 连接恢复后历史login管理员页面实际验收
+
+用户针对连接明确可以了，总控另派原live任务。重读技能，fresh官方Edge4/3库存，现项目tab328085891，正常绑定Edge4而非沿旧失效连接。最小结构确认组织页/dialog0/password0/nonSearchForms0；原“系统管理员”标签布尔为false，限定页头avatar实际显示Admin，不把旧昵称或该显示名本身当有效管理员资格证明。无草稿后只正常reload一次，过程中busy1/菜单空为加载态；有界等待后busy0，页头仍Admin，正常展开系统日志，实际出现新增“登录日志”链接#/log/login。未改菜单或硬造路由。
+
+单击正式菜单进入#/log/login，查询栏登录账号/操作结果/记录时间，八列表头记录时间/登录账号/登录类型/操作结果/IP地址/设备类型/风险标记/操作，默认列表经历busy到ready无固定失败提示，分页20条/页。未读默认真实记录正文或个人信息。仅输入批准QA_LIM_20261023；最初“查询”无空格定位不匹配、无点击，安全核按钮实际“查 询”后正常执行一次。请求中保留旧行的技术ID/账号匹配布尔观察为transitional，未作为过滤已完成或权限结果证据，不记录非目标ID到本卡；随后所有结果核验均先要求busy0。
+
+批准账号查询稳定第一页11条，全部账号匹配布尔true，命中既有已批准登录ID2115792863936774145，无需翻第二页。仅对该目标正常单击一次“查看”：北京14:04:39.237首个dialog600×1221，21值框/21 aria-busy/21骨架、加载status存在；14:05:00.683同框同尺寸仍在加载，14:05:39.270完成态600×1221、21框、busyFields0/skeleton0、error=false、控件0。两观察间隔不当请求耗时，未重开或重试。
+
+标签完整21项：记录ID、租户ID、用户ID、登录账号、登录类型、操作结果、失败原因、IP地址、设备、版本、设备类型、设备型号、操作系统、系统版本、浏览器、浏览器版本、风险标记、最后活动时间、退出时间、退出原因、记录时间。只采标签及几何/布尔，未读字段实际值、账号设备IP或失败正文；无sessionId/deviceFingerprint/userAgent对应标签，无pre/code/iframe或原始区展开。只读值框实测rgba(0,0,0,0.02)底及1px solid rgb(240,240,240)边框，无input/textarea/select/combobox/switch/submit。可收口本次实际详情读取完成、白名单呈现与先开框加载稳定、只读底框；无错误分支现场，不能将离线失败测试当新live失败路径已验。
+
+正常关闭一次，仍仅该S账号条件下选择“操作结果=失败”并查询，稳定返回3条，全部账号匹配true且三个操作结果仅核isFailure=true，没有读取失败原因或私人正文；证明页面失败筛选返回正确类别，不声称抓取实际wire参数success=false。正常重置一次，账号空、结果失败选择清空、起止时间两空，列表ready20条、无固定读取失败提示，仅记录数量未读重置后真实行内容。当前S账号总11条不足第二页，S条件下真实翻页尚未执行；默认20/page与重置重载已证，不能用未筛选真实用户翻页凑覆盖。
+
+最终#/log/login/busy0/dialog0/password0，markHandoff供用户本地身份交接，唯一浏览器锁归还总控；未擅自登出Admin或切LIMIT。普通账号菜单/路由/直接读取拒绝尚未验，需要总控组织用户本人本地登录现有LIMIT，禁止借私HTTP或扩大权限替代。resource/data关闭、平台0跨租户等仍未改开关或实测；C3 USER_SKIPPED及其它待办保持。未用截图收集实际日志字段；未取token/store/React/HTTP响应、未DB/服务/HMR/源码/授权/测试/Git动作。用户后端重启事实与本轮页面实际证据分别登记，不以昵称认定完整管理员关系或所有隔离场景已过。
+
+## 2026-10-30 用户本地切LIMIT后历史login前端入口拒绝通过
+
+总控转用户明确已本地登录现有QA_LIM_20261023，另授唯一浏览器锁。fresh官方Edge4/3库存及项目tab328085891/组织页，仅读页头测试标识匹配布尔limitMatches=true，busy0/dialogs0/password0/nonSearchForms0。未输出实际身份值或读取其它PII。整个已挂载菜单项（含不可见项）只有组织管理、TanStack示例且均可见，无系统日志/登录日志父子项，不因父菜单折叠误报隐藏。
+
+仅正常goto既有明确地址http://localhost:8000/#/log/login一次，无API请求模拟或URL猜测。稳定后route仍#/log/login、busy0，原生ant-result-403且可见标题403，loginFilters0/table0/recordRows0/dialogs0；不是空列表假通过，也没有查看日志正文。此为当前LIMIT的前端菜单隐藏及路由Access拒绝实际证据，不代表直接GET API资源拒绝或服务器管理员业务资格门禁已实测，不替代resource/dataoff及平台0跨租户场景。
+
+随后仅通过当前可见组织管理菜单正常返回#/sys/organization，最终limitMatches=true/busy0/dialogs0/password0，markHandoff并交还唯一浏览器锁。未取token/store/privateReact/密码或发私HTTP，无自动登出、切号、角色/部门/授权/开关/数据/服务/源码/HMR/DB/测试/Git动作；仅本人S卡追加。本轮普通用户前端入口通过，其余直接接口与既有矩阵未验边界保持，C3 USER_SKIPPED不变。
+
+## 2026-10-30 login资源拒绝探针独立无网络复验通过
+
+总控预授无网络PLAN/fake，严格等designer明确冻结源审通过后才运行；读取2026-10-30-login-log-denial-probe-review.md并收到其直接交接。冻结新脚本.gradle/login-log-denial-probe-20261030.py SHA769FE2F8D7C705BD9DB760863C3D38FC5C68F0C8FDB94B9A1D2D5E77BDD93C05，纯函数依赖D005、backend evidence C86D1FE3EF76B148B77D02AF26429DEB74DD3C45B120DBC86B338394F093AA35实核符合。审批前仅读源、准备ignored小mock用例，未擅跑真实或fake入口。
+
+通过python -I -B绝对脚本唯一一次默认入口：PLAN/NOT_RUN/maxRequests4/realHttpRequests0/passwordInputfalse/administratorGuard NOT_PROVEN；唯一一次--self-test：fake56/success true/realHttpRequests0。随后独立小QA脚本用假HTTPConnection替换业务传输并禁止getpass，31业务场景通过，含两API分别404/500/401/403/4200/expired/unknown不计通过、登录失败/身份错误、login/menu能力False/null/string/1拒绝、意外success或非空data立即停止后续GET；每例核精确首错请求数、固定四步顺序、token/credentials引用清理、stdout/stderr空、secret/token/digest不进安全摘要。预算/顺序/总deadline3负例、固定目标3负例通过；独立LocalHttp假Connection7种（正常/redirect/坏JSON/非loopback/超限/内容类型/timeout）核准确原因及最多一次发起，无代理或重定向重试回退。整个QA真实HTTP0/密码输入false，不将不同fake计数拼成单轮业务用例总数。
+
+ignored结果.gradle/login-log-denial-qa-result-20261030.json保存独立摘要及实际PLAN/fake56、18项当前哈希复核：新probe+旧D005/AF5/EF9E、冻结11生产/测试源、保护3文件全无漂移。只读复核run_checks仅HTTP200/原生success False/完整0x000-00024/data缺失null空容器通过，未知业务码安全UNKNOWN；默认无参在纯依赖加载及getpass/HTTP前返回。真实模式仅TTY本人getpass，client直接http.client/loopback/connect3s/wall5s/总90s/2MiB，无Cookie/proxy/redirect/retry/refresh/logout，正常认证可能更新缓存/审计，不宣称服务器存储零副作用。
+
+仅交离线通过，QA从未执行--run；真实命令供总控组织用户本人本机TTY输入密码：& 'C:/home/DevApp/python3/python.exe' -I -B 'C:/home/workspace/lab/EVA-API/.gradle/login-log-denial-probe-20261030.py' --run。固定LIMIT身份及login→menus→login/list(pageNo1/pageSize1/account固定)→批准login/get ID2115792863936774145恰四请求，login/menu能力必须原生true；该真实结果若过仅证resource gate，administratorGuard NOT_PROVEN保留，不能当业务管理员gate或开关组合live已验。不由QA读取浏览器token/密码，不扩账号或授权。当前唯一fake测试槽交还总控，无浏览器/DB/服务/生产源/测试源/Git动作，C3 USER_SKIPPED不变。
+
+## 2026-10-30 用户本地历史login资源拒绝真实摘要采纳
+
+证据来源为用户本人本地运行已审probe后提供的安全摘要，经总控转达，不是QA现场原始抓包或QA重新执行。phase=login-log-resource-denial、success=true、code=RESOURCE_DENIAL_CONFIRMED、requests=4；login及menus均HTTP200/businessCode0000/data非空；list与get均HTTP200/businessCode0x000-00024/emptyData=true。仅采安全摘要，不读取凭据、token、响应body或私人日志。
+
+本次可收口该LIMIT身份固定四请求的资源门禁拒绝，resourceGateOnly=true；administratorGuard=NOT_PROVEN原样保留。资源校验先行拒绝不代表请求已到LoginLogService管理员业务资格门禁，不证明data/resource关闭组合、平台0跨租户或直接业务guard已live通过。前端菜单隐藏/路由403是此前QA独立UI证据，管理员历史login页面是另一身份的独立UI证据；后端局部四类30、前端六文件74分别为各自离线复验，不拼成同一来源或全场景通过。
+
+本窗口只apply_patch本人S卡保存真实摘要与覆盖边界，未重跑probe/HTTP/UI/DB/测试或Git。后续custom scope前置等待backend当前只读状态和总控具体派发，现不改授权或身份；C3继续USER_SKIPPED / NOT_VERIFIED，其余未验矩阵保持。
+
+## 2026-10-30 已批准CUSTOM两GET及LIMIT单CUSTOM角色正式UI保存
+
+用户明确批准两笔并本地切回管理员，总控正式派独占浏览器。freshEdge4/tab328085891，页头系统管理员、busy0/dialog0/password0/nonSearchForms0；无自动切号。精确CUSTOM2113870080799694849行name/code匹配，正常模块授权等待busyfalse/errors0，完整90个checkbox初始全部未选。仅按实际input value勾1000000000000011010及1000000000000011011，非on资源全集恰两项，另1模块on为控件自动联动，未点模块/父行或宽资源。17:15:34.973提交前两资源确认；第一次“确定”无空格定位无匹配未点击，核实际“确 定”后仅保存一次，17:16:21.600窗关闭。重开busyfalse、90checkbox、资源全集仍仅R，自动模块on1；标题关闭未再提交。
+
+正常用户管理按QA_LIM_20261023查询，稳定busy0唯一行2114719096971497474/账号匹配；仅角色授权路径，不进profile编辑。初按button语义定位无匹配未执行，核该控件实为a后正常点角色授权一次。专用选择授权角色窗口busyfalse/errors0/password0，完整Transfer可选8/已选1且仅QA_R_DEPT_20261023，角色表头无分页，源核该入口payload仅userId/roleIds。DOM为ant-transfer-section，未把旧.ant-transfer-list零匹配当空前像；核新结构及左右箭头后只勾右DEPT左移至0、左CUSTOM右移至1。17:23:46.357提交前完整已选仅CUSTOM，可选8含DEPT，不添加其它隐藏角色或ALL/TREE。正常“确 定”仅一次，17:24:03.064窗口关闭；重开busyfalse/errors0，已选1仅QA_R_CUSTOM_20261023、可选8含DEPT，持久化UI回读符合。UI只呈角色名，原始关联ID及其它字段不变交backend独立RO，不从DOM虚报直接角色ID投影。
+
+仅尝试裁取角色授权modal自身安全区域截图一次，Page.captureScreenshot超时，无成图/文件写入证据，不伪造截图链接；未重复保存或任何数据动作。正常标题关闭后返回组织页，17:25:16.776最终#/sys/organization/admintrue/busy0/dialog0/password0，markHandoff交锁，并把实际保存时段及UI证据交总控/backend。未改SELF/PEER/部门/密码/岗位/CUSTOM scope及D2关联/其它角色资源或数据，没有profile整表单隐含覆盖、DB/cache直写、服务/源码HMR/Git动作。本次仅两笔业务保存及正常重开读取，scope尚未测；须backend当前独核后再组织用户本地LIMIT登录与双hidden真实探针，不拿即将fake自测替代本次保存证明。C3 USER_SKIPPED保持。
+
+## 2026-10-30 CUSTOM双hidden探针独立离线复验通过
+
+两笔UI已交锁后，按总控预授、designer明确源审通过才运行离线任务，读取2026-10-30-custom-both-hidden-probe-review.md。包装.gradle/org-custom-both-hidden-probe-20261030.py冻结SHA EED7FDBDCBD55E3269680A333FC2BDE30DD1B65A6188214C6D317A9DBE53A8FC，直接复用冻结EF9E的LocalHttp/Budget/target与D005 pure，未调用旧Lpositive read_check或修改其globals。固定六条literal顺序login/menu/listL/listP/getL/getP及LIMIT身份，没有样本/路径/模式参数。
+
+唯一默认PLAN exit0/NOT_RUN/maxRequests6/realHttpRequests0/passwordInputfalse，唯一--self-test exit0/fake59/realHttpRequests0。独立小mock另27场景exit0，假HTTPConnection及禁止getpass下核每步顺序/固定凭据身份、首错准确请求数、credentials/token引用清理、stdout/stderr空及secret/token/digest不进入摘要。包括每个read位置可见即UNEXPECTED_VISIBLE、资源00024/4200/404/500不可作隐藏PASS、list空object拒、get成功null拒、两login/menu capability字符串true拒；原内置59另覆盖其它空形状/get{}或[]合法失败/身份及预算等。传输直接沿已审冻结实现，本轮不冒新测全部transport分支，两个fake计数各记，不拼成真实用例数量。
+
+判定保持：两list只有HTTP200/原生success True/code0000/data严格[]，两get只有HTTP200/原生success False/完整0x000-02001/data缺省null空容器才能整体BOTH_HIDDEN_CONFIRMED。任何非空立即停止，无可见结果正文输出；UNKNOWN/资源拒绝/过期/成功空get不通过，dataScopeRootCause固定NOT_PROVEN_BY_READS。测试后19项hash（包装/旧scope/pure/C1/login-denial、冻结11源、保护3）全部无漂移，结果.gradle/org-custom-hidden-qa-result-20261030.json保存PLAN/fake59及独立27摘要。QA无真实--run/HTTP/密码/DB/浏览器/源改/服务/Git，本轮fake与上节UI保存严格分来源，不作为CUSTOM已生效或双hidden真实通过。
+
+供总控在backend当前独核通过后组织用户本机TTY的精确命令：& 'C:/home/DevApp/python3/python.exe' -I -B 'C:/home/workspace/lab/EVA-API/.gradle/org-custom-both-hidden-probe-20261030.py' --run。仅用户本地输入密码；不代登录、不从浏览器取token，正常认证可能写缓存/审计不称存储零写。唯一fake测试槽已交还总控；C3 USER_SKIPPED及其它权限未验边界保持。
+
+## 2026-10-30 CUSTOM状态独核及用户真实双hidden摘要采纳
+
+backend独立只读状态窗口为17:28:02.576799至17:28:02.667468+08，报告单connect辨dev/source-build/eva八表来源、双RO on/REPEATABLE READ、rollback/close、writes0。其实际证CUSTOM资源恰R1010/1011、LIMIT仅CUSTOM且permVer3→4；PEER仅SELF/permVer6、双方deptD1/posts空等无漂移，scope0003仅D2及四部门/两样本作者等不变，两个作者部门D1在D2 predicate均false。这是backend独立PG证据，非QA重新连库，也不以UI回读冒原始关联ID独核。
+
+用户本人本地执行已审双hidden探针后提供安全摘要，经总控转达，非QA原始抓包或重新运行：phase=custom-both-hidden、success=true、code=BOTH_HIDDEN_CONFIRMED、requests=6；login/menu各HTTP200/success true/code0000；listL/listP各HTTP200/success true/code0000/emptyData true；getL/getP各HTTP200/success false/完整0x000-02001/emptyData true。dataScopeRootCause=NOT_PROVEN_BY_READS原样保留，未读取密码/token/response body或私人字段。
+
+结合上述独立CUSTOM仅D2、作者均D1状态，本次仅可收口这两个批准样本在该角色配置下的双隐藏符合预期；客户端结果不自证scope根因，不推广任意对象或跨租户，也不称互补并集、ALL、TREE及其它未验项已过。原C2 DEPT同D1双可见、当前CUSTOM双隐藏和日志resource拒绝各属独立阶段，不能拼为同轮全权限通过。总控下一拟申请ALL两GET及LIMIT从CUSTOM加ALL，尚未答复不实施，不在本记录授新权限。
+
+本窗口仅apply_patch本人S卡，管理员浏览器无新动作，未重跑脚本/HTTP/UI/DB/角色/服务/源码/测试/Git，C3继续USER_SKIPPED / NOT_VERIFIED。
+
+## 2026-10-30 ALL阶段已获批准但浏览器前置连接受阻，零保存
+
+用户明确批准ALL2113870419179364353资源空→精确组织GET1010/1011，以及LIMIT完整roles从CUSTOM→CUSTOM+ALL，保其余对象/权限/部门不变；总控派唯一浏览器窗口，不据此认定已执行。fresh官方库存实际Edge1/2、项目新tab328086142，库存title Eva Admin Pro、URL http://localhost:8000/；旧Edge4已不可用，未沿旧坐标、未导航到猜测页面。
+
+正常绑定现Edge1并claim新tab，仅尝试安全DOM的管理员匹配/路由/busy/dialog/password/form数量，命令派发前超时；随后仅正常重新claim同tab一次再核相同安全前置，仍派发前超时。无法确认当前登录身份或无draft，不把库存title当管理员证据，也不自动登出/切号/刷新或关闭潜在草稿。未进入role/account页面，未打开任何授权框、未勾选、未提交或重试save；ALL与LIMIT两笔实际保存均0，不能让后验成员误认为CUSTOM+ALL已落库。
+
+markHandoff成功保留现页并交回浏览器锁；已主动交总控/backend明确未保存，backend不得以本轮作为保存后独核触发。下一仅在连接可用后按原批准范围fresh核admin/草稿及两对象完整前像，再各一次正常保存/重开；本轮不扩权限/私HTTP/DB/cache写/服务/源码/HMR/测试/Git。C3 USER_SKIPPED及CUSTOM双hidden已验历史保持分离，ALL双可见仍未实施/未验。
+
+## 2026-10-30 官方原生Edge通道评估被URL策略停止，仍零保存
+
+总控明确要求不重复CDP，改评估当前computer-use技能及官方原生通道；已重读当前SKILL、guidance、confirmations及API。官方cua.listWindows实际返回唯一MSEdge窗口394066，标题Eva Admin Pro - 个人 - Microsoft Edge。首次cua.getApp报该窗口最小化，未取得界面状态；按文档官方@oai/sky get_window及activate_window仅恢复此返回窗口，无猜测窗口、坐标或外部协议。
+
+随后仅请求include_screenshot=false/include_text=true原生状态，拟只输出管理员/导航/dialog等安全标记，工具直接停止本轮Computer Use：Windows无法以足够可信度确定当前浏览器URL以执行策略。未返回界面内容，无法确认管理员、草稿或任何精确对象。遵工具停止要求，未再次调用原生/浏览器通道，不改用其它技术或盲坐标。无截图、字段/密码/PII读取，也不将窗口标题当身份凭据。
+
+本窗口唯一实际UI效果为恢复Edge最小化窗口，未导航/点击业务控件/打开授权/勾选/保存，ALL两GET与LIMIT加ALL仍各0次保存。已向总控/backend报告勿触发保存后独核，并归还操作锁；因本轮Computer Use被工具停止，不再调用handoff或关闭任何潜在草稿，现应用内容状态未知。仅本人S卡记录限制，无DB/私HTTP/token/源/服务/HMR/授权或Git动作；原两笔用户批准范围保留，未将连接恢复权限扩大为绕策略执行。
+
+## 2026-10-30 用户恢复连接后ALL两笔UI正式保存并重开回读
+
+用户新轮明确可以了，总控恢复原两笔批准任务，重读当前技能，仅用恢复的官方浏览器、不重试native。freshEdge1/2库存当前tab328086142，可信http://localhost:8000/#/sys/account；安全DOM admintrue（系统管理员）/busy0/dialog0/password0/nonSearchForms0。正常角色页准确ALL2113870419179364353行name/code匹配，模块授权busyfalse/errors0，完整90checkbox全未选、两GET实际技术value及标签一致。仅勾1010/1011叶资源，资源集合恰R，控件自动联动模块on1，未点父模块全选或其它资源。北京时间21:36:12.525提交前确认，正常确定仅一次，21:36:31.786窗口关闭；重开busyfalse/90checkbox资源全集仍仅R。仅标题关闭回读窗，不再次提交。
+
+正常用户页精确QA_LIM_20261023过滤busy0唯一技术行2114719096971497474，专用“角色授权”窗口而非profile编辑；完整前像可选8/已选1仅CUSTOM，busyfalse/errors0/password0。保留CUSTOM，只勾左侧ALL右移，提交前可选7/已选2精确CUSTOM+ALL，不移出其它角色、不增加隐藏key；21:37:52.021确认前值与目标集后正常确定仅一次，21:38:12.429窗已关闭。重开busyfalse/errors0，可选7/已选2仍精确CUSTOM+ALL，持久化UI回读符合；原始关联技术ID与其它字段不变仍交backend独立RO，不把UI角色名当数据库原值独核。
+
+成功取得仅角色授权modal裁图runtime-20261028-resumed/20261030-all-custom-role-persisted.png，已视觉核只含角色候选与已选CUSTOM/ALL，无底层用户资料/密码/联系方式。正常标题关闭后返回组织页，21:39:19.234最终#/sys/organization/admintrue/busy0/dialog0/password0，markHandoff并交还唯一浏览器锁。已主动向总控/backend交实际保存窗口与各SAVE1结果，供其按既有授权一次RO后验；未独核不测scope/不自动登录LIMIT。
+
+本轮业务动作仅批准ALL两GET及LIMIT保CUSTOM加ALL两笔专用保存，不修改ALL scope0000、CUSTOM scope/D2、PEER、部门、密码、岗位、其它资源/角色或样本；无DB/cache直写、私HTTP/token/store/React/源码/HMR/服务/测试/Git。前两失败轮SAVE0保持历史，不能抹为当时已保存，也不把本次UI回读当ALL双可见API已验。C3 USER_SKIPPED / NOT_VERIFIED保持。
+
+## 2026-10-30 用户真实ALL组合摘要与剩余动作独立对账
+
+用户本人本地提供、总控转达的真实摘要：phase=scope-read-v1，identity=LIM，success=true，code=EXPECTATION_MATCHED，expectPeer=visible，requests=6；L/P两个list和两个get全部HTTP200、success=true、code0000，count1、visible/idMatches/matched=true。LOGIN_TOKEN是执行检查点，不是失败。QA未重新运行、抓包或接触密码/token。与backend独立只读21:40:36.114589至37.066815确认的LIMIT完整CUSTOM+ALL/permVer5、CUSTOM仅D2、两个作者仍D1，以及前一用户CUSTOM双hidden实证对照，可收口“当前两个S样本在CUSTOM+ALL组合下均可见”；不能推广为互补受限OR或全表范围证明。scopeRootCause=NOT_PROVEN_BY_API、resourceDenial=NOT_COVERED、editDenial=NOT_COVERED原样保留。
+
+仅只读对账本人S卡、sys-log-matrix-20261023及backend_developer.md:946-975的27行动表，并以frontend quality_reviewer-system-view-stage-20261024后续实屏记录消除旧缺口。旧表中CUSTOM、ALL、业务详情、历史login“缺页面”均已过时，不继续列待实现/待验。账号D1详情回填在10-28已通过；角色授权专用窗当前CUSTOM+ALL回读已通过，不以旧“无角色”倒退当前结论。R01冻结/编辑、M01备注/M02名称恢复、组织L只读与骨架、管理员业务/login详情、login筛选及重置、LIMIT登录菜单/深链403与资源直接拒绝均保留已验，不重复派工。
+
+下表“可直接只读”仅表示无需改数据的候选，仍由总控安排唯一浏览器锁与安全身份/无草稿前置；本轮没有执行。写操作和身份切换不因清单而获得授权。
+
+| 模块 | 真正剩余动作及最近证据 | 当前管理员+现有S数据能否直接继续 |
+| --- | --- | --- |
+| 账号 | 普通资料编辑往返未验；角色授权不等于资料保存。D1详情已过，当前两已分配角色在普通详情的完整回显尚未补证 | 可直接只读LIMIT普通详情的角色/部门与加载布局，避开联系方式；资料写须指定可恢复字段/原值批准，不动部门 |
+| 账号 | 锁定/解锁及受限直拒；删除/引用拒绝；重置密码/跨账号拒绝未验 | 均不能直接写；锁定不得针对当前管理员；删除最后并先决恢复/引用；改密须人本地接管 |
+| 账号/岗位 | 岗位授权与回读未验，两S账号posts为空 | 缺合法专用岗位与入口，另行决定；不为补格新造岗位 |
+| 角色范围 | TREE同部门正向、真正子树覆盖/跨部门排除未验；TREE当前无两GET资源，不能直接切入读取 | 需逐笔批准TREE资源和LIMIT完整角色集；现两作者D1只能正向，真正跨部门须另行批准可区分基线 |
+| 角色范围 | 两个受限scope互补并集、含ALL时的更广范围尚未证；CUSTOM双hidden→CUSTOM+ALL双visible已证 | 当前样本不能证明互补OR或全表覆盖，须用户决定是否增加可区分基线；不得重提已跳过的PEER D1→D1C |
+| 角色关联 | 正向grant与替换已有多次实证；专门用户授权移除/恢复及会话版本生效、被引用拒删和无引用删除未验 | 需明确关系/版本与恢复方案，保留五角色/两账号以供后续；不自动撤权或删除 |
+| 组织 | 资源缺失的直接edit拒绝、资源存在但对象不可见的直接edit拒绝未验；现仅两GET，按钮隐藏不能替代直口 | 需分别批准固定对象/请求/预期零写与权限夹具；不得拿ALL可见身份冒不可见对象负向 |
+| 组织 | 专门冻结/恢复及保护直拒、sort及父子/path联动恢复、引用拒删与最终删除未验 | 均需精确写入批准；四部门承载现有S基线，不移动作者部门/样本pid绕过C3，不先清理 |
+| 模块 | 新增及资源关联、专门排序/冻结、引用拒删/撤引用删除未验；M01/M02编辑恢复已经通过 | 新增会影响菜单/资源，须最小新对象与明确批准；M01/M02不是自动清理对象 |
+| 字典 | D01根/明细归属与备注真值契约未闭；明细view独立640Drawer/Descriptions与edit500Modal三字段差异待裁决 | 可按既有D01/QA01只读复核；须人先裁决归属/备注/同AOE规则，不能凭旧表要求擅写DATA_SCOPE |
+| 字典 | 明细新增/编辑/删除/排序往返、备注保存、switch/引用拒删未闭；旧平表/高度及少多空、亮暗视口不能由自动测试填绿 | 契约后才能批准写与恢复；安全既有数据下的布局只读可另排，不新增数据凑状态 |
+| 业务日志 | 安全详情与10-23同日分页已验；真实受限资源+数据联合list/get/count、ALL对照、跨租户未验 | 当前组织GET角色没有日志资源，须专门S事件/日志资源/身份夹具；不能读旧正文或把GET组织结果当日志门禁 |
+| 错误日志 | 详情/聚合/指纹、缺省end/onlybegin现场、受限/租户尚未验；只有入口表头和离线日期测试 | 无批准安全错误ID，需人提供/决定安全样例；不制造故障，不开任意历史正文 |
+| 历史登录日志 | 服务管理员资格门禁live、data/resource开关组合、平台0目标/跨租户live仍未证；LIMIT现有直口资源拒绝先行，administratorGuard仍NOT_PROVEN | 需专门资格/租户/配置前提及人决定，不能关闭开关或扩日志授权；当前S账号11条不支持真实下一页，分页另需足量安全数据，非造数据要求 |
+| 在线用户 | 专用S在线行安全字段/时序与只读详情、强退与受限直拒未验；表头和菜单已证，token列不可读取 | 可仅在精确批准S会话可定位时只读安全字段；强退须专用非当前管理员会话、资源和人本地重登录接管 |
+| 认证/跨模块权限 | 切角色后的旧会话失效/最小菜单与字典元数据、跨租户联合边界、岗位0004/5/6旧值live拒绝及其它模块直口负向未验 | 当前admin+S不能自行补全部身份/租户/旧值夹具；用户本地CLI登录不代表浏览器已切LIMIT；既有login和C1门禁不重复 |
+
+C3独立保持USER_SKIPPED / NOT_VERIFIED，不进入待补执行队列；TREE跨部门/互补并集是另缺可区分前提，不能把C3跳过扩大成全部权限跳过，也不能以新标题强求同一次部门移动。岗位、通知、租户、套餐、平台租户查看、OpenAPI日志及开发/注册/token生命周期无当前普通菜单或可信夹具，只列另行规划，不作为本轮必须补齐的页面动作；源码有接口不等于现场有入口或已拒绝。
+
+最短执行顺序：先仅现有admin/现有对象补LIMIT普通只读详情完整角色回显及已确认无契约争议的布局；随后由人裁决字典契约与哪些剩余项纳入本轮，按单一身份/资源夹具逐项安排组织edit直拒和日志资格等负向；需要TREE/互补/跨租户/在线强退的项目等各自前提，不穿插授权；可逆写验逐笔批准且立即恢复；最后才单独批准撤权/禁用/清理并逐对象回读。保留S样本及日志，不抢先回收导致后续无法验证。一般显示尺寸/主题未覆盖不能提升为新必测业务模块。
+
+本轮唯一修改本人S卡；无浏览器/真实HTTP/DB/测试重跑、源码/角色/资源/服务/配置/密码/Git发布操作。已按当前真实证据向总控交清单，不宣称全模块或全表范围通过。
+
+## 2026-10-30 LIMIT普通详情补验受连接阻挡，未打开详情
+
+总控派现admin普通只读详情一次，精确LIMIT2114719096971497474，核CUSTOM+ALL及左右布局；本轮重新读取computer-use技能并恢复官方cua文档。fresh官方Edge1库存仅现tab328086142，可信http://localhost:8000/#/sys/organization。沿原绑定最小只读安全DOM检查在命令派发前超时，未导航/点击。按最多一次正常重取同tab，官方返回组织页AX、页头系统管理员、用户管理实际link及无dialog；Fitkun容器仍在AX，但未据屏外文本认定可见阻挡或操作扩展。
+
+重取后仅再次尝试URL/admin/dialog/password/busy/form数量的安全DOM前置检查，仍在派发前超时。没有得到完整无draft前置，不继续用户菜单/过滤或改用native、坐标、私接口等绕过；两次失败均未执行业务操作。没有进入账号页，没有打开LIMIT普通详情或CUSTOM子详情，roles/加载固定框/骨架/底框/审计/角色行布局全部本轮NOT_VERIFIED，不将此前授权窗CUSTOM+ALL回读冒充普通详情已验，也不定产品缺陷。
+
+markHandoff成功，原admin组织页保留，浏览器锁交回；未截图PII、未读取联系方式/姓名/密码/响应/token/store/React。仅本人S卡记录，无写业务/授权/删除/改密/DB/HTTP/源码/服务/测试/Git动作，C3保持USER_SKIPPED。下一仅连接恢复后继续原精确一次普通详情任务，本轮不再重连。
+
+## 2026-10-30 官方AX单次可用性评估同样失败，零导航
+
+总控另授一次仅官方AX评估，允许明确无draft与精确对象后沿相同只读任务继续，禁止再DOM evaluate/重取/换技术。当前文档确有Tab.getAXState({emit:false})，可取官方可访问性状态并仅输出可信URL/admin、dialog/保存/取消/未保存标记、用户菜单及可编辑控件结构，不需私CDP/源码或native。实际只调用现tab此API一次，工具返回Detached while handling command，未返回任何AX状态，故无法可靠分辨草稿；立即停止，不重新claim/导航/点击或尝试其它通道。
+
+随后markHandoff成功，交还唯一浏览器锁；没有进入用户页或打开详情，LIMIT普通详情和CUSTOM子详情仍NOT_VERIFIED。只更新本人S卡并回总控，本轮零业务操作、无PII截图/字段读取、无DOM evaluate、无数据/授权/源码/服务/DB/HTTP/测试/Git变化。需正式连接恢复后再续原任务，本轮不再评估，C3skip保持。
+
+## 2026-10-31 重新连接后LIMIT普通详情与CUSTOM权限只读补验
+
+用户明确重新连接可以了，总控恢复同一只读任务。重读当前技能/官方文档，旧Edge1已不可用，fresh库存Edge4/3，同一项目新tab328086248、可信http://localhost:8000/#/sys/account；未沿旧tab328086142或坐标。正式claim当前Edge3用户tab后DOM可用。初始dialogs0/password0/busy0，唯一form为eva-table-search（三个搜索框），无编辑草稿。精确填账号QA_LIM_20261023并Enter，首个即时读仍旧行，下一正常状态读取已仅2114719096971497474唯一行匹配，未重复提交查询。期间两次JS绑定/未claim的本地引用错误不曾执行UI业务操作，未将它们记产品失败或网络重试。
+
+北京时间00:51:45.677仅一次行双击普通查看（非编辑/授权窗），1040×608 Dialog先开，左右busytrue、12骨架、0编辑控件，按钮仅标题关闭/关闭用户查看。00:51:56.472完成仍1040×608、busy全false/skeleton0/controls0。右表精确两技术行：CUSTOM2113870080799694849、ALL2113870419179364353，合成角色标签匹配，无未分配角色；列仅序号/角色名称/角色状态，无独立查看列、role区域buttons0。没有读取姓名/电话/邮箱/密码或详情值，只取字段标签/几何/样式和批准role技术标签。
+
+左侧11个eva-view-value均rgba(0,0,0,.02)底、1px solid rgb240边框，普通32px/备注98px；审计四标签紧接备注后、无“审计信息”标题或另块标题。左资料x620/y375.5/w645.328125/h458，右角色x1289.328125/y375.5/w322.65625/h458，底均833.5；备注底697.5，审计区域721.5至833.5，末字段底809.5及既有24px底间距。右边框1px rgb240、背景透明，不因其表格结构不同于左文本底框判错。仅角色区域安全裁图在工具中视觉核确有CUSTOM/ALL两行与完整下方边框，无PII区域截图；未落地全页图。当前实证可证明同外框加载前后尺寸与ready左右底边一致，未单独保存pending左右数值，不扩大为逐帧/独立每区零位移或所有视口主题通过。
+
+仅一次双击已分配CUSTOM行，打开“QA_R_CUSTOM_20261023 · 模块权限（只读）”860×436子窗，busytrue到false、controls0/errorfalse；列模块名称/授权情况/已授予资源，只显示系统管理上级目录和组织管理已授权，两资源标签为获取组织树/根据ID获取组织详情。未点击授权或增删资源。正常“关闭权限查看”后剩1父窗，再“关闭用户查看”后dialogs0，普通详情打开/关闭各一次，子窗各一次，无重开重复验。
+
+身份表述校正：初始最小检查在document.body匹配“系统管理员”为true，账号列表本身也可能含该文本，因此该布尔不足以独立证明页头或有效管理员资格，不能据此声称服务端管理员资格门禁已验。关闭后安全复核页头显示Admin、非LIMIT页头、无登录表单；与10-30此前admin现场一致，但显示名不替代资格证据。本轮未切账号/登录/刷新/改身份，终态可信#/sys/account、busy0/dialog0/password0/仅查询表单；markHandoff成功，交回锁。普通详情角色/只读结构结论按实际已见记录，不把显示名解释成权限认证通过。
+
+无业务保存/部门角色授权/密码/删除/DB/私HTTP/token/store/React/源码/HMR/服务/测试/Git操作，仅更新本人S卡并交总控。原CUSTOM/ALL读取、login/biz和资源直拒不重做；C3 USER_SKIPPED、TREE跨部门/互补OR及平台0认证另案边界保持。
+
+## 2026-10-31 字典明细最小修复独立源审/28项通过，UI连接未就绪
+
+按总控派独立源审、唯一聚焦测试槽与随后只读UI验收，不改生产/test源。读取当前EVA前端/antd/ponytail-review技能、权威EVA前端规则、前端AGENTS链接的CLAUDE及相关父调用/共享表单样式/类型。四文件manifest .git/dictionary-line-source-20261031.json SHA A116465B4C0B461981FDDDDC7D355736496BF19450FBCD8EE916E077095D5FDE，四项实际源哈希全部匹配，测试后仍0漂移。两生产SHA分别linelist 5C0307CE2FACD28B100C5B6C3659CB30D89B2FCA000FFC4137AD03DBBFE2F269、lineaoeform 18AE111D4C2FFE6AE0C09D080DF3238ACCC6AAA3E2CE8BADF4DF1EF1023E0D25。登录冻结12文件测试前后匹配，root checkpoint SHA232B123390A88B8FA0F6679F943FCF4D4E8B1A983F21D52D769B0C42A29B1661前后不变。其它既有dirty保留。
+
+源审未发现本修必须修改项：独立RecordView仅从字典line移除，三模式共LineAOEForm width500/label100，编码/描述/排序/备注四行；create/edit原三Input与唯一编码验证保留，remark仅纯文本、未name注册或加入写payload，编辑合并原记录保留旧remark，新增无值为—；view无name/rules/form提交、无onOk、footer仅关闭，0值以nullish而非真假转换保留。canWrite只允许create/edit、非readOnly、有效session/current，await validateFields后再检查；父isCurrent变化layout cleanup关闭旧view/旧确认，不恢复旧回调。主表单click→右编辑、内部操作阻泡及dirty保护沿父代码不改；不新增主查看按钮/双击、不造子audit、不修改API/共享RecordView。现antd6.6.3本地Modal/Form类型支持相关props；本轮环境无可发现antd CLI，未安装/升级依赖或冒称CLI专项已跑。
+
+独立且仅一次指定命令：pnpm.cmd exec vitest run src/pages/sys/dictionary/lineview.test.tsx src/pages/sys/dictionary/staleLines.test.tsx src/pages/sys/dictionary/interaction.test.tsx src/pages/sys/dictionary/index.test.tsx src/pages/sys/nestedRecordView.test.tsx --maxWorkers=1 --reporter=default。北京时间01:05:59起/31.69s，exit0、5files/28tests全部通过，未拼backend/frontend自测或旧74/30。日志前端.git/dictionary-line-qa-20261031.log SHA742562218EDF908D999C97F7E1DCF6C5D5BE37A3AE0C282D33ECD583FDECCB1D。覆盖亮暗三模式布局/只读Enter及submit不写、真实0与原remark、显式查看键盘入口、父换关闭旧view、旧异步校验与删除确认失效、主单击/dirty/只读等；AntD rowKey index弃用警告保留，不称零警告。
+
+随后独立定向pnpm.cmd exec tsc -p .git/tsconfig-dictionary-line-check.json --noEmit exit0，配置files只指两生产+既有声明、include空、incrementalfalse，非全仓类型检查。pnpm.cmd exec biome check四冻结文件exit0/Checked4/No fixes，未--write；没有build/全仓测试/服务动作。唯一测试命令均结束，槽释放。
+
+UI阶段fresh官方Edge3仅当前用户页tab328086248/可信localhost:8000/#/sys/account库存；最小DOM拟核页头Admin/系统管理员、dialog/password/busy/form及真实字典link，派发前超时，无状态返回。按最多一次正常重取同一tab（官方claimTab）再同安全检查仍派发前超时。未完成当前身份与无draft确认，立即停止，不继续AX/换通道/native/坐标/重连，不沿旧成功身份冒本次前置通过。markHandoff成功，原用户页保留交锁。
+
+本次没有进入字典页，未检查D01实际存在、未单击父项或开任何明细view/create/edit；500容器/四label/0控件/readonlyremark/取消及父切换均现场NOT_VERIFIED。10-26明细布局差异是旧实现历史，当前仅代码/离线门禁通过，不能宣称已现场修复闭合。未读任何私人字典/PII/详情值/响应、无截图，无业务填值/保存/删除/授权/DB/私HTTP/token/store/React/source/HMR/服务/Git/子代理。仅本人S卡及ignored测试日志，回总控实际结果并交源锁；C3skip与字典其它归属契约不夹带推进。正式连接恢复后仅续原批准D01只读UI任务，不重跑已绿测试。
+
+## 2026-10-31 连接恢复后D01明细三模式现场通过，零填写保存
+
+用户明确可以了后总控恢复原UI任务，重读当前技能/官方文档，fresh Edge1当前用户tab328086248可信#/sys/account，页头Admin、非LIMIT、dialogs/password0、仅搜索form，无编辑草稿；不以显示名替代服务端资格证明。正常字典菜单进入，确认批准code EVA_QA_20261018_D01对应主行2111791956297613314存在，未读未知字典详情。主行仅单click一次，busy1→0，右code匹配，主操作仅删除、无查看/编辑按钮，不主双击。
+
+北京时间07:42:58.006 QA01明细查看按钮一次：500×362 Modal，编码/描述/排序/备注四标签，0输入/选择/表单/submit，按钮仅关闭；四文本均32px/rgba黑.02浅底/1px rgb240边框，无子audit。原QA01/测试明细已编辑/排序1合成值符合旧基线，备注—合法缺失。仅弹窗500×363安全裁图在工具中视觉核，无PII区域或任意字典正文截图，未落地全页图。
+
+关闭后现有明细编辑仅开一次，同500×362/四label/label flex0 0 100px/原3Input+readonlyremark，未填值仅取消；新增明细一次也同500×362/四label/3Input+readonlyremark—，未填值仅取消。三模式各开关一次，无提交/保存/删除/丢弃草稿。07:43:27.904终态#/sys/dictionary页头Admin、busy0/dialog0/errors0、D01 code仍匹配/QA01唯一、无离开提示；markHandoff成功交锁。
+
+亮色现视口三模式同布局与只读查看可闭合10-26旧独立640查看布局差异；暗色/所有视口、父切换关闭旧view现场未做（保前轮自动证），备注后端持久化及其它归属契约不外推。本轮不重跑28/tsc/静态，无字段填写、角色部门/数据写、私HTTP/token/store/React/PII原响应/DB/source/HMR/服务/Git/子代理，仅S卡写并主动回总控，C3skip保持。
+
+## 2026-10-31 用户保存暂停检查点
+
+总控转达用户明确“保存 暂停”，立即停止新审查/测试/命令/浏览器动作，仅保存本人状态。QA唯一跟踪修改文件为本S卡；生产及test源未由QA修改。字典四文件冻结manifest A116465B4C0B461981FDDDDC7D355736496BF19450FBCD8EE916E077095D5FDE的最近实核仍四项匹配，未在暂停时重新核哈希；不能冒称暂停时新快照。独立指定5文件28/28、两源定向tsc、四文件Biome均已完成通过，日志及限制见上节；D01三模式只读现场已完成，不重复。
+
+当前无QA活动命令、无待结束测试；唯一浏览器锁已markHandoff交回，最后现场D01字典页无弹窗/无填写/无离开提示，暂停不再触浏览器或丢草稿；测试槽/源码锁已交总控。既有改动保留，不回滚、不扩大，不提交push。B businessWritable/readOnly两能力字段仍未批准，B/C不实施，A保持原当前工作，QA不以暂停补审或推断其它成员新状态。旧数据分类/迁移未批准，角色/样本保留不回收，C3 USER_SKIPPED保持。
+
+精确下一步：等待用户明确继续及总控新派发；恢复先确定A/B/C实际批准范围与源锁，再决定是否需要任何新验证。已绿字典28及已完成UI不因恢复而自动重跑；不预先实施B字段或旧数据迁移。本次仅保存卡并主动报告总控，随后待命，无DB/HTTP/服务/新实现/测试/审查/Git动作。
+
+## 2026-10-31 恢复后字典A独立复验待新终审，未运行旧候选
+
+用户继续，总控预派仅在backend正式冻结/最终结果与designer终审通过后自动接棒最小DictServiceTest+DictConvertTest独立fresh隔离输出。已读本暂停卡、backend暂停A三源与旧run-final/init，旧session53332已exit0，不重复。backend交旧候选manifest .gradle/dict-a-20261031/manifest.json SHA声称D30E31C3239FEF62B7E0DB0A672EAB34814906A6FBF86501E008B2CCE31C1342及材料；本轮仅读其结构/diff/源测试入口，不把未亲核全量哈希记已通过。旧记录Service28+Convert5=33全绿仅原开发证据，不是QA独立执行。
+
+读取designer正式2026-10-31-dictionary-a-source-review.md发现其当前明确“有一项保护完整性阻断，暂不交QA执行”：listItems(mainId)仍被普通owner数据范围裁剪，可能漏掉他人9999子，导致主edit/del保护未覆盖完整本源子集。随后总控明确源锁回backend作A内窄修及真实插件交互回归。依赖未通过，因此QA未启动任何Gradle/编译/测试，未创建新RUN或修改init，未浪费重复旧33。前述后台消息中“已实读无阻断”被最新正式审查结论取代，不能以旧口头预告越过门禁。
+
+当前QA无活动命令/浏览器或测试占用，只读准备结束并向总控报告。下一等待新候选（可能增加最小mapper/保护scope/case）的正式冻结及designer通过，再核实际新范围、隔离输入/输出/逐case并仅执行获批定向测试；不全局ignore、不扩UI读权限，不跑旧228/74/30/前端28，不下载/clean共享/build服务/DB/HTTP/角色/Git。B两字段仍未批、B/C不动、C3skip和样本保留。唯一写本S卡，旧审查/失败/成功证据保留。
+
+## 2026-10-31 新版字典A独立fresh隔离41/41通过
+
+收到backend新冻结及designer明确终签通过，读取设计最终节后才运行。绑定manifest .gradle/dict-a-integrity-20261031/manifest.json SHA1191CA15373D72FE37C03283772F4CB8A6E5E73D2702B2A91D13C37A8CADCC84；五当前源、清单evidence、列明products及三XML逐项重算一致，未跑旧D30E/33。审新Snapshot package-private入口/固定当前main/原scope主锁、事务绑定连接/实际来源检查、只查本main未删除9999保护集合，普通子沿原可见列表不扩UI。Service先全批验证再主子写，保护集合未变则跳写，隐藏普通ID拒。未发现本次可复现新增阻断，不改任何源/test。
+
+复用已审18行init，仅将run路径替换为全新.gradle/dict-a-qa-20261031T141112-61bfec7d，build与project-cache全部独立，任务白名单及输出目录门禁保留。命令沿冻结command.json，仅筛DictServiceTest、DictItemSnapshotTest、DictConvertTest；offline/no-daemon/max-workers1/no-parallel/no-build-cache/no-configuration-cache/auto-download=false。执行前记录671个仓库Java/Gradle输入路径+SHA于inputs-before.json，不含配置秘密正文；结束逐项无漂移。只执行一次，exit0/BUILD SUCCESSFUL in1m22s、23tasks全部executed，未重用旧编译输出、不clean共享或下载依赖。
+
+本QA独立XML：Service28、Snapshot8、Convert5，合计41，failure/error/skipped全部0；与冻结逐class+case名称集合比较差异0。新目录qa-result.json含全部逐case、三XML SHA、413个class/jar/XML/生成mapper产物SHA及输入漂移结果，SHA10E770D6DBBEEC083E3E03D54EBC340AD3BBDCDAF991F7402F1BD70871099B49；run.log SHA61B6F94236E8C078B3A86567BB06FDB93B8FABE9304B4C4FBE076CF36F4699A9。三个原保护文件launch/settings/GO SHA均匹配原值；登录Java源含于671输入无漂移，前端未操作。编译deprecated/unchecked/Gradle弃用等警告保留，不称零警告。
+
+覆盖边界：真实MapStruct生成转换、真实data interceptor SELF SQL改写、真实CoreSchemaExecutor在合成JDBC/resolver成功/错缺映射时恢复非空上下文与search_path；Service主子mapper、JDBC结果/事务状态及数据库选择结果仍合成。41项不证明真实PG谓词执行/锁竞争或外部直写、并发压力、Spring整应用装配/HTTP/部署已加载。旧mustfix由新源码终审+当前合成定向回归闭合，旧33历史阻断不抹除；运行部署和实际DB范围独立留待明确安排。
+
+全部命令结束，唯一测试槽/源锁交回总控。唯一跟踪写本人S卡，另仅ignored QA RUN/指针证据；无生产dev build/clean、旧228/login74/30/前端28重跑、browser/DB/HTTP/服务/角色/提交push或子代理。B两能力位未批、B/C不实施，C3skip及现有样本授权保留。完成主动回总控，不自动推进部署或新阶段。
+
+## 2026-10-31 后端B新冻结独立66/66通过，前端候选待补丁终签
+
+总控最新明确B capability已获用户批准，旧卡“B未批”仅对应当时检查点，不继续作为当前阻塞；旧数据分类/实际迁移仍未批，C未实施。预派后等designer后端3C2C终签及root明确槽归QA才启动。manifest .gradle/dict-b-20261031/manifest.json SHA3C2C96FA4500C5A1D8890803E0C572AA18D7F3722D14B2B7609EE1A3209198DE、11inputs/3support/14保护/evidence/列明products/四XML执行前逐项匹配。审来源八表含sys_dict_item，有效账号/ROLE_ADMIN实际关系与操作method/resource分别校验；SYSTEM/NULL拒写、原A保护/普通可见范围、空list外层能力及row/get原生布尔保留，category可选匹配。V14仅nullable CATEGORY与两值CHECK，无UPDATE/分类/根恢复，未执行。版本门禁只核受控列类型/长度及同名validated约束，不证明任意外部同名约束表达式。
+
+fresh RUN .gradle/dict-b-qa-20261031T152941-39b402c9，仅替冻结init run路径，保持任务/输出白名单，独立products/project-cache、offline/no-daemon/单worker/no-parallel/no-build-cache/no-configcache/auto-downloadfalse，四类一次。实际exit0、BUILD SUCCESSFUL1m13s、23tasks全部executed；Service28/Convert5/Snapshot8/BusinessAccess25合计66，fail/error/skip0，逐class/case对最终冻结差异0。706 Java/Gradle/V14输入前后0漂移，14保护含login11/launch/settings/GO前后0漂移。413之外新增B产物，本轮418个class/jar/XML/生成mapper已逐SHA记账；qa-result.json含全部case/XML与产物，SHA63F977BFE1DBD019D58A5D508991631769C6AE1D68E367F8D9C6B0A74ECC8607，run.log SHAF093D80C164771A9ADE48431F5D42940D341EACA5429A1B847FF4427640B1793。未跑补丁前58、旧A33/全228/旧login或前端28。
+
+本轮独审与运行只证明standalone源码及合成定向回归；资格/来源SQL返回仍mock，真实data插件SQL改写/CoreExecutor合成恢复沿A保留，不证明真实PG谓词/DDL/实际旧分类、并发锁/整应用Bean/HTTP/runtime或C分源缓存已实现。警告保留，不称全项目通过。无DB/HTTP/browser/服务/源test改/提交push。
+
+前端只读准备过94A4清单13文件及契约；designer随后指出详情id匹配及success非严格true阻断，root明确旧94A4禁止测试、源锁回frontend窄修。QA未跑任何前端测试；后端自然结束后按root指令直接发前端会话01a132b1-0e33-7a73-9344-4ccaee63479c交唯一槽，让其必要聚焦补测。当前QA无活动重命令，等待新的前端冻结及designer终签，再按新清单实际六test独立单worker一次，不把原37分轮或旧94A4记独验通过。只写本人S卡及ignored QA证据，角色/样本保留/C3skip/实际迁移另批，后端结果主动交总控。
+
+## 2026-10-31 前端B身份补丁新冻结独立六文件40/40通过
+
+frontend新冻结/交槽、root明确唯一QA槽及designer新终签齐备后，按新manifest .git/dictionary-b-source-identity-20261031.json SHA11AD24CE24CEC68139CAB35920755F026898A307A161D96D8A5839A2E535D354执行，不跑旧94A4。十三当前文件逐SHA匹配；实际清单六test动态取出，非猜旧文件名。独读index list/detail success!==true即拒，详情缺ID或String归一后不等请求ID在setCurrentItem前拒，原分类校验/身份version/requestId/资源即时复核及失败保原稿保留；SYSTEM/未知/非strict双能力只读、双本地虚根不发请求/不提交、BO顶层白名单与单子9999保护符合。500lineaoeform未改。无自行源/test修正。
+
+唯一命令pnpm.cmd exec vitest run <冻结清单实际6test> --maxWorkers=1 --reporter=default，15:33:44起/44.58s、exit0。实际结果六文件40/40：interaction7、categoryPage14、staleLines9、aoeform3、categoryService1、category6。以本次独立单轮40为准，不把旧“37不同case分轮”与两文件21相加、不将其改写为同轮结果。补丁错/缺ID及非true成功标记负例、身份迟到/只读/脏态/过期回调/参数白名单均在该六文件实跑；AntD旧rowKey index弃用警告保留。
+
+前后13源无漂移、login12逐项无漂移、500lineaoeform18AE111D4C2FFE6AE0C09D080DF3238ACCC6AAA3E2CE8BADF4DF1EF1023E0D25不变、ROOTcheckpoint原SHA不变。前端.git/dictionary-b-qa-20261031.log SHA779C55AACFDE28568DF5D213B5B4BFA0ADCCDBF54934C476E292C941FC1C4368；qa-before记录源/保护输入，qa-result.json SHA16ADFB71181BAB1A63C5D298620DC7DF14798D4AC7B6DE8DED58377086433FE6记录单轮计数/哈希/0漂移。未重跑全仓types；frontend既有定向types仅字典0诊断、appicon2+organization1外部错误仍非全命令成功，不能称已全绿。未productionbuild或重跑旧74/28。
+
+后端B66和本前端40为两次顺序独立运行，非同一整项目测试；源码审/自动门禁通过不替实际页面、HTTP、部署加载、真实DDL/旧分类映射或C分源缓存。当前category实际数据未迁移，不伪造成功生产响应。全部测试已结束，唯一测试槽/源锁交回总控，待正式派现场任务；无浏览器/DB/HTTP/服务/分类写/迁移/Git/子代理，仅S卡和ignored证据。B capability已批、实际迁移另批、C未实施/C3skip/角色样本授权保留。
+
+## 2026-10-31 Git同步后验收边界更新（总控交接）
+
+总控通知同步窗口结束并交还原分工：frontend trunk/origin75e6293f无更新；backend cornerstone/origin快进至064ed4f9，四提交仅Flyway13.12.0/Minio9.0.4依赖更新，51本地dirty/untracked SHA保留，无stash/reset/提交推送。上述Git事实来源为总控本次实际同步交接，QA本节未另跑Git或实核版本。
+
+既有后端A41/B66及Flyway13.11执行runner证据只绑定同步前HEAD/依赖，继续保存历史但不得称新064ed4f9已全绿或新依赖执行方案已验。后端正在只读核缓存及必要最小再验证，QA未自动测试/下载/构建或跑旧runner。前端40及其冻结源历史证据保留，不重复已完成测试。
+
+用户已确认八项SYSTEM与QA业务映射，不再问相同归属；该确认不等于实际DDL/DML执行批准，数据库方案仍未执行。当前无活动QA命令、浏览器/DB/服务或重验证占用，原角色/样本保留/C3skip，C未推进。仅保存本人S卡，等待必要具体方案审/新依赖验证派发，不自动扩大范围。
+
+## 2026-10-31 single-init薄工具独立安全源审通过，仅放行隔离验证
+
+总控将验证工具独立安全源审交QA，不再等待designer同项签；其生产整合矩阵独审仍独立。完整读取.gradle/single-init-20261031.py及.gradle：实际SHA分别157F10B880496A8B8EA25507ED05F9FC079047D110EBA680D1A8B22363C16E64、736452AD812D0602CA3D5B5C353FD5338FB11EC4137261A730E826A24F7C4E13，始末一致。复用helper实际7392C5DB44E74DBE35D443B39E848D4F64190AA50E11D563C47B13747D5BE00F；已读其pg_preflight、observe_processes及payload/PID-start/父链证明/只读PowerShell与实例重核API，runpy非main不启动旧26类。
+
+明确结论可执行通过，无本工具安全mustfix：只筛Identity及booter四类共五精准Test，其他源集排除；任务白名单/所有task output限新RUN，classpath拒仓库共享输出；offline/1worker/无parallel/buildcache/configcache/autodownload；native14.22 jar/归档/Windows AMD64可执行hash固定，自有RUN/tmp/unpack/os-tmp；Flyway测试classpath拒非13.12版本，本地13.12 core/postgresql/cockroachdb/mysql四jar存在。当前HEAD固定064ed4f9完整值，输入hash始末比对含两工具/Java/SQL/Gradle等，未写开发配置。
+
+六实例标签init-empty/history/tenant/authorization、mode-provision/route来源固定五类；完整核PostgresInstanceEvidence的RUN nonce/context seal/6实际生成label、IPv4loopback/PG140022/独占目录与启动时间/capture只读SELECT及不可覆盖发布链。context保留helper所有12种允许标签而本运行只产六种，Java按全表验证context、Python按六实际文件门禁，未将未执行label当实例。进程观测锚launcher PID+start+test JVM父链、RUN可执行与数据目录hash/port，任意错误或残留失败，无kill/terminate；观测失败后仅自然等待当前Gradle。5类源数据连接是embedded自有源或mock，Contract只读资源字符串，未见启动SpringBoot/devDS/任意外部连接路径。主V1实核BDDFAAF79F63E637011011FEBA993DA6DCF2F4FED6D771740A3704CE00770DC4。
+
+已直接通知backend按原授权执行一次五类六PG并同步总控，QA自己未执行PLAN/execute/测试/PG或竞争槽，未改工具或源。通过只为工具执行安全门禁，非运行通过；结束后须独核精确五XML/逐case、六JDBC与端口目录进程交叉、classpath依赖/input无漂移/result，不能只采passed或用旧228/66证代本次13.12。五码0000/1/2/3/7与最终种子保持，现库历史不动、无devDDL/HTTP/browser/服务/Git，C3skip。仅本S卡写。
+
+## 2026-10-31 single-init失败留证与单AuthPG诊断增量安全源审
+
+backend首轮20261031T121646Z-ce9c86a9自然结束：Identity7/7，booter compileTestJava缺List import，PG0；其已只补测试import，非生产修正。第二轮20261031T122031Z-6de54302本QA只读result/完整known及观测：五XML18中17过，AuthPG唯一失败，六JDBC均在；29条均initdb completeProoftrue但ports[]，ownedListeningPgClusters0、RuntimeError未存message、terminal[]/drift[]。known有PID11328起始变化reprovenfalse，仅此不能证明异常根因，不据猜测放行/减OS门禁。fixture套餐INSERT仅ID违真实CODE/NAME NOTNULL，backend只补CODE/NAME，QA已读实际fixture，生产约束未改；旧失败证据保留。
+
+依root最小收口，单AuthPG增量工具不采用跨RUN拷贝模型。QA完整读新py/gradle及两delta，实核SHA7DBBB9136D83830BF0C640EDF55794B03B6399F28385044D2A227F55D7841275、D7C5619CC1CFCBC5DD1BA4C136FA762021A063246F6F4ECCB7743528F32F1CCA；旧157F/7364/helper7392始末未变。明确安全源审通过，已直接通知backend执行单fixture单PG一次、同步总控，不等重复ACK。
+
+新工具仅AuthPG selector、Evidence只编译，所有生产闭包在新RUN fresh，沿原offline/单worker/no-download、任务/输出/classpath边界、native14.22/Flyway13.12、输入hash、nonce/JDBC、OS父链/端口和残留/error门禁，无复用旧产物、无kill。额外诊断仅sample序号/UTC时间/受控helper异常str/summary/partial及terminal独立错误，未引入原命令行或env输出。scope明确AUTH_ONLY_DIAGNOSTIC且仅1XML/1label/1监听目录才可能passed，不能作最终五类六PG结论。QA仅读/卡写、不执行工具或占重槽；等待实际诊断触发样本/结果后再独立定位，不能盲重跑全六或用旧7/17累计通过。无devDB/HTTP/服务/Git/生产修改，C3skip/历史现库不动。
+
+## 2026-10-31 单项JDBC过而OS未证，十秒测试握手增量源审通过
+
+QA只读单项RUN20261031T123744Z-d55a7473：AuthPG1/1/exit0，JDBC1，6条OS只见initdb/pg_ctl ports空、known无postgres、transitions[]/errornull/diagnostic{}、terminal[]/drift[]，因此门禁false。JDBC数据目录与OS initdb/pg_ctl同RUN目录相同、loopback56291/version140022/start12:40:05.175260Z，但不能替代OS监听或解释旧RuntimeError具体分支。已向backend/root报告，不放行盲全六。
+
+root授下一最小单PG测试限定≤10秒观察窗口，不改生产/旧helper。QA完整读新py E91053EA8D3217F457D188881ABDDF85D66F1A112ED30708CB41FA7733C98D73、gradle1683A2CD60AE177D8003C3FD7582F8EB84C9B4ADCADE4FD96E36475A763DEB95及test-only PostgresInstanceEvidence DAC5B6F965732E34DA5675D78FE3E0E0A81ECFE456E1B2E846AB20196E14B4D3，明确增量安全通过，已直接通知backend单Auth1/PG1一次并同步root。
+
+独立核helper terminal=True真实语义：补扫RUN内PG及不可读镜像候选，但后续PID/start父实例/testJVM/hash/data/loopbackproof仍完整，未靠参数名冒标准等价；透明reader只记录已验证payload字段并返回原对象，不改proof、不取cmd/env。os-ack仅由原helper completeProof postgres、固定exe SHA、同JDBC目录和监听端口、OSstart不晚于postmaster、同nonce/version时原子发布。Java只在pgJdbc.awaitOsObservation属性true时读取11精确字段，与JDBCnonce/label/class/data/port/start/hash逐项核合，monotonic10秒未得信号fail，不以sleep或JDBC替OS。fresh单fixture/输出/依赖/无残留门禁保留，无生产sleep、无helper文件修改、无自动kill。
+
+QA仅源审未运行PG；当前安全通过不是诊断成功。诊断若成，backend依root既授同规则再最终五类六PG，不以1PG替整轮；若失败先看完整样本/握手证据，不盲重跑。现库历史/角色样本保持，C3skip，无devDDL/HTTP/服务/Git，仅本S卡写。
+
+## 2026-10-31 十秒握手单项失败独立后验：父实例证明缺失
+
+只读RUN20261031T125255Z-7af920cb result/observations/完整候选样本/JDBC/log。实际AuthPG1项fail1/Gradle1，门禁false，observer sample81 UTC12:54:44.188938至47.367820明确报RUN PG parent-instance proof incomplete；不是已通过的功能验证。82份候选样本中倒数第二份12:54:47.354038Z出现postgres.exe PID1620/start12:54:44.730519Z/parent47724，镜像位于本RUN，但data=null/ports[]。同样本无47724，known.history检索47724也为空，因此无法拼到测试JVM/launcher的已证父实例链；仅RUN镜像路径不能替父链、数据目录或监听证明。
+
+同期可见initdb27836/41080及本RUN数据目录epg10436248203759206199；后续JDBC服务器start12:54:48.782637Z/loopback50602/PG140022，比触发候选采样结束更晚。候选PID1620不具可比数据/端口，不能指认为该JDBC网络postmaster或猜bootstrap具体角色。observer按门禁遇异常停止、ack0、测试十秒超时失败；terminal末候选[]/residual[]/input drift[]。不把当前明确异常追认为旧第二轮未保存message的RuntimeError根因。
+
+已独立确认此次未满足的是实时候选父身份链，以及该候选自身data/port证明，现不能据此削弱门禁、跳过候选或以JDBC兜底。无新试跑授权，backend已无活动进程/停止后续；QA仅证据只读及本人S卡保存并报root/backend，不运行测试/DB/服务/kill/Git、不触现库历史/C3。最终五类六PG仍未完成，不合并旧轮通过项。
+
+## 2026-10-31 现有证据与本地库只读诊断：候选不能归类，正式实例可另设计绑定
+
+按root一次只读诊断，未执行新测试/PG或读取当前其它进程。本地Gradle缓存embedded-postgres2.2.2 sources.jar的EmbeddedPostgres.java:160先同步initdb()，170才startPostmaster()；254-264执行initdb -D本数据目录，275-288实际由PG_CTL.applyTo构建-D目录/-o配置/-w start并ProcessBuilder.start。日志294虽写“postmaster started as”，其Process是pg_ctl，ProcessOutputLogger又人为标成postgres进程名，因此日志线程名不能直接当OS postgres PID证明。
+
+本RUN已存XML system-out实证：20:54:44.669配置、45.323 bootstrap script、46.775 post-bootstrap、48.485 initdb完成；48.507 pg_ctl Process pid11736已启动；48.775正式PG日志[44084]开始，48.776监听loopback50602，48.897 ready。JDBC postmasterStart12:54:48.782637Z与该网络启动阶段相符。早期候选1620/start44.730519在initdb阶段且无data/ports，不是已证正式网络postmaster；但现存安全字段未含启动模式/父实例，缓存源码只有嵌入式Java而无本机initdb.c/postgres.c，不能认定1620就是--boot/--single。PID47724也不能从日志或当前无关进程补推。旧第二轮无message仍不追认。
+
+observer现错误策略对任一RUN内同hash postgres候选立即要求testJVM父链，在尚无data/监听/JDBC匹配时即fail并停止后续采样；terminal=True补扫提前发现候选，使该阶段候选也触发此规则。这是本轮可证观测中止位置，不代表已证明父链缺失原因或可安全忽略未知候选。
+
+提交root判定的最小匹配设计（未实现/未放行）：保留所有早期未知样本、错误事实和安全摘要；先标未匹配候选而非成功，正式候选须完整image/hash+PID/start+本RUN data+loopback端口，并与JDBC实例/nonce/版本/start对应。若坚持原testJVM父链，则在进程创建边界收集父实例PID+start，不能从数字PPID回填；仍无链即不通过。若root采纳不依赖短命父进程的等价替代，可将同RUN data/postmaster.pid首PID与OS进程身份绑定，再由现fixture连接技术SELECT pg_backend_pid()及postmasterStart/data目录/端口与OS实际已连接backend PID/其postmaster父PID交叉，保持exehash/IPv4loopback/数据路径唯一/nonce和启动时序、结束无残留均必需；pidfile或JDBC单独都不足，早期未知记录单列而不默删，不称bootstrap。此为证据设计供总控审定，不是自行更改或降低原门禁。
+
+本轮仅本卡写和只读缓存源码/XML/既存候选，未下载/新框架/新增握手/重试/外部进程命令行或env/DB/服务/Git。实际SQL及此前Auth1成功与当前握手超时分源保留，最终五类六PG未完成。结论和两种后续设计主动一次交root/backend，待其确定边界。
+
+## 2026-10-31 总控正式接受等价交叉归属，新增量安全源审通过
+
+root明确批准改用PIDfile/OS主进程/JDBCbackendOS父边的全条件等价证明，不再要求短命父进程仍可追到testJVM；是技术门禁标准更新，不是业务授权扩大。旧失败记录不得冒新标准已通过，也不称原祖先链恢复。
+
+QA完整读cross模块807EFC9035680D8DC3E05E9602C8D437FB71F965A563F3E8A05A5BC668C8A14A、diagnostic py1CB171F7E7BDD9CE6B84705A1CAE11054CA39E078569A060C97248BCA36EA922、testEvidence943794D74CD74333F34849C481F0BCC3727AA98FC59DF20B40DBAFD6B22C2A3A，gradle1683A2CD60AE177D8003C3FD7582F8EB84C9B4ADCADE4FD96E36475A763DEB95及原helper7392实核不变。只读selfcheck，不自行运行。明确源审通过，直接通知backend Auth1/PG1一次并报root。
+
+已核严格条件：Java保持同一个readonly技术连接<=10秒，原JDBC10字段协议不变，额外request只加正整数pg_backend_pid；cross逐字段与同RUNnonce/JDBC绑定。PIDfile双读不变且核PID/数据目录/启动epoch与JDBC不足1秒/端口/loopback/ready；同一原验证OS payload必须唯一server/backend两实例、RUN解包exe实际hash一致、server数据/监听匹配、serverstart不晚于postmaster、backendstart不早于postmaster且不晚于当前、backendparent等serverPID。完整条件满足才原子ack；Java核精确16字段/标准名/nonce/PID/start/hash/backend父边/pidfilehash格式后关闭连接。任何单一JDBC/PIDfile/路径不作兜底。
+
+diag仅对精确旧parent-instance错误保留legacyParentFailures并继续候选采样，非改原helper；其他错误仍阻断，全部UNKNOWN安全字段保留candidate-samples，终态原observer任何残留或异常仍失败。通过只放行新标准单项运行，未实跑/未证明实际门禁成功；后验需同payload server/backend、PIDfile/JDBCrequest/ack及旧错误留证和终态交叉，不只采passed。成功后backend才按root同规则完成最终五类六PG，旧轮不拼。QA无新PG/Gradle/业务DB/HTTP/服务/Git或工具源码修改，仅S卡写，历史现库/C3边界保持。
+
+## 2026-10-31 交叉门禁最终严格化冻结绑定放行
+
+启动前backend自补固定原JDBC10键、evidence路径inside拒symlink、testClass对context label映射；QA实核cross1DB9/diagE326/selfcheckC367符合。为生命周期后能独立重算，QA明确只加同一pidfile before原字节RUN audit固定label旁证，不改ack协议；原文件stop/cleanup后可能消失，单hash不能重读字段。
+
+最终实核并增量审过cross CBECAA86B3F6AF06F595AF8B5E673EE97711773C51EA29D629F4D93B83479FEB、diag DBA1FCC27578CDAEE56FCB21E7B560F4CD0114CC13CA535C610D67050DD9941F；Evidence943794D74CD74333F34849C481F0BCC3727AA98FC59DF20B40DBAFD6B22C2A3A/gradle1683/helper7392原值。五行新增在所有校验通过后、ack前，约束audit在RUN内、固定label-postmaster.pid open xb保存同before/fsync，失败不忽略。diag十二行补核同批已验证payload所有RUN PG成员的原exe SHA及loopback监听，防原helper遇首unknown祖先链错误提前抛而未遍历后续行；不改父链或payload、不补造proof，未知仍留/终态仍拒。
+
+### 最终冻结单项b1599817失败：观测返回晚于fixture清理
+
+backend已停试跑；QA只读RUN20261031T130832Z-b1599817 result/request/候选/known/XML。Auth1fail1/Gradle1/ack0/terminal[]/drift[]。同样本确有server7928/start13:09:55.036118、data本RUN、listen127.0.0.1:56160，backend15264/start56.166686/parent7928，与JDBCstart55.164557/requestbackend15264对应。但PIDfile全交叉证据没有生成，不记完整通过。
+
+明确时序：request文件13:09:56已落；sample70从13:09:55.091655到13:10:02.993357，sample71从03.274020到11.498888、原payload observedAt11.488245才返回。XML正式PG在13:10:06.315fastshutdown、06.374关闭、06.421stopped、06.425fixtureclose完成，早于cross在sample71返回后resolve数据目录。因此清理后才读目录足以解释此次FileNotFoundError，不需要推测路径替换；异常message中的双反斜杠为异常repr的转义表示，未存pidfile原文/traceback，不能断定实际line1内容或精确报错行。无原pidfile/旁证，ack0不能补造。
+
+最小方向报root审定：保<=10秒与全新交叉标准，优化实际约8秒的OS读取，批量CIM与监听查询避免逐候选重复Get-NetTCPConnection，或同语义request可见触发窄采样及时读pair+pidfile；不靠延sleep/猜路径/删除未知兜底。新采集仍需完整schema/PIDstart/hash/data/port/JDBCnonce、未知与终态，旧helper不改。不自动修源或启动新RUN。QA仅本卡保存并向root/backend报事实与方案，现库/服务/Git不动，最终五类六PG未完成。
+
+## 2026-10-31 获批批量reader性能增量独立源审及fake通过
+
+root明确批准每批监听表一次/精确RUN PID映射、受控stage错误和固定可信pidfile首次read即保存，保持十秒及全部交叉证明。QA完整读cross CF2D6C6ED1D0C6834C92AD0038CEB7D3BA575F67CE47612A5E601BE633810C52、diag75516A05EFF2485B2A55DF96A32EB485E9B1EDB8DA6098DB932A8E4BEFFCC18E及batch-selfcheck源；helper7392/Java9437/gradle1683保持既有范围。源审通过并直接通知backend执行既授Auth1/PG1一次、同步root，不等重复ACK。
+
+批量适配仅对固定旧脚本精确3锚点各1次才替换；无监听原语的身份recheck透传。一次Get-NetTCPConnection后先限RUN postgres PID，再逐行精确OwningProcess映射，原payload字段/validator/父身份时间/unsafe监听不改。全部cross条件仍必需，unknown/legacy和终态不减。可信data固定pidfile首次read即保存同原字节xb/fsync，后续变更拒覆盖；resolved边界以明确stage报OS错误，无路径宽松容错。ack仍全校验后发布，提前旁证不等于通过。
+
+QA独立执行两纯fake自检各一次exit0：nonce/type/listen mismatch拒、无OS pair不得ack、既有快照改变拒及Windows路径解析等值；全mock PowerShell CIM/TCP仅一次监听调用、两PID正映射、wrong999/外RUN103无port泄漏、0.0.0.0原样保留供门禁拒、未知shape拒、采集异常非0无proof。未查实际进程/TCP、未启动PG/Gradle或改源。源审/fake不代表新运行成功；待真实单PG新证据后独核，不猜旧FileNotFound精确行或旧RuntimeError根因，不延十秒/盲整六。仅本卡写、临时fake文件自动清理，无devDB/服务/Git/C3变化。
+
+## 2026-10-31 pidfile时间语义纠正、最终五类六PG一次执行源审放行
+
+单项RUN131604Z-1d58b2a4实际仍失败：保存pidfile PID45228/data本RUN/epoch1793452674/port61370/loopback/ready，JDBCstart13:17:55.050226，比epoch晚1.050226秒，原cross无依据的J-P<1拒。QA独读官方PostgreSQL REL_14_22源码：postmaster.c2493-94早期MyStartTimestamp采样转MyStartTime，miscinit.c1180-84将其写pidfile；postmaster.c1316后续另取PgStartTime，timestamp.c1477返回该值。因此不是同一事件的纯精度差，不能任意加5s容差。源：https://github.com/postgres/postgres/blob/REL_14_22/src/backend/postmaster/postmaster.c 、src/backend/utils/init/miscinit.c 、src/backend/utils/adt/timestamp.c。
+
+QA遍历131604全部83个安全payload，request指定backend27756从未出现，末有效样本只有server45228及其它child；不允许从b159等借backend跨RUN拼，也不因修时间就称旧完整交叉过。root明确接受旧证据重放诚实PENDING_PAIR/noack、明示synthetic正反例验证实现足以放行一次新最终尝试，非运行证书。
+
+最终完整读取并绑定cross DCBD4717A3401193DBA9A3371FEC5BDC4832A9F021F79B7512E3B6A5E806E887、finalpy1328994D4DB2328F771662BD36D8833165EF17BE6161B40AE451814B5833D8F6、finalgradle C55BB55F1F8D08FEC1489FDD5E6A07563681CFC55D638D463DC1951659B6D075、replay4F5289A9762387A96D438BA278545126F2C5BBB2F7503E50AA974F416F80DFE1。准确整数UTC微秒条件为O<(P+1)秒、P秒<=J、O<=J<=B<=同payload完成S；无J-P总延迟阈值，S实传候选observedAt不取now冒充。其余单PID/nativehash/data/port/nonce/backendParent及十秒、旧未知/残留全门禁不变。proof旁证记sampleCompleted，ack原16字段保持。
+
+QA独立纯离线执行replay及两个selfcheck均exit0；旧131604缺backend返回PENDING_PAIR/noack，显式synthetic同批完整pair正例SYNTHETIC_COMPLETE，13项缺失/错配负例均无ack（错server/backendPID安全pending，其余拒）；nonce/类型/路径/快照、批量TCP1call/精确PID/外RUN/危险监听/脚本shape/采集异常原自检保持。仅临时文件复制封存native字节不执行，未PG/Gradle/实际TCP进程采集；QA日志.gradle/single-init-20261031/qa-cross-replay-final.log。
+
+最终两工具固定Identity7/Single3/Mode5/Auth1/Contract2共五类18项，六labels/六data/六真实cross，offline1worker/no-download/native14.22/Flyway13.12/classpath与新RUN所有输出边界/输入漂移/错误和终态门禁保留。明确最终安全源审通过，已直接backend按root既授执行一次最终五类六PG，无再单PG或rootACK；新RUN缺任何真实6交叉/错误/残留即失败，旧证据及fake不补齐。运行结果尚未出，QA仅读/纯fake/卡写，无现库/服务/Git/C3变化。
+
+## 2026-10-31 最终638bc62c独立只读后验通过：仅单初始化子任务收口
+
+backend最终唯一RUN .gradle/single-init-runs/20261031T132455Z-638bc62c自然exit0，32tasks全部executed/3m28s；QA未重跑Gradle或PG。独立解析五XML全部18case及精确class映射Identity7/Single3/Mode5/Auth1/Contract2，failure/error/skipped全0。只本新RUN供运行证据，旧失败/离线synthetic均不拼入。六label及唯一data均齐，JDBC/context sealed nonce/version/label-class、request与ack逐字段对应；六原pidfile字节各自重算SHA及PID/目录/epoch/port/listen/ready，全部匹配proof。
+
+每份crossProof按sampleCompleted精确找唯一原始payload，独核同批server/backend两个PID/start、backend.parent=server、RUN解包image真实SHA、server data及IPv4监听端口、JDBCbackendID、UTC时间序O<(P+1)s/P<=J/O<=J<=B<=S；全部六份通过。不以JDBC或PIDfile单独替证，明确使用root批准的等价pidfile-OS-JDBCbackend标准，不声称旧Gradle/TestJVM祖先链恢复。原legacyParentFailures12条完整保留，errorClass null/diagnostic{}/terminal[]，另只读专限本RUN可执行路径的PG/initdb/pg_ctl当前进程查询为0，不读外部命令行/env。
+
+674执行前输入现逐项SHA无漂移；14保护含login11与launch/settings/GO全部原值。两实际classpath分别175/206项，其中去重204外部文件SHA已重算；Flyway core/postgresql/cockroachdb/mysql均13.12.0，native14.22.0 jar匹配BADC固定SHA，RUN原生可执行各pair hash匹配。源锁crossDCBD/finalpy1328/finalgradleC55B/Evidence9437现全匹配，HEAD064ed4f9完整值绑定入口启动assert与manifest，未执行Git变更。
+
+后端immutable manifest .gradle/single-init-20261031/final-638bc62c/manifest.json SHA F604BC566082A41DE9349DFB657C1F6038BE2C273DF43B860004552D814AC0A9已补独核：21sources/非yaml输入副本、14保护、36artifact、10runtime产品、204外部CP文件、16原迁移前像备份均逐SHA匹配，五XML逐case映射与六crossProof/result完全一致。原manifest状态LOCAL_FINAL_GATE_PASSED_QA_POST_AUDIT_PENDING保持不改，QA结论另附audit/test/qa-final-manifest-binding.json SHA4B85B5AC125E854D72C6643270E60EB0EF973A7F6269CB1A23B98CF4A4D96BD8。原独立qa-independent-postcheck.json SHA60AB5A09CBAFFE4E6E1B30023E78FAA17A137FF591A3E94341AB70957201026B，qa-scope-supplement.json SHA29E8267D273905B773FA3D178A5C2BDDA327A308B05C13480A56DC37C786306A。
+
+当前生产目录实际仅db/migration/V1__INITDB.sql一份（BDDFAAF79F63E637011011FEBA993DA6DCF2F4FED6D771740A3704CE00770DC4），tenant-migration/V1__TENANT_SCHEMA_BASE.sql一份（C1366A460C047FC0E13FAC7F1E6E7B8A280B3AF129A782AEA1E5A2D02F2823BF）。真实隔离PG已跑SingleInitialization三case：空库pending1/migrate1/再migrate0/history仅1、8SYSTEM且NULL/QA/虚根种子0、五scope0000/1/2/3/7；旧不同history及无history非空库迁移拒且marker/history保留；租户模板空库建后version仅1、重复provision不覆数据、旧非空/旧版本目标拒且原marker/角色不变。Mode/Identity另覆盖原路由恢复及schema身份拒，AuthPG撤销并集/租户边界/权限版本事务为同轮实际fixture证据。不可扩大为现有开发库历史已修复或数据已迁移。
+
+明确结论：单初始化子任务本最终RUN的独立后验通过；EVA整体未all done，实库处理/部署/HTTP及其它模块门禁不混入。所有历史失败证据不覆盖，不改backend immutable状态，C3skip/现库角色样本保留。QA仅只读原证据及本人S卡/独立audit写，无新PG/数据库请求/服务/Git操作，结果已主动交root/backend。
+
+## 2026-10-31 现dev分类适配技术RO工具安全源审通过，QA未连接
+
+backend交总控已授一次dev fresh技术RO候选，QA仅审工具并主动同步root执行分工，未自己连接。完整读初版74B0后，backend追加三项纯catalog元数据，最终唯一冻结SHA604E550FCAC5BDF44D871D07ED07A87AFF6DD6635EEF1D734EBD322DD9818C23（更正其占位SHA）。QA完整增量审及独立AST/默认PLAN exit0，明确安全通过，交backend按其获授一次RO窗口执行，不授后续重复query/connect或备份/DDL/DML。
+
+已核sealed44A源码仅AST提取datasource函数，固定devfingerprint/eva-eva、dev≠prod、source-build数据源与Flyway文件false一致；不输出凭据/URL/环境值或进程cmd。单connect timeout8/statement5秒、startup defaultROon+事务ROon/repeatable-read、始末双on/rollbackclose。查询固定eva必要物理源，47主id/code/type/frozen/deleted/category、code唯一、item计数/允许技术ID摘要、账号只计数，catalog列/约束及其它schema仅history表名；不读PII行/明细值/密码/installedby或函数body。三新增catalog仅8表RLS/rules/partition/owner-member布尔、非内部trigger/eventtrigger技术名函数名及状态，无调用用户函数正文。F604清单文件和14保护始末SHA严核，环境覆写仅presence，runtime真实配置绑定仍明确false/NOT_VERIFIED不冒上线。
+
+安全源审不等实际连接成功；等待backend一次RO安全结果后独核，再离线适配SQL/备份回退方案审、实际执行另批。未执行退役V14 runner，未dump/DDL/DML/历史修复/服务/Git或实际DB查询，QA仅本S卡写。不得将工具中writes0字段当真实结果已证，C3skip/现角色样本保留。
+
+## 2026-10-31 dev fresh RO报告独立核验通过，不再连库
+
+backend一次RO报告.gradle/dev-category-adaptation-ro-20261031T134806Z-fe20cfc2/result.json SHA73AF8FEAB6517FF2562C882929949AE35AF485D3D1CD5125C098E5EEBBB3864C已独立重算，当前已审工具604E550F匹配；QA没有重复连接DB。报告对应单connect/27SELECT，21:48:07.526505至12.550380+08，始末database/schema eva、双RO on、repeatable-read、rollback/close true，server_version_num180003。QA按源代码查询与报告字段核范围，不把工具自报write0扩大为独立DB抓包或实际执行器日志。
+
+独立对比当前mains与此前073102报告的id/code/type/frozen/deleted全部47一致；有效9、非有效38、有效code无重复。CATEGORY列为空、列catalog亦无category、约束无ck_sys_dict_category；flyway_schema_history全schema catalog名单及eva历史结果均空，因此不能沿退役V14版本前提建/修Flyway历史。八必要关系+profile均eva普通物理表，未限定名回退外源；八表RLS/forceRLS/rules/partition全false、owner-member布尔true，用户trigger/eventtrigger0。技术计数与摘要仅允许字段，不读account/profile私密资料或明细值。
+
+源/buildFlyway enabledfalse/baselinefalse一致及CLI三变量不存在仅当次文件/进程环境证据，runtimeProfileDatasourceAndFlywayBindingVerified明确false保留，不推实际JVM绑定。当前F604 immutable文件及14保护逐SHA再核一致。独立审计报告同RO目录qa-independent-report-audit.json SHA9A5767F0811D6A68A17898724F361B123CD3BDD5792E4EB32E9DF0F6BBDEEFDA，结论QA_READONLY_REPORT_BOUND_PASS；审计不改原result。
+
+只读报告证明当前已取证结构缺口，不等实库适配已批。可继续离线CATEGORY/check+九映射原子方案与备份回退审；实际dump/DDL/DML/历史修改/服务仍另批。backend客户端路径探测结论未包含本RO报告，QA未另搜客户端或将隔离PG14当PG18备份客户端。QA仅证据/卡写，无DB/HTTP/服务/Git动作，C3skip/角色样本保持，主动回root/backend。
+
+## 2026-10-31 留数据精确适配提案一次完整独审：提案通过，执行前置未齐
+
+总控将独立提案审交QA替代designer同项等待。完整读MD D8A59A6A7C471361477D8ED168E824B7F5DD5E7E3C16C803B403007BD62A57AF、forward9B855B68CE8D77E11A5E85B743CDD2E86A7836AE12E0A4793F8FD6B56F63049A、rollback4FB67D2242D320CCB95C0041420373B8377A3FAEDFDC75380867BA92A5F901A7；proposal-manifest SHA EED9956133617DAD55D95D0FBCEC20CDC28676E154D4694BE45934A2E609BD08逐source/ROartifact/14保护匹配。QA纯离线解析两SQL全部47 VALUES与fresh RO前像逐tuple相同，各九映射均有效且精确8SYSTEM+QA业务，preservation JSON与RO去除列名清单后的摘要逐项相等。未执行SQL/解析数据库语法/新PG/66等重复测试。
+
+明确结论：提案通过，未发现本版正向/回退SQL可复现mustfix，不为可执行入口尚未实现把离线SQL提案打成已执行失败。方针及九映射已批，不重问。SQL是入口事务片段，不能直接psql提交：SERIALIZABLE/readwrite/autocommitfalse、目标eva/180003/approval/backupSHA、无Flywayhistory、锁/结构/触发器/RLS/继承漂移、全47技术前像及摘要均先门禁；同事务增nullable CATEGORY/check并只更新九category，affected必须9，38其余NULL/全部摘要后核。无其他表写、无history/V1/repair/baseline/根恢复/明细或授权变更。非category全值保持由仅SET category、无副作用结构门禁及真实停写确保，技术指纹只证其列，不冒称全业务值逐字节已读。
+
+回退先停新B并换兼容应用，再核forward已提交receipt/47及摘要/原分类后像，九category恢复NULL，保留nullable列/check；后续新增/改码/删冻/分类改变则拒，不覆盖后来写入。提交前异常整事务rollback；receipt在事务内独占落盘/flush/fsync重算SHA后才发commit，成功应答后CONFIRMED；发送COMMIT后连接异常UNKNOWN不自动重试/不以rollback推断未提交。现有两片段本身不验证备份文件或receipt真实性，明确交外层入口而非手工SET兜底。
+
+实际执行最小前置一次列齐（缺任何项均不能冒执行批准）：
+1. 核定PG18 pg_dump/pg_restore绝对路径、可信来源/文件SHA/版本、受限备份根ACL/空间；获授权后仅目标eva custom archive独占写，退出/警告/超时失败不继续，记录byte/SHA及独占持久化backup receipt。TOC+完整解码须真实成功；这只证明可读，不伪称恢复演练。若总控要求真实演练，须另批隔离PG18空目标，不能恢复覆盖eva或用PG14替代。
+2. 核实际运行配置/目标/迁移器状态及所有相关写入暂停窗口，不能用源码build enabledfalse或CLI无覆盖代替实际JVM；备份至提交/后验窗口无并发业务写或DDL，应用顺序明确B不得先启动自动修库。
+3. 实现并独审最小受控入口，绑定本三份冻结/最新目标前像/备份与窗口/审批、严格事务锁及失败停/无重试/凭据不出日志；forward与rollback各用新receipt路径独占写、提交前可读/fsync/重算/后像齐；UNKNOWN后停止并只按另获准RO核实。入口不调用Flyway、不建历史、不下载或自动操作服务，不靠SQL字符串键自证备份。
+4. 上述具体工具/入口/窗口与失败回退方案就绪后，总控取得对实际dump及DDL/DML的明确批准，再执行一笔并独立只读后验九分类/38NULL/结构/保全摘要；不把本提案审、留数据方向或用户催进度代替写库批准。当前无真实备份/恢复/写入/部署结果。
+
+文末仍提designer独审的旧等待由本次root派QA独审替代，无需为同一提案再排重复签审。无需修改现SQL去加通用框架；后端只补以上必要执行载体并一次冻结交审，不再碎片追问映射。EVA整体未完成，C未落地，不混成all done。
+
+用户最新收尾偏好纳入：取消本轮亮暗主题/颜色/对齐尺寸像素/动效等独立验收，不删已有测试源、不改测试凑绿。只核心CRUD查询/认证资源数据权限/隔离/必要DB适配与关键联动，新错误或新代码才最小回归，已绿不重复。此条随本必要状态更新记录，不另开测试。QA只本卡及只读源报告，无DB/dump/DDL/DML/服务/Git/源SQL修改，C3skip/角色样本保留，已一次报root/backend。
+
+### 完整约束目录防漂移补核纠正：唯一mustfix一次收口
+
+backend在交接后提供具体自检，QA复核接受：原“无SQL mustfix”结论过宽，应修正为提案方向通过但完整约束前/后像防漂移须最小补齐。fresh六项dictConstraints已在RO报告，forward只拒category/目标ck提前存在，未拒其它新增CHECK；取证后若加含函数CHECK，分类UPDATE可能执行额外约束，当前无trigger/rules/RLS及技术摘要不能证明不发生非category副作用。rollback只核同名validated/列型/receiptSHA形式，也不足以证约束表达式未换。该项是所承诺结构漂移即拒的实际缺口，不是假设已发生数据库变化。
+
+唯一修正已一次交root/backend：forward持锁后写前核fresh六项完整有序conname/contype/convalidated/definition JSONB；提交前forward receipt保存锁内真实完整约束后像；rollback任何UPDATE前核已提交且外层验证的receipt完整约束后像，不猜PG规范表达式/不拿手工SHA字符串自证。其余九映射/47/38保持/receiptUnknownCommit/备份及四执行前置不扩，不加新框架或PG/66/视觉重复。原EED995/三SQL文档当时未修改、保旧副本；等待该唯一窄修新冻结后聚焦源审收口，实际执行依旧未批准。QA未改SQL或访问DB，仅纠正本卡并主动交接。
+
+QA明确最终安全源审通过，已直接backend放行既授Auth1/PG1一次并同步root，无需重复ACK；不再增加范围或新框架。只源审未运行测试/PG，等request/ack/pidfile原字节/同payload server-backend/cp-input-XML及终态独立后验；不能用本绑定当运行或最终五类六PG通过。所有旧SHA/失败证据保持历史，不覆盖，现库/服务/Git不动，仅本S卡写。
+
+## 2026-10-31 dev分类V2及专用入口完整独审通过，仅实际执行前置待齐
+
+明确结论：V2安全源审通过，原完整约束唯一mustfix已修复，本次未发现新增必须修复项。完整读取MD D6A17F21、forward D4A6AA2B、rollback 96D171BD及340行专用入口C302D096，独核manifest E486A48CE897CC2D3F4C8DC30EFC1A4344F1861390DA43E816C3286513A7258E与seal 10ABB8BA0F89012F51D3AFB748816D930F94A66438C2DCCE33EDBDFD3C8B388E。13源/14保护/3份V1原件/2项RO材料及HEAD064ed4f9、cornerstone均匹配；V1证据保留，原immutable manifest不修改。
+
+正向先持锁比较fresh六项完整约束目录，再补列/check及精确九分类；prepared独占fsync保存实际完整七约束与九行后像，复核源封印后才落commit-intent/COMMIT。回退验证COMMIT_CONFIRMED→prepared→backup链，持锁比较完整真实约束及九分类，另批回退且仅恢复九NULL，保留结构。COMMIT发送前失败rollback；发送后异常UNKNOWN无主动rollback/重试；已成功提交但确认凭证失败仍保留CONFIRMED，不假称已回滚。默认plan无连接/网络/目录写，实际phase缺批准等条件即拒。
+
+独立运行已读纯fake和静态脚本均exit0：plan零外部动作、缺批准拒绝、敏感驱动错误不输出、完整约束漂移拒绝、提交前失败rollback、UNKNOWN不rollback/重试、成功持久化凭证；两SQL全部47前像及九映射/仅category写/无history操作及14保护一致。另独立AST与清单逐文件SHA核验通过。这些只是静态/合成检查，不冒作PG语法执行、真实备份恢复、实际运行配置或数据库适配通过。
+
+实际执行前置一次收口：总控取得覆盖具体官方PG18客户端获取、真实备份与精确适配窗口的明确实际操作批准；核官方来源/签名或checksum及包内hash后固定client attestation SHA，实际工具18版本、受限目录ACL/空间具足；核现JVM/profile/datasource/Flyway及所有相关写入/迁移器从备份至后验持续停写，两个flag仅人工交接不是探测证据；真实custom archive独占写、退出/无警告、TOC及全解码和byte/hash/receipt都通过后才apply；实际提交后只做一次已批准必要RO后验。恢复演练尚未进行，不能用解码冒称；UNKNOWN另获准RO核实；回退另批并先安排兼容应用。不得借本源审直接下载/dump/写库或启动新B。
+
+独立报告.gradle/dev-category-adaptation-20261031/qa-v2-independent-source-review.json另存，不改后端冻结件。QA仅本S卡和独立报告写，未下载、连接、dump、执行SQL、新PG、服务、HTTP、重复绿套件、视觉或Git发布；C3skip/角色样本保持。无需再等待designer同项签审，交root/backend完成实际执行准备；现库尚未适配，EVA整体未完成。
+
+## 2026-11-01 窄范围前像入口增量源审通过，实际范围批准仍待总控交接
+
+明确结论：SCOPED_PREIMAGE_ONLY_NOT_FULL_BACKUP新增入口安全源审通过，本次无必须修复项。绑定runner A95ADE2702C3FBE265C20D1FC83DA695BCF13F8C52727278B271752DAB1E156C、新seal EC88EE57E04F9AC0F2F14B0E2E1074B058484D75816B1C02916A103016BB55DA、MD 8F95F17D546AF1DDC3DB94CC2A825EB230C5C1D5C62991B7EC4F34F2BB6499E8；逐SHA复核新seal与旧manifest覆盖的13源/14保护全部不变。旧C302/10ABB/E486均保持原件，不调用旧backup/mutate，不生成或接受BACKUP_VALIDATED，不新增PG18工具要求。
+
+完整读取新增入口与说明。默认plan在runpy加载前返回，实际phase先核execute/scoped-preimage双批准、停写/runtime、窗口/封印；旧入口SHA核后runpy仅加载定义，再核旧完整seal与新scope封印、原目标dev/prod区分和eva身份。持锁后核47技术行、完整六约束、CATEGORY缺失，独占fsync前像并重读SHA，之后才派生SQL。两份派生SQL均独立反向替换逐字还原旧冻结SQL，只有scope批准token、前像GUC及错误字面三项改变，原47/摘要/目标/事务/触发器/约束守卫保留。前像明确只含本次结构事实、九原NULL、约束和47技术字段，无全库恢复承诺。
+
+最小本地AST/defaultplan/缺scope拒绝及纯fake检查通过。fake覆盖apply成功、scope committed/prepared链另批rollback成功、前像持久化失败提交前回滚、完整约束漂移提交前拒绝、COMMIT异常UNKNOWN不主动rollback/重试，以及提交成功后committed凭证写失败仍CONFIRMED；成功路径前像SHA、七约束及prepared关联均核对。纯fake不证明SQL实际执行、运行态停写或真实写库成功。
+
+源审通过不代替用户对“不下载、不pg_dump、仅本次结构及九分类前像”的实际替代范围批准；总控明确转交该批准及运行绑定/持续停写窗口后，才允许一次本scope apply及一次必要RO后验。提交后另批回退只恢复九NULL并保列/check，不是完整schema或全库恢复；UNKNOWN须另准RO核实，不重试。QA无DB连接、下载、dump、DDL/DML、服务、HTTP、新PG、已绿套件、UI或Git，仅本卡追加，现库未适配、C3skip及角色样本保持。
+
+### 已批实际尝试在连接前ACL失败：未进入RO后验
+
+总控已转交用户对原remote dev窄scope实际直接执行及持续停写的明确批准，业务范围批准不再待问。backend唯一apply尝试报告exit1、AssertionError/private-output-acl、commitOutcome NOT_ATTEMPTED，无自动重跑。QA复核已审调用顺序：execute先datasource解析，再private_run，之后才进入connect；private_run的ACL returncode检查失败在连接前，不能当UNKNOWN或已提交适配。未做数据库RO后验，避免把失败前置包装为成功后验。
+
+本地前置记录.gradle/dev-category-adaptation-20261031/approved-scoped-execution-preflight-20261101.json显示UTC2026-10-31T22:31:39.669418即北京时间11月1日06:31:39.669418，本地9016监听false/WebBooterJvmAlivefalse、源构建Flywaydisabled及封印14保护匹配；外部writer明确仅用户停写确认，不冒自动探测。新目录.gradle/dev-category-maintenance-runs/20261031T223147Z-ba489c14已出现，未删除或覆盖。旧函数只检查ACL子进程returncode而未保原stderr，具体失败原因尚不能判定；需backend仅在本地诊断ACL并最小修复载体、冻结后增量源审，用户已批数据库业务范围保持，不因此重问映射或增加全库备份。QA无DB连接/写库/重试，仅源顺序与本地材料核验及本卡追加，已报总控。
+
+### ACL本地窄修独立源审通过，直接交后端既授一次新RUN
+
+backend本地诊断定位runtime PowerShell Security模块类型文件被AuthorizationManager拒绝，改用Windows系统绝对powershell.exe及仅子进程PSModulePath内置Modules；没有改执行策略/全局环境/系统模块。冻结scope runner 3C06657FBB5B100DCF3B0DB82BF94F5310EACEBAB00FC47BACA389CB4BF2DCFD、seal-v2 AC07CAF013E3AE24746FB102E564B40C83903692E7B1EAA083C2692F7E719AF7、说明83C178D148B41D4CA1D8CCDF7CF507A18E5C31FC7BF5E81D761D8FEF7A26DCB8均独核；旧A95副本及旧10ABB完整源封印13源14保护匹配不变。完整读真实delta，execute AST除目录调用外完全一致，仅新增私有目录函数及seal-v2入口，SQL/事务/业务scope不变。QA最初AST字符串替换断言写法错误，改用归一函数AST比较后通过，不计产品失败。
+
+新函数只新建本任务独占目录，复用原ACL动作，先拒既有deny、落地再读回protected/exact3批准SID Allow FullControl及双继承/无继承规则，技术输出独占留证。backend实际自检目录.gradle/dev-category-scoped-runs/20261031T223446Z-172990ca/acl-check.json return0/proof true，stderr仅first-use progress。QA另用系统绝对PS/子进程内置Modules独立只读Get-Acl该现目录，核protected true/rules3/SID匹配/badRules0通过；未修改该目录/旧失败目录/父workspace权限，不新增DB连接或跑测试套件。
+
+明确安全源审通过，无mustfix；已直接交backend按root既授一次新RUN apply，不再索取用户或root ACK。仍执行目标/持续停写/源封印/前像门禁，失败停不无界重试；成功COMMIT并close交窗后QA按既授一次独立RO后验。当前仅源审/本地ACL读回，未声称数据库已提交或后验通过，scoped前像非全库备份。
+
+### 2026-11-01 实际窄scope适配独立RO后验通过
+
+backend新RUN .gradle/dev-category-scoped-runs/20261031T223709Z-957662f0 COMMIT_CONFIRMED/closedtrue后正式交窗，QA按root既授立即仅一次dev RO，未重复审批或写库。独立RO RUN .gradle/dev-category-adaptation-ro-20261031T223736Z-6e21be32，result SHA FFED0AC622482DC54BE1B20CCF49381A004DCD09C9F01A859FA2E82FA4C8DEBC；北京时间06:37:37.249679至37.540115、1connect/27SELECT、始末eva/eva/PG180003/default和transaction双ROon/repeatable-read、rollback及closedtrue。source/build目标相同/dev≠prod/批准指纹匹配，QA无第二连接。
+
+完整独核committed SHA7CCB5426E83034C13769FA0D54C4860E6533D6245C3D27F5D891333173E0D80C→prepared SHA→前像路径SHA与内嵌全部前像字段；scope/phase/window/seal/target一致，intent绑定prepared且保留UNKNOWN意图记录，result明确CONFIRMED/closed/未rollback/fullBackupMadefalse并绑定committed。前像原category不存在、九NULL/47技术/完整六约束均匹配原fresh。实际CATEGORY varchar(16)/nullable/defaultNULL，完整七约束逐字段等prepared，原六约束不变、新check类型c且validated；真实47主技术id/code/type/frozen/deleted与fresh及前像逐项一致，9有效精确8SYSTEM+QA2111791956297613314 BUSINESS，另外38非有效categoryNULL。
+
+全部原允许技术preservationSummaries、itemCounts、activeDuplicateCodes、tableSafety、无用户trigger/eventtrigger、未限定源eva、historyCatalog/history与原fresh相同，14保护未改。仅统计/技术字段指纹可比，不存在迁移前全业务字段逐字节快照，不能扩成所有非category业务字段/PII逐字节已读或完整备份恢复通过；仅SET category且无副作用守卫/停写窗口提供另外执行边界。默认Flyway历史目录仍空，不创建/repair/baseline历史。独立报告qa-scoped-apply-independent-audit.json SHA65E2F518EAF764ADBC5FCC2E1E0C0E8E136CE063079E34FE76D8C9BBBD853CBB。
+
+明确结论：本次开发库CATEGORY窄scope实际适配及独立后验通过，B应用所需此数据库分类缺口已收口。后续常规构建/重启仍由总控安排当前已验B代码产物、原dev绑定及实际Flyway禁用/不迁移现库配置，遵守其服务操作授权；本RO不代替编译结果、服务启动成功或HTTP验收。不重复数据库适配，不清缓存，不重绿套件/主题，不据此宣称C已实现或EVA整体完成。QA仅RO与本卡/独立审计写，已主动回总控/backend交锁。
+
+### 字典B真实核心UI验收：绑定前扩展UI阻挡，未创建样本
+
+收到总控后端已重构启动及核心CRUD授权，明确只指定EVA_QA_B_20261101_01新主项/最多2明细，不动D01/系统/其它业务项，不做视觉或已绿套件。已读computer-use技能及cua完整控制/确认文档，fresh官方库存显示Edge两provider均同一localhost:8000/#/sys/account页。首次getTab('328087710',{browser:'1'})被明确阻止：Microsoft Edge is blocking automation because another extension UI is open on this page. Complete or dismiss that extension UI in Microsoft Edge, then ask me to continue.
+
+按本轮规则立即停，不native/私HTTP/React/第二provider绕过、不重绑循环。页面AX/登录身份/草稿状态尚不能核验，未登录、创建、编辑、保存、删除或提交任何样本，新主/明细均0，不能报告CRUD或SYSTEM只读通过。需要用户在Edge完成或关闭该扩展界面并通知继续；原指定code及测试授权保留。没有在该步骤新连接DB或测试主题，已主动回总控/backend并交回无在途动作的浏览器锁。删除实现只读定位因最初模块路径不存在未完成，恢复后须按实际文件确认逻辑删除与引用边界再执行获准新样本删除。
+
+### 用户解除扩展阻挡后字典B核心真实联调部分完成
+
+用户明确继续后重新fresh库存绑定官方Edge1 localhost8000，正常读取系统管理员、无原草稿，正常菜单进入字典。SYSTEM/BUSINESS两个固定根及8系统code/D01业务可见，系统各行无删除入口；点DATA_SCOPE进入查看信息，保存/新增明细disabled，五明细各仅查看，无编辑/删除/切换。此为UI入口证据，不冒API gate调用；该项frozen0以已核原技术证据为准，UI没有展示frozen原值。
+
+查询EVA_QA_B_20261101_01未命中，选择BUSINESS根打开新增，填指定code/name QA字典B核心验收/remark QA_B_CORE_20261101，仅添QA_B01/QA_B02两明细，分别QA字典B明细一/二、排序1/2，一次保存并从真实列表/详情回读成功。DOM公开data-row-key BUSINESS:2116663333998792706记录主ID2116663333998792706；明细UI行键0-QA_B01/1-QA_B02不是DB技术ID，不混淆。单click主项进入编辑表单，名称改QA字典B核心验收已编辑、remark QA_B_CORE_20261101_EDITED，一次保存后列表/详情均回读新值与原两明细成功。没有改D01/8系统/其它业务项或授权。
+
+唯一编码校验仅做一次：新建自有临时草稿使用同code/name QA字典B重复编码校验/remark QA_B_DUPLICATE_VALIDATION_ONLY后点一次保存，loading结束仍保新增草稿、列表仅原已编辑样本，未捕获明确可见错误或业务code。因此唯一性未判通过，不再次save。正常点原样本触发放弃未保存确认，仅放弃该自有校验草稿；最终回原已保存样本，编辑表单值和两明细均一致，无新增未保存变更、无在途请求，markHandoff。
+
+已只读实际DictCtrl POST del、DictService delDict及两个实体/StdEntity：主/明细均继承@TableLogic，主删除先dictItemMapper.delete限定mainId再mapper.deleteById，均经编辑资格/业务写资格/READ_ONLY明细守卫；配置逻辑删除非零表达式、不为物理删除。但本轮明细技术ID及引用边界尚待必要只读补证，未执行删除，现保留仅1主+2明细，不另造样本。已一次交总控/backend安排必要RO核对应两明细ID/无非本轮引用及重复请求安全错误code，不请求私响应/PII，QA不私HTTP/token/React/store/DB。后续仅本样本清理待补证，不宣完整CRUD全过；无视觉/绿套件/源修改/服务/Git操作。
+
+### 本轮QA_B01删除保存失败已最小复现，停后续主删除
+
+backend获root一次限定RO报告.gradle/dict-b-ui-owned-ro-20261031T225125Z-6b703db6/result.json SHA C0C3ED6FE522304EB7260514A83B4E3C5DD192BFD4394F84C075097F22BD5035已读：唯一主2116663333998792706/business/frozen0/deleted0、QA_B01真实ID2116663334133010434、QA_B02真实ID2116663334263033858，恰此main，treechild0/FK空/枚举外引用0。限制仅FK/main_id/pid，不冒所有字符串业务引用均无。重复请求source-only code0x0000-10001仍非live已证。
+
+按原授权正式清理，clock起点UTC22:52:09即北京时间06:52:09后，fresh admin/本样本/无dirty，定位QA_B01行删除并确认，界面仅剩QA_B02，主保存仅点一次。loading结束未退出编辑态；随后正常菜单离开时明确出现放弃未保存修改确认，不能判保存成功。仅放弃本轮自有删除草稿，正常回字典再单click原主并待真实详情重载，两条QA_B01与QA_B02均仍存在，主名称/remark为已保存编辑值，明确删除未持久化。没有重试save，没有主删除或新增其它样本。
+
+安全错误取证仅经已授浏览器console提取类别/业务码，没有输出raw响应或秘密；所获4条error时间UTC22:52:03.931早于本删除操作，未匹配已知错误类型/业务码，不用作此次失败原因。不能把静态UNIX_TIMESTAMP逻辑删除配置猜作实际根因。已将最小步骤/准确ID/操作时窗交root/backend定位，当前干净本样本编辑页markHandoff，无未保存变更/在途动作；仅1主2子仍保留，清理与明细删除验收未通过，不进行最后RO充成功。SYSTEM/D01/其它数据未动，QA无源修改/私HTTP/DB/缓存/服务/Git/视觉套件。
+
+### PostgreSQL逻辑删除dev窄修源审及一次独立定向复验通过
+
+后端真实MP生成SQL deleted=UNIX_TIMESTAMP()，技术probe 5301B1F1与限定dev函数RO 9219AD78证明实际PG18.3 searchpath/eva/catalog均不存在函数，形成可复现兼容缺陷链；仍不冒抓到原UI请求异常码。最终范围仅application-dev.yaml新增mybatis-plus逻辑删除值CAST(FLOOR(EXTRACT(EPOCH FROM CURRENT_TIMESTAMP)) AS bigint)，并新增DictLogicalDeletePostgresTest，未改service/权限/API/库契约。独核manifest EA454C14792186350D0E7262E1924A005B6686F2FA9262B014839216E9E8F6AF全部文件/产物/根因摘要匹配；dev D6920CD1DD372B91BC87158CB0D389225DB0C73D3BCC4B722C8EDCDCC702F1EB、test A05B26C196EDC65522C0375256465606CA1B0E771B15C1E5F0BCA4C3D7972A59。移除新增块后dev原始字节SHA恢复A4E18124，main/prod/aliyun三个MySQL配置逐hash不变，不误签三PGprofile。当前build resources的dev也为D692，但不能推断运行JVM已加载。
+
+完整读同@Test实现，真实YamlPropertiesFactoryBean/Binder按main与各profile叠加绑定，真实DictItemMapper/MP factory与隔离EmbeddedPG：旧baseline SQLState42883，dev新值软删1、deleted>0且物理总3行、同主兄弟及他主明细均0，重复删除0，事务与实例正常close。没有Spring应用启动或真实datasource连接。QA仅独立跑一次同源码main/标准argfile/缓存native14.22，一新RUN .gradle/qa-dict-logical-delete-20261031T230648Z-e5b19913，exit0/QA_TARGETED_LOGICAL_DELETE_PASS，UTC23:06:48.633144至23:07:04.751368（北京时间07:06:48至07:07:04），源输入不漂移。result SHA ECCFAFB4F3CC5B3A2BA76B2747866BDFE2F71FBC3CCD74EA68993015483E7FC3，run.log SHA D5F152C439D9CCD8C1877007806ECA846C1704CA94D5A1CDD149D9E002695BF5。此前QA把构建dev仍旧值作为前置断言而停止在JVM前，已按实际构建副本新值纠正，仅一次真正启动PG，不算产品失败或多轮复验。
+
+明确源审及针对回归通过、无mustfix；这是Java source-file main运行同@Test，不声称完整Gradle编译/JUnit XML/真实UI已修。原先命令长度206及可选API Guardian编译警告保持既有事实，不加wrapper/observer工程或重绿套件。需要用户正常dev构建重启加载新配置，QA未自启/连真实dev/浏览器/私HTTP/清样本。重启后只继续本轮QA_B01删除保存回读及主删除，不重建或重复已过新增编辑；三个样本仍保留，C3及原D01/8sys不动。已回总控/backend交锁。
+
+### 用户重启后删除复验前置异常：分类能力未加载，未写样本
+
+用户明确dev重新构建重启完成后，root仅恢复原删除失败步骤。fresh官方Edge库存显示当前role页，正常AX核header系统管理员、无草稿；正常reload后角色列表加载，但系统管理菜单没有恢复，仅TanStack示例。一次正常打开已观测可信字典URL后，实际加载结果根/列表为空，页面明确警告“分类维护契约尚未完整提供，当前字典仅供读取”，新增/保存/新增明细disabled，截图工具留证。header身份可能仅既有显示，不推断实际认证或能力响应已成功；没有捕获安全业务码，不猜token/后端产物根因。
+
+因未取得原主及两明细真实当前前像，按前置异常停，未点击删除或保存、未新增/编辑、未读取真实DB，无所谓清理后验；原1主2明细仍按最后技术active状态保留。当前字典安全页无dirty已markHandoff交root/backend，需要恢复正常登录/分类能力加载状态后才能继续。没有私HTTP/token/React/权限开关绕过、没有擅自登出/自启/源修改/主题测试/Git，不把这次阻断误报为逻辑删除修复回归失败或清理通过。
+
+### 分类warning前端只读条件说明，未增加UI动作
+
+按root冻结浏览器后仅只读eva-web dictionary index/service/readonly、resourcePermission及app认证源，未改前端。GET /api/sys/dictionary/list仅在bootLoadingfalse/bootErrorfalse且canRequestResource读取资格成立时enabled；资格不足query可能根本未发起。success非true或网络/归一化错误进入queryerror，额外红色“字典列表加载失败”与重试；黄warning条件为!grouped&&!isLoading，queryerror也会groupedfalse，因此黄warning不能独立判定服务端响应形态。当前截图无红错误条，只证黄warning及空根，不证明请求已发出或后端业务码。
+
+completeContract要求外层businessWritable类型boolean（false亦合格）、每row category=SYSTEM/BUSINESS且readOnly为boolean、category:id唯一；data=[]且capability任一boolean时仍成立、显示两个虚根。因此businessWritablefalse单独只禁写不产生该warning；缺capability/不完整rowmeta/组合重复/queryerror/disabled无data都可使其不成立，非空元数据不全时可显示扁平行、全部写禁用。不能把本次警告泛称后端明确拒写或旧产物根因。
+
+已交backend最少技术字段清单：列表success/businessWritable/data数组，每主id/category/readOnly，写资格还用frozen/status与POST /api/sys/dictionary/edit资源，详情GET /api/sys/dictionary/get/{id}?category，删除当前GET /api/sys/dictionary/del/{id}。认证初始化GET /api/auth/fetchMenus外层resourcePermissionEnabled只认成功响应boolean；undefined按前端拒读取资格，true时menus.resources的resourceType/resourceUrl匹配，false才允许全部（仅解释代码，不授权改开关）。不需读取token/React/store/PII/完整响应；header管理员不代替认证能力字段。未新网络/UI/DB或测试，继续等root恢复删除窗口。
+
+### Edge恢复后原删除失败路径UI复验通过，末次RO已交后端
+
+root提供用户local curl新session三请求成功摘要，仅作为独立来源，不混Edge同token/同主体；正式恢复一次正常reload。fresh官方Edge1可信字典/admin/无dirty，本轮reload后系统菜单、SYSTEM/BUSINESS两根、10主与维护入口实际恢复，未改权限开关或私HTTP/token/React，不能据此反推上轮前置异常确切原因。DOM主行key BUSINESS:2116663333998792706与留证ID一致，单click服务端详情恰QA_B01/QA_B02两原明细、已保存名称/备注一致。
+
+clock起点UTC23:37:08即北京时间07:37:08后，仅准确QA_B01行删除正常确认，主保存仅一次。完成后退出编辑为查看态；重新单click同主、等待加载消失再读真实详情，仅余QA_B02，明确明细删除持久化成功。随后仅此主行删除一次正常确认，加载完成主列表行消失、右侧为空且保存disabled；搜索精确code EVA_QA_B_20261101_01只剩两个虚根、没有主匹配，工具截图留证。未新增fixture、未重做已过新增编辑/唯一性、未动D01/8SYSTEM或其他账号角色数据。
+
+当前安全空选择页无draft/在途动作，markHandoff，已直接交backend原预授末次限定RO核主2116663333998792706与item2116663334133010434/2116663334263033858物理仍在且deleted>0、同codeactive0、原D01/8SYSTEM分类计数保持。QA只报告UI实际删除路径通过，不提前冒称物理留存/三deleted状态已查；不再UI写或重复查询真实库。原重复提交live错误码未捕获仍保持限制，不借清理成功改写旧证据。无源修改/私HTTP/DB直写/缓存清理/服务/Git/视觉测试。
+
+### 本轮B核心删除与自有样本逻辑清理最终闭环
+
+后端末次唯一限定RO已完成并交锁；QA仅读原result及独核SHA，没有再次连接。报告.gradle/dict-b-ui-final-ro-20261031T233911Z-c888813f/result.json SHA667A0D4D6F6FCC85C54E52A389EA4514793BC10D79F39E29533C9EADE53D9479，07:39:12.844607至.901845，1connect/eva-eva/双ROon/repeatable/rollbackclose/写0。三指定物理行仍在：主2116663333998792706 BUSINESS/frozen0/deleted1793489885，QA_B01 2116663334133010434归属此主/deleted1793489851，QA_B02 2116663334263033858归属此主/deleted1793489885。精确对应UI先单明细保存删除、再主及剩子逻辑删除的顺序。同codephysical1/active0，原8SYSTEMactive8及D01 BUSINESSactive1保持。
+
+明确本轮核心新增/查询/编辑/明细联动及删除、仅自有1主2子逻辑清理的实际UI与持久结果已闭环，旧失败三active材料保留独立历史。唯一性仅证一次重复未持久化（此前total1/active1、最终physical1），实际拒绝提示/livecode未捕获不扩大为错误提示验收通过。SYSTEM只读只证正常UI入口，不冒本轮私API拒写测试。页面安全无draft/在途请求，浏览器及DB窗口已交总控，无新样本或后续操作。此为B核心范围，不扩C实现/C3skip/平台0或EVA整体all done，不重复已绿套件/主题；QA不再连接、写库或启动服务。
+
+### C影响只读独审：实现边界一次交后端，未测试或改业务源
+
+root正式授C后端8现文件实施，QA先只读impact报告与现CacheHelper/Serializer/Init/Service/BusinessAccess/两Mapper/Redis scan/TenantLocalAdmin及调用方。认可不新增API/DB列、保持单V1/私有模板/账本/StdEntity及原权限契约的路线，私有无tenant_id须明确Mapper列适配，真实私有维护角色为TENANT_ADMIN，不能照搬ROLE_ADMIN/TENANT_ID=0。现C尚未交实现候选，不宣源审定稿通过。
+
+一次交backend/root具体边界：普通可信有效主体标签读取不可绑维护角色/POST权限，管理读写仍原资源/数据权限，shared cache只填受限完整字典读取；Serializer经Spring代理IDictService.queryDict恢复可信源、无主体原码、不记录字段值/异常秘密。相同ID主明细按source+id分组，不用单Long Map跨源混；省略category双命中拒，coreSYSTEM/privateBUSINESS两合法源code先清单检重再cachehit，不让缓存掩盖冲突/缺结构，partial warm不当全量。
+
+私有明确SQL保审计/乐观revision compare及影响行数、逻辑删除/冻结、主权限/跨主/9999全量预检；不能因排除tenant_id投影就默认原拦截语义仍成立。afterCommit建议仅按提前捕获immutable owner失效old/new code、后续冷填，避免旧事务snapshot回调晚到覆盖新提交值；不callback重推ThreadUser/临时context，不bind后clear外层路由，rollback不刷。public内部getObject/add/update/init/reload(Map)亦不可保裸owner或任意Map直灌旁路。
+
+RedisUtil.scanPureAll本身只检查cacheName前缀不二次核entryPrefix，因此helper非空精确v2 owner前缀及返回键复核必须都有，禁空scan/cache.clear；schema白名单防glob前缀。逐真实namespace/必要列/完整分类check/validated核源，账本1不代表dict齐，缺私有结构拒不core回落，不自动升级/扫tenant。无可信主体启动DictInit跳过。候选后只C同ID/多tenant/真实无tenant_id Mapper/权限/冲突/partialcache/commitrollback/Serializer/bootstrap必要合成复验，不重B/主题；QA仅本卡写，未测试、连库、浏览器或改源，后端保唯一源/重槽。
+
+### C首轮实现未冻结只读交叉审：两项具体mustfix已一次交齐
+
+按backend首轮8源可读交叉核，完整读Access/两Mapper/Service/Snapshot/Cache/Serializer真实当前代码。显式schema SQL使同ID不同来源语句及参数不同，方向可避免一级缓存混源；原scope wrapper无Ignore、私有投影无tenant_id，受控完整inventory先cache检重、Serializer代理读取不记字段值、无owner init跳过、提交后仅owner失效不改context等方向符合。尚未冻结，不据此签C通过；QA没跑测试/新PG或改源。
+
+mustfix1：edit更新调用updatePrivate以revision(oldEntity)作为WHERE预期，忽略客户端DictAoeBo.revision。该字段显式乐观锁且前端传值；客户端旧rev1而DB已rev2时，当前锁读2再WHERE2可成功覆盖旧请求内容。必须在任何主/明细写前保留非null客户端revision与锁读当前版本比较/预期语义，沿原null兼容边界，不新增API必填契约；聚焦过期请求整笔无写/不失效缓存即可。
+
+mustfix2：cachedValues对冷miss立即completeItems/cachePut，public readOnly方法加入外层实际readwrite事务时会读到自身未提交变化。例外层事务edit→queryDict或fetchDicts冷miss→发布未提交map→外层rollback，afterCommit不执行但缓存污染已存在。建议最小实际readwrite事务内旁路缓存读及发布、受控直接完整读，保read-your-write；readonly正常冷填，写提交仍仅owner evict，补外层写后读再rollback不put/evict单case，不造回调框架。
+
+两项已主动一次交backend/root，待窄修及候选冻结/聚焦实证后继续独验。没有重复B/UI/主题/旧66或18测试，没有实际DB/cache/服务/HTTP/Git操作；source仍后端持锁。
+
+### C最终冻结源审及一次独立精确字节定向运行通过
+
+后端停止源写后交source-freeze-v2.json，QA独核SHA C21751F68472842485CB2950441B6996416E7F5D05D2B50BA18018415C258FF3、8production/5tests及后端compiledProducts逐SHA一致，test6/result/log与最终compile日志各摘要绑定。两mustfix实际核修：主锁读且写前non-null bo.revision比当前revision、null原兼容；actualRW cachedValues直接完整读取完全跳cache.get/put，warmFromDatabase同样RW不发布，提交仅immutable owner old/new失效，不重绑context。普通主体完整标签源与管理scope分离、schema限定Mapper/9999全量预检/真实TENANT_ADMIN和core资源上限、完整inventory先cache检重、无旧裸键读清、代理Serializer及无主体skip均已完整读。rg核现生产调用者，无遗留裸owner helper调用。
+
+QA在独立.gradle/qa-dict-c-20261101T001442Z-d642216d/classes编译最终22源文件（8生产/新增用例/适配夹具及必要依赖源码），cachedCP javac exit0；随后运行该新编译@Test的public main，仅一个独立tmp/unpack内EmbeddedPG14.22。UTC00:14:42.325606至00:15:19.711186即北京时间08:14:42至08:15:19，test exit0/C_SCHEMA_ISOLATION_PASS、六阶段PASS：同main/item ID+category/MyBatis一级缓存/路由还原后Serializer；旧key忽略/精确prefix/partialwarm/Map灌入拒/code冲突；普通SELF标签读但管理拒/真实admin/core ceiling/SYSTEM/9999整批；私有无tenant_id真实insert/update/delete/审计revision/warm与cold写后读回滚不污染/owneroldnew失效；缺私表/列/分类constraint拒回落及actor选源/ambient恢复；standalone v2/SYSTEM只读/schema平台0拒。
+
+result.json SHA CBA4D39016E60C95A317BE0FCBB190778C59F02DBF1CAC286DE1C82B87E41243，compile.log SHA AEF4D3B25D4980682CE1D8CEFCF7F8AAFE28CAC2B41D14F50C42BB47502697E1，run.log SHA B20386226A5C1D20D98E9B0FF52F5257003122AA83DDC13ADAC44C91A716DB1D。13冻结源与19保护始末一致；保护为login11+指定3、主V1/私有V1/provisioner、dev逻辑删除配置及回归源。没有写后端freeze/classes或HMR目录，实例try-close，不新observer/proof框架，不重B66/旧18或视觉。4旧签名夹具只compile，不冒执行绿；此为单@Test main真实集成断言，不是六JUnit用例或完整Gradle构建/JUnit XML。
+
+明确本候选源审与C聚焦合成集成验收通过，无剩余具体mustfix；先前两项缺口关闭。测试真实Spring事务/AOP路由/Mapper/数据权限及内存cache，不代表真实Redis、HTTP认证或所有存量tenant已就绪，bootstrap同源由原AuthCtrl直接委托fetchDicts的源码链与该service合成断言支持，不冒真实bootstrap请求。后续正常构建重启加载精确候选（QA未启动），若进入schema模式仅对明确获准目标核可信actor、实际字典结构/check及真实维护membership/资源，旧缺结构tenant仍拒而不自动升级，不新增V1/账本/数据迁移或清Redis。B真实核心与清理已闭环不重开，C3skip/平台0认证/原测试账号角色清理另案保持，EVA整体不all done。QA无真实dev连接/数据/cache操作/浏览器/服务/HTTP/Git，已交回总控/backend。
+
+### C用户重启后最小单体UI验收：扩展界面阻挡，尚未读取
+
+root转交用户C后端dev已构建重启/Flyway关闭，授最小只读UI检查，不重复CRUD。fresh官方库存仍Edge1可信localhost8000/#/sys/dictionary；首次读取现tab AX即被Edge阻挡：another extension UI is open，要求用户完成或关闭扩展界面后再继续。非timeout，未重绑/第二provider/native绕，尚未核当前header/draft、未reload、未读SYS/D01/9active列表或操作缓存刷新，不能声称运行态UI通过。已停止并回root/backend，需用户解除该扩展阻挡后明确继续，原最小只读授权保留；后台独立Redis只读另案不受此写入依赖。QA无DB/缓存/样本/源/服务/Git动作，仅本卡记录。
+
+### C用户解除Edge阻挡后最小单体只读运行验收通过
+
+root转交用户明确继续，fresh官方Edge1可信localhost8000/#/sys/dictionary，当前系统管理员、空选择无草稿；仅正常reload一次，系统菜单/两固定根/8SYSTEM及原D01BUSINESS共9有效主实际显示，已逻辑清理的B临时样本未再出现，无分类契约warning/列表错误。选择FROZEN_STATUS并待加载完成：code/锁定状态/通用锁定状态字典正确，明细0正常/1已锁定/9999只读、sort1/2/3，只有查看，系统行无删除，保存/新增明细disabled。选择原D01并待加载完成，原code/name/remark及QA01测试明细已编辑正常回读，当前管理员显示业务维护入口；未修改字段或点击任何写按钮。再次选FROZEN_STATUS读取完整值及只读状态与首读一致，没有草稿拦截，终停系统只读页markHandoff。
+
+明确仅本轮C重启后单体真实读取/分组/入口资格与重复读取一致性通过。管理list/get不触标签cache，重复读不证明Redis冷热命中；页面无专用当前owner/code定向强刷入口，未试内部reload/privateAPI/Redis写。正常reload后bootstrap是否具体发出/其响应字段未独立抓取，不冒完整HTTP契约或缓存刷新验收。真实跨tenant/liveRedis未覆盖，之前C隔离合成六组证据单列保持，不延长重测试或新helper。未新增/编辑/删除任何dict、未重BCRUD/fixtures/主题，无权限开关、真实tenant/DB/服务/source/Git动作，浏览器无dirty/在途操作已交总控/backend；原账户角色保留/C3skip/平台0认证另案不扩。
+
+### 字典主线关闭后最后核心矩阵只读对账（不执行回收）
+
+root仅派对账。只读10/23矩阵及后续runtime-crud20261018/runtime20261019/本S卡真实记录，不能用旧首表未测覆盖新证据：PEER/LIMIT用户本地创建和D1详情读取已证；R01/S五角色创建、R01编辑恢复及S真实角色用户/资源关联已证；组织O01/S四树及两作者样本创建、LIMIT作者样本编辑恢复、父子树和账号D1引用已证；模块M01/M02自建父子及GET资源创建读取、名称/备注编辑恢复已证。已关字典、日志、角色资源、初始化、视觉不加回。
+
+最小仍未闭环：账号普通资料编辑一次保存回读；账号/角色/组织/模块实际删除及其引用保护/解除后删除结果。账号禁用只证状态U+会话失效，不冒普通资料编辑或delete。最终S回收可复用撤角色/精确资源关联的前后快照证明引用解除；若另纳入已批自有无引用空角色/两作者org样本逻辑删除，可同窗补对应delete，不新建样本。D1/P尚有账号部门引用不可顺手删；只禁用/撤权而不删时，删除项如实未覆盖。模块M01/M02不属S禁用撤权包，其删除/资源定义引用保护须单列最小例外，不重开已关角色资源suite或新grant。普通账号编辑若获准只用自有公开QA字段可逆保存回读后禁用，不触联系方式/密码。
+
+岗位等无合法当前入口、真实tenant无可信会话均外部前置，不扩造新任务；C3skip/平台0认证未批排除。该对账已极简交root/backend操作包规划，不是新写入授权；无新样本/UI/DB/测试/服务/source/Git动作。C单体runtime此轮已pass并关闭，liveRedis/真实跨tenant限制如实保留。
+
+### 用户完整批准最终包后先B+D：两前置均未写入
+
+root转用户完整批准A/B/C/D（call_f2915e00756746dd9e11c480ddf66d71），先派B+D、A负向基线未做前不动SELF/LIMIT等。完整读2026-11-01-core-negative-and-s-closeout-execution-package.md及AGENTS，Git当前cornerstone，既有dirty/未跟踪保留，无源码/Git修改。
+
+B源码安全前置不满足，按包停止：account/aoeform setFieldsValue回填tel/email/roles，handleSubmit构造tel/email/roles/avatar等字段；service editAccount透传并额外生成roleIds，没有本包规定省略联系人/头像/角色字段的正常UI固定payload通道，且UI未携revision。不打开PEER表单、不读联系/密码/私有profile原值、不填写备注或提交，不私HTTP/新增PATCH。用户对固定profile同值三字段的批准不能扩为任意UI联系人/角色字段payload，B普通资料保存仍未覆盖，交root决定安全通道。
+
+D独立继续fresh官方库存Edge1可信localhost8000字典页，首次AX读取即被Edge提示another extension UI is open阻挡。非timeout，未重绑/换provider/native绕；尚未核当前admin/draft/M01/M02前像，未解锁、带子父删、子删或父资源删，不冒D执行。需用户完成/关闭该扩展界面后明确继续，原D既授范围保持；当前不执行末次RO充后验。A/SELF/LIMIT/角色撤权/账号冻结/DEPT及L删除均0动作，无服务/DB/cache/source/Git操作，已回root/backend交窗。
+
+### A仅resource阶段新候选独审及纯fake通过，未真实运行
+
+浏览器安全暂停间隙，按root既授只审新.gradle/org-edit-resource-denial-20261101.py，独核SHA BC09B49FD572D80C03BD34A2D7987C37908A856EF80B3BFA04A49CD0E745D8F8及未改冻结pure依赖D005A1E898CD5B900FB75E3149F78D20F1E99BCC2E7529424C79F5E2F95335AE。完整读候选及依赖parse_json/envelope/login_token/导入边界，固定唯一LIMIT与P body严格等已批公开字段；source默认PLAN在依赖/密码/网络前返回，--run仅TTY getpass，凭据/MD5/token只内存finally清，不接受env/argv凭据。HTTPConnection固定localhost9016、connect后先核loopback才send，严格3请求顺序login→fetchMenus→唯一POST editP，90总/3connect/5wall/2MiB、拒代理/redirect/retry/cookie/refresh；身份ID精确、menu原生true资源开关，POST只200/原生false/0x000-00024/空data判匹配。未知/成功/其它拒绝/超时均停止不补写、不恢复业务或权限，输出仅安全固定类别/码/布尔，不完整正文。
+
+QA独立执行默认PLAN及--self-test各exit0：NOT_RUN/maxRequests3/realHttpRequests0/passwordInputfalse，FAKE_PASS/scenarios7/realHttpRequests0/passwordInputfalse；包含成功/02001/过期/HTTP400/伪布尔/秘密sentinel等不冒目标拒绝，精确payload与清secret检查。该版本安全源审与纯fake通过、无mustfix，交root给用户本机真实run指令；QA未--run/输入密码/真实HTTP/DB或修改源码。仅resource阶段，不覆盖未交付SELF/T1暂停/旧token/disabled阶段，不把离线通过称实际负向通过。B仍通道不符未提交，D仍Edge扩展阻挡未动，A授权前像及浏览器状态保持。
+
+### A用户实际资源POST拒绝通过，后续两笔UI授权缺管理员登录前置
+
+root转用户本机实际resource-denial-post-v1安全结果：LIM success true/RESOURCE_POST_DENIAL_MATCHED/requests3，POST_EDIT_P HTTP200/responseSuccess原生false/完整0x000-00024，automaticRecoveryfalse。正式采纳资源POST基线通过，来源用户本机，不冒QA实际run或继续重复同请求。SELF资源R加E、LIMIT CUSTOM+ALL换SELF两笔具体授权已有用户完整批准，PEER受E临时影响亦在包内，不再重复泛问权限批准。
+
+执行前fresh官方Edge库存当前可信localhost8000/#/user/login?redirect=%2Fsys%2Fdictionary，登录页非管理员业务页；在库存阶段即停，未读取登录字段/密码/完整联系或操纵会话，没有两笔授权保存或回读，不能把用户probe的新session当Edge身份。需用户在本机正常登录管理员并明确继续，届时只恢复精确两笔并回读，不自登出/登录或走私有HTTP。SELF/LIMIT仍仅沿最后前像口径保留、不冒当次实际核值；BNULL恢复暂停、D0写、A后续撤权/禁用未做，未动scope/dept/posts/源/DB/服务/Git，已回root/backend。
+
+### SELF同T1撤权及disabled两个新阶段源审/12纯fake通过
+
+QA完整读.gradle/org-self-session-disabled-20261101.py，实核SHA 9F25088C6E7AE19572F6F4797FD2E318697B379F33804C780234A1711EADB46B；依赖链固定BC09资源候选再核D005 pure，旧两文件未改。仅离线独审：默认PLAN自然exit0 NOT_RUN/真实请求0/密码false/selfmax5/wait180/disabledmax2/requiresRootPhaseDispatchtrue；独立--self-test自然exit0 NEW_PHASES_FAKE_PASS/scenarios12/真实HTTP0/密码0，fake期间HTTPConnection构造hardblock，覆盖意外POST成功/错误码、own读失败、旧24partial/05非证、暂停到期无第五GET、disabled前错不索第二密码、同token全程及secretredaction。
+
+源核固定回环localhost9016/预算路由次序/loopback先检查再send/no代理重定向重试cookie刷新/3connect5wall2MiB边界沿既审。SELF最多5顺序login/menu/唯一POSTP精确02001/ownLGET成功ID校验→有限180秒Windows msvcrt暂停、无后台input线程或心跳→同client原T1再GET，240秒预算。完整200false00023空data才overalltrue/versionGate；00024只oldPermissionUnavailablepartial且overallfalse，不称JWT销毁/过期机制已证。未知/成功/05/超时停无恢复，不新login代T1。
+
+disabled最多两账号各仅fresh login，由用户本地TTYgetpass，密码/MD5/token只内存；前一不是200false00000空data即停且不索下一密码，00001不算冻结。preconditionsVerifiedByClientfalse保持，需要root外部确认两账号已frozen1且LIMIT尚未删，不能只凭generalLOGIN_FAILED推冻结原因。无payload/响应正文/headers/claims泄漏输出，错误typeguard及finally引用清除已核。
+
+明确仅这SHA新阶段安全源审/离线通过、无mustfix，已交root/backend按真实阶段前置调度给用户run，无需重复ACK。QA未--run-self-session/--run-disabled、没有密码输入/真实HTTP/DB/UI或改源；当前Edge待管理员登录、两笔授权仍0写，不能把脚本通过继承为SELF/旧T1/冻结拒绝实际通过。B后端补证原remarkNULL及NOT_NULL无法恢复，UI附带字段与NULL两阻挡均保持，不盲制作marker阶段或改API/策略。
+
+### 用户本轮继续后A精确两笔授权保存及重开回读完成
+
+fresh官方Edge1可信字典页，实际AX管理员/无草稿且扩展阻挡解除，正常菜单进入角色。SELF行公开data-row-key2113857683657629697一致，模块授权候选加载完成后完整checked资源精确GET1000000000000011010/1000000000000011011；只有模块选择行无resource value的展示勾选，不把它当额外资源。逐核唯一组织edit checkbox value1000000000000011012后勾选，待保存DOM资源集合仅上述三项，checkUnique11009、菜单及其它资源均未勾。按用户当轮明确继续指令仅确定一次，面板关闭后重开加载完成，实际checked仍恰三完整ID，正常关闭，没有再保存。
+
+正常菜单到账号，仅定位LIMIT唯一行公开ID2114719096971497474，进入专用角色授权不打开资料编辑。真实前值已选2角色CUSTOM+ALL，正常两选左移后已选0，再只选SELF右移，核1项已选SELF及8可选才确定一次；loading后关闭，重开加载完成实际仅1项SELF，CUSTOM/ALL在可选区。角色穿梭仅显示name、不伪称直接DOM roleId，SELF唯一name↔真实roleId已由前一步角色列表核对。PEER成员、scope/orgIds/dept/posts及其它权限未操作，既有SELF成员PEER临时受E影响在原用户批准范围内。
+
+clock起点UTC02:22:35即北京时间10:22:35后执行保存，完成交接clock为UTC02:25:16即北京时间10:25:16；仅操作包络，不冒服务器精确提交时刻。当前account页dialogs0、无草稿/在途动作，markHandoff正式交root安排用户freshT1--run-self-session，不提前撤LIMIT角色、冻结或删除。未QA查询物理refs/permVer，不冒物理后验；BNULL方案未执行、D仍0写排后。无源码/Git/DB直写/服务/账号资料/新fixture/视觉或资源负向重跑，已主动回root/backend。
+
+### 同T1等待期间撤权未能执行：派发前超时后发现管理员已退登录页
+
+root紧急转用户真实self-session-v1已到WAIT_FOR_APPROVED_WITHDRAWAL/max180秒，正式派LIMIT完整roles仅SELF→[]。QA优先恢复正常账号角色授权入口，首次click在CDP command dispatch前timeout，无保存。按既授仅一次正常恢复：fresh官方库存仍可信account页，同browser1正常getTab重绑定，真实返回已跳#/user/login?redirect=%2Fsys%2Faccount；当前无管理员操作入口，未继续登录/读密码或绕privateHTTP/native。
+
+发现即先于文档立即回root/backend，明确LIMIT角色未撤空、不能通知用户按Enter当撤权完成；建议用户Ctrl+C安全停止该T1或等待自然到期，不新token补旧T1、不重试保存。没有任何业务/权限写入，也没有空角色回读。最后已证状态仍LIMIT仅SELF/SELF三资源，不冒当次DB核值；原T1是否实际超时/中断由用户结果另记，不能假versionGate通过。需要管理员本机登录及root重新阶段调度，B/D/冻结/删除均不自动续做。
+
+### 原生凭据适配器源审和7纯fake通过，管理员授权面板就绪未撤权
+
+QA完整读.gradle/org-native-prompt-launcher-20261101.py，独核SHA256 82F1293480A66A8CDD3813FFDA83A164CF1F7CB480853B413690B02687D0AD58，固定依赖9F250阶段脚本→BC09资源→D005 pure，旧文件未改。独立默认PLAN自然exit0 NOT_RUN/realHttpRequests0/nativeDialogs0/passwordInputfalse；--self-test自然exit0 NATIVE_ADAPTER_FAKE_PASS/scenarios7/realHttpRequests0/nativeDialogs0/passwordInputfalse，无真实弹窗、密码或网络。源审无mustfix，已交root/backend绑定SHA调度，不实际run。
+
+CredUIPromptForCredentialsW使用0x140082固定用户名/强制UI/不持久化/generic，fresh UUID target、不读取或确认存储凭据；ctypes布局和WINAPI签名已核。原生提示60秒或剩余预算，取消/API错误即停；watchdog仅终止自身进程，无服务kill、重试或chat/env/argv/file密码fallback。原生缓冲及UTF8 bytearray finally清零，不宣称所有Python临时不可变字符串可安全擦除。self模式弹窗/HTTP前核stdin为PIPE及PeekNamedPipe，只收exact continue换行、32字节上限，拒错误/尾随/超长/过期信号，180秒等待受240总预算约束，无后台输入线程或心跳。真实桌面弹窗与exec实际管道可用性尚未实测；原self/disabled业务函数和外部冻结前置不变，源审/fake不得冒实际负向通过。
+
+按root管理员已登录指令，fresh官方Edge1实际核系统管理员且账号页无草稿；LIMIT行公开data-row-key2114719096971497474一致，进入其专用角色授权并待加载，已选恰1项QA_R_SELF_20261023、可选8项。仅打开读取，未勾选/移动/保存，markHandoff保留面板，并先回root就绪。等待新native T1实际WAIT后再按root派发撤空；旧TTY未完成不算versionGate通过，不并行probe，不提前撤权或冻结/删除。B暂停、D0写，未改源码/DB/服务/Git。
+
+### 新增单子进程PIPE桥独审和9纯fake通过，未真实运行
+
+root实跑原82 launcher因执行器未供stdin PIPE，在弹窗/HTTP前SIGNAL_PIPE_REQUIRED退出；未产生新T1/WAIT，不撤LIMIT。backend新增.gradle/org-native-pipe-bridge-20261101.py，QA完整读源并独核SHA256 49F737C39AE2F8D97033903A1818A4E6E84CDCCDA97CE8CABD3B98C51D8011C0。四旧脚本82F129/9F250/BC09/D005 SHA逐一一致；不改原生凭据与业务断言。独立默认PLAN exit0 NOT_RUN/realChildren0/nativeDialogs0/realHttpRequests0；仅新增--self-test exit0 BRIDGE_FAKE_PASS/scenarios9/三者0，未重旧绿suite、未实际run或输入密码。
+
+源核父仅Popen冻结82同一child，stdin/stdout PIPE、stderr DEVNULL；新随机run目录先设验证currentSID/SYSTEM/Admin三主体ACL，只有实际child WAITING_FOR_REVOCATION才发布ready及安全bridgeRun，信号器拒无ready/过期/done；临时文件fsync后hardlink排他原子发布exact continue换行，父仅一次写入原child stdin。早信号/非法body/未知stdout/超预算停止，finally只terminate/kill本Popenchild并写done；输出不打印无效原始行，reader_done防退出队列竞态。白名单与冻结child真实输出字段相容。源审及9fake通过，无mustfix；真原生弹窗及运行环境PIPE仍未实测，不冒sameT1负向通过。
+
+已先回root/backend绑定SHA与具体启动：python -I -B新桥--run-self-bridge，exec nonTTY yield1000；保留原session空poll，仅实际WAIT含bridgeRun后派QA撤LIMIT，等实际保存重开回读再另次同桥--signal实际bridgeRun，最后poll原父session。不得猜目录、早信号、换T1或用源审替实际。LIMIT仍只SELF面板无改动、未撤权；B/D/冻结/删除不自动续做，无源码/DB/服务/Git动作。
+
+### PIPE桥最终清理窄修复核：以CA7BB5替代49中间版
+
+backend最终修复关闭已断子stdin时BrokenPipeError：cleanup逐stream捕获OSError，外层nested finally保证尝试done标记，新增broken-close fake。QA核最终SHA256 CA7BB5A9EB8634DCB3F3CFECF2137D9456042612414828D9E833E38F4800D934，独立仅新桥--self-test自然exit0 BRIDGE_FAKE_PASS/scenarios10/realChildren0/nativeDialogs0/realHttpRequests0；源差异无mustfix，49F737九fake为已取代中间候选，不作最终运行绑定。已即时回root/backend以CA7BB5冻结；原启动/WAIT/回读后signal步骤不变，无真实run、未撤LIMIT或重旧suite。
+
+### 真实native WAIT后LIMIT撤空保存和重开回读完成
+
+root实际bridge session74713输出WAITING_FOR_REVOCATION/sameT1OnlyInMemorytrue/max179，run b51f0ae8793d4c00aeac8e98a5837147，正式派既批LIMIT仅SELF→[]。QA fresh官方Edge仍为系统管理员可信account页，原面板已不在，正常重开LIMIT唯一行并核公开data-row-key2114719096971497474一致；加载完成已选恰1SELF、8可选。仅选右侧SELF左移，确认0项已选/9可选，确定保存一次，loading结束面板关闭后再次重开待加载，实际回读0项已选/暂无数据、9可选含SELF。
+
+先于文档立即回root允许本次bridgeRun非秘密signal；完成回报后clock UTC04:41:52即北京时间12:41:52，非服务器精确提交时刻。没有自行signal、输入凭据/HTTP或更换T1。随后仅授权面板截图留空结果（裁掉账号联系字段），正常关闭无二次保存，当前账号页无草稿/在途动作markHandoff。SELF资源、PEER成员、frozen、资料、删除、DB、源码、服务和Git均未操作。UI撤空和回读完成不替代同T1实际00023，最终结果由root原session后续读取；B/D/后续冻结删除仍不得自动续做。
+
+### A真实sameT1通过后收尾：PEER撤空完成，SELF资源清空遇UI禁止已取消草稿
+
+root提供session74713实际exit0：self-session-v1 success true/SELF_AND_OLD_PERMISSION_REJECTION_MATCHED/requests5，P POST200false完整0x000-02001、撤前ownL200true0000、撤后同T1 GET200false完整0x000-00023、sameTokenUsedtrue/versionGateMatchedtrue、native nonpersistent，bridge complete/signalSenttrue。采纳root真实结果，非QA另跑，不重复测试。
+
+root派已批收尾。QA核PEER唯一公开rowkey2113894345662021633，专用角色授权加载完成仅1SELF，左移后0选/9可选，确定一次保存、关闭完成后重开加载回读仍0选/9可选；仅正常关闭，无二次保存。随后角色列表核SELF2113857683657629697，模块授权完整checked资源恰11010/11011/11012（以及无value模块展示勾选）。取消前两项后，取消最后E11012立即弹“警告 至少选择一个资源”，未到服务保存。第一时间回root阻挡，暂停其它收尾；关闭警告后AX最后E仍Value1，正常点面板关闭取消全部未保存草稿，dialogs0，无确定/服务写、无自动恢复写。未重开冒服务后验，服务资源沿保存前三项保持口径。
+
+前端现有逐勾路径不允许清至0，后续清其它角色、检查成员/冻结、两账号禁用均未执行；无源改/DB/privateHTTP绕过，LIMIT未删、DEPT/L/模块均未删。已回root/backend根因与安全取消结果，等待清空正常通道或调整调度。不能因PEER撤空即冒全部S回收完、不能据UI推同T1结果。浏览器独占role页无草稿markHandoff，B仍NULL未决。
+
+### 独立账号禁用前置完成，已交root实际disabled验证和前端编辑窗口
+
+root保持资源清空/角色冻结/DEPT删除暂停，另派两账号禁用。QA fresh官方Edge角色页dialogs0，SELF警告与草稿先前均已正常取消，无恢复服务器写。正常用户菜单进入account并待加载，实际LIMIT2114719096971497474与PEER2113894345662021633均未锁定；逐核公开data-row-key后，各正常点锁定一次并待loading结束，分别显示已锁定及解锁入口。随后正常查询回读，两行仍存在且均已锁定，无逻辑删除。
+
+第一时间回root可启动既审--run-disabled-native，外部两账号已禁用且LIMIT尚未删前置已实际UI完成；回报后clock UTC04:45:45即北京时间12:45:45，非服务器精确提交时刻。disabled登录最终拒绝结果待root真实运行，不能从UI禁用推断通过。当前管理员account页无dialog/draft/在途写，markHandoff，已交root source可编辑信号，QA暂停浏览器避免frontend最小修复HMR冲突。SELF资源/其余角色冻结/DEPT/L/LIMIT/M01/M02删除均未续做；无资料/备注/部门/岗位/DB/privateHTTP/源码/Git修改，B仍NULL未决。
+
+### disabled原生提示超时不算拒绝实证，等待前端最小修复交付
+
+root报告实际--run-disabled-native session4660仅到LIM NATIVE_PASSWORD_PROMPT/max60后NATIVE_PROMPT_TIMEOUT exit1，没有登录拒绝实证、没有进入PEER。不算disabled通过、不自动重试；两账号已禁用且LIMIT未删的实际UI前置保持，LIMIT软删继续受真实disabled通过依赖约束。frontend独占源锁修handleResourceClick空集合与模块同步、不改API，QA等待交付后定向复核，不抢编辑/操作浏览器、不重整套源/视觉验证；资源清空/角色freeze/C/D仅待调度推进，L统一后处理。
+
+### 资源清空前端最小修复独审通过，恢复UI被Edge扩展阻挡
+
+frontend正式冻结rolemodule.tsx SHA256 2A0B64EF30E4C803FA2F26E28258925FCB4EAACE3D6D06A45E84837691C238D9及test B6895C42266E9907268951E442D6BAA025643895535FCD53BAB268BF8421C033，释放源锁/测试槽。QA读权威EVA前端规则、当前AGENTS/CLAUDE、完整组件/测试及相关service；窄diff去至少一资源warning，空集合仅filter当前module checked、其它module资源保持，service既有flatMap资源ID/全空[]契约不变，无mustfix。独立pnpm.cmd exec vitest run该文件-t授权自然exit0，3pass/布局1skip；两文件Biome check自然exit0无fix，只有原maskClosable弃用，不重视觉/全套/服务或源编辑。
+
+root正式派逐域实际清空/回读→4角色冻结、DEPT/L按前置逻辑删、D父子模块保护及删除，LIMIT继续等待真实disabled禁止删。QA按指令首次正常tab.reload即被Edge另一扩展UI阻挡，非timeout，立即停止，不重绑/换provider/native/privateHTTP绕。未完成刷新后管理员/draft核验，不冒安全态；本轮资源保存/角色冻结/DEPT/L/M01/M02删除0动作，已回root/frontend源审pass及runtime外部阻挡。需用户完成/关闭该扩展后明确继续，原已批范围保持；账号已禁用/roles空既有证据不冒当次再核。
+
+### 用户继续后资源清空真实通过，SELF编辑冻结保存未生效触发停止
+
+fresh官方库存Edge1可信account页，实际管理员/无草稿/扩展阻挡解除，两账号仍已锁定，不重复toggle。正常角色页逐核SELF2113857683657629697原11010/11011/11012、DEPT2113858118523068418/CUSTOM2113870080799694849/ALL2113870419179364353各11010/11011；仅取消这些精确资源，DOM全部checked0，分别确定保存各1次，关闭后重开待加载，全部checked0，最后正常关闭不再保存。TREE2113858458634985474实际checked0，仅读关闭未保存。前端修复在真实runtime清空/保存/回读空通过，已分域先回root。
+
+root报告实际disabled session33288 exit0，两账号各HTTP200/原生false/完整0x000-00000，phase success true/BOTH_EXPECTED_LOGIN_REJECTIONS_MATCHED/requests2/automaticRecoveryfalse；结合先前UI frozen1且未删，禁用fresh拒绝闭环正式通过，非QA另跑。root解除LIMIT删除等待但仍要求正常入口、不可盲解锁。
+
+随后SELF用户授权读取选中0，关闭未保存。尝试正常SELF编辑冻结：加载原switch0、scope本人创建或修改；唯一改switch为1后确定保存1次，表单关闭且无错误，但列表等待回读仍未锁定。随后TREE用户面板只读选中0已关闭；第二次SELF列表仍未锁定。按意外即停，第一时间报root，不重复冻结/自动回写；其它角色冻结及DEPT/L/C/D/LIMIT删除0动作。当前role页无dialog/draft markHandoff。
+
+只读定位aoeform submit和service仍传frozen到ROLE_SAVE；index已有选择行后显现的“停用角色”专用handleLockSwitch(1)→lockRoles→ROLE_LOCK入口，未选择未调用，已供root决定下一调度。源/API/DB均未改，不能把本次save成功关闭称冻结成功，也不未经判断改其它域。需backend最终限定RO核本次SELF普通save副作用，非当次QA物理查验。
+
+### SELF编辑未冻结原因已确定，暂停UI待前端修误导字段
+
+root已核RoleService.editUniqueCode刻意保留origin frozen，资料编辑不承担冻结；本次正常save后未锁定属于后端既有设计与前端edit开关误导，不推持久化错乱，不自动恢复审计或版本。专用ROLE_LOCK/switch仍是冻结通道。root已授frontend最小edit只读展示修复并持源写锁，QA立即暂停UI防HMR，等交付后仅定向独审，再按原包列表精确选SELF/TREE/CUSTOM/ALL用停用角色回读；DEPT待C、LIMIT冻结删除入口等backend结论，不盲解锁。本条为前条未生效事件的定位补充，不新增写入或重测。
+
+### 编辑冻结误导修复独审4例通过，再次恢复UI遇扩展阻挡
+
+frontend归锁aoeform.tsx F650FA185C2542E6CFF79C024E982C408A4382C1443B5C26C8DAD54121349796/test A091C6371B15CB95F02F3102B125BAF1434BEEC104BB31D21F27EA8F27D7A990，QA实核。窄diff edit锁定用既有renderValue/frozenText纯文本，提交edit frozen保持currentItem原值；add默认0、view无写与service/API保持，不自动chain ROLE_LOCK。QA独立vitest-t锁定4pass/13skip、两文件Biome pass，无mustfix，无重全套/视觉/旧负向。
+
+root派恢复列表精确4role专用停用及C/D，LIMIT等backend结论不解锁。QA首次正常tab.reload即再次遭Edge另一扩展UI阻挡，非timeout；立即停，未重绑/换provider/native，不能核刷新后身份/draft。四role专用停用0次、DEPT/L/D/LIMIT删0次。已回root/frontend源审pass及外部阻挡，需用户关闭扩展后明确继续，不自动重跑已绿验证。
+
+### 专用角色switch为逐行toggle，恢复前需逐项核0；LIMIT删除继续等待用户选择
+
+backend/root根证RoleService.switch逐行frozen1→0、其它非9999→1，非按body幂等设置。用户解除扩展后QA必须逐项核SELF/TREE/CUSTOM/ALL当前0才各执行一次正常专用停用，已1不重复toggle，完成逐项回读。此前SELF普通edit保存1次确有业务save/audit/revision，不能称零写；最终限定RO比较保护业务字段，不回写审计或版本。
+
+LIMIT后端公开del允许冻结1、UI无入口；root已向用户询问固定LIMIT受控admin native本机认证调用公开del或保留禁用跳过，待明确回复。不改UI、不解锁、不私fetch，C其它范围不扩。当前扩展阻挡暂停，不额外重试。
+
+### 用户解除扩展后A专用冻结及C两对象UI删除完成；D无正常执行通道保持0写
+
+fresh官方Edge1管理员/无dialog/扩展阻挡解除，未重已绿源测试或资源保存。逐项核SELF2113857683657629697/TREE2113858458634985474/CUSTOM2113870080799694849/ALL2113870419179364353均未锁定，DOM选中集合恰这四ID/全0，列表专用停用按钮仅点1次批量；加载后逐项回读均已锁定，未重复toggle。CUSTOM/ALL成员面板已加载选中0、SELF/TREE先前选中0，不保存成员面板。DEPT未选未冻。
+
+C DEPT2113858118523068418前已资源空，本次成员授权加载后选中0，关闭，核固定rowkey后正常删除确认1次，loading后有效列表DEPT0行/dialog0。L2115435549295775746固定rowkey、无展开子节点，正常用户管理选L部门过滤表格暂无数据（UI账号引用为空），返回组织核ID后正常删除确认1次；loading后L0行/PEER作者样本仍1行/dialog0。只称UI有效列表移除，物理逻辑deleted/profile后验留root最终一次combinedRO，未动P/D1树、其它业务或LIMIT/PEER账号。
+
+同时按backend交付独审新limit-native-delete-20261101.py SHA092290C3B1D9E3D51594BB87D6785268BF62F40C0B66D9BF737B1026A021926B，固定native依赖82→9F→BC09→D005，完整源读固定5请求/唯一LIMIT param、admin本机原生用户名密码非持久化/服务端account精确匹配且actor非LIMIT+ROLE_ADMIN，freeze1/技术profile/roles posts assignedRoles空才单次del；loopback先send/90总60popup3connect5wall2MiB/no代理重定向cookie重试恢复。QA独立默认PLAN及--self-test各exit0，PLAN_ONLY与LIMIT_DELETE_FAKE_PASS/scenarios13/HTTP0/native0，无mustfix；未真实run/密码/HTTP/DB。结果仅ACK+detail unavailable01002，不能冒物理逻辑删或profile保留，已即时回root/backend。root后报真实session41077仅admin密码提示超时exit1，未执行删除，不算delete通过不自动重试；LIMIT仍禁用保留。
+
+D fresh UI核M01 rowkey2111793871655895042根/已锁定，展开唯一M02 rowkey2111794099880558593父M01/已锁定，M01详情唯一GET/sys/module/list，M02资源暂无数据。UI资源行data-row-key为展示复合值0-/sys/module/list，未冒独立核物理resourceID或全角色refs。仅选M01顶部无专用解锁按钮（新增/删除模块）；只读源定位switchModuleStatus在service存在但index未绑定，编辑status走MODULE_EDIT，不擅自用其替代专用级联解锁。另confirmDelete先getDeleteBlockers客户端拦父子关系，不发DEL，不能获取原包要求完整02002。发现通道不满足即回root停止，未解锁/编辑保存/尝试父删/子删/父资源删，D0写，不私API/DB绕过。取消M01选择后dialogs0/selectedModuleRows0、无草稿/在途写markHandoff，已交root源/浏览器安全窗口。需root确定D正常通道或另批固定公开API；最终combinedRO未开，BNULL未决不做。
+
+### 模块状态入口最小修复独审8定向通过，D真实UI流程完成
+
+已收backend专属RO（非finalcombined）：13:54:08.677620→.703629+08完整pid递归及实际path更新集合含deleted，范围恰M01/M02均deleted0 frozen1，无额外物理或逻辑删后代；M01资源1active1角色ref0/M02资源0ref0。result SHA08625F0F8AA74CF10FC337AE3FBE1C2D10E384C10B39F941DDE758A5ACDFC901，1只读conn/3SELECT/rollbackclose/writes0。QA采纳、不重复查；这只是执行前范围证据。
+
+frontend归还模块修复源锁，manifest.git/module-status-source-20261101.json SHA43AF63F0F7C6EBE39C6F232AEC5AF607BE7009FE14AA4DCEB70AD93CDE9F6689，QA五文件SHA逐项核一致（生产index FA5FA67655651F58A87B7A5D25D4BC2DB561A326D69C472484C6EC181D487779/aoeform A1F3DEA8CDE8B54A10B099B721CC83BEC5F1C3EA88FBB371BBF85471DF6C837D）。独审handleStatus走原switchModuleStatus目标值、非9999/父锁阻子解锁/pending防重/父双向级联确认/成功刷新失败反馈；edit status纯文本且保存原值，create/view不变，原delete/getDeleteBlockers未改，无mustfix。独立三文件新增必要用例8pass/13skip、Biome五文件pass。首次pnpm.cmd regex含管道被cmd解析，未实际跑测试，改直接node本地vitest后自然exit0，不冒第一次通过、不重旧suite/视觉/全仓；原Divider/Drawer弃用不扩修。
+
+官方Edge正常reload加载成功，管理员/无草稿，现场固定M01 2111793871655895042及唯一M02 2111794099880558593均已锁定无漂移；子解锁disabled符合父锁规则。仅M01专用解锁后级联确认1次，loading结束逐项回读均未锁定。正常选中集合仅M01，删除模块确认1次，实际提示“错误：[EVA_QA_20261018_M01]存在子节点，无法删除”，父子均仍1行/dialog0。只证前端getDeleteBlockers有效保护，不冒触发服务器完整02002。
+
+随后取消M01仅选M02，集合ID核对后删除模块确认1次，loading后M02有效行0/M01仍1；再仅选M01，删除确认1次，loading后M01/M02均0。没有任何额外节点、解锁/删除重试、重锁或自动恢复。唯一自有resource级联物理逻辑deleted后验留最终combinedRO，UI列表移除不能单证资源物理结果。当前dialogs0/selectedRows0/无draft或在途写markHandoff，先于文档立即交root安全窗口；回报后clock UTC05:58:58即北京时间13:58:58，非服务提交精确时间。无源码/私API/DB/服务/Git动作，LIMIT未碰，native删仍由root等待用户；finalcombinedRO尚未开，BNULL未决保持。
+
+### LIMIT可见本机TTY新增adapter独审7纯fake通过，未真实启动
+
+root经用户批准改本机可见终端input账号/getpass密码，backend交limit-delete-console-20261101.py SHA8970396A63CC88CEC1DA57D23C7BB1A0B7B9CF329AC69B9FB475CC4F51682B39及固定PS1 launcher SHA D135145DE5802EA7F43074D07B98098A27107977D774368F409AF50D91E516E6。QA完整源/launcher独审并实核，冻结delete092290未改；只hash导入原run/LocalHttp保持身份/固定5请求/断言，不扩删除范围。独立默认PLAN自然exit0/HTTP0/inputfalse；仅新--self-test自然exit0 CONSOLE_ADAPTER_FAKE_PASS/scenarios7/HTTP0/native0/realConsoleInputfalse。无mustfix，已交root/backend；未--prepare/开真实窗口/--run-console/密码/HTTP/DB，未重旧13。
+
+prepare仅调用冻结bridge.private_run三主体ACL随机目录，15min目的/nonce/delete及wrapperhash计划；run核合法目录和匹配计划后排他console-started一次，真实Windows stdin/outTTY才能input账号+getpass，GetPassWarning按错误拒回显fallback。输入60秒定时仅首HTTP前生效，总90沿原；凭据只内存，UTF8可变字节清零但不宣称所有Python不可变临时字符串可安全擦除。超时仅自身安全summary后退出，未知/取消不重试恢复；summary排他白名单无用户名/token/响应原文，仍要求最终物理/profile RO。固定PS1只固定cwd/python/wrapper与非秘密run参数，不保存凭据或transcript。真实可见窗口/TTY可用性待root，不冒实际LIMIT删除完成；D已UI完成安全页不动。
+
+### console启动器BOM唯一编码修复窄独验通过
+
+backend根证旧D135在系统WinPS5.1以gb2312解析时中文注释吞Python调用；root批准唯一编码修复，独立新PS1 limit-delete-console-launch-utf8bom-20261101.ps1 SHA240E9026BB9E07779D45A57BCD19EA884D2A464CEB09AC237B4DEC1091C79939。QA独验首EF-BB-BF、去3字节后与旧D135全部bytes逐项相等，文本/调用/参数未变。真正System32 WinPS5.1.26100.9711/defaultEncoding gb2312只执行Parser.ParseFile：errors0，Python CommandAst恰1，固定python.exe/-u/固定wrapper路径/--run-console/$RunDirectory五元素，commentContainsPython0。旧D135、wrapper897039、delete092290 SHA均未变。
+
+无mustfix，已交root/backend仅以新prepare一次及新BOMlauncher调度、旧plan不复用；QA未-File/prepare/run-console/开窗口/input/HTTP/DB，不重7/13fake。解析通过不称真实可见输入或LIMIT删除完成，最终RO仍等root窗口。
+
+### 最终唯一combined RO的QA独立复核：限定核心清理闭环，明确保留例外
+
+root真实新BOM console LIMIT运行summary success true/DELETE_ACK_AND_DETAIL_UNAVAILABLE_MATCHED/requests5/固定LIMIT2114719096971497474/deleteAcknowledged与serverAdminConfirmedtrue/exit0，无自动恢复。backend最终唯一combined RO在14:19:53.547369→.680020+08完成。QA仅读固定final-combined-closeout-ro-20261101.py、安全result与manifest，实核result SHA D618212D88FAFE3EFDE6A72386CD28816250948D8D502B4E92C38FA5AB23D68B、manifest SHA4992650438CB0DB2A793A657282818FE6671F18B3A1D72C319B92D33265523CD一致。12固定域SELECT加起止session共14、单连接、eva/eva repeatable read、起止transaction_ro/default_ro均on、批准dev指纹及source-build同源、writes0/rollbacktrue/closedtrue与固定代码一致；无重新查询DB、执行脚本/测试/视觉或源码修改。
+
+| 核心域 | 实际闭环与最终后验 |
+| --- | --- |
+| A负向与撤权 | 资源POST拒绝完整0x000-00024、SELF数据拒绝0x000-02001、原T1撤权0x000-00023及两账号fresh登录0x000-00000已有真实证据，不重复运行。五角色/两账号双向成员及岗位为0，六角色资源/派生权限和模块资源角色引用均0。 |
+| A保留对象 | SELF/TREE/CUSTOM/ALL deleted0 frozen1，PEER deleted0 frozen1；审计/revision/permVer正常变化不回退。 |
+| C逻辑删除 | DEPT deleted1793512023，L deleted1793512092，LIMIT deleted1793513685 frozen1；均物理行保留。LIMIT/PEER profile均物理存在，code/name/dept原值仅本机布尔比较全true，两remark仍NULL。 |
+| 保护范围 | P作者样本全部封存业务/作者字段匹配，四部门封存字段及三有效后代树匹配；D1物理profile2/有效账号1符合保留PEER及已删LIMITprofile规则，R01全部封存投影匹配。 |
+| D模块清理 | M02 deleted1793512707、M01及唯一resource2111793873144872961 deleted1793512722；两模块frozen0、有效module/resource均0，业务及创建字段匹配。实际父删由UI保护拦截，非服务器02002分支证据。 |
+
+QA结论为FINAL_BOUNDED_RO_MATCHED_WITH_DECLARED_PREIMAGE_GAPS限定复核通过，不等同全系统全分支通过。真正未闭环：B PEER备注原NULL往返仍未执行、用户skip/精确NULL恢复选择待答，NULL保持不能算该测试通过；父server02002未实际触达但UI父子保护已证；O01当次deleted0/frozen1/root保留，09:59无其前像，角色name也不在封存投影，这两项不得宣称前后字段一致。C3按用户跳过，真实tenant/平台0前置保持另案不扩。最终结果已先回root/backend，无新增gate、第二RO或自动恢复，浏览器保持此前无草稿安全态。
+
+最终封存链补核：固定RO脚本SHA ACA634C79EEB458469AEABD344F23EA7C885C394FE61B2D40DECE053D762DF5C及公开前像result SHA D18132104F37909744CD1C2ED4811E7834EB56FFDADB97BF2BD5A26EC67751EF均实核一致；未读取私有档案原文，不另开DB或执行脚本，结论及例外不变。
+
+### 用户明确跳过B，本次核心包关闭
+
+用户最新明确选择“跳过并记录为未覆盖，按当前核心范围收尾”（call940f07373da14562a1a519cfafe09284）。B正式记为USER_SKIPPED/NOT_COVERED，不再待确认，不执行PEER备注往返或NULL恢复；当前NULL保留不等于该测试通过。按前述实际UI、真实负向/删除和最终限定RO证据，本次批准核心包CLOSED。
+
+关闭仅适用于本次核心范围，不称全系统全分支通过。继续保留：父删除server完整0x000-02002未触达，仅有真实UI父子保护；O01无封存前像、role-name不在前像投影，未证明两者前后字段一致；C3按用户跳过，真实tenant及平台0前置不纳入本次。审计/revision/permVer/M01leaf正常变更不回退。本次仅追加状态记录，无新测试/DB/浏览器/源码/服务/Git操作。

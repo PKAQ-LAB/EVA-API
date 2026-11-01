@@ -1,0 +1,47 @@
+# 历史登录日志已批准读取政策与实现边界
+
+当前决策更新：用户已进一步批准集中来源方案，schema模式未来login日志core同源并采用独立审计事务，standalone保持配置单库、旧日志不迁。此前“来源方案待用户确认”已关闭，改为实施与定向证据待独审；不重复询问已批政策，不把批准本身当实现验收通过。
+
+2026-10-30 technical_designer。总控转达用户已明确批准：租户管理员查看本租户、可信平台管理员查看各租户、普通用户不可读。仅历史LoginLog，不改变在线用户、OpenAPI或业务/错误日志。此为批准政策收口，无需再问是否选集中审计；本角色仅设计与协作，不改生产/DB/授权/服务或执行测试，C3仍USER_SKIPPED。
+
+## 常驻资格
+
+必须先验证可信ThreadUser、正userId及合法tenantId/运行模式，缺失/不一致/资格查询错误拒绝且不触日志Mapper。standalone仅真实standalone非schema及tenant0，在受信standalone源验证有效账号—角色关系中的ROLE_ADMIN，优先复用现IOpenApiAuditAdministratorQuery；不是rolesMap或前端canAdmin。
+
+平台跨租户资格仅真实platform/schema模式、可信tenant0，core库同源验证有效平台管理员关系；account/role删除及冻结状态按已有OpenAPI有效性查询，9999系统只读管理员不是锁定。正租户ROLE_ADMIN代码、ALL、TENANT_INSPECT/API身份及外部target参数不能替代此资格。
+
+正租户管理员只在其可信tenant范围内核有效账号/租户/管理员membership。现core TenantAuthorization.xml以SYS_ROLE.SYSTEM_ROLE=TENANT_ADMIN且role.TENANT_ID匹配绑定正式管理员；私有schema另有TenantLocalAdminService的TENANT_ADMIN角色。backend须先说明两个机制的可信membership/账号实际源及租户路由一致性，再确定复用查询，不能凭任意同名角色字符串或新造adminId-only判定替代。不得授新角色/资源、补ALL或恢复supporter权限。
+
+## list/get 的统一边界
+
+租户管理员list/get/count都必须显式tenant_id=当前可信tenant，不能只限制列表。list.targetTenantId=null或等于自己可接受；越租户或负数拒绝，不按输入切换schema。standalone固定tenant0且拒不相符目标。平台管理员list.target=null保持跨租户已批准范围，非负目标只缩小等值范围；负值拒绝。
+
+get现签名只有id，不加target参数。平台管理员按ID在同一受信日志源内读取其全范围，与list总体资格一致；租户管理员按ID再叠本tenant条件，不能用“列表选中过”作为授权。分页records/count一致，用户account/IP/sessionId/时间等只作查询条件，不作资格或租户来源。空/无记录与权限拒绝不混为成功资格。
+
+data/resource开关均不得取消管理员资格或可信tenant过滤。resource开启时叠原真实GET list/get实际路径授权，关闭只跳过资源匹配；不得从旧缓存/admin字符串绕过资格。原resource permit行为不在本次扩大，是否命中现机制须如实测试。
+
+## 物理来源及通用scope兼容
+
+backend须证明现login success/failure/logout写入和历史query真正位于哪个受信物理源。schema模式预期复用受信core集中日志源、standalone用已配置standalone源；不能只因无TenantSchema就推断运行默认search_path一定正确，也不能向每个tenant复制/回填历史日志。资格查询需要租户路由时，按可信resolver/executor执行并finally恢复，然后到受信日志源内同步读取。
+
+SYS_LOGIN_LOG没有CREATE_ID/MODIFY_ID。最小兼容应以本日志精确读取方法/专属局部授权作用域接管数据权限：验证管理员及tenant边界后，只有固定LoginLogMapper detail/page/count语句获得专用上下文；通用拦截器对此精确组合不再拼SELF/DEPT列。上下文外直接读取必须拒绝，不是全表无条件Ignore；禁止全局exclude、补ALL、关闭DataPermissionInterceptor或复用OpenAPI marker造成日志间串权。作用域同步且try/finally清理、嵌套恢复，不能跨异步请求泄露。该边界不套登录失败等内部写审计，save/closeSession保持现职责。
+
+backend追加源核澄清：resolveRiskFlags在saveSuccess内部也调用同LoginLogMapper.selectCount/selectOne，属于系统内部风控读取。上述“上下文外直接读取拒绝”严格指新增或明确区分的历史专用detail/page/count方法，不能扩为所有BaseMapper.select*。历史入口须改接专用方法，使其直接无授权scope调用时拒绝；内部风控既有方法/调用职责保持，不为人类历史查询借用风控通道绕门禁。若必须给内部读取独立范围证明，也须明确最小系统职责，不能伪造ThreadUser/ALL或套管理员资格破坏匿名失败/成功风险记录。
+
+若不能证明现物理来源、现管理员membership或需要修改API字段/参数/返回形状、数据库结构/迁移、历史数据归属，应明确报总控暂停相应实现，不自行扩大政策。当前批准的是读取门禁收敛，非新API/DB契约。
+
+## 前端范围及验收
+
+现userinfo没有独立可确认有效审计管理员资格的新字段；authorities/capabilities/canAdmin不可替代服务端资格查询。前端按现已授权的显式/log/login菜单与实际资源呈现入口，未知/loading/error拒绝；不创建硬造菜单/角色，不凭TENANT_INSPECT推租户管理员。后端最终拒绝仍须正常错误处理。
+
+最小页面只读历史列表/同布局详情，原分页/LocalDateTime过滤语义；固定字段白名单、不Object.entries展开全部VO，sessionId/deviceFingerprint默认不展示，不虚构四审计字段。targetTenantId先不出UI（无可信selector载体），不新增get参数。前端已获总控实现范围，需等待后端资格与来源方案交审，不能称资源谓词就证明管理员政策。
+
+测试候选须覆盖standalone/平台tenant0有效管理员/正tenant管理员正向，普通用户含ALL或资源宽放仍拒、正tenant伪ROLE_ADMIN不能global、无身份/缺schema/失效关系拒、跨tenant target与ID/分页count、data/resource开关组合、局部scope直接Mapper拒及异常恢复。只规划必要定向测试，不重跑历史228冒新证，不自行执行真实HTTP/DB/UI/授权操作。
+
+backend已收到上述约束并要求先交资格/来源方案再改；前端已同步无可信客户端admin位、显式菜单/资源与字段范围，禁止改后台契约。后端方案或实现交付后本角色另独审，不把本约束文档当实现验收。
+
+## 后端方案前置复核更新
+
+backend确认当前仅dataPermission.enable=true时注册数据权限拦截器，因此常驻历史Mapper门禁不能只靠handler。原则可采用专用历史@SelectProvider：每次BoundSql生成前校验历史scope，固定detail/page/count SQL并由可信scope约束tenant边界；需核当前MyBatis实际ProviderSqlSource及MP count路径，不以marker存在代替租户条件。handler只在精确历史方法和局部scope组合下跳过缺失owner列，原风控BaseMapper保持，不改变全局拦截器注册。不新增通用框架，本条为可执行候选机制，非生产实现批准。
+
+backend全仓源核core ensure/bind XML无实际调用，当前租户管理员实际资格在TenantLocalAdmin私有schema角色关系；前文core SYSTEM_ROLE仅候选源码机制，不能视为运行依据。平台schema模式日志写没有显式core路由/事务，当前默认仅能证standalone配置eva与dev datasource currentSchema一致，不能推出平台历史集中eva_core。此为必须先上报总控的来源缺口：不得为读功能擅改write路由/历史迁移或直接假设core读取；若需超出现有只读源核的事实证据或变更范围，等待总控另授，当前后端仍不应开始未收口的生产实现。

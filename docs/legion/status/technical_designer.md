@@ -241,3 +241,147 @@ root已明确合并仅新bootstrap无参supportsMultipleResultSets=false及断�
 测试4B449窄补与26类准备计划已独审补入source-review：真实执行ID栈/prepare记录、core阶段非SQL异常注入及原非空上下文恢复、有效身份无事务拒均已具源码；生产5hash不变。最新loopback四文件8190BB1A/8F3DB6BF/695418BE/E8F612D9，实际替换1/2/1/1，内存逐字节逆改四项均精确匹配修改前SHA，旧三diff无其它增量，默认port0保留。无静态阻断可准备新辅助，但实际四Test图/CP/离线PG资源唯一性/wholeJVM目录/ownedchild（含Fixture构造失败）及监听收尾仍需辅助实现与独立审后另授执行；未跑任何测试或PG。
 
 菜单辅助终审见design/2026-10-28-menu-helper-final-review.md。最小生命周期方案替代曾讨论的Job方向，不做ETW/Job/新依赖；新Fixture初始化失败close/保原异常已补。初版py8BA终态漏未知不可读exe候选为唯一阻塞；窄修后实核最终py B58F948FB3715C6C987DFB8017DBA87293910619D22347C8DAE2F3F6F0480ADA，init5550EC20…及menuTestA78269AB…不变。歧义在读CommandLine前最小输出、未认领completeProof=false并使terminal失败/no kill；明确外部可读PG不泛失败。阻塞已消除，可交root决定一次受控独立执行。root严格保留8实例观察，漏采失败停报非业务回归、不自动重跑/事后放宽；26类实际未执行，本角色未PLAN/Gradle/PG/进程观察或改源/helper。
+
+### 2026-10-30 历史登录日志只读安全复核
+
+按总控派发，仅源码/现证据只读；当前HEAD ade2f918，backend/QA两状态卡原有修改，前端仅未跟踪暂停checkpoint，未操作。使用obsidian-memory读取匹配项目入口/profile；其租户/发布旧摘要已滞后，以现源码为准。仅追加本人卡，无HTTP/DB/浏览器/测试/授权/服务/源码/helper/Git写入，C3仍USER_SKIPPED。
+
+实际LoginLogCtrl提供GET /monitor/log/login/list与/get/{id}，LoginLogService经BaseMapper查独立SYS_LOGIN_LOG，seed1407对应method* /monitor/log/login/**。JWT资源门禁开启时仍按真实资源校验，关闭仅跳过资源匹配；不是admin名称绕资源。前端当前无该历史页/路由/API常量，online不是历史。列表参数targetTenantId只有平台管理员分支处理；get无目标租户参数。
+
+显式租户行为：standalone固定TENANT_ID=0（服务内部此分支不需ThreadUser，不能等同HTTP匿名可读）；platform且当前ThreadUser存在且ThreadUserHelper.isAdmin时，list未指定targetTenantId不加tenant条件、指定非负target则等值，get按任意ID不加tenant条件；其它模式/主体强制可信currentUser.tenantId，传targetTenantId被忽略，缺身份用-1拒式条件。既有LoginLogServiceTest直接wrapper用例覆盖这几个分支，未运行，不当HTTP/真实schema验证。此边界没有USER_ID=本人条件，也没有显式ALL/requireAll；允许查询账号/成功/IP/会话/风险/时间，不把过滤参数当授权。
+
+必须纠正“没有requireAll等于完全不受数据范围”：MybatisPlusDataPermissionHandler仅对biz/archive/error额外requireAll、api_call_log独立授权，但SYS_LOGIN_LOG仍可能进入后续通用buildPermissionSql。当前源eva.yaml data-permission.enable=true且exclude-tables不含sys_login_log，Mapper也无Ignore；ALL生成1=1，空scope生成1=0，SELF/DEPT等会用CREATE_ID/MODIFY_ID，而V1 SYS_LOGIN_LOG及实体无这两列。故受限scope获登录日志资源时存在SQL列不匹配/读取失败的具体兼容风险；不是已证全租户泄露，也不能说运行一定错误（外部配置/实际实例尚未核）。data关闭/该表被排除时只剩上述服务租户过滤，普通同租户获资源者可看租户内其它账号日志；不能把它描述成SELF读取本人。
+
+条件性跨租户风险：platform管理员分支仅isAdmin（rolesMap中ROLE_ADMIN代码），没有像OpenAPI政策那样额外校验可信tenant0及core有效管理员关系。若platform模式中允许正租户身份携ROLE_ADMIN到达该分支，则可不带tenant条件读取；本轮未证实这种主体可达，不凭单缺requireAll宣布漏洞。LoginLogService/Mapper也无显式TenantSchema/core执行器，跨schema物理表来源需按现路由和实例独立证，不因tenant条件存在就保证schema来源正确。
+
+现有OpenAPI政策已在design/2026-10-23-openapi-log-boundary.md第8节用户批准：独立有效管理员资格、standalone或platform可信tenant0/core、开关不影响该资格、普通tenant不提供本应用视图；范围仅OpenAPI。不得自动推广为历史登录日志管理员-only，也不能把此前“三日志都requireAll”的卡当登录日志既有政策。登录日志资源/租户门禁与biz/error或OpenAPI是不同实现。
+
+最小政策收口建议只问登录日志：是否保留现有按资源授权的租户审计视图（普通主体本租户全部，平台管理员可跨租户筛选），还是另定本人-only/独立管理员审计？若保留现有边界，则前端只补历史列表/同布局只读详情及已授权真实字段、现分页/时间/过滤契约、错误/加载/无权限与实际GET资源守卫，无删除/清理/导出/在线会话管理、新授权或新API；不自动给受限账号授1407/ALL，也不擅加targetTenant选择器。先明确通用scope与登录表不兼容的处理（独立资格或保租户条件的精确读取豁免均涉及读取范围，需用户确认），不能为补UI静默全局Ignore或补ALL。若选择本人-only/admin-only则需后端明确策略及可能的schema门禁，当前无权实施。VO虽无token/password，含account/IP/sessionId/fingerprint/UserAgent/失败原因等，UI不是全部默认展开的授权；最小列只呈业务已确认字段，敏感技术值/原始对象不在QA读取或输出。政策、物理来源和受限scope未收口前，不宣称可安全开放所有已有资源角色。
+
+### 2026-10-30 历史登录日志冻结实现终审
+
+已完成7main+4test独立源码审查，详见design/2026-10-30-login-log-source-review.md。manifest SHA D582E2130B00A9799DB4361A61496A43A4D04E9E602E283209AF64BADE090ABB，11项源码SHA逐项一致；未发现可复现静态阻断，可交QA独立复验。核心来源/私有资格/资源开关/Provider单次与MP count固定tenant/精确human-system窗口/独立事务代理外捕获commit异常均核现源码及关联路由。只读test-4.log为30/30，属backend证据非本人运行；合成JDBC/事务/路由mock、旧产品CP局部javac、不是真实PG或完整Gradle，QA签审仍待。本人仅设计/status写入，无源或测试修改、无测试/DB/HTTP/UI/服务/Git发布操作；C3 USER_SKIPPED。
+
+### 2026-10-30 平台tenant0菜单独立设计
+
+已实读schema0菜单拒绝、10/28设计第6节与现PostgresTest拒绝断言，并有界追踪登录resolveCode/resolveId、成功签发、JWT校验、账号角色及资源重载router。结论是既有有意安全边界与平台入口未实现的能力差距；不能仅删<=0。新design/2026-10-30-platform-zero-menu-boundary.md限定真实platform/schema+可信0+有效core管理员关系，推荐首版只已批login审计叶/实际既有资源与获授父元数据，不选全部core/租户业务菜单，认证入口/代次/会话/资源来源及行为契约仍须用户确认。现已批审计资格/集中来源不重问，dev两项菜单SQL与此分开。backend菜单SQL三项门禁窄补已实核，定稿SHA18A055BD787A747D2D1BCF09B5914C52E40E7BB9C6EEE02C67947A22882E919B，软删回退可用无静态阻断。仅设计/status写入，无源/DB/HTTP/测试/服务修改，C3仍USER_SKIPPED。
+
+### 2026-10-30 登录日志资源拒绝探针预审
+
+按总控新派，仅源码预核：LoginLogCtrl真实GET list与get/{id}，JwtAuthFilter资源拒绝在chain前返回HTTP200/application-json、success严格false、完整code0x000-00024、默认空data；此不同于业务管理员资格拒绝。AuthBootstrapResponse仅成功login/menu外层提供原生boolean resourcePermissionEnabled，预条件必须恰true，不能用false/unknown当拒绝PASS。success=true即使空data也意外允许，应首错停止；非完整拒绝码、过期、无记录、404/500不能记PASS。正常login可写审计/session、cache缺失可重载Redis，探针不宣称零系统写。候选脚本尚未出现，已把真实路径与判定发backend，待冻结文件后直接源码独审并交QA/root。未执行真实请求、测试或修改生产/辅助脚本，C3 USER_SKIPPED。
+
+### 2026-10-30 登录日志denial探针冻结独审
+
+已完成397行冻结脚本只读独审，SHA769FE2F8D7C705BD9DB760863C3D38FC5C68F0C8FDB94B9A1D2D5E77BDD93C05；pure依赖D005匹配，evidenceC86D匹配。design/2026-10-30-login-log-denial-probe-review.md列精确四请求、loopback/超时/体积预算、strict能力身份、完整00024+空失败data、成功/非空首错停、输出/秘密清理与fake实际分支。未见静态阻断，可交QA独立PLAN/fake；backend evidence56仅只读不代QA签审。administratorGuard NOT_PROVEN保持；用户真实run仍待总控组织，本角色无任何真实请求/测试或源改。已主动交QA/root，不需ACK。
+
+### 2026-10-30 CUSTOM双hidden探针预核
+
+按总控新派预核现Organization list/query.id/TreeHelper空集与get/02001/ExceptionAdvice真实HTTP200路径。双list仅strict200/true/0000/data[]，双get仅200/false/完整0x000-02001/空失败data；资源00024/过期/其它错误不当hidden通过。CUSTOM0003按样本CREATE_ID或MODIFY_ID对应有效account/profile部门IN指定集合，并非actor部门或样本所属组织；作者D1/指定D2与两existsfalse仅据root已有只读证据，本角色未DB复算。旧scope labelL强制positive不复用不改；已交backend新独立六请求判定条件。当前UI授权状态切换未由本人执行，不把预期当已验结果；待冻结脚本直接独审交QA，无真实HTTP/测试/源改/DB/服务，C3skip。
+
+### 2026-10-30 CUSTOM双hidden冻结源码独审
+
+新包装EED7FDBDCBD55E3269680A333FC2BDE30DD1B65A6188214C6D317A9DBE53A8FC、scopeEF9E/pureD005/evidence20125均实核，见design/2026-10-30-custom-both-hidden-probe-review.md。直接复用原LocalHttp/Budget不改globals、不调用旧Lpositive read_check，六literal顺序/双strict list[]及双完整02001空失败get/非空首错停/能力身份/最小投影均无静态阻断。可交QA无网络PLAN/fake；59为backend报告非本人运行，UI变更后独立角色状态与真实用户本机run仍待，dataScopeRootCause NOT_PROVEN保留。本人仅设计/status无真实请求/测试/源码/旧工具/部门/DB/服务改动，C3skip。
+
+### 2026-10-31 字典契约待办精准收口
+
+完成现DictService/BO/VO/Convert/entity/cache及前端dictionary只读核对，详design/2026-10-31-dictionary-contract-closeout.md。结论取消笼统归属/备注开关待确认：两类/系统全只读/tenant业务自治/standalone管理员已定，无需重问。现实现仍单级平表、无真实父分类/资格与显式core系统+tenant业务分源；主9999有拒写，但明细9999只保状态仍可改值/遗漏删除，switch仅跳过9999。主项真实remark可写却DictViewVo缺回读字段；明细remark真实BO/VO链完整且新三mode只读呈现，旧弹窗冲突关闭，不增备注或启停UI开关。仅未知历史QA主项无归属证据且未另批时才问归业务或排除；fresh数据清单/映射执行批准不重复产品政策，旧DATA_SCOPE删除快照不可套用。本人仅设计/status，无源/DB/HTTP/浏览器/服务/测试/授权/Git操作，C3skip/平台0另案。
+
+### 2026-10-31 字典最小具体契约提案
+
+已交design/2026-10-31-dictionary-minimal-contract-proposal.md：推荐前端两展示虚根+SYS_DICT.CATEGORY(SYSTEM/BUSINESS，过渡NULL拒写)，不新增持久根/pid树；list保持平数组加category/remark，get可选category消歧。A无DDL主remark回读/9999明细精确预检全入口，B单库逐项分类+虚根与守卫，C独立schema分源/tenant版本/v2owner缓存及Serializer旁路。重码拒绝不覆盖，未知旧行原值保留NULL、分类版启用前映射门禁，不猜QA或照旧deleted脚本。已列确切文件/列/BO规则/响应兼容/缓存变更和一句批准范围，实际数据写仍另批fresh精确清单。仅设计/status，无源/DB/HTTP/测试/服务/授权操作，Modal已验不动，C3/平台0另案。
+
+### 2026-10-31 A方案独审准备及B检查清单
+
+总控转达用户已批A/B/C分步契约，不重复问政策；A backend唯一写源，本角色只读等冻结交付。已发backend批前置建议：任何主子写前全量预检，未变9999保留不写，字段/排序/备注/移除或伪外main ID拒，批switch/del先全检，remark仅主VO回读。已新增design/2026-10-31-dictionary-b-checklist.md，B在A通过后，候选仅历史系统路径证据、QA不猜，fresh精确分类清单/真实迁移仍另批，不照旧deleted脚本。当前未见A新diff不预签通过；本人无源/测试/DB/HTTP/服务操作，C3skip/平台0另案。
+
+### 2026-10-31 B有效写能力响应补充候选
+
+前端指出空BUSINESS无行时不能判新建，已补design/2026-10-31-dictionary-b-write-capability-addendum.md并交root确认：list外层原生businessWritable同源资格，行readOnly综合分类/身份/源/9999，操作资源另叠；缺位failclosed不猜角色，旧分类缺失保平表只读，完整数据再两虚根。BO不收授权位，后端动作重验。此为原提案未逐字列的响应增量，等待root冻结，不擅称已批或开B源码；A独立推进不受影响。仅设计/status无源/运行操作。
+
+### 2026-10-31 A三文件候选差异预审
+
+已实读DictViewVo/DictService/DictServiceTest当前diff，remark同名回读、edit在主写前完整预检/旧lines单快照、9999未变保留跳update、del只读子拒及switch先targets后写均符合A，无当前新源码阻断。非终签：backend仍需补sanitize非法id整批拒与混批switch测试；已交正常项在前后项非法零写、null/空行、显式与省略9999字段及正常子/保护子混合保存必要覆盖建议。等待最终SHA与结果再签，未自行测试或改源，B/C未启动。
+
+### 2026-10-31 用户保存暂停
+
+总控转达用户明确保存暂停，立即停止新审查、实现、测试及浏览器动作。本人当前无活动命令、无源码/测试写锁、无待清理进程；未改生产或测试文件。本阶段本人新增/更新设计为2026-10-31-dictionary-contract-closeout.md、2026-10-31-dictionary-minimal-contract-proposal.md、2026-10-31-dictionary-b-checklist.md、2026-10-31-dictionary-b-write-capability-addendum.md及本状态卡；既有500Modal验收不重审。A仅已读三文件候选diff，无新阻断但尚未终签、最终SHA及后端补测结果尚未收取，本角色未运行测试。B businessWritable/readOnly两响应增量仍未批准，不能当用户答复为授权；B/C不实施，旧数据分类/迁移未批准。A源码保当前不回滚，本角色不干预backend当前命令或锁；不杀服务、不丢草稿、不回收角色样本。精确恢复点：仅用户继续后先接收backend最终A冻结文件/SHA及真实结果，再完成A独审；B两能力位由总控取得明确决定后才冻结契约，实际旧数据写另批。暂停期间不轮询、不发真实DB/HTTP、不启停服务、不提交推送，C3仍USER_SKIPPED，平台0另案。
+
+### 2026-10-31 恢复A终审发现保护快照范围阻断
+
+三SHA与暂停一致，最终XML只读Service28+Convert5=33/33/0skip，生成MapStruct有VO.setRemark，本人未重跑。实读diff其参数预检/只读跳写/switch整批符合，但发现listItems仍受通用SELF数据范围裁剪：本人主项下他人创建9999子可不可见，del仍删主、edit遗漏仍过。已交backend/root核实并最小内部完整性查询修正，详design/2026-10-31-dictionary-a-source-review.md。当前不签通过、不交QA执行；只读XML不抵销该缺口。B两位未批，B/C不实施，无源/DB/HTTP/测试/服务改动，C3skip。
+
+### 2026-10-31 A完整性窄修已获总控授权
+
+总控采纳隐藏只读子快照mustfix并派backend唯一写槽，QA停旧33。已交边界：先原data scope可见主授权/可编辑校验，同可信源真实事务内仅当前main完整保护集合，内部不返UI；普通子/UI scope不扩。推荐私有固定JDBC或精确Mapper+绑定身份/main/源/事务窗口，finally清理，写前快照只采一次，并协调父行锁/锁顺序覆盖edit/del/switch防重查竞态，不全局Ignore/表锁。必要真实插件用例主可见/保护子他人作者不可见，遗漏edit/del拒零写、UI原不可见、普通子不扩权。旧manifest D30E/diff235A实核保留，新冻结再审交QA。仅设计/status无源/测试/DB操作；B/C能力位未批。
+
+### 2026-10-31 A快照实施边界追加
+
+backend获正式窄修源槽、拟DictItemSnapshot JDBC；已补避免新风险：helper参数main实体不自证本次原scope授权，入口需绑定/自行核父授权；全量普通oldItems不能直接成为可写diff授权集合。建议一次原scope可见普通旧行+一次仅9999完整保护集合，父锁后同事务，或实证插件普通子不扩权。无新框架/全局Ignore，等待锁/源/授权具体实现冻结后审，未启动测试或改源。
+
+### 2026-10-31 新Snapshot五文件候选复审
+
+已实读package-private Snapshot自己按原scope锁主+事务/connection/映射/物理源核验，仅JDBC当前main9999保护列；普通visible一次与保护合并，未变跳写，UI不扩。旧完整性阻断在当前源码上消除，无新可复现source blocker；非终签。新4test standalone实际插件改写+合成mapper/JDBC结果，schema新分支尚缺正负，已交最小真实core executor合成路由/映射/恢复用例建议，等backend最终结果SHA。已更新原source-review，不跑测试/改源/DB，B两位未批。
+
+### 2026-10-31 字典A新冻结源码终审通过
+
+最终manifest1191CA15373D72FE37C03283772F4CB8A6E5E73D2702B2A91D13C37A8CADCC84实核，五sources与三XML SHA均匹配；现XML Service28/Convert5/Snapshot8共41，fail/error/skip0，日志47s成功且3executed20up-to-date，本人只读未执行。已读真实CoreSchemaExecutor合成schema正/错/缺映射三例及恢复断言，helper末次null拒绝，普通scope/完整保护集合不扩权链保持。旧快照裁剪阻断关闭，无新可复现source blocker，可交QA独立新范围复验，旧D30E/33不混用。详source-review最终节；真实PG/并发/整应用/HTTP未证，A通过非B/C授权，B两位仍未批。已直接主动交QA/root/backend；本人仅设计/status无源码或运行操作。
+
+### 2026-10-31 B能力位获批，standalone实施契约冻结
+
+总控转达用户明确可以，businessWritable外层/行及get readOnly严格bool已批准；已更新minimal-proposal、B-checklist、write-capability-addendum顶部批准状态，替代旧未批准措辞，不重复问。A新1191基线独审+QA独立41通过，B仅standalone实施CATEGORY两值/NULL拒写、虚根无pidpath、平数组/能力位与真实同源资格/系统全入口拒；两位不入库/BO回传不授权，动作重验，前端unknown旧平表可见全只读不第三根。Ccore私有/cache后续不抢跑，旧分类fresh映射与实际迁移/DB执行仍另批，不猜type/QA。本人仅设计/status与后续独审，未生产源/测试/DB/HTTP/服务操作，C3skip平台0另案。
+
+### 2026-10-31 B接口及缓存候选收口
+
+backend建议临时停旧cache/Serializer原code/afterCommit no-op已否：管理分类/能力直接DB，不需破坏原单库键值显示刷新；现DictCacheHelper/DictInit/Serializer及定code afterCommit保持，C再归属v2。已发root/backend并补Bchecklist。实读sys-service/domain/webcore/common build未见auth依赖，已纠正backend已有api auth说法，请给精确依据或交最小接线方案，非booter运行CP自证。frontend确认旧del不增category、switch保SingleArray.param，BO白名单不回bool/owner、get可选category，继续与backend定稿核。本人无源/测试或运行操作。
+
+### 2026-10-31 B后端最小方案收口
+
+backend接受保旧cache/Serializer/afterCommit，不增auth依赖，DictBusinessAccess固定JDBC同源资格/资源。已交资源现实现精确语义：有效membership-role-resource-module状态、资源无frozen、HTTP类型白名单、auth.permit/资源关闭仅跳资源、Ant与method星号非根后代边界兼容；实际GET/POSTdel内部固定重载不收客户端method。CATEGORY未知list前置失败/get未知只读，nullable/checkDDL不填旧类；空集合能力可真/查询错误fail。后台唯一源测试槽推进，等完整冻结后审，无本人源/运行操作，C不动。
+
+### 2026-10-31 B进行中候选源审发现子表来源遗漏
+
+实读BusinessAccess/Service/Ctrl/VO/Response/V14与新test，bool位置/分类资格全写守卫/旧KV缓存保持符合。mustfix：requireSource漏sys_dict_item，合法主源但缺子表时get/list可回落public同名子，A快照仅写不足；已交backend/root名单补子表及错/缺源先拒最小回归。详design/2026-10-31-dictionary-b-source-review.md，候选未冻不签过/不交QA，未跑测试/DB/服务，源槽backend，C不抢。
+
+### 2026-10-31 B子表来源补丁候选复核
+
+实读requireSource新增sys_dict_item及public/缺relation两例，三管理入口拒且主子mapper零交互；源码mustfix已收口，未见新mustfix。补前58仅旧版本结果，新补丁待前端释放唯一槽后backend最终定向+冻结SHA再签，不预称通过。受控V14版本识别限制接受，不扩任意约束表达式解析；原枚举及分类守卫保留。仅设计/status无源/测试/DB操作。
+
+### 2026-10-31 字典B正式冻结源码终审通过
+
+manifest3C2C96FA4500C5A1D8890803E0C572AA18D7F3722D14B2B7609EE1A3209198DE与diff38016实核，11inputs/3support及4XML SHA全匹配；Service28+Convert5+Snapshot8+BusinessAccess25=66、fail/error/skip0，33s成功3executed20UPTODATE，只读证据非本人运行。子表source遗漏mustfix关闭，无新可复现source blocker；生成category/remark真实回读、有效同源资格与操作资源、SYSTEM/NULL全写拒/A完整保护、旧codeKV链及纯nullable/check V14均符合。详B-source-review最终节，已直接交QA/root，最终运行/DDL/旧分类未执行不算通过；C不动、平台0/C3另案。仅design/status无源测试DB操作。
+
+### 2026-10-31 前端B94A4冻结源审阻断
+
+13inputs实核一致，login12与500lineaoe18AE均无漂移。已读7production+6test，发现handleEdit核category不核返回id：请求A若回同类可写B可切对象保存B；已交frontend错/缺ID拒并原catch保稿负例。另success仅拒false但http未严格校验，已要求严格true才采纳能力/详情。其余strict双bool资源、unknownflat/虚根零请求、身份version/晚回、BO顶层白名单、9999子保护已核符合。详design/2026-10-31-dictionary-b-frontend-source-review.md。通知root/QA暂不跑旧94A4等新冻；37仅分轮不同case非整轮。本人无测试或源改，后端3C2C签审不变。
+
+### 2026-10-31 前端B身份窄修候选已核
+
+前端撤回旧94A4；已实读index新增list/detail严格successTrue、setCurrentItem前缺/错ID拒、分类原核保留，原catch保稿。新错/缺ID与success负例已见源码，候选阻断收口，待QA后端释槽后frontend必要复验及新SHA再终签，未本人测试/改源。
+
+### 2026-10-31 前端B11AD正式源码终审通过
+
+新清单11AD24CE24CEC68139CAB35920755F026898A307A161D96D8A5839A2E535D354实核13输入，较旧94A4仅index/categoryPage两项变。只读两文件21/21日志及7新增负例，严格success+返回ID/分类匹配在setCurrentItem前、失败原草稿零POST，旧mustfix关闭无新阻断。login12再核全匹配/500lineaoe18AE保持。已直接交QA/root新清单，旧37分轮与新21不拼单轮总跑；tsc外部3问题仍非全绿。仅设计/status无源/测试/浏览器/DB操作，后端B3C2C源签不变，C不提前。
+
+### 2026-10-31 字典映射已定/执行版独审准备
+
+用户8SYSTEM+QA BUSINESS归属已批准、其余38不动，实际DB写未批。已读backend RO清单与Flyway源码配置，dev/prod默认enabled=false（已立即纠正给backend的一条devtrue误述），绑定覆盖/启动自动迁移仍需明确核。新design/2026-10-31-dictionary-b-execution-review.md列正式history不伪造、只pendingV14/异常停、DDL+DML非天然原子须停用窗口、fresh全前像摘要/九条限定/回退保V14结构history与依赖顺序等。待backend具体执行版再审，不重问mapping，不源/DB/测试/HTTP/服务操作。
+
+### 2026-10-31 九行分类forward/rollback SQL首审
+
+已逐段读两SQL，9/47精确映射/前像/非category指纹/保护集合锁摘要/回退仅9复NULL且保V14history结构，无当前DML语义阻断。整套执行版仍待：固定copy receipt会覆盖，必须runner新RUN绝对路径既存拒+提交前9项/SHA验证真实停点；SQL V14success检查不替官方validate/checksum/pending/target与精确CP工具。已发backend/root要求补齐，不批准DB写或启动应用，等最终runner/停写备份文档审。仅design/status无新DB/测试/服务。
+
+### 2026-10-31 Git同步后恢复执行方案文档审查
+
+总控交回锁；只读核后端HEAD064ed4f9与版本声明Flyway13.12.0/Minio9.0.4。原66及13.11.1工具证据只历史，不称新HEAD全绿，已补执行review版本门禁；后续runner须按新依赖重新封CP和验证证据，缺缓存停报，不自动测试/构建/下载。映射8SYSTEM/QA业务不重问，实际DDL/DML未批准；仅恢复文档方案审，无DB/HTTP/服务/源改，不重复前端测试。
+
+### 2026-10-31 单初始化脚本整合新授权
+
+总控转达用户未发布前Flyway仅单init，原V14执行方案停止准备；不继续审旧runner或尝试执行。转只读审整合：最终V1覆盖旧V1-14有效结构/索引约束/seed；账户直接ACCOUNT+PROFILE、历史删除对象不复活、8系统字典直接分类无QA/旧叶子、租户init与provision账本/测试引用一致。已发backend最小等价矩阵及freshPG官方13.12单migration+二次0+tenant初始化必要验证建议；source唯一backend，不争槽，不DB/服务/HTTP/测试。现库history/checksum不得自动修复，mapping已批但实际DB执行仍未批。
+
+### 2026-10-31 单init职责矩阵及最小验证已交
+
+新design/2026-10-31-single-init-consolidation-review.md列旧V1-14最终对象/seed去向与可去历史过程，core一个Flyway V1/tenant两直接SQL合一模板及provision引用账本，不混core/private。已按root明确口径纠正backend仍待全仓一个确认的旧消息，不重复问。最小fresh合成PG真实13.12恰1/二次0/validate+最终约束/模式隔离/8SYSTEM无QA+tenant最终账户profile账本隔离，旧升级测试改职责，不新大infra/不自动228。等backend实际矩阵与冻结源再审；现库history/DB写另批，旧V14维护方案停止，未源改/测试/DB/服务。
+
+### 2026-10-31 单init候选首审与五类最小验证
+
+已读backend矩阵/实际两目录唯一V1/新PG3case/provisioner与引用，静态旧新索引inventory仅旧账号dept索引随分表消失profile索引保留。mustfix：无账本仅查4账号标记，已有旧role/dict/marker可被模板拼入后记version1，应目标schema已有用户关系即拒并加原init-tenant实例内负例；已交backend/root。DATA_SCOPE8/5仍待root已问用户决定，不签seed最终态。五类6PG拟范围认可不扩大228，薄wrapper/init/实际CP图及证据仍待审和root槽；本人无PG/tests/dev/服务/源修改。

@@ -1,0 +1,43 @@
+# 字典A暂停候选恢复终审
+
+2026-10-31 technical_designer。最新结论：新冻结版通过独立源码终审，原保护完整性阻断已关闭，可交QA独立复验；此前阻断版及修正过程保留如下，不能混用其33项结果。
+
+三文件当前SHA与暂停记录一致：DictViewVo `26CBDF5055858AF0D247B8022AE2DC4FCCA3FD84F799A5132745EB9DAE3D6BD1`；DictService `AFA80BB99BA4E1F08D38B8ADBFBF0C48126D115D437639863717D3B198C2313D`；DictServiceTest `42CBDF3B24A7A1674F77D279202542E3F76976D9E4C1E133E89A0AE38CC29D05`。只读最终XML为Service28+Convert5，合计33，failure/error/skip均0，run-final.log BUILD SUCCESSFUL；本角色未执行测试。这是现候选证据，不是最终交付manifest或独立QA结果。
+
+已确认remark VO及生成MapStruct的真实setRemark回读、主写前全量参数校验、显式/省略orders/frozen保旧只读行且跳update、普通明细非法状态及伪/重复ID拒、del只读子保护、switch非法ID预检及全部targets集齐后写。新增测试覆盖14编辑负例、5switch负例及显式/省略保护行和普通子更新并存；实际mapper均mock。
+
+## 必修：内部保护快照仍受主体数据范围裁剪
+
+DictService.edit和delDict使用的listItems(mainId)仍为DictItemMapper继承BaseMapper.selectList，只加mainId等值；Mapper无独立方法或权限豁免。MybatisPlusDataPermissionHandler对SYS_DICT_ITEM仍进入普通CREATE_ID/MODIFY_ID范围，现eva.yaml开启data且exclude-tables仅sys_module_resources、sys_role_user。
+
+具体情况：SELF主体获字典edit/del资源，可见自己创建的主项；主项下9999明细由另一主体创建/修改。主项查询通过，listItems却排除此子行。delDict的anyMatch看不到它，仍删除主项；edit提交可见子集时也不认为遗漏了这条保护行。因此A保证的“遗漏/保护子整批拒”并非全体明细上的守卫。即使子delete本身仍被数据范围拦下，主项删除已经使该保护行失去有效主项，不能视为保护成立。
+
+最小修正应提供限已校验当前主项、可信本源/事务的内部保护完整性读取；UI普通list/get数据范围不扩，全局Ignore/ALL不改。可以由窄专用查询取得完整保护快照并对不可见保护行默认拒写，或比较本源完整只读行集合与提交确保遗漏拒绝；普通子写权限不可借内部快照绕过。具体语句及来源范围交backend/root定稿，不由审查者改源。必要验证必须让真实数据权限处理参与，构造主可见/只读子不可见，断言del/edit均零主子写；不能仅mock返回全量列表再声称解决。
+
+本发现已主动交backend/root，未启动QA或新测试。B businessWritable/readOnly仍未批准，B/C/旧分类迁移未实施；仅本设计及本人status写入，无源/DB/HTTP/服务操作，C3skip。
+
+## 总控授权后的窄修边界
+
+总控已采纳mustfix并授权backend在A内修正。backend确认原快照受owner范围裁剪，推荐服务内私有参数化JDBC查询完整保护行，固定当前已授权mainId、有效deleted与frozen9999；不暴露任意查询或UI快照，不改全局插件。该选择比增加公共豁免Mapper窗口更小；仍须证明真实事务、实际relation来源及主项先按原scope授权，缺任一条件不查询。
+
+保护集合与原可见旧行在任何写前一次取得并用于全批校验；隐藏保护行遗漏拒绝，若请求精确保留也只校验并跳写，不因内部读扩大普通子写范围。edit/del/switch的父行锁与确定锁顺序应统一，必要保护行锁保持到事务结束；仅使用事务而无锁不能声称快照不会在预检后变化。实现者须交具体锁/快照链，避免为此全局表锁或新框架。
+
+新验证最少引入真实data handler交互：SELF允许主项、他人作者的只读子被原UI查询隐藏，内部仍检出并让遗漏edit/del零写；正常未变保护行及普通子合法保存继续成立。JDBC返回的保护行不能作为UI内容或权限依据。旧33及manifest继续保留，新冻结代码和新结果另签。
+
+## 新版候选源码复核（未冻结终签）
+
+已读新增DictItemSnapshot/DictItemSnapshotTest与Service适配。入口为package-private，自行使用原Mapper ID等值FOR UPDATE取得可见且非9999主项；不是信任调用者实体。校验有效ThreadUser、实际事务/ConnectionHolder，standalone配置源或正tenant的core SYS_TENANT解析映射及实际父子relation同源。JDBC仅当前main/deleted0/frozen9999固定列并锁保护行；Service在父锁后一次读原可见普通行，合并保护集合，仅预检未变保护行后跳写。UI读取方法不变。旧mustfix在此候选源码上已消除，当前未见新可复现源码阻断。
+
+edit/del均先锁授权主后取保护行，正常服务内竞争写遵守该顺序；普通scope保留，任意显式普通隐藏ID仍拒。不能由此宣称外部直写或并发压力实证。真实插件test实际改写SELF SQL，但父/子mapper结果与JDBC为合成，并非SQL执行器在真实PG选择作者行。
+
+当前新四项测试只覆盖standalone。已交backend最小补测建议：schema正tenant经真实CoreSchemaExecutor+合成JDBC/search_path/resolver的成功、错/缺映射拒例及路由恢复，确认错源不触保护查询。等最终冻结SHA与结果再绑定终签；不把新候选或旧33当QA通过。B两位仍未批准，B/C不推进。
+
+## 最终新冻结版签审
+
+实核 `.gradle/dict-a-integrity-20261031/manifest.json` SHA256 `1191CA15373D72FE37C03283772F4CB8A6E5E73D2702B2A91D13C37A8CADCC84`，五个当前源码/测试文件逐项重算均与sources一致；三份XML逐项SHA与清单一致，Service28、Convert5、Snapshot8合计41，failure/error/skip均0。run-schema.log明确BUILD SUCCESSFUL in47s、23任务中3执行20up-to-date，不称全部fresh构建。本角色只读证据，未执行测试。
+
+冻结生产文件为VO `26CBDF5055858AF0D247B8022AE2DC4FCCA3FD84F799A5132745EB9DAE3D6BD1`、Service `AD27E1518779749115053A0A3CC5C733A0BD15FC8D85262D677840DCA5136E91`、Snapshot `96BE73DD2F6D35DD07F4BB955F40F64F4C57ED04EA3904248493F68F15BE359B`；测试Service `7DF22D30117680D2C9A8F169B61705B08797EE99E4AE7CD5301031699D185E1D`、Snapshot `A0F954F42F89B5AD0C0EB5F7658007EA885A2FAF706876A6213A0EED273EF40C`。
+
+补充测试使用真实CoreSchemaExecutor及合成Jdbc/search_path、resolver三种映射，成功读取保护行、错映射/缺映射在主授权查询和保护查询前拒绝，并断言原非空TenantContext/search_path保留。Snapshot新增null schema显式拒绝；其余已审授权主锁、可信物理源、完整9999集合、普通visible集合与写前精确校验链保持。未见新可复现源码阻断，旧mustfix关闭，范围可交QA独立定向复验。
+
+限制保留：真实data interceptor只证明SQL改写，mapper/JDBC/事务状态及resolver结果仍合成；未执行真实PG、并发锁压力、Spring整应用装配或真实HTTP，不由41项证明这些能力。父锁/保护行锁为受控service路径的源码顺序保证，不涵盖任意外部直写。旧D30E/33保持被阻断历史证据。A源码审查通过不等于QA签审、运行部署通过或B/C启动授权；B两能力位仍未批准。本人只写设计/status，未改生产/测试或运行测试/DB/HTTP/服务。

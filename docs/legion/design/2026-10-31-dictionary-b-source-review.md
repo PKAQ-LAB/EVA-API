@@ -1,0 +1,35 @@
+# 字典B standalone进行中源码审查
+
+2026-10-31 technical_designer。最新结论：正式新冻结版源码终审通过，子表来源mustfix关闭，可交QA独立复验；下文旧候选问题保留追踪。本人不运行测试/DB/HTTP或修改源。
+
+## 必修：管理读取来源名单遗漏明细表
+
+DictBusinessAccess.requireSource核sys_dict及账号/角色/资源表，遗漏sys_dict_item。list/get随后通过listItems读该表。具体条件为search_path=eva,public、eva有合法主表与身份表但无sys_dict_item，而public有同名子表及相同mainId；current_schema与主表namespace均正确，旧校验仍通过，子查询却从public返回非本源明细。A的DictItemSnapshot校源只作用写入路径，不能保护get/list。
+
+最小修为在同一requireSource名单补sys_dict_item，并验证该表错namespace/缺失使管理资格/读取失败且不触明细mapper。不扩大通用拦截器或全局路由，不需要真实dev库操作。已交backend/root。
+
+## 已核符合的部分
+
+list保留平数组，专用Response子类外层businessWritable，row/get readOnly与category显式Include.ALWAYS；空集合仍携当前资格，非管理员false，资格查询/版本错误fail。已有测试使用NON_DEFAULT序列化核false仍原生bool。两个能力位无BO字段。
+
+有效资格固定当前uid/tenant0账号与ROLE_ADMIN实际membership、删除冻结条件，无rolesMap/ALL替代。操作资源再按有效role/module/resource与真实URL/method核验，permit及资源关闭只跳资源、不跳维护资格。系统/NULL写入口通过requireBusiness拒，新增服务端BUSINESS、改类拒，get可选类别匹配；A批量预检与保护快照链保留。旧GET删除固定controller传GET、POST路径保持POST，不接客户端method参数。
+
+现代码未修改query/select/fetch/validate键值链、DictCacheHelper/DictInit/Serializer或afterCommit旧code刷新。B分类与资格从DB取，不从dictdata推。V14只ADD nullable CATEGORY VARCHAR16及两值CHECK，无旧分类UPDATE或根恢复；未执行数据库。list完整性检查不由个人data scope隐藏NULL行，get未知只读，符合上线前分类门禁。
+
+结构版本检查目前核列类型/长度及同名validated CHECK，未验证表达式正文；不能据此声称识别任意被手改同名约束。受控migration和逐条分类守卫是当前依据，该限制已告backend，不要求新通用版本框架。最终测试、SHA、具体SQL及该问题修复须新冻结后再终签，不能以正在执行的Gradle称通过。C分源/cache与真实分类/迁移执行不在本轮授权，已验Modal不动。
+
+## 来源窄修候选复核
+
+已实读requireSource名单补入sys_dict_item，以及public/缺relation两用例：分别使businessWritable、listWithCapability、getDict拒绝，断言主/明细mapper无交互。原来源遗漏在候选源码上已收口，未见新mustfix；仍待补丁后最终冻结与结果，不把补前58项当本补丁验证。后端等待前端释放唯一测试槽再执行必要定向，不由本角色运行。
+
+受控迁移版本识别保留上述限制即可；已有严格枚举、分类守卫和未分类列表门禁独立存在，不为任意同名外部约束引入解析框架。分类/资源/能力新增回归仍以最终manifest逐项核定。
+
+## 正式冻结终签
+
+实核 `.gradle/dict-b-20261031/manifest.json` SHA256 `3C2C96FA4500C5A1D8890803E0C572AA18D7F3722D14B2B7609EE1A3209198DE`，frozen.diff SHA `38016FE5B355821696CF40EE3A338E3F070817706E3D392FCD1EFBA549D24A18`。11项inputs及3项support当前文件哈希逐一一致；四份最终XML哈希均一致，Service28/Convert5/Snapshot8/BusinessAccess25合计66，failure/error/skip均0。日志BUILD SUCCESSFUL in33s、23任务中3执行20up-to-date；首轮58在补丁前，与本轮不累加、不代补丁验证。本角色仅只读核证，未自行运行。
+
+最终DictBusinessAccess为 `DD995A89C95689A661B2C409F1BC93CC8DFC45EA7177D39E48E217E07230E5B5`、Service `B9111F266B1F6306D9F184F606962DFFDB4B7B5A0BBEA01A7FEA1A8E3B489220`。已核sys_dict_item列入来源名单及public/缺relation用例实际包含于新25项；旧mustfix关闭，未发现新可复现源码阻断。
+
+已读新增正反例：省略category更新保持BUSINESS、正常停用行仍可维护/9999只读、混合switch写前全检、个人scope不能藏保留code、有效管理员无操作资源仍各写口拒、错误method及根通配不授后代、两响应false仍为原生布尔且BO无能力字段。现MapStruct生成物实际setCategory/setRemark，同名字段真实回读。A完整9999保护链及普通visible边界保留。V14仍只有nullable列及两值CHECK，无UPDATE/根恢复，未执行；原code键值/缓存/序列化链不变，分类/资格管理读新鲜DB。
+
+本签审仅standalone B源码及既有证据，不替QA独立执行、真实PG/事务装配/并发/HTTP/页面验收。旧数据具体分类映射与实际DDL/DML仍另批；应用未部署不得当成能力已上线。C分源/cache未实施，平台0认证与C3仍另案。已主动交QA及总控，后端源保持冻结。
