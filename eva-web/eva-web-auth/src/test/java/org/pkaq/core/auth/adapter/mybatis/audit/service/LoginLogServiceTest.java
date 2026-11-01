@@ -1,224 +1,143 @@
 package org.pkaq.core.auth.adapter.mybatis.audit.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.pkaq.core.auth.audit.bo.LoginLogQueryBo;
 import org.pkaq.core.auth.adapter.mybatis.audit.entity.LoginLogEntity;
 import org.pkaq.core.auth.adapter.mybatis.audit.mapper.LoginLogMapper;
-import org.pkaq.core.constant.CommonConstant;
+import org.pkaq.core.auth.audit.bo.LoginLogQueryBo;
+import org.pkaq.core.mybatis.log.LoginLogQueryScope;
 import org.pkaq.core.properties.EvaConfig;
-import org.pkaq.core.threaduser.ThreadUser;
-import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.web.core.client.ClientInfoResolver;
+import org.springframework.mock.web.MockHttpServletRequest;
 
-import java.util.Map;
+import java.util.function.Supplier;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.lenient;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * 登录日志租户隔离测试。
- *
+ * 外层 best-effort、动作事务粒度及历史入口委托的隔离验证。
  * @author PKAQ
+ * @date 2026-10-30
  */
-@ExtendWith(MockitoExtension.class)
 class LoginLogServiceTest {
-    @Mock
-    private LoginLogMapper loginLogMapper;
+    private final LoginLogMapper mapper = mock(LoginLogMapper.class);
+    private final LoginLogStorage storage = mock(LoginLogStorage.class);
+    private final LoginLogReadAccess access = mock(LoginLogReadAccess.class);
+    private final LoginLogService service = new LoginLogService(mapper,
+            new ClientInfoResolver(new EvaConfig()), storage, access);
 
-    private EvaConfig evaConfig;
-
-    private LoginLogService service;
-
-    /**
-     * 初始化被测服务。
-     */
     @BeforeEach
-    void setUp() {
-        TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""),
-                LoginLogEntity.class);
-        this.evaConfig = new EvaConfig();
-        this.service = new LoginLogService(this.loginLogMapper, this.evaConfig,
-                new ClientInfoResolver(this.evaConfig));
-        lenient().when(this.loginLogMapper.selectPage(any(Page.class), any(LambdaQueryWrapper.class)))
-                .thenReturn(new Page<>());
+    void initialize() {
+        TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), LoginLogEntity.class);
+        doAnswer(invocation -> {
+            LoginLogQueryScope.write(invocation.getArgument(0));
+            return null;
+        }).when(storage).write(any());
     }
 
-    /**
-     * 普通租户不得通过目标租户参数越权查询。
-     */
     @Test
-    void shouldIgnoreTargetTenantForTenantUser() {
-        this.evaConfig.setMode(CommonConstant.MODE_SAAS);
-        LoginLogQueryBo queryBo = new LoginLogQueryBo();
-        queryBo.setTargetTenantId(99L);
-
-        ThreadUserHelper.runWithUser(user(7L, false), () -> this.service.list(queryBo));
-
-        assertTenantValue(captureListWrapper(), 7L);
-    }
-
-    /**
-     * 平台管理员可以显式查询目标租户。
-     */
-    @Test
-    void shouldAllowPlatformAdminTargetTenant() {
-        this.evaConfig.setMode(CommonConstant.MODE_PLATFORM);
-        LoginLogQueryBo queryBo = new LoginLogQueryBo();
-        queryBo.setTargetTenantId(99L);
-
-        ThreadUserHelper.runWithUser(user(0L, true), () -> this.service.list(queryBo));
-
-        assertTenantValue(captureListWrapper(), 99L);
-    }
-
-    /**
-     * 平台管理员不指定目标租户时可以查询全局日志。
-     */
-    @Test
-    void shouldAllowPlatformAdminGlobalQuery() {
-        this.evaConfig.setMode(CommonConstant.MODE_PLATFORM);
-
-        ThreadUserHelper.runWithUser(user(0L, true), () -> this.service.list(new LoginLogQueryBo()));
-
-        LambdaQueryWrapper<LoginLogEntity> wrapper = captureListWrapper();
-        assertFalse(wrapper.getSqlSegment().toLowerCase().contains("tenant_id"));
-    }
-
-    /**
-     * 未登录请求必须使用拒绝式租户条件。
-     */
-    @Test
-    void shouldDenyUnauthenticatedQuery() {
-        this.evaConfig.setMode(CommonConstant.MODE_SAAS);
-
-        this.service.list(new LoginLogQueryBo());
-
-        assertTenantValue(captureListWrapper(), -1L);
-    }
-
-    /**
-     * 单机模式必须固定使用零号租户。
-     */
-    @Test
-    void shouldUseTenantZeroInStandaloneMode() {
-        this.evaConfig.setMode(CommonConstant.MODE_STANDALONE);
-
-        this.service.list(new LoginLogQueryBo());
-
-        assertTenantValue(captureListWrapper(), 0L);
-    }
-
-    /**
-     * 详情查询必须使用当前可信租户。
-     */
-    @Test
-    void shouldFilterGetByCurrentTenant() {
-        this.evaConfig.setMode(CommonConstant.MODE_SAAS);
-
-        ThreadUserHelper.runWithUser(user(23L, false), () -> this.service.get(1L));
-
-        @SuppressWarnings({"rawtypes", "unchecked"})
-        ArgumentCaptor<LambdaQueryWrapper<LoginLogEntity>> captor = ArgumentCaptor.forClass(LambdaQueryWrapper.class);
-        verify(this.loginLogMapper).selectOne(captor.capture());
-        assertTenantValue(captor.getValue(), 23L);
-    }
-
-    /**
-     * 退出日志必须保存可信用户的租户、用户和账号。
-     */
-    @Test
-    void shouldSaveLogoutIdentity() {
-        ThreadUser currentUser = new ThreadUser()
-                .setTenantId(45L)
-                .setUserId(67L)
-                .setAccount("logout-account");
-
-        ThreadUserHelper.runWithUser(currentUser,
-                () -> this.service.saveLogout(new org.springframework.mock.web.MockHttpServletRequest()));
-
-        ArgumentCaptor<LoginLogEntity> captor = ArgumentCaptor.forClass(LoginLogEntity.class);
-        verify(this.loginLogMapper).insert(captor.capture());
-        LoginLogEntity entity = captor.getValue();
-        assertEquals(45L, entity.getTenantId());
-        assertEquals(67L, entity.getUserId());
-        assertEquals("logout-account", entity.getAccount());
-    }
-
-    /**
-     * 匿名放行的退出接口仍应使用已验签Token身份记录退出日志。
-     */
-    @Test
-    void shouldSaveLogoutWithTrustedTokenIdentity() {
-        this.service.saveLogout(new org.springframework.mock.web.MockHttpServletRequest(),
-                45L, 67L, "token-account", "web-1", "USER_LOGOUT");
-
-        ArgumentCaptor<LoginLogEntity> captor = ArgumentCaptor.forClass(LoginLogEntity.class);
-        verify(this.loginLogMapper).insert(captor.capture());
-        LoginLogEntity entity = captor.getValue();
-        assertEquals(45L, entity.getTenantId());
-        assertEquals(67L, entity.getUserId());
-        assertEquals("token-account", entity.getAccount());
-        assertEquals("web-1", entity.getSessionId());
-        assertEquals("USER_LOGOUT", entity.getLogoutReason());
-    }
-
-    /**
-     * 登录成功日志必须关联会话并记录解析后的客户端信息。
-     */
-    @Test
-    void shouldSaveSessionAndParsedClientInformation() {
-        when(this.loginLogMapper.selectCount(any(LambdaQueryWrapper.class))).thenReturn(0L);
-        org.springframework.mock.web.MockHttpServletRequest request =
-                new org.springframework.mock.web.MockHttpServletRequest();
+    void successRiskAndInsertUseOneStorageAction() {
+        when(mapper.selectRiskDeviceCount(eq(45L), eq(67L), any())).thenReturn(0L);
+        when(mapper.selectRiskLastLogin(45L, 67L)).thenAnswer(invocation -> {
+            LoginLogQueryScope.requireStorage(LoginLogMapper.class.getName() + ".selectRiskLastLogin");
+            return null;
+        });
+        doAnswer(invocation -> {
+            LoginLogEntity entity = invocation.getArgument(0);
+            assertEquals(45L, entity.getTenantId());
+            assertEquals(67L, entity.getUserId());
+            assertEquals("web-1", entity.getSessionId());
+            assertEquals("203.0.113.10", entity.getIp());
+            assertEquals("Windows", entity.getOsName());
+            assertEquals("Edge", entity.getBrowserName());
+            assertTrue(entity.getRiskFlags().contains("NEW_DEVICE"));
+            return 1;
+        }).when(mapper).insert(any(LoginLogEntity.class));
+        MockHttpServletRequest request = new MockHttpServletRequest();
         request.setRemoteAddr("203.0.113.10");
         request.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
                 + "AppleWebKit/537.36 Chrome/140.0.0.0 Safari/537.36 Edg/140.0.0.0");
-        this.service.saveSuccess(request, 45L, 67L, "admin", "web-1");
-
-        ArgumentCaptor<LoginLogEntity> captor = ArgumentCaptor.forClass(LoginLogEntity.class);
-        verify(this.loginLogMapper).insert(captor.capture());
-        LoginLogEntity entity = captor.getValue();
-        assertEquals("web-1", entity.getSessionId());
-        assertEquals("203.0.113.10", entity.getIp());
-        assertEquals("DESKTOP", entity.getDeviceType());
-        assertEquals("Windows", entity.getOsName());
-        assertEquals("Edge", entity.getBrowserName());
-        assertEquals("NEW_DEVICE", entity.getRiskFlags());
+        service.saveSuccess(request, 45L, 67L, "synthetic", "web-1");
+        verify(storage).write(any());
+        var order = inOrder(mapper);
+        order.verify(mapper).selectRiskDeviceCount(eq(45L), eq(67L), any());
+        order.verify(mapper).selectRiskLastLogin(45L, 67L);
+        order.verify(mapper).insert(any(LoginLogEntity.class));
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private LambdaQueryWrapper<LoginLogEntity> captureListWrapper() {
-        ArgumentCaptor<LambdaQueryWrapper<LoginLogEntity>> captor = ArgumentCaptor.forClass(LambdaQueryWrapper.class);
-        verify(this.loginLogMapper).selectPage(any(Page.class), captor.capture());
-        return captor.getValue();
+    @Test
+    void logoutCloseAndInsertUseOneStorageAction() {
+        service.saveLogout(new MockHttpServletRequest(), 45L, 67L, "synthetic", "web-1", "USER_LOGOUT");
+        verify(storage).write(any());
+        var order = inOrder(mapper);
+        order.verify(mapper).update(eq(null), any());
+        order.verify(mapper).insert(any(LoginLogEntity.class));
     }
 
-    private void assertTenantValue(LambdaQueryWrapper<LoginLogEntity> wrapper, long tenantId) {
-        assertTrue(wrapper.getSqlSegment().toLowerCase().contains("tenant_id"));
-        assertTrue(wrapper.getParamNameValuePairs().containsValue(tenantId));
+    @Test
+    void logoutOverloadKeepsCurrentTrustedIdentity() {
+        org.pkaq.core.threaduser.ThreadUser subject = new org.pkaq.core.threaduser.ThreadUser()
+                .setUserId(67L).setTenantId(45L).setAccount("synthetic");
+        doAnswer(invocation -> {
+            LoginLogEntity entity = invocation.getArgument(0);
+            assertEquals(45L, entity.getTenantId());
+            assertEquals(67L, entity.getUserId());
+            assertEquals("synthetic", entity.getAccount());
+            return 1;
+        }).when(mapper).insert(any(LoginLogEntity.class));
+        org.pkaq.core.threaduser.ThreadUserHelper.runWithUser(subject,
+                () -> service.saveLogout(new MockHttpServletRequest()));
+        verify(storage).write(any());
+        verify(mapper).insert(any(LoginLogEntity.class));
     }
 
-    private ThreadUser user(long tenantId, boolean admin) {
-        ThreadUser user = new ThreadUser().setTenantId(tenantId);
-        if (admin) {
-            user.setRolesMap(Map.of(1L,
-                    new ThreadUser.GrantedRoles("管理员", CommonConstant.ADMIN_ROLE_NAME)));
-        }
-        return user;
+    @Test
+    void independentSessionUpdatesUseStorage() {
+        service.closeSession(45L, 67L, "old", "USER_LOGOUT");
+        service.rotateSession(45L, 67L, "old", "new");
+        service.closeUserSessions(45L, 67L, "ADMIN_FORCED");
+        verify(storage, times(3)).write(any());
+        verify(mapper, times(3)).update(eq(null), any());
+    }
+
+    @Test
+    void proxyCommitFailureNeverEscapesAuditFacade() {
+        doThrow(new org.springframework.transaction.TransactionSystemException("synthetic commit failure"))
+                .when(storage).write(any());
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        assertDoesNotThrow(() -> service.saveSuccess(request, 1L, 2L, "synthetic", "session"));
+        assertDoesNotThrow(() -> service.saveFailure(request, "synthetic"));
+        assertDoesNotThrow(() -> service.saveLogout(request, 1L, 2L, "synthetic", "session", "USER_LOGOUT"));
+        assertDoesNotThrow(() -> service.closeSession(1L, 2L, "session", "USER_LOGOUT"));
+        assertDoesNotThrow(() -> service.rotateSession(1L, 2L, "old", "new"));
+        assertDoesNotThrow(() -> service.closeUserSessions(1L, 2L, "ADMIN_FORCED"));
+    }
+
+    @Test
+    void detailAndPageDelegateToGuardWithActualPaths() {
+        doAnswer(invocation -> ((Supplier<?>) invocation.getArgument(2)).get())
+                .when(access).read(anyString(), any(), any());
+        when(mapper.selectHistoryPage(any(), any())).thenReturn(new Page<>());
+        service.get(3L);
+        service.list(new LoginLogQueryBo());
+        verify(access).read(eq("/monitor/log/login/get/3"), eq(null), any());
+        verify(access).read(eq("/monitor/log/login/list"), eq(null), any());
+        verify(mapper).selectHistoryDetail(3L);
     }
 }

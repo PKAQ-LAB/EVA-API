@@ -1,7 +1,6 @@
 package org.pkaq.core.auth.adapter.mybatis.audit.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,7 +12,6 @@ import org.pkaq.core.auth.audit.bo.LoginLogQueryBo;
 import org.pkaq.core.auth.adapter.mybatis.audit.entity.LoginLogEntity;
 import org.pkaq.core.auth.adapter.mybatis.audit.mapper.LoginLogMapper;
 import org.pkaq.core.auth.audit.vo.LoginLogVo;
-import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.core.threaduser.ThreadUser;
 import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.core.util.StrUtils;
@@ -55,9 +53,11 @@ public class LoginLogService implements ILoginAudit {
 
     private final LoginLogMapper loginLogMapper;
 
-    private final EvaConfig evaConfig;
-
     private final ClientInfoResolver clientInfoResolver;
+
+    private final LoginLogStorage storage;
+
+    private final LoginLogReadAccess readAccess;
 
     /**
      * 根据ID获取登录日志详情
@@ -66,10 +66,8 @@ public class LoginLogService implements ILoginAudit {
      * @return 登录日志详情
      */
     public LoginLogVo get(Long id) {
-        var wrapper = Wrappers.<LoginLogEntity>lambdaQuery()
-                .eq(LoginLogEntity::getId, id);
-        applyTenantFilter(wrapper, null);
-        return toVo(this.loginLogMapper.selectOne(wrapper));
+        return readAccess.read("/monitor/log/login/get/" + id, null,
+                () -> toVo(loginLogMapper.selectHistoryDetail(id)));
     }
 
     /**
@@ -80,22 +78,9 @@ public class LoginLogService implements ILoginAudit {
      */
     public IPage<LoginLogVo> list(LoginLogQueryBo queryBo) {
         LoginLogQueryBo safeQueryBo = queryBo == null ? new LoginLogQueryBo() : queryBo;
-        Page<LoginLogEntity> page = new Page<>(safeQueryBo.getPageNo(), safeQueryBo.getPageSize());
-        var wrapper = Wrappers.<LoginLogEntity>lambdaQuery()
-                        .like(StrUtils.isNotBlank(safeQueryBo.getAccount()),
-                                LoginLogEntity::getAccount, safeQueryBo.getAccount())
-                        .eq(safeQueryBo.getSuccess() != null, LoginLogEntity::getSuccess, safeQueryBo.getSuccess())
-                        .eq(StrUtils.isNotBlank(safeQueryBo.getSessionId()),
-                                LoginLogEntity::getSessionId, safeQueryBo.getSessionId())
-                        .eq(StrUtils.isNotBlank(safeQueryBo.getIp()), LoginLogEntity::getIp, safeQueryBo.getIp())
-                        .like(StrUtils.isNotBlank(safeQueryBo.getRiskFlag()),
-                                LoginLogEntity::getRiskFlags, safeQueryBo.getRiskFlag())
-                        .ge(safeQueryBo.getBegin() != null, LoginLogEntity::getUtcCreate, safeQueryBo.getBegin())
-                        .le(safeQueryBo.getEnd() != null, LoginLogEntity::getUtcCreate, safeQueryBo.getEnd());
-        applyTenantFilter(wrapper, safeQueryBo.getTargetTenantId());
-        wrapper.orderByDesc(LoginLogEntity::getUtcCreate);
-        return this.loginLogMapper.selectPage(page, wrapper)
-                .convert(this::toVo);
+        return readAccess.read("/monitor/log/login/list", safeQueryBo.getTargetTenantId(),
+                () -> loginLogMapper.selectHistoryPage(
+                        new Page<>(safeQueryBo.getPageNo(), safeQueryBo.getPageSize()), safeQueryBo).convert(this::toVo));
     }
 
     /**
@@ -115,12 +100,10 @@ public class LoginLogService implements ILoginAudit {
         entity.setAccount(limit(account, MAX_ACCOUNT_LENGTH));
         entity.setSessionId(limit(sessionId, MAX_DEVICE_LENGTH));
         entity.setSuccess(Boolean.TRUE);
-        try {
+        write(() -> {
             entity.setRiskFlags(limit(resolveRiskFlags(entity), MAX_RISK_FLAGS_LENGTH));
-        } catch (Exception exception) {
-            log.warn("识别登录风险失败, tenantId: {}, userId: {}", tenantId, userId, exception);
-        }
-        save(entity);
+            save(entity);
+        });
     }
 
     /**
@@ -135,7 +118,7 @@ public class LoginLogService implements ILoginAudit {
         entity.setAccount(limit(resolveAccount(request), MAX_ACCOUNT_LENGTH));
         entity.setSuccess(Boolean.FALSE);
         entity.setFailReason(limit(failReason, MAX_FAIL_REASON_LENGTH));
-        save(entity);
+        write(() -> save(entity));
     }
 
     /**
@@ -164,7 +147,6 @@ public class LoginLogService implements ILoginAudit {
         if (tenantId == null || userId == null || userId <= 0L) {
             return;
         }
-        closeSession(tenantId, userId, sessionId, logoutReason);
         LoginLogEntity entity = buildBaseLog(request);
         entity.setTenantId(tenantId);
         entity.setUserId(userId);
@@ -174,7 +156,10 @@ public class LoginLogService implements ILoginAudit {
         entity.setSuccess(Boolean.TRUE);
         entity.setLogoutAt(LocalDateTime.now());
         entity.setLogoutReason(limit(logoutReason, MAX_DEVICE_LENGTH));
-        save(entity);
+        write(() -> {
+            doCloseSession(tenantId, userId, sessionId, logoutReason);
+            save(entity);
+        });
     }
 
     /**
@@ -191,6 +176,13 @@ public class LoginLogService implements ILoginAudit {
         if (tenantId == null || userId == null || StrUtils.isBlank(sessionId)) {
             return;
         }
+        write(() -> doCloseSession(tenantId, userId, sessionId, logoutReason));
+    }
+
+    private void doCloseSession(Long tenantId, Long userId, String sessionId, String logoutReason) {
+        if (StrUtils.isBlank(sessionId)) {
+            return;
+        }
         LocalDateTime now = LocalDateTime.now();
         var wrapper = Wrappers.<LoginLogEntity>lambdaUpdate()
                 .eq(LoginLogEntity::getTenantId, tenantId)
@@ -201,12 +193,7 @@ public class LoginLogService implements ILoginAudit {
                 .set(LoginLogEntity::getLastActiveAt, now)
                 .set(LoginLogEntity::getLogoutAt, now)
                 .set(LoginLogEntity::getLogoutReason, limit(logoutReason, MAX_DEVICE_LENGTH));
-        try {
-            loginLogMapper.update(null, wrapper);
-        } catch (Exception exception) {
-            log.warn("更新登录会话退出状态失败, tenantId: {}, userId: {}, sessionId: {}",
-                    tenantId, userId, sessionId, exception);
-        }
+        loginLogMapper.update(null, wrapper);
     }
 
     /**
@@ -225,11 +212,7 @@ public class LoginLogService implements ILoginAudit {
                 .isNull(LoginLogEntity::getLogoutAt)
                 .set(LoginLogEntity::getSessionId, newSessionId)
                 .set(LoginLogEntity::getLastActiveAt, LocalDateTime.now());
-        try {
-            loginLogMapper.update(null, wrapper);
-        } catch (Exception exception) {
-            log.warn("更新登录会话轮换标识失败, tenantId: {}, userId: {}", tenantId, userId, exception);
-        }
+        write(() -> loginLogMapper.update(null, wrapper));
     }
 
     /**
@@ -248,41 +231,20 @@ public class LoginLogService implements ILoginAudit {
                 .set(LoginLogEntity::getLastActiveAt, now)
                 .set(LoginLogEntity::getLogoutAt, now)
                 .set(LoginLogEntity::getLogoutReason, limit(logoutReason, MAX_DEVICE_LENGTH));
-        try {
-            loginLogMapper.update(null, wrapper);
-        } catch (Exception exception) {
-            log.warn("关闭用户全部登录会话失败, tenantId: {}, userId: {}", tenantId, userId, exception);
-        }
+        write(() -> loginLogMapper.update(null, wrapper));
     }
 
     private void save(LoginLogEntity entity) {
-        try {
-            this.loginLogMapper.insert(entity);
-        } catch (Exception e) {
-            log.warn("保存登录日志失败, account: {}, success: {}", entity.getAccount(), entity.getSuccess(), e);
-        }
+        this.loginLogMapper.insert(entity);
     }
 
-    private void applyTenantFilter(LambdaQueryWrapper<LoginLogEntity> wrapper,
-                                   Long targetTenantId) {
-        if (this.evaConfig.isStandaloneMode()) {
-            wrapper.eq(LoginLogEntity::getTenantId, 0L);
-            return;
+    private void write(Runnable action) {
+        try {
+            // 必须在事务代理外捕获，包含提交阶段异常，避免审计失败影响认证或业务事务。
+            storage.write(action);
+        } catch (Exception exception) {
+            log.warn("登录审计独立事务失败", exception);
         }
-
-        ThreadUser currentUser = ThreadUserHelper.getCurrentUserOrNull();
-        if (this.evaConfig.isPlatformMode() && currentUser != null && ThreadUserHelper.isAdmin()) {
-            if (targetTenantId != null) {
-                if (targetTenantId < 0L) {
-                    throw new IllegalArgumentException("目标租户ID不能为负数");
-                }
-                wrapper.eq(LoginLogEntity::getTenantId, targetTenantId);
-            }
-            return;
-        }
-
-        long tenantId = currentUser == null ? -1L : currentUser.getTenantId();
-        wrapper.eq(LoginLogEntity::getTenantId, tenantId);
     }
 
     private LoginLogEntity buildBaseLog(HttpServletRequest request) {
@@ -368,21 +330,12 @@ public class LoginLogService implements ILoginAudit {
         if (entity.getUserId() == null) {
             return String.join(",", riskFlags);
         }
-        Long knownDeviceCount = loginLogMapper.selectCount(Wrappers.<LoginLogEntity>lambdaQuery()
-                .eq(LoginLogEntity::getTenantId, entity.getTenantId())
-                .eq(LoginLogEntity::getUserId, entity.getUserId())
-                .eq(LoginLogEntity::getSuccess, Boolean.TRUE)
-                .eq(LoginLogEntity::getDeviceFingerprint, entity.getDeviceFingerprint()));
+        Long knownDeviceCount = loginLogMapper.selectRiskDeviceCount(
+                entity.getTenantId(), entity.getUserId(), entity.getDeviceFingerprint());
         if (knownDeviceCount == null || 0L == knownDeviceCount) {
             riskFlags.add("NEW_DEVICE");
         }
-        LoginLogEntity lastLogin = loginLogMapper.selectOne(Wrappers.<LoginLogEntity>lambdaQuery()
-                .eq(LoginLogEntity::getTenantId, entity.getTenantId())
-                .eq(LoginLogEntity::getUserId, entity.getUserId())
-                .eq(LoginLogEntity::getSuccess, Boolean.TRUE)
-                .eq(LoginLogEntity::getLoginType, LOGIN_TYPE_PASSWORD)
-                .orderByDesc(LoginLogEntity::getUtcCreate)
-                .last("LIMIT 1"));
+        LoginLogEntity lastLogin = loginLogMapper.selectRiskLastLogin(entity.getTenantId(), entity.getUserId());
         if (lastLogin != null && !Objects.equals(lastLogin.getIp(), entity.getIp())) {
             riskFlags.add("IP_CHANGED");
         }

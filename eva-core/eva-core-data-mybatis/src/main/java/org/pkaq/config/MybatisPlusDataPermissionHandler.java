@@ -9,6 +9,7 @@ import net.sf.jsqlparser.schema.Table;
 import org.pkaq.core.annotation.Ignore;
 import org.pkaq.core.mybatis.enums.DataPermissionEnumm;
 import org.pkaq.core.mybatis.log.LogQueryAccess;
+import org.pkaq.core.mybatis.log.LoginLogQueryScope;
 import org.pkaq.core.mybatis.log.OpenApiAuditQueryScope;
 import org.pkaq.core.properties.DataPermission;
 import org.pkaq.core.properties.EvaConfig;
@@ -53,6 +54,16 @@ public class MybatisPlusDataPermissionHandler implements MultiDataPermissionHand
      */
     @Override
     public Expression getSqlSegment(Table table, Expression where, String mappedStatementId) {
+        if ("sys_login_log".equals(normalizeTableName(table.getName()))) {
+            if (LoginLogQueryScope.isHistory(mappedStatementId)) {
+                LoginLogQueryScope.requireHistory(mappedStatementId);
+                return null;
+            }
+            if (LoginLogQueryScope.isSystem(mappedStatementId)) {
+                LoginLogQueryScope.requireStorage(mappedStatementId);
+                return null;
+            }
+        }
         if ("api_call_log".equals(normalizeTableName(table.getName()))) {
             OpenApiAuditQueryScope.requireAuthorized(mappedStatementId);
             return null;
