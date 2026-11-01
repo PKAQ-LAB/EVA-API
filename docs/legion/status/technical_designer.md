@@ -385,3 +385,83 @@ manifest3C2C96FA4500C5A1D8890803E0C572AA18D7F3722D14B2B7609EE1A3209198DE与diff3
 ### 2026-10-31 单init候选首审与五类最小验证
 
 已读backend矩阵/实际两目录唯一V1/新PG3case/provisioner与引用，静态旧新索引inventory仅旧账号dept索引随分表消失profile索引保留。mustfix：无账本仅查4账号标记，已有旧role/dict/marker可被模板拼入后记version1，应目标schema已有用户关系即拒并加原init-tenant实例内负例；已交backend/root。DATA_SCOPE8/5仍待root已问用户决定，不签seed最终态。五类6PG拟范围认可不扩大228，薄wrapper/init/实际CP图及证据仍待审和root槽；本人无PG/tests/dev/服务/源修改。
+
+### 2026-11-01 0006指定岗位读取资格只读设计
+
+新任务仅分析，已核cornerstone工作区/项目与命名规则及角色岗位认证过滤链；GitNexus索引落后53commit不重建，以源为准。用户语义已明确当前登录用户有效岗位∩角色所选岗位读资格，非作者岗位。design/2026-11-01-role-0006-post-read-proposal.md列DATA_POST_IDS独立TEXT/BO-VO-auth快照、有效同源集合校验、0006只读贡献与原多角色OR、写前selectById不得获1=1、JWT/permVer角色岗位变更失效、既有post/list多选和0006自动展开、单V1种子0006及现库适配分开。data总开关/全局vs逐资源边界和仅读贡献拆分列一次契约确认，不代用户选扩展。不实现/迁移/DB/测试或账户，未扩0004/5，无视觉补验。
+
+### 2026-11-01 0006全局读取已定/具体契约收敛
+
+用户确认现全局受管读取/不增editdelete/原role OR，proposal顶部及最终节关闭旧未决。最终API dataPostIds ListLong/DB独立TEXT CSV、显式转换/合法同源岗位全集、省略保持切离清、纯读controller窄窗口+真实readonly事务+SELECT，写预读无贡献而其它role照旧。每请求查有效岗位与角色membership，Role/savePosts现permVer复用/岗位删冻级联用户补推进；主tenant单V1列及字典原5+0006，现库两适配另批。root收到具体文件清单/一次批准句，backend只读列实际入口，不实现不DB不测。
+
+### 2026-11-01 0006读取接线清单补齐
+
+后端提供七域16端点及服务实际事务清单，已复核controller映射并并入同一proposal。三条件固定为方法级纯读窗口+actual active readonly事务+SELECT；ModuleService.list/getModule待实施补readonly，StdService不全局开放。字典GET del明确排除，同selectById读写路径作为针对性回归，授权面板/bootstrap/Ignore原边界保持。清单是源码设计证据而非实测或全仓覆盖证明；仅改本角色design/status，无源/DB/测试操作。
+
+### 2026-11-01 0006代码获批／现库适配草案
+
+总控转达call76107391代码/初始化获批，由backend/frontend唯一写源，本角色独立读审。新增design/2026-11-01-role-0006-existing-db-adaptation-plan.md，仅列角色可空TEXT加列与真实SYSTEM来源0006单明细、原五项/category/status/授权保持、主私有源现场核验、备份前后像、事务/部署顺序、条件回退及提交后单键失效。当前DictCacheHelper有真实Owner键；DictService提交回调为businessOwner，不可借其刷新SYSTEM。无DB读取/写入，待backend最终DDL和种子字段对齐后再向root交一次审批清单。
+
+### 2026-11-01 前端候选独审发现切换载荷问题
+
+核057347前端manifest及7文件SHA全匹配，仅只读独审，未编译/测试/视觉。发现原0003非空部门切0006后aoeform仍发送旧dataOrgIds，与后端validatePostScope拒非空org冲突，导致合法保存失败；已直接交frontend唯一写者最小修payload及该路径定向case并重封签，root同步。晚回/只读/失效岗位静态未见其他阻断。backend仍施工，controller16标记/实际readonly/SELECT窗口及finally与原role OR在当前源码符合设计方向，不作冻结安全通过结论。现库计划已按DATA_POST_IDS nullable TEXT及核心4008/0006/sort7对齐，无DB操作。
+
+### 2026-11-01 前端93F4修订源码复核关闭问题
+
+新manifest完整SHA93F4C1AEC1599457B20FCD00A9C23FAF1CE70AAF7A859412D5A76A8B4C133749与7源SHA均实算匹配。aoeform/service仅0006清dataOrgIds，新增原0003非空部门切0006实Form精确载荷断言；已有id编辑省略posts保持省略，新建缺省/显式空拒，与API契约一致。此前mustfix源码复核关闭，无新阻断，已报root/frontend；测试通过为frontend分轮报告，本角色未重跑，不替代QA、后端或现库验收。
+
+### 2026-11-01 后端CB768冻结独立源码审
+
+source-freeze.json SHA CB76828AE249553AE2523F250847B2EB6E2BDF3F4673F1ACE10D301B734B57BF与40输入均实算匹配。三条件窗口/主体绑定/finally、16入口、无新写贡献及原role OR、有效账号角色岗位JOIN、严格CSV、主私有列与仅核心种子、岗位删除及实际级联范围增permVer方向均符合契约；未运行测试。发现standalone资格SQL仅过滤账号/角色/岗位tenant而未过滤实际有TENANT_ID的SYS_POSTUSER_REF，外归属99关系仍可形成交集，已报root统一修派并通知backend待命。ROLEUSER_REF无tenant列及private分支不加虚构列。当前候选该项未关闭，其他上述边界未发现新阻断；现库限定RO由root另派backend，本角色仍不查库。
+
+### 2026-11-01 现库只读证据收口为恢复既有0006
+
+本地读取并实算backend限定RO结果E58E09A72B9BDA287CA6A3C3618AD20D5E3876FB20825DA17A1F8F50C3886EED匹配；未自连DB。结果eva源角色列缺失，0006既有唯一物理ID1000000000000004008/main1000000000000004001 deleted1，其余关键字段和原五项符合。新增design/2026-11-01-role-0006-existing-db-adaptation-review.md精确审批清单，旧plan标替代：ADD nullable TEXT+仅恢复deleted1→0，不INSERT；回退恢复deleted1而非DELETE；单键工具未具备，不提前请求用户批准不可执行缓存动作。runtimeProcess未核、无private授权和只读窗口用完均明列。待backend固定evict通道/SQL包后独审，未写源/DB/cache或测试。
+
+### 2026-11-01 后端v2缺口关闭及维护包候选独审
+
+237DB48F945863B9B377B275AEEC550C4245D821C97FF05F1A7855789D621462与40输入匹配，唯资格query与PG测试改变，standalone puNULL/0、private无列分支核实，原缺口源码复核关闭。维护candidate A9CD50A4E41C428FEC1A60F49079D493FD02A3865DEE6D9AF6409F5DFA29F796及11输入匹配；两SQL、默认ROLLBACK同IDdeleted回退、Python先PING再锁重核/提交收据后SYSTEM精确单键、未知状态停未见新阻断。review文末已接具体工具候选及边界：限定前像不称完整行备份，Java helper仅作Python已审入口子进程，不独立执行。维护QA尚待，不取代产品/维护QA，无重测/网络/DB/cache写。
+
+### 2026-11-01 真实维护已完成，待运行联调
+
+总控按用户最新明确批准完成一次维护；本角色仅本地读取收据并实算SHA398BE19D9DF4FEEE3809197B0C1FA494F548127F5C44398DEAD512BD813AE0C5匹配，state DB_AND_SYSTEM_CACHE_DONE、dbCommittedtrue、1PG连接已关闭、加列/恢复ID1000000000000004008一行/精确SYSTEM单键失效完成。三份设计顶部均标最新阶段，早期待批准态仅历史不再作为阻塞。backend限定RO后验和QA收据后验审核进行中；用户新构建/重启及运行联调尚未完成，不等同运行功能已验收。本角色无重复DB/Redis/测试。
+
+### 2026-11-01 字典会话本地映射／条件同步合同只读提案
+
+新增design/2026-11-01-dictionary-local-snapshot-sync-contract.md，核app/login已载initialState.dict但DictSelector仍逐code远程，需统一内存快照映射。拟现fetchDicts ETag/304，认证/inventory冲突先核，现owner/cache/权限不变，无新DB/Redis版本或permVer。backend核Spring正常200 ResponseEntity weakETag可在Advice前转空304，直接null304会被Advice包装；CORS仅expose ETag。按backend转达root边界，已撤回候选60s/10s及错误全清：基础登录/前台或网络恢复/本tab提交成功触发合并，不默认周期；同身份临时错误保正确snapshot/etag并标失败，身份切换清/旧响应失效；冲突不新发布，旧stale显示策略由root收口。仅设计不源/API/DB/Redis/测试，0003语义及0006待用户重启live保持。
+
+### 2026-11-01 字典同步待批合同最终收敛
+
+后端证据显示TTL0缓存旧回填可能晚于提交evict，合同改仅同步端点以一次actual readonly REPEATABLE_READ DB完整inventory/items投影构造snapshot/etag，不碰其他缓存。root最新选定待批visibleonline60s/focusonline10s合并/localwrite立即；临时网络timeout/普通5xx保同身份有效snapshot+etag标stale/retry，认证/退出切身份/可信来源冲突/结构无效清可用快照etag保formcode，已更新合同替代此前候选。补窄必要边界：source冲突不能被通用500当临时错误，需现错误格式可辨结果；本地提交撞旧同步在途须补提交后校验。已报root/backend，不实施/测试/连接，不改serializer或0003/0006语义。
+
+### 2026-11-01 0003右栏候选独审与同步待用户选项
+
+部门/岗位合并候选71B9891BFF427A02F32FE83F2196032664B83633DE1B1F503FB2646E47D36B52及9输入实算匹配。0003复用TreeSelect默认联动/SHOW_CHILD，无strict，父全选子ID、单子、原ID仅改名保存CSV契约不变；0003/0006互斥且0006清org、切离posts空，service/roleposts保持旧修订。loading/strictsuccess/重试/active晚回/view文本源码无新阻断，已报root/frontend，未重测不代QA。字典合同顶部已改A推荐60/10轮询+B仅登录恢复提交无定时两个待选，等root用户答复统一冻结，不称用户已否决或已批。
+
+### 2026-11-01 字典方案A获批，成员分写与设计独审
+
+总控转达用户回复可以正式批准方案A，已将design标题/顶部/末段改已批60/10/提交立即、全局initialState.dict单内存及错误策略，B仅未采用历史不再待选。backend/frontend分别唯一源写，本角色只设计独审；已协调精确source冲突code与HTTPbody、正常无体304前端判别类型及ETag可信身份generation输入互发冻结，不扩DB/版本表/cache清空/serializer。未源/测试/连接/服务/Git；0006仍待用户新后端重启live。
+
+### 2026-11-01 字典后端06BEA8冻结独审
+
+精确HTTP协议已记contract：weak dict-v1、409/0x0000-10002固定失败message、无体304/200原map/ordinary500保留，可信Owner schema纳摘要覆盖现schema哈希代次。施工提出缺表0行误500已scalar单行NULL typed拒修复，冻结06BEA8A7C5CE27F2DEABC77C90FEB02634AF04AF2C936273455B43947C393EDE与9inputs实算匹配，原0006v3 40输入逐hash保持。独立源码复核未见新阻断，问题关闭报root/backend；backend真实GradlePG新方法/HTTP通过为成员报告，本角色未重跑不代独立QA。待前端冻结后查身份generation/调度/union接线，0源写/DB/cache连接。
+
+### 2026-11-01 字典前端730D初候选独审
+
+730D3AADB2420485C1DFB04128D2D27E80930FC97B9DD79913C6021230B5F59C及23输入实算匹配；0003/6保护8输入保持。union updated/data/etag与unchanged/etag已对齐，查本机Umi生成请求层仅显式successfalse触发errorThrower，空304可过；owned单内存/epoch/60/10/写碰在途followup/消费者原codefallback无另阻断。发现runtime sync在skipErrorHandler下最终401/auth失效仅清字典不调用原退出（全局refresh后重放仍失败可触发），已报frontend+root最小current身份守卫下redirectToLogin，不使旧身份晚回退出新会话，不把source409/普通403退出。该项尚未关闭，未改源/测试/连接。
+
+### 2026-11-01 字典前端A2A710修订关闭认证问题
+
+A2A710618430041F1097611A8772FA6D1C374573E2349EEB19A718BA5D0ABFAB与25输入实算匹配，730D仅历史；current+authExpired原redirect修复已核，旧身份晚回不退出新会话，403/source不退出，原mustfix源码关闭。finalOptions/findLast恢复全部/真实0000标签；真实generated request SHA0937A9F2F0D346394DB3B156FF624F958BA6B96A0DD58119BCD41B7C4686DE97匹配，新增本地adapter测试确走生成request及原errorConfig，Vitest仅现有依赖alias，无生产HTTP/新框架改动。已报root/frontend无新阻断，未重测不代QA或重启live验收。
+
+### 2026-11-01 snapshot最小批量优化方案边界审
+
+root授权snapshot内部去重复核验/Owner批量items，已确认backend package-private自带一次sources验证+请求内Owner，每源单窗口分类/完整main含冻结冲突/批量有序items，最后同次hash可行；无public bypass或跨请求核验cache，其它query/管理不动。明确mainNULL frozen沿旧getInt0输出、item仍旧<>1，空map/order保留。静态40固定JDBC待PG实际计数证明非SLA。仅2产品+PG新方法/原HTTP定向，由成员协调测试slot；本角色不写源/测试/realprobe，等待新freeze替代06BE。
+
+### 2026-11-01 批量snapshot CA68冻结独审完成
+
+CA68BBCC4C6FA19496E4F4A13ABBEB8CD25183E33BE5A46A4E3D2390CA3EC06E及9输入实算匹配，相较06BE仅3源差异，rolev3 40输入0漂移。逐源核一次requireSource/请求内schema去重结构分类/Owner完整main含冻结冲突/JOINitems/NULLmain/item原语义/顺序空map/hash与finally均保，无通用bypass/其它cache管理改动，报root/backend无新阻断。Connection真实语句计数与增10字典不增断言源码已核，50为开发隔离schema含路由SHOW报告，不称生产SLA；未重测/真实dev/源写，待QA仅2target。
+
+### 2026-11-01 role pane UI候选撤回待一行类型修订
+
+原UI manifest5F8F8D39470B09540BD635D2501EEEB07AF53BD025DC0C9ACF229B3BBF0A2CD5四源实算匹配、字典A2A71025输入保持，同Modal/form/pane稳定身份与tag隐藏不改cascade/save静态无合同阻断；随后frontend发现tsc tagRender不得返回null并主动撤签，拟空fragment等价修后重封。已向root明确5F8F非当前通过候选，等QA HMR安全再改，frontend亦撤回仅旧3类型错说法（另有cloudflare缺hono等环境失败）。本角色未跑tsc/浏览器/测试，静态合同读审不代类型或视觉QA。
