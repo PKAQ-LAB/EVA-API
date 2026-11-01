@@ -16,13 +16,13 @@ class TenantAuthorizationContractTest {
 
     @Test
     void migrationRetainsRevokedGrantsAndSeparatesSystemRole() throws Exception {
-        String migration = resource("db/migration/V2__TENANT_ROLE_AUTHORIZATION.sql");
+        String migration = resource("db/migration/V1__INITDB.sql");
 
         assertTrue(migration.contains("ACTIVE BOOLEAN NOT NULL DEFAULT TRUE"));
         assertTrue(migration.contains("REVOKED_AT TIMESTAMP"));
         assertTrue(migration.contains("SYS_TENANT_PACKAGE_GRANT"));
         assertTrue(migration.contains("SYSTEM_ROLE VARCHAR(32)"));
-        assertTrue(migration.contains("COALESCE(role.FROZEN, 0) <> 1"));
+        assertTrue(migration.contains("UK_SYS_ROLE_TENANT_SYSTEM"));
     }
 
     @Test

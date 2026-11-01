@@ -15,18 +15,13 @@
 
 角色、岗位、登录日志和业务记录中的用户 ID 继续指向同一账号 ID，不重新生成 ID。现有管理端新增和自助注册使用同一个 `IAccountCreation`，复用保留账号校验、唯一性检查和 BCrypt 哈希；部门、岗位、角色仅由管理用例添加。
 
-## 数据库升级
+## 发布前统一初始化
 
-- 已有 standalone/平台库执行 `db/migration/V12__ACCOUNT_PROFILE_SPLIT.sql`，同时升级平台登记的既有租户 schema，不扫描无关 schema。
-- 新租户顺序执行租户 V1、V2；版本 2 完成后不再执行 V1，以免重新生成 `SYS_USER`。
-- 原始 V1 等已发布迁移保持不变，不修改旧迁移的校验和。
-- 旧表与新表重叠、资料复制数量不一致时迁移失败，必须排查，不覆盖已有表。
-- 数据迁移与新应用必须一起部署；旧应用仍查询 `SYS_USER`，不能在新结构上继续运行。
-- `docs/sql/system_management_full_postgresql.sql` 仅用于新建 standalone 数据库。不得对已有库重跑管理员初始化或覆盖密码。
+发布前仅保留 `web-booter/src/main/resources/db/migration/V1__INITDB.sql` 这一份生产 Flyway 初始化脚本，直接创建最终 `SYS_ACCOUNT` 与可选 `SYS_ACCOUNT_PROFILE`，不再先建 `SYS_USER` 后重命名。独立重复的 docs SQL 和旧账号拆分维护工具已移除，避免两套建库定义漂移。
 
-开发库可使用 `scripts/AccountProfileMigration.java inspect` 检查。`migrate` 在同一事务中锁定旧表，复制完整旧账号表至禁止 PUBLIC 访问的时间戳备份 schema，再执行 V12 并校验后提交。备份含敏感密码哈希，禁止导出到仓库、日志或公共目录；它不是全库备份。失败不提交，原结构不变。
+租户私有 schema 由 `TenantSchemaProvisioner` 直接执行唯一 `db/tenant-migration/V1__TENANT_SCHEMA_BASE.sql` 模板；这是自有初始化账本，不是第二条生产 Flyway 迁移链。模板不包含控制面菜单、系统日志或平台种子。旧租户升级账本、旧用户表或无账本的既有账号结构不得自动重跑该模板。
 
-开发配置当前关闭 Flyway，工具不伪造 Flyway 历史。以后启用 Flyway 时必须核对实际结构与历史，并制定对应 baseline，不得在已手动升级的数据库上重新运行初始化。生产环境使用正式备份、维护窗口和迁移流程，不使用此开发工具。
+这些文件只供受控空库初始化。已有开发库的旧 Flyway checksum/history 将与重新整理的 V1 不匹配，必须由用户另行选择并批准处理方式；本次未执行 clean、baseline、repair、删除 history、重建数据库或任何实际迁移。不得把新 V1 当作旧库升级脚本，也不得为验证通过而修改历史。
 
 ## 注册首期边界
 

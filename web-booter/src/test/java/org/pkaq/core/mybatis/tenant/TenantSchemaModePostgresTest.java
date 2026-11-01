@@ -11,7 +11,6 @@ import org.pkaq.test.PostgresInstanceEvidence;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.StreamUtils;
 
@@ -45,14 +44,6 @@ class TenantSchemaModePostgresTest {
             DataSource dataSource = postgres.getPostgresDatabase();
             PostgresInstanceEvidence.capture(dataSource, "mode-provision");
             JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-            jdbcTemplate.execute("""
-                    CREATE TABLE SYS_TENANT (
-                        ID BIGINT PRIMARY KEY,
-                        CODE VARCHAR(6) NOT NULL,
-                        DELETED INTEGER DEFAULT 0,
-                        FROZEN INTEGER DEFAULT 0
-                    )
-                    """);
             executeMigration(jdbcTemplate);
             jdbcTemplate.update("INSERT INTO SYS_TENANT(ID, CODE) VALUES (101, 'acme')");
 
@@ -196,19 +187,7 @@ class TenantSchemaModePostgresTest {
     }
 
     private void executeMigration(JdbcTemplate jdbcTemplate) throws IOException {
-        TransactionTemplate transaction = new TransactionTemplate(
-                new DataSourceTransactionManager(jdbcTemplate.getDataSource()));
-        for (String path : List.of("db/migration/V3__TENANT_SCHEMA_MODE.sql",
-                "db/migration/V13__TENANT_CODE_SCHEMA.sql")) {
-            ClassPathResource migration = new ClassPathResource(path);
-            String script = StreamUtils.copyToString(migration.getInputStream(), StandardCharsets.UTF_8);
-            transaction.executeWithoutResult(status -> {
-                for (String statement : script.split("--#")) {
-                    if (!statement.isBlank()) {
-                        jdbcTemplate.execute(statement);
-                    }
-                }
-            });
-        }
+        ClassPathResource initialization = new ClassPathResource("db/migration/V1__INITDB.sql");
+        jdbcTemplate.execute(StreamUtils.copyToString(initialization.getInputStream(), StandardCharsets.UTF_8));
     }
 }

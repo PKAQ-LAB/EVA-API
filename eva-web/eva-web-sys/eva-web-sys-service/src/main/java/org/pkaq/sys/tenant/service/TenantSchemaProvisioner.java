@@ -6,7 +6,6 @@ import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.tenant.util.TenantCodeRules;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.support.EncodedResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
@@ -119,15 +118,33 @@ public class TenantSchemaProvisioner {
             }
             statement.setString(1, schema);
             statement.execute();
-            // 已完成账号迁移的 schema 不得再次执行 V1 重新生成旧用户表。
+            // 新模板直接建最终结构；既有升级账本不能被当作新模板自动修复。
             if (!hasMigration(connection, "1")) {
+                try (PreparedStatement query = connection.prepareStatement("""
+                        SELECT EXISTS (SELECT 1 FROM pg_catalog.pg_class
+                            WHERE relnamespace=pg_catalog.to_regnamespace(pg_catalog.current_schema())
+                              AND relkind IN ('r','p','v','m','S','f','c'))
+                            OR EXISTS (SELECT 1 FROM pg_catalog.pg_type
+                            WHERE typnamespace=pg_catalog.to_regnamespace(pg_catalog.current_schema())
+                              AND typtype IN ('d','e','r','m'))
+                        """); ResultSet result = query.executeQuery()) {
+                    if (!result.next() || result.getBoolean(1)) {
+                        throw new IllegalStateException("无初始化账本的非空租户结构需单独处理");
+                    }
+                }
                 ScriptUtils.executeSqlScript(connection,
                         new ClassPathResource("db/tenant-migration/V1__TENANT_SCHEMA_BASE.sql"));
-            }
-            if (!hasMigration(connection, "2")) {
-                ScriptUtils.executeSqlScript(connection,
-                        new EncodedResource(new ClassPathResource("db/tenant-migration/V2__ACCOUNT_PROFILE_SPLIT.sql")),
-                        false, false, "--", ScriptUtils.EOF_STATEMENT_SEPARATOR, "/*", "*/");
+            } else {
+                try (PreparedStatement query = connection.prepareStatement("""
+                        SELECT NOT EXISTS (SELECT 1 FROM EVA_TENANT_SCHEMA_VERSION WHERE VERSION <> '1')
+                            AND to_regclass('sys_user') IS NULL
+                            AND to_regclass('sys_account') IS NOT NULL
+                            AND to_regclass('sys_account_profile') IS NOT NULL
+                        """); ResultSet result = query.executeQuery()) {
+                    if (!result.next() || !result.getBoolean(1)) {
+                        throw new IllegalStateException("既有租户结构或版本需单独迁移，禁止重跑初始化");
+                    }
+                }
             }
             statement.setString(1, originalPath);
             statement.execute();

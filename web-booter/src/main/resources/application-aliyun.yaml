@@ -42,9 +42,9 @@ spring:
       enabled: true
     restart:
       additional-paths: src/main/java
-  # flyway配置 对于非空数据库 需要开启此项避免报错
+  # 单初始化仅供空库；非空旧库禁止自动baseline，须独立批准处理。
   flyway:
-    baseline-on-migrate: true
+    baseline-on-migrate: false
     locations: classpath:/db/migration
     baseline-version: 0
     enabled: false

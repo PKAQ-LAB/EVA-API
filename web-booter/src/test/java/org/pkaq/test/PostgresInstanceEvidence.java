@@ -43,15 +43,17 @@ public final class PostgresInstanceEvidence {
             Map.entry("mode-route", "org.pkaq.core.mybatis.tenant.TenantSchemaModePostgresTest"),
             Map.entry("advisor-order", "org.pkaq.core.mybatis.tenant.TenantSchemaAdvisorOrderPostgresTest"),
             Map.entry("role-isolation", "org.pkaq.sys.role.service.RoleSchemaIsolationPostgresTest"),
-            Map.entry("migration-empty13", "org.pkaq.sys.tenant.TenantCodeFlywayChainPostgresTest"),
-            Map.entry("migration-legacy11to13", "org.pkaq.sys.tenant.TenantCodeFlywayChainPostgresTest"),
-            Map.entry("migration-rename-rollback", "org.pkaq.sys.tenant.TenantCodeFlywayChainPostgresTest"));
+            Map.entry("init-empty", "org.pkaq.sys.tenant.SingleInitializationPostgresTest"),
+            Map.entry("init-history", "org.pkaq.sys.tenant.SingleInitializationPostgresTest"),
+            Map.entry("init-tenant", "org.pkaq.sys.tenant.SingleInitializationPostgresTest"),
+            Map.entry("init-authorization", "org.pkaq.sys.tenant.service.TenantAuthorizationPostgresTest"));
     private static final Set<String> FIELDS = Set.of("version", "nonce", "testClass", "label", "dataDirectory",
             "serverAddress", "serverPort", "listenAddresses", "serverVersionNum", "postmasterStart");
     private static final String SELECT = """
             SELECT pg_catalog.host(pg_catalog.inet_server_addr()), pg_catalog.inet_server_port(),
                    pg_catalog.current_setting('listen_addresses'), pg_catalog.current_setting('data_directory'),
-                   pg_catalog.current_setting('server_version_num'), pg_catalog.pg_postmaster_start_time()
+                   pg_catalog.current_setting('server_version_num'), pg_catalog.pg_postmaster_start_time(),
+                   pg_catalog.pg_backend_pid()
             """;
 
     private PostgresInstanceEvidence() {
@@ -87,6 +89,7 @@ public final class PostgresInstanceEvidence {
         // 单一自有连接只执行技术SELECT，不改变测试事务或search_path。
         try (Connection connection = dataSource.getConnection()) {
             connection.setReadOnly(true);
+            int backendPid;
             try (Statement statement = connection.createStatement();
                  ResultSet result = statement.executeQuery(SELECT)) {
                 require(result.next(), "缺少服务器技术事实");
@@ -108,11 +111,59 @@ public final class PostgresInstanceEvidence {
                 record.put("listenAddresses", listen);
                 record.put("serverVersionNum", 140022);
                 record.put("postmasterStart", started.toInstant().toString());
+                backendPid = result.getInt(7);
+                require(!result.wasNull() && backendPid > 0, "缺少当前连接backend PID");
                 require(!result.next(), "服务器技术事实行数不符");
             }
+            verifyExisting(evidence, temporary, nonce, record);
+            publish(evidence, label, JSON.writeValueAsBytes(record));
+            if (Boolean.getBoolean("pgJdbc.awaitOsObservation")) {
+                Map<String, Object> request = new LinkedHashMap<>(record);
+                request.put("backendPid", backendPid);
+                publish(run.resolve("pg/os-request").toRealPath(), label, JSON.writeValueAsBytes(request));
+                // 保持该只读连接存活，允许同一次OS采样核对真实backend到postmaster的父边。
+                awaitOsObservation(run, record, backendPid);
+            }
         }
-        verifyExisting(evidence, temporary, nonce, record);
-        publish(evidence, label, JSON.writeValueAsBytes(record));
+    }
+
+    /** 仅合成验证可选开启，最多十秒等待真实OS证明，不以等待时长替代证明。 */
+    private static void awaitOsObservation(Path run, Map<String, Object> record, int backendPid) throws Exception {
+        Path directory = run.resolve("pg/os-ack").toRealPath();
+        require(directory.startsWith(run) && !Files.isSymbolicLink(directory), "OS确认目录越界");
+        Path file = directory.resolve(record.get("label") + ".json");
+        long deadline = System.nanoTime() + 10_000_000_000L;
+        while (System.nanoTime() < deadline) {
+            if (Files.isRegularFile(file)) {
+                require(!Files.isSymbolicLink(file) && file.toRealPath().startsWith(directory), "OS确认文件越界");
+                JsonNode proof = JSON.readTree(file.toFile());
+                require(keys(proof).equals(Set.of("version", "nonce", "label", "testClass", "dataDirectory",
+                        "serverAddress", "serverPort", "postmasterStart", "pid", "started", "sha256",
+                        "proofStandard", "backendPid", "backendStarted", "backendParent", "pidfileSha256")),
+                        "OS确认字段不符");
+                for (String key : List.of("version", "nonce", "label", "testClass", "dataDirectory",
+                        "serverAddress", "postmasterStart")) {
+                    require(record.get(key).toString().equals(text(proof, key)), "OS确认归属不符");
+                }
+                require(proof.path("serverPort").isInt()
+                        && record.get("serverPort").equals(proof.path("serverPort").intValue())
+                        && proof.path("pid").isInt() && proof.path("pid").intValue() > 0
+                        && !Instant.parse(text(proof, "started")).isAfter(
+                                Instant.parse(record.get("postmasterStart").toString()))
+                        && "6E5F90D94D50CB44467B6D30D14D10D1DCCEECCC7834941E450393B2BE7D4AA3"
+                                .equals(text(proof, "sha256")), "OS确认进程或监听不符");
+                require("pidfile-os-jdbc-backend-v1".equals(text(proof, "proofStandard"))
+                        && proof.path("backendPid").isInt() && backendPid == proof.path("backendPid").intValue()
+                        && proof.path("backendParent").isInt()
+                        && proof.path("pid").intValue() == proof.path("backendParent").intValue()
+                        && !Instant.parse(text(proof, "backendStarted")).isBefore(
+                                Instant.parse(record.get("postmasterStart").toString()))
+                        && text(proof, "pidfileSha256").matches("[0-9A-F]{64}"), "OS交叉归属不符");
+                return;
+            }
+            Thread.sleep(25L);
+        }
+        throw new IllegalStateException("十秒内未取得本合成PG的完整OS监听确认");
     }
 
     private static void verifyContext(Path run, Path evidence, String nonce) throws Exception {

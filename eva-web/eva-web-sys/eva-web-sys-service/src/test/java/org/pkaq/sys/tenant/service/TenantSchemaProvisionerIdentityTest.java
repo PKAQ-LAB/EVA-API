@@ -179,5 +179,11 @@ class TenantSchemaProvisionerIdentityTest {
         ResultSet version = mock(ResultSet.class);
         when(findVersion.executeQuery()).thenReturn(version);
         when(version.next()).thenReturn(true);
+        PreparedStatement structure = mock(PreparedStatement.class);
+        when(connection.prepareStatement(contains("SELECT NOT EXISTS"))).thenReturn(structure);
+        ResultSet valid = mock(ResultSet.class);
+        when(structure.executeQuery()).thenReturn(valid);
+        when(valid.next()).thenReturn(true);
+        when(valid.getBoolean(1)).thenReturn(true);
     }
 }
