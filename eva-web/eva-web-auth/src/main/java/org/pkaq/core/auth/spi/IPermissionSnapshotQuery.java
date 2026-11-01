@@ -16,4 +16,9 @@ public interface IPermissionSnapshotQuery {
      * @return 有效角色列表
      */
     List<RoleSnapshot> findRoles(Long userId);
+
+    /** 当前可信源内有效0006角色与有效岗位的交集，仅供本请求读取资格。 */
+    default java.util.Map<Long, List<Long>> findEligiblePostScopes(Long userId) {
+        return java.util.Map.of();
+    }
 }

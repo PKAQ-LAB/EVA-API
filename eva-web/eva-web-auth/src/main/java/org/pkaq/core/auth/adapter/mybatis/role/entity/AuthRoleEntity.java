@@ -34,6 +34,10 @@ public class AuthRoleEntity extends StdEntity {
     /** 逗号分隔的指定组织 ID。 */
     private String dataOrgIds;
 
+    /** 规范十进制岗位ID集合。 */
+    private String dataPostIds;
+
+
     public String getCode() {
         if (!this.code.startsWith(CommonConstant.AUTH_PREFIX)) {
             this.code = CommonConstant.AUTH_PREFIX + this.code;

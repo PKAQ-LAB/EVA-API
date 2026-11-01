@@ -28,17 +28,20 @@ import java.util.List;
 public class NoticeCtrl extends Ctrl {
     private final NoticeService noticeService;
 
+    @org.pkaq.core.mybatis.permission.PostScopeRead
     @GetMapping("/notices")
     public Response<List<NoticeVo>> notices() {
         return success(this.noticeService.listAvailable());
     }
 
+    @org.pkaq.core.mybatis.permission.PostScopeRead
     @GetMapping("/sys/notice/list")
     @BizLog(operateType = BizLogCodes.QUERY, description = "查询了通知列表[{0}]", args = {"param:0"})
     public Response<Object> list(NoticeQueryBo queryBo) {
         return success(this.noticeService.list(queryBo));
     }
 
+    @org.pkaq.core.mybatis.permission.PostScopeRead
     @GetMapping("/sys/notice/get/{id}")
     @BizLog(operateType = BizLogCodes.QUERY, description = "查询了通知[{0}]", args = {"param:0"})
     public Response<Object> get(@PathVariable("id") Long id) {

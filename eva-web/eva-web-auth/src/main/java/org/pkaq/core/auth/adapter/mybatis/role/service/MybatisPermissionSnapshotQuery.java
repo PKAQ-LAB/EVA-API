@@ -19,6 +19,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MybatisPermissionSnapshotQuery implements IPermissionSnapshotQuery {
     private final AuthRoleMapper roleMapper;
+    private final MybatisPostEligibilityQuery postEligibility;
+
+    @Override
+    public java.util.Map<Long, List<Long>> findEligiblePostScopes(Long userId) {
+        return postEligibility.find(userId);
+    }
 
     /**
      * 在已绑定的租户上下文中查询有效角色。
@@ -38,6 +44,8 @@ public class MybatisPermissionSnapshotQuery implements IPermissionSnapshotQuery 
         snapshot.setName(role.getName());
         snapshot.setDataScope(role.getDataScope());
         snapshot.setDataOrgIds(role.getDataOrgIds());
+        snapshot.setDataPostIds(role.getDataPostIds());
+        snapshot.setDeleted(role.getDeleted());
         return snapshot;
     }
 }

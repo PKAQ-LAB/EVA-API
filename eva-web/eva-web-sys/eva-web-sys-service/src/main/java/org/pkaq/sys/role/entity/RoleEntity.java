@@ -37,6 +37,9 @@ public class RoleEntity extends StdEntity {
      **/
     private String dataOrgIds;
 
+    /** 规范十进制岗位ID集合，独立于指定组织。 */
+    private String dataPostIds;
+
     /** 平台角色模板 ID；租户自定义角色为空。 */
     private Long templateRoleId;
 

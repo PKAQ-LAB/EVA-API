@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 public class RoleCtrl extends StdCtrl<RoleService> {
 
     @Override
+    @org.pkaq.core.mybatis.permission.PostScopeRead
     @GetMapping("/get/{id}")
     @Operation(summary = "根据ID获取角色详情")
     @BizLog(operateType = BizLogCodes.QUERY, description = "查询了角色信息[{0}]", args = {"param:0"})
@@ -114,6 +115,7 @@ public class RoleCtrl extends StdCtrl<RoleService> {
         return success();
     }
 
+    @org.pkaq.core.mybatis.permission.PostScopeRead
     @GetMapping("/list")
     @Operation(summary = "分页查询", description = "列表查询")
     @BizLog(operateType = BizLogCodes.QUERY, description = "查询了角色列表[{0}]", args = {"param:0"})

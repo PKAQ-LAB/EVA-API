@@ -7,12 +7,15 @@
                 R.CODE,
                 R.DATA_SCOPE,
                 R.DATA_ORG_IDS,
+                R.DATA_POST_IDS,
+                R.DELETED,
                 RU.USER_ID
         from SYS_ROLE R, SYS_ROLEUSER_REF RU
         <where>
             R.ID= RU.ROLE_ID
             and
             R.FROZEN != 1
+            and (R.DATA_SCOPE &lt;&gt; '0006' OR R.DATA_SCOPE IS NULL OR R.DELETED = 0)
             and
             RU.USER_ID=#{userId,jdbcType=BIGINT}
         </where>

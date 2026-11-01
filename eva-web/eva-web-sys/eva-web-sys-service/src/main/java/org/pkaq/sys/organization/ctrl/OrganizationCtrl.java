@@ -43,6 +43,7 @@ public class OrganizationCtrl extends Ctrl {
         return exists ? failure(SysCodes.ORG_CODE_EXIST) : success();
     }
 
+    @org.pkaq.core.mybatis.permission.PostScopeRead
     @GetMapping("/list")
     @Operation(summary = "获取组织树")
     @BizLog(operateType = BizLogCodes.QUERY, description = "查询了组织树[{0}]", args = {"param:0"})
@@ -50,6 +51,7 @@ public class OrganizationCtrl extends Ctrl {
         return success(this.service.list(queryBo));
     }
 
+    @org.pkaq.core.mybatis.permission.PostScopeRead
     @GetMapping("/get/{id}")
     @Operation(summary = "根据 ID 获取组织详情")
     @BizLog(operateType = BizLogCodes.QUERY, description = "查询了组织信息[{0}]", args = {"param:0"})

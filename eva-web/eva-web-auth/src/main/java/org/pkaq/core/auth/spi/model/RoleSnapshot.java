@@ -15,4 +15,6 @@ public class RoleSnapshot {
     private String code;
     private String dataScope;
     private String dataOrgIds;
+    private String dataPostIds;
+    private Long deleted;
 }

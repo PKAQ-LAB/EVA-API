@@ -190,6 +190,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
      * @param id 模块 id
      * @return 模块详情
      */
+    @Transactional(readOnly = true)
     public ModuleDetailVo getModule(Long id) {
         if (0 == id) {
             CommonCodes.PARAM_ERROR.newException();
@@ -212,6 +213,7 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
     /**
      * 查询模块树，可按需附带资源列表。
      */
+    @Transactional(readOnly = true)
     public Collection<ModuleDetailVo> list(ModuleQueryBo queryBo, boolean withResource) {
         Map<Long, ModuleDetailVo> moduleMap = toDetailMap(this.mapper.selectModuleMapList(queryBo));
 

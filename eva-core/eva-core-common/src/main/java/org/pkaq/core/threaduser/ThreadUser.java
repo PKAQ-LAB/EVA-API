@@ -71,6 +71,13 @@ public class ThreadUser implements Serializable {
     public static class DataScope implements Serializable {
         private String code;
         private List<Long> orgIds;
+        private List<Long> postIds;
+        private boolean postEligible;
+
+        public DataScope(String code, List<Long> orgIds) {
+            this.code = code;
+            this.orgIds = orgIds;
+        }
     }
 }
 

@@ -146,6 +146,7 @@ public class UserCtrl extends Ctrl {
      * @param bo 查询条件
      * @return 响应结果
      */
+    @org.pkaq.core.mybatis.permission.PostScopeRead
     @GetMapping("/list")
     @Operation(summary = "列表查询")
     @BizLog(operateType = BizLogCodes.QUERY, description = "查询了用户列表[{0}]", args = {"param:0"})
@@ -159,6 +160,7 @@ public class UserCtrl extends Ctrl {
      * @param id 用户 ID
      * @return 响应结果
      */
+    @org.pkaq.core.mybatis.permission.PostScopeRead
     @GetMapping("/get/{id}")
     @Operation(summary = "根据ID获取记录信息")
     @BizLog(operateType = BizLogCodes.QUERY, description = "查询了用户信息[{0}]", args = {"param:0"})

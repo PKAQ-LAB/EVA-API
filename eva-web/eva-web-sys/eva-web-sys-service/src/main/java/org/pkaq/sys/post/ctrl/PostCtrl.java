@@ -43,6 +43,7 @@ public class PostCtrl extends Ctrl {
         return exists ? failure(SysCodes.DUPLICATE_CODE_OR_NAME) : success();
     }
 
+    @org.pkaq.core.mybatis.permission.PostScopeRead
     @GetMapping("/list")
     @Operation(summary = "获取岗位树")
     @BizLog(operateType = BizLogCodes.QUERY, description = "查询了岗位树[{0}]", args = {"param:0"})
@@ -50,6 +51,7 @@ public class PostCtrl extends Ctrl {
         return success(this.postService.list(query));
     }
 
+    @org.pkaq.core.mybatis.permission.PostScopeRead
     @GetMapping("/get/{id}")
     @Operation(summary = "根据 ID 获取岗位详情")
     @BizLog(operateType = BizLogCodes.QUERY, description = "查询了岗位信息[{0}]", args = {"param:0"})

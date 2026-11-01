@@ -98,7 +98,8 @@ class RoleServiceTest {
         TableInfoHelper.initTableInfo(new MapperBuilderAssistant(configuration, ""), UserEntity.class);
         service = new RoleService(organizationMapper, roleResourceMapper, roleUserMapper, moduleMapper, userMapper,
                 tenantResourceMapper, userConvert, roleConvert, moduleConvert, eventPublisher,
-                coreSchemaExecutor, evaConfig, jdbcTemplate);
+                coreSchemaExecutor, evaConfig, org.mockito.Mockito.mock(org.pkaq.sys.post.mapper.PostMapper.class),
+                jdbcTemplate);
         ReflectionTestUtils.setField(service, "mapper", roleMapper);
         TableInfoHelper.initTableInfo(new MapperBuilderAssistant(configuration, ""), RoleEntity.class);
         TableInfoHelper.initTableInfo(new MapperBuilderAssistant(configuration, ""), OrganizationEntity.class);
@@ -198,6 +199,76 @@ class RoleServiceTest {
         bo.setName("测试角色");
         bo.setDataScope(scope);
         return bo;
+    }
+
+    @Test
+    void validatesCompletePostSelectionPreservesOmissionAndClearsLeavingScope() {
+        var posts = (org.pkaq.sys.post.mapper.PostMapper) ReflectionTestUtils.getField(service, "postMapper");
+        TenantProperties tenant = new TenantProperties();
+        tenant.setEnable(false);
+        tenant.setStandaloneSchema("eva");
+        when(evaConfig.getTenant()).thenReturn(tenant);
+        when(evaConfig.isStandaloneMode()).thenReturn(true);
+        TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""),
+                org.pkaq.sys.post.entity.PostEntity.class);
+        when(jdbcTemplate.queryForMap(org.mockito.ArgumentMatchers.anyString())).thenReturn(
+                java.util.Map.of("source", "eva", "post_source", "eva"));
+        javax.sql.DataSource source = org.mockito.Mockito.mock(javax.sql.DataSource.class);
+        when(jdbcTemplate.getDataSource()).thenReturn(source);
+        var first = new org.pkaq.sys.post.entity.PostEntity();
+        first.setId(11L);
+        var second = new org.pkaq.sys.post.entity.PostEntity();
+        second.setId(12L);
+        when(posts.selectList(any(LambdaQueryWrapper.class))).thenReturn(List.of(first, second));
+        RoleEntity origin = new RoleEntity();
+        origin.setDataScope("0006");
+        origin.setDataPostIds("11,12");
+        when(roleMapper.selectById(5L)).thenReturn(origin);
+        when(roleConvert.fromBo(any(RoleAoeBo.class))).thenReturn(origin);
+        ThreadUserHelper.runWithUser(new ThreadUser().setUserId(7L).setTenantId(0L), () -> {
+            org.springframework.transaction.support.TransactionSynchronizationManager.setActualTransactionActive(true);
+            org.springframework.transaction.support.TransactionSynchronizationManager.bindResource(source,
+                    new org.springframework.jdbc.datasource.ConnectionHolder(
+                            org.mockito.Mockito.mock(java.sql.Connection.class)));
+            try {
+                RoleAoeBo bo = roleBo("0006");
+                bo.setId(5L);
+                bo.setDataPostIds(List.of(12L, 11L));
+                service.editUniqueCode(bo);
+                assertEquals(List.of(11L, 12L), bo.getDataPostIds());
+                RoleAoeBo omitted = roleBo("0006");
+                omitted.setId(5L);
+                service.editUniqueCode(omitted);
+                assertEquals(List.of(11L, 12L), omitted.getDataPostIds());
+                for (List<Long> invalid : java.util.Arrays.asList(List.<Long>of(), List.of(11L, 11L),
+                        List.of(0L), List.of(-1L), java.util.Arrays.asList(11L, null), List.of(13L))) {
+                    RoleAoeBo input = roleBo("0006");
+                    input.setDataPostIds(invalid);
+                    assertThrows(RuntimeException.class, () -> service.editUniqueCode(input));
+                }
+                RoleAoeBo leaving = roleBo("0007");
+                leaving.setId(5L);
+                service.editUniqueCode(leaving);
+                assertEquals(List.of(), leaving.getDataPostIds());
+            } finally {
+                org.springframework.transaction.support.TransactionSynchronizationManager.unbindResource(source);
+                org.springframework.transaction.support.TransactionSynchronizationManager.clear();
+            }
+        });
+        verify(roleMapper, org.mockito.Mockito.times(3)).insertOrUpdate(origin);
+    }
+
+    @Test
+    void convertsPostArrayToCanonicalCsvAndBackWithoutReusingOrganizations() {
+        RoleConvert convert = org.mapstruct.factory.Mappers.getMapper(RoleConvert.class);
+        RoleAoeBo bo = roleBo("0006");
+        bo.setDataPostIds(List.of(2113856614139469826L, 11L));
+        RoleEntity entity = convert.fromBo(bo);
+        assertEquals("11,2113856614139469826", entity.getDataPostIds());
+        assertEquals(bo.getDataPostIds().stream().sorted().toList(), convert.toVo(entity).getDataPostIds());
+        assertEquals(bo.getDataPostIds().stream().sorted().toList(), convert.toListItemVo(entity).getDataPostIds());
+        entity.setDataPostIds("+11");
+        assertEquals(List.of(), convert.toVo(entity).getDataPostIds());
     }
 
     @Test

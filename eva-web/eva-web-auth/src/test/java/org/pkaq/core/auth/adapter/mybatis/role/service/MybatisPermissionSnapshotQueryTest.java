@@ -28,7 +28,8 @@ class MybatisPermissionSnapshotQueryTest {
         role.setDataOrgIds("1,2");
         when(mapper.selectByUserId(7L)).thenReturn(List.of(role));
 
-        var snapshot = new MybatisPermissionSnapshotQuery(mapper).findRoles(7L).getFirst();
+        var snapshot = new MybatisPermissionSnapshotQuery(mapper,
+                mock(MybatisPostEligibilityQuery.class)).findRoles(7L).getFirst();
 
         assertEquals(9L, snapshot.getId());
         assertEquals("ROLE_ADMIN", snapshot.getCode());

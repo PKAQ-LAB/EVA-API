@@ -78,7 +78,8 @@ class WriteProtectionServiceTest {
         TableInfoHelper.initTableInfo(new MapperBuilderAssistant(configuration, ""), TenantPackageEntity.class);
         this.organizationService = new OrganizationService(this.organizationConvert, this.userMapper);
         ReflectionTestUtils.setField(this.organizationService, "mapper", this.organizationMapper);
-        this.postService = new PostService(this.postConvert, this.postUserMapper);
+        this.postService = new PostService(this.postConvert, this.postUserMapper,
+                org.mockito.Mockito.mock(org.pkaq.sys.user.mapper.UserMapper.class));
         ReflectionTestUtils.setField(this.postService, "mapper", this.postMapper);
         this.tenantPackageService = new TenantPackageService(this.tenantPackageMapper,
                 this.tenantPackageResourceMapper, this.roleResourceMapper,

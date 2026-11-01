@@ -2,7 +2,7 @@ package org.pkaq.config;
 
 import com.baomidou.mybatisplus.core.handlers.CompositeEnumTypeHandler;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.inner.DataPermissionInterceptor;
+import org.pkaq.core.mybatis.permission.PostScopeDataPermissionInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +37,7 @@ public class MybatisPlusConfig {
         CompositeEnumTypeHandler.setDefaultEnumTypeHandler(UniversalEnumTypeHandler.class);
         // 数据权限必须位于分页插件之前，保证总数查询和数据查询采用相同条件。
         if (evaConfig.getDataPermission().isEnable()) {
-            interceptor.addInnerInterceptor(new DataPermissionInterceptor(
+            interceptor.addInnerInterceptor(new PostScopeDataPermissionInterceptor(
                     new MybatisPlusDataPermissionHandler(evaConfig)));
         }
 

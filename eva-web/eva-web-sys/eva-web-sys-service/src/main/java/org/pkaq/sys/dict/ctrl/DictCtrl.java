@@ -55,6 +55,7 @@ public class DictCtrl extends Ctrl {
      *
      * @return 字典列表
      */
+    @org.pkaq.core.mybatis.permission.PostScopeRead
     @GetMapping("/list")
     @Operation(summary = "获取字典列表")
     public Response<List<DictViewVo>> listDict() {
@@ -84,6 +85,7 @@ public class DictCtrl extends Ctrl {
      * @param id 字典 ID
      * @return 字典详情
      */
+    @org.pkaq.core.mybatis.permission.PostScopeRead
     @GetMapping("/get/{id}")
     @Operation(summary = "根据 ID 获取字典")
     public Response<DictViewVo> getDict(@Parameter(name = "id", description = "字典 ID")
@@ -103,6 +105,7 @@ public class DictCtrl extends Ctrl {
      * @param code 字典编码
      * @return 字典详情
      */
+    @org.pkaq.core.mybatis.permission.PostScopeRead
     @GetMapping("/get/type/{code}")
     @Operation(summary = "根据编码获取字典")
     public Response<DictViewVo> getDictByCode(@Parameter(name = "code", description = "字典编码")

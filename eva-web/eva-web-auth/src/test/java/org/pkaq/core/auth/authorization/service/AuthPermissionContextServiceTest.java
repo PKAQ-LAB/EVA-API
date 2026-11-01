@@ -74,4 +74,31 @@ class AuthPermissionContextServiceTest {
         role.setDataOrgIds(organizations);
         return role;
     }
+
+    @Test
+    void rebuildsPostEligibilityEveryRequestAndFailsClosedWithoutChangingOtherRoles() {
+        EvaConfig config = new EvaConfig();
+        config.getDataPermission().setEnable(true);
+        IPermissionSnapshotQuery permissions = mock(IPermissionSnapshotQuery.class);
+        RoleSnapshot post = roleWithScope(null);
+        post.setDataScope("0006");
+        post.setDeleted(0L);
+        RoleSnapshot self = roleWithScope(null);
+        self.setId(2L);
+        self.setDataScope("0007");
+        when(permissions.findRoles(7L)).thenReturn(List.of(post, self));
+        when(permissions.findEligiblePostScopes(7L)).thenReturn(java.util.Map.of(1L, List.of(11L, 12L)))
+                .thenReturn(java.util.Map.of()).thenThrow(new IllegalStateException("合成来源失败"));
+        var service = new AuthPermissionContextService(config, permissions,
+                mock(ITenantAuthRouter.class), mock(IAccountProfileQuery.class));
+        var first = service.buildUser(7L, 0L, "合成账号", new AccountSnapshot());
+        assertTrue(first.getDataScopes().getFirst().isPostEligible());
+        assertEquals(List.of(11L, 12L), first.getDataScopes().getFirst().getPostIds());
+        assertTrue(!service.buildUser(7L, 0L, "合成账号", new AccountSnapshot())
+                .getDataScopes().getFirst().isPostEligible());
+        var failed = service.buildUser(7L, 0L, "合成账号", new AccountSnapshot());
+        assertTrue(!failed.getDataScopes().getFirst().isPostEligible());
+        assertEquals("0007", failed.getDataScopes().get(1).getCode());
+        org.mockito.Mockito.verify(permissions, org.mockito.Mockito.times(3)).findEligiblePostScopes(7L);
+    }
 }

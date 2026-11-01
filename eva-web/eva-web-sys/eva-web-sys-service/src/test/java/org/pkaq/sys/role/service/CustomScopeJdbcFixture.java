@@ -118,7 +118,8 @@ final class CustomScopeJdbcFixture {
         unproxied = new RoleService(organizationMapper, roleResourceMapper, roleUserMapper,
                 mock(ModuleMapper.class), userMapper, mock(TenantResourceMapper.class), mock(UserConvert.class),
                 Mappers.getMapper(RoleConvert.class), mock(ModuleConvert.class), mock(ApplicationEventPublisher.class),
-                new CoreSchemaExecutor(jdbc, config), config, jdbc);
+                new CoreSchemaExecutor(jdbc, config), config,
+                mock(org.pkaq.sys.post.mapper.PostMapper.class), jdbc);
         ReflectionTestUtils.setField(unproxied, "mapper", roleMapper);
         TransactionInterceptor transactions = new TransactionInterceptor();
         transactions.setTransactionManager(new DataSourceTransactionManager(dataSource));

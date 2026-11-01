@@ -95,10 +95,33 @@ public class AuthPermissionContextService {
         boolean platformAdmin = evaConfig.isPlatformMode() && 0L == tenantId
                 && rolesMap.values().stream()
                 .anyMatch(role -> CommonConstant.ADMIN_ROLE_NAME.equals(role.getCode()));
+        List<RoleSnapshot> scopedRoles = roles.stream().filter(Objects::nonNull).toList();
         List<ThreadUser.DataScope> dataScopes = evaConfig.getDataPermission().isEnable()
-                ? roles.stream().filter(Objects::nonNull)
+                ? scopedRoles.stream()
                 .map(role -> new ThreadUser.DataScope(role.getDataScope(), parseOrgIds(role.getDataOrgIds()))).toList()
                 : List.of();
+        if (evaConfig.getDataPermission().isEnable()
+                && roles.stream().anyMatch(role -> role != null && "0006".equals(role.getDataScope()))) {
+            Map<Long, List<Long>> eligible;
+            try {
+                eligible = evaConfig.getTenant().isSchemaMode()
+                        ? tenantRouter.execute(tenantId, () -> permissionQuery.findEligiblePostScopes(userId))
+                        : permissionQuery.findEligiblePostScopes(userId);
+            } catch (RuntimeException exception) {
+                // 资格来源不可验证时只撤去0006贡献，不记录配置或回退其它来源。
+                eligible = Map.of();
+            }
+            for (int index = 0; index < scopedRoles.size(); index++) {
+                RoleSnapshot role = scopedRoles.get(index);
+                if (role != null && "0006".equals(role.getDataScope())) {
+                    ThreadUser.DataScope scope = dataScopes.get(index);
+                    List<Long> posts = eligible == null ? null : eligible.get(role.getId());
+                    scope.setPostIds(posts == null ? List.of() : posts);
+                    scope.setPostEligible(role.getDeleted() != null && role.getDeleted() == 0L
+                            && posts != null && !posts.isEmpty());
+                }
+            }
+        }
         return new ThreadUser().setUserId(userId).setTenantId(tenantId).setAccount(account)
                 .setName(null != profile && StrUtils.isNotBlank(profile.getName()) ? profile.getName()
                         : StrUtils.isNotBlank(authState.getNickName()) ? authState.getNickName() : account)

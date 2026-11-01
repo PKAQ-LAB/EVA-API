@@ -56,6 +56,7 @@ public class ModuleCtrl extends Ctrl {
         return this.service.checkUnique(bo) ? this.failure() : this.success();
     }
 
+    @org.pkaq.core.mybatis.permission.PostScopeRead
     @GetMapping("/get/{id}")
     @Operation(summary = "根据ID获得模块")
     @BizLog(operateType = BizLogCodes.QUERY, description = "查询了模块信息[{0}]", args = {"param:0"})
@@ -64,6 +65,7 @@ public class ModuleCtrl extends Ctrl {
         return this.success(this.service.getModule(id));
     }
 
+    @org.pkaq.core.mybatis.permission.PostScopeRead
     @GetMapping({"/list"})
     @Operation(summary = "获取模块树 ")
     @BizLog(operateType = BizLogCodes.QUERY, description = "查询了模块树[{0}]", args = {"param:0"})

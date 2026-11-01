@@ -12,6 +12,9 @@ import org.pkaq.core.mvc.vo.StdVo;
 @Data
 @Schema(title = "角色詳情VO")
 public class RoleDetailVo extends StdVo {
+    @Schema(description = "指定岗位数据范围")
+    private java.util.List<Long> dataPostIds;
+
     @Schema(description = "编码")
     private String code;
 

@@ -21,6 +21,7 @@ import org.pkaq.sys.post.entity.PostEntity;
 import org.pkaq.sys.post.entity.PostUserEntity;
 import org.pkaq.sys.post.mapper.PostMapper;
 import org.pkaq.sys.post.mapper.PostUserMapper;
+import org.pkaq.sys.user.mapper.UserMapper;
 import org.pkaq.sys.post.vo.PostDetailVo;
 import org.pkaq.sys.post.vo.PostListVo;
 import org.springframework.stereotype.Service;
@@ -48,6 +49,7 @@ public class PostService extends StdService<PostMapper, PostEntity> {
 
     private final PostConvert postConvert;
     private final PostUserMapper postUserMapper;
+    private final UserMapper userMapper;
 
     /**
      * 校验同级岗位 code 或名称是否重复。
@@ -185,9 +187,13 @@ public class PostService extends StdService<PostMapper, PostEntity> {
                 .filter(pid -> pid != null && pid != ROOT_PID)
                 .collect(Collectors.toSet());
 
+        Set<Long> affectedUsers = this.postUserMapper.selectList(new LambdaQueryWrapper<PostUserEntity>()
+                        .select(PostUserEntity::getUserId).in(PostUserEntity::getPostId, ids)).stream()
+                .map(PostUserEntity::getUserId).filter(Objects::nonNull).collect(Collectors.toSet());
         this.mapper.delete(new LambdaQueryWrapper<PostEntity>().in(PostEntity::getId, ids));
         this.postUserMapper.delete(new LambdaQueryWrapper<PostUserEntity>().in(PostUserEntity::getPostId, ids));
         refreshParentLeaf(originPids);
+        affectedUsers.forEach(this.userMapper::incrementPermVer);
     }
 
     /**
@@ -236,7 +242,12 @@ public class PostService extends StdService<PostMapper, PostEntity> {
                     continue;
                 }
             }
+            List<Long> affectedUsers = this.postUserMapper.selectCascadeUserIds(id, self.getPath(), target.getCode());
             this.mapper.cascadeFrozen(id, self.getPath(), target.getCode());
+            if (affectedUsers != null) {
+                affectedUsers.stream().filter(Objects::nonNull).distinct()
+                        .forEach(this.userMapper::incrementPermVer);
+            }
         }
     }
 

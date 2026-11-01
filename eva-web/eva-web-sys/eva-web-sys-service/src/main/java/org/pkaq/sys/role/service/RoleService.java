@@ -13,6 +13,8 @@ import org.pkaq.core.mvc.bo.IdCodeBo;
 import org.pkaq.core.mvc.bo.SingleArray;
 import org.pkaq.core.mvc.vo.PageVo;
 import org.pkaq.core.mybatis.mvc.service.StdService;
+import org.pkaq.sys.post.entity.PostEntity;
+import org.pkaq.sys.post.mapper.PostMapper;
 import org.pkaq.core.mybatis.tenant.CoreSchemaExecutor;
 import org.pkaq.core.mybatis.tenant.TenantSchema;
 import org.pkaq.core.properties.EvaConfig;
@@ -98,6 +100,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
     private final CoreSchemaExecutor coreSchemaExecutor;
 
     private final EvaConfig evaConfig;
+    private final PostMapper postMapper;
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -183,6 +186,7 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
             return;
         }
         RoleEntity origin = bo.getId() != null && bo.getId() != 0L ? ensureRoleEditable(bo.getId()) : null;
+        boolean scopeOmitted = bo.getDataScope() == null;
         validateDataScope(bo, origin);
         IdCodeBo codeCheck = new IdCodeBo();
         codeCheck.setId(bo.getId());
@@ -195,6 +199,9 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
         if (origin != null) {
             // 普通编辑保留可信原状态，冻结切换仍由专用操作处理。
             entity.setFrozen(origin.getFrozen());
+            if (scopeOmitted) {
+                entity.setDataPostIds(origin.getDataPostIds());
+            }
         }
         this.mapper.insertOrUpdate(entity);
         if (bo.getId() != null && bo.getId() != 0L) {
@@ -471,12 +478,16 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
             // 未提交范围表示未修改，连同原组织关联保留，不能通过默认值扩大权限。
             bo.setDataScope(origin.getDataScope());
             bo.setDataOrgIds(origin.getDataOrgIds());
-            return;
+            bo.setDataPostIds(storedPostIds(origin.getDataPostIds()));
+            if (!"0006".equals(origin.getDataScope())) {
+                return;
+            }
         }
         DataPermissionEnumm scope = DataPermissionEnumm.getByCode(bo.getDataScope());
-        if (scope == null || Set.of("0004", "0005", "0006").contains(bo.getDataScope())) {
+        if (scope == null || Set.of("0004", "0005").contains(bo.getDataScope())) {
             CommonCodes.PARAM_ERROR.newException();
         }
+        validatePostScope(bo, origin);
         if (origin != null && "0003".equals(bo.getDataScope())
                 && bo.getDataScope().equals(origin.getDataScope()) && bo.getDataOrgIds() == null) {
             bo.setDataOrgIds(origin.getDataOrgIds());
@@ -523,6 +534,85 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
                 CommonCodes.PARAM_ERROR.newException();
             }
         }
+    }
+
+    /** 历史岗位配置整体解析，不过滤非法片段后继续授权。 */
+    private List<Long> storedPostIds(String csv) {
+        if (csv == null || csv.isBlank()) {
+            return List.of();
+        }
+        try {
+            if (!csv.matches("[1-9][0-9]*(,[1-9][0-9]*)*")) {
+                CommonCodes.PARAM_ERROR.newException();
+            }
+            return java.util.Arrays.stream(csv.split(",")).map(Long::valueOf).toList();
+        } catch (NumberFormatException exception) {
+            CommonCodes.PARAM_ERROR.newException();
+            return List.of();
+        }
+    }
+
+    /** 所选岗位全量验证通过后才允许角色写入，不把坏ID静默过滤。 */
+    private void validatePostScope(RoleAoeBo bo, RoleEntity origin) {
+        if (!"0006".equals(bo.getDataScope())) {
+            if (bo.getDataPostIds() != null && !bo.getDataPostIds().isEmpty()) {
+                CommonCodes.PARAM_ERROR.newException();
+            }
+            bo.setDataPostIds(List.of());
+            return;
+        }
+        if (hasText(bo.getDataOrgIds())) {
+            CommonCodes.PARAM_ERROR.newException();
+        }
+        bo.setDataOrgIds("");
+        if (bo.getDataPostIds() == null && origin != null && "0006".equals(origin.getDataScope())) {
+            bo.setDataPostIds(storedPostIds(origin.getDataPostIds()));
+        }
+        List<Long> ids = bo.getDataPostIds();
+        if (ids == null || ids.isEmpty() || ids.stream().anyMatch(id -> id == null || id <= 0L)
+                || new HashSet<>(ids).size() != ids.size()) {
+            CommonCodes.PARAM_ERROR.newException();
+        }
+        String schema = this.evaConfig.getTenant().isSchemaMode()
+                ? TenantContext.schemaName() : this.evaConfig.getTenant().getStandaloneSchema();
+        ThreadUser user = ThreadUserHelper.getCurrentUserOrNull();
+        if (user == null || user.getUserId() <= 0L || schema == null
+                || !schema.matches("[a-z_][a-z0-9_]{0,62}")
+                || !TransactionSynchronizationManager.isActualTransactionActive()
+                || this.jdbcTemplate.getDataSource() == null
+                || !TransactionSynchronizationManager.hasResource(this.jdbcTemplate.getDataSource())) {
+            CommonCodes.PERMISSION_DENY.newException();
+        }
+        if (this.evaConfig.getTenant().isSchemaMode()) {
+            if (user.getTenantId() <= 0L || !Long.valueOf(user.getTenantId()).equals(TenantContext.tenantId())) {
+                CommonCodes.PERMISSION_DENY.newException();
+            }
+        } else if (!this.evaConfig.isStandaloneMode() || this.evaConfig.getTenant().isEnable()
+                || user.getTenantId() != 0L) {
+            CommonCodes.PERMISSION_DENY.newException();
+        }
+        // 同一已绑定事务核真实表来源，禁止私有缺表时search_path回落。
+        Map<String, Object> source = this.jdbcTemplate.queryForMap("""
+                SELECT current_schema() AS source,
+                    (SELECT n.nspname FROM pg_catalog.pg_class c
+                     JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+                     WHERE c.oid=pg_catalog.to_regclass('sys_post')) AS post_source
+                """);
+        if (!schema.equals(source.get("source")) || !schema.equals(source.get("post_source"))) {
+            CommonCodes.PERMISSION_DENY.newException();
+        }
+        LambdaQueryWrapper<PostEntity> query = new LambdaQueryWrapper<PostEntity>()
+                .select(PostEntity::getId).in(PostEntity::getId, ids)
+                .in(PostEntity::getFrozen, FrozenEnumm.UN_FROZEN, FrozenEnumm.READ_ONLY);
+        if (!this.evaConfig.getTenant().isSchemaMode()) {
+            query.and(owner -> owner.isNull(PostEntity::getTenantId).or().eq(PostEntity::getTenantId, 0L));
+        }
+        Set<Long> actual = this.postMapper.selectList(query).stream().map(PostEntity::getId)
+                .collect(Collectors.toSet());
+        if (!actual.equals(new HashSet<>(ids))) {
+            CommonCodes.PARAM_ERROR.newException();
+        }
+        bo.setDataPostIds(ids.stream().sorted().toList());
     }
 
     /** 仅在同一可信事务和唯一组织表来源已核实后兼容单体历史NULL归属。 */

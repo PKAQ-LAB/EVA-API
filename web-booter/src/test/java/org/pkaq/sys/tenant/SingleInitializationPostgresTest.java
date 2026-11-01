@@ -78,7 +78,7 @@ class SingleInitializationPostgresTest {
                     + "OR code LIKE 'EVA_QA_%' OR code IN ('SYSTEM_DICT','SYSTEM','BUSINESS')", Integer.class));
             assertEquals(0, database.queryForObject("SELECT count(*) FROM eva.sys_dict_item i "
                     + "LEFT JOIN eva.sys_dict d ON d.id=i.main_id WHERE d.id IS NULL", Integer.class));
-            assertEquals(List.of("0000", "0001", "0002", "0003", "0007"), database.queryForList(
+            assertEquals(List.of("0000", "0001", "0002", "0003", "0006", "0007"), database.queryForList(
                     "SELECT d_code FROM eva.sys_dict_item WHERE main_id=1000000000000004001 ORDER BY d_code",
                     String.class));
             assertEquals("/log/login", database.queryForObject(

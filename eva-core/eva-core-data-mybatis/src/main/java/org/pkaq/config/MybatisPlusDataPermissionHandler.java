@@ -10,6 +10,7 @@ import org.pkaq.core.annotation.Ignore;
 import org.pkaq.core.mybatis.enums.DataPermissionEnumm;
 import org.pkaq.core.mybatis.log.LogQueryAccess;
 import org.pkaq.core.mybatis.log.LoginLogQueryScope;
+import org.pkaq.core.mybatis.permission.PostReadScope;
 import org.pkaq.core.mybatis.log.OpenApiAuditQueryScope;
 import org.pkaq.core.properties.DataPermission;
 import org.pkaq.core.properties.EvaConfig;
@@ -85,7 +86,7 @@ public class MybatisPlusDataPermissionHandler implements MultiDataPermissionHand
         }
 
         try {
-            return CCJSqlParserUtil.parseCondExpression(buildPermissionSql(table, currentUser));
+            return CCJSqlParserUtil.parseCondExpression(buildPermissionSql(table, currentUser, mappedStatementId));
         } catch (Exception exception) {
             log.error("数据权限 SQL 生成失败，statementId={}, table={}", mappedStatementId, table, exception);
             try {
@@ -96,7 +97,7 @@ public class MybatisPlusDataPermissionHandler implements MultiDataPermissionHand
         }
     }
 
-    private String buildPermissionSql(Table table, ThreadUser currentUser) {
+    private String buildPermissionSql(Table table, ThreadUser currentUser, String statementId) {
         List<ThreadUser.DataScope> scopes = currentUser.getDataScopes();
         if (scopes == null || scopes.isEmpty()) {
             return DENY_ALL_SQL;
@@ -121,6 +122,12 @@ public class MybatisPlusDataPermissionHandler implements MultiDataPermissionHand
                 continue;
             }
             switch (permission) {
+                case POST_LIMIT -> {
+                    if (scope.isPostEligible() && scope.getPostIds() != null && !scope.getPostIds().isEmpty()
+                            && PostReadScope.allows(statementId)) {
+                        conditions.add("1 = 1");
+                    }
+                }
                 case CREATOR_LIMIT -> conditions.add(ownerCondition(createId, modifyId, userId));
                 case DEPT_ONLY_LIMIT -> addDepartmentCondition(conditions, createId, modifyId, deptId);
                 case DEPT_AND_CHILDREN_LIMIT -> addDepartmentTreeCondition(
