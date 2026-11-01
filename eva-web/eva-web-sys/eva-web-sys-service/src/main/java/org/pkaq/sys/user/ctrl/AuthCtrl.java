@@ -10,11 +10,17 @@ import org.pkaq.core.mvc.vo.AuthBootstrapResponse;
 import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.sys.dict.service.DictService;
+import org.pkaq.sys.dict.service.DictSnapshot;
+import org.pkaq.sys.dict.service.DictSourceException;
+import org.pkaq.sys.SysCodes;
 import org.pkaq.sys.module.service.AuthorizedMenuService;
 import org.pkaq.sys.user.service.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 /**
  * @author PKAQ
@@ -44,7 +50,17 @@ public class AuthCtrl extends Ctrl {
 
     @GetMapping("/fetchDicts")
     @Operation(summary = "获取字典信息")
-    public Response<Object> fetchDicts() {
-        return success(dictService.fetchDicts());
+    public ResponseEntity<Response<Object>> fetchDicts() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setCacheControl("private, no-store");
+        headers.setVary(java.util.List.of(HttpHeaders.AUTHORIZATION, HttpHeaders.COOKIE));
+        try {
+            DictSnapshot snapshot = dictService.snapshot();
+            headers.setETag(snapshot.etag());
+            // 正常200由Spring在统一响应Advice之前处理条件GET，命中时输出无体304。
+            return new ResponseEntity<>(success(snapshot.data()), headers, HttpStatus.OK);
+        } catch (DictSourceException exception) {
+            return new ResponseEntity<>(failure(SysCodes.DICT_SNAPSHOT_INVALID), headers, HttpStatus.CONFLICT);
+        }
     }
 }

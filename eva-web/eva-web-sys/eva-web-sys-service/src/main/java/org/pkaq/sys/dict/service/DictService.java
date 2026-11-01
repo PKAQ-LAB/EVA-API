@@ -25,6 +25,8 @@ import org.pkaq.sys.dict.mapper.DictMapper;
 import org.pkaq.sys.dict.vo.DictViewVo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
@@ -98,6 +100,13 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
         inventory(null).forEach((owner, dicts) -> dicts.forEach(dict ->
                 result.put(dict.getCode(), cachedValues(owner, dict))));
         return result;
+    }
+
+    /** 在独立只读一致性事务中读取完整投影，避免旧缓存回填影响条件同步。 */
+    @TenantSchema
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRES_NEW)
+    public DictSnapshot snapshot() {
+        return businessAccess.snapshotProjection();
     }
 
     /**
@@ -615,7 +624,7 @@ public class DictService extends StdService<DictMapper, DictEntity> implements I
             List<DictEntity> dicts = businessAccess.completeDicts(owner, code);
             for (DictEntity dict : dicts) {
                 if (StrUtils.isBlank(dict.getCode()) || !codes.add(dict.getCode())) {
-                    throw new IllegalStateException("字典编码来源冲突");
+                    throw new DictSourceException();
                 }
             }
             result.put(owner, dicts.stream().filter(dict -> dict.getFrozen() != FrozenEnumm.FROZEN).toList());

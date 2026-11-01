@@ -60,12 +60,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.doAnswer;
 
 /**
  * 单一隔离PG内验证C新增来源、显式列Mapper、缓存和事务链；不连接开发库。
@@ -184,8 +187,124 @@ public class DictSchemaIsolationPostgresTest {
         return context;
     }
 
+    @Test
+    void conditionalSnapshotReadsOneReadonlyDatabaseVersionWithoutSharedCache() throws Exception {
+        config.setMode("saas");
+        config.getTenant().setEnable(true);
+        config.getTenant().setMode(TenantProperties.MODE_SCHEMA);
+        config.getTenant().setCoreSchema("public");
+        config.getDataPermission().setEnable(false);
+        try (EmbeddedPostgres postgres = EmbeddedPostgres.builder()
+                .setServerConfig("listen_addresses", "127.0.0.1").start()) {
+            var statementCount = new java.util.concurrent.atomic.AtomicInteger();
+            DataSource dataSource = new org.springframework.jdbc.datasource.DelegatingDataSource(
+                    postgres.getPostgresDatabase()) {
+                @Override
+                public java.sql.Connection getConnection() throws java.sql.SQLException {
+                    java.sql.Connection actual = super.getConnection();
+                    return (java.sql.Connection) java.lang.reflect.Proxy.newProxyInstance(
+                            getClass().getClassLoader(), new Class<?>[]{java.sql.Connection.class},
+                            (proxy, method, args) -> {
+                                if (method.getName().equals("prepareStatement")
+                                        || method.getName().equals("createStatement")) {
+                                    statementCount.incrementAndGet();
+                                }
+                                try {
+                                    return method.invoke(actual, args);
+                                } catch (java.lang.reflect.InvocationTargetException exception) {
+                                    throw exception.getCause();
+                                }
+                            });
+                }
+            };
+            jdbc = spy(new JdbcTemplate(dataSource));
+            new TransactionTemplate(new DataSourceTransactionManager(dataSource)).executeWithoutResult(status -> {
+                try {
+                    initialize();
+                } catch (Exception exception) {
+                    throw new IllegalStateException(exception);
+                }
+            });
+            try (var context = context(dataSource)) {
+                service = context.getBean(DictService.class);
+                cache = context.getBean(DictCacheHelper.class);
+                var concurrentWrite = new java.util.concurrent.atomic.AtomicBoolean(false);
+                doAnswer(call -> {
+                    String schema = (String) call.callRealMethod();
+                    assertEquals("on", jdbc.queryForObject("SHOW transaction_read_only", String.class));
+                    assertEquals("repeatable read", jdbc.queryForObject("SHOW transaction_isolation", String.class));
+                    if (concurrentWrite.compareAndSet(true, false)) {
+                        try (var writer = java.util.concurrent.Executors.newSingleThreadExecutor()) {
+                            writer.submit(() -> new JdbcTemplate(dataSource).update(
+                                    "UPDATE public.SYS_DICT_ITEM SET D_VALUE='core-next' WHERE ID=1000")).get();
+                        }
+                    }
+                    return schema;
+                }).when(jdbc).queryForObject("SELECT current_schema()", String.class);
+                ThreadUserHelper.runWithUser(actor(101, "0000"), () -> {
+                    statementCount.set(0);
+                    DictSnapshot initial = service.snapshot();
+                    int baselineStatements = statementCount.get();
+                    assertTrue(baselineStatements <= 60);
+                    for (long dictId = 300; dictId < 310; dictId++) {
+                        jdbc.update("INSERT INTO tenant_one.SYS_DICT(ID,CODE,NAME,TYPE,CATEGORY)"
+                                + " VALUES(?,?,'count','x','BUSINESS')", dictId, "COUNT_" + dictId);
+                        jdbc.update("INSERT INTO tenant_one.SYS_DICT_ITEM(ID,MAIN_ID,D_CODE,D_VALUE)"
+                                + " VALUES(?,?,'k','v')", dictId + 2000, dictId);
+                    }
+                    statementCount.set(0);
+                    assertEquals(12, service.snapshot().data().size());
+                    assertEquals(baselineStatements, statementCount.get());
+                    System.out.println("SNAPSHOT_JDBC_STATEMENTS=" + baselineStatements + "; EXTRA_DICTIONARIES=10");
+                    jdbc.update("DELETE FROM tenant_one.SYS_DICT_ITEM WHERE MAIN_ID BETWEEN 300 AND 309");
+                    jdbc.update("DELETE FROM tenant_one.SYS_DICT WHERE ID BETWEEN 300 AND 309");
+                    assertEquals("one", initial.data().get("BUS_CODE").get("k"));
+                    assertEquals(initial, service.snapshot());
+                    assertThrows(UnsupportedOperationException.class, () -> initial.data().clear());
+                    cache.cachePut(new Owner("tenant_one", "BUSINESS"), "BUS_CODE", Map.of("k", "stale"));
+                    assertEquals(initial, service.snapshot());
+                    concurrentWrite.set(true);
+                    assertEquals(initial, service.snapshot());
+                    DictSnapshot changed = service.snapshot();
+                    assertEquals("core-next", changed.data().get("SYS_CODE").get("k"));
+                    assertNotEquals(initial.etag(), changed.etag());
+                    jdbc.update("INSERT INTO tenant_one.SYS_DICT_ITEM"
+                            + "(ID,MAIN_ID,D_CODE,D_VALUE,SORT) VALUES(1001,100,'second','二',2)");
+                    DictSnapshot ordered = service.snapshot();
+                    jdbc.update("UPDATE tenant_one.SYS_DICT_ITEM SET SORT=-1 WHERE ID=1001");
+                    assertNotEquals(ordered.etag(), service.snapshot().etag());
+                    jdbc.update("UPDATE tenant_one.SYS_DICT_ITEM SET FROZEN=1 WHERE ID=1001");
+                    assertEquals(changed.etag(), service.snapshot().etag());
+                    jdbc.update("INSERT INTO tenant_one.SYS_DICT"
+                            + "(ID,CODE,NAME,TYPE,CATEGORY) VALUES(200,'SYS_CODE','conflict','x','BUSINESS')");
+                    assertThrows(DictSourceException.class, service::snapshot);
+                    jdbc.update("DELETE FROM tenant_one.SYS_DICT WHERE ID=200");
+                    jdbc.update("ALTER TABLE tenant_one.SYS_DICT_ITEM RENAME COLUMN D_VALUE TO hidden_value");
+                    assertThrows(DictSourceException.class, service::snapshot);
+                    jdbc.update("ALTER TABLE tenant_one.SYS_DICT_ITEM RENAME COLUMN hidden_value TO D_VALUE");
+                    jdbc.update("ALTER TABLE tenant_one.SYS_DICT_ITEM RENAME TO hidden_items");
+                    assertThrows(DictSourceException.class, service::snapshot);
+                    jdbc.update("ALTER TABLE tenant_one.hidden_items RENAME TO SYS_DICT_ITEM");
+                    ThreadUserHelper.runWithUser(actor(102, "0000"), () -> {
+                        assertEquals("two", service.snapshot().data().get("BUS_CODE").get("k"));
+                        assertNotEquals(changed.etag(), service.snapshot().etag());
+                    });
+                    ThreadUserHelper.runWithUser(actor(101, "0000").setUserId(8L), () ->
+                            assertNotEquals(changed.etag(), service.snapshot().etag()));
+                    ThreadUserHelper.runWithUser(actor(101, "0000").setUserId(999L), () ->
+                            assertThrows(RuntimeException.class, service::snapshot));
+                    assertEquals("stale", cache.get(new Owner("tenant_one", "BUSINESS"), "BUS_CODE").get("k"));
+                });
+                assertThrows(RuntimeException.class, service::snapshot);
+                assertEquals(1, nativeCache().size());
+            } finally {
+                TenantContext.clear();
+            }
+        }
+    }
+
     private void initialize() throws Exception {
-        String template = Files.readString(Path.of(System.getProperty("eva.test.resources"))
+        String template = Files.readString(Path.of(System.getProperty("eva.test.resources", "src/main/resources"))
                 .resolve("db/tenant-migration/V1__TENANT_SCHEMA_BASE.sql"));
         for (String schema : List.of("public", "tenant_one", "tenant_two")) {
             jdbc.execute("CREATE SCHEMA IF NOT EXISTS " + schema);

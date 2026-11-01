@@ -20,6 +20,7 @@ import org.springframework.util.AntPathMatcher;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -40,6 +41,64 @@ class DictBusinessAccess {
     private final CoreSchemaExecutor core;
     private final TenantSchemaResolver resolver;
     private final AntPathMatcher matcher = new AntPathMatcher();
+
+    /** 同一事务内完成一次来源核验与批量投影，不向其它读取路径提供免校验入口。 */
+    DictSnapshot snapshotProjection() {
+        ThreadUser user = requireSource();
+        String local = localSchema(user);
+        String system = config.getTenant().isSchemaMode() ? config.getTenant().getCoreSchema() : local;
+        List<Owner> owners = List.of(new Owner(system, SYSTEM), new Owner(local, BUSINESS));
+        var checkedSchemas = new HashSet<String>();
+        var codes = new HashSet<String>();
+        Map<String, LinkedHashMap<String, String>> values = new LinkedHashMap<>();
+        for (Owner owner : owners) {
+            inSource(owner, () -> {
+                if (checkedSchemas.add(owner.schema())) {
+                    requireDictionaryStructure(owner.schema());
+                    Boolean incomplete = jdbc.queryForObject("""
+                            SELECT EXISTS (SELECT 1 FROM SYS_DICT WHERE DELETED = 0
+                              AND (CATEGORY IS NULL OR CATEGORY NOT IN ('SYSTEM', 'BUSINESS')))
+                            """, Boolean.class);
+                    if (!Boolean.FALSE.equals(incomplete)) {
+                        throw new DictSourceException();
+                    }
+                }
+                Map<Long, LinkedHashMap<String, String>> buckets = new LinkedHashMap<>();
+                jdbc.query("""
+                        SELECT ID, CODE, FROZEN FROM SYS_DICT WHERE DELETED = 0 AND CATEGORY = ? ORDER BY SORT, ID
+                        """, row -> {
+                            String code = row.getString("code");
+                            // 冻结主项亦参与编码冲突核验，空明细仍形成有效空字典。
+                            if (code == null || code.isBlank() || !codes.add(code)) {
+                                throw new DictSourceException();
+                            }
+                            if (row.getInt("frozen") != 1) {
+                                LinkedHashMap<String, String> items = new LinkedHashMap<>();
+                                buckets.put(row.getLong("id"), items);
+                                values.put(code, items);
+                            }
+                        }, owner.category());
+                jdbc.query("""
+                        SELECT item.MAIN_ID, item.D_CODE, item.D_VALUE
+                        FROM SYS_DICT_ITEM item JOIN SYS_DICT main ON main.ID = item.MAIN_ID
+                        WHERE main.DELETED = 0 AND main.CATEGORY = ? AND COALESCE(main.FROZEN, 0) <> 1
+                          AND item.DELETED = 0 AND item.FROZEN <> 1
+                        ORDER BY main.SORT, main.ID, item.SORT, item.ID
+                        """, row -> {
+                            Map<String, String> items = buckets.get(row.getLong("main_id"));
+                            String key = row.getString("d_code");
+                            String label = row.getString("d_value");
+                            if (items == null || key == null || key.isBlank() || label == null
+                                    || items.containsKey(key)) {
+                                throw new DictSourceException();
+                            }
+                            items.put(key, label);
+                        }, owner.category());
+                return null;
+            });
+        }
+        return DictSnapshot.create(user, owners, values);
+    }
 
     /** 普通有效主体可读标签；不得以维护资格代替有效主体核验。 */
     List<Owner> sources() {
@@ -97,10 +156,12 @@ class DictBusinessAccess {
                     SELECT D_CODE, D_VALUE FROM SYS_DICT_ITEM
                     WHERE MAIN_ID = ? AND DELETED = 0 AND FROZEN <> 1 ORDER BY SORT, ID
                     """, row -> {
-                        String previous = items.put(row.getString("d_code"), row.getString("d_value"));
-                        if (previous != null) {
-                            throw new IllegalStateException("字典明细编码冲突");
+                        String key = row.getString("d_code");
+                        String value = row.getString("d_value");
+                        if (key == null || key.isBlank() || value == null || items.containsKey(key)) {
+                            throw new DictSourceException();
                         }
+                        items.put(key, value);
                     }, id);
             return items;
         });
@@ -190,7 +251,7 @@ class DictBusinessAccess {
                           AND (CATEGORY IS NULL OR CATEGORY NOT IN ('SYSTEM', 'BUSINESS')))
                         """, Boolean.class);
                 if (!Boolean.FALSE.equals(incomplete)) {
-                    throw new IllegalStateException("字典分类前置未满足");
+                    throw new DictSourceException();
                 }
                 return null;
             });
@@ -274,25 +335,25 @@ class DictBusinessAccess {
                 return resolver.resolve(user.getTenantId());
             });
         } else {
-            throw new SecurityException("字典缺少可信运行模式或租户");
+            throw new DictSourceException();
         }
         if (schema == null || !schema.matches("[a-z_][a-z0-9_]{0,62}")) {
-            throw new SecurityException("字典来源非法");
+            throw new DictSourceException();
         }
         return schema;
     }
 
     private void requireTables(String schema, String... tables) {
         if (schema == null || !schema.matches("[a-z_][a-z0-9_]{0,62}")) {
-            throw new SecurityException("字典来源非法");
+            throw new DictSourceException();
         }
         for (String table : tables) {
             String namespace = jdbc.queryForObject("""
-                    SELECT n.nspname FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n
-                    ON n.oid = c.relnamespace WHERE c.oid = pg_catalog.to_regclass(?)
+                    SELECT (SELECT n.nspname FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n
+                    ON n.oid = c.relnamespace WHERE c.oid = pg_catalog.to_regclass(?))
                     """, String.class, table);
             if (!schema.equals(namespace)) {
-                throw new SecurityException("字典实际表来源不一致");
+                throw new DictSourceException();
             }
         }
     }
@@ -308,7 +369,7 @@ class DictBusinessAccess {
                     SELECT column_name FROM information_schema.columns WHERE table_schema = ? AND table_name = ?
                     """, String.class, schema, table);
             if (!columns.containsAll(expected)) {
-                throw new IllegalStateException("字典结构版本未就绪");
+                throw new DictSourceException();
             }
         }
         Boolean category = jdbc.queryForObject("""
@@ -326,7 +387,7 @@ class DictBusinessAccess {
                 .replaceAll("[\\s()]", "") : "";
         if (!Boolean.TRUE.equals(category)
                 || !"CHECKcategoryISNULLORcategory=ANYARRAY['SYSTEM','BUSINESS']".equals(definition)) {
-            throw new IllegalStateException("字典分类结构版本未就绪");
+            throw new DictSourceException();
         }
     }
 }

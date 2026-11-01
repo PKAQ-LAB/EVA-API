@@ -86,7 +86,8 @@ public class WebSecurityConfig {
                 "xsrf-token",
                 "content-type",
                 "X-Frame-Options",
-                "Authorization"));
+                "Authorization",
+                "ETag"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
