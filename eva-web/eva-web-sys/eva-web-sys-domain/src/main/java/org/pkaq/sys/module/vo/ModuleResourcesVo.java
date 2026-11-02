@@ -21,6 +21,9 @@ public class ModuleResourcesVo implements Entity {
     @Schema(description = "资源编码")
     private String code;
 
+    @Schema(description = "前端操作key")
+    private String actionKey;
+
     @Schema(description = "璧勬簮鎻忚堪")
     private String resourceDesc;
 

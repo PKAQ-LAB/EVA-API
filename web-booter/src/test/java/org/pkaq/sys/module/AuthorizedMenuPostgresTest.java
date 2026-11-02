@@ -64,7 +64,7 @@ class AuthorizedMenuPostgresTest {
                     assertEquals(1, menus.size());
                     ModuleMenuVo menu = menus.iterator().next();
                     assertEquals("/sys/organization", menu.getRouteUrl());
-                    assertEquals(List.of(11L), menu.getResources().stream().map(resource -> resource.getId()).toList());
+                    assertEquals(List.of("read"), menu.getResources());
                     assertTrue(fixture.capture.queries.getLast().contains("RESOURCE_ID"));
                     assertTrue(!fixture.capture.queries.getLast().toUpperCase().contains("CREATE_ID"));
                     assertEquals(AuthorizedMenuMapper.class.getName() + ".selectMenuRows",
@@ -116,8 +116,8 @@ class AuthorizedMenuPostgresTest {
             fixture.jdbc.update("INSERT INTO sys_tenant_resource VALUES(101,11),(102,12)");
             for (long tenantId : List.of(101L, 102L)) {
                 fixture.withUser(tenantId, "0007", () -> {
-                    assertEquals(List.of(tenantId == 101L ? 11L : 12L), fixture.service.fetchCurrentMenus()
-                            .iterator().next().getResources().stream().map(resource -> resource.getId()).toList());
+                    assertEquals(List.of(tenantId == 101L ? "read" : "update"), fixture.service.fetchCurrentMenus()
+                            .iterator().next().getResources());
                     assertEquals("public", fixture.jdbc.queryForObject("SELECT current_schema()", String.class));
                     assertEquals(null, TenantContext.tenantId());
                 });
@@ -216,15 +216,17 @@ class AuthorizedMenuPostgresTest {
                             isleaf BOOLEAN,code TEXT,icon TEXT,route_url TEXT,component_url TEXT,
                             deleted BIGINT,frozen INTEGER,tenant_id BIGINT,create_id BIGINT,modify_id BIGINT);
                         CREATE TABLE sys_module_resources(id BIGINT,main_id BIGINT,code TEXT,resource_desc TEXT,
-                            resource_url TEXT,resource_type TEXT,sort DOUBLE PRECISION,deleted BIGINT,tenant_id BIGINT);
+                            resource_url TEXT,resource_type TEXT,sort DOUBLE PRECISION,deleted BIGINT,tenant_id BIGINT,
+                            action_key VARCHAR(64));
                         INSERT INTO sys_role VALUES(1,0,0,0);
                         INSERT INTO sys_roleuser_ref VALUES(1,9);
                         INSERT INTO sys_roleres_ref VALUES(1,11);
                         INSERT INTO sys_module VALUES(1,0,'Organization',0,'/1',true,'sys.organization',NULL,
                             '/sys/organization',NULL,0,0,0,NULL,88);
-                        INSERT INTO sys_module_resources VALUES
-                            (11,1,'read','Read','/sys/organization/list','GET',0,0,0),
-                            (12,1,'write','Write','/sys/organization/edit','POST',1,0,0);
+                        INSERT INTO sys_module_resources(id,main_id,code,resource_desc,resource_url,resource_type,
+                            sort,deleted,tenant_id,action_key) VALUES
+                            (11,1,'read','Read','/sys/organization/list','GET',0,0,0,'read'),
+                            (12,1,'write','Write','/sys/organization/edit','POST',1,0,0,'update');
                         """);
                 MybatisConfiguration mybatis = new MybatisConfiguration();
                 mybatis.setEnvironment(new Environment("synthetic-menu",

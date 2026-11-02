@@ -10,7 +10,6 @@ import org.pkaq.core.mvc.vo.Response;
 import org.pkaq.core.properties.EvaConfig;
 import org.pkaq.sys.dict.service.DictService;
 import org.pkaq.sys.module.service.AuthorizedMenuService;
-import org.pkaq.sys.module.vo.ModuleMenuResourceVo;
 import org.pkaq.sys.module.vo.ModuleMenuVo;
 import org.pkaq.sys.user.service.UserService;
 import org.pkaq.web.core.utils.ResponseUtil;
@@ -45,14 +44,10 @@ class AuthMenuCapabilityTest {
         EvaConfig config = new EvaConfig();
         AuthorizedMenuService menus = mock(AuthorizedMenuService.class);
         AuthCtrl controller = new AuthCtrl(mock(DictService.class), menus, mock(UserService.class), config);
-        ModuleMenuResourceVo resource = new ModuleMenuResourceVo();
-        resource.setId(11L);
-        resource.setResourceType("POST");
-        resource.setResourceUrl("/sys/organization/edit");
         ModuleMenuVo menu = new ModuleMenuVo();
         menu.setId(1L);
         menu.setRouteUrl("/sys/organization");
-        menu.setResources(List.of(resource));
+        menu.setResources(List.of("update"));
         when(menus.fetchCurrentMenus()).thenReturn(List.of(menu));
         for (boolean enabled : new boolean[] {true, false}) {
             config.getResourcePermission().setEnable(enabled);
@@ -66,8 +61,8 @@ class AuthMenuCapabilityTest {
             assertEquals(1, json.path("data").size());
             assertEquals("/sys/organization", json.path("data").path(0).path("routeUrl").textValue());
             JsonNode grant = json.path("data").path(0).path("resources").path(0);
-            assertEquals("POST", grant.path("resourceType").textValue());
-            assertEquals("/sys/organization/edit", grant.path("resourceUrl").textValue());
+            assertTrue(grant.isTextual());
+            assertEquals("update", grant.textValue());
             assertEquals("0000", json.path("code").textValue());
             assertEquals("合成响应消息", json.path("message").textValue());
             assertFalse(json.path("data").path(0).has("resourcePermissionEnabled"));

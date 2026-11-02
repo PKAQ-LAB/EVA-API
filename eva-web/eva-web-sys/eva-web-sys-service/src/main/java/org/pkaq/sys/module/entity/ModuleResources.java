@@ -22,6 +22,10 @@ public class ModuleResources extends StdLineEntity {
 
     private String code;
 
+    /** 前端操作key，清空时允许更新为NULL；不替代资源编码或HTTP权限。 */
+    @TableField(updateStrategy = com.baomidou.mybatisplus.annotation.FieldStrategy.ALWAYS)
+    private String actionKey;
+
     private String resourceDesc;
 
     private String resourceUrl;

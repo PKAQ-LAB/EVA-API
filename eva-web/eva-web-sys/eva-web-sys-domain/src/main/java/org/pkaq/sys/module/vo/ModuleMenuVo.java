@@ -47,7 +47,7 @@ public class ModuleMenuVo {
     private Double sort;
 
     @Schema(description = "菜单资源")
-    private List<ModuleMenuResourceVo> resources;
+    private List<String> resources;
 
     @Schema(description = "子菜单")
     private List<ModuleMenuVo> children;

@@ -13,7 +13,6 @@ import org.pkaq.sys.module.entity.ModuleEntity;
 import org.pkaq.sys.module.entity.ModuleResources;
 import org.pkaq.sys.module.vo.ModuleDetailVo;
 import org.pkaq.sys.module.vo.ModuleListVo;
-import org.pkaq.sys.module.vo.ModuleMenuResourceVo;
 import org.pkaq.sys.module.vo.ModuleMenuVo;
 import org.pkaq.sys.module.vo.ModuleResourcesVo;
 import org.pkaq.sys.user.vo.UserResourceVo;
@@ -114,18 +113,12 @@ public interface ModuleConvert {
      * @param resources 模块资源
      * @return 菜单资源
      */
-    default List<ModuleMenuResourceVo> resourcesToMenuVo(List<ModuleResourcesVo> resources) {
+    default List<String> resourcesToMenuVo(List<ModuleResourcesVo> resources) {
         if (resources == null) {
             return Collections.emptyList();
         }
-        return resources.stream().map(resource -> {
-            ModuleMenuResourceVo vo = new ModuleMenuResourceVo();
-            vo.setId(resource.getId());
-            vo.setCode(resource.getCode());
-            vo.setResourceDesc(resource.getResourceDesc());
-            vo.setResourceUrl(resource.getResourceUrl());
-            vo.setResourceType(resource.getResourceType());
-            return vo;
-        }).collect(Collectors.toList());
+        return resources.stream().map(resource ->
+                org.pkaq.sys.module.ModuleActionKey.normalize(resource.getActionKey()))
+                .filter(java.util.Objects::nonNull).distinct().collect(Collectors.toList());
     }
 }

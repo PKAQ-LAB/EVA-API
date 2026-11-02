@@ -56,6 +56,57 @@ class ModuleServiceTest {
 
     private ModuleService service;
 
+    @Test
+    void keepsDifferentActionKeysForCodeLessNewRowsAndDeduplicatesTheSameKey() {
+        var create = new org.pkaq.sys.module.bo.ModuleResourcesBo();
+        create.setResourceType("POST");
+        create.setResourceUrl("/sys/module/edit");
+        create.setActionKey("create");
+        var update = new org.pkaq.sys.module.bo.ModuleResourcesBo();
+        update.setResourceType("POST");
+        update.setResourceUrl("/sys/module/edit");
+        update.setActionKey("update");
+        var duplicate = new org.pkaq.sys.module.bo.ModuleResourcesBo();
+        duplicate.setResourceType("POST");
+        duplicate.setResourceUrl("/sys/module/edit");
+        duplicate.setActionKey(" create ");
+        when(resourceMapper.selectList(any())).thenReturn(List.of());
+        ReflectionTestUtils.invokeMethod(service, "handleResources", 7L, List.of(create, update, duplicate));
+        ArgumentCaptor<ModuleResources> saved = ArgumentCaptor.forClass(ModuleResources.class);
+        verify(resourceMapper, org.mockito.Mockito.times(2)).insert(saved.capture());
+        assertEquals(List.of("create", "update"), saved.getAllValues().stream()
+                .map(ModuleResources::getActionKey).toList());
+        assertTrue(saved.getAllValues().stream().allMatch(row -> row.getCode() == null));
+    }
+
+    @Test
+    void keepsOmittedActionKeyAndClearsExplicitNullWithoutChangingHttpMetadata() throws Exception {
+        for (String json : List.of("{\"id\":11,\"code\":\"stable\",\"resourceType\":\"GET\"}",
+                "{\"id\":11,\"code\":\"stable\",\"resourceType\":\"GET\",\"actionKey\":null}",
+                "{\"id\":11,\"code\":\"stable\",\"resourceType\":\"GET\",\"actionKey\":\"  \"}")) {
+            org.mockito.Mockito.reset(resourceMapper);
+            ModuleResources old = new ModuleResources();
+            old.setId(11L);
+            old.setMainId(7L);
+            old.setActionKey("read");
+            when(resourceMapper.selectList(any())).thenReturn(List.of(old));
+            var bo = new com.fasterxml.jackson.databind.ObjectMapper().readValue(json,
+                    org.pkaq.sys.module.bo.ModuleResourcesBo.class);
+            ReflectionTestUtils.invokeMethod(service, "handleResources", 7L, List.of(bo));
+            ArgumentCaptor<ModuleResources> saved = ArgumentCaptor.forClass(ModuleResources.class);
+            verify(resourceMapper).updateById(saved.capture());
+            assertEquals(bo.isActionKeySubmitted() ? null : "read", saved.getValue().getActionKey());
+            assertEquals("stable", saved.getValue().getCode());
+            assertEquals("GET", saved.getValue().getResourceType());
+        }
+        for (String invalid : List.of("module.read", "scope:read", "Read", "bad key", "a".repeat(65))) {
+            assertThrows(IllegalArgumentException.class, () ->
+                    org.pkaq.sys.module.ModuleActionKey.normalize(invalid));
+        }
+        assertEquals("grantResource", org.pkaq.sys.module.ModuleActionKey.normalize(" grantResource "));
+        assertEquals("custom_key", org.pkaq.sys.module.ModuleActionKey.normalize("custom_key"));
+    }
+
     /**
      * 使用真实生成转换器，复现父类注入角色转换器的运行时环境。
      */
@@ -95,6 +146,7 @@ class ModuleServiceTest {
         resource.setId(11L);
         resource.setMainId(7L);
         resource.setCode("edit");
+        resource.setActionKey("update");
         resource.setResourceDesc("编辑模块");
         resource.setResourceUrl("/sys/module/edit");
         resource.setResourceType("operation");
@@ -122,6 +174,7 @@ class ModuleServiceTest {
         assertEquals(resource.getId(), resourceVo.getId());
         assertEquals(resource.getMainId(), resourceVo.getMainId());
         assertEquals(resource.getCode(), resourceVo.getCode());
+        assertEquals("update", resourceVo.getActionKey());
         assertEquals(resource.getResourceDesc(), resourceVo.getResourceDesc());
         assertEquals(resource.getResourceUrl(), resourceVo.getResourceUrl());
         assertEquals(resource.getResourceType(), resourceVo.getResourceType());

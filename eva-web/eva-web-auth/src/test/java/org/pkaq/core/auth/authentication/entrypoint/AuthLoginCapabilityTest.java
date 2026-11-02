@@ -55,22 +55,27 @@ class AuthLoginCapabilityTest {
         Authentication authentication = mock(Authentication.class);
         when(authentication.getPrincipal()).thenReturn(user);
         for (boolean enabled : new boolean[] {true, false}) {
-            config.getResourcePermission().setEnable(enabled);
-            config.getResourcePermission().setStrict(!enabled);
-            MockHttpServletResponse response = new MockHttpServletResponse();
-            handler.onAuthenticationSuccess(new MockHttpServletRequest(), response, authentication);
-            JsonNode json = new ObjectMapper().readTree(response.getContentAsString());
-            assertTrue(json.path("success").booleanValue());
-            assertTrue(json.path("resourcePermissionEnabled").isBoolean());
-            assertEquals(enabled, json.path("resourcePermissionEnabled").booleanValue());
-            assertEquals("0000", json.path("code").textValue());
-            assertTrue(json.path("data").isObject());
-            assertEquals("synthetic-access", json.path("data").path("access_token").textValue());
-            assertEquals("synthetic-refresh", json.path("data").path("refresh_token").textValue());
-            assertEquals("synthetic-login", json.path("data").path("user_info").path("account").textValue());
-            assertFalse(json.path("data").has("resourcePermissionEnabled"));
-            assertFalse(json.has("mtype"));
-            assertFalse(json.has("args"));
+            for (boolean dataEnabled : new boolean[] {true, false}) {
+                config.getDataPermission().setEnable(dataEnabled);
+                config.getResourcePermission().setEnable(enabled);
+                config.getResourcePermission().setStrict(!enabled);
+                MockHttpServletResponse response = new MockHttpServletResponse();
+                handler.onAuthenticationSuccess(new MockHttpServletRequest(), response, authentication);
+                JsonNode json = new ObjectMapper().readTree(response.getContentAsString());
+                assertTrue(json.path("success").booleanValue());
+                assertTrue(json.path("resourcePermissionEnabled").isBoolean());
+                assertEquals(enabled, json.path("resourcePermissionEnabled").booleanValue());
+                assertTrue(json.path("dataPermissionEnabled").isBoolean());
+                assertEquals(dataEnabled, json.path("dataPermissionEnabled").booleanValue());
+                assertEquals("0000", json.path("code").textValue());
+                assertTrue(json.path("data").isObject());
+                assertEquals("synthetic-access", json.path("data").path("access_token").textValue());
+                assertEquals("synthetic-refresh", json.path("data").path("refresh_token").textValue());
+                assertEquals("synthetic-login", json.path("data").path("user_info").path("account").textValue());
+                assertFalse(json.path("data").has("resourcePermissionEnabled"));
+                assertFalse(json.has("mtype"));
+                assertFalse(json.has("args"));
+            }
         }
     }
 
@@ -82,9 +87,10 @@ class AuthLoginCapabilityTest {
         JsonNode json = new ObjectMapper().readTree(response.getContentAsString());
         assertFalse(json.path("success").booleanValue());
         assertFalse(json.has("resourcePermissionEnabled"));
+        assertFalse(json.has("dataPermissionEnabled"));
         assertThrows(IllegalArgumentException.class,
-                () -> AuthBootstrapResponse.fromSuccess(Response.failure("合成失败"), false));
-        assertThrows(IllegalArgumentException.class, () -> AuthBootstrapResponse.fromSuccess(null, false));
+                () -> AuthBootstrapResponse.fromSuccess(Response.failure("合成失败"), false, false));
+        assertThrows(IllegalArgumentException.class, () -> AuthBootstrapResponse.fromSuccess(null, false, false));
     }
 
     @Test
@@ -95,7 +101,7 @@ class AuthLoginCapabilityTest {
         original.setMessage("合成消息{0}");
         original.setMtype("synthetic-message-type");
         original.setArgs(args);
-        AuthBootstrapResponse<List<String>> snapshot = AuthBootstrapResponse.fromSuccess(original, false);
+        AuthBootstrapResponse<List<String>> snapshot = AuthBootstrapResponse.fromSuccess(original, false, false);
         assertEquals(original.getCode(), snapshot.getCode());
         assertEquals(original.getMessage(), snapshot.getMessage());
         assertSame(original.getMtype(), snapshot.getMtype());
@@ -105,6 +111,8 @@ class AuthLoginCapabilityTest {
         JsonNode json = mapper.readTree(mapper.writeValueAsString(snapshot));
         assertTrue(json.path("resourcePermissionEnabled").isBoolean());
         assertFalse(json.path("resourcePermissionEnabled").booleanValue());
+        assertTrue(json.path("dataPermissionEnabled").isBoolean());
+        assertFalse(json.path("dataPermissionEnabled").booleanValue());
         assertFalse(json.has("mtype"));
         assertFalse(json.has("args"));
     }

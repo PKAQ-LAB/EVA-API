@@ -68,6 +68,36 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 class DictSyncHttpTest {
     @Test
+    void menuBootstrapReportsIndependentCurrentFlagsOnlyOnSuccess() throws Exception {
+        try (var context = new AnnotationConfigWebApplicationContext()) {
+            context.setServletContext(new MockServletContext());
+            context.getEnvironment().getPropertySources().addFirst(new org.springframework.core.env.MapPropertySource(
+                    "toggle-test", Map.of("project.version", "toggle-test")));
+            context.register(Beans.class);
+            context.refresh();
+            authenticate(context);
+            MockMvc mvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
+            EvaConfig config = context.getBean(EvaConfig.class);
+            AuthorizedMenuService menus = context.getBean(AuthorizedMenuService.class);
+            when(menus.fetchCurrentMenus()).thenReturn(java.util.List.of());
+            for (boolean resourceEnabled : new boolean[]{true, false}) {
+                for (boolean dataEnabled : new boolean[]{true, false}) {
+                    config.getResourcePermission().setEnable(resourceEnabled);
+                    config.getDataPermission().setEnable(dataEnabled);
+                    mvc.perform(get("/auth/fetchMenus"))
+                            .andExpect(status().isOk()).andExpect(jsonPath("success").value(true))
+                            .andExpect(jsonPath("resourcePermissionEnabled").value(resourceEnabled))
+                            .andExpect(jsonPath("dataPermissionEnabled").value(dataEnabled));
+                }
+            }
+            doThrow(new IllegalStateException("synthetic menu failure")).when(menus).fetchCurrentMenus();
+            mvc.perform(get("/auth/fetchMenus")).andExpect(jsonPath("success").value(false))
+                    .andExpect(jsonPath("resourcePermissionEnabled").doesNotExist())
+                    .andExpect(jsonPath("dataPermissionEnabled").doesNotExist());
+        }
+    }
+
+    @Test
     void conditionalResponsesKeepAuthenticationAndErrorBoundaries() throws Exception {
         try (var context = new AnnotationConfigWebApplicationContext()) {
             context.setServletContext(new MockServletContext());

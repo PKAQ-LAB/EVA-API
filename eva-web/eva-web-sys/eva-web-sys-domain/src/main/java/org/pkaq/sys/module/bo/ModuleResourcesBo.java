@@ -21,6 +21,18 @@ public class ModuleResourcesBo implements Vo {
     @Schema(description = "资源编码")
     private String code;
 
+    @Schema(description = "前端操作key，可空；read仅表示详情")
+    private String actionKey;
+
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private boolean actionKeySubmitted;
+
+    /** 区分旧客户端省略与显式清空操作key。 */
+    public void setActionKey(String actionKey) {
+        this.actionKey = actionKey;
+        this.actionKeySubmitted = true;
+    }
+
     @Schema(description = "资源描述")
     private String resourceDesc;
 

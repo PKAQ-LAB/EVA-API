@@ -521,7 +521,10 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
                 .orElse(0D) + 1D;
 
         if (CollUtils.isNotEmpty(resources)) {
-            List<ModuleResources> incoming = this.convert.resourceBoToEntity(distinctResources(resources));
+            List<ModuleResourcesBo> distinct = distinctResources(resources);
+            Set<Long> actionKeySubmittedIds = distinct.stream().filter(ModuleResourcesBo::isActionKeySubmitted)
+                    .map(ModuleResourcesBo::getId).collect(Collectors.toSet());
+            List<ModuleResources> incoming = this.convert.resourceBoToEntity(distinct);
             for (ModuleResources r : incoming) {
                 if (r.getId() != null && r.getId() != 0L && existingIds.contains(r.getId())) {
                     ModuleResources existing = existingMap.get(r.getId());
@@ -530,6 +533,9 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
                         continue;
                     }
                     r.setMainId(moduleId);
+                    if (!actionKeySubmittedIds.contains(r.getId())) {
+                        r.setActionKey(existing.getActionKey());
+                    }
                     normalizeResourceForSave(r, existing.getSort(), nextSort);
                     this.moduleResourceMapper.updateById(r);
                     retainedIds.add(r.getId());
@@ -576,10 +582,15 @@ public class ModuleService extends StdService<ModuleMapper, ModuleEntity> {
         if (hasText(resource.getCode())) {
             return "NEW_CODE:" + resource.getCode().trim();
         }
+        String actionKey = org.pkaq.sys.module.ModuleActionKey.normalize(resource.getActionKey());
+        if (actionKey != null) {
+            return "NEW_ACTION:" + resource.getResourceType() + ":" + actionKey + ":" + resource.getResourceUrl();
+        }
         return "NEW:" + resource.getResourceType() + ":" + resource.getResourceUrl();
     }
 
     private void normalizeResourceForSave(ModuleResources resource, Double oldSort, double nextSort) {
+        resource.setActionKey(org.pkaq.sys.module.ModuleActionKey.normalize(resource.getActionKey()));
         resource.setResourceType(ResourceTypeEnum.normalize(resource.getResourceType()));
         if (resource.getSort() == null || resource.getSort() <= 0D) {
             resource.setSort(oldSort == null || oldSort <= 0D ? nextSort : oldSort);

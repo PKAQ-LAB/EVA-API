@@ -187,7 +187,15 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
         }
         RoleEntity origin = bo.getId() != null && bo.getId() != 0L ? ensureRoleEditable(bo.getId()) : null;
         boolean scopeOmitted = bo.getDataScope() == null;
-        validateDataScope(bo, origin);
+        boolean dataPermissionEnabled = evaConfig.getDataPermission().isEnable();
+        if (dataPermissionEnabled) {
+            validateDataScope(bo, origin);
+        } else {
+            // 关闭时不解析客户端关联或历史CSV，避免隐藏配置影响普通资料保存。
+            bo.setDataScope("0000");
+            bo.setDataOrgIds("");
+            bo.setDataPostIds(origin == null ? List.of() : null);
+        }
         IdCodeBo codeCheck = new IdCodeBo();
         codeCheck.setId(bo.getId());
         codeCheck.setCode(bo.getCode());
@@ -196,6 +204,11 @@ public class RoleService extends StdService<RoleMapper, RoleEntity> implements I
             return;
         }
         RoleEntity entity = this.roleConvert.fromBo(bo);
+        if (!dataPermissionEnabled) {
+            entity.setDataScope(origin == null ? "0000" : origin.getDataScope());
+            entity.setDataOrgIds(origin == null ? "" : origin.getDataOrgIds());
+            entity.setDataPostIds(origin == null ? "" : origin.getDataPostIds());
+        }
         if (origin != null) {
             // 普通编辑保留可信原状态，冻结切换仍由专用操作处理。
             entity.setFrozen(origin.getFrozen());

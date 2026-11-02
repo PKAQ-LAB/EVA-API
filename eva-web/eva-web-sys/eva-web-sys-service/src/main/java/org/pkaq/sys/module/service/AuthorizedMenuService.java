@@ -150,7 +150,10 @@ public class AuthorizedMenuService {
             });
             if (resourceKeys.computeIfAbsent(module.getId(), moduleId -> new HashSet<>())
                     .add(row.getResource().getId())) {
-                target.getResources().add(row.getResource());
+                String actionKey = org.pkaq.sys.module.ModuleActionKey.normalize(row.getResource().getActionKey());
+                if (actionKey != null && !target.getResources().contains(actionKey)) {
+                    target.getResources().add(actionKey);
+                }
             }
         }
         List<ModuleMenuVo> roots = new ArrayList<>();

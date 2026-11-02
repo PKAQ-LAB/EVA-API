@@ -41,7 +41,8 @@ public class AuthCtrl extends Ctrl {
     public Response<Object> fetchMenus() {
         try {
             Response<Object> response = success(this.authorizedMenuService.fetchCurrentMenus());
-            return AuthBootstrapResponse.fromSuccess(response, evaConfig.getResourcePermission().isEnable());
+            return AuthBootstrapResponse.fromSuccess(response, evaConfig.getResourcePermission().isEnable(),
+                    evaConfig.getDataPermission().isEnable());
         } catch (Exception e) {
             log.error("获取当前用户菜单失败", e);
             return failure(CommonCodes.SERVER_ERROR);

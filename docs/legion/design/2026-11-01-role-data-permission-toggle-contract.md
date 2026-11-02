@@ -1,0 +1,45 @@
+# 数据权限关闭时角色范围隐藏与保存契约（用户最终语义已定，分角色实施）
+
+前端竞态修订已独审关闭：最新`.git/role-data-capability-source-20261101.json` SHA256 `D0EEF9FD36821F9E143C38D9DFCD84AC7FA462A58C6DF4309233D73B6445E6C3`与15输入实算匹配，旧B1A5撤回仅历史。latestCapability每render更新，await validate后与本次捕获能力不等则在组包/save之前停止，原finally释放busy且保稿；双向变化都受比较保护。编码异步校验期间true→false/unknown零save用例已源核，开发修后单文件25/25报告不等于本角色重跑或独立QA。当前源码复核未发现新增阻断，仍待总控收QA与用户重启运行态证据。
+
+后端最新冻结：`.gradle/role-data-toggle-20261101/source-freeze.json` SHA256 `B4B27F66B3F2BAC8B142C21ABFD1F833B7998F09E228F59F0665D9E36D02D6C0`及7输入实算匹配。falseexisting转换前隔离岗位列表/转换后三字段raw恢复、falsenew显式0000空关联、true原validate与角色保护/版本、独立bootstrap成功bool均复核符合；MybatisPlusConfig原装配无diff，源码未见新增阻断。root批准必要插件解析后，backend实际Gradle3target报告22项0fail/skip，旧offline配置失败仅历史；本角色未重跑，QA独验与用户重启后运行态核验未完成，不能称部署已生效。
+
+候选撤回更新：前端主动暂撤B1A5，发现异步表单/编码校验期间能力改变时旧handler闭包可能继续提交。须在validate返回后以最新能力ref核对本次捕获值，变化即停止、不发save，保留稿件；同身份切能力也适用。待仅aoeform/postscope修订与定向证据重封后再关闭，以下B1A5静态审仅历史，不作为最终通过。
+
+前端候选已独审：`.git/role-data-capability-source-20261101.json` SHA256 `B1A53413D816F66E40044FB9A90C565E035FFFFD0ACB9CA58E8C83FA49E7CF79`及15输入实算匹配。顶层成功strict bool、用户合并后明确覆盖undefined、false五字段剔除、unknown隐藏并禁存、true保原strict与view原只读均符合合同，未发现新增阻断。137项通过为前端单轮报告，本角色未重测；类型检查仍有成员已核的既有5项，不称全绿。后端生产施工方向已核false转换前归一/三项原值恢复、bootstrap两调用真实bean且原条件装配不变；实际编译测试/冻结及QA证据待成员完成，不将插件配置阶段失败说成产品已编译通过。
+
+2026-11-01 technical_designer。用户最终明确关闭dataPermission即全部数据/不启过滤，未接受早期0007建议；总控已正式派成员实施，本角色仅设计独审，不改产品源码/测试/DB/服务/Git。新建默认0000、编辑原配置保留，以下最终合同替代此前0007待议；不再重复确认，不改变0003/0006或资源权限开关。
+
+## 已核源码
+
+AuthBootstrapResponse当前仅包含resourcePermissionEnabled（boolean且JsonInclude.ALWAYS）；login成功与AuthCtrl.fetchMenus成功使用fromSuccess，失败不附能力快照。前端resourcePermissionFromResponse只从成功响应外层读取严格boolean，用户对象合并缓存身份存在，因此新增能力不能从缓存用户对象回填，也不能用resourcePermissionEnabled推断。
+
+RoleAoeBo.dataScope没有默认值；SYS_ROLE DDL默认0000，但当前新建不传scope会先被validateDataScope拒绝，尚无“关闭时新建默认”应用行为，不能把DDL默认视为已获业务授权。编辑省略scope会回填原scope/org/post，原0006仍验证当前岗位；因此仅前端隐藏并省略字段不能保证普通名称修改可保存。editUniqueCode当前转换后只对scopeOmitted恢复原DATA_POST_IDS，新增关闭分支须精确保留三字段原存储值，不能经CSV解析/排序覆盖原值或因无效旧岗位阻塞普通资料修改。
+
+## 最小API增量
+
+仅现AuthBootstrapResponse增加独立dataPermissionEnabled boolean，值取当前真实EvaConfig.getDataPermission().isEnable()；login成功、fetchMenus成功均提供，false也必须序列化，错误响应不带。原resourcePermissionEnabled保持独立来源/行为，data和成功/错误结构不变，无DB字段或新端点。
+
+前端只在当前有效身份成功bootstrap外层严格dataPermissionEnabled===true时显示角色dataScope及0003/0006侧栏；false、缺失、类型错误、初始化失败均隐藏，不读localStorage/缓存身份/JWT/资源flag补值。新增字段合并当前用户时必须明确覆盖为本次解析值（含undefined），避免旧用户缓存上的true残留。退出/切用户租户和初始化失效沿现身份清理，不影响字典同步会话隔离。
+
+用户本次仅指定新增/编辑：这两模式隐藏期间不挂载字典选择器或部门岗位选择器，不请求候选列表、不运行它们的必填/ready校验；能力明确false时保存仅发普通资料，省略dataScope/dataOrgIds/dataPostIds/dataPermissionType/dataPermissionDeptid五字段，不能把隐藏字段空串/空数组当用户清空。查看模式保留原已存配置只读展示，不顺改展示或扩大读取。能力缺失、类型错误、初始化失败时隐藏配置并阻止新增/编辑保存，明确重试能力初始化，不能把unknown当false或true；保留稿件、审计和角色保护。
+
+## 真实开关关闭时后端保存
+
+现事务、租户/资源与真实角色可编辑守卫、唯一性、系统9999保护原样执行；只绕开范围选择校验，不绕开业务保存权限。以服务端EvaConfig实际开关判断，忽略客户端bootstrap值。
+
+编辑现有角色：关闭时不调用范围校验/岗位或部门选择查询，不解析旧CSV；无论旧客户端是否夹带scope字段，最终entity明确恢复origin.dataScope、origin.dataOrgIds、origin.dataPostIds的原始值（含NULL、空值或历史非法配置），仅普通资料可更新。不能因关闭就重置旧scope为ALL/SELF或清空关联；重新启用后原配置按原权限规则执行。显式夹带范围字段的处理建议为不采纳并保原值，以兼容旧客户端普通编辑；不把“关闭”变成后台继续配置范围的旁路。
+
+MapStruct前还须阻断无效请求集合进入postCsv排序：关闭的existing分支把用于转换的BO岗位列表设为null（不将旧CSV解析回列表），后续entity三字段再从origin原样覆盖；关闭new分支先将BO归一0000/空org/空post列表再转换。不能只跳validate后仍将恶意含null/负值列表交Convert，导致隐藏字段影响普通保存或新建；也不能修改共享RoleConvert的开启分支以放宽原校验。该策略不新增字段或映射契约。
+
+新建角色：依用户最终决定，关闭时服务器明确保存dataScope=0000（ALL），org/post空关联，不要求客户端选scope，不采纳客户端夹带的其他范围或关联。此值与现DDL默认相同，但在服务层显式归一，不能因请求空值或转换策略漏写。关闭期间不启数据过滤；以后重新开启时该新角色按已存0000原ALL规则贡献范围，仍需通过原资源/租户资格。既有DDL默认、初始化及旧角色配置不改，不设置0007。
+
+MybatisPlusConfig当前仅enable=true时注册数据权限插件，已符合用户“关闭不启过滤”的条件装配要求；保持此链不改，不用角色字段隐藏代替服务端开关，不增加资源门禁旁路或热更新框架。
+
+开关开启时保留现保存契约与0003/0006校验。开关变化须按现配置加载/部署方式生效，本任务不新增热更新监听；bootstrap是当前服务实例能力快照，前端隐藏不授任何后端权限。原编辑更新成员permVer逻辑不因本任务放宽；无需增加DB表、版本字段、Redis键或新框架。
+
+## 已定实施范围与必要验证
+
+已定范围：成功登录/菜单初始化新增独立dataPermissionEnabled布尔能力；新增编辑只有明确true展示范围，明确false隐藏并可无scope保存，unknown隐藏且阻止保存；实际关闭时编辑精确保留三项原值、新建服务器0000空关联；开配置原严格校验保留，view原只读，原资源/租户/角色保护不变，无数据库迁移。
+
+仅针对性验证：成功true/false与资源flag正交输出、失败/缺失/类型错不继承旧flag且阻止保存；关闭旧0006无效或坏CSV仍可改名且原三字段字节不变、旧0003同样保留；夹带scope/legacy/恶意postlist不能改范围或触发转换NPE；关闭新建0000空关联；开启原required及范围校验不退；明确false隐藏不发候选请求/不校验scope/省略五字段；view原只读；身份切换晚回无残留。沿既有测试，不全仓重测、服务/DB动作或发布。本角色待成员源候选后独审，不另发已定语义选择。

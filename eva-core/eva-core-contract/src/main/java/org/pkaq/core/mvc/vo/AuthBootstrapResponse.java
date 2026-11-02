@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 
 /**
- * 仅用于登录和菜单初始化成功响应的当前资源权限能力快照。
+ * 仅用于登录和菜单初始化成功响应的当前资源及数据权限能力快照。
  *
  * @param <T> 保持原结构的响应数据
  * @author PKAQ
@@ -15,8 +15,13 @@ public final class AuthBootstrapResponse<T> extends Response<T> {
     @JsonInclude(JsonInclude.Include.ALWAYS)
     private final boolean resourcePermissionEnabled;
 
-    private AuthBootstrapResponse(boolean resourcePermissionEnabled) {
+    @Getter
+    @JsonInclude(JsonInclude.Include.ALWAYS)
+    private final boolean dataPermissionEnabled;
+
+    private AuthBootstrapResponse(boolean resourcePermissionEnabled, boolean dataPermissionEnabled) {
         this.resourcePermissionEnabled = resourcePermissionEnabled;
+        this.dataPermissionEnabled = dataPermissionEnabled;
     }
 
     /**
@@ -24,14 +29,17 @@ public final class AuthBootstrapResponse<T> extends Response<T> {
      *
      * @param original 原成功响应
      * @param resourcePermissionEnabled 当前配置bean的资源权限开关
+     * @param dataPermissionEnabled 当前配置bean的数据权限开关
      * @param <T> 原响应数据类型
      * @return 携带能力快照的认证成功响应
      */
-    public static <T> AuthBootstrapResponse<T> fromSuccess(Response<T> original, boolean resourcePermissionEnabled) {
+    public static <T> AuthBootstrapResponse<T> fromSuccess(Response<T> original, boolean resourcePermissionEnabled,
+                                                         boolean dataPermissionEnabled) {
         if (null == original || !original.isSuccess()) {
             throw new IllegalArgumentException("仅成功认证响应可提供资源权限能力");
         }
-        AuthBootstrapResponse<T> response = new AuthBootstrapResponse<>(resourcePermissionEnabled);
+        AuthBootstrapResponse<T> response = new AuthBootstrapResponse<>(resourcePermissionEnabled,
+                dataPermissionEnabled);
         response.setSuccess(original.isSuccess());
         response.setCode(original.getCode());
         response.setMessage(original.getMessage());

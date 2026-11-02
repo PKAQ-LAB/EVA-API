@@ -87,6 +87,8 @@ class RoleServiceTest {
     private JdbcTemplate jdbcTemplate;
 
     private RoleService service;
+    private final org.pkaq.core.properties.DataPermission dataPermission =
+            new org.pkaq.core.properties.DataPermission();
 
     /**
      * 初始化被测服务。
@@ -104,6 +106,58 @@ class RoleServiceTest {
         TableInfoHelper.initTableInfo(new MapperBuilderAssistant(configuration, ""), RoleEntity.class);
         TableInfoHelper.initTableInfo(new MapperBuilderAssistant(configuration, ""), OrganizationEntity.class);
         org.mockito.Mockito.lenient().when(evaConfig.isSaasMode()).thenReturn(true);
+        dataPermission.setEnable(true);
+        org.mockito.Mockito.lenient().when(evaConfig.getDataPermission()).thenReturn(dataPermission);
+    }
+
+    @Test
+    void disabledCreateIgnoresClientScopeAndUsesAllWithoutAssociationValidation() {
+        dataPermission.setEnable(false);
+        RoleAoeBo bo = roleBo("invalid");
+        bo.setDataOrgIds("invalid");
+        bo.setDataPostIds(java.util.Arrays.asList(null, -1L));
+        RoleEntity saved = new RoleEntity();
+        doAnswer(call -> {
+            RoleAoeBo actual = call.getArgument(0);
+            assertEquals("0000", actual.getDataScope());
+            assertEquals("", actual.getDataOrgIds());
+            assertEquals(List.of(), actual.getDataPostIds());
+            return saved;
+        }).when(roleConvert).fromBo(any(RoleAoeBo.class));
+        for (String scope : java.util.Arrays.asList(null, "invalid")) {
+            bo.setDataScope(scope);
+            service.editUniqueCode(bo);
+        }
+        assertEquals("0000", saved.getDataScope());
+        assertEquals("", saved.getDataOrgIds());
+        assertEquals("", saved.getDataPostIds());
+        verify(roleMapper, org.mockito.Mockito.times(2)).insertOrUpdate(saved);
+        verifyNoInteractions(organizationMapper, jdbcTemplate);
+    }
+
+    @Test
+    void disabledEditPreservesRawScopeAndAssociationsEvenWithInvalidClientAndHistoricalCsv() {
+        dataPermission.setEnable(false);
+        RoleEntity origin = new RoleEntity();
+        origin.setDataScope("0006");
+        origin.setDataOrgIds("old-invalid-org");
+        origin.setDataPostIds("frozen-or-invalid-csv");
+        when(roleMapper.selectById(5L)).thenReturn(origin);
+        RoleAoeBo bo = roleBo("invalid-client-scope");
+        bo.setId(5L);
+        bo.setDataOrgIds("different");
+        bo.setDataPostIds(java.util.Arrays.asList(null, -1L));
+        RoleEntity saved = new RoleEntity();
+        doAnswer(call -> {
+            assertEquals(null, ((RoleAoeBo) call.getArgument(0)).getDataPostIds());
+            return saved;
+        }).when(roleConvert).fromBo(any(RoleAoeBo.class));
+        service.editUniqueCode(bo);
+        assertEquals(origin.getDataScope(), saved.getDataScope());
+        assertEquals(origin.getDataOrgIds(), saved.getDataOrgIds());
+        assertEquals(origin.getDataPostIds(), saved.getDataPostIds());
+        verify(roleMapper).insertOrUpdate(saved);
+        verifyNoInteractions(organizationMapper, jdbcTemplate);
     }
 
     @Test

@@ -98,7 +98,7 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
 
         ResponseUtil.write(httpServletResponse, AuthBootstrapResponse.fromSuccess(Response
                 .success(loginSuccessVo, CommonCodes.LOGIN_SUCCESS_WELCOME, user.getName()),
-                evaConfig.getResourcePermission().isEnable()));
+                evaConfig.getResourcePermission().isEnable(), evaConfig.getDataPermission().isEnable()));
     }
 
     /**

@@ -20,6 +20,8 @@ public class ModuleMenuResourceVo {
     @Schema(description = "资源编码")
     private String code;
 
+    private String actionKey;
+
     @Schema(description = "资源描述")
     private String resourceDesc;
 

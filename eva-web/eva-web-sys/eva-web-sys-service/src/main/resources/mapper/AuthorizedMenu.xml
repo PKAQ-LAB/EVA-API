@@ -17,6 +17,7 @@
         <association property="resource" javaType="org.pkaq.sys.module.vo.ModuleMenuResourceVo" autoMapping="false">
             <id property="id" column="RESOURCE_ID"/>
             <result property="code" column="RESOURCE_CODE"/>
+            <result property="actionKey" column="ACTION_KEY"/>
             <result property="resourceDesc" column="RESOURCE_DESC"/>
             <result property="resourceUrl" column="RESOURCE_URL"/>
             <result property="resourceType" column="RESOURCE_TYPE"/>
@@ -41,7 +42,7 @@
             m.PID AS MODULE_PID, m.PATH AS MODULE_PATH, m.ISLEAF AS MODULE_ISLEAF,
             m.ICON AS MODULE_ICON, m.ROUTE_URL AS MODULE_ROUTE_URL,
             m.COMPONENT_URL AS MODULE_COMPONENT_URL, m.SORT AS MODULE_SORT,
-            r.ID AS RESOURCE_ID, r.CODE AS RESOURCE_CODE, r.RESOURCE_DESC,
+            r.ID AS RESOURCE_ID, r.CODE AS RESOURCE_CODE, r.ACTION_KEY, r.RESOURCE_DESC,
             r.RESOURCE_URL, r.RESOURCE_TYPE, r.SORT AS RESOURCE_SORT
         FROM SYS_MODULE_RESOURCES r JOIN SYS_MODULE m ON r.MAIN_ID = m.ID
         WHERE COALESCE(r.DELETED, 0) = 0 AND COALESCE(m.DELETED, 0) = 0
