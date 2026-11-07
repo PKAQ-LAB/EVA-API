@@ -4,11 +4,6 @@ plugins {
     alias(libs.plugins.ben.manes.versions)
 }
 
-def springBootVersion = libs.versions.spring.boot.get()
-if (!(springBootVersion ==~ /\d+\.\d+\.\d+/)) {
-    throw new GradleException('Spring Boot 版本必须为三段数字')
-}
-
 allprojects {
     group = 'org.pkaq'
     version = '1.1.3'
@@ -61,22 +56,17 @@ subprojects {
     repositories {
         mavenLocal()
         maven {
-            url "http://dev.jm-sk.com:12081/"
-            allowInsecureProtocol = true
-            credentials {
-                username = 'admin'
-                password = '7u8i9o0p'
+            name = 'nexus'
+            def nexusBaseUrl = providers.gradleProperty('nexusBaseUrl')
+                    .getOrElse('http://dev.jm-sk.com:12081').replaceAll('/+$', '')
+            url = uri("${nexusBaseUrl}/repository/maven-public/")
+            allowInsecureProtocol = url.scheme == 'http'
+            // 默认匿名下载；配置凭据时与发布仓库使用相同的用户级属性。
+            if (providers.gradleProperty('nexusUsername').isPresent()
+                    || providers.gradleProperty('nexusPassword').isPresent()) {
+                credentials(PasswordCredentials)
             }
         }
-//        maven { url 'https://central.sonatype.com/repository/maven-snapshots/' }
-//        maven {
-//            url "http://yy.pkaq.org:8082/artifactory/yunyue-public/"
-//            allowInsecureProtocol = true
-//            credentials {
-//                username = 'yyfrog'
-//                password = 'YYfrog7788'
-//            }
-//        }
         mavenCentral()
     }
 
