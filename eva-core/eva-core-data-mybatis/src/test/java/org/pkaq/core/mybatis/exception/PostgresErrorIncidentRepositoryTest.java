@@ -44,6 +44,7 @@ class PostgresErrorIncidentRepositoryTest {
     @BeforeEach
     void setUp() {
         this.evaConfig = new EvaConfig();
+        this.evaConfig.getDataPermission().setEnable(true);
         this.repository = new PostgresErrorIncidentRepository(this.errorIncidentMapper, this.evaConfig);
     }
 

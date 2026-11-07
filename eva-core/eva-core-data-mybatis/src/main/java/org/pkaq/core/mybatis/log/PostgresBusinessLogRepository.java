@@ -51,7 +51,7 @@ public class PostgresBusinessLogRepository implements BusinessLogRepository {
 
     @Override
     public String get(String id) {
-        LogQueryAccess.requireAll();
+        LogQueryAccess.requireAll(evaConfig.getDataPermission().isEnable());
         try {
             MybatisBizLogEntity entity = this.businessLogMapper.selectLogById(
                     Long.valueOf(id), currentTenantId(null));
@@ -63,7 +63,7 @@ public class PostgresBusinessLogRepository implements BusinessLogRepository {
 
     @Override
     public Object list(LogQueryBo queryBo) {
-        LogQueryAccess.requireAll();
+        LogQueryAccess.requireAll(evaConfig.getDataPermission().isEnable());
         LogQueryBo safeQuery = queryBo == null ? new LogQueryBo() : queryBo;
         Date begin = safeQuery.getBegin();
         Date end = safeQuery.getEnd();

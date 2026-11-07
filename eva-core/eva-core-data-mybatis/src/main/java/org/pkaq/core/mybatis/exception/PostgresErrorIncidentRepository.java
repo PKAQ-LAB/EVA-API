@@ -57,7 +57,7 @@ public class PostgresErrorIncidentRepository implements ErrorIncidentRepository 
 
     @Override
     public ErrorIncident get(String id) {
-        LogQueryAccess.requireAll();
+        LogQueryAccess.requireAll(evaConfig.getDataPermission().isEnable());
         QueryWrapper<ErrorIncidentEntity> wrapper = new QueryWrapper<>();
         wrapper.eq("id", id);
         applyTenantFilter(wrapper);
@@ -66,7 +66,7 @@ public class PostgresErrorIncidentRepository implements ErrorIncidentRepository 
 
     @Override
     public PageVo<? extends ErrorIncident> list(DateRangeBo dateRangeBo, int pageNo, int pageSize) {
-        LogQueryAccess.requireAll();
+        LogQueryAccess.requireAll(evaConfig.getDataPermission().isEnable());
         QueryWrapper<ErrorIncidentEntity> wrapper = new QueryWrapper<>();
 
         Date begin = dateRangeBo.getBegin();

@@ -35,6 +35,7 @@ class PostgresBusinessLogRepositoryTest {
 
     @Test
     void deniesMissingAndRestrictedIdentityBeforeListCountDetailOrArchiveQuery() {
+        config.getDataPermission().setEnable(true);
         assertThrows(RuntimeException.class, () -> repository.get("invalid"));
         assertThrows(RuntimeException.class, () -> repository.list(null));
         for (String code : Arrays.asList(null, "", "unknown", "0001", "0002", "0003", "0004", "0005", "0006", "0007")) {

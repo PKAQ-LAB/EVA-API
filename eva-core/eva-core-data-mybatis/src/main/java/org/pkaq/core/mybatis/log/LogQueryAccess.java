@@ -14,12 +14,27 @@ public final class LogQueryAccess {
     private LogQueryAccess() {
     }
 
-    /** 必须有可信身份和明确的全部数据范围；资源权限仍由请求鉴权入口检查。 */
+    /**
+     * 保留原调用方式，默认检查全部数据范围。
+     */
     public static void requireAll() {
+        requireAll(true);
+    }
+
+    /**
+     * 关闭数据权限时只检查身份，租户范围仍由查询条件限制。
+     */
+    public static void requireAll(boolean dataPermissionEnabled) {
         ThreadUser user = ThreadUserHelper.getCurrentUserOrNull();
-        if (user == null || user.getUserId() <= 0L || user.getTenantId() < 0L
-                || user.getDataScopes() == null || user.getDataScopes().stream()
-                .noneMatch(scope -> scope != null && "0000".equals(scope.getCode()))) {
+
+        // 无论权限开关如何，都必须有已认证的用户和租户
+        if (user == null || user.getUserId() <= 0L || user.getTenantId() < 0L) {
+            CommonCodes.PERMISSION_DENY.newException();
+        }
+
+        // 开启数据权限后，才要求具备全部数据范围
+        if (dataPermissionEnabled && (user.getDataScopes() == null || user.getDataScopes().stream()
+                .noneMatch(scope -> scope != null && "0000".equals(scope.getCode())))) {
             CommonCodes.PERMISSION_DENY.newException();
         }
     }
