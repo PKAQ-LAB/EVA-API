@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <springProperty scope="context" name="EVA_TENANT_LOGS" source="eva.tenant.enable" defaultValue="false"/>
+    <springProperty scope="context" name="EVA_LOG_ROOT" source="logging.file.path" defaultValue="logs"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+    <appender name="TENANT_FILES" class="ch.qos.logback.classic.sift.SiftingAppender">
+        <timeout>30 minutes</timeout>
+        <maxAppenderCount>256</maxAppenderCount>
+        <discriminator class="org.pkaq.core.log.config.TenantLogDiscriminator">
+            <tenantEnabled>${EVA_TENANT_LOGS}</tenantEnabled>
+        </discriminator>
+        <sift>
+            <appender name="FILE-${evaLogRoute}" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <!-- 不设置固定活动文件名，当前活动文件也直接带日期，每天一个。 -->
+                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                    <fileNamePattern>${EVA_LOG_ROOT}/${evaLogRoute}/%d{yyyy-MM-dd,Asia/Shanghai}.log</fileNamePattern>
+                    <maxHistory>${LOGBACK_ROLLINGPOLICY_MAX_HISTORY:-30}</maxHistory>
+                    <cleanHistoryOnStart>true</cleanHistoryOnStart>
+                </rollingPolicy>
+                <encoder>
+                    <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS,Asia/Shanghai} %-5level [%thread] %logger{60} - %msg%n%ex</pattern>
+                    <charset>UTF-8</charset>
+                </encoder>
+            </appender>
+        </sift>
+    </appender>
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="TENANT_FILES"/>
+    </root>
+</configuration>

@@ -7,6 +7,10 @@ import org.pkaq.core.log.base.ErrorIncidentRepository;
 import org.pkaq.core.log.util.ErrorFingerprint;
 import org.pkaq.core.log.util.LogSanitizer;
 import org.pkaq.core.util.BeanUtils;
+import org.pkaq.core.tenant.TenantLogContext;
+import org.pkaq.core.util.json.JsonUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.annotation.Async;
@@ -22,6 +26,8 @@ import java.time.LocalDateTime;
 @Component
 @RequiredArgsConstructor
 public class ErrorIncidentEventHandler {
+    /** 错误摘要只输出已脱敏事件，不复制未过滤的请求内容。 */
+    private static final Logger FILE_LOG = LoggerFactory.getLogger("eva.audit.error");
     private static final String OPEN_STATUS = "OPEN";
 
     private final ErrorIncidentRepository errorIncidentRepository;
@@ -45,6 +51,8 @@ public class ErrorIncidentEventHandler {
         incident.setLastOccurredAt(now);
         incident.setOccurrenceCount(1L);
         incident.setStatus(OPEN_STATUS);
+        TenantLogContext.runWithTenant(incident.getTenantId(),
+                () -> FILE_LOG.error("{}", JsonUtil.toJson(incident)));
         this.errorIncidentRepository.save(incident);
     }
 }

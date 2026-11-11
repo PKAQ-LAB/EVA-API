@@ -13,6 +13,9 @@ import org.pkaq.core.auth.adapter.mybatis.audit.entity.LoginLogEntity;
 import org.pkaq.core.auth.adapter.mybatis.audit.mapper.LoginLogMapper;
 import org.pkaq.core.auth.audit.vo.LoginLogVo;
 import org.pkaq.core.threaduser.ThreadUser;
+import org.pkaq.core.tenant.TenantLogContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.pkaq.core.threaduser.ThreadUserHelper;
 import org.pkaq.core.util.StrUtils;
 import org.pkaq.web.core.client.ClientInfo;
@@ -33,6 +36,8 @@ import java.util.Objects;
 @Slf4j
 @RequiredArgsConstructor
 public class LoginLogService implements ILoginAudit {
+    /** 登录文件只保留技术标识和结果，不输出密码、令牌或设备指纹。 */
+    private static final Logger FILE_LOG = LoggerFactory.getLogger("eva.audit.login");
 
     private static final String LOGIN_TYPE_PASSWORD = "PASSWORD";
     private static final String LOGIN_TYPE_LOGOUT = "LOGOUT";
@@ -100,6 +105,8 @@ public class LoginLogService implements ILoginAudit {
         entity.setAccount(limit(account, MAX_ACCOUNT_LENGTH));
         entity.setSessionId(limit(sessionId, MAX_DEVICE_LENGTH));
         entity.setSuccess(Boolean.TRUE);
+        TenantLogContext.runWithTenant(tenantId,
+                () -> FILE_LOG.info("login success tenantId={} userId={}", tenantId, userId));
         write(() -> {
             entity.setRiskFlags(limit(resolveRiskFlags(entity), MAX_RISK_FLAGS_LENGTH));
             save(entity);
@@ -118,6 +125,8 @@ public class LoginLogService implements ILoginAudit {
         entity.setAccount(limit(resolveAccount(request), MAX_ACCOUNT_LENGTH));
         entity.setSuccess(Boolean.FALSE);
         entity.setFailReason(limit(failReason, MAX_FAIL_REASON_LENGTH));
+        TenantLogContext.runWithTenant(entity.getTenantId(),
+                () -> FILE_LOG.info("login failure tenantId={}", entity.getTenantId()));
         write(() -> save(entity));
     }
 
@@ -156,6 +165,8 @@ public class LoginLogService implements ILoginAudit {
         entity.setSuccess(Boolean.TRUE);
         entity.setLogoutAt(LocalDateTime.now());
         entity.setLogoutReason(limit(logoutReason, MAX_DEVICE_LENGTH));
+        TenantLogContext.runWithTenant(tenantId,
+                () -> FILE_LOG.info("logout tenantId={} userId={}", tenantId, userId));
         write(() -> {
             doCloseSession(tenantId, userId, sessionId, logoutReason);
             save(entity);

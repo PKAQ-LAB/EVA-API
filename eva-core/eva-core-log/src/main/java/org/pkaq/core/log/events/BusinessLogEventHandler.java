@@ -3,6 +3,10 @@ package org.pkaq.core.log.events;
 import lombok.RequiredArgsConstructor;
 import org.pkaq.core.log.base.BizLogEntity;
 import org.pkaq.core.log.base.BusinessLogRepository;
+import org.pkaq.core.tenant.TenantLogContext;
+import org.pkaq.core.util.json.JsonUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
@@ -16,6 +20,8 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @Component
 @RequiredArgsConstructor
 public class BusinessLogEventHandler {
+    /** 脱敏后的业务事件专用文件输出。 */
+    private static final Logger FILE_LOG = LoggerFactory.getLogger("eva.audit.operation");
     public static final String FAILURE_PREFIX = "【操作失败】";
 
     private final BusinessLogRepository businessLogRepository;
@@ -28,7 +34,9 @@ public class BusinessLogEventHandler {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
     @Async("log_task")
     public void listenerCommit(BizLogEvent event) {
-        this.businessLogRepository.save((BizLogEntity) event.getSource());
+        BizLogEntity entity = (BizLogEntity) event.getSource();
+        TenantLogContext.runWithTenant(entity.getTenantId(), () -> FILE_LOG.info("{}", JsonUtil.toJson(entity)));
+        this.businessLogRepository.save(entity);
     }
 
     /**
@@ -45,6 +53,8 @@ public class BusinessLogEventHandler {
         }
         logEntity.setSuccess(Boolean.FALSE);
         logEntity.setDescription(FAILURE_PREFIX + logEntity.getDescription());
+        TenantLogContext.runWithTenant(logEntity.getTenantId(),
+                () -> FILE_LOG.info("{}", JsonUtil.toJson(logEntity)));
         this.businessLogRepository.save(logEntity);
     }
 }

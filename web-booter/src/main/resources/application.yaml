@@ -1,11 +1,11 @@
 project:
   version: 0.0.1
 logging:
+  config: classpath:eva-logback-spring.xml
   logback:
     rollingpolicy:
-      max-file-size: 100MB
+      # 按日期滚动，每种日志每天一个文件；此处配置保留天数。
       max-history: 30
-      total-size-cap: 10GB
       clean-history-on-start: true
 spring:
   profiles:
