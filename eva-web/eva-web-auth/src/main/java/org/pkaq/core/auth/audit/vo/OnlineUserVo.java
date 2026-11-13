@@ -12,6 +12,8 @@ import org.pkaq.core.mvc.vo.Vo;
 public class OnlineUserVo implements Vo {
     private Long tenantId;
     private Long userId;
+    /** 服务端认证账号，旧会话缺失时为空。 */
+    private String account;
     private String sessionId;
     private String device;
     private String version;

@@ -91,6 +91,7 @@ public class OnlineUserService {
             OnlineUserVo vo = new OnlineUserVo();
             vo.setTenantId(Long.valueOf(keyParts[0]));
             vo.setUserId(Long.valueOf(keyParts[1]));
+            vo.setAccount(stringValue(token.get("loginAccount")));
             vo.setSessionId(keyParts[2]);
             vo.setDevice(stringValue(token.get("device")));
             vo.setVersion(stringValue(token.get("version")));

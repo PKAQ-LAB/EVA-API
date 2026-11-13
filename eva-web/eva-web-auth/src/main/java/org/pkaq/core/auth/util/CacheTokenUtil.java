@@ -71,7 +71,8 @@ public class CacheTokenUtil {
         value.put("expireAt", jwtUtil.getExpirationDateFromToken(accessToken));
         value.put("loginTime", System.currentTimeMillis());
         value.put("lastActiveAt", System.currentTimeMillis());
-        value.put("account", uid);
+        // 使用独立缓存字段，避免把旧会话中的用户ID误认为账号。
+        value.put("loginAccount", jwtUtil.getAccount(accessToken));
         value.put(ACCESS_TOKEN_HASH, hash(accessToken));
         value.put(REFRESH_TOKEN_HASH, hash(refreshToken));
         Date refreshExpireAt = jwtUtil.getExpirationDateFromToken(refreshToken);

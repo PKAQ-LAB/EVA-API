@@ -86,6 +86,7 @@ class CacheTokenUtilTest {
                 new MockHttpServletRequest(), 11L, accessToken, refreshToken);
         when(sessionStore.get(7L, 11L, "web-1")).thenReturn(value);
 
+        assertEquals("admin", value.get("loginAccount"));
         assertFalse(value.containsValue(accessToken));
         assertFalse(value.containsValue(refreshToken));
         assertTrue(util.matchesAccessToken(7L, 11L, "web-1", accessToken));

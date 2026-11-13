@@ -12,11 +12,28 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
 class OnlineUserServiceTest {
+
+    @Test
+    void returnsResolvedAccountWithoutMistakingLegacyUserIdForAccount() {
+        CacheTokenUtil tokenUtil = mock(CacheTokenUtil.class);
+        doReturn(Map.of("0:11:new", Map.of("loginAccount", "admin"),
+                "0:12:old", Map.of("account", "12")))
+                .when(tokenUtil).getTokens(0L);
+        OnlineUserService service = new OnlineUserService(tokenUtil, new EvaConfig(), mock(ILoginAudit.class));
+
+        var sessions = service.list(null, null);
+
+        assertEquals("admin", sessions.stream().filter(item -> item.getUserId() == 11L)
+                .findFirst().orElseThrow().getAccount());
+        assertNull(sessions.stream().filter(item -> item.getUserId() == 12L)
+                .findFirst().orElseThrow().getAccount());
+    }
 
     @Test
     void listsOnlyStandaloneSessionsWithoutExposingToken() {
