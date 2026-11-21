@@ -19,7 +19,7 @@ dependencies {
                        project(":eva-core:eva-core-log"),
                        libs.flywaypg
 
-    testImplementation("io.zonky.test:embedded-postgres:2.2.2") {
+    testImplementation("io.zonky.test:embedded-postgres:2.2.3") {
         exclude group: "io.zonky.test.postgres", module: "embedded-postgres-binaries-darwin-amd64"
         exclude group: "io.zonky.test.postgres", module: "embedded-postgres-binaries-linux-amd64"
         exclude group: "io.zonky.test.postgres", module: "embedded-postgres-binaries-linux-amd64-alpine"
